@@ -2,7 +2,7 @@ import React from 'react';
 
 interface ILoginProps {}
 
-const Login = (props: ILoginProps) => {
+const Login: React.FC<ILoginProps> = () => {
   return <div>Login Page</div>;
 };
 

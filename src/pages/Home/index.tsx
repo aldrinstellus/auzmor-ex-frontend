@@ -9,10 +9,14 @@ export const loader = (queryClient: QueryClient) => async (): Promise<any> => {
   // ⬇️ return react-query client store cache (ensureQueryData)
 };
 
-const Home = (props: IHomeProps) => {
-  // ⬇️ use hook to get the data after router loads (useLoaderData)
+const Home: React.FC<IHomeProps> = () => {
   // ⬇️ use hook to get the data from react query client using useQuery
-  return <div>Home Page</div>;
+  // ⬇️ use hook to get the data after router loads (useLoaderData)
+  return (
+    <div className="flex flex-col items-center">
+      <div className="text-lg font-bold">Home Page</div>
+    </div>
+  );
 };
 
 export default Home;
