@@ -27,7 +27,7 @@ const homeDetailQuery = () => ({
   queryKey: ['post-data'],
   queryFn: async () =>
     await axios
-      .get(serverErrorUrl)
+      .get(dummyPostUrl)
       .then((res) => {
         return res.data;
       })

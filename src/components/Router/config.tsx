@@ -4,11 +4,8 @@ import {
   createRoutesFromElements,
   Navigate,
   Route,
-  RouterProvider,
 } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
+import queryClient from 'utils/queryClient';
 import { loader as homeLoader } from 'pages/Home';
 
 const RequireAuth = React.lazy(() => import('components/RequireAuth'));
@@ -24,11 +21,6 @@ const Users = React.lazy(() => import('pages/Users'));
 const UserDetail = React.lazy(() => import('pages/UserDetail'));
 const PageNotFound = React.lazy(() => import('pages/PageNotFound'));
 const ServerErrorPage = React.lazy(() => import('pages/ServerErrorPage'));
-
-interface IRoutersProps {}
-
-// ⬇️ react query client instance
-const queryClient = new QueryClient();
 
 const routers = createBrowserRouter(
   createRoutesFromElements(
@@ -87,17 +79,4 @@ const routers = createBrowserRouter(
   ),
 );
 
-const Routers: React.FC<IRoutersProps> = () => {
-  return (
-    <React.Suspense fallback={<div>LOADING...</div>}>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={routers} />
-        {process.env.NODE_ENV === 'development' ? (
-          <ReactQueryDevtools initialIsOpen={false} />
-        ) : null}
-      </QueryClientProvider>
-    </React.Suspense>
-  );
-};
-
-export default Routers;
+export default routers;
