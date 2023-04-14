@@ -1,9 +1,22 @@
 import React from 'react';
 import './App.css';
+import Router from './components/Router';
+import AuthProvider from 'contexts/AuthContext';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+import queryClient from 'utils/queryClient';
 
 function App() {
   return (
-    <h1 className="text-3xl font-bold underline text-red-400">Auzmor Office</h1>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        {process.env.NODE_ENV === 'development' ? (
+          <ReactQueryDevtools initialIsOpen={false} />
+        ) : null}
+        <Router />
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
