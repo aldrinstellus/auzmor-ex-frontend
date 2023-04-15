@@ -6,6 +6,15 @@ module.exports = {
       width: {
         120: '541px',
       },
+      spacing: {
+        52: '3.25rem',
+      },
+      color: {
+        editorText: '#171717',
+      },
+      height: {
+        56: '56px',
+      },
     },
   },
   plugins: [],

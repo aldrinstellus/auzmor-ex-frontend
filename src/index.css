@@ -4,3 +4,20 @@
 body {
   background-color: #f5f5f5;
 }
+/*This will change the style of placeholder to our product*/
+.quill > .ql-container > .ql-editor.ql-blank::before {
+  color: #737373;
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 140%;
+}
+/* Content styles*/
+.quill > .ql-container {
+  color: #171717;
+  font-family: 'Manrope';
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 140%;
+}

@@ -13,7 +13,9 @@ const RequireAuth: React.FC<IRequireAuthProps> = () => {
   return !user ? (
     <AppShell>
       <Navbar />
-      <Outlet />
+      <div className="mx-14 mt-12">
+        <Outlet />
+      </div>
     </AppShell>
   ) : (
     <Navigate to="/login" />
