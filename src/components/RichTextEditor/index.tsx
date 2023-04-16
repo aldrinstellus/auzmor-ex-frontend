@@ -1,12 +1,11 @@
 import React, { memo, useRef, useState } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
-import 'react-quill/dist/quill.bubble.css';
+import 'react-quill/dist/quill.snow.css';
 import './mentions/quill.mention';
 import './mentions/quill.mention.css';
 
 import { MentionBlot } from './mentions/blots/mentions';
-import { mention } from './config';
-import Toolbar, { formats } from './toolbar/index';
+import Toolbar, { formats, modules } from './toolbar/index';
 
 export interface EditorContentChanged {
   html: string;
@@ -50,11 +49,6 @@ const RichTextEditor: React.FC<QuillEditorProps> = ({
         json: contentJson,
       });
     }
-  };
-
-  const modules = {
-    toolbar: false,
-    mention: mention,
   };
 
   return (

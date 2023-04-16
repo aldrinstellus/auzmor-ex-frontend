@@ -1,29 +1,50 @@
 import React from 'react';
-import { Quill } from 'react-quill';
+import { mention } from '../config';
+
+import Emoticon from 'images/EmotIcon.svg';
 
 // format object for setting the quill editor
 export const formats = ['bold', 'italic', 'underline', 'strike', 'mention'];
 
+export const modules = {
+  toolbar: {
+    container: '#toolbar',
+  },
+  mention: mention,
+};
+
 const Toolbar = () => {
   return (
-    <div id="toolbar" className="h-56 bg-white border-t-2 border-grey-500">
-      <div className="flex justify-between ml-7 mr-6 my-5">
-        <span className="gap-5">
-          <button className="ql-bold">
-            <span className="text-bold">B</span>
-          </button>
-          <button className="ql-italic">
-            <span className="text-bold">I</span>
-          </button>
-          <button className="ql-underline">
-            <span className="text-bold">U</span>
-          </button>
-          <button className="ql-emoji">
-            <span>😃</span>
-          </button>
-        </span>
-        <div>
-          <button>Add Hashtags</button>
+    <div id="toolbar">
+      {/* Controls - pending work on style */}
+      <div className="flex justify-between items-center h-56">
+        <div className="">
+          <span className="ql-formats">
+            <button className="ql-bold"></button>
+            <button className="ql-italic">
+              <span></span>
+            </button>
+            <button className="ql-underline">
+              <span></span>
+            </button>
+            {/* <button className="ql-strike">
+              <span>S</span>
+            </button> */}
+            <button className="ql-emoji">
+              <span>
+                <img src={Emoticon} alt="emoji" />
+              </span>
+            </button>
+            {/* <button className="ql-link">
+              <span>L</span>
+            </button> */}
+            {/* <button className="ql-image" /> */}
+            {/* <button className="ql-video" /> */}
+          </span>
+        </div>
+        {/* Add hashtags button */}
+        <div className="font-bold text-sm font-['manrope']">
+          <div>Add Hashtags</div>
         </div>
       </div>
     </div>
