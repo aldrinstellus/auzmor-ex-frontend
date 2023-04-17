@@ -1,9 +1,14 @@
 import React from 'react';
 import { mention } from '../config';
 
-import Emoticon from 'images/EmotIcon.svg';
-
-export const formats = ['bold', 'italic', 'underline', 'mention', 'link'];
+export const formats = [
+  'bold',
+  'italic',
+  'underline',
+  'mention',
+  'link',
+  'emoji',
+];
 
 export const modules = {
   toolbar: {
@@ -11,6 +16,7 @@ export const modules = {
   },
   mention: mention,
   autoLinks: true,
+  'emoji-toolbar': true,
 };
 
 const Toolbar = () => {
@@ -28,11 +34,7 @@ const Toolbar = () => {
               <span></span>
             </button>
 
-            <button className="ql-emoji">
-              <span>
-                <img src={Emoticon} alt="emoji" />
-              </span>
-            </button>
+            <button className="ql-emoji" />
           </span>
         </div>
         {/* Add hashtags button */}

@@ -1,6 +1,7 @@
 import React, { memo, useRef, useState } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import 'quill-emoji/dist/quill-emoji.css';
 import './mentions/quill.mention';
 import './mentions/quill.mention.css';
 
@@ -8,6 +9,8 @@ import { MentionBlot } from './mentions/blots/mentions';
 import Toolbar, { formats, modules } from './toolbar/index';
 import { LinkBlot } from './blots/link';
 import AutoLinks from './autoLinks';
+import EmojiBlot from './blots/emoji';
+import EmojiToolbar from './emoji';
 
 export interface EditorContentChanged {
   html: string;
@@ -37,7 +40,9 @@ const RichTextEditor: React.FC<QuillEditorProps> = ({
     {
       'formats/mention': MentionBlot,
       'formats/link': LinkBlot,
+      'formats/emoji': EmojiBlot,
       'modules/autoLinks': AutoLinks,
+      'modules/emoji-toolbar': EmojiToolbar,
     },
     true,
   );
