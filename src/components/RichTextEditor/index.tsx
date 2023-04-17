@@ -6,6 +6,8 @@ import './mentions/quill.mention.css';
 
 import { MentionBlot } from './mentions/blots/mentions';
 import Toolbar, { formats, modules } from './toolbar/index';
+import { LinkBlot } from './blots/link';
+import AutoLinks from './autoLinks';
 
 export interface EditorContentChanged {
   html: string;
@@ -34,6 +36,8 @@ const RichTextEditor: React.FC<QuillEditorProps> = ({
   Quill.register(
     {
       'formats/mention': MentionBlot,
+      'formats/link': LinkBlot,
+      'modules/autoLinks': AutoLinks,
     },
     true,
   );

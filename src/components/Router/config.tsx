@@ -25,13 +25,11 @@ const ServerErrorPage = React.lazy(() => import('pages/ServerErrorPage'));
 const routers = createBrowserRouter(
   createRoutesFromElements(
     <Route ErrorBoundary={ErrorBoundary}>
-      // root router
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Registration />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<RequireAuth />}>
-        // protected routers
         <Route
           path="/"
           element={<Home />}

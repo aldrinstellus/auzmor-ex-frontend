@@ -3,14 +3,14 @@ import { mention } from '../config';
 
 import Emoticon from 'images/EmotIcon.svg';
 
-// format object for setting the quill editor
-export const formats = ['bold', 'italic', 'underline', 'strike', 'mention'];
+export const formats = ['bold', 'italic', 'underline', 'mention', 'link'];
 
 export const modules = {
   toolbar: {
     container: '#toolbar',
   },
   mention: mention,
+  autoLinks: true,
 };
 
 const Toolbar = () => {
@@ -27,19 +27,12 @@ const Toolbar = () => {
             <button className="ql-underline">
               <span></span>
             </button>
-            {/* <button className="ql-strike">
-              <span>S</span>
-            </button> */}
+
             <button className="ql-emoji">
               <span>
                 <img src={Emoticon} alt="emoji" />
               </span>
             </button>
-            {/* <button className="ql-link">
-              <span>L</span>
-            </button> */}
-            {/* <button className="ql-image" /> */}
-            {/* <button className="ql-video" /> */}
           </span>
         </div>
         {/* Add hashtags button */}
