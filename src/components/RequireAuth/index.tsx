@@ -1,5 +1,4 @@
 import AppShell from 'components/AppShell';
-import Navbar from 'components/AppShell/components/Navbar';
 import useAuth from 'hooks/useAuth';
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
@@ -12,10 +11,7 @@ const RequireAuth: React.FC<IRequireAuthProps> = () => {
 
   return !user ? (
     <AppShell>
-      <Navbar />
-      <div className="mx-14 mt-12">
-        <Outlet />
-      </div>
+      <Outlet />
     </AppShell>
   ) : (
     <Navigate to="/login" />
