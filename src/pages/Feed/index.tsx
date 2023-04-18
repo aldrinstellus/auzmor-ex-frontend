@@ -25,9 +25,9 @@ const Feed: React.FC<IFeedProps> = () => {
       <div className="col-span-6">
         <RichTextEditor
           placeholder="What’s on your mind?"
-          className="bg-white shadow rounded"
+          className=""
           value={''}
-          theme="bubble"
+          theme="snow"
           onChange={onEditorContentChanged}
         />
       </div>
