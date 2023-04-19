@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@auzmorui/component-library.components.button": "^0.0.2",
+    "@auzmorui/component-library.components.checkbox": "^0.0.1",
     "@auzmorui/component-library.components.divider": "^0.0.1",
     "@auzmorui/component-library.components.form": "^0.0.2",
     "@hookform/resolvers": "^3.1.0",
