@@ -12,21 +12,14 @@ class ApiService {
 
     this.instance.interceptors.request.use((config: any) => {
       let headers = {};
-      const token = getItem('gat');
+      const token = getItem(process.env.SESSION_KEY || 'token');
       if (token) {
         headers = {
           ...headers,
           authorization: `Bearer ${token}`,
         };
       }
-      return {
-        ...config,
-        headers: {
-          ...config.headers,
-          ...headers,
-          'Cache-Control': 'no-cache',
-        },
-      };
+      return config;
     });
   }
 

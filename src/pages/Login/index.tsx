@@ -1,3 +1,5 @@
+import { useMutation } from '@tanstack/react-query';
+import { login } from 'queries/account';
 import React from 'react';
 import { Variant as InputVariant } from '@auzmorui/component-library.components.input';
 import { useForm } from 'react-hook-form';
@@ -24,6 +26,13 @@ const schema = yup.object({
 });
 
 const Login: React.FC<ILoginProps> = () => {
+  const loginMutation = useMutation((formData: any) => login(formData), {
+    onError: () => {},
+    onSuccess: (res: any) => {
+      // logic to redirect: window.location.href = res.redirectUrl
+    },
+  });
+
   const {
     control,
     handleSubmit,
