@@ -12,6 +12,7 @@ const RequireAuth = React.lazy(() => import('components/RequireAuth'));
 const ErrorBoundary = React.lazy(() => import('components/ErrorBoundary'));
 
 const Login = React.lazy(() => import('pages/Login'));
+const Signup = React.lazy(() => import('pages/Signup'));
 const Registration = React.lazy(() => import('pages/Registration'));
 const ForgotPassword = React.lazy(() => import('pages/ForgotPassword'));
 const ResetPassword = React.lazy(() => import('pages/ResetPassword'));
@@ -27,6 +28,7 @@ const routers = createBrowserRouter(
     <Route ErrorBoundary={ErrorBoundary}>
       // root router
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
       <Route path="/register" element={<Registration />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
