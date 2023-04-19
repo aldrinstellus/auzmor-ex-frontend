@@ -16,7 +16,6 @@ const CreatePost = () => {
       <RichTextEditor
         placeholder="What’s on your mind?"
         className="h-28 ml-4"
-        theme="snow"
       />
     </>
   );

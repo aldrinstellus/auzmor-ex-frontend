@@ -14,14 +14,12 @@ import EmojiToolbar from './emoji';
 
 export type QuillEditorProps = {
   className?: string;
-  theme?: string;
   placeholder: string;
 };
 
 const RichTextEditor: React.FC<QuillEditorProps> = ({
   className,
   placeholder,
-  theme,
 }) => {
   const [editorHtmlValue, setEditorHtmlValue] = useState<string>('');
   const [editorTextValue, setEditorTextValue] = useState<string>('');
@@ -55,7 +53,7 @@ const RichTextEditor: React.FC<QuillEditorProps> = ({
         value={editorHtmlValue}
         modules={{ ...modules }}
         placeholder={placeholder}
-        theme={theme}
+        theme="snow"
         ref={reactQuillRef}
         formats={formats}
         onChange={onChangeEditorContent}
