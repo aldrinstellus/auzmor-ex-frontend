@@ -22,24 +22,25 @@ export const modules = {
 const Toolbar = () => {
   return (
     <div id="toolbar">
-      {/* Controls - pending work on style */}
-      <div className="flex justify-between items-center h-56">
-        <div className="">
-          <span className="ql-formats">
-            <button className="ql-bold"></button>
-            <button className="ql-italic">
-              <span></span>
-            </button>
-            <button className="ql-underline">
-              <span></span>
-            </button>
+      <div className="border-t-2">
+        <div className="flex justify-between items-center h-56 ml-5 mr-6 ">
+          <div className="">
+            <span className="ql-formats">
+              <button className="ql-bold"></button>
+              <button className="ql-italic">
+                <span></span>
+              </button>
+              <button className="ql-underline">
+                <span></span>
+              </button>
 
-            <button className="ql-emoji" />
-          </span>
-        </div>
-        {/* Add hashtags button */}
-        <div className="font-bold text-sm font-['manrope']">
-          <div>Add Hashtags</div>
+              <button className="ql-emoji" />
+            </span>
+          </div>
+          {/* Add hashtags button */}
+          <div className="font-bold text-sm text-neutral-900">
+            <div>Add Hashtags</div>
+          </div>
         </div>
       </div>
     </div>

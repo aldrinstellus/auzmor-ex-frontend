@@ -12,28 +12,20 @@ import AutoLinks from './autoLinks';
 import EmojiBlot from './blots/emoji';
 import EmojiToolbar from './emoji';
 
-export interface EditorContentChanged {
-  html: string;
-  markdown: string;
-  json: string;
-}
-
 export type QuillEditorProps = {
   className?: string;
   theme?: string;
   placeholder: string;
-  value: string;
-  onChange: (content: EditorContentChanged) => void;
 };
 
 const RichTextEditor: React.FC<QuillEditorProps> = ({
   className,
   placeholder,
   theme,
-  value,
-  onChange,
 }) => {
-  const [contentValue, setContentValue] = useState<string>(value || '');
+  const [editorHtmlValue, setEditorHtmlValue] = useState<string>('');
+  const [editorTextValue, setEditorTextValue] = useState<string>('');
+  const [editorJsonValue, setEditorJsonValue] = useState<string>('');
   const reactQuillRef = useRef<ReactQuill>(null);
 
   Quill.register(
@@ -47,17 +39,12 @@ const RichTextEditor: React.FC<QuillEditorProps> = ({
     true,
   );
 
-  const onChangeContent = (content: string) => {
-    setContentValue(content);
-    const delta = reactQuillRef.current?.getEditor().getContents();
-    const contentJson = JSON.stringify(delta);
-    if (onChange) {
-      onChange({
-        html: content,
-        markdown: content.replace(/<[^>]+>/g, ''),
-        json: contentJson,
-      });
-    }
+  const onChangeEditorContent = (content: string) => {
+    setEditorHtmlValue(content);
+    setEditorTextValue(content.replace(/<[^>]+>/g, ''));
+    setEditorJsonValue(
+      JSON.stringify(reactQuillRef.current?.getEditor().getContents()),
+    );
   };
 
   return (
@@ -65,16 +52,17 @@ const RichTextEditor: React.FC<QuillEditorProps> = ({
       <ReactQuill
         id="quill"
         className={className}
-        value={contentValue}
+        value={editorHtmlValue}
         modules={{ ...modules }}
         placeholder={placeholder}
         theme={theme}
         ref={reactQuillRef}
         formats={formats}
-        onChange={onChangeContent}
+        onChange={onChangeEditorContent}
       />
       <Toolbar />
     </>
   );
 };
+
 export default memo(RichTextEditor);

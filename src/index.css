@@ -4,6 +4,7 @@
 
 body {
   background-color: #f5f5f5;
+  font-family: 'manrope';
 }
 /* This will change the style of placeholder to our product*/
 .quill > .ql-container > .ql-editor.ql-blank::before {
@@ -26,9 +27,34 @@ body {
 /* Custom toolbar style globall applied */
 #toolbar {
   border: none;
-  padding: 0px 24px 0px 28px;
+  /* padding: 0px 24px 0px 28px; */
   font-family: initial !important;
   background-color: white;
 }
 
-/* Remove snow theme border - pending*/
+.ql-toolbar.ql-snow .ql-formats {
+  margin-right: 10px !important;
+}
+
+.ql-toolbar.ql-snow {
+  padding: 0px !important;
+}
+
+.ql-snow .ql-formats {
+  vertical-align: 0% !important;
+}
+
+.ql-snow.ql-toolbar button {
+  margin-right: 10px;
+}
+
+/* Remove snow theme border*/
+
+.ql-container.ql-snow {
+  border: none !important;
+}
+
+/* emoji margin */
+.bem {
+  margin: 6px !important;
+}

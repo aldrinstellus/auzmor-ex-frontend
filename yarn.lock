@@ -24,6 +24,55 @@
     jsonpointer "^5.0.0"
     leven "^3.1.0"
 
+"@auzmorui/component-library.components.avatar@^0.0.1":
+  version "0.0.1"
+  resolved "https://node.bit.cloud/@auzmorui/component-library.components.avatar/-/@auzmorui-component-library.components.avatar-0.0.1.tgz#9e9aa108904be61f9ca23d8641fe5a718467515c"
+  integrity sha1-npqhCJBL5h+coj2GQf5acYRnUVw=
+  dependencies:
+    clsx "1.2.1"
+    core-js "^3.0.0"
+    is-dark-color "^1.2.0"
+
+"@auzmorui/component-library.components.button@^0.0.4":
+  version "0.0.4"
+  resolved "https://node.bit.cloud/@auzmorui/component-library.components.button/-/@auzmorui-component-library.components.button-0.0.4.tgz#1a6adaaa902254edce71920a6b689be33c3aef0a"
+  integrity sha1-GmraqpAiVO3OcZIKa2ib4zw67wo=
+  dependencies:
+    "@auzmorui/component-library.components.icon" "0.0.1"
+    clsx "1.2.1"
+    core-js "^3.0.0"
+
+"@auzmorui/component-library.components.card@^0.0.1":
+  version "0.0.1"
+  resolved "https://node.bit.cloud/@auzmorui/component-library.components.card/-/@auzmorui-component-library.components.card-0.0.1.tgz#de4824c25b4e58e48b64d10c61b02d4c24f88186"
+  integrity sha1-3kgkwltOWOSLZNEMYbAtTCT4gYY=
+  dependencies:
+    core-js "^3.0.0"
+
+"@auzmorui/component-library.components.divider@^0.0.1":
+  version "0.0.1"
+  resolved "https://node.bit.cloud/@auzmorui/component-library.components.divider/-/@auzmorui-component-library.components.divider-0.0.1.tgz#590d6003b8e7e23e980028a1392ab9858471b5f1"
+  integrity sha1-WQ1gA7jn4j6YACihOSq5hYRxtfE=
+  dependencies:
+    clsx "1.2.1"
+    core-js "^3.0.0"
+
+"@auzmorui/component-library.components.icon@0.0.1":
+  version "0.0.1"
+  resolved "https://node.bit.cloud/@auzmorui/component-library.components.icon/-/@auzmorui-component-library.components.icon-0.0.1.tgz#d6e97567c1a4ff8161cd74447c13a915e7945449"
+  integrity sha1-1ul1Z8Gk/4FhzXREfBOpFeeUVEk=
+  dependencies:
+    "@auzmorui/component-library.hooks.use-hover" "0.0.1"
+    clsx "1.2.1"
+    core-js "^3.0.0"
+
+"@auzmorui/component-library.hooks.use-hover@0.0.1", "@auzmorui/component-library.hooks.use-hover@^0.0.1":
+  version "0.0.1"
+  resolved "https://node.bit.cloud/@auzmorui/component-library.hooks.use-hover/-/@auzmorui-component-library.hooks.use-hover-0.0.1.tgz#fb0813ab4dacff1daa4e88bcab5c3a15be36e8f1"
+  integrity sha1-+wgTq02s/x2qToi8q1w6Fb426PE=
+  dependencies:
+    core-js "^3.0.0"
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.16.0", "@babel/code-frame@^7.18.6", "@babel/code-frame@^7.21.4", "@babel/code-frame@^7.8.3":
   version "7.21.4"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.21.4.tgz#d0fa9e4413aca81f2b23b9442797bda1826edb39"
@@ -3171,6 +3220,11 @@ clone@^2.1.1:
   resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
   integrity sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==
 
+clsx@1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
+  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
+
 co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
@@ -3353,6 +3407,11 @@ core-js-pure@^3.23.3:
   version "3.30.0"
   resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.30.0.tgz#41b6c42e5f363bd53d79999bd35093b17e42e1bf"
   integrity sha512-+2KbMFGeBU0ln/csoPqTe0i/yfHbrd2EUhNMObsGtXMKS/RTtlkYyi+/3twLcevbgNR0yM/r0Psa3TEoQRpFMQ==
+
+core-js@^3.0.0:
+  version "3.30.1"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.30.1.tgz#fc9c5adcc541d8e9fa3e381179433cbf795628ba"
+  integrity sha512-ZNS5nbiSwDTq4hFosEDqm65izl2CWmLz0hARJMyNQBgkUZMIF51cQiMvIQKA6hvuaeWxQDP3hEedM1JZIgTldQ==
 
 core-js@^3.19.2:
   version "3.30.0"
@@ -5261,6 +5320,11 @@ is-core-module@^2.11.0, is-core-module@^2.9.0:
   integrity sha512-RRjxlvLDkD1YJwDbroBHMb+cukurkDWNyHx7D3oNB5x9rb5ogcksMC5wHCadcXoo67gVr/+3GFySh3134zi6rw==
   dependencies:
     has "^1.0.3"
+
+is-dark-color@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/is-dark-color/-/is-dark-color-1.2.0.tgz#60dea9b56cfd6e3a286fcf59e3ab78fd60a2c77d"
+  integrity sha512-07rMiXL60NRntHOMLp5A/2hVw+JGyQco7YS8mkg4y3FP0mTl68fm7/xVLuVR/8minoEQJKVqQ+xSgBlclaN5qA==
 
 is-date-object@^1.0.1, is-date-object@^1.0.5:
   version "1.0.5"

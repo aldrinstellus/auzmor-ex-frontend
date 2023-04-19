@@ -1,38 +1,17 @@
-import React, { useState } from 'react';
-import RichTextEditor from 'components/RichTextEditor';
+import React from 'react';
+
+import ArtDeco from 'components/ArtDeco';
+import Post from 'components/Post';
+import CreatePost from 'components/CreatePost';
+
 interface IFeedProps {}
 
-interface EditorContentChanged {
-  html: string;
-  markdown: string;
-  json: string;
-}
-
 const Feed: React.FC<IFeedProps> = () => {
-  const [editorHtmlValue, setEditorHtmlValue] = useState<string>('');
-  const [editorMarkdownValue, setEditorMarkdownValue] = useState<string>('');
-  const [editorJsonValue, setEditorJsonValue] = useState<string>('');
-
-  const onEditorContentChanged = (content: EditorContentChanged) => {
-    setEditorHtmlValue(content.html);
-    setEditorMarkdownValue(content.markdown);
-    setEditorJsonValue(content.json);
-  };
-
   return (
-    <div className="grid grid-cols-12 gap-52">
-      <div className="col-span-3 text-center bg-red-400 rounded">Column 1</div>
-      <div className="col-span-6">
-        <RichTextEditor
-          placeholder="What’s on your mind?"
-          className=""
-          value={''}
-          theme="snow"
-          onChange={onEditorContentChanged}
-        />
-      </div>
-      <div className="col-span-3 text-center bg-blue-400 rounded">Column 2</div>
-    </div>
+    <>
+      <ArtDeco />
+      <Post />
+    </>
   );
 };
 
