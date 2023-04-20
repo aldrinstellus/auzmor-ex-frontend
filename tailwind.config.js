@@ -2,7 +2,7 @@
 module.exports = {
   content: [
     './src/**/*.{js,jsx,ts,tsx}',
-    './node_modules/@auzmorui/**/*.{js,jsx,ts,tsx}',
+    './node_modules/@auzmorui/**/*.{js, jsx, ts, tsx}',
   ],
   theme: {
     extend: {
@@ -126,6 +126,7 @@ module.exports = {
         '29xl': '4.907398700714111rem',
         full: '9999px',
       },
+      fontFamily: { manrope: 'Manrope' },
     },
     plugins: [],
   },
