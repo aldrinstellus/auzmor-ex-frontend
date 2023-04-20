@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React, { useState } from 'react';
 
 interface Tab {
@@ -15,23 +16,32 @@ const TabSwitcher: React.FC<TabSwitcherProps> = ({ tabs }) => {
     setActiveTabIndex(index);
   };
 
+  const styles = (active: boolean) =>
+    clsx(
+      {
+        'pl-3 pr-3 pt-1 pb-1 font-bold': true,
+      },
+      {
+        'bg-primary-500 rounded-6xl text-white': active,
+      },
+      {
+        'bg-neutral-50 rounded-lg': !active,
+      },
+    );
+
   return (
-    <>
-      <div className='flex'>
-        <span className="p-1 mb-6 bg-[#fafafa] rounded-6xl border-solid border-2 border-[#e5e5e5]">
-          {tabs.map((tab, index) => (
-            <span
-              style={{ cursor: 'pointer' }}
-              key={tab.label}
-              onClick={() => handleTabClick(index)}
-              className={index === activeTabIndex ? 'active bg-primary-500 rounded-6xl pl-3 pr-3 pt-1 pb-1 text-white' : 'bg-[#fafafa] rounded-lg pl-3 pr-3 pt-1 pb-1'}
-            >
-              {tab.label}
-            </span>
-          ))}
-        </span>
-      </div>
-    </>
+    <div className="p-1 bg-neutral-50 rounded-6xl border-solid border-2 border-neutral-200 flex max-w-min">
+      {tabs.map((tab, index) => (
+        <div
+          style={{ cursor: 'pointer' }}
+          key={tab.label}
+          onClick={() => handleTabClick(index)}
+          className={styles(index === activeTabIndex)}
+        >
+          {tab.label}
+        </div>
+      ))}
+    </div>
   );
 };
 
