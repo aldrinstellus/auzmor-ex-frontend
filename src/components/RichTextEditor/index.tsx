@@ -12,16 +12,20 @@ import AutoLinks from './autoLinks';
 import EmojiBlot from './blots/emoji';
 import EmojiToolbar from './emoji';
 
+export interface EditorContentChanged {
+  html: string;
+}
+
 export type QuillEditorProps = {
   className?: string;
-  theme?: string;
   placeholder: string;
+  onChangeEditor: (content: EditorContentChanged) => void;
 };
 
 const RichTextEditor: React.FC<QuillEditorProps> = ({
   className,
   placeholder,
-  theme,
+  onChangeEditor,
 }) => {
   const [editorHtmlValue, setEditorHtmlValue] = useState<string>('');
   const [editorTextValue, setEditorTextValue] = useState<string>('');
@@ -45,6 +49,11 @@ const RichTextEditor: React.FC<QuillEditorProps> = ({
     setEditorJsonValue(
       JSON.stringify(reactQuillRef.current?.getEditor().getContents()),
     );
+    if (onChangeEditor) {
+      onChangeEditor({
+        html: content,
+      });
+    }
   };
 
   return (
@@ -55,7 +64,7 @@ const RichTextEditor: React.FC<QuillEditorProps> = ({
         value={editorHtmlValue}
         modules={{ ...modules }}
         placeholder={placeholder}
-        theme={theme}
+        theme="snow"
         ref={reactQuillRef}
         formats={formats}
         onChange={onChangeEditorContent}

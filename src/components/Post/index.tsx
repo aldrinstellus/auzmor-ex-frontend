@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { Card } from '@auzmorui/component-library.components.card';
 import Like from 'images/like.svg';
 
@@ -9,7 +9,11 @@ import { VIEW_POST } from 'components/Actor/constant';
 import Commentspage from 'components/Comments/index';
 import { Likes } from 'components/Likes';
 
-const Post = () => {
+type PostProps = {
+  content: any;
+};
+
+const Post: React.FC<PostProps> = ({ content }) => {
   const [showComments, setShowComments] = useState(false);
   const [name, setName] = useState<string>('Like');
   const [likeIcon, setLikeIcon] = useState<string>(Like);
@@ -17,7 +21,7 @@ const Post = () => {
     useState<string>('text-neutral-500');
 
   return (
-    <Card className="bg-white rounded-xl mt-5">
+    <Card className="bg-white rounded-9xl mt-5">
       <Actor
         avatar="https://png.pngtree.com/png-clipart/20210619/ourlarge/pngtree-instagram-lady-social-media-flat-style-avatar-png-image_3483977.jpg"
         actorName="Sam Fields"
@@ -27,8 +31,9 @@ const Post = () => {
       />
       <div className="mx-6">
         {/* Post Content */}
-        <p>sdfasdfasdfasdfdsfasdfa</p>
+        <div dangerouslySetInnerHTML={{ __html: content }} />
         {/* Media Display */}
+        <div></div>
         {/* Reaction and comment repost */}
         <div className="flex justify-between pt-4 pb-6">
           <div className="flex ">
