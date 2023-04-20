@@ -7,7 +7,7 @@ export interface IAppShellProps {
 
 const AppShell: React.FC<IAppShellProps> = ({ children }) => {
   return (
-    <div className="h-screen w-screen bg-neutral-100">
+    <div className="h-screen w-screen">
       <Navbar />
       <div className="pt-12 flex w-full justify-center">
         <div className="max-w-[1600px]">{children}</div>

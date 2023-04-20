@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Card } from '@auzmorui/component-library.components.card';
 import Like from 'images/like.svg';
 import Comments from 'images/comments.svg';
 import Actor from 'components/Actor';
 import { VIEW_POST } from 'components/Actor/constant';
 
-const Post = () => {
+type PostProps = {
+  content: any;
+};
+
+const Post: React.FC<PostProps> = ({ content }) => {
   return (
     <Card className="bg-white rounded-xl mt-5">
       <Actor
@@ -17,8 +21,9 @@ const Post = () => {
       />
       <div className="mx-6">
         {/* Post Content */}
-        <p>sdfasdfasdfasdfdsfasdfa</p>
+        <div dangerouslySetInnerHTML={{ __html: content }} />
         {/* Media Display */}
+        <div></div>
         {/* Reaction and comment repost */}
         <div className="flex justify-between pt-4 pb-6">
           <div className="flex">
