@@ -11,7 +11,7 @@ interface CommentFormProps {
 
 export const CommentForm: React.FC<CommentFormProps> = ({
   handleSubmit,
-  className,
+  className = '',
   setReplyInputBox,
 }) => {
   const [text, setText] = useState('');
@@ -25,7 +25,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
     <form onSubmit={onSubmit}>
       <div className={`flex flex-row items-center ${className} `}>
         <input
-          className="py-3 px-5 gap-2 box-border border rounded-8 border-neutral-200 w-[550px] align-top"
+          className="py-3 px-5 gap-2 box-border border rounded-[32px] border-neutral-200 w-[550px] align-top"
           value={text}
           type="text"
           onChange={(e) => setText(e.target.value)}

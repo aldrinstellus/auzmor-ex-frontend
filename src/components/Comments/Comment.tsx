@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Dispatch, SetStateAction } from 'react';
 import { DataType, activeCommentsDataType } from '.';
 import { CommentForm } from './CommentForm';
@@ -6,6 +6,7 @@ import Like from 'images/like.svg';
 import Reply from 'images/reply.png';
 import Icon from 'images/icon.png';
 import Dots from 'images/dots.png';
+import { Likes } from 'components/Likes';
 
 interface CommentProps {
   replyInputBox: boolean;
@@ -40,7 +41,10 @@ export const Comment: React.FC<CommentProps> = ({
   const replyId = parentId ? parentId : comment.id;
   const createdAt = new Date(comment.createdAt).toLocaleDateString();
 
-  const handleLikes = () => {};
+  const [name, setName] = useState<string>('Like');
+  const [likeIcon, setLikeIcon] = useState<string>(Like);
+  const [likeButtonColor, setLikeButtonColor] =
+    useState<string>('text-neutral-500');
 
   return (
     <div key={comment.id}>
@@ -76,12 +80,14 @@ export const Comment: React.FC<CommentProps> = ({
 
         <div className="flex justify-between pt-4 pb-6">
           <div className="flex">
-            <button className="flex items-center" onClick={handleLikes}>
-              <img src={Like} height={13.33} width={13.33} />
-              <div className="text-xs font-normal text-neutral-500 ml-1.5">
-                {comment.likes.length} Like
-              </div>
-            </button>
+            <Likes
+              name={name}
+              setName={setName}
+              setLikeIcon={setLikeIcon}
+              likeIcon={likeIcon}
+              setLikeButtonColor={setLikeButtonColor}
+              likeButtonColor={likeButtonColor}
+            />
             <button
               className="flex items-center ml-7"
               onClick={() => {
