@@ -49,8 +49,6 @@ const ArtDeco: React.FC<ArtDecoProps> = ({ activityFeed, setActivityFeed }) => {
     setHtmlValue(content);
   };
 
-  console.log(htmlValue);
-
   return (
     <div>
       <Card className="bg-white rounded-9xl">
@@ -104,6 +102,7 @@ const ArtDeco: React.FC<ArtDecoProps> = ({ activityFeed, setActivityFeed }) => {
               <div></div>
               <Button
                 label={'Post'}
+                disabled={!htmlValue.html || htmlValue.html === '<p><br></p>'}
                 className="bg-primary-500 rounded-3xl text-white w-20"
                 onClick={() => {
                   const newFeed = {

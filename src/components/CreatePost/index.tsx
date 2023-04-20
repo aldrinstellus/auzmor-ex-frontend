@@ -10,10 +10,7 @@ type CreatePostProps = {
 };
 
 const CreatePost: React.FC<CreatePostProps> = ({ onChangeEditor }) => {
-  const [htmlValue, setHtmlValue] = useState<any>('');
-
   const onEditorContentChanged = (content: EditorContentChanged) => {
-    setHtmlValue(content);
     onChangeEditor(content);
   };
 
