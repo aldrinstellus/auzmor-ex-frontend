@@ -24,10 +24,10 @@
     jsonpointer "^5.0.0"
     leven "^3.1.0"
 
-"@auzmorui/component-library.components.button@^0.0.2":
-  version "0.0.2"
-  resolved "https://node.bit.cloud/@auzmorui/component-library.components.button/-/@auzmorui-component-library.components.button-0.0.2.tgz#a204357aaa400a3b1060114969e26838c5333115"
-  integrity sha1-ogQ1eqpACjsQYBFJaeJoOMUzMRU=
+"@auzmorui/component-library.components.button@^0.0.4":
+  version "0.0.4"
+  resolved "https://node.bit.cloud/@auzmorui/component-library.components.button/-/@auzmorui-component-library.components.button-0.0.4.tgz#1a6adaaa902254edce71920a6b689be33c3aef0a"
+  integrity sha1-GmraqpAiVO3OcZIKa2ib4zw67wo=
   dependencies:
     "@auzmorui/component-library.components.icon" "0.0.1"
     clsx "1.2.1"
