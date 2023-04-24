@@ -1,4 +1,6 @@
-import React from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { login } from 'queries/auth';
+import React, { useEffect } from 'react';
 import { Variant as InputVariant } from '@auzmorui/component-library.components.input';
 import { useForm } from 'react-hook-form';
 import { Layout, FieldType } from '@auzmorui/component-library.components.form';
@@ -7,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Button,
   Variant as ButtonVariant,
+  Type as ButtonType,
 } from '@auzmorui/component-library.components.button';
 import { Divider } from '@auzmorui/component-library.components.divider';
 import { Logo } from 'components/Logo';
@@ -16,23 +19,46 @@ interface ILoginProps { }
 interface IForm {
   email: string;
   password: string;
+  domain?: string;
 }
 
 const schema = yup.object({
-  email: yup.string().email('Please enter valid email address'),
-  password: yup.string().min(6, 'At leaset 6 digits'),
+  email: yup
+    .string()
+    .email('Please enter valid email address')
+    .required('Required field'),
+  password: yup.string().required('Required field'),
+  domain: yup.string(),
 });
 
 const Login: React.FC<ILoginProps> = () => {
+  const loginMutation = useMutation((formData: any) => login(formData), {
+    onSuccess: (data) => {
+      if (process.env.NODE_ENV === 'development') {
+        window.location.replace(
+          `http://localhost:3000?accessToken=${data.result.data.uat}`,
+        );
+      } else {
+        window.location.replace(
+          `${data.result.data.redirectUrl}?accessToken=${data.result.data.uat}`,
+        );
+      }
+    },
+  });
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     getValues,
+    setValue,
   } = useForm<IForm>({
     resolver: yupResolver(schema),
     mode: 'onBlur',
   });
+
+  useEffect(() => {
+    setValue('domain', '');
+  }, []);
 
   const fields = [
     {
@@ -49,7 +75,7 @@ const Login: React.FC<ILoginProps> = () => {
     },
     {
       type: FieldType.Input,
-      InputVariant: InputVariant.Password,
+      variant: InputVariant.Password,
       className: 'w-full mt-8',
       placeholder: 'Enter password',
       name: 'password',
@@ -71,12 +97,22 @@ const Login: React.FC<ILoginProps> = () => {
         </div>
         <div className="w-full max-w-[440px]">
           <div className="font-extrabold text-neutral-900 text-4xl">Signin</div>
-          <form className="mt-16" onSubmit={handleSubmit(() => { })}>
+          <form
+            className="mt-16"
+            onSubmit={handleSubmit((data) => {
+              loginMutation.mutate(data);
+            })}
+          >
             <Layout className="w-full" fields={fields} />
             <div className="flex flex-row-reverse mt-4">
               <div className="font-bold text-sm">Forgot Password?</div>
             </div>
-            <Button label={'Sign In'} className="w-full mt-8" />
+            <Button
+              label={'Sign In'}
+              className="w-full mt-8"
+              disabled={!isValid}
+              type={ButtonType.Submit}
+            />
           </form>
           <div className="flex items-center mt-8">
             <Divider />
