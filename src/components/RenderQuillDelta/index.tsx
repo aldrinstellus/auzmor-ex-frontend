@@ -2,11 +2,11 @@ import React, { ReactElement } from 'react';
 import { emojiList } from 'components/RichTextEditor/emoji/emojiList';
 import { Delta, DeltaOperation } from 'quill';
 
-function formatText(text: string) {
+const formatText = (text: string) => {
   return Array.from(text, (char, index) =>
     char === '\n' ? <br key={index} /> : char,
   );
-}
+};
 
 function RenderDeltaOperation(deltaOperation: DeltaOperation): ReactElement {
   // If the delta operation corresponds to a mention
