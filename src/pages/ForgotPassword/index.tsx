@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Logo } from 'components/Logo';
 import { Success } from 'components/Logo';
-import { FieldType } from 'components/Form';
-import Button from 'components/Button';
+import Layout, { FieldType } from 'components/Form';
+import Button, { Type } from 'components/Button';
 import { Variant as InputVariant } from 'components/Input';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Link } from 'react-router-dom';
-// import PasswordComponent from 'components/PasswordComponent';
+import { useMutation } from '@tanstack/react-query';
+import { redirectWithToken } from 'utils/misc';
+import { forgotPassword } from 'queries/account';
 
-interface IForgotPasswordProps {}
+interface IForgotPasswordProps { }
 interface IForm {
   email: string;
 }
@@ -20,6 +22,14 @@ const schema = yup.object({
 });
 
 const ForgotPassword: React.FC<IForgotPasswordProps> = () => {
+
+  const [success, setSuccess] = useState(false);
+
+  const loginMutation = useMutation((formData: any) => forgotPassword(formData), {
+    onSuccess: () =>
+      setSuccess(true),
+  });
+
   const {
     control,
     handleSubmit,
@@ -41,9 +51,14 @@ const ForgotPassword: React.FC<IForgotPasswordProps> = () => {
       error: errors.email?.message,
       control,
       getValues,
-      onChange: (data: string, e: React.ChangeEvent) => {},
+      onChange: (data: string, e: React.ChangeEvent) => { },
     },
   ];
+
+  const onSubmit = (formData: IForm) => {
+    loginMutation.mutate(formData);
+    console.log(formData, "HERE")
+  };
 
   return (
     <div className="flex h-screen w-screen">
@@ -53,16 +68,16 @@ const ForgotPassword: React.FC<IForgotPasswordProps> = () => {
           <Logo />
         </div>
         <div className="w-full max-w-[440px]">
-          {2 + 2 === 4 ? (
+          {!success ? (
             <>
               <div className="font-extrabold text-neutral-900 text-4xl">
                 Forgot Password
               </div>
-              <form className="mt-16" onSubmit={handleSubmit(() => {})}>
-                {/* <PasswordComponent fields={fields} /> */}
-                <Button
+              <form className="mt-16" onSubmit={handleSubmit((onSubmit))}>
+                <Layout fields={fields} />
+                <Button type={Type.Submit}
                   label={'Reset Via Email'}
-                  disabled
+                  disabled={Object.values(fields)[0].error !== undefined}
                   className="w-full mt-8"
                 />
               </form>

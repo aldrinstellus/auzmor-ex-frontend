@@ -10,4 +10,12 @@ export const login = async (payload: ILogin) => {
   return data;
 };
 
+export const forgotPassword = async (payload: ILogin) => {
+  const { data } = await apiService.post(
+    '/auth/user/password-reset-mail',
+    payload,
+  );
+  return data;
+};
+
 export const signup = async () => {};
