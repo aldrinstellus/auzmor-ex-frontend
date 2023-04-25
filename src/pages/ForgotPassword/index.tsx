@@ -8,9 +8,9 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Link } from 'react-router-dom';
-import PasswordComponent from 'components/PasswordComponent';
+// import PasswordComponent from 'components/PasswordComponent';
 
-interface IForgotPasswordProps { }
+interface IForgotPasswordProps {}
 interface IForm {
   email: string;
 }
@@ -20,7 +20,6 @@ const schema = yup.object({
 });
 
 const ForgotPassword: React.FC<IForgotPasswordProps> = () => {
-
   const {
     control,
     handleSubmit,
@@ -42,7 +41,7 @@ const ForgotPassword: React.FC<IForgotPasswordProps> = () => {
       error: errors.email?.message,
       control,
       getValues,
-      onChange: (data: string, e: React.ChangeEvent) => { },
+      onChange: (data: string, e: React.ChangeEvent) => {},
     },
   ];
 
@@ -56,18 +55,25 @@ const ForgotPassword: React.FC<IForgotPasswordProps> = () => {
         <div className="w-full max-w-[440px]">
           {2 + 2 === 4 ? (
             <>
-              <div className="font-extrabold text-neutral-900 text-4xl">Forgot Password</div>
-              <form className="mt-16" onSubmit={handleSubmit(() => { })}>
-                <PasswordComponent fields={fields} />
-                <Button label={'Reset Via Email'} disabled className="w-full mt-8" />
+              <div className="font-extrabold text-neutral-900 text-4xl">
+                Forgot Password
+              </div>
+              <form className="mt-16" onSubmit={handleSubmit(() => {})}>
+                {/* <PasswordComponent fields={fields} /> */}
+                <Button
+                  label={'Reset Via Email'}
+                  disabled
+                  className="w-full mt-8"
+                />
               </form>
             </>
           ) : (
             <>
-              <div className='text-center flex justify-center items-center flex-col space-y-9'>
+              <div className="text-center flex justify-center items-center flex-col space-y-9">
                 <Success />
                 <div>
-                  Email has been sent to <b>kate.banks@office.com</b> with instructions on resetting your password.
+                  Email has been sent to <b>kate.banks@office.com</b> with
+                  instructions on resetting your password.
                 </div>
               </div>
               <Link to="/login">
@@ -76,10 +82,8 @@ const ForgotPassword: React.FC<IForgotPasswordProps> = () => {
             </>
           )}
         </div>
-
-
       </div>
-    </div >
+    </div>
   );
 };
 

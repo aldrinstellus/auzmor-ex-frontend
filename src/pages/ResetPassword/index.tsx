@@ -8,9 +8,9 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Link } from 'react-router-dom';
-import PasswordComponent from 'components/PasswordComponent';
+// import PasswordComponent from 'components/PasswordComponent';
 
-interface IResetPasswordProps { }
+interface IResetPasswordProps {}
 
 interface IForm {
   password: string;
@@ -21,7 +21,6 @@ const schema = yup.object({
 });
 
 const ResetPassword: React.FC<IResetPasswordProps> = () => {
-
   const {
     control,
     handleSubmit,
@@ -44,7 +43,7 @@ const ResetPassword: React.FC<IResetPasswordProps> = () => {
       error: errors.password?.message,
       control,
       getValues,
-      onChange: (data: string, e: React.ChangeEvent) => { },
+      onChange: (data: string, e: React.ChangeEvent) => {},
     },
     {
       type: FieldType.Input,
@@ -57,7 +56,7 @@ const ResetPassword: React.FC<IResetPasswordProps> = () => {
       error: errors.password?.message,
       control,
       getValues,
-      onChange: (data: string, e: React.ChangeEvent) => { },
+      onChange: (data: string, e: React.ChangeEvent) => {},
     },
   ];
   return (
@@ -70,30 +69,34 @@ const ResetPassword: React.FC<IResetPasswordProps> = () => {
         <div className="w-full max-w-[440px]">
           {2 + 2 !== 4 ? (
             <>
-              <div className="font-extrabold text-neutral-900 text-4xl">Reset Password</div>
-              <form className="mt-16" onSubmit={handleSubmit(() => { })}>
-                <PasswordComponent fields={fields} />
-                <Button label={'Reset Password'} disabled className="w-full mt-8" />
+              <div className="font-extrabold text-neutral-900 text-4xl">
+                Reset Password
+              </div>
+              <form className="mt-16" onSubmit={handleSubmit(() => {})}>
+                {/* <PasswordComponent fields={fields} /> */}
+                <Button
+                  label={'Reset Password'}
+                  disabled
+                  className="w-full mt-8"
+                />
               </form>
             </>
           ) : (
             <>
-              <div className='text-center flex justify-center items-center flex-col space-y-9'>
+              <div className="text-center flex justify-center items-center flex-col space-y-9">
                 <Success />
                 <div className="text-neutral-900">
                   Password has been successfully reset
                 </div>
               </div>
-              <Link to='/login'>
+              <Link to="/login">
                 <Button label={'Sign In Now'} className="w-full mt-8" />
               </Link>
             </>
           )}
         </div>
-
-
       </div>
-    </div >
+    </div>
   );
 };
 
