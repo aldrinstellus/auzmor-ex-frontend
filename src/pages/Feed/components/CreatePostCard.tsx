@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from '@auzmorui/component-library.components.card';
 import { Avatar } from '@auzmorui/component-library.components.avatar';
-
+import { DeltaStatic } from 'quill';
 import { Button } from '@auzmorui/component-library.components.button';
 
 import Media from 'images/media.svg';
@@ -47,7 +47,7 @@ const CreatePostCard: React.FC<CreatePostCardProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [htmlValue, setHtmlValue] = useState<any>('');
-  const [jsonValue, setJsonValue] = useState<any>('{}');
+  const [jsonValue, setJsonValue] = useState<any>({} as DeltaStatic);
 
   const onEditorContentChanged = (content: EditorContentChanged) => {
     setHtmlValue(content.html);
