@@ -91,7 +91,7 @@ const CreatePostCard: React.FC<CreatePostCardProps> = ({
 
       <Modal
         open={open}
-        setOpen={setOpen}
+        closeModal={() => setOpen(false)}
         title="Create a post"
         body={<CreatePost onChangeEditor={onEditorContentChanged} />}
         footer={
