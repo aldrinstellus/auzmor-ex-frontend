@@ -14,6 +14,7 @@ import EmojiToolbar from './emoji';
 
 export interface EditorContentChanged {
   html: string;
+  json: string;
 }
 
 export type QuillEditorProps = {
@@ -52,6 +53,7 @@ const RichTextEditor: React.FC<QuillEditorProps> = ({
     if (onChangeEditor) {
       onChangeEditor({
         html: content,
+        json: JSON.stringify(reactQuillRef.current?.getEditor().getContents()),
       });
     }
   };

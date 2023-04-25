@@ -47,9 +47,11 @@ const CreatePostCard: React.FC<CreatePostCardProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [htmlValue, setHtmlValue] = useState<any>('');
+  const [jsonValue, setJsonValue] = useState<any>('{}');
 
   const onEditorContentChanged = (content: EditorContentChanged) => {
-    setHtmlValue(content);
+    setHtmlValue(content.html);
+    setJsonValue(content.json);
   };
 
   return (
@@ -105,14 +107,14 @@ const CreatePostCard: React.FC<CreatePostCardProps> = ({
               <div></div>
               <Button
                 label={'Post'}
-                disabled={!htmlValue.html || htmlValue.html === '<p><br></p>'}
+                disabled={!htmlValue || htmlValue === '<p><br></p>'}
                 className="bg-primary-500 rounded-3xl text-white w-20"
                 onClick={() => {
                   const newFeed = {
                     content: {
                       text: 'Basic Plaint Text',
-                      html: htmlValue.html,
-                      editor: '',
+                      html: htmlValue,
+                      editor: jsonValue,
                     },
                     uuid: `45ba1474-649e-4664-b5ca-b552ba509635${
                       activityFeed.length + 1

@@ -31,7 +31,7 @@ const Post: React.FC<PostProps> = ({ content }) => {
       />
       <div className="mx-6">
         {/* Post Content */}
-        <div dangerouslySetInnerHTML={{ __html: content }} />
+        {content}
         {/* Media Display */}
         <div></div>
         {/* Reaction and comment repost */}
