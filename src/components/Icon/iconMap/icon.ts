@@ -7,10 +7,12 @@ import HomeIcon from '../components/Home';
 import FeedIcon from '../components/Feed';
 import MoreIcon from '../components/More';
 import EditIcon from '../components/Edit';
+import CloseIcon from '../components/Close';
 
 export const icon = {
   calendarTwo: CalendarIconTwo,
   chart: ChartIcon,
+  close: CloseIcon,
   edit: EditIcon,
   feed: FeedIcon,
   home: HomeIcon,

@@ -3,9 +3,11 @@ import Card from 'components/Card';
 import React from 'react';
 import { postTypeMapIcons } from '..';
 
-export interface ICreatePostCardProps {}
+export interface ICreatePostCardProps {
+  setShowModal: (flag: boolean) => void;
+}
 
-const CreatePostCard: React.FC<ICreatePostCardProps> = ({}) => {
+const CreatePostCard: React.FC<ICreatePostCardProps> = ({ setShowModal }) => {
   return (
     <Card className="bg-white">
       <div className="flex items-center px-6 pt-6 pb-3">
@@ -20,7 +22,7 @@ const CreatePostCard: React.FC<ICreatePostCardProps> = ({}) => {
           type="input"
           className="w-135.25 h-11 border border-neutral-200 rounded-19xl ml-3 px-5 py-3 text-sm font-medium outline-none"
           readOnly
-          onClick={() => {}}
+          onClick={() => setShowModal(true)}
           placeholder="What's on your mind?"
         />
       </div>

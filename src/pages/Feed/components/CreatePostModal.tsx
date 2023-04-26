@@ -1,10 +1,7 @@
 import React, { ReactNode, useState } from 'react';
-import Card from 'components/Card';
 import Button from 'components/Button';
-import { DeltaStatic } from 'quill';
 import Modal from 'components/Modal';
 import CreatePost from 'components/CreatePost';
-import { EditorContentChanged } from 'components/RichTextEditor';
 import Icon from 'components/Icon';
 import Tooltip from 'components/Tooltip';
 import Divider, { Variant as DividerVariant } from 'components/Divider';
@@ -12,9 +9,15 @@ import { postTypeMapIcons } from '..';
 import { useMutation } from '@tanstack/react-query';
 import { createPost } from 'queries/post';
 
-interface ICreatePostModal {}
+interface ICreatePostModal {
+  showModal: boolean;
+  setShowModal: (flag: boolean) => void;
+}
 
-const CreatePostModal: React.FC<ICreatePostModal> = ({}) => {
+const CreatePostModal: React.FC<ICreatePostModal> = ({
+  showModal,
+  setShowModal,
+}) => {
   const [editorValue, setEditorValue] = useState<{
     html: string;
     json: Record<string, any>;
@@ -92,21 +95,20 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({}) => {
   return (
     <div>
       <Modal
-        open={true}
-        closeModal={() => {}}
-        title="this is title"
+        open={showModal}
+        closeModal={() => {
+          setShowModal(false);
+        }}
+        title="Create a post"
         body={
-          <Card className="bg-white overflow-hidden">
-            <Header />
-            <CreatePost
-              onChangeEditor={(content) => {
-                console.log(content);
-                setEditorValue({ html: content.html, json: content.json });
-              }}
-            />
-            <Footer />
-          </Card>
+          <CreatePost
+            onChangeEditor={(content) => {
+              console.log(content);
+              setEditorValue({ html: content.html, json: content.json });
+            }}
+          />
         }
+        footer={<Footer />}
       />
     </div>
   );

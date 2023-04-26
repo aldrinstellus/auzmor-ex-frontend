@@ -20,7 +20,7 @@ const Modal: React.FC<ModalProps> = ({
 }) => {
   return (
     <>
-      {/* <Transition appear show={open} as={Fragment}>
+      <Transition appear show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
             as={Fragment}
@@ -45,39 +45,34 @@ const Modal: React.FC<ModalProps> = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-xl transform overflow-hidden bg-white text-left align-middle transition-all rounded-9xl shadow">
                   {!!title && (
-                    <div className="flex flex-wrap">
+                    <div className="flex flex-wrap border-b-1 border-neutral-200">
                       <Dialog.Title
                         as="h3"
-                        className="text-lg text-[#000000] p-4 font-bold flex-[50%]"
+                        className="text-lg text-black p-4 font-extrabold flex-[50%]"
                       >
                         {title}
                       </Dialog.Title>
                       <IconButton
                         onClick={closeModal}
-                        icon={'X'}
+                        icon={'close'}
                         className="!flex-[0] !text-right !p-1 !mx-4 !my-3 !bg-inherit !text-neutral-900"
                         variant={IconVariant.Primary}
                       />
                     </div>
                   )}
-                  <div className="p-6">
-                    <p className="text-sm text-neutral-900">{body}</p>
+                  <div>
+                    <div className="text-sm text-neutral-900">{body}</div>
                   </div>
 
-                  {!!footer && (
-                    <div className="mt-[16px] bg-blue-50">{footer}</div>
-                  )}
+                  {!!footer && <div className="bg-blue-50">{footer}</div>}
                 </Dialog.Panel>
               </Transition.Child>
             </div>
           </div>
         </Dialog>
-      </Transition> */}
-      <div className="w-screen h-screen fixed bg-neutral-900/60 z-50 top-0 left-0 justify-center flex">
-        <div className="w-1/3 mt-32">{body}</div>
-      </div>
+      </Transition>
     </>
   );
 };

@@ -51,11 +51,12 @@ export const postTypeMapIcons: IPostTypeIcon[] = [
 ];
 
 const Feed: React.FC<IFeedProps> = () => {
+  const [showModal, setShowModal] = useState(true);
   return (
     <div className="flex flex-col">
-      <CreatePostCard />
+      <CreatePostCard setShowModal={setShowModal} />
       <ActivityFeed activityFeed={[]} />
-      <CreatePostModal />
+      <CreatePostModal showModal={showModal} setShowModal={setShowModal} />
     </div>
   );
 };
