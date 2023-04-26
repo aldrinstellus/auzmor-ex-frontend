@@ -33,8 +33,6 @@ export type InputProps = {
   label?: string;
   onLeftIconClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onRightIconClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  // onChange?: any;
-  // value?: any;
 };
 
 const Input: React.FC<InputProps> = ({
@@ -56,8 +54,6 @@ const Input: React.FC<InputProps> = ({
   label,
   onLeftIconClick,
   onRightIconClick,
-  // onChange,
-  // value,
 }) => {
   const { field } = useController({
     name,
@@ -155,8 +151,6 @@ const Input: React.FC<InputProps> = ({
             ref={field.ref}
             onChange={field.onChange}
             onBlur={field.onBlur}
-          // onChange={onChange}
-          // value={value}
           />
         </div>
         {rightIcon && (
