@@ -14,6 +14,10 @@ interface IReset {
   confirmPassword: string;
 }
 
+interface IMailExpiry {
+  token: string;
+}
+
 export const login = async (payload: ILogin) => {
   const data = await apiService.post('/login', payload);
   return data;
@@ -24,8 +28,13 @@ export const forgotPassword = async (payload: IForgotPassword) => {
   return data;
 };
 
+export const mailExpiry = async (payload: IMailExpiry) => {
+  const { data } = await apiService.get('/password/reset', payload);
+  return data;
+};
+
 export const resetPassword = async (payload: IReset) => {
-  const { data } = await apiService.post('/auth/user/password-reset', payload);
+  const { data } = await apiService.put('/password/reset', payload);
   return data;
 };
 

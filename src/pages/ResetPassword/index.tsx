@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import PasswordPolicy from 'components/PasswordPolicy';
 import { useMutation } from '@tanstack/react-query';
 import { redirectWithToken } from 'utils/misc';
-import { resetPassword } from 'queries/account';
+import { mailExpiry, resetPassword } from 'queries/account';
 import PasswordExpiry from 'components/PasswordExpiry';
 
 interface IResetPasswordProps {}
@@ -41,6 +41,8 @@ const ResetPassword: React.FC<IResetPasswordProps> = () => {
 
   const [success, setSuccess] = useState(false);
 
+  const [expiry, setExpiry] = useState(true);
+
   const loginMutation = useMutation(
     (formData: any) => resetPassword(formData),
     {
@@ -53,6 +55,15 @@ const ResetPassword: React.FC<IResetPasswordProps> = () => {
       },
     },
   );
+
+  const expiryMutation = useMutation((formData: any) => mailExpiry(formData), {
+    onError: () => {
+      setErr(true);
+    },
+    onSuccess: () => {
+      setExpiry(false);
+    },
+  });
 
   const {
     watch,
@@ -109,6 +120,7 @@ const ResetPassword: React.FC<IResetPasswordProps> = () => {
 
   const onSubmit = (formData: IForm) => {
     loginMutation.mutate(formData);
+    expiryMutation.mutate(formData);
   };
 
   const validatePassword = (value: string) => {
@@ -150,7 +162,7 @@ const ResetPassword: React.FC<IResetPasswordProps> = () => {
 
   return (
     <div className="flex h-screen w-screen">
-      {2 + 2 === 4 ? (
+      {expiry ? (
         <>
           <div className="bg-[url(images/welcomeToOffice.png)] w-1/2 h-full bg-no-repeat bg-cover" />
           <div className="w-1/2 h-full flex justify-center items-center relative">
