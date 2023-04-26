@@ -6,27 +6,25 @@ type IconProps = {
   fill?: string;
 };
 
-const SvgDropdownArrowFilled = ({
-  size = 14,
+const SvgCloseFilled = ({
+  size = 12,
   fill = '#171717',
   ...props
 }: SVGProps<SVGSVGElement> & IconProps) => (
   <svg
     width={size}
     height={size}
-    viewBox="0 0 14 7"
+    viewBox="0 0 14 13"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M12.2787 0.96875L7.93208 5.31542C7.41875 5.82875 6.57875 5.82875 6.06542 5.31542L1.71875 0.96875"
+      d="M1.66406 12.1693L7.33073 6.5026M7.33073 6.5026L12.5776 1.25569M7.33073 6.5026L1.66406 0.835938M7.33073 6.5026L12.9974 12.1693"
       stroke="#171717"
       strokeWidth="1.5"
-      strokeMiterlimit="10"
       strokeLinecap="round"
-      strokeLinejoin="round"
     />
   </svg>
 );
 
-export default SvgDropdownArrowFilled;
+export default SvgCloseFilled;

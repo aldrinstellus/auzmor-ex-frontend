@@ -4,7 +4,7 @@ import { IFeed } from 'pages/Feed';
 import React from 'react';
 import SortByDropdown from './components/SortByDropdown';
 import ClockIcon from 'components/Icon/components/Clock';
-import FilterIcon from 'components/Icon/components/Filter';
+import FeedFilter from './components/FeedFilters';
 
 type ActivityFeedProps = {
   activityFeed: IFeed[];
@@ -13,8 +13,8 @@ type ActivityFeedProps = {
 const ActivityFeed: React.FC<ActivityFeedProps> = ({ activityFeed }) => {
   return (
     <div style={{ marginTop: 41.5 }}>
-      <div className="flex flex-row items-center gap-x-4">
-        <FilterIcon />
+      <div className="flex flex-row items-center gap-x-2">
+        <FeedFilter name="Filters" />
         <ClockIcon />
         <Divider />
         <SortByDropdown />

@@ -6,8 +6,8 @@ type IconProps = {
   fill?: string;
 };
 
-const SvgChartFilled = ({
-  size = 18,
+const SvgClockFilled = ({
+  size = 16,
   fill = '#737373',
   ...props
 }: SVGProps<SVGSVGElement> & IconProps) => (
@@ -28,4 +28,4 @@ const SvgChartFilled = ({
   </svg>
 );
 
-export default SvgChartFilled;
+export default SvgClockFilled;

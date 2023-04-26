@@ -32,9 +32,9 @@ const Dropdown: React.FC<DropdownProps> = ({
   );
 
   return (
-    <div>
+    <div className="relative">
       <button
-        className="relative box-border font-bold flex flex-row justify-center items-center py-2 px-4 gap-4 bg-white border border-gray-300 rounded-[24px]"
+        className="box-border font-bold flex flex-row justify-center items-center py-2 px-4 gap-4 bg-white border border-gray-300 rounded-[24px]"
         onClick={() => {
           setShowDropdown(!showDropdown);
         }}
@@ -47,7 +47,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             <ul className="text-left border rounded-md space-y-1">
               {options?.map((option) => (
                 <li
-                  className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                  className="px-4 py-2 hover:bg-green-50 rounded-md"
                   onClick={() => setDropdownName(option?.label)}
                   key={option?.value}
                   value={option?.value}
