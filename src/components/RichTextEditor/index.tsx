@@ -21,7 +21,7 @@ export interface EditorContentChanged {
 export type QuillEditorProps = {
   className?: string;
   placeholder: string;
-  onChangeEditor: (content: EditorContentChanged) => void;
+  onChangeEditor?: (content: EditorContentChanged) => void;
 };
 
 const RichTextEditor: React.FC<QuillEditorProps> = ({
