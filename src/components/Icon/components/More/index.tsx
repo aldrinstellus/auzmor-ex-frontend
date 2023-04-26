@@ -1,7 +1,7 @@
 import React from 'react';
 import useHover from 'hooks/useHover';
-import { default as CloseFilled } from './CloseFilled';
-import { default as CloseOutline } from './CloseOutline';
+import { default as MoreFilled } from './MoreFilled';
+import { default as MoreOutline } from './MoreOutline';
 
 type IconProps = {
   size?: number;
@@ -10,7 +10,7 @@ type IconProps = {
   onClick?: () => void;
 };
 
-const CloseIcon: React.FC<IconProps> = ({
+const MoreIcon: React.FC<IconProps> = ({
   hover,
   onClick,
   className = '',
@@ -21,12 +21,12 @@ const CloseIcon: React.FC<IconProps> = ({
   return (
     <div onClick={onClick} className={className} {...eventHandlers}>
       {hover && isHovered ? (
-        <CloseFilled {...props} />
+        <MoreFilled {...props} />
       ) : (
-        <CloseOutline {...props} />
+        <MoreOutline {...props} />
       )}
     </div>
   );
 };
 
-export default CloseIcon;
+export default MoreIcon;
