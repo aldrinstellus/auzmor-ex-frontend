@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
 import Button, { Variant } from 'components/Button';
-import UserCard from '../../components/UserCard';
-import TabSwitch from '../../components/TabSwitch';
+import UserCard from '../../components/peopleHub/UserCard';
+import TabSwitch from '../../components/peopleHub/TabSwitch';
 import { deleteUser, useUsers } from 'queries/users';
-import UserInvite from 'components/UserInvite';
+import UserInvite from 'components/peopleHub/UserInvite';
 import Modal from 'components/Modal';
-import AddUsers from 'components/AddUsers';
+import AddUsers from 'components/peopleHub/AddUsers';
 
 interface IUsersProps {}
 

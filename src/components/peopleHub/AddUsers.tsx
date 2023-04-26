@@ -14,9 +14,8 @@ import {
   Variant as ButtonVariant,
 } from '@auzmorui/component-library.components.button';
 import { Divider } from '@auzmorui/component-library.components.divider';
-import File from '../images/file.svg';
+import File from '../../images/file.svg';
 import { createUsers } from 'queries/users';
-import './add.css';
 
 export interface IAddUsersProps {
   reference: React.MutableRefObject<undefined>;
@@ -128,7 +127,7 @@ const AddUsers: React.FC<IAddUsersProps> = ({
 
   return (
     <>
-      <div className="model-scrollBar h-[490px]">
+      <div className="h-[490px]">
         <div className="mx-6">
           <div className="flex flex-col   mb-3">
             <form onSubmit={handleSubmit(onSubmit)}>
