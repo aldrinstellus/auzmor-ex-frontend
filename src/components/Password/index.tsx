@@ -23,6 +23,7 @@ export type PasswordProps = {
   dataTestId?: string;
   control?: Control<Record<string, any>>;
   label?: string;
+  onChange?: any;
 };
 
 const Password: React.FC<PasswordProps> = ({
@@ -39,6 +40,7 @@ const Password: React.FC<PasswordProps> = ({
   helpText,
   control,
   label,
+  onChange,
 }) => {
   const [show, setShow] = useState(false);
 
@@ -119,7 +121,10 @@ const Password: React.FC<PasswordProps> = ({
             data-testid={dataTestId}
             defaultValue={defaultValue}
             ref={field.ref}
-            onChange={field.onChange}
+            onChange={(e: any) => {
+              field.onChange(e);
+              onChange && onChange(e);
+            }}
             onBlur={field.onBlur}
           />
         </div>
