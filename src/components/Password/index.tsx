@@ -123,7 +123,7 @@ const Password: React.FC<PasswordProps> = ({
             ref={field.ref}
             onChange={(e: any) => {
               field.onChange(e);
-              onChange(e);
+              onChange && onChange(e);
             }}
             onBlur={field.onBlur}
           />
