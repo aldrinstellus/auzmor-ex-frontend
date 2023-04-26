@@ -1,21 +1,13 @@
 import React, { useRef, useState } from 'react';
-import {
-  Button,
-  Variant,
-  Type,
-} from '@auzmorui/component-library.components.button';
-import * as yup from 'yup';
+import { Button, Variant } from '@auzmorui/component-library.components.button';
 import UserCard from '../../components/UserCard';
 import TabSwitch from '../../components/TabSwitch';
-import { userList } from '../../components/mockUtils';
-import { useUsers } from 'queries/users';
+import { deleteUser, useUsers } from 'queries/users';
 import UserInvite from 'components/UserInvite';
 import Modal from 'components/Modal';
 import AddUsers from 'components/AddUsers';
 import Filter from '../../images/filter.svg';
 import ArrowSwap from '../../images/arrow-swap.svg';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 
 interface IUsersProps {}
 
@@ -28,26 +20,15 @@ const tabs = [
   },
 ];
 
-const footerMapDeleteButtons = [
-  {
-    id: 1,
-    label: 'Cancel',
-    disabled: false,
-    className: '!py-2 !px-4 !text-neutral-900 !bg-white !rounded-[24px] border',
-    onClick: () => {},
-  },
-  {
-    id: 2,
-    label: 'Delete',
-    disabled: true,
-    className: '!py-2 !px-4 !bg-red-500 !text-white !rounded-[24px] border',
-  },
-];
-
 const Users: React.FC<IUsersProps> = () => {
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [openErrorModal, setOpenErrorModal] = useState(false);
+
+  const [id, setId] = useState<string | null>(null);
   const { data, isLoading } = useUsers({});
-  const [open, setOpen] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
+  const usersData = data?.result.data;
+
   const formRef = useRef();
 
   const footerMapButtons = [
@@ -57,7 +38,9 @@ const Users: React.FC<IUsersProps> = () => {
       disabled: false,
       className:
         '!py-2 !px-4 !text-neutral-900 !bg-white !rounded-[24px] border',
-      onClick: () => {},
+      onClick: () => {
+        setShowAddUserModal(false);
+      },
     },
     {
       id: 2,
@@ -71,12 +54,70 @@ const Users: React.FC<IUsersProps> = () => {
     },
   ];
 
+  const footerMapErrorModalButtons = [
+    {
+      id: 1,
+      label: 'Cancel',
+      disabled: false,
+      className:
+        '!py-2 !px-4 !text-neutral-900 !bg-white !rounded-[24px] border',
+      onClick: () => {
+        setOpenErrorModal(false);
+      },
+    },
+    {
+      id: 2,
+      label: 'Try Again',
+      disabled: false,
+      className:
+        '!py-2 !px-4 !bg-primary-500 !text-white !rounded-[24px] border',
+      onClick: () => {
+        setOpenErrorModal(false);
+        setShowAddUserModal(true);
+      },
+    },
+  ];
+
+  const footerMapDeleteModalButtons = [
+    {
+      id: 1,
+      label: 'Cancel',
+      disabled: false,
+      className:
+        '!py-2 !px-4 !text-neutral-900 !bg-white !rounded-[24px] border',
+      onClick: () => {
+        setShowDeleteModal(false);
+        setId(null);
+      },
+    },
+    {
+      id: 2,
+      label: 'Delete',
+      disabled: false,
+      className: '!py-2 !px-4 !bg-red-500 !text-white !rounded-[24px] border',
+      onClick: () => {
+        console.log(id);
+        if (id) {
+          deleteUser(id).then((res: any) => {
+            if (res.result.data[0].status === 'Success') {
+              setShowDeleteModal(false);
+              setId(null);
+            } else {
+              setShowDeleteModal(false);
+              setId(null);
+              alert("can't delete user");
+            }
+          });
+        }
+      },
+    },
+  ];
   if (isLoading) {
     return <div>Loader...</div>;
   }
 
   return (
-    <div className="bg-white px-8 py-9 rounded-9xl">
+    <div className="bg-white px-8 py-9 rounded-9xl w-[100%] h-[100%]">
       <div className="flex justify-between">
         <span className="text-2xl font-bold">People Hub</span>
         <div className="flex">
@@ -92,17 +133,23 @@ const Users: React.FC<IUsersProps> = () => {
             label="Add People"
             leftIcon="people"
             onClick={() => {
-              setOpen(true);
+              setShowAddUserModal(true);
             }}
           />
         </div>
       </div>
       <Modal
         className="w-[50%]"
-        open={open}
-        setOpen={setOpen}
+        open={showAddUserModal}
+        setOpen={setShowAddUserModal}
         title="Invite new people to your organization"
-        body={<AddUsers reference={formRef} />}
+        body={
+          <AddUsers
+            reference={formRef}
+            setOpenError={setOpenErrorModal}
+            setOpen={setShowAddUserModal}
+          />
+        }
         footer={
           <div className="flex justify-end items-center h-16 p-6">
             {footerMapButtons.map((type) => (
@@ -121,9 +168,9 @@ const Users: React.FC<IUsersProps> = () => {
       />
 
       <Modal
-        className="w-[364px] h-[226x] flex items-center justify-center"
-        open={openDelete}
-        setOpen={setOpenDelete}
+        className="max-w-[364px] max-h-[226x] flex items-center justify-center"
+        open={showDeleteModal}
+        setOpen={setShowDeleteModal}
         title="Delete User?"
         body={
           <div className="font-medium text-sm text-neutral-500 not-italic mx-6 my-6">
@@ -132,13 +179,42 @@ const Users: React.FC<IUsersProps> = () => {
         }
         footer={
           <div className="flex justify-end items-center mr-6 py-4">
-            {footerMapDeleteButtons.map((type) => (
+            {footerMapDeleteModalButtons.map((type) => (
               <div className="ml-3" key={type.id}>
                 <Button
                   label={type.label}
                   variant={Variant.Secondary}
                   disabled={type.disabled}
                   className={type.className}
+                  onClick={type.onClick}
+                />
+              </div>
+            ))}
+          </div>
+        }
+      />
+
+      <Modal
+        className=" max-h-[226x] flex items-center justify-center max-w-[364px]"
+        open={openErrorModal}
+        setOpen={setOpenErrorModal}
+        title="Error!"
+        body={
+          <div className="font-medium text-sm text-neutral-500 not-italic mx-6 my-6">
+            Failed to add participant. Email not recognised. Please enter valid
+            details.
+          </div>
+        }
+        footer={
+          <div className="flex justify-end items-center mr-6 py-4">
+            {footerMapErrorModalButtons.map((type) => (
+              <div className="ml-3" key={type.id}>
+                <Button
+                  label={type.label}
+                  variant={Variant.Secondary}
+                  disabled={type.disabled}
+                  className={type.className}
+                  onClick={type.onClick}
                 />
               </div>
             ))}
@@ -162,36 +238,32 @@ const Users: React.FC<IUsersProps> = () => {
             className="mr-4"
           />
         </div>
-        <div className="order-last flex flex-row ">
-          <div className="flex p-2.5   border border-solid rounded-[24px] border-neutral-200 items-center justify-center">
-            <img width={16} height={16} src={Filter} />
-          </div>
-          <div className="flex ml-2 p-2.5  border border-solid rounded-[24px] border-neutral-200 items-center justify-center">
-            <img width={16} height={16} src={ArrowSwap} />
-          </div>
-          <input
-            type="text"
-            className="rounded-[32px] border border-neutral-200 border-solid ml-2"
-          />
-        </div>
       </div>
+
       <div className="mt-6 text-neutral-500">Showing 200 results</div>
       <div className="flex flex-wrap mt-6">
-        {userList.results.map((user, index) => (
-          <div key={user.id} className={index % 5 !== 0 ? 'ml-6' : ''}>
-            <UserCard
-              key={user.id}
-              name={user.name}
-              image={user.image}
-              designation={user.designation}
-              department={user.department}
-              location={user.location}
-              status={user.status}
-              isActive={user.active}
-              setOpen={setOpenDelete}
-            />
-          </div>
-        ))}
+        {usersData.length > 0 &&
+          usersData
+            .filter((user: any) => user.role !== 'SUPERADMIN')
+            .map((user: any, index: number) => (
+              <div key={user.id} className={index % 5 !== 0 ? 'ml-6' : ''}>
+                <UserCard
+                  key={user.id}
+                  userId={user.id}
+                  name={
+                    user.fullName ? user.fullName : user.workEmail.slice(0, 6)
+                  }
+                  image={'https://randomuser.me/api/portraits/med/women/42.jpg'}
+                  designation={'Customer Success Manager'}
+                  department={'Sales'}
+                  location={'New York, USA'}
+                  status={user.role}
+                  isActive={user.active}
+                  setOpen={setShowDeleteModal}
+                  setId={setId}
+                />
+              </div>
+            ))}
       </div>
     </div>
   );

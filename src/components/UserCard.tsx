@@ -6,6 +6,7 @@ import { Button, Variant } from '@auzmorui/component-library.components.button';
 import clsx from 'clsx';
 
 export interface IUserCardProps {
+  userId: string;
   status: string;
   name?: string;
   image?: string;
@@ -14,6 +15,7 @@ export interface IUserCardProps {
   location?: string;
   isActive?: boolean;
   setOpen: (show: boolean) => void;
+  setId: (id: string) => void;
 }
 
 export enum Status {
@@ -29,6 +31,7 @@ const statusColorMap: Record<string, string> = {
 };
 
 const UserCard: React.FC<IUserCardProps> = ({
+  userId,
   name = '',
   image,
   designation,
@@ -37,6 +40,7 @@ const UserCard: React.FC<IUserCardProps> = ({
   status,
   isActive,
   setOpen,
+  setId,
 }) => {
   const [isHovered, hoverEvents] = useHover();
 
@@ -92,6 +96,7 @@ const UserCard: React.FC<IUserCardProps> = ({
                 label={'X'}
                 onClick={() => {
                   setOpen(true);
+                  setId(userId);
                 }}
                 className="!p-2 !gap-2 !rounded-[8px] !border !border-neutral-200 !border-solid"
               />

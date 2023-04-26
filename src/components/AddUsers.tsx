@@ -4,38 +4,37 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Input, Variant } from '@auzmorui/component-library.components.input';
 import { Layout, FieldType } from '@auzmorui/component-library.components.form';
 import { Variant as InputVariant } from '@auzmorui/component-library.components.input';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  Control,
-  SubmitHandler,
-  UseFormGetValues,
-  UseFormHandleSubmit,
-  UseFormReturn,
-  useForm,
-} from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import {
   Button,
   Variant as ButtonVariant,
 } from '@auzmorui/component-library.components.button';
 import { Divider } from '@auzmorui/component-library.components.divider';
 import File from '../images/file.svg';
+import { createUsers } from 'queries/users';
 import './add.css';
 
 export interface IAddUsersProps {
   reference: React.MutableRefObject<undefined>;
+  setOpen: (show: boolean) => void;
+  setOpenError: (show: boolean) => void;
 }
 
 export interface IForm {
-  name: string;
-  email: string;
+  fullName: string;
+  workEmail: string;
   role: string;
 }
 
-const AddUsers: React.FC<IAddUsersProps> = ({ reference }) => {
+const AddUsers: React.FC<IAddUsersProps> = ({
+  reference,
+  setOpen,
+  setOpenError,
+}) => {
   useImperativeHandle(
     reference,
     () =>
@@ -51,8 +50,8 @@ const AddUsers: React.FC<IAddUsersProps> = ({ reference }) => {
   };
 
   const schema = yup.object({
-    name: yup.string().required('Please enter name'),
-    email: yup.string().email('Please enter valid email address'),
+    fullName: yup.string().required('Please enter name'),
+    workEmail: yup.string().email('Please enter valid email address'),
     role: yup.string().required('Please enter role'),
   });
 
@@ -72,9 +71,9 @@ const AddUsers: React.FC<IAddUsersProps> = ({ reference }) => {
       InputVariant: InputVariant.Text,
       className: 'w-[37.5%]',
       placeholder: 'Enter name',
-      name: 'name',
+      name: 'fullName',
       label: 'Full Name',
-      error: errors.name?.message,
+      error: errors.fullName?.message,
       control,
       getValues,
       onChange: (data: string, e: React.ChangeEvent) => {},
@@ -84,9 +83,9 @@ const AddUsers: React.FC<IAddUsersProps> = ({ reference }) => {
       variant: InputVariant.Text,
       className: 'w-[37.5%]',
       placeholder: 'Add via email',
-      name: 'email',
+      name: 'workEmail',
       label: 'Email Address',
-      error: errors.email?.message,
+      error: errors.workEmail?.message,
       control,
       getValues,
       onChange: (data: string, e: React.ChangeEvent) => {},
@@ -112,8 +111,19 @@ const AddUsers: React.FC<IAddUsersProps> = ({ reference }) => {
   };
   const files = fileList ? [...fileList] : [];
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async (data1: any) => {
+    const users = [];
+    users.push(data1);
+
+    await createUsers({ users: users }).then((res: any) => {
+      if (res.result.data[0].status === 'FAILED') {
+        setOpen(false);
+        setOpenError(true);
+      } else {
+        setOpen(false);
+        alert('Successfully added');
+      }
+    });
   };
 
   return (
