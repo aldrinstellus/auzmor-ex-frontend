@@ -4,22 +4,24 @@ interface ICreatePost {
   content: {
     text: string;
     html: string;
-    editor: Record<string, any>;
+    editor: string;
   };
-  mentions?: string[];
-  hashtags?: [
-    {
-      name: string;
-      id: string;
-    },
-  ];
+  mentions: string[];
+  hashtags:
+    | [
+        {
+          name: string;
+          id: string;
+        },
+      ]
+    | [];
   files?: string[];
   type: string;
-  audience?: {
+  audience: {
     users: string[];
   };
-  isAnnouncement?: true;
-  announcement?: {
+  isAnnouncement: true;
+  announcement: {
     end: string;
   };
 }

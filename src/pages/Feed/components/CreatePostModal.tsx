@@ -34,9 +34,18 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({}) => {
       content: {
         text: editorValue.html,
         html: editorValue.html,
-        editor: editorValue.json,
+        editor: JSON.stringify(editorValue.json),
       },
       type: 'UPDATE',
+      mentions: [],
+      hashtags: [],
+      audience: {
+        users: [],
+      },
+      isAnnouncement: true,
+      announcement: {
+        end: '',
+      },
     });
   };
 
