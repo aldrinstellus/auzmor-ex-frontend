@@ -8,6 +8,7 @@ import {
 import queryClient from 'utils/queryClient';
 import { loader as homeLoader } from 'pages/Home';
 import RequireAuth from 'components/RequireAuth';
+import Expirymail from 'components/ExpiryMail';
 
 const ErrorBoundary = React.lazy(() => import('components/ErrorBoundary'));
 const Login = React.lazy(() => import('pages/Login'));
@@ -32,7 +33,11 @@ const routers = createBrowserRouter(
       <Route path="/signup" element={<Signup />} />
       <Route path="/register" element={<Registration />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route
+        path="/reset-password"
+        element={<ResetPassword expiryToken={''} />}
+      />
+      <Route path="/password/reset" element={<Expirymail />} />
       <Route element={<RequireAuth />}>
         <Route
           path="/"
