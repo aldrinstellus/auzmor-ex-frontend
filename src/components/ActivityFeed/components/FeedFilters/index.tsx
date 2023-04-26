@@ -119,12 +119,15 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
 }): ReactElement => {
   const [showFeedFilter, setShowFeedFilter] = useState<boolean>(false);
   const [feedFilters, setFeedFilters] = useState<string[]>([]);
+  const [haveFiltersBeenModified, setHaveFiltersBeenModified] =
+    useState<boolean>(false);
   return (
     <div className="relative">
       <button
         className="box-border font-bold flex flex-row justify-center items-center p-1 gap-4 border-none"
         onClick={() => {
           setShowFeedFilter(!showFeedFilter);
+          setHaveFiltersBeenModified(false);
         }}
         data-testid={dataTestId}
       >
@@ -135,10 +138,13 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
         <Card className="bg-white rounded-3xl top-full min-w-full w-max shadow-md z-10 mt-1 absolute">
           <div
             className="flex flex-row justify-center items-center py-2 px-4 gap-40"
-            onClick={() => setShowFeedFilter(false)}
+            onClick={() => {
+              setShowFeedFilter(false);
+              setHaveFiltersBeenModified(true);
+            }}
           >
             <p className="text-base font-bold">Filter by</p>
-            <CloseIcon />
+            <CloseIcon size={16} className="cursor-pointer" />
           </div>
           <div>
             <ul className="text-left border rounded-md space-y-1">
@@ -146,7 +152,7 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
                 <div
                   key={option?.value}
                   onClick={() => {
-                    setShowFeedFilter(true);
+                    setHaveFiltersBeenModified(true);
                     if (feedFilters.includes(option.value)) {
                       setFeedFilters(
                         feedFilters.filter((filter) => filter !== option.value),
@@ -188,7 +194,10 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
               className={`box-border border-none px-4 ${
                 feedFilters.length > 0 ? 'text-gray-900 ' : 'text-gray-400'
               }`}
-              onClick={() => setFeedFilters([])}
+              onClick={() => {
+                setHaveFiltersBeenModified(true);
+                setFeedFilters([]);
+              }}
               disabled={feedFilters.length === 0}
             >
               Clear filters
@@ -196,7 +205,7 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
             <Button
               label="Apply"
               variant={Variant.Primary}
-              disabled={feedFilters.length === 0}
+              disabled={!haveFiltersBeenModified}
               onClick={() => setShowFeedFilter(false)}
             />
           </div>
