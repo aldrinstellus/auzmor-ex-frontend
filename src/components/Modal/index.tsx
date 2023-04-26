@@ -2,6 +2,7 @@ import React, { ReactNode, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
 import IconButton, { Variant as IconVariant } from 'components/IconButton';
+import { Divider } from '@auzmorui/component-library.components.divider';
 
 export type ModalProps = {
   open: boolean;
@@ -9,6 +10,7 @@ export type ModalProps = {
   body: ReactNode | null;
   title?: string;
   footer?: ReactNode | null;
+  className?: string;
 };
 
 const Modal: React.FC<ModalProps> = ({
@@ -17,11 +19,12 @@ const Modal: React.FC<ModalProps> = ({
   title = '',
   body,
   footer = null,
+  className,
 }) => {
   return (
     <>
       <Transition appear show={open} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Dialog as="div" className="relative z-10 " onClose={closeModal}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
