@@ -48,37 +48,28 @@ const Modal: React.FC<ModalProps> = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel
-                  className={`w-full rounded-9xl transform overflow-hidden  bg-white text-left align-middle shadow-xl transition-all ${className}`}
-                >
+                <Dialog.Panel className="w-full max-w-xl transform overflow-hidden bg-white text-left align-middle transition-all rounded-9xl shadow">
                   {!!title && (
-                    <div>
-                      <div className="flex flex-wrap">
-                        <Dialog.Title
-                          as="h3"
-                          className="text-lg text-[#000000] p-4 font-bold flex-[50%]"
-                        >
-                          {title}
-                        </Dialog.Title>
-                        <IconButton
-                          onClick={closeModal}
-                          icon={'X'}
-                          className="!flex-[0] !text-right !p-1 !mx-4 !my-3 !bg-inherit !text-neutral-900"
-                          variant={IconVariant.Primary}
-                        />
-                      </div>
-                      <div className="flex justify-center item-center mb-6">
-                        <Divider className="w-[95%]" />
-                      </div>
+                    <div className="flex flex-wrap border-b-1 border-neutral-200">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg text-black p-4 font-extrabold flex-[50%]"
+                      >
+                        {title}
+                      </Dialog.Title>
+                      <IconButton
+                        onClick={closeModal}
+                        icon={'close'}
+                        className="!flex-[0] !text-right !p-1 !mx-4 !my-3 !bg-inherit !text-neutral-900"
+                        variant={IconVariant.Primary}
+                      />
                     </div>
                   )}
-                  <div className="">
-                    <p className="text-sm text-neutral-900">{body}</p>
+                  <div>
+                    <div className="text-sm text-neutral-900">{body}</div>
                   </div>
 
-                  {!!footer && (
-                    <div className="mt-[16px] bg-blue-50">{footer}</div>
-                  )}
+                  {!!footer && <div className="bg-blue-50">{footer}</div>}
                 </Dialog.Panel>
               </Transition.Child>
             </div>
