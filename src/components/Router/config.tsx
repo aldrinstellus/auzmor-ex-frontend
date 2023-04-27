@@ -8,13 +8,13 @@ import {
 import queryClient from 'utils/queryClient';
 import { loader as homeLoader } from 'pages/Home';
 import RequireAuth from 'components/RequireAuth';
+import { getPosts } from 'queries/post';
 
 const ErrorBoundary = React.lazy(() => import('components/ErrorBoundary'));
 const Login = React.lazy(() => import('pages/Login'));
 const Signup = React.lazy(() => import('pages/Signup'));
 const Registration = React.lazy(() => import('pages/Registration'));
 const ForgotPassword = React.lazy(() => import('pages/ForgotPassword'));
-const ResetPassword = React.lazy(() => import('pages/ResetPassword'));
 const ExpiryMail = React.lazy(() => import('pages/ExpiryMail'));
 const Feed = React.lazy(() => import('pages/Feed'));
 const Home = React.lazy(() => import('pages/Home'));
@@ -65,7 +65,13 @@ const routers = createBrowserRouter(
             return '';
           }}
         />
-        <Route path="/feed" element={<Feed />} />
+        <Route
+          path="/feed"
+          element={<Feed />}
+          loader={async () => {
+            return await getPosts();
+          }}
+        />
         <Route path="/apps" element={<Apps />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/admin" element={<Admin />} />
