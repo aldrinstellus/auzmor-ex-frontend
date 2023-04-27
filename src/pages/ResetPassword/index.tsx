@@ -12,10 +12,10 @@ import PasswordPolicy from 'components/PasswordPolicy';
 import { useMutation } from '@tanstack/react-query';
 import { redirectWithToken } from 'utils/misc';
 import { resetPassword } from 'queries/account';
-import PasswordExpiry from 'components/PasswordExpiry';
+import PasswordExpiry from 'pages/PasswordExpiry';
 
 interface IResetPasswordProps {
-  expiryToken: string;
+  token: string;
 }
 
 interface IForm {
@@ -30,12 +30,11 @@ const schema = yup.object({
     .string()
     .required()
     .oneOf([yup.ref('newPassword')], 'Passwords do not match'),
+  token: yup.string(),
 });
 
-const ResetPassword: React.FC<IResetPasswordProps> = ({ expiryToken }) => {
+const ResetPassword: React.FC<IResetPasswordProps> = ({ token }) => {
   const [success, setSuccess] = useState(false);
-
-  // const [expiry, setExpiry] = useState(false);
 
   const [passwordRule, setPasswordRule] = useState({
     length: false,
@@ -48,7 +47,6 @@ const ResetPassword: React.FC<IResetPasswordProps> = ({ expiryToken }) => {
     (formData: any) => resetPassword(formData),
     {
       onSuccess: (data) => {
-        redirectWithToken(data.result.data.redirectUrl, data.result.data.uat);
         setSuccess(true);
       },
     },
@@ -65,12 +63,10 @@ const ResetPassword: React.FC<IResetPasswordProps> = ({ expiryToken }) => {
     defaultValues: {
       newPassword: '',
       password: '',
-      token: { expiryToken },
+      token,
     },
     mode: 'onChange',
   });
-
-  console.log(getValues().token, 'kkk');
 
   useEffect(() => {
     resetPasswordMutation.reset();
@@ -114,7 +110,11 @@ const ResetPassword: React.FC<IResetPasswordProps> = ({ expiryToken }) => {
   ];
 
   const onSubmit = (formData: IForm) => {
-    resetPasswordMutation.mutate(formData);
+    console.log(formData, 'DATA');
+    resetPasswordMutation.mutate({
+      password: formData.password,
+      token: formData.token,
+    });
   };
 
   const validatePassword = (value: string) => {
