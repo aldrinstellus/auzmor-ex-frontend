@@ -9,6 +9,9 @@ import DropdownArrowIcon from './components/DropdownArrow';
 import ClockIcon from './components/Clock';
 import FilterIcon from './components/Filter';
 import CloseIcon from './components/Close';
+import Add from './components/Add';
+import AddCircle from './components/AddCircle';
+import ConvertShape from './components/ConvertShape';
 
 export const icon = {
   calendarTwo: CalendarIconTwo,
@@ -22,4 +25,7 @@ export const icon = {
   clock: ClockIcon,
   filter: FilterIcon,
   close: CloseIcon,
+  add: Add,
+  addCircle: AddCircle,
+  convertShape: ConvertShape,
 };

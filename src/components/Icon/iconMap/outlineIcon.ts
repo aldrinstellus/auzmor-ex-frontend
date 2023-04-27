@@ -6,6 +6,9 @@ import SvgImageOutline from '../components/Image/ImageOutline';
 import SvgMagicStarOutline from '../components/MagicStar/MagicStarOutline';
 import SvgMoreOutline from '../components/More/MoreOutline';
 import SvgPeopleOutline from '../components/People/PeopleOutline';
+import SvgAddCircleOutline from '../components/AddCircle/AddCircleOutline';
+import SvgAddOutline from '../components/Add/AddOutline';
+import SvgConvertShapeOutline from '../components/ConvertShape/ConvertShapeOutline';
 
 export const outlineIcon = {
   calendarOutlineTwo: SvgCalendarOutlineTwo,
@@ -16,4 +19,7 @@ export const outlineIcon = {
   magicStarOutline: SvgMagicStarOutline,
   moreOutline: SvgMoreOutline,
   peopleOutline: SvgPeopleOutline,
+  addOutline: SvgAddOutline,
+  addCircleOutline: SvgAddCircleOutline,
+  convertShapeOutline: SvgConvertShapeOutline,
 };

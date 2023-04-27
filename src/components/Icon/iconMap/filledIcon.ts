@@ -9,6 +9,9 @@ import SvgPeopleFilled from '../components/People/PeopleFilled';
 import SvgDropdownArrowFilled from '../components/DropdownArrow/DropdownArrowFilled';
 import SvgClockFilled from '../components/Clock/ClockFilled';
 import SvgFilterFilled from '../components/Filter/FilterFilled';
+import SvgAddCircleFilled from '../components/AddCircle/AddCircleFilled';
+import SvgAddFilled from '../components/Add/AddFilled';
+import SvgConvertShapeFilled from '../components/ConvertShape/ConvertShapeFilled';
 
 export const filledIcon = {
   calendarFilledTwo: SvgCalendarFilledTwo,
@@ -22,4 +25,7 @@ export const filledIcon = {
   dropdownArrowFilled: SvgDropdownArrowFilled,
   clockFilled: SvgClockFilled,
   filterFilled: SvgFilterFilled,
+  addFilled: SvgAddFilled,
+  addCircleFilled: SvgAddCircleFilled,
+  convertShapeFilled: SvgConvertShapeFilled,
 };
