@@ -1,7 +1,7 @@
 import React from 'react';
 import useHover from 'hooks/useHover';
-import { default as ImageFilled } from './ImageFilled';
-import { default as ImageOutline } from './ImageOutline';
+import { default as VideoFilled } from './VideoFilled';
+import { default as VideoOutline } from './VideoOutline';
 
 type IconProps = {
   size?: number;
@@ -10,7 +10,7 @@ type IconProps = {
   onClick?: () => void;
 };
 
-const ImageIcon: React.FC<IconProps> = ({
+const VideoIcon: React.FC<IconProps> = ({
   hover = true,
   onClick,
   className = '',
@@ -21,12 +21,12 @@ const ImageIcon: React.FC<IconProps> = ({
   return (
     <div onClick={onClick} className={className} {...eventHandlers}>
       {hover && isHovered ? (
-        <ImageFilled {...props} />
+        <VideoFilled {...props} />
       ) : (
-        <ImageOutline {...props} />
+        <VideoOutline {...props} />
       )}
     </div>
   );
 };
 
-export default ImageIcon;
+export default VideoIcon;
