@@ -8,6 +8,7 @@ class ApiService {
   constructor() {
     this.instance = axios.create({
       baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
+      withCredentials: true,
     });
 
     this.instance.interceptors.request.use((config: any) => {
@@ -31,7 +32,7 @@ class ApiService {
   }
 
   async get(url: string, params = {}) {
-    return this.instance.get(url, { ...params });
+    return await this.instance.get(url, { ...params });
   }
 
   async put(url: string, data = {}) {

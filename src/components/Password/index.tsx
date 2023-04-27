@@ -1,12 +1,7 @@
 import clsx from 'clsx';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Control, useController } from 'react-hook-form';
 import Icon from 'components/Icon';
-
-export enum Variant {
-  Text = 'TEXT',
-  Password = 'PASSWORD',
-}
 
 export enum Size {
   Small = 'SMALL',
@@ -17,10 +12,7 @@ export enum Size {
 export type PasswordProps = {
   name: string;
   id?: string;
-  variant?: Variant;
   size?: Size;
-  rightIcon?: string;
-  leftIcon?: string;
   defaultValue?: string;
   placeholder?: string;
   loading?: boolean;
@@ -31,17 +23,13 @@ export type PasswordProps = {
   dataTestId?: string;
   control?: Control<Record<string, any>>;
   label?: string;
-  onLeftIconClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  onRightIconClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onChange?: any;
 };
 
 const Password: React.FC<PasswordProps> = ({
   name,
   id,
-  variant = Variant.Text,
   size = Size.Medium,
-  rightIcon = null,
-  leftIcon = null,
   defaultValue = '',
   placeholder = '',
   loading = false,
@@ -52,9 +40,10 @@ const Password: React.FC<PasswordProps> = ({
   helpText,
   control,
   label,
-  onLeftIconClick,
-  onRightIconClick,
+  onChange,
 }) => {
+  const [show, setShow] = useState(false);
+
   const { field } = useController({
     name,
     control,
@@ -71,18 +60,6 @@ const Password: React.FC<PasswordProps> = ({
             error,
         },
         {
-          'pl-5': !leftIcon,
-        },
-        {
-          'pl-11': leftIcon,
-        },
-        {
-          'pr-5': !rightIcon,
-        },
-        {
-          'pr-11': rightIcon,
-        },
-        {
           'py-2': size === Size.Small,
         },
         {
@@ -95,7 +72,7 @@ const Password: React.FC<PasswordProps> = ({
           'bg-neutral-100': disabled,
         },
         {
-          'w-full rounded-19xl border border-neutral-200 focus:outline-none':
+          'w-full rounded-19xl border border-neutral-200 focus:outline-none pl-5 pr-11':
             true,
         },
       ),
@@ -134,30 +111,26 @@ const Password: React.FC<PasswordProps> = ({
         htmlFor={id}
       >
         <div className="flex relative items-center w-full">
-          {leftIcon && (
-            <div className="absolute ml-5" onClick={onLeftIconClick}>
-              <Icon name={leftIcon} size={16} />
-            </div>
-          )}
           <input
             id={id}
             name={field.name}
-            type={variant?.toLowerCase()}
+            type={show ? 'text' : 'password'}
             className={inputStyles}
             disabled={loading || disabled}
             placeholder={placeholder}
             data-testid={dataTestId}
             defaultValue={defaultValue}
             ref={field.ref}
-            onChange={field.onChange}
+            onChange={(e: any) => {
+              field.onChange(e);
+              onChange && onChange(e);
+            }}
             onBlur={field.onBlur}
           />
         </div>
-        {rightIcon && (
-          <div className="absolute right-5" onClick={onRightIconClick}>
-            <Icon name={rightIcon} size={16} />
-          </div>
-        )}
+        <div className="absolute right-5" onClick={() => setShow((t) => !t)}>
+          <Icon name="people" size={16} className="cursor-pointer" />
+        </div>
       </label>
       <div
         className={`absolute -bottom-4 text-xs truncate leading-tight ${helpTextStyles}`}

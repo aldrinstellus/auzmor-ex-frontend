@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
-
-import { feeds } from 'mocks/feed';
+import React, { ReactNode, useState } from 'react';
+import { DeltaStatic } from 'quill';
 import ActivityFeed from 'components/ActivityFeed';
 import CreatePostCard from './components/CreatePostCard';
+import Icon from 'components/Icon';
+import CreatePostModal from './components/CreatePostModal';
+import { useLoaderData } from 'react-router-dom';
 
 interface IFeedProps {}
 
 interface IContent {
   text: string;
   html: string;
-  editor: string;
+  editor: DeltaStatic;
+}
+
+export interface IPostTypeIcon {
+  id: number;
+  label: string;
+  icon: ReactNode;
 }
 export interface IFeed {
   content: IContent;
@@ -20,15 +28,50 @@ export interface IFeed {
   isAnnouncement: boolean;
 }
 
+export const postTypeMapIcons: IPostTypeIcon[] = [
+  {
+    id: 1,
+    label: 'Media',
+    icon: <Icon name="imageFilled" fill="#000000" size={14} />,
+  },
+  {
+    id: 2,
+    label: 'Shoutout',
+    icon: <Icon name="magicStarFilled" fill="#000000" size={14} />,
+  },
+  {
+    id: 3,
+    label: 'Events',
+    icon: <Icon name="calendarFilledTwo" fill="#000000" size={14} />,
+  },
+  {
+    id: 4,
+    label: 'Polls',
+    icon: <Icon name="chartFilled" fill="#000000" size={14} />,
+  },
+];
+
 const Feed: React.FC<IFeedProps> = () => {
-  const [activityFeed, setActivityFeed] = useState<IFeed[]>(feeds);
+  const [showModal, setShowModal] = useState(true);
+  const rawFeedData: any = useLoaderData();
+  const feed: IFeed[] = rawFeedData.data.map((data: any) => {
+    return {
+      content: {
+        ...data.content,
+        editor: JSON.parse(data.content.editor),
+      },
+      uuid: data.uuid,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+      type: data.type,
+      isAnnouncement: data.isAnnouncement,
+    } as IFeed;
+  });
   return (
     <div className="flex flex-col">
-      <CreatePostCard
-        activityFeed={activityFeed}
-        setActivityFeed={setActivityFeed}
-      />
-      <ActivityFeed activityFeed={activityFeed} />
+      <CreatePostCard setShowModal={setShowModal} />
+      <ActivityFeed activityFeed={feed} />
+      <CreatePostModal showModal={showModal} setShowModal={setShowModal} />
     </div>
   );
 };
