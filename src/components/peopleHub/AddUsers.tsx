@@ -108,6 +108,7 @@ const AddUsers: React.FC<IAddUsersProps> = ({
   const handleUploadClick = () => {
     inputRef.current?.click();
   };
+  // @ts-ignore
   const files = fileList ? [...fileList] : [];
 
   const onSubmit = async (data1: any) => {
