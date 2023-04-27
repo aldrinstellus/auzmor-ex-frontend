@@ -41,6 +41,7 @@ const ResetPassword: React.FC<IResetPasswordProps> = ({ token }) => {
     isUppercase: false,
     isLowercase: false,
     isNumber: false,
+    isSymbol: false,
   });
 
   const resetPasswordMutation = useMutation(
@@ -123,6 +124,7 @@ const ResetPassword: React.FC<IResetPasswordProps> = ({ token }) => {
       isUppercase: true,
       isLowercase: true,
       isNumber: true,
+      isSymbol: true,
     };
     let isValid = true;
 
@@ -148,6 +150,12 @@ const ResetPassword: React.FC<IResetPasswordProps> = ({ token }) => {
     if (!/\d/.test(value)) {
       isValid = false;
       validationState.isNumber = false;
+    }
+
+    // password should contain at least one special character
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)) {
+      isValid = false;
+      validationState.isSymbol = false;
     }
 
     setPasswordRule(validationState);
@@ -185,6 +193,10 @@ const ResetPassword: React.FC<IResetPasswordProps> = ({ token }) => {
                   <PasswordPolicy
                     policyName="Must have atleast 1 number"
                     isChecked={passwordRule.isNumber}
+                  />
+                  <PasswordPolicy
+                    policyName="Must have atleast 1 symbol"
+                    isChecked={passwordRule.isSymbol}
                   />
                   <Layout fields={confirmPasswordField} />
                   <Button
