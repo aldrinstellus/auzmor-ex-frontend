@@ -11,6 +11,7 @@ import SvgMagicStarOutline from '../components/MagicStar/MagicStarOutline';
 import SvgMoreOutline from '../components/More/MoreOutline';
 import SvgPeopleOutline from '../components/People/PeopleOutline';
 import SvgVideoOutline from '../components/video/VideoOutline';
+import SvgUserOutline from '../components/Users/UsersOutline';
 
 export const outlineIcon = {
   calendarOutlineTwo: SvgCalendarOutlineTwo,
@@ -25,5 +26,6 @@ export const outlineIcon = {
   magicStarOutline: SvgMagicStarOutline,
   moreOutline: SvgMoreOutline,
   peopleOutline: SvgPeopleOutline,
+  userOutline: SvgUserOutline,
   videoOutline: SvgVideoOutline,
 };

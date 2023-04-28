@@ -14,6 +14,7 @@ import SvgClockFilled from '../components/Clock/ClockFilled';
 import SvgFilterFilled from '../components/Filter/FilterFilled';
 import SvgEyeFilled from '../components/Eye/EyeFilled';
 import SvgEyeSlashFilled from '../components/EyeSlash/EyeSlashFilled';
+import SvgUsersFilled from '../components/Users/UsersFilled';
 
 export const filledIcon = {
   calendarFilledTwo: SvgCalendarFilledTwo,
@@ -31,5 +32,6 @@ export const filledIcon = {
   magicStarFilled: SvgMagicStarFilled,
   moreFilled: SvgMoreFilled,
   peopleFilled: SvgPeopleFilled,
+  userFilled: SvgUsersFilled,
   videoFilled: SvgVideoFilled,
 };
