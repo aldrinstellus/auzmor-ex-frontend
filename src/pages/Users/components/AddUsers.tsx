@@ -14,9 +14,9 @@ import Button, { Variant } from 'components/Button';
 import Divider from 'components/Divider';
 import File from '../../../images/file.svg';
 import { inviteUsers } from 'queries/users';
-import { QueryClient, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import _ from 'lodash';
-import queryClient, { getRelatedCacheKeys } from 'utils/queryClient';
+import queryClient from 'utils/queryClient';
 
 export interface IAddUsersProps {
   reference: React.MutableRefObject<undefined>;
@@ -29,10 +29,6 @@ export interface IForm {
   fullName: string;
   workEmail: string;
   role: string;
-}
-
-export function updateFn(old: any, data: any) {
-  old.result.data.push(data.result.data[0]);
 }
 
 const AddUsers: React.FC<IAddUsersProps> = ({
@@ -143,10 +139,7 @@ const AddUsers: React.FC<IAddUsersProps> = ({
         } else {
           setOpen(false);
           alert('Successfully added');
-          const keys = getRelatedCacheKeys(queryClient, 'users');
-          keys.forEach((key) => {
-            queryClient.setQueryData(key, (old: any) => updateFn(old, data));
-          });
+          queryClient.invalidateQueries({ queryKey: ['users'] });
         }
       });
     },

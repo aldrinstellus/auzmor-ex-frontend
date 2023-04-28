@@ -11,16 +11,3 @@ const queryClient = new QueryClient({
 });
 
 export default queryClient;
-
-export const getRelatedCacheKeys = (
-  queryClient: QueryClient,
-  targetKey: string,
-) => {
-  return queryClient
-    .getQueryCache()
-    .getAll()
-    .map((query: { queryKey: any }) => query.queryKey)
-    .filter((key: string | any[]) =>
-      Array.isArray(key) ? key.includes(targetKey) : key === targetKey,
-    );
-};
