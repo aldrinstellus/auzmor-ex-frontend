@@ -1,5 +1,7 @@
 import React from 'react';
 import InfoCircleOutline from './InfoCircleOutline';
+import InfoCircleFilled from './InfoCircleFilled';
+import useHover from 'hooks/useHover';
 
 type IconProps = {
   size?: number;
@@ -14,9 +16,15 @@ const InfoCircleIcon: React.FC<IconProps> = ({
   className = '',
   ...props
 }) => {
+  const [isHovered, eventHandlers] = useHover();
+
   return (
-    <div onClick={onClick} className={className}>
-      <InfoCircleOutline {...props} />
+    <div onClick={onClick} className={className} {...eventHandlers}>
+      {hover && isHovered ? (
+        <InfoCircleFilled {...props} />
+      ) : (
+        <InfoCircleOutline {...props} />
+      )}
     </div>
   );
 };

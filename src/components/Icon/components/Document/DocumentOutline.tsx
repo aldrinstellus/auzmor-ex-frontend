@@ -6,7 +6,7 @@ type IconProps = {
   stroke?: string;
 };
 
-const SvgInfoCircleOutline = ({
+const SvgDocumentOutline = ({
   size = 24,
   stroke = '#737373',
   ...props
@@ -20,21 +20,7 @@ const SvgInfoCircleOutline = ({
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-      stroke={stroke}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M12 8V13"
-      stroke={stroke}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M11.9946 16H12.0036"
+      d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14M22 10H18C15 10 14 9 14 6V2M22 10L14 2M7 13H13M7 17H11"
       stroke={stroke}
       strokeWidth="1.5"
       strokeLinecap="round"
@@ -43,4 +29,4 @@ const SvgInfoCircleOutline = ({
   </svg>
 );
 
-export default SvgInfoCircleOutline;
+export default SvgDocumentOutline;

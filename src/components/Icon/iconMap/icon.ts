@@ -11,8 +11,10 @@ import FilterIcon from '../components/Filter';
 import MoreIcon from '../components/More';
 import EditIcon from '../components/Edit';
 import CloseIcon from '../components/Close';
+import VideoIcon from '../components/video';
+import DocumentIcon from '../components/Document';
+import InfoCircleIcon from '../components/InfoCircle';
 import EyeIcon from '../components/Eye';
-import InfoCircle from '../components/InfoCircle';
 import EyeSlashIcon from '../components/EyeSlash';
 import PeopleIcon from '../components/People';
 import LauncherIcon from '../components/Launcher';
@@ -21,25 +23,27 @@ import AdminIcon from '../components/Admin';
 import NotificationIcon from '../components/Notification';
 
 export const icon = {
+  admin: AdminIcon,
   calendarTwo: CalendarIconTwo,
   chart: ChartIcon,
   clock: ClockIcon,
   close: CloseIcon,
+  document: DocumentIcon,
   dropdownArrow: DropdownArrowIcon,
   edit: EditIcon,
+  explore: ExploreIcon,
   eye: EyeIcon,
   eyeSlash: EyeSlashIcon,
   feed: FeedIcon,
   filter: FilterIcon,
   home: HomeIcon,
   image: ImageIcon,
-  infoCircle: InfoCircle,
+  infoCircle: InfoCircleIcon,
   launcher: LauncherIcon,
   magicStar: MagicStarIcon,
   more: MoreIcon,
+  notification: NotificationIcon,
   people: PeopleIcon,
   user: UsersIcon,
-  explore: ExploreIcon,
-  admin: AdminIcon,
-  notification: NotificationIcon,
+  video: VideoIcon,
 };

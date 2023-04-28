@@ -6,41 +6,33 @@ type IconProps = {
   stroke?: string;
 };
 
-const SvgInfoCircleOutline = ({
+const SvgEyeOutline = ({
   size = 24,
   stroke = '#737373',
   ...props
 }: SVGProps<SVGSVGElement> & IconProps) => (
   <svg
+    xmlns="http://www.w3.org/2000/svg"
     width={size}
     height={size}
-    viewBox="0 0 24 24"
     {...props}
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
       stroke={stroke}
-      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M10.39 8a2.384 2.384 0 0 1-2.386 2.387A2.384 2.384 0 0 1 5.617 8a2.384 2.384 0 0 1 2.387-2.387A2.384 2.384 0 0 1 10.39 8Z"
     />
     <path
-      d="M12 8V13"
       stroke={stroke}
-      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-    />
-    <path
-      d="M11.9946 16H12.0036"
-      stroke={stroke}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M8 13.513c2.353 0 4.547-1.386 6.073-3.786.6-.94.6-2.52 0-3.46C12.547 3.867 10.353 2.48 8 2.48S3.453 3.867 1.927 6.267c-.6.94-.6 2.52 0 3.46 1.526 2.4 3.72 3.786 6.073 3.786Z"
     />
   </svg>
 );
 
-export default SvgInfoCircleOutline;
+export default SvgEyeOutline;

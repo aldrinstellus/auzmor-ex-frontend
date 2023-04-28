@@ -1,7 +1,7 @@
 import React from 'react';
 import useHover from 'hooks/useHover';
-import { default as ImageFilled } from './ImageFilled';
-import { default as ImageOutline } from './ImageOutline';
+import { default as DocumentFilled } from './DocumentFilled';
+import { default as DocumentOutline } from './DocumentOutline';
 
 type IconProps = {
   size?: number;
@@ -10,7 +10,7 @@ type IconProps = {
   onClick?: () => void;
 };
 
-const ImageIcon: React.FC<IconProps> = ({
+const DocumentIcon: React.FC<IconProps> = ({
   hover = true,
   onClick,
   className = '',
@@ -21,12 +21,12 @@ const ImageIcon: React.FC<IconProps> = ({
   return (
     <div onClick={onClick} className={className} {...eventHandlers}>
       {hover && isHovered ? (
-        <ImageFilled {...props} />
+        <DocumentFilled {...props} />
       ) : (
-        <ImageOutline {...props} />
+        <DocumentOutline {...props} />
       )}
     </div>
   );
 };
 
-export default ImageIcon;
+export default DocumentIcon;
