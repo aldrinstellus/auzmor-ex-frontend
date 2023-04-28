@@ -9,6 +9,8 @@ import { deleteUser } from 'queries/users';
 import ConfirmationBox from 'components/ConfirmationBox';
 import _ from 'lodash';
 
+import queryClient, { getRelatedCacheKeys } from 'utils/queryClient';
+
 export interface IUserCardProps {
   id: string;
   status: string;
@@ -33,6 +35,13 @@ const statusColorMap: Record<string, string> = {
   [Status.Owner]: '#171717',
 };
 
+export function updateFn(old: any, id: any) {
+  function matchesId(object: any) {
+    return object.id === id;
+  }
+  old.result.data.splice(old.result.data.findIndex(matchesId), 1);
+}
+
 const UserCard: React.FC<IUserCardProps> = ({
   id,
   status,
@@ -56,6 +65,11 @@ const UserCard: React.FC<IUserCardProps> = ({
     onSuccess: (data, variables, context) => {
       setShowDeleteModal(false);
       alert('Successfully Deleted');
+
+      const keys = getRelatedCacheKeys(queryClient, 'users');
+      keys.forEach((key) => {
+        queryClient.setQueryData(key, (old: any) => updateFn(old, id));
+      });
     },
   });
 
