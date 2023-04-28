@@ -4,13 +4,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Layout, FieldType } from '@auzmorui/component-library.components.form';
-import { Variant as InputVariant } from '@auzmorui/component-library.components.input';
+import Layout, { FieldType } from 'components/Form';
+import { Variant as InputVariant } from 'components/Input';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
+import { UseFormGetValues, useForm } from 'react-hook-form';
 import Button, { Variant } from 'components/Button';
-import { Divider } from '@auzmorui/component-library.components.divider';
+import Divider from 'components/Divider';
 import File from '../../../images/file.svg';
 import { inviteUsers } from 'queries/users';
 import { useMutation } from '@tanstack/react-query';
@@ -51,7 +51,7 @@ const AddUsers: React.FC<IAddUsersProps> = ({
       .string()
       .email('Please enter valid email address')
       .required('Please enter Email'),
-    role: yup.string().required('Please enter role'),
+    role: yup.object().required('please enter role'),
   });
   const {
     control,
@@ -89,16 +89,22 @@ const AddUsers: React.FC<IAddUsersProps> = ({
       onChange: (data: string, e: React.ChangeEvent) => {},
     },
     {
-      type: FieldType.Input,
-      variant: InputVariant.Text,
-      className: 'w-[25%]',
-      placeholder: 'Select Role',
+      type: FieldType.Select,
       name: 'role',
-      label: 'Role',
-      error: errors.role?.message,
       control,
+
       getValues,
-      onChange: (data: string, e: React.ChangeEvent) => {},
+      label: 'Role',
+      placeholder: 'member',
+      error: errors.role?.message,
+      options: [
+        { value: ' MEMBER', label: 'Member' },
+        { value: 'ADMIN', label: 'Admin' },
+        { value: 'SUPERADMIN', label: 'SuperAdmin' },
+      ],
+      onChange: (data: UseFormGetValues<any>, e: React.ChangeEvent) => {
+        console.log(data);
+      },
     },
   ];
 
@@ -131,7 +137,7 @@ const AddUsers: React.FC<IAddUsersProps> = ({
 
   const onSubmit = async (data: any) => {
     const users = [];
-
+    data.role = data.role.value;
     users.push(data);
 
     inviteUsersMutation.mutate({

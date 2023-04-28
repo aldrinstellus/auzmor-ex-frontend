@@ -7,7 +7,7 @@ type IconProps = {
 };
 
 const SvgConvertShapeFilled = ({
-  size = 20,
+  size = 12,
   stroke = '#737373',
   ...props
 }: SVGProps<SVGSVGElement> & IconProps) => (
@@ -15,9 +15,9 @@ const SvgConvertShapeFilled = ({
     width={size}
     height={size}
     viewBox="0 0 20 20"
-    fill="none"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
+    fill="none"
   >
     <path
       d="M9.16406 13.457V15.707C9.16406 17.582 8.41406 18.332 6.53906 18.332H4.28906C2.41406 18.332 1.66406 17.582 1.66406 15.707V13.457C1.66406 11.582 2.41406 10.832 4.28906 10.832H6.53906C8.41406 10.832 9.16406 11.582 9.16406 13.457Z"

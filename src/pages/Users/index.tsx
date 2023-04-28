@@ -52,30 +52,6 @@ const Users: React.FC<IUsersProps> = () => {
     },
   ];
 
-  const footerMapErrorModalButtons = [
-    {
-      id: 1,
-      label: 'Cancel',
-      disabled: false,
-      className:
-        '!py-2 !px-4 !text-neutral-900 !bg-white !rounded-[24px] border',
-      onClick: () => {
-        setOpenErrorModal(false);
-      },
-    },
-    {
-      id: 2,
-      label: 'Try Again',
-      disabled: false,
-      className:
-        '!py-2 !px-4 !bg-primary-500 !text-white !rounded-[24px] border',
-      onClick: () => {
-        setOpenErrorModal(false);
-        setShowAddUserModal(true);
-      },
-    },
-  ];
-
   if (isLoading) {
     return <div>Loader...</div>;
   }
