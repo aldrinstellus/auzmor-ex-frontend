@@ -42,7 +42,6 @@ const navigations = [
 const Navbar = () => {
   return (
     <header className="sticky top-0 z-40">
-      {/* add media query classes - make it responsiveness */}
       <div className="bg-white shadow h-16 w-full flex items-center justify-center px-8">
         <Link to="/">
           <Logo />
