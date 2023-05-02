@@ -81,19 +81,18 @@ const Users: React.FC<IUsersProps> = () => {
         </div>
       </div>
       <Modal
-        wMax="max-w-2xl"
+        className="max-w-2xl"
         open={showAddUserModal}
         closeModal={() => setShowAddUserModal(false)}
-        title="Invite new people to your organization"
-        body={
+      >
+        <div>
+          <div>Invite new people to your organization</div>
           <AddUsers
             reference={formRef}
             setOpenError={setOpenErrorModal}
             setOpen={setShowAddUserModal}
             setButtonState={setButtonState}
           />
-        }
-        footer={
           <div className="flex justify-end items-center h-16 p-6">
             {footerMapButtons.map((type) => (
               <div className="mr-4" key={type.id}>
@@ -107,8 +106,8 @@ const Users: React.FC<IUsersProps> = () => {
               </div>
             ))}
           </div>
-        }
-      />
+        </div>
+      </Modal>
 
       <ConfirmationBox
         open={openErrorModal}
