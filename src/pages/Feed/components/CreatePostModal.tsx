@@ -192,7 +192,14 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
 
   return (
     <div>
-      <Modal
+      <Modal open={showModal} closeModal={() => setShowModal(false)}>
+        <div>
+          {createPostMap[activeFlow].title}
+          {createPostMap[activeFlow].body}
+          {createPostMap[activeFlow].footer}
+        </div>
+      </Modal>
+      {/* <Modal
         open={showModal}
         closeModal={() => setShowModal(false)}
         title={createPostMap[activeFlow].title}
@@ -200,7 +207,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         footer={createPostMap[activeFlow].footer}
         showBackIcon={createPostMap[activeFlow].showBackIcon || false}
         onBackIconClick={createPostMap[activeFlow].onBackIconClick}
-      />
+      /> */}
     </div>
   );
 };
