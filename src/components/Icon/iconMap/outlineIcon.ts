@@ -18,6 +18,9 @@ import SvgUserOutline from '../components/Users/UsersOutline';
 import SvgSpeakerOutline from '../components/Speaker/SpeakerOutline';
 import SvgDraftOutline from '../components/Draft/DraftOutline';
 import SvgArrowLeftOutline from '../components/ArrowLeft/ArrowLeftOutline';
+import SvgSendOutline from '../components/Send/SendOutline';
+import SvgIconLinearOutline from '../components/IconLinear/IconLinearOutline';
+import SvgEmojiHappyOutline from '../components/EmojiHappy/EmojiHappyOutline';
 
 export const outlineIcon = {
   arrowLeftOutline: SvgArrowLeftOutline,
@@ -40,4 +43,7 @@ export const outlineIcon = {
   convertShapeOutline: SvgConvertShapeOutline,
   userOutline: SvgUserOutline,
   videoOutline: SvgVideoOutline,
+  sendOutline: SvgSendOutline,
+  iconLinearOutline: SvgIconLinearOutline,
+  emojiHappyOutline: SvgEmojiHappyOutline,
 };

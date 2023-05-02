@@ -73,6 +73,7 @@ const Comments: React.FC<CommentsProps> = ({}) => {
         <CommentForm
           handleSubmit={addComment}
           setReplyInputBox={setReplyInputBox}
+          className="w-[100%]"
         />
       </div>
       <div className="border-b border-neutral-200 my-4"></div>

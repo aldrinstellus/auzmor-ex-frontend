@@ -21,6 +21,9 @@ import SvgUsersFilled from '../components/Users/UsersFilled';
 import SvgSpeakerFilled from '../components/Speaker/SpeakerFilled';
 import SvgDraftFilled from '../components/Draft/DraftFilled';
 import SvgArrowLeftFilled from '../components/ArrowLeft/ArrowLeftFilled';
+import SvgSendFilled from '../components/Send/SendFilled';
+import SvgIconLinearFilled from '../components/IconLinear/IconLinearFilled';
+import SvgEmojiHappyFilled from '../components/EmojiHappy/EmojiHappyFilled';
 
 export const filledIcon = {
   arrowLeftFilled: SvgArrowLeftFilled,
@@ -46,4 +49,7 @@ export const filledIcon = {
   convertShapeFilled: SvgConvertShapeFilled,
   userFilled: SvgUsersFilled,
   videoFilled: SvgVideoFilled,
+  sendFilled: SvgSendFilled,
+  iconLinearFilled: SvgIconLinearFilled,
+  emojiHappyFilled: SvgEmojiHappyFilled,
 };

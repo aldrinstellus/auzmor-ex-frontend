@@ -27,6 +27,9 @@ import NotificationIcon from '../components/Notification';
 import SpeakerIcon from '../components/Speaker';
 import DraftIcon from '../components/Draft';
 import ArrowLeftIcon from '../components/ArrowLeft';
+import Send from '../components/Send';
+import IconLinear from '../components/IconLinear';
+import EmojiHappy from '../components/EmojiHappy';
 
 export const icon = {
   admin: AdminIcon,
@@ -58,4 +61,7 @@ export const icon = {
   convertShape: ConvertShape,
   user: UsersIcon,
   video: VideoIcon,
+  send: Send,
+  iconLinear: IconLinear,
+  emojiHappy: EmojiHappy,
 };
