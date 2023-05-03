@@ -26,7 +26,7 @@ const Post: React.FC<PostProps> = ({ data }) => {
   const content: DeltaStatic = data?.content?.editor;
 
   return (
-    <Card className="mt-5">
+    <Card>
       <Actor
         visibility="Everyone"
         contentMode={VIEW_POST}
