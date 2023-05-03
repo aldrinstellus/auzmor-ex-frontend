@@ -6,11 +6,13 @@ import ClosePreview from './ClosePreview';
 type ImagePreviewProps = {
   metaData: Metadata;
   setShowPreview: (show: boolean) => void;
+  setLinkValues: (links: string[]) => void;
 };
 
 const ImagePreview: React.FC<ImagePreviewProps> = ({
   metaData,
   setShowPreview,
+  setLinkValues,
 }) => {
   return (
     <Card className="mx-6 mb-9">
@@ -22,7 +24,10 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
           alt={metaData?.title}
           className="w-full h-40 rounded-md object-cover"
         />
-        <ClosePreview setShowPreview={setShowPreview} />
+        <ClosePreview
+          setShowPreview={setShowPreview}
+          setLinkValues={setLinkValues}
+        />
       </div>
       <div className="flex flex-col bg-neutral-50 p-4">
         <div className="font-bold text-sm text-neutral-900">

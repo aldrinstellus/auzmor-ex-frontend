@@ -6,15 +6,32 @@ import IconPreview from './components/IconPreview';
 export type PreviewLinkProps = {
   link: string[];
   setShowPreview: (show: boolean) => void;
+  setLinkValues: (links: string[]) => void;
 };
 
-const PreviewLink: React.FC<PreviewLinkProps> = ({ link, setShowPreview }) => {
+const PreviewLink: React.FC<PreviewLinkProps> = ({
+  link,
+  setShowPreview,
+  setLinkValues,
+}) => {
   const { data, isLoading } = usePreviewLink(link[0]);
   const preview = useMemo(() => {
     if (data?.open_graph?.images && data?.open_graph?.images.length > 0) {
-      return <ImagePreview metaData={data} setShowPreview={setShowPreview} />;
+      return (
+        <ImagePreview
+          metaData={data}
+          setShowPreview={setShowPreview}
+          setLinkValues={setLinkValues}
+        />
+      );
     } else if (data?.favicon) {
-      return <IconPreview metaData={data} setShowPreview={setShowPreview} />;
+      return (
+        <IconPreview
+          metaData={data}
+          setShowPreview={setShowPreview}
+          setLinkValues={setLinkValues}
+        />
+      );
     } else if (isLoading) {
       return (
         <div className="flex justify-center items-center mb-14">

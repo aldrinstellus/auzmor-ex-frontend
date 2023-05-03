@@ -146,7 +146,11 @@ const RichTextEditor: React.FC<QuillEditorProps> = ({
         </div>
       )}
       {showPreview ? (
-        <PreviewLink link={linkValues} setShowPreview={setShowPreview} />
+        <PreviewLink
+          link={linkValues}
+          setShowPreview={setShowPreview}
+          setLinkValues={setLinkValues}
+        />
       ) : null}
       <Toolbar isCharLimit={isCharLimit} />
     </>
