@@ -18,9 +18,11 @@ import { DeltaStatic } from 'quill';
 interface ICreatePostProps {
   closeModal: () => void;
   handleSubmitPost: (content: IEditorValue) => void;
+  data?: Record<string, any>;
 }
 
 const CreatePost: React.FC<ICreatePostProps> = ({
+  data,
   closeModal,
   handleSubmitPost,
 }) => {
@@ -49,7 +51,9 @@ const CreatePost: React.FC<ICreatePostProps> = ({
         <RichTextEditor
           placeholder="What’s on your mind?"
           className="max-h-64 overflow-y-auto min-h-[128px]"
-          defaultValue={editorValue.json as DeltaStatic}
+          defaultValue={
+            data?.content?.editor || (editorValue.json as DeltaStatic)
+          }
           ref={quillRef}
         />
       </div>
