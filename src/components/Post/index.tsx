@@ -11,6 +11,7 @@ import { Likes } from 'components/Likes';
 import { RenderQuillDelta } from 'components/RenderQuillDelta';
 import { DeltaStatic } from 'quill';
 import FeedPostMenu from './components/FeedPostMenu';
+import clsx from 'clsx';
 
 type PostProps = {
   data: Record<string, any>;
@@ -25,13 +26,21 @@ const Post: React.FC<PostProps> = ({ data }) => {
 
   const content: DeltaStatic = data?.content?.editor;
 
+  const isAnnouncement = data?.isAnnouncement;
+
+  const cardBorder = clsx(
+    { 'rounded-9xl': !isAnnouncement },
+    { 'rounded-b-9xl': isAnnouncement },
+    { 'mt-5': true },
+  );
+
   return (
-    <Card className="mt-5">
+    <Card className={cardBorder}>
       <div className="flex justify-between items-center">
         <Actor
           visibility="Everyone"
           contentMode={VIEW_POST}
-          createdTime="10 mins ago"
+          createdTime={data?.createdAt}
         />
         <div className="relative">
           <FeedPostMenu data={data} />

@@ -33,6 +33,7 @@ import CopyLink from '../components/CopyLinkIcon';
 import DeleteIcon from '../components/DeleteIcon';
 import MenuEditIcon from '../components/MenuEditIcon';
 import MenuNotificationIcon from '../components/MenuNotificationIcon';
+import FlashIcon from '../components/FlashIcon';
 
 export const icon = {
   admin: AdminIcon,
@@ -70,4 +71,5 @@ export const icon = {
   deleteIcon: DeleteIcon,
   editIcon: MenuEditIcon,
   notificationIcon: MenuNotificationIcon,
+  flashIcon: FlashIcon,
 };
