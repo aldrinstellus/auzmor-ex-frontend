@@ -1,7 +1,7 @@
 import apiService from 'utils/apiService';
 import { useQuery } from '@tanstack/react-query';
 
-interface ICreatePost {
+interface IPost {
   content: {
     text: string;
     html: string;
@@ -26,8 +26,11 @@ interface ICreatePost {
     end: string;
   };
 }
+interface IDeletePost {
+  id: string;
+}
 
-export const createPost = async (payload: ICreatePost) => {
+export const createPost = async (payload: IPost) => {
   const data = await apiService.post('/posts', payload);
   return data;
 };
@@ -48,4 +51,15 @@ export const usePreviewLink = (previewUrl: string) => {
     queryFn: () => getPreviewLink(previewUrl),
     staleTime: Infinity,
   });
+};
+
+export const editPost = async (id: string, payload: IPost) => {
+  const data = await apiService.put(`/posts/${id}`, payload);
+  return data;
+};
+
+export const deletePost = async (id: string) => {
+  const data = await apiService.delete(`/posts/${id}`);
+  console.log(data, 'API');
+  return data;
 };

@@ -7,6 +7,7 @@ import CreatePostModal from '../../components/PostBuilder/components/CreatePostM
 import { IMenuItem } from 'components/PopupMenu';
 import { twConfig } from 'utils/misc';
 import { useLoaderData } from 'react-router-dom';
+import Divider, { Variant } from 'components/Divider';
 import CreatePostProvider from 'contexts/CreatePostContext';
 import PostBuilder from 'components/PostBuilder';
 
@@ -23,6 +24,7 @@ export interface IPostTypeIcon {
   label: string;
   icon: ReactNode;
   menuItems: IMenuItem[];
+  divider?: ReactNode;
 }
 export interface IFeed {
   content: IContent;
@@ -44,7 +46,7 @@ export const postTypeMapIcons: IPostTypeIcon[] = [
           <div className="flex px-6 py-3 items-center hover:bg-primary-50">
             <Icon
               name="image"
-              size={16}
+              size={10}
               className="p-2 rounded-7xl border mr-2.5 bg-white"
               fill={twConfig.theme.colors.primary['500']}
             />
@@ -85,18 +87,21 @@ export const postTypeMapIcons: IPostTypeIcon[] = [
         ),
       },
     ],
+    divider: <Divider variant={Variant.Vertical} />,
   },
   {
     id: 2,
     label: 'Shoutout',
     icon: <Icon name="magicStarFilled" fill="#000000" size={14} />,
     menuItems: [],
+    divider: <Divider variant={Variant.Vertical} />,
   },
   {
     id: 3,
     label: 'Events',
     icon: <Icon name="calendarFilledTwo" fill="#000000" size={14} />,
     menuItems: [],
+    divider: <Divider variant={Variant.Vertical} />,
   },
   {
     id: 4,
@@ -107,7 +112,7 @@ export const postTypeMapIcons: IPostTypeIcon[] = [
 ];
 
 const Feed: React.FC<IFeedProps> = () => {
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const rawFeedData: any = useLoaderData();
   const feed: IFeed[] = rawFeedData.data.map((data: any) => {
     return {
@@ -115,13 +120,14 @@ const Feed: React.FC<IFeedProps> = () => {
         ...data.content,
         editor: JSON.parse(data.content.editor),
       },
-      uuid: data.uuid,
+      uuid: data.id,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
       type: data.type,
       isAnnouncement: data.isAnnouncement,
     } as IFeed;
   });
+
   return (
     <div className="flex flex-col">
       <CreatePostCard setShowModal={setShowModal} />

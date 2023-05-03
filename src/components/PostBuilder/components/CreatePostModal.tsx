@@ -13,11 +13,13 @@ import {
 interface ICreatePostModal {
   showModal: boolean;
   setShowModal: (flag: boolean) => void;
+  data?: any;
 }
 
 const CreatePostModal: React.FC<ICreatePostModal> = ({
   showModal,
   setShowModal,
+  data = '',
 }) => {
   const { activeFlow, announcement, editorValue } =
     useContext(CreatePostContext);
@@ -56,6 +58,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     <Modal open={showModal} closeModal={() => setShowModal(false)}>
       {activeFlow === CreatePostFlow.CreatePost && (
         <CreatePost
+          data={data}
           closeModal={() => setShowModal(false)}
           handleSubmitPost={handleSubmitPost}
         />
