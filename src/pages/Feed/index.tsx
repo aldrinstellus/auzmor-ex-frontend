@@ -113,13 +113,14 @@ const Feed: React.FC<IFeedProps> = () => {
         ...data.content,
         editor: JSON.parse(data.content.editor),
       },
-      uuid: data.uuid,
+      uuid: data.id,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
       type: data.type,
       isAnnouncement: data.isAnnouncement,
     } as IFeed;
   });
+
   return (
     <div className="flex flex-col">
       <CreatePostCard setShowModal={setShowModal} />

@@ -10,9 +10,11 @@ import Commentspage from 'components/Comments/index';
 import { Likes } from 'components/Likes';
 import { RenderQuillDelta } from 'components/RenderQuillDelta';
 import { DeltaStatic } from 'quill';
+import FeedPostMenu from 'components/FeedPostMenu';
 
 type PostProps = {
   data: DeltaStatic;
+  id: string;
 };
 
 const Post: React.FC<PostProps> = (props: PostProps) => {
@@ -24,13 +26,18 @@ const Post: React.FC<PostProps> = (props: PostProps) => {
 
   return (
     <Card className="bg-white rounded-9xl mt-5">
-      <Actor
-        avatar="https://png.pngtree.com/png-clipart/20210619/ourlarge/pngtree-instagram-lady-social-media-flat-style-avatar-png-image_3483977.jpg"
-        actorName="Sam Fields"
-        visibility="Everyone"
-        contentMode={VIEW_POST}
-        createdTime="10 mins ago"
-      />
+      <div className="flex justify-between items-center">
+        <Actor
+          avatar="https://png.pngtree.com/png-clipart/20210619/ourlarge/pngtree-instagram-lady-social-media-flat-style-avatar-png-image_3483977.jpg"
+          actorName="Sam Fields"
+          visibility="Everyone"
+          contentMode={VIEW_POST}
+          createdTime="10 mins ago"
+        />
+        <div className="relative">
+          <FeedPostMenu id={props?.id} />
+        </div>
+      </div>
       <div className="mx-6">
         {/* Post Content */}
         <RenderQuillDelta delta={props?.data as DeltaStatic} />

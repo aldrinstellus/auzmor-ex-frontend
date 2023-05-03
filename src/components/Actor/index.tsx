@@ -1,8 +1,7 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import Avatar from 'components/Avatar';
 import Earth from 'images/earth.svg';
 import { CREATE_POST, VIEW_POST } from './constant';
-import FeedPostMenu from 'components/FeedPostMenu';
 
 type ActorProps = {
   avatar: string;
@@ -45,8 +44,8 @@ const Actor: React.FC<ActorProps> = ({
         </div>
       </div>
       {/* post visibility - dropdown */}
-      <div className="relative">
-        {contentMode === CREATE_POST ? (
+      <div>
+        {contentMode === CREATE_POST && (
           <div className="flex justify-between items-center border border-neutral-300 rounded-17xl py-1.5 px-3">
             <div>
               <img src={Earth} height={13.33} width={13.33} />
@@ -55,8 +54,6 @@ const Actor: React.FC<ActorProps> = ({
               {visibility}
             </div>
           </div>
-        ) : (
-          <FeedPostMenu id="" />
         )}
       </div>
     </div>

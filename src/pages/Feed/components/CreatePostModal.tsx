@@ -51,24 +51,6 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     },
   });
 
-  // const editPostMutation = useMutation({
-  //   mutationKey: ['editPostMutation'],
-  //   mutationFn: editPost,
-  //   onError: (error) => console.log(error),
-  //   onSuccess: (data, variables, context) => {
-  //     console.log('data==>', data);
-  //   },
-  // });
-
-  // const deletePostMutation = useMutation({
-  //   mutationKey: ['deletePostMutation'],
-  //   mutationFn: deletePost,
-  //   onError: (error) => console.log(error),
-  //   onSuccess: (data, variables, context) => {
-  //     console.log('data==>', data);
-  //   },
-  // });
-
   const handleSubmitPost = () => {
     createPostMutation.mutate({
       content: {
@@ -82,7 +64,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       audience: {
         users: [],
       },
-      isAnnouncement: true,
+      isAnnouncement: false,
       announcement: {
         end: '',
       },
@@ -194,18 +176,6 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       showBackIcon: false,
       onBackIconClick: () => {},
     },
-    // [CreatePostFlow.EditPost]: {
-    //   title: 'Edit post',
-    //   body: (
-    //     <CreatePost
-    //       onChangeEditor={(content) => setEditorValue({ ...content })}
-    //       announcement={announcement}
-    //     />
-    //   ),
-    //   footer: <Footer />,
-    //   showBackIcon: false,
-    //   onBackIconClick: () => {},
-    // },
     [CreatePostFlow.CreateAnnouncement]: {
       title: 'Create an announcement',
       body: (

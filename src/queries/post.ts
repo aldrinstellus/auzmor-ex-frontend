@@ -20,7 +20,7 @@ interface ICreatePost {
   audience: {
     users: string[];
   };
-  isAnnouncement: true;
+  isAnnouncement: boolean;
   announcement: {
     end: string;
   };
@@ -51,7 +51,9 @@ interface IEditPost {
   };
 }
 
-interface IDeletePost {}
+interface IDeletePost {
+  id: string;
+}
 
 export const createPost = async (payload: ICreatePost) => {
   const data = await apiService.post('/posts', payload);
@@ -68,7 +70,8 @@ export const editPost = async (payload: IEditPost) => {
   return data;
 };
 
-export const deletePost = async (payload: IDeletePost) => {
-  const data = await apiService.delete('/posts', payload);
+export const deletePost = async (id: string) => {
+  const data = await apiService.delete(`/posts/${id}`);
+  console.log(data, 'API');
   return data;
 };

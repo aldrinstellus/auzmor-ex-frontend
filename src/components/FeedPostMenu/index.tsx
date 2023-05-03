@@ -2,16 +2,10 @@ import React, { ReactNode, useState } from 'react';
 import Icon from 'components/Icon';
 import PopupMenu, { IMenuItem } from 'components/PopupMenu';
 import { twConfig } from 'utils/misc';
-// import { editPost } from 'queries/post';
 import { useMutation } from '@tanstack/react-query';
-import CreatePostCard from 'pages/Feed/components/CreatePostCard';
-import ActivityFeed from 'components/ActivityFeed';
 import CreatePostModal from 'pages/Feed/components/CreatePostModal';
-import Feed from 'pages/Feed';
-import { divide } from 'lodash';
-import Modal from 'components/Modal';
 import ConfirmationBox from 'components/ConfirmationBox';
-import { deletePost } from 'queries/post';
+import { deletePost, editPost } from 'queries/post';
 
 export interface IFeedPostMenuProps {
   id: string;
@@ -21,12 +15,22 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ id }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
+  const editPostMutation = useMutation({
+    mutationKey: ['editPostMutation'],
+    mutationFn: editPost,
+    onError: (error) => console.log(error),
+    onSuccess: (data, variables, context) => {
+      console.log('data==>', data);
+    },
+  });
+
   const deletePostMutation = useMutation({
     mutationKey: ['deletePostMutation', id],
     mutationFn: deletePost,
     onError: (error) => console.log(error),
     onSuccess: (data, variables, context) => {
       console.log('data==>', data);
+      setShowDeleteModal(false);
     },
   });
 
@@ -139,9 +143,10 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ id }) => {
         }
         menuItems={postOptions}
       />
-      <Modal open={showModal} closeModal={() => setShowModal(false)}>
-        <div>Hello</div>
-      </Modal>
+      <CreatePostModal
+        showModal={showModal}
+        setShowModal={() => setShowModal(false)}
+      />
       <ConfirmationBox
         open={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
