@@ -47,8 +47,7 @@ const RichTextEditor = React.forwardRef(
     const { announcement, setActiveFlow, setEditorValue } =
       useContext(CreatePostContext);
     const [isCharLimit, setIsCharLimit] = useState<boolean>(false);
-    const [linkValues, setLinkValues] = useState<string[]>([]);
-    const [showPreview, setShowPreview] = useState<boolean>(false);
+    const [previewUrl, setPreviewUrl] = useState<string[]>([]);
 
     const formats = ['bold', 'italic', 'underline', 'mention', 'link', 'emoji'];
 
@@ -97,12 +96,9 @@ const RichTextEditor = React.forwardRef(
       }
       const matches = editor.getText().match(previewLinkRegex);
       if (matches) {
-        const uniqueMatches = [...new Set(matches)];
-        setLinkValues(uniqueMatches);
-        setShowPreview(true);
+        setPreviewUrl(matches);
       } else {
-        setLinkValues([]);
-        setShowPreview(false);
+        setPreviewUrl([]);
       }
     };
 
@@ -171,15 +167,7 @@ const RichTextEditor = React.forwardRef(
             </div>
           </div>
         )}
-
-        {showPreview ? (
-          <PreviewLink
-            link={linkValues}
-            setShowPreview={setShowPreview}
-            setLinkValues={setLinkValues}
-          />
-        ) : null}
-
+        <PreviewLink previewUrl={previewUrl} setPreviewUrl={setPreviewUrl} />
         <Toolbar isCharLimit={isCharLimit} />
       </>
     );

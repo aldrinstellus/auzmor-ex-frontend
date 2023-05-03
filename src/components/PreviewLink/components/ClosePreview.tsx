@@ -1,25 +1,24 @@
-import Icon from 'components/Icon';
 import React from 'react';
+import IconButton, {
+  Variant as IconVariant,
+  Size,
+} from 'components/IconButton';
 
 type ClosePreviewProps = {
-  setShowPreview: (show: boolean) => void;
-  setLinkValues: (links: string[]) => void;
+  setPreviewUrl: (previewUrl: string[]) => void;
 };
 
-const ClosePreview: React.FC<ClosePreviewProps> = ({
-  setShowPreview,
-  setLinkValues,
-}) => {
+const ClosePreview: React.FC<ClosePreviewProps> = ({ setPreviewUrl }) => {
   return (
-    <button
+    <IconButton
+      icon="closeOutline"
       className="absolute top-0 right-0 bg-white border-1 border-neutral-200 border-solid rounded-7xl m-4 p-2"
+      variant={IconVariant.Secondary}
+      size={Size.Small}
       onClick={() => {
-        setShowPreview(false);
-        setLinkValues([]);
+        setPreviewUrl([]);
       }}
-    >
-      <Icon name="closeOutline" size={10} fill="#171717" />
-    </button>
+    />
   );
 };
 

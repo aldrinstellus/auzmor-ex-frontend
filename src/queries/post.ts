@@ -38,8 +38,8 @@ export const getPosts = async () => {
 };
 
 export const getPreviewLink = async (previewUrl: string) => {
-  const data = await apiService.get(`links/unfurl?url=${previewUrl}`);
-  return data?.data;
+  const { data } = await apiService.get(`links/unfurl?url=${previewUrl}`);
+  return data;
 };
 
 export const usePreviewLink = (previewUrl: string) => {
