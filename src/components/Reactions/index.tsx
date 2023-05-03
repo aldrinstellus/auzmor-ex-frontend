@@ -13,6 +13,7 @@ interface LikesProps {
   entityId: string;
   entityType: string;
   reactionId: string;
+  setReaction: (reaction: string) => void;
 }
 
 export const Likes: React.FC<LikesProps> = ({
@@ -20,6 +21,7 @@ export const Likes: React.FC<LikesProps> = ({
   entityId,
   entityType,
   reactionId,
+  setReaction,
 }) => {
   const nameStyle = clsx(
     {
@@ -48,11 +50,11 @@ export const Likes: React.FC<LikesProps> = ({
   const reactionIconMap: { [key: string]: any } = {
     like: 'blueLike',
     support: 'support',
-    Like: 'like',
     celebrate: 'celebrate',
     love: 'love',
     funny: 'funny',
     insightful: 'insightful',
+    Like: 'like',
   };
   const reactionNameMap: { [key: string]: any } = {
     like: 'Like',
@@ -61,6 +63,7 @@ export const Likes: React.FC<LikesProps> = ({
     love: 'Love',
     funny: 'Funny',
     insightful: 'Insightful',
+    Like: 'like',
   };
   const nameIcon = reactionIconMap[reaction];
 
@@ -101,6 +104,7 @@ export const Likes: React.FC<LikesProps> = ({
       entityType: entityType,
     };
     deleteReactionMutation.mutate(data);
+    setReaction('Like');
   };
 
   return (
@@ -129,6 +133,7 @@ export const Likes: React.FC<LikesProps> = ({
                 className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
                 onClick={() => {
                   submitReaction('like');
+                  setReaction('like');
                 }}
                 variant={IconVariant.Primary}
                 size={SizeVariant.Large}
@@ -143,6 +148,7 @@ export const Likes: React.FC<LikesProps> = ({
                 className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
                 onClick={() => {
                   submitReaction('love');
+                  setReaction('like');
                 }}
                 variant={IconVariant.Primary}
                 size={SizeVariant.Large}
@@ -157,6 +163,7 @@ export const Likes: React.FC<LikesProps> = ({
                 className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
                 onClick={() => {
                   submitReaction('celebrate');
+                  setReaction('celebrate');
                 }}
                 variant={IconVariant.Primary}
                 size={SizeVariant.Large}
@@ -171,6 +178,7 @@ export const Likes: React.FC<LikesProps> = ({
                 className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
                 onClick={() => {
                   submitReaction('support');
+                  setReaction('support');
                 }}
                 variant={IconVariant.Primary}
                 size={SizeVariant.Large}
@@ -185,6 +193,7 @@ export const Likes: React.FC<LikesProps> = ({
                 className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
                 onClick={() => {
                   submitReaction('funny');
+                  setReaction('funny');
                 }}
                 variant={IconVariant.Primary}
                 size={SizeVariant.Large}
@@ -199,6 +208,7 @@ export const Likes: React.FC<LikesProps> = ({
                 className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
                 onClick={() => {
                   submitReaction('insightful');
+                  setReaction('insightful');
                 }}
                 variant={IconVariant.Primary}
                 size={SizeVariant.Large}

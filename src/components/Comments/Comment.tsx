@@ -79,6 +79,7 @@ export const Comment: React.FC<CommentProps> = ({
         <div className="flex justify-between pt-4 pb-6">
           <div className="flex">
             <Likes
+              setReaction={setReaction}
               reaction={reaction}
               entityId=""
               entityType="comment"

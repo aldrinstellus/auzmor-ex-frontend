@@ -1,8 +1,6 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import Card from 'components/Card';
-
 import Comments from 'images/comments.svg';
-
 import Actor from 'components/Actor';
 import { VIEW_POST } from 'components/Actor/constant';
 import Commentspage from 'components/Comments/index';
@@ -78,6 +76,7 @@ const Post: React.FC<PostProps> = ({ data, id }) => {
               entityId={id}
               entityType="post"
               reactionId={reactionId}
+              setReaction={setReaction}
             />
 
             <button className="flex items-center ml-7">
