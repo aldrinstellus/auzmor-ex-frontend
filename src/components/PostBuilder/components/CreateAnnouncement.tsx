@@ -9,7 +9,7 @@ import Button, {
   Type as ButtonType,
 } from 'components/Button';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
-import moment from 'moment';
+import { afterXUnit } from 'utils/time';
 
 export interface ICreateAnnouncementProps {
   closeModal: () => void;
@@ -81,25 +81,25 @@ const CreateAnnouncement: React.FC<ICreateAnnouncementProps> = ({
                   {
                     label: '1 Day',
                     value:
-                      moment().add(1, 'days').toISOString().substring(0, 19) +
+                      afterXUnit(1, 'days').toISOString().substring(0, 19) +
                       'Z',
                   },
                   {
                     label: '1 Week',
                     value:
-                      moment().add(1, 'weeks').toISOString().substring(0, 19) +
+                      afterXUnit(1, 'weeks').toISOString().substring(0, 19) +
                       'Z',
                   },
                   {
                     label: '2 Weeks',
                     value:
-                      moment().add(2, 'weeks').toISOString().substring(0, 19) +
+                      afterXUnit(2, 'weeks').toISOString().substring(0, 19) +
                       'Z',
                   },
                   {
                     label: '1 Month',
                     value:
-                      moment().add(1, 'months').toISOString().substring(0, 19) +
+                      afterXUnit(1, 'months').toISOString().substring(0, 19) +
                       'Z',
                   },
                   { label: 'Custom Date', value: '5Week' },

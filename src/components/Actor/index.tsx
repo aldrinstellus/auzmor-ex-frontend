@@ -16,16 +16,17 @@ const Actor: React.FC<ActorProps> = ({
   contentMode,
   createdTime,
 }) => {
-  const user = useAuth();
+  const { user } = useAuth();
+
   return (
     <div className={`flex justify-between items-center mx-6 mt-6 mb-4`}>
       <div className="flex items-center">
         <div>
-          <Avatar name={user?.user?.name || 'U'} size={32} />
+          <Avatar name={user?.name || 'U'} size={32} />
         </div>
         <div className="ml-3">
           <div className="font-bold text-sm text-neutral-900">
-            {user?.user?.name}
+            {user?.name}
             {contentMode === VIEW_POST ? (
               <span className="ml-1 text-sm font-normal text-neutral-900">
                 shared a post
