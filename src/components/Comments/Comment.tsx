@@ -42,6 +42,7 @@ export const Comment: React.FC<CommentProps> = ({
 
   const reaction = '';
   const reactionId = '';
+
   return (
     <div key={comment.id}>
       <div className={`flex flex-col mt-[16px] ${className}`}>

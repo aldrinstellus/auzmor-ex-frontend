@@ -44,10 +44,7 @@ export const useReactions = (q: IReactions) => {
 export const deleteReaction = async (payload: IDelete) => {
   const { entityId, entityType, id } = payload;
 
-  await apiService.delete(
-    `/reactions/${id}?entityId=${entityId}&entityType=${entityType}`,
-    {},
-  );
+  await apiService.delete(`/reactions/${id}`, { entityId, entityType });
 };
 
 export const getComments = async (payload: IComments) => {
