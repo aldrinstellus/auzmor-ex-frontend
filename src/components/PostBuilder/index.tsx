@@ -1,16 +1,24 @@
 import React from 'react';
 import CreatePostProvider from 'contexts/CreatePostContext';
 import CreatePostModal from './components/CreatePostModal';
+import { IFeed } from 'pages/Feed';
+
+enum PostBuilderMode {
+  Create = 'CREATE',
+  Edit = 'EDIT',
+}
 
 export interface IPostBuilderProps {
-  data?: Record<string, any>;
+  data?: IFeed;
   showModal: boolean;
   setShowModal: (flag: boolean) => void;
+  mode?: PostBuilderMode;
 }
 
 const PostBuilder: React.FC<IPostBuilderProps> = ({
-  data = {},
+  data,
   showModal,
+  mode = PostBuilderMode.Create,
   setShowModal,
 }) => {
   return (

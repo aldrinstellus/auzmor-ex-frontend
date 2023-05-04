@@ -9,17 +9,18 @@ import {
   CreatePostContext,
   IEditorValue,
 } from 'contexts/CreatePostContext';
+import { IFeed } from 'pages/Feed';
 
 interface ICreatePostModal {
   showModal: boolean;
   setShowModal: (flag: boolean) => void;
-  data?: any;
+  data?: IFeed;
 }
 
 const CreatePostModal: React.FC<ICreatePostModal> = ({
   showModal,
   setShowModal,
-  data = '',
+  data,
 }) => {
   const { activeFlow, announcement, editorValue } =
     useContext(CreatePostContext);
