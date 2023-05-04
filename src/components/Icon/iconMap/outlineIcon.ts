@@ -18,6 +18,7 @@ import SvgUserOutline from '../components/Users/UsersOutline';
 import SvgSpeakerOutline from '../components/Speaker/SpeakerOutline';
 import SvgDraftOutline from '../components/Draft/DraftOutline';
 import SvgArrowLeftOutline from '../components/ArrowLeft/ArrowLeftOutline';
+import SvgMailOutline from '../components/Mail/MailOutline';
 
 export const outlineIcon = {
   arrowLeftOutline: SvgArrowLeftOutline,
@@ -40,4 +41,5 @@ export const outlineIcon = {
   convertShapeOutline: SvgConvertShapeOutline,
   userOutline: SvgUserOutline,
   videoOutline: SvgVideoOutline,
+  mailOutline: SvgMailOutline,
 };

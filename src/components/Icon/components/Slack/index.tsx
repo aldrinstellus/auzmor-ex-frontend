@@ -1,6 +1,6 @@
 import React from 'react';
 import useHover from 'hooks/useHover';
-import { default as HashtagFilled } from './HashtagFilled';
+import { default as SlackFilled } from './SlackFilled';
 
 type IconProps = {
   size?: number;
@@ -9,7 +9,7 @@ type IconProps = {
   onClick?: () => void;
 };
 
-const OrangeHashtagIcon: React.FC<IconProps> = ({
+const SlackIcon: React.FC<IconProps> = ({
   hover,
   onClick,
   className = '',
@@ -19,9 +19,9 @@ const OrangeHashtagIcon: React.FC<IconProps> = ({
 
   return (
     <div onClick={onClick} className={className} {...eventHandlers}>
-      <HashtagFilled {...props} />
+      <SlackFilled {...props} />
     </div>
   );
 };
 
-export default OrangeHashtagIcon;
+export default SlackIcon;

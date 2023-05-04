@@ -36,8 +36,8 @@ export const MentionUserCard: React.FC<MentionUserCardProps> = (
           </span>
           <div className="flex items-center justify-between gap-x-11">
             <span className="flex items-center gap-x-3">
-              <CircularIcon name="magicStar" className="m-2" />
-              <CircularIcon name="people" className="m-2" />
+              <CircularIcon name="mail" className="m-2" />
+              <CircularIcon name="slack" className="m-2" />
               <CircularIcon name="convertShape" className="m-2" />
             </span>
             <span className="text-neutral-900 font-bold text-sm">

@@ -33,7 +33,9 @@ import CopyLink from '../components/CopyLinkIcon';
 import DeleteIcon from '../components/DeleteIcon';
 import MenuEditIcon from '../components/MenuEditIcon';
 import MenuNotificationIcon from '../components/MenuNotificationIcon';
-import OrangeHashtag from '../components/OrangeHashtag';
+import OrangeHashtagIcon from '../components/OrangeHashtag';
+import MailIcon from '../components/Mail';
+import SlackIcon from '../components/Slack';
 
 export const icon = {
   admin: AdminIcon,
@@ -71,5 +73,7 @@ export const icon = {
   deleteIcon: DeleteIcon,
   editIcon: MenuEditIcon,
   notificationIcon: MenuNotificationIcon,
-  orangeHashtag: OrangeHashtag,
+  orangeHashtag: OrangeHashtagIcon,
+  mail: MailIcon,
+  slack: SlackIcon,
 };

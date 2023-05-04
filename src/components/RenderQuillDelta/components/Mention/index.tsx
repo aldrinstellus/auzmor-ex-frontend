@@ -14,7 +14,7 @@ export const Mention: React.FC<MentionProps> = (
         <MentionUserCard
           fullName="Akshay Rajpurohit"
           email="akshay.r@auzmor.com"
-          className="absolute top-0 left-0 shadow-lg opacity-0 transition-opacity duration-200 hover:opacity-100"
+          className="absolute top-0 left-0 shadow-lg opacity-0 transition-opacity duration-200 hover:opacity-100 min-w-max"
         />
         <span contentEditable="false">
           <span className="ql-mention-denotation-char">{props?.value}</span>

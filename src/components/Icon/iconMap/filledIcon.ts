@@ -22,6 +22,7 @@ import SvgSpeakerFilled from '../components/Speaker/SpeakerFilled';
 import SvgDraftFilled from '../components/Draft/DraftFilled';
 import SvgArrowLeftFilled from '../components/ArrowLeft/ArrowLeftFilled';
 import SvgOrangeHashtagFilled from '../components/OrangeHashtag/HashtagFilled';
+import SvgSlackFilled from '../components/Slack/SlackFilled';
 
 export const filledIcon = {
   arrowLeftFilled: SvgArrowLeftFilled,
@@ -48,4 +49,5 @@ export const filledIcon = {
   userFilled: SvgUsersFilled,
   videoFilled: SvgVideoFilled,
   hashtagFilled: SvgOrangeHashtagFilled,
+  slackFilled: SvgSlackFilled,
 };
