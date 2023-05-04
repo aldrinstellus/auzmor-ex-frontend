@@ -1,15 +1,13 @@
 import React, { ReactNode, useState } from 'react';
 import { DeltaStatic } from 'quill';
 import ActivityFeed from 'components/ActivityFeed';
-import CreatePostCard from '../../components/PostBuilder/components/CreatePostCard';
 import Icon from 'components/Icon';
-import CreatePostModal from '../../components/PostBuilder/components/CreatePostModal';
 import { IMenuItem } from 'components/PopupMenu';
 import { twConfig } from 'utils/misc';
-import { useLoaderData } from 'react-router-dom';
+import { useInfiniteFeed } from 'queries/post';
 import Divider, { Variant } from 'components/Divider';
-import CreatePostProvider from 'contexts/CreatePostContext';
 import PostBuilder from 'components/PostBuilder';
+import CreatePostCard from 'components/PostBuilder/components/CreatePostCard';
 
 interface IFeedProps {}
 
@@ -26,13 +24,20 @@ export interface IPostTypeIcon {
   menuItems: IMenuItem[];
   divider?: ReactNode;
 }
+
+export interface ILiked {
+  id: string;
+  hasLike: string;
+}
+
 export interface IFeed {
   content: IContent;
-  uuid: string;
+  id: string;
   createdAt: string;
   updatedAt: string;
   type: string;
   isAnnouncement: boolean;
+  hasLike: ILiked;
 }
 
 export const postTypeMapIcons: IPostTypeIcon[] = [
@@ -113,25 +118,26 @@ export const postTypeMapIcons: IPostTypeIcon[] = [
 
 const Feed: React.FC<IFeedProps> = () => {
   const [showModal, setShowModal] = useState(false);
-  const rawFeedData: any = useLoaderData();
-  const feed: IFeed[] = rawFeedData.data.map((data: any) => {
-    return {
-      content: {
-        ...data.content,
-        editor: JSON.parse(data.content.editor),
-      },
-      uuid: data.id,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
-      type: data.type,
-      isAnnouncement: data.isAnnouncement,
-    } as IFeed;
-  });
+
+  const { isLoading, isError, error, data, fetchNextPage } = useInfiniteFeed();
+
+  const feed = data?.pages.flatMap((page) => {
+    return page.data?.result?.data.map((post: any) => {
+      try {
+        return post;
+      } catch (e) {
+        console.log('Error', { post });
+      }
+    });
+  }) as IFeed[];
 
   return (
     <div className="flex flex-col">
-      <CreatePostCard setShowModal={setShowModal} />
-      <ActivityFeed activityFeed={feed} />
+      <ActivityFeed
+        activityFeed={feed}
+        loadMore={fetchNextPage}
+        setShowModal={setShowModal}
+      />
       <PostBuilder showModal={showModal} setShowModal={setShowModal} />
     </div>
   );

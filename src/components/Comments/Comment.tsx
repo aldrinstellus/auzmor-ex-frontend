@@ -40,10 +40,8 @@ export const Comment: React.FC<CommentProps> = ({
   const replyId = parentId ? parentId : comment.id;
   const createdAt = new Date(comment.createdAt).toLocaleDateString();
 
-  const [reaction, setReaction] = useState<string>('');
-
-  const [reactionId, setReactionId] = useState('');
-
+  const reaction = '';
+  const reactionId = '';
   return (
     <div key={comment.id}>
       <div className={`flex flex-col mt-[16px] ${className}`}>

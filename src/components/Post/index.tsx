@@ -8,17 +8,19 @@ import Likes from 'components/Reactions';
 import { RenderQuillDelta } from 'components/RenderQuillDelta';
 import { DeltaStatic } from 'quill';
 import FeedPostMenu from './components/FeedPostMenu';
+import { ILiked } from 'pages/Feed';
 
 type PostProps = {
   data: Record<string, any>;
   id: string;
+  reactionData: ILiked;
 };
 
-const Post: React.FC<PostProps> = ({ data, id }) => {
+const Post: React.FC<PostProps> = ({ data, id, reactionData }) => {
   const [showComments, setShowComments] = useState(false);
 
-  const [reaction, setReaction] = useState<string>('');
-  const [reactionId, setReactionId] = useState('');
+  const reaction = reactionData?.hasLike;
+  const reactionId = reactionData?.id;
 
   const content: DeltaStatic = data?.content?.editor;
 

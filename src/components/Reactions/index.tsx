@@ -51,9 +51,7 @@ const Likes: React.FC<LikesProps> = ({
     {
       'text-[#173E90]': reaction === 'like',
     },
-    {
-      'text-neutral-500': reaction === 'Like',
-    },
+
     {
       'text-[#F96B40]': reaction === 'love',
     },
@@ -120,10 +118,10 @@ const Likes: React.FC<LikesProps> = ({
     type: string;
   }
 
-  const ReactionDiv = ({ name, icon, type }: Idiv) => {
+  const Reactions = ({ name, icon, type }: Idiv) => {
     return (
       <div className="mb-2 mt-1 space-x-4 [&_span]:hover:visible">
-        <span className="invisible rounded-[8px] bg-black text-white py-1 px-2 absolute z-1 mt-[-40px]">
+        <span className="invisible rounded-lg bg-black text-white py-1 px-2 absolute z-1 -mt-10">
           {name}
         </span>
         <IconButton
@@ -140,112 +138,45 @@ const Likes: React.FC<LikesProps> = ({
   };
 
   return (
-    <>
-      <div className="flex items-center [&_div]:hover:visible">
-        <div className="flex flex-row" onClick={handleDeleteReaction}>
-          <IconButton
-            icon={nameIcon ? nameIcon : 'like'}
-            className=" !bg-inherit  !p-0"
-            variant={IconVariant.Primary}
-            size={SizeVariant.Small}
-          />
-          <div className={`text-xs font-normal ml-1.5 ${nameStyle}`}>
-            {name ? name : 'Like'}
-          </div>
-        </div>
-        <div className=" bg-white h-8 rounded-[8px] invisible absolute z-1 mb-12 shadow-md ">
-          <div className="flex flex-row items-center ">
-            {/* <div className="mb-2 mt-1 space-x-4 [&_span]:hover:visible">
-              <span className="invisible rounded-lg bg-black text-white py-1 px-2 absolute z-1 -mt-10">
-                Like
-              </span>
-              <IconButton
-                icon={'blueLike'}
-                className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
-                onClick={() => {
-                  handleReaction(ReactionType.Like);
-                }}
-                variant={IconVariant.Primary}
-                size={SizeVariant.Large}
-              />
-            </div> */}
-
-            <ReactionDiv name="Like" icon="blueLike" type={ReactionType.Like} />
-
-            <div className="mb-2 mt-1 space-x-4 [&_span]:hover:visible">
-              <span className="invisible rounded-[8px] bg-black text-white py-1 px-2 absolute z-1 mt-[-40px]">
-                Love
-              </span>
-              <IconButton
-                icon={'love'}
-                className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
-                onClick={() => {
-                  handleReaction(ReactionType.Love);
-                }}
-                variant={IconVariant.Primary}
-                size={SizeVariant.Large}
-              />
-            </div>
-            <div className="mb-2 mt-1 space-x-4 [&_span]:hover:visible">
-              <span className="invisible rounded-[8px] bg-black text-white py-1 px-2 absolute z-1 mt-[-40px]">
-                Celebrate
-              </span>
-              <IconButton
-                icon={'celebrate'}
-                className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
-                onClick={() => {
-                  handleReaction(ReactionType.Celebrate);
-                }}
-                variant={IconVariant.Primary}
-                size={SizeVariant.Large}
-              />
-            </div>
-            <div className="mb-2 mt-1 space-x-4 [&_span]:hover:visible">
-              <span className="invisible rounded-[8px] bg-black text-white py-1 px-2 absolute z-1 mt-[-40px]">
-                Support
-              </span>
-              <IconButton
-                icon={'support'}
-                className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
-                onClick={() => {
-                  handleReaction(ReactionType.Support);
-                }}
-                variant={IconVariant.Primary}
-                size={SizeVariant.Large}
-              />
-            </div>
-            <div className="mb-2 mt-1 space-x-4 [&_span]:hover:visible">
-              <span className="invisible rounded-[8px] bg-black text-white py-1 px-2 absolute z-1 mt-[-40px]">
-                Funny
-              </span>
-              <IconButton
-                icon={'laugh'}
-                className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
-                onClick={() => {
-                  handleReaction(ReactionType.Funny);
-                }}
-                variant={IconVariant.Primary}
-                size={SizeVariant.Large}
-              />
-            </div>
-            <div className="mb-2 mt-1 space-x-4 [&_span]:hover:visible">
-              <span className="invisible rounded-[8px] bg-black text-white py-1 px-2 absolute z-1 mt-[-40px]">
-                Insightful
-              </span>
-              <IconButton
-                icon={'insightful'}
-                className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
-                onClick={() => {
-                  handleReaction(ReactionType.Insightful);
-                }}
-                variant={IconVariant.Primary}
-                size={SizeVariant.Large}
-              />
-            </div>
-          </div>
+    <div className="flex items-center [&_div]:hover:visible">
+      <div className="flex flex-row" onClick={handleDeleteReaction}>
+        <IconButton
+          icon={nameIcon ? nameIcon : 'like'}
+          className=" !bg-inherit  !p-0"
+          variant={IconVariant.Primary}
+          size={SizeVariant.Small}
+        />
+        <div
+          className={`text-xs font-normal ml-1.5 ${
+            name ? nameStyle : 'text-neutral-500 '
+          } `}
+        >
+          {name ? name : 'Like'}
         </div>
       </div>
-    </>
+      <div className=" bg-white h-8 rounded-lg invisible absolute z-1 mb-12 shadow-md">
+        <div className="flex flex-row items-center  ">
+          <Reactions name="Like" icon="blueLike" type={ReactionType.Like} />
+          <Reactions name="Love" icon="love" type={ReactionType.Love} />
+          <Reactions
+            name="Celebrate"
+            icon="celebrate"
+            type={ReactionType.Celebrate}
+          />
+          <Reactions
+            name="Support"
+            icon="support"
+            type={ReactionType.Support}
+          />
+          <Reactions name="Funny" icon="laugh" type={ReactionType.Funny} />
+          <Reactions
+            name="Insightful"
+            icon="insightful"
+            type={ReactionType.Insightful}
+          />
+        </div>
+      </div>
+    </div>
   );
 };
 
