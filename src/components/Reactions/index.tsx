@@ -84,7 +84,9 @@ const Likes: React.FC<LikesProps> = ({
     onError: (error: any) => {
       console.log(error);
     },
-    onSuccess: (data: any, variables, context) => {},
+    onSuccess: (data: any, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
+    },
   });
 
   const deleteReactionMutation = useMutation({
@@ -93,7 +95,9 @@ const Likes: React.FC<LikesProps> = ({
     onError: (error: any) => {
       console.log(error);
     },
-    onSuccess: () => {},
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
+    },
   });
 
   const handleReaction = (type: string) => {
@@ -104,7 +108,6 @@ const Likes: React.FC<LikesProps> = ({
     };
 
     createReactionMutation.mutate(data);
-    queryClient.invalidateQueries({ queryKey: ['feed'] });
   };
 
   const handleDeleteReaction = () => {
@@ -114,7 +117,6 @@ const Likes: React.FC<LikesProps> = ({
       entityType: entityType,
     };
     deleteReactionMutation.mutate(data);
-    queryClient.invalidateQueries({ queryKey: ['feed'] });
   };
 
   const Reactions = ({ name, icon, type }: IReaction) => {

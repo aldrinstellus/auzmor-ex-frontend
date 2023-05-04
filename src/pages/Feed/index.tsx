@@ -10,12 +10,6 @@ import { IPost, useInfiniteFeed } from 'queries/post';
 
 interface IFeedProps {}
 
-interface IContent {
-  text: string;
-  html: string;
-  editor: DeltaStatic;
-}
-
 export interface IPostTypeIcon {
   id: string;
   label: string;
