@@ -6,16 +6,21 @@ import ClosePreview from './ClosePreview';
 type IconPreviewProps = {
   metaData: Metadata;
   setPreviewUrl: (previewUrl: string) => void;
+  setIsPreviewRemove: (isPreviewRemove: boolean) => void;
 };
 
 const IconPreview: React.FC<IconPreviewProps> = ({
   metaData,
   setPreviewUrl,
+  setIsPreviewRemove,
 }) => {
   return (
     <Card className="bg-[#F7F8FB] h-40 mx-6 mb-11">
       <div className="relative">
-        <ClosePreview setPreviewUrl={setPreviewUrl} />
+        <ClosePreview
+          setPreviewUrl={setPreviewUrl}
+          setIsPreviewRemove={setIsPreviewRemove}
+        />
       </div>
       <div className="flex p-8">
         <img

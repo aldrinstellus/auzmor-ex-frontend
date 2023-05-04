@@ -17,7 +17,6 @@ import Icon from 'components/Icon';
 import { twConfig } from 'utils/misc';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
 import moment from 'moment';
-import PreviewLink from 'components/PreviewLink';
 
 export interface IEditorContentChanged {
   text: string;
@@ -34,6 +33,7 @@ export interface IQuillEditorProps {
   previewLink?: (
     previewUrl: string,
     setPreviewUrl: (previewUrl: string) => void,
+    setIsPreviewRemove: (isPreviewRemove: boolean) => void,
   ) => ReactNode;
   onChangeEditor?: (content: IEditorContentChanged) => void;
 }
@@ -56,6 +56,7 @@ const RichTextEditor = React.forwardRef(
 
     const [isCharLimit, setIsCharLimit] = useState<boolean>(false);
     const [previewUrl, setPreviewUrl] = useState<string>('');
+    const [isPreviewRemove, setIsPreviewRemove] = useState<boolean>(false);
 
     const formats = ['bold', 'italic', 'underline', 'mention', 'link', 'emoji'];
 
@@ -103,10 +104,12 @@ const RichTextEditor = React.forwardRef(
         });
       }
       const matches = editor.getText().match(previewLinkRegex);
+      console.log('matce', matches);
       if (matches) {
         setPreviewUrl(matches[0]);
       } else {
         setPreviewUrl('');
+        setIsPreviewRemove(false);
       }
     };
 
@@ -175,7 +178,9 @@ const RichTextEditor = React.forwardRef(
             </div>
           </div>
         )}
-        {previewLink && previewLink(previewUrl, setPreviewUrl)}
+        {!isPreviewRemove &&
+          previewLink &&
+          previewLink(previewUrl, setPreviewUrl, setIsPreviewRemove)}
         {toolbar && toolbar(isCharLimit)}
       </>
     );

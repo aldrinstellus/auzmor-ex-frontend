@@ -63,10 +63,12 @@ const CreatePost: React.FC<ICreatePostProps> = ({
           previewLink={(
             previewUrl: string,
             setPreviewUrl: (previewUrl: string) => void,
+            setIsPreviewRemove: (isPreviewRemove: boolean) => void,
           ) => (
             <PreviewLink
               previewUrl={previewUrl}
               setPreviewUrl={setPreviewUrl}
+              setIsPreviewRemove={setIsPreviewRemove}
             />
           )}
         />
