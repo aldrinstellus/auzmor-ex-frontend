@@ -110,7 +110,7 @@ export const postTypeMapIcons: IPostTypeIcon[] = [
 ];
 
 const Feed: React.FC<IFeedProps> = () => {
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   const { isLoading, isError, error, data, fetchNextPage } = useInfiniteFeed();
 
@@ -126,7 +126,6 @@ const Feed: React.FC<IFeedProps> = () => {
 
   return (
     <div className="flex flex-col">
-      <CreatePostCard setShowModal={setShowModal} />
       <ActivityFeed
         activityFeed={feed}
         loadMore={fetchNextPage}

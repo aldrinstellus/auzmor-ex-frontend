@@ -24,8 +24,8 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
       {activityFeed?.length > 0 ? (
         <InfiniteScroll
           // innerHeight > outerHeight
-          outerClassName="flex justify-between pt-16 px-32 h-[calc(100vh-64px)] overflow-y-scroll"
-          innerClassName="w-1/2 flex flex-col"
+          outerClassName="flex justify-between h-[calc(100vh-64px)] overflow-y-scroll"
+          innerClassName="flex flex-col"
           itemCount={activityFeed.length}
           itemRenderer={(index) => (
             <div key={`post-${index}`}>
@@ -36,7 +36,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
           prependElement={
             <>
               <CreatePostCard setShowModal={setShowModal} />
-              <div className="flex flex-row items-center gap-x-2">
+              <div className="flex flex-row items-center gap-x-2 mt-8">
                 <FeedFilter name="Filters" />
                 <Icon name="clock" size={16} />
                 <Divider />
@@ -46,9 +46,12 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
           }
         />
       ) : (
-        <div className="flex justify-center items-center mt-20">
-          Feed Not Found
-        </div>
+        <>
+          <CreatePostCard setShowModal={setShowModal} />
+          <div className="flex justify-center items-center mt-20">
+            Feed Not Found
+          </div>
+        </>
       )}
     </>
   );
