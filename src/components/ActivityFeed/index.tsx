@@ -50,7 +50,10 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ activityFeed }) => {
                     size={Size.Small}
                     variant={Variant.Tertiary}
                     onClick={() => {
-                      acknowledgeAnnouncement.mutate(feed?.uuid);
+                      acknowledgeAnnouncement.mutate({
+                        entityId: feed?.uuid,
+                        entityType: feed?.type,
+                      });
                     }}
                   />
                 </div>
