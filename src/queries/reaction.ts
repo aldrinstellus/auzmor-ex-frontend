@@ -61,11 +61,7 @@ export const deleteComment = async (payload: IDelete) => {
 };
 
 export const getComments = async (payload: IComments) => {
-  const { entityId, entityType, limit, page } = payload;
-
-  const { data } = await apiService.get(
-    `/comments?entityId=${entityId}&entityType=${entityType}&page=${page}&limit=${limit}`,
-  );
+  const { data } = await apiService.get(`/comments`, payload);
   return data;
 };
 

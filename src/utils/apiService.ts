@@ -54,7 +54,7 @@ class ApiService {
 
   async delete(url: string, params = {}) {
     try {
-      return this.instance.delete(url, { ...params });
+      return this.instance.delete(url, { params });
     } catch (e: any) {
       throw new Error(e.response.data.message);
     }

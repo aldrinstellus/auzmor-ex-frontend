@@ -28,7 +28,7 @@ export interface IPost {
     end: string;
   };
   id?: string;
-  myReaction?: IMyReactions;
+  myReactions?: IMyReactions[];
 }
 
 interface IDeletePost {

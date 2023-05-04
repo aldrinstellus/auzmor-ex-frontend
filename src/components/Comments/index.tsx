@@ -1,30 +1,33 @@
-import React, { useEffect, useState } from 'react';
-
+import React from 'react';
 import { Comment } from './Comment';
 import { CommentForm } from './CommentForm';
-import like from 'images/like.svg';
-import icon from 'images/icon.png';
 import { useComments } from 'queries/reaction';
+import { DeltaStatic } from 'quill';
 import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
+import { ICreated, IMyReactions } from 'pages/Feed';
 
 interface CommentsProps {
   entityId: string;
 }
 
-export interface DataType {
-  id: string;
-  body: string;
-  username: string;
-  userId: string;
-  parentId: string | null | undefined;
+export interface IComment {
+  content: {
+    text: string;
+    html: string;
+    editor: DeltaStatic;
+  };
+  mentions: object[];
+  hashtags: string[];
+  latestComments: object[];
+  entityType: string;
+  entityId: string;
+  orgId: string;
   createdAt: string;
-  designation: string;
-  likes: Array<string>;
-}
-export interface activeCommentsDataType {
+  updatedAt: string;
+  createdBy: ICreated;
   id: string;
-  type: string;
+  myReaction: IMyReactions;
 }
 
 const Comments: React.FC<CommentsProps> = ({ entityId }) => {
@@ -48,12 +51,8 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
 
       {data?.length > 0 && (
         <div>
-          {data.map((rootComment: any, i: any) => (
-            <Comment
-              key={rootComment.id || i}
-              comment={rootComment}
-              className=""
-            />
+          {data.map((rootComment: IComment, i: any) => (
+            <Comment key={rootComment.id} comment={rootComment} className="" />
           ))}
         </div>
       )}

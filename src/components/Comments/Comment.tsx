@@ -4,9 +4,10 @@ import IconButton, { Variant as IconVariant } from 'components/IconButton';
 import Avatar from 'components/Avatar';
 import { deleteComment } from 'queries/reaction';
 import { useMutation } from '@tanstack/react-query';
+import { IComment } from '.';
 
 interface CommentProps {
-  comment: any;
+  comment: IComment;
   className?: string;
 }
 
@@ -38,17 +39,17 @@ export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
           <div className="flex flex-row">
             <div className="mr-4">
               <Avatar
-                name={comment.createdBy?.fullName}
+                name={comment.createdBy.fullName}
                 size={32}
-                image={comment.profileImage?.blurHash}
+                image={comment.createdBy.profileImage.blurHash}
               />
             </div>
             <div className="flex flex-col items-start p-0 w-64">
               <div className="text-neutral-900 font-bold text-sm">
-                {comment.createdBy?.fullName}
+                {comment.createdBy.fullName}
               </div>
               <div className="font-normal text-neutral-500 text-sm ">
-                {comment.designation}
+                {comment.createdBy.designation}
               </div>
             </div>
           </div>
