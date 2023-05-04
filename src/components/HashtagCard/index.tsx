@@ -22,7 +22,7 @@ export const HashtagCard: React.FC<HashtagCardProps> = (
             {getTextByCount(props.count)}
           </div>
         </div>
-        <Icon name="orangeHashtag" size={48} />
+        <Icon name="orangeHashtag" size={60} />
       </div>
     </Card>
   );
