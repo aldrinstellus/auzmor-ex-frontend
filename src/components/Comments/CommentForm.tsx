@@ -55,7 +55,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
   };
   return (
     <div className={`flex flex-row ${className} `}>
-      <div className="flex flex-row items-center py-3 gap-2 border border-neutral-200 rounded-4xl border-solid w-full">
+      <div className="flex flex-row items-center py-3 gap-2 border border-neutral-200 rounded-19xl border-solid w-full">
         <RichTextEditor
           placeholder="Leave a Comment..."
           className="max-h-6 overflow-y-auto w-full min-h-[24px] "

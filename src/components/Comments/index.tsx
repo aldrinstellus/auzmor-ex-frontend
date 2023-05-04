@@ -28,7 +28,6 @@ export interface activeCommentsDataType {
 }
 
 const Comments: React.FC<CommentsProps> = ({ entityId }) => {
-  console.log(entityId);
   const { user } = useAuth();
   const { data } = useComments({
     entityId: entityId,
