@@ -26,7 +26,6 @@ export const CommentForm: React.FC<CommentFormProps> = ({
   const onSubmit = (event: any) => {
     event.preventDefault();
 
-    //handleSubmit(text);
     setText('');
     setReplyInputBox(false);
   };
@@ -51,14 +50,12 @@ export const CommentForm: React.FC<CommentFormProps> = ({
         <IconButton
           icon={'emojiHappy'}
           className="mx-2 !p-0 cursor-pointer bg-inherit hover:bg-inherit"
-          //  onClick={onClose}
           size={SizeVariant.Large}
           variant={IconVariant.Primary}
         />
         <IconButton
           icon={'iconLinear'}
           className="mx-2 !p-0 cursor-pointer bg-inherit hover:bg-inherit"
-          // onClick={onClose}
           size={SizeVariant.Large}
           variant={IconVariant.Primary}
         />

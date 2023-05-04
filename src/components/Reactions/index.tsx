@@ -14,6 +14,11 @@ interface LikesProps {
   entityType: string;
   reactionId: string;
 }
+interface IReaction {
+  name: string;
+  icon: string;
+  type: string;
+}
 
 export enum ReactionType {
   Like = 'like',
@@ -99,7 +104,7 @@ const Likes: React.FC<LikesProps> = ({
     };
 
     createReactionMutation.mutate(data);
-    queryClient.invalidateQueries({ queryKey: ['get-reactions'] });
+    queryClient.invalidateQueries({ queryKey: ['reactions'] });
   };
 
   const handleDeleteReaction = () => {
@@ -109,16 +114,10 @@ const Likes: React.FC<LikesProps> = ({
       entityType: entityType,
     };
     deleteReactionMutation.mutate(data);
-    queryClient.invalidateQueries({ queryKey: ['get-reactions'] });
+    queryClient.invalidateQueries({ queryKey: ['reactions'] });
   };
 
-  interface Idiv {
-    name: string;
-    icon: string;
-    type: string;
-  }
-
-  const Reactions = ({ name, icon, type }: Idiv) => {
+  const Reactions = ({ name, icon, type }: IReaction) => {
     return (
       <div className="mb-2 mt-1 space-x-4 [&_span]:hover:visible">
         <span className="invisible rounded-lg bg-black text-white py-1 px-2 absolute z-1 -mt-10">

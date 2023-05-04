@@ -25,9 +25,24 @@ export interface IPostTypeIcon {
   divider?: ReactNode;
 }
 
-export interface ILiked {
+export interface IProfileImage {
+  blurHash: string;
+}
+
+export interface ICreated {
+  designation: string;
+  fullName: string;
+  userId: string;
+  workLocation: string;
+  status: string;
+  department: string;
+  profileImage: IProfileImage;
+}
+export interface IMyReactions {
   id: string;
-  hasLike: string;
+  type: string;
+  reaction: string;
+  createdBy: ICreated;
 }
 
 export interface IFeed {
@@ -37,7 +52,7 @@ export interface IFeed {
   updatedAt: string;
   type: string;
   isAnnouncement: boolean;
-  hasLike: ILiked;
+  myReaction: IMyReactions;
 }
 
 export const postTypeMapIcons: IPostTypeIcon[] = [

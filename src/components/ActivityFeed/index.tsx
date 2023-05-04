@@ -32,7 +32,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
               <Post
                 data={activityFeed[index]}
                 id={activityFeed[index]?.id}
-                reactionData={activityFeed[index]?.hasLike}
+                reactionData={activityFeed[index]?.myReaction}
               />
             </div>
           )}
