@@ -3,12 +3,10 @@ import { DeltaStatic } from 'quill';
 import ActivityFeed from 'components/ActivityFeed';
 import CreatePostCard from '../../components/PostBuilder/components/CreatePostCard';
 import Icon from 'components/Icon';
-import CreatePostModal from '../../components/PostBuilder/components/CreatePostModal';
 import { IMenuItem } from 'components/PopupMenu';
 import { twConfig } from 'utils/misc';
 import { useLoaderData } from 'react-router-dom';
 import Divider, { Variant } from 'components/Divider';
-import CreatePostProvider from 'contexts/CreatePostContext';
 import PostBuilder from 'components/PostBuilder';
 
 interface IFeedProps {}
