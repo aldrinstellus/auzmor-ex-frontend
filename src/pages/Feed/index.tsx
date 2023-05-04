@@ -136,7 +136,7 @@ const Feed: React.FC<IFeedProps> = () => {
         <PostBuilder showModal={showModal} setShowModal={setShowModal} />
       </div>
       <div>
-        <AnnouncementCard />
+        <AnnouncementCard activityFeed={feed} />
       </div>
     </div>
   );

@@ -25,7 +25,6 @@ const UserCard: React.FC<IUserCardProps> = ({ image = '' }) => {
           <div className="text-base font-bold mt-2">{user?.name}</div>
         </div>
       </Card>
-      {/* </div> */}
     </div>
   );
 };
