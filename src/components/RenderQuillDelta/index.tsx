@@ -5,6 +5,7 @@ import { Hashtag } from './components/Hashtag';
 import { Emoji } from './components/Emoji';
 import { Text } from './components/Text';
 import PreviewLink, { LinkMetadataProps } from 'components/PreviewLink';
+import MediaPreview, { IMedia, Mode } from 'components/MediaPreview';
 
 type RenderQuillDeltaProps = {
   delta: Delta;
@@ -20,6 +21,29 @@ const linkMetadata = {
   url: 'https://auzmor.com',
   themeColor: '#000000',
 } as LinkMetadataProps;
+
+const media = [
+  {
+    type: 'image',
+    url: 'https://images.unsplash.com/photo-1683130565572-61af42023da6?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=640',
+    className: 'w-64 h-64',
+  },
+  {
+    type: 'image',
+    url: 'https://media.tenor.com/o656qFKDzeUAAAAC/rick-astley-never-gonna-give-you-up.gif',
+    className: 'w-64 h-64',
+  },
+  {
+    type: 'image',
+    url: 'https://media.tenor.com/O2RBK9klEMYAAAAC/homer-simpson-homer.gif',
+    className: 'w-64 h-64',
+  },
+  {
+    type: 'image',
+    url: 'https://img.freepik.com/free-vector/set-ten-clover-leaves-flat-style_1017-24189.jpg',
+    className: 'w-64 h-64',
+  },
+] as IMedia[];
 
 export const RenderQuillDelta: React.FC<RenderQuillDeltaProps> = (
   props: RenderQuillDeltaProps,
@@ -46,8 +70,11 @@ export const RenderQuillDelta: React.FC<RenderQuillDeltaProps> = (
   return (
     <div>
       {content}
-      <div className="mt-4 -mb-4">
+      <div className="mt-4">
         <PreviewLink linkMetadata={linkMetadata} />
+      </div>
+      <div className="mt-4">
+        <MediaPreview media={media} mode={Mode.View} />
       </div>
     </div>
   );
