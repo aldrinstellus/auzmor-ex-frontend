@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import RichTextEditor from 'components/RichTextEditor';
 import Actor from 'components/Actor';
 import { CREATE_POST } from 'components/Actor/constant';
@@ -14,6 +14,8 @@ import { CreatePostContext, IEditorValue } from 'contexts/CreatePostContext';
 import { CreatePostFlow } from 'contexts/CreatePostContext';
 import ReactQuill from 'react-quill';
 import { DeltaStatic } from 'quill';
+import Toolbar from 'components/RichTextEditor/toolbar';
+import PreviewLink from 'components/PreviewLink';
 
 interface ICreatePostProps {
   closeModal: () => void;
@@ -29,6 +31,8 @@ const CreatePost: React.FC<ICreatePostProps> = ({
   const quillRef = useRef<ReactQuill>(null);
   const { setActiveFlow, setEditorValue, editorValue } =
     useContext(CreatePostContext);
+  const [isCharLimit, setIsCharLimit] = useState<boolean>(false);
+  const [previewUrl, setPreviewUrl] = useState<string>('');
   const Header: React.FC = () => (
     <div className="flex flex-wrap border-b-1 border-neutral-200 items-center">
       <div className="text-lg text-black p-4 font-extrabold flex-[50%]">
@@ -55,7 +59,11 @@ const CreatePost: React.FC<ICreatePostProps> = ({
             data?.content?.editor || (editorValue.json as DeltaStatic)
           }
           ref={quillRef}
+          setIsCharLimit={setIsCharLimit}
+          setPreviewUrl={setPreviewUrl}
         />
+        <PreviewLink previewUrl={previewUrl} setPreviewUrl={setPreviewUrl} />
+        <Toolbar isCharLimit={isCharLimit} />
       </div>
     </div>
   );

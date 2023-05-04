@@ -31,6 +31,8 @@ export interface IQuillEditorProps {
   charLimit?: number;
   defaultValue?: ReactQuill.Value;
   onChangeEditor?: (content: IEditorContentChanged) => void;
+  setIsCharLimit: (IsChartLimit: boolean) => void;
+  setPreviewUrl: (previewUrl: string) => void;
 }
 
 const RichTextEditor = React.forwardRef(
@@ -41,13 +43,13 @@ const RichTextEditor = React.forwardRef(
       charLimit = 3000,
       defaultValue,
       onChangeEditor,
+      setIsCharLimit,
+      setPreviewUrl,
     }: IQuillEditorProps,
     ref,
   ) => {
     const { announcement, setActiveFlow, setEditorValue } =
       useContext(CreatePostContext);
-    const [isCharLimit, setIsCharLimit] = useState<boolean>(false);
-    const [previewUrl, setPreviewUrl] = useState<string>('');
 
     const formats = ['bold', 'italic', 'underline', 'mention', 'link', 'emoji'];
 
@@ -167,8 +169,6 @@ const RichTextEditor = React.forwardRef(
             </div>
           </div>
         )}
-        <PreviewLink previewUrl={previewUrl} setPreviewUrl={setPreviewUrl} />
-        <Toolbar isCharLimit={isCharLimit} />
       </>
     );
   },
