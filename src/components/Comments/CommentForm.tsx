@@ -25,7 +25,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
 
   const onSubmit = (event: any) => {
     event.preventDefault();
-    console.log(editorValue);
+
     //handleSubmit(text);
     setText('');
     setReplyInputBox(false);
