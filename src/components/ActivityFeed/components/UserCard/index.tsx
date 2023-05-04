@@ -4,7 +4,6 @@ import useAuth from 'hooks/useAuth';
 import React from 'react';
 
 export interface IUserCardProps {
-  // name: string;
   image?: string;
 }
 

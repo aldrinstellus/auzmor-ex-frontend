@@ -2,21 +2,17 @@ import Button, { Variant } from 'components/Button';
 import Card from 'components/Card';
 import Icon from 'components/Icon';
 import Post from 'components/Post';
-import useAuth from 'hooks/useAuth';
-import { IFeed } from 'pages/Feed';
 import React from 'react';
 
 export interface IAnnouncementCardProps {
-  // name: string;
   image?: string;
-  activityFeed: IFeed[];
+  activityFeed: any;
 }
 
 const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({
   image = '',
   activityFeed,
 }) => {
-  console.log(activityFeed, 'FEED');
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -33,8 +29,8 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({
         <Card className="pb-10 flex flex-col items-center">
           <div className="flex flex-col justify-center items-center">
             <div>
-              {activityFeed.length > 0 ? (
-                activityFeed.map((feed) => (
+              {activityFeed?.length > 0 ? (
+                activityFeed.map((feed: any) => (
                   <>
                     {feed?.isAnnouncement && (
                       <div key={feed.uuid} className="space-y-4">

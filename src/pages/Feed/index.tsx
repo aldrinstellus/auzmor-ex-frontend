@@ -1,16 +1,15 @@
 import React, { ReactNode, useState } from 'react';
 import { DeltaStatic } from 'quill';
 import ActivityFeed from 'components/ActivityFeed';
-import CreatePostCard from '../../components/PostBuilder/components/CreatePostCard';
 import Icon from 'components/Icon';
 import { IMenuItem } from 'components/PopupMenu';
 import { twConfig } from 'utils/misc';
-import { useLoaderData } from 'react-router-dom';
 import Divider, { Variant } from 'components/Divider';
 import PostBuilder from 'components/PostBuilder';
 import UserCard from 'components/ActivityFeed/components/UserCard';
 // import UserCard from 'pages/Users/components/UserCard';
 import AnnouncementCard from 'components/ActivityFeed/components/AnnouncementCard';
+import { IPost, useInfiniteFeed } from 'queries/post';
 
 interface IFeedProps {}
 
@@ -26,14 +25,6 @@ export interface IPostTypeIcon {
   icon: ReactNode;
   menuItems: IMenuItem[];
   divider?: ReactNode;
-}
-export interface IFeed {
-  content: IContent;
-  uuid: string;
-  createdAt: string;
-  updatedAt: string;
-  type: string;
-  isAnnouncement: boolean;
 }
 
 export const postTypeMapIcons: IPostTypeIcon[] = [
@@ -114,15 +105,18 @@ export const postTypeMapIcons: IPostTypeIcon[] = [
 
 const Feed: React.FC<IFeedProps> = () => {
   const [showModal, setShowModal] = useState(false);
-  const rawFeedData: any = useLoaderData();
-  const feed: IFeed[] = rawFeedData.data.map((data: any) => {
-    return {
-      ...data,
-      uuid: data.id,
-    } as IFeed;
-  });
 
-  console.log(feed, 'DATA');
+  const { isLoading, isError, error, data, fetchNextPage } = useInfiniteFeed();
+
+  const feed = data?.pages.flatMap((page) => {
+    return page.data?.result?.data.map((post: any) => {
+      try {
+        return post;
+      } catch (e) {
+        console.log('Error', { post });
+      }
+    });
+  }) as IPost[];
 
   return (
     <div className="flex space-x-12">
@@ -131,8 +125,11 @@ const Feed: React.FC<IFeedProps> = () => {
         {/* <UserCard id={'1'} status={''} fullName={'ANISH '} /> */}
       </div>
       <div className="flex flex-col">
-        <CreatePostCard setShowModal={setShowModal} />
-        <ActivityFeed activityFeed={feed} />
+        <ActivityFeed
+          activityFeed={feed}
+          loadMore={fetchNextPage}
+          setShowModal={setShowModal}
+        />
         <PostBuilder showModal={showModal} setShowModal={setShowModal} />
       </div>
       <div>

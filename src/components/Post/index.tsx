@@ -11,10 +11,12 @@ import { Likes } from 'components/Likes';
 import { RenderQuillDelta } from 'components/RenderQuillDelta';
 import { DeltaStatic } from 'quill';
 import FeedPostMenu from './components/FeedPostMenu';
+import { IPost } from 'queries/post';
 
 type PostProps = {
-  data: Record<string, any>;
+  // data: Record<string, any>;
   className?: string;
+  data: IPost;
 };
 
 const Post: React.FC<PostProps> = ({ data, className = '' }) => {
