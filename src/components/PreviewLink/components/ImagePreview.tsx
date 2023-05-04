@@ -5,7 +5,7 @@ import ClosePreview from './ClosePreview';
 
 type ImagePreviewProps = {
   metaData: Metadata;
-  setPreviewUrl: (previewUrl: string[]) => void;
+  setPreviewUrl: (previewUrl: string) => void;
 };
 
 const ImagePreview: React.FC<ImagePreviewProps> = ({

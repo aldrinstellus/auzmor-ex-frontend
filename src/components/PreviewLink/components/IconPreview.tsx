@@ -5,7 +5,7 @@ import ClosePreview from './ClosePreview';
 
 type IconPreviewProps = {
   metaData: Metadata;
-  setPreviewUrl: (previewUrl: string[]) => void;
+  setPreviewUrl: (previewUrl: string) => void;
 };
 
 const IconPreview: React.FC<IconPreviewProps> = ({

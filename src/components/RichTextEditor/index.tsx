@@ -47,7 +47,7 @@ const RichTextEditor = React.forwardRef(
     const { announcement, setActiveFlow, setEditorValue } =
       useContext(CreatePostContext);
     const [isCharLimit, setIsCharLimit] = useState<boolean>(false);
-    const [previewUrl, setPreviewUrl] = useState<string[]>([]);
+    const [previewUrl, setPreviewUrl] = useState<string>('');
 
     const formats = ['bold', 'italic', 'underline', 'mention', 'link', 'emoji'];
 
@@ -96,9 +96,9 @@ const RichTextEditor = React.forwardRef(
       }
       const matches = editor.getText().match(previewLinkRegex);
       if (matches) {
-        setPreviewUrl(matches);
+        setPreviewUrl(matches[0]);
       } else {
-        setPreviewUrl([]);
+        setPreviewUrl('');
       }
     };
 

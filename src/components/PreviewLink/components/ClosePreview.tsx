@@ -5,7 +5,7 @@ import IconButton, {
 } from 'components/IconButton';
 
 type ClosePreviewProps = {
-  setPreviewUrl: (previewUrl: string[]) => void;
+  setPreviewUrl: (previewUrl: string) => void;
 };
 
 const ClosePreview: React.FC<ClosePreviewProps> = ({ setPreviewUrl }) => {
@@ -16,7 +16,7 @@ const ClosePreview: React.FC<ClosePreviewProps> = ({ setPreviewUrl }) => {
       variant={IconVariant.Secondary}
       size={Size.Small}
       onClick={() => {
-        setPreviewUrl([]);
+        setPreviewUrl('');
       }}
     />
   );

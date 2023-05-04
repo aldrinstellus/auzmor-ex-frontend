@@ -4,15 +4,15 @@ import ImagePreview from './components/ImagePreview';
 import IconPreview from './components/IconPreview';
 
 export type PreviewLinkProps = {
-  previewUrl: string[];
-  setPreviewUrl: (previewUrl: string[]) => void;
+  previewUrl: string;
+  setPreviewUrl: (previewUrl: string) => void;
 };
 
 const PreviewLink: React.FC<PreviewLinkProps> = ({
   previewUrl,
   setPreviewUrl,
 }) => {
-  const { data, isLoading } = usePreviewLink(previewUrl[0]);
+  const { data, isLoading } = usePreviewLink(previewUrl);
   const preview = useMemo(() => {
     if (data?.open_graph?.images && data?.open_graph?.images.length > 0) {
       return <ImagePreview metaData={data} setPreviewUrl={setPreviewUrl} />;
