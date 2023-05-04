@@ -33,7 +33,7 @@ export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
 
   return (
     <div key={comment.id}>
-      <div className={`flex flex-col mt-[16px] ${className}`}>
+      <div className={`flex flex-col mt-4 ${className}`}>
         <div className="flex justify-between p-0">
           <div className="flex flex-row">
             <div className="mr-4">
@@ -69,7 +69,7 @@ export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
           </div>
         </div>
         {
-          <div className=" text-neutral-900 leading-[140%] font-normal text-[14px] mt-4">
+          <div className=" text-neutral-900  font-normal text-sm mt-4">
             {comment.content.text}
           </div>
         }
