@@ -70,7 +70,10 @@ export const mention = {
   renderItem: (item: IUserMentions, searchItem: any) => {
     return `<div>
               <div style="display:flex; padding:5px">
-                <img style="width:40px; height:40px; border-radius:50px" src="https://radarcirebon.id/wp-content/uploads/2023/02/baca-komik-lookism.png" alt="${item.id}"/>
+                <div style="background-color:#F7F8FB; font-weight:bold; border-radius:50px; padding:0px; text-align:center; width:35px; height:35px; margin-button:10px">${
+                  item?.firstName?.charAt(0) + item?.lastName?.charAt(0) ||
+                  item?.fullName?.charAt(0).toUpperCase()
+                }</div>
                 <div style="margin-left:10px">${item.fullName}<div>
               </div>
             </div>`;
