@@ -7,12 +7,23 @@ import ClockIcon from 'components/Icon/components/Clock';
 import FeedFilter from './components/FeedFilters';
 import Button, { Size, Variant } from 'components/Button';
 import Icon from 'components/Icon';
+import { useMutation } from '@tanstack/react-query';
+import { announcementRead } from 'queries/post';
 
 type ActivityFeedProps = {
   activityFeed: IFeed[];
 };
 
 const ActivityFeed: React.FC<ActivityFeedProps> = ({ activityFeed }) => {
+  const acknowledgeAnnouncement = useMutation({
+    mutationKey: ['acknowledgeAnnouncement'],
+    mutationFn: announcementRead,
+    onError: (error) => console.log(error),
+    onSuccess: (data, variables, context) => {
+      console.log('data==>', data);
+    },
+  });
+
   return (
     <div className="mt-10">
       <div className="flex flex-row items-center gap-x-2">
@@ -38,7 +49,9 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ activityFeed }) => {
                     label={'Mark as read'}
                     size={Size.Small}
                     variant={Variant.Tertiary}
-                    onClick={() => {}}
+                    onClick={() => {
+                      acknowledgeAnnouncement.mutate(feed?.uuid);
+                    }}
                   />
                 </div>
               )}

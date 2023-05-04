@@ -34,6 +34,8 @@ const Post: React.FC<PostProps> = ({ data }) => {
     { 'mt-5': true },
   );
 
+  console.log(data, 'here');
+
   return (
     <Card className={cardBorder}>
       <div className="flex justify-between items-center">

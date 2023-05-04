@@ -46,6 +46,10 @@ export const editPost = async (id: string, payload: IPost) => {
 
 export const deletePost = async (id: string) => {
   const data = await apiService.delete(`/posts/${id}`);
-  console.log(data, 'API');
+  return data;
+};
+
+export const announcementRead = async (id: string) => {
+  const data = await apiService.put(`/notifications/:${id}`);
   return data;
 };
