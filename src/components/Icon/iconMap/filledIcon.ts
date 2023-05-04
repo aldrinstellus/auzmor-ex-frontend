@@ -33,6 +33,7 @@ import SvgLoveFilled from '../components/Love/LoveFilled';
 import SvgSupportFilled from '../components/Support/SupportFilled';
 import SvgTrashFilled from '../components/Trash/TrashFilled';
 import SvgCrossCircleFilled from '../components/CrossCircle/CrossCircleFilled';
+import SvgReplyFilled from '../components/Reply/ReplyFilled';
 
 export const filledIcon = {
   arrowLeftFilled: SvgArrowLeftFilled,
@@ -70,4 +71,5 @@ export const filledIcon = {
   supportFilled: SvgSupportFilled,
   trashFilled: SvgTrashFilled,
   crossCircleFilled: SvgCrossCircleFilled,
+  replyFilled: SvgReplyFilled,
 };

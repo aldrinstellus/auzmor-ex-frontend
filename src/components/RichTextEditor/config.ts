@@ -90,10 +90,11 @@ export const mention = {
   renderLoading: () => {},
   renderItem: (item: IUserMentions, searchItem: any) => {
     return `<div>
-              <div style="display:flex; padding:5px">
+              <div style="display:flex; padding:5px ">
                 <img style="width:40px; height:40px; border-radius:50px" src="https://radarcirebon.id/wp-content/uploads/2023/02/baca-komik-lookism.png" alt="${item.id}"/>
                 <div style="margin-left:10px">${item.value}<div>
               </div>
             </div>`;
   },
+  positioningStrategy: 'fixed',
 };

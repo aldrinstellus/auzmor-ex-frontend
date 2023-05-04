@@ -104,7 +104,7 @@ const Likes: React.FC<LikesProps> = ({
     const data = {
       entityId: entityId,
       entityType: entityType,
-      type: type,
+      reaction: type,
     };
 
     createReactionMutation.mutate(data);

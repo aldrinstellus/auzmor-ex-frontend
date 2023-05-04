@@ -4,16 +4,12 @@ import { Comment } from './Comment';
 import { CommentForm } from './CommentForm';
 import like from 'images/like.svg';
 import icon from 'images/icon.png';
-import { getCommentsApi } from 'mocks/comments';
+import { useComments } from 'queries/reaction';
+import useAuth from 'hooks/useAuth';
+import Avatar from 'components/Avatar';
 
 interface CommentsProps {
   entityId: string;
-}
-
-interface IContent {
-  text: string;
-  html: string;
-  editor: string;
 }
 
 export interface DataType {
@@ -32,76 +28,32 @@ export interface activeCommentsDataType {
 }
 
 const Comments: React.FC<CommentsProps> = ({ entityId }) => {
-  const [comments, setComments] = useState<Array<DataType>>([]);
-  const [activeComment, setActiveComment] =
-    useState<activeCommentsDataType | null>(null);
-
-  const rootComments = comments.filter((Comment) => Comment.parentId === null);
-
-  const createCommentApi = async (text: any, parentId: any = null) => {
-    return {
-      id: Math.random().toString(36).substr(2, 9),
-      body: text,
-      parentId,
-      userId: '1',
-      username: 'John',
-      createdAt: new Date().toISOString(),
-      designation: 'Talent Acquisition Specialist',
-      likes: [],
-    };
-  };
-
-  const getReplies = (commentId: any) =>
-    comments
-      .filter((Comment) => Comment.parentId === commentId)
-      .sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      );
-
-  const addComment = (text: any, parentId: string | null | undefined) => {
-    createCommentApi(text, parentId).then((comment) => {
-      setComments([comment, ...comments]);
-      setActiveComment(null);
-    });
-  };
-
-  const [replyInputBox, setReplyInputBox] = useState(false);
-
-  useEffect(() => {
-    getCommentsApi().then((data) => {
-      setComments(data);
-    });
-  }, []);
+  console.log(entityId);
+  const { user } = useAuth();
+  const { data } = useComments({
+    entityId: entityId,
+    entityType: 'post',
+    limit: 30,
+    page: 1,
+  });
 
   return (
     <div>
       <div className="flex flex-row items-center justify-between p-0">
         <div className="flex-none grow-0 order-none pr-2">
-          <img width={32} height={32} src={icon} />
+          <Avatar name={user?.name || 'U'} size={36} />
         </div>
-        <CommentForm
-          handleSubmit={addComment}
-          setReplyInputBox={setReplyInputBox}
-          className="w-full"
-        />
+        <CommentForm className="w-full" entityId={entityId} />
       </div>
       <div className="border-b border-neutral-200 my-4"></div>
 
-      {rootComments.length > 0 && (
+      {data?.length > 0 && (
         <div>
-          {rootComments.map((rootComment) => (
+          {data.map((rootComment: any, i: any) => (
             <Comment
-              key={rootComment.id}
+              key={rootComment.id || i}
               comment={rootComment}
-              replies={getReplies(rootComment.id)}
-              activeComment={activeComment}
-              setActiveComment={setActiveComment}
-              addComment={addComment}
-              currentUserId={'1'}
               className=""
-              replyInputBox={replyInputBox}
-              setReplyInputBox={setReplyInputBox}
             />
           ))}
         </div>

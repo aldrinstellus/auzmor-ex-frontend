@@ -1,37 +1,61 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 import IconButton, {
   Variant as IconVariant,
   Size as SizeVariant,
 } from 'components/IconButton';
 import RichTextEditor from 'components/RichTextEditor';
+import { useMutation } from '@tanstack/react-query';
+import { createComments } from 'queries/reaction';
+import queryClient from 'utils/queryClient';
 
 interface CommentFormProps {
-  handleSubmit: (text: any, parentId?: string | null | undefined) => void;
   className?: string;
-  setReplyInputBox: Dispatch<SetStateAction<boolean>>;
+  entityId?: string;
 }
 
 export const CommentForm: React.FC<CommentFormProps> = ({
-  handleSubmit,
   className = '',
-  setReplyInputBox,
+  entityId,
 }) => {
-  const [text, setText] = useState('');
   const [editorValue, setEditorValue] = useState<{
     html: string;
     text: string;
     json: Record<string, any>;
   }>({ html: '', json: {}, text: '' });
 
-  const onSubmit = (event: any) => {
-    event.preventDefault();
+  const createCommentMutation = useMutation({
+    mutationKey: ['create-comment-mutation'],
+    mutationFn: createComments,
+    onError: (error: any) => {
+      console.log(error);
+    },
+    onSuccess: (data: any, variables, context) => {
+      setEditorValue({ html: '', json: {}, text: '' });
+      queryClient.invalidateQueries([
+        'comments',
+        { entityId, entityType: 'post', limit: 30, page: 1 },
+      ]);
+    },
+  });
 
-    setText('');
-    setReplyInputBox(false);
+  const onSubmit = () => {
+    const data = {
+      entityId: entityId || '',
+      entityType: 'post',
+      content: {
+        text: editorValue.text,
+        html: editorValue.html,
+        editor: editorValue.json,
+      },
+      hashtags: [],
+      mentions: [],
+    };
+
+    createCommentMutation.mutate(data);
   };
   return (
     <div className={`flex flex-row ${className} `}>
-      <div className="flex flex-row items-center py-3 px-5 gap-2 border border-neutral-200 rounded-[32px] border-solid w-[100%]">
+      <div className="flex flex-row items-center py-3 gap-2 border border-neutral-200 rounded-[32px] border-solid w-[100%]">
         <RichTextEditor
           placeholder="Leave a Comment..."
           className="max-h-6 overflow-y-auto w-full min-h-[24px] "
@@ -39,26 +63,27 @@ export const CommentForm: React.FC<CommentFormProps> = ({
         />
       </div>
 
-      <div className="flex -ml-40 flex-row items-center">
+      <div className="flex flex-row items-center z-10 -ml-40">
         <IconButton
           icon={'emojiHappy'}
-          className="mx-2 !p-0 cursor-pointer bg-inherit hover:bg-inherit"
+          className="mx-2 !p-0 cursor-pointer !bg-inherit hover:bg-inherit"
           size={SizeVariant.Large}
           variant={IconVariant.Primary}
         />
         <IconButton
           icon={'iconLinear'}
-          className="mx-2 !p-0 cursor-pointer bg-inherit hover:bg-inherit"
+          className="mx-2 !p-0 cursor-pointer !bg-inherit hover:bg-inherit"
           size={SizeVariant.Large}
           variant={IconVariant.Primary}
         />
         <IconButton
           icon={'send'}
-          className="mx-2 !p-0 cursor-pointer bg-inherit hover:bg-inherit disabled:bg-inherit "
+          className="mx-2 !p-0 cursor-pointer !bg-inherit hover:bg-inherit disabled:bg-inherit "
           size={SizeVariant.Large}
           variant={IconVariant.Primary}
-          disabled={text ? false : true}
-          onClick={onSubmit}
+          onClick={() => {
+            onSubmit();
+          }}
         />
       </div>
     </div>

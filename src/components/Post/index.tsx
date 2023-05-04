@@ -67,7 +67,7 @@ const Post: React.FC<PostProps> = ({ data }) => {
           </div>
           <div></div>
         </div>
-        {showComments && <CommentCard entityId="" />}
+        {showComments && <CommentCard entityId={data?.id || ''} />}
       </div>
     </Card>
   );

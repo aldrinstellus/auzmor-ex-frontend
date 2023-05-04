@@ -1,58 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import { Dispatch, SetStateAction } from 'react';
-import { DataType, activeCommentsDataType } from '.';
-import { CommentForm } from './CommentForm';
-import Reply from 'images/reply.png';
-import Icon from 'images/icon.png';
-import Dots from 'images/dots.png';
+import React from 'react';
 import Likes from 'components/Reactions';
+import IconButton, { Variant as IconVariant } from 'components/IconButton';
+import Avatar from 'components/Avatar';
+import { deleteComment } from 'queries/reaction';
+import { useMutation } from '@tanstack/react-query';
 
 interface CommentProps {
-  replyInputBox: boolean;
-  setReplyInputBox: Dispatch<SetStateAction<boolean>>;
-  comment: DataType;
-  replies: DataType[];
-  setActiveComment: Dispatch<SetStateAction<activeCommentsDataType | null>>;
-  activeComment: activeCommentsDataType | null;
-  addComment: (text: any, parentId: string | null | undefined) => void;
-  parentId?: string | null;
-  currentUserId: string;
+  comment: any;
   className?: string;
 }
 
-export const Comment: React.FC<CommentProps> = ({
-  replyInputBox,
-  setReplyInputBox,
-  comment,
-  replies,
-  setActiveComment,
-  activeComment,
-  addComment,
-  parentId = null,
-  currentUserId,
-  className,
-}) => {
-  const isReplying =
-    activeComment &&
-    activeComment.id === comment.id &&
-    activeComment.type === 'replying';
+export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
+  const createdAt = new Date(comment.updatedAt).toLocaleDateString();
 
-  const replyId = parentId ? parentId : comment.id;
-  const createdAt = new Date(comment.createdAt).toLocaleDateString();
+  const deleteReactionMutation = useMutation({
+    mutationKey: ['delete-comment-mutation'],
+    mutationFn: deleteComment,
+    onError: (error: any) => {
+      console.log(error);
+    },
+    onSuccess: () => {},
+  });
 
-  const reaction = '';
-  const reactionId = '';
+  const handleDeleteReaction = () => {
+    const data = {
+      id: comment.id,
+      entityId: comment.entityId,
+      entityType: comment.entityType,
+    };
+    deleteReactionMutation.mutate(data);
+  };
+
   return (
     <div key={comment.id}>
       <div className={`flex flex-col mt-[16px] ${className}`}>
         <div className="flex justify-between p-0">
           <div className="flex flex-row">
             <div className="mr-4">
-              <img width={32} height={32} src={Icon} />
+              <Avatar
+                name={comment.createdBy?.fullName}
+                size={32}
+                image={comment.profileImage?.blurHash}
+              />
             </div>
             <div className="flex flex-col items-start p-0 w-64">
               <div className="text-neutral-900 font-bold text-[14px] leading-[140%]">
-                {comment.username}
+                {comment.createdBy?.fullName}
               </div>
               <div className="font-normal text-neutral-500 text-[12px] leading-[150%]">
                 {comment.designation}
@@ -63,71 +56,45 @@ export const Comment: React.FC<CommentProps> = ({
             <div className="text-neutral-500 font-normal leading-[150%] text-[12px]">
               {createdAt}
             </div>
-            <div className="ml-4 mt-1">
-              <img width={16} height={16} src={Dots} />
+            <div className="ml-4">
+              <IconButton
+                icon={'more'}
+                className="!p-0 !bg-inherit"
+                variant={IconVariant.Primary}
+                onClick={() => {
+                  handleDeleteReaction();
+                }}
+              />
             </div>
           </div>
         </div>
         {
           <div className=" text-neutral-900 leading-[140%] font-normal text-[14px] mt-4">
-            {comment.body}
+            {comment.content.text}
           </div>
         }
 
         <div className="flex justify-between pt-4 pb-6">
           <div className="flex">
             <Likes
-              reaction={reaction}
-              entityId=""
+              reaction={comment?.myReaction?.reaction || ''}
+              entityId="6453b0af38cdab4ce82a91bb"
               entityType="comment"
-              reactionId={reactionId}
+              reactionId={comment?.myReaction?.id || ''}
             />
-            <button
-              className="flex items-center ml-7"
-              onClick={() => {
-                if (replyInputBox) {
-                  setReplyInputBox(false);
-                } else {
-                  setReplyInputBox(true);
-                }
-
-                setActiveComment({ id: comment.id, type: 'replying' });
-              }}
-            >
-              <img src={Reply} height={13.33} width={13.33} />
+            <button className="flex items-center ml-7" onClick={() => {}}>
+              <IconButton
+                icon={'reply'}
+                className="!p-0 !bg-inherit"
+                variant={IconVariant.Primary}
+              />
               <div className="text-xs font-normal text-neutral-500 ml-1.5">
-                {replies.length} Reply
+                0 Reply
               </div>
             </button>
           </div>
           <div></div>
         </div>
-
-        {isReplying && replyInputBox && (
-          <CommentForm
-            className="my-[8px]"
-            handleSubmit={(text: any) => addComment(text, replyId)}
-            setReplyInputBox={setReplyInputBox}
-          />
-        )}
-        {replies.length > 0 && (
-          <div className="ml-[32px]">
-            {replies.map((reply: any) => (
-              <Comment
-                comment={reply}
-                key={reply.id}
-                setActiveComment={setActiveComment}
-                activeComment={activeComment}
-                addComment={addComment}
-                parentId={comment.id}
-                replies={[]}
-                currentUserId={currentUserId}
-                replyInputBox={replyInputBox}
-                setReplyInputBox={setReplyInputBox}
-              />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

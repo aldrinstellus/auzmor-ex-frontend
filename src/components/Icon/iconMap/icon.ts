@@ -45,6 +45,7 @@ import Love from '../components/Love';
 import Support from '../components/Support';
 import Trash from '../components/Trash';
 import CrossCircle from '../components/CrossCircle';
+import Reply from '../components/Reply';
 
 export const icon = {
   admin: AdminIcon,
@@ -94,4 +95,5 @@ export const icon = {
   notificationIcon: MenuNotificationIcon,
   trash: Trash,
   crossCircle: CrossCircle,
+  reply: Reply,
 };
