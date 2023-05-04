@@ -44,16 +44,16 @@ export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
               />
             </div>
             <div className="flex flex-col items-start p-0 w-64">
-              <div className="text-neutral-900 font-bold text-[14px] leading-[140%]">
+              <div className="text-neutral-900 font-bold text-sm">
                 {comment.createdBy?.fullName}
               </div>
-              <div className="font-normal text-neutral-500 text-[12px] leading-[150%]">
+              <div className="font-normal text-neutral-500 text-sm ">
                 {comment.designation}
               </div>
             </div>
           </div>
           <div className="flex flex-row items-start">
-            <div className="text-neutral-500 font-normal leading-[150%] text-[12px]">
+            <div className="text-neutral-500 font-normal text-xs">
               {createdAt}
             </div>
             <div className="ml-4">
