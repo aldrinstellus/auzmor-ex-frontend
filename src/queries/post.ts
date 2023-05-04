@@ -1,11 +1,12 @@
 import apiService from 'utils/apiService';
 import { useQuery } from '@tanstack/react-query';
+import { DeltaStatic } from 'quill';
 
 interface IPost {
   content: {
     text: string;
     html: string;
-    editor: string;
+    editor: DeltaStatic;
   };
   mentions: string[];
   hashtags:
