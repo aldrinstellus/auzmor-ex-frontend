@@ -50,9 +50,9 @@ const RichTextEditor = React.forwardRef(
     const formats = ['bold', 'italic', 'underline', 'mention', 'link', 'emoji'];
 
     const modules = {
-      // toolbar: {
-      //   container: '#toolbar',
-      // },
+      toolbar: {
+        container: '#toolbar',
+      },
       mention: mention,
       autoLinks: true,
       'emoji-toolbar': true,

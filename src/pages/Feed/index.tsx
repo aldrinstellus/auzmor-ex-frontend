@@ -3,12 +3,10 @@ import { DeltaStatic } from 'quill';
 import ActivityFeed from 'components/ActivityFeed';
 import CreatePostCard from '../../components/PostBuilder/components/CreatePostCard';
 import Icon from 'components/Icon';
-import CreatePostModal from '../../components/PostBuilder/components/CreatePostModal';
 import { IMenuItem } from 'components/PopupMenu';
 import { twConfig } from 'utils/misc';
 import { useLoaderData } from 'react-router-dom';
 import Divider, { Variant } from 'components/Divider';
-import CreatePostProvider from 'contexts/CreatePostContext';
 import PostBuilder from 'components/PostBuilder';
 
 interface IFeedProps {}
@@ -114,19 +112,23 @@ export const postTypeMapIcons: IPostTypeIcon[] = [
 const Feed: React.FC<IFeedProps> = () => {
   const [showModal, setShowModal] = useState(false);
   const rawFeedData: any = useLoaderData();
-  const feed: IFeed[] = rawFeedData.data.map((data: any) => {
-    return {
-      content: {
-        ...data.content,
-        editor: JSON.parse(data.content.editor),
-      },
-      uuid: data.id,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
-      type: data.type,
-      isAnnouncement: data.isAnnouncement,
-    } as IFeed;
-  });
+  const feed: IFeed[] = rawFeedData.data
+    .map((data: any) => {
+      try {
+        return {
+          content: {
+            ...data.content,
+            editor: JSON.parse(data.content.editor),
+          },
+          uuid: data.id,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt,
+          type: data.type,
+          isAnnouncement: data.isAnnouncement,
+        } as IFeed;
+      } catch (e) {}
+    })
+    .filter((feed: IFeed) => feed !== undefined);
 
   return (
     <div className="flex flex-col">
