@@ -15,28 +15,26 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   setIsPreviewRemove,
 }) => {
   return (
-    <Card className="mx-6 mb-9">
-      <div className="relative">
+    <Card className="mx-6 mb-9 cursor-pointer relative">
+      <a href={metaData.url} target="_blank" rel="noreferrer">
         <img
-          src={
-            metaData?.open_graph?.images && metaData?.open_graph?.images[0]?.url
-          }
+          src={metaData?.image}
           alt={metaData?.title}
           className="w-full h-40 rounded-md object-cover"
         />
-        <ClosePreview
-          setPreviewUrl={setPreviewUrl}
-          setIsPreviewRemove={setIsPreviewRemove}
-        />
-      </div>
-      <div className="flex flex-col bg-neutral-50 p-4">
-        <div className="font-bold text-sm text-neutral-900">
-          {metaData?.title}
+        <div className="flex flex-col bg-neutral-50 p-4">
+          <div className="font-bold text-sm text-neutral-900">
+            {metaData?.title}
+          </div>
+          <div className="text-xs text-neutral-500 font-normal mt-2">
+            {metaData?.url}
+          </div>
         </div>
-        <div className="text-xs text-neutral-500 font-normal mt-2">
-          {metaData?.canonical_url}
-        </div>
-      </div>
+      </a>
+      <ClosePreview
+        setPreviewUrl={setPreviewUrl}
+        setIsPreviewRemove={setIsPreviewRemove}
+      />
     </Card>
   );
 };

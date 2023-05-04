@@ -16,7 +16,7 @@ const PreviewLink: React.FC<PreviewLinkProps> = ({
 }) => {
   const { data, isLoading } = usePreviewLink(previewUrl);
   const preview = useMemo(() => {
-    if (data?.open_graph?.images && data?.open_graph?.images.length > 0) {
+    if (data?.image) {
       return (
         <ImagePreview
           metaData={data}
@@ -45,7 +45,7 @@ const PreviewLink: React.FC<PreviewLinkProps> = ({
     }
   }, [data, isLoading]);
 
-  return <div>{previewUrl.length > 0 ? <div>{preview}</div> : null}</div>;
+  return <div>{previewUrl ? <div>{preview}</div> : null}</div>;
 };
 
 export default PreviewLink;
