@@ -1,13 +1,13 @@
 import React, { ReactNode, useState } from 'react';
 import { DeltaStatic } from 'quill';
 import ActivityFeed from 'components/ActivityFeed';
-import CreatePostCard from '../../components/PostBuilder/components/CreatePostCard';
 import Icon from 'components/Icon';
 import { IMenuItem } from 'components/PopupMenu';
 import { twConfig } from 'utils/misc';
-import { useLoaderData } from 'react-router-dom';
+import { useInfiniteFeed } from 'queries/post';
 import Divider, { Variant } from 'components/Divider';
 import PostBuilder from 'components/PostBuilder';
+import CreatePostCard from 'components/PostBuilder/components/CreatePostCard';
 
 interface IFeedProps {}
 
@@ -26,7 +26,7 @@ export interface IPostTypeIcon {
 }
 export interface IFeed {
   content: IContent;
-  uuid: string;
+  id: string;
   createdAt: string;
   updatedAt: string;
   type: string;
@@ -111,18 +111,26 @@ export const postTypeMapIcons: IPostTypeIcon[] = [
 
 const Feed: React.FC<IFeedProps> = () => {
   const [showModal, setShowModal] = useState(false);
-  const rawFeedData: any = useLoaderData();
-  const feed: IFeed[] = rawFeedData.data.map((data: any) => {
-    return {
-      ...data,
-      uuid: data.id,
-    } as IFeed;
-  });
+
+  const { isLoading, isError, error, data, fetchNextPage } = useInfiniteFeed();
+
+  const feed = data?.pages.flatMap((page) => {
+    return page.data?.result?.data.map((post: any) => {
+      try {
+        return post;
+      } catch (e) {
+        console.log('Error', { post });
+      }
+    });
+  }) as IFeed[];
 
   return (
     <div className="flex flex-col">
-      <CreatePostCard setShowModal={setShowModal} />
-      <ActivityFeed activityFeed={feed} />
+      <ActivityFeed
+        activityFeed={feed}
+        loadMore={fetchNextPage}
+        setShowModal={setShowModal}
+      />
       <PostBuilder showModal={showModal} setShowModal={setShowModal} />
     </div>
   );
