@@ -8,6 +8,9 @@ import { twConfig } from 'utils/misc';
 import { useLoaderData } from 'react-router-dom';
 import Divider, { Variant } from 'components/Divider';
 import PostBuilder from 'components/PostBuilder';
+import UserCard from 'components/ActivityFeed/components/UserCard';
+// import UserCard from 'pages/Users/components/UserCard';
+import AnnouncementCard from 'components/ActivityFeed/components/AnnouncementCard';
 
 interface IFeedProps {}
 
@@ -119,11 +122,22 @@ const Feed: React.FC<IFeedProps> = () => {
     } as IFeed;
   });
 
+  console.log(feed, 'DATA');
+
   return (
-    <div className="flex flex-col">
-      <CreatePostCard setShowModal={setShowModal} />
-      <ActivityFeed activityFeed={feed} />
-      <PostBuilder showModal={showModal} setShowModal={setShowModal} />
+    <div className="flex space-x-12">
+      <div className="">
+        <UserCard image="" />
+        {/* <UserCard id={'1'} status={''} fullName={'ANISH '} /> */}
+      </div>
+      <div className="flex flex-col">
+        <CreatePostCard setShowModal={setShowModal} />
+        <ActivityFeed activityFeed={feed} />
+        <PostBuilder showModal={showModal} setShowModal={setShowModal} />
+      </div>
+      <div>
+        <AnnouncementCard />
+      </div>
     </div>
   );
 };

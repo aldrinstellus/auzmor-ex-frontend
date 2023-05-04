@@ -12,7 +12,7 @@ type ActivityFeedProps = {
 
 const ActivityFeed: React.FC<ActivityFeedProps> = ({ activityFeed }) => {
   return (
-    <div style={{ marginTop: 41.5 }}>
+    <div style={{ marginTop: 41.5 }} className="flex flex-col">
       <div className="flex flex-row items-center gap-x-2">
         <FeedFilter name="Filters" />
         <ClockIcon />
