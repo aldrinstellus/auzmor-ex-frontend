@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext } from 'react';
 import Modal from 'components/Modal';
 import CreatePost from 'components/PostBuilder/components/CreatePost';
 import { useMutation } from '@tanstack/react-query';
@@ -13,11 +13,13 @@ import {
 interface ICreatePostModal {
   showModal: boolean;
   setShowModal: (flag: boolean) => void;
+  data?: any;
 }
 
 const CreatePostModal: React.FC<ICreatePostModal> = ({
   showModal,
   setShowModal,
+  data = '',
 }) => {
   const { activeFlow, announcement, editorValue } =
     useContext(CreatePostContext);
@@ -36,8 +38,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       content: {
         text: content?.text || editorValue.text,
         html: content?.html || editorValue.html,
-        editor:
-          JSON.stringify(content?.json) || JSON.stringify(editorValue.json),
+        editor: content?.json || editorValue.json,
       },
       type: 'UPDATE',
       mentions: [],
@@ -56,6 +57,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     <Modal open={showModal} closeModal={() => setShowModal(false)}>
       {activeFlow === CreatePostFlow.CreatePost && (
         <CreatePost
+          data={data}
           closeModal={() => setShowModal(false)}
           handleSubmitPost={handleSubmitPost}
         />

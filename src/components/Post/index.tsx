@@ -10,28 +10,36 @@ import Commentspage from 'components/Comments/index';
 import { Likes } from 'components/Likes';
 import { RenderQuillDelta } from 'components/RenderQuillDelta';
 import { DeltaStatic } from 'quill';
+import FeedPostMenu from './components/FeedPostMenu';
 
 type PostProps = {
-  data: DeltaStatic;
+  data: Record<string, any>;
 };
 
-const Post: React.FC<PostProps> = (props: PostProps) => {
+const Post: React.FC<PostProps> = ({ data }) => {
   const [showComments, setShowComments] = useState(false);
   const [name, setName] = useState<string>('Like');
   const [likeIcon, setLikeIcon] = useState<string>(Like);
   const [likeButtonColor, setLikeButtonColor] =
     useState<string>('text-neutral-500');
 
+  const content: DeltaStatic = data?.content?.editor;
+
   return (
-    <Card className="bg-white rounded-9xl mt-5">
-      <Actor
-        visibility="Everyone"
-        contentMode={VIEW_POST}
-        createdTime="10 mins ago"
-      />
+    <Card className="mt-5">
+      <div className="flex justify-between items-center">
+        <Actor
+          visibility="Everyone"
+          contentMode={VIEW_POST}
+          createdTime="10 mins ago"
+        />
+        <div className="relative">
+          <FeedPostMenu data={data} />
+        </div>
+      </div>
       <div className="mx-6">
         {/* Post Content */}
-        <RenderQuillDelta delta={props?.data as DeltaStatic} />
+        <RenderQuillDelta delta={content} />
         {/* Media Display */}
         <div></div>
         {/* Reaction and comment repost */}
