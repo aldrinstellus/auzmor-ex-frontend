@@ -1,0 +1,29 @@
+import Card from 'components/Card';
+import Icon from 'components/Icon';
+import React, { ReactElement } from 'react';
+import { getTextByCount } from './helper';
+
+type HashtagCardProps = {
+  hashtag: string;
+  count: number;
+};
+
+export const HashtagCard: React.FC<HashtagCardProps> = (
+  props: HashtagCardProps,
+): ReactElement => {
+  return (
+    <Card className="bg-orange-50 mb-6">
+      <div className="flex flex-row items-center justify-between m-6">
+        <div className="flex flex-col">
+          <div className="text-neutral-900 text-2xl font-bold">
+            {`#${props.hashtag}`}
+          </div>
+          <div className="text-neutral-500 text-base font-normal mt-2">
+            {getTextByCount(props.count)}
+          </div>
+        </div>
+        <Icon name="orangeHashtag" size={48} />
+      </div>
+    </Card>
+  );
+};

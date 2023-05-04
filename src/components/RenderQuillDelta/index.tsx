@@ -15,7 +15,7 @@ export const RenderQuillDelta: React.FC<RenderQuillDeltaProps> = (
   const content = props?.delta?.ops?.map((op: DeltaOperation) => {
     switch (true) {
       case op.insert.hasOwnProperty('mention'):
-        return <Mention value={op.insert.mention?.value} />;
+        return <Hashtag value={op.insert.mention?.value} />;
       case op.insert.hasOwnProperty('hashtag'):
         return <Hashtag value={op.insert.hashtag?.value} />;
       case op.insert.hasOwnProperty('emoji'):

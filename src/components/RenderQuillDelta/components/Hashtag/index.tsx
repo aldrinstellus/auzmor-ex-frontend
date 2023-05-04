@@ -1,5 +1,5 @@
+import { useInfiniteFeed } from 'queries/post';
 import React, { ReactElement } from 'react';
-import { Mention } from '../Mention';
 
 type HashtagProps = {
   value: string;
@@ -8,5 +8,14 @@ type HashtagProps = {
 export const Hashtag: React.FC<HashtagProps> = (
   props: HashtagProps,
 ): ReactElement => {
-  return <Mention value={props.value} />;
+  const { refetch } = useInfiniteFeed();
+
+  return (
+    <span
+      onClick={() => {
+        refetch({ queryKey: ['feed', { hashtags: [props.value] }] });
+      }}
+      className="hashtag"
+    >{`#${props?.value}`}</span>
+  );
 };

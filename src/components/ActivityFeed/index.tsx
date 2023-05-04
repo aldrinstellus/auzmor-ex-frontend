@@ -7,6 +7,7 @@ import FeedFilter from './components/FeedFilters';
 import { InfiniteScroll } from 'components/InfiniteScroll';
 import CreatePostCard from 'components/PostBuilder/components/CreatePostCard';
 import Icon from 'components/Icon';
+import { HashtagCard } from 'components/HashtagCard';
 
 type ActivityFeedProps = {
   activityFeed: IFeed[];
@@ -35,6 +36,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
           loadMore={loadMore}
           prependElement={
             <>
+              <HashtagCard hashtag="WorldCup2023" count={56} />
               <CreatePostCard setShowModal={setShowModal} />
               <div className="flex flex-row items-center gap-x-2 mt-8">
                 <FeedFilter name="Filters" />
