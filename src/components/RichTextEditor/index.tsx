@@ -104,7 +104,6 @@ const RichTextEditor = React.forwardRef(
         });
       }
       const matches = editor.getText().match(previewLinkRegex);
-      console.log('matce', matches);
       if (matches) {
         setPreviewUrl(matches[0]);
       } else {
