@@ -14,7 +14,7 @@ import { useMutation } from '@tanstack/react-query';
 import { announcementRead } from 'queries/post';
 
 type ActivityFeedProps = {
-  activityFeed: IPost[];
+  activityFeed: any;
   loadMore: any; // Change this type to something more appropriate for functions
   setShowModal: (flag: boolean) => void;
 };
@@ -24,14 +24,14 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
   loadMore,
   setShowModal,
 }) => {
-  // const acknowledgeAnnouncement = useMutation({
-  //   mutationKey: ['acknowledgeAnnouncement'],
-  //   mutationFn: announcementRead,
-  //   onError: (error) => console.log(error),
-  //   onSuccess: (data, variables, context) => {
-  //     console.log('data==>', data);
-  //   },
-  // });
+  const acknowledgeAnnouncement = useMutation({
+    mutationKey: ['acknowledgeAnnouncement'],
+    mutationFn: announcementRead,
+    onError: (error) => console.log(error),
+    onSuccess: (data, variables, context) => {
+      console.log('data==>', data);
+    },
+  });
 
   return (
     <div>
@@ -64,10 +64,13 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
                       size={Size.Small}
                       variant={Variant.Tertiary}
                       onClick={() => {
-                        // acknowledgeAnnouncement.mutate({
-                        //   entityId: feed?.uuid,
-                        //   entityType: feed?.type,
-                        // });
+                        acknowledgeAnnouncement.mutate({
+                          entityId: activityFeed?.[index]?.id,
+                          entityType: 'post',
+                          type: activityFeed?.[index]?.myReactions?.[0].type,
+                          reaction:
+                            activityFeed?.[index]?.myReactions?.[0].reaction,
+                        });
                       }}
                     />
                   </div>

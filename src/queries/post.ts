@@ -29,7 +29,12 @@ export interface IPost {
   id?: string;
 }
 
-interface IReaction {}
+export interface IReaction {
+  entityId: string;
+  entityType: string;
+  type: string;
+  reaction: string;
+}
 
 interface IDeletePost {
   id: string;
@@ -67,15 +72,8 @@ export const deletePost = async (id: string) => {
   return data;
 };
 
-export const announcementRead = async (
-  payload: IReaction,
-  entityId: string,
-  entityType: string,
-) => {
-  const data = await apiService.post(
-    `/reactions?entityId=${entityId}&entityType=${entityType}/`,
-    payload,
-  );
+export const announcementRead = async (payload: IReaction) => {
+  const data = await apiService.post('/reactions', payload);
   return data;
 };
 
