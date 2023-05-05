@@ -81,7 +81,7 @@ const Post: React.FC<PostProps> = ({ data }) => {
         <div className="flex flex-row justify-between my-3">
           <div className={`flex flex-row`}>
             {keys > 0 && (
-              <div className="mr-1">
+              <div className="mr-2">
                 {Object.keys(data.reactionsCount)
                   .slice(0, 3)
                   .map((key, i) => (
