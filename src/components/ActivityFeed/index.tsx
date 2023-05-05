@@ -24,14 +24,14 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
   loadMore,
   setShowModal,
 }) => {
-  const acknowledgeAnnouncement = useMutation({
-    mutationKey: ['acknowledgeAnnouncement'],
-    mutationFn: announcementRead,
-    onError: (error) => console.log(error),
-    onSuccess: (data, variables, context) => {
-      console.log('data==>', data);
-    },
-  });
+  // const acknowledgeAnnouncement = useMutation({
+  //   mutationKey: ['acknowledgeAnnouncement'],
+  //   mutationFn: announcementRead,
+  //   onError: (error) => console.log(error),
+  //   onSuccess: (data, variables, context) => {
+  //     console.log('data==>', data);
+  //   },
+  // });
 
   return (
     <div>
@@ -50,7 +50,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
             itemCount={activityFeed.length}
             itemRenderer={(index) => (
               <div key={`post-${index}`} className="mt-8">
-                {activityFeed[index].isAnnouncement && (
+                {/* {activityFeed[index].isAnnouncement && (
                   <div className="flex justify-between items-center bg-blue-700 -mb-4 p-2 rounded-t-9xl">
                     <div className="flex justify-center items-center text-white text-xs font-bold space-x-4">
                       <div>
@@ -74,7 +74,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
                       }}
                     />
                   </div>
-                )}
+                )} */}
                 <Post data={activityFeed[index]} />
               </div>
             )}

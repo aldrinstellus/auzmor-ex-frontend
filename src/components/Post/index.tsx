@@ -12,7 +12,10 @@ import { RenderQuillDelta } from 'components/RenderQuillDelta';
 import { DeltaStatic } from 'quill';
 import FeedPostMenu from './components/FeedPostMenu';
 import clsx from 'clsx';
-import { IPost } from 'queries/post';
+import { announcementRead, IPost } from 'queries/post';
+import Icon from 'components/Icon';
+import Button, { Size, Variant } from 'components/Button';
+import { useMutation } from '@tanstack/react-query';
 
 type PostProps = {
   data: IPost;
@@ -29,6 +32,15 @@ const Post: React.FC<PostProps> = ({ data }) => {
 
   const isAnnouncement = data?.isAnnouncement;
 
+  const acknowledgeAnnouncement = useMutation({
+    mutationKey: ['acknowledgeAnnouncement'],
+    mutationFn: announcementRead,
+    onError: (error) => console.log(error),
+    onSuccess: (data, variables, context) => {
+      console.log('data==>', data);
+    },
+  });
+
   const cardBorder = clsx(
     { 'rounded-9xl': !isAnnouncement },
     { 'rounded-b-9xl': isAnnouncement },
@@ -37,6 +49,32 @@ const Post: React.FC<PostProps> = ({ data }) => {
 
   return (
     <Card className={cardBorder}>
+      <div>
+        {isAnnouncement && data?.myReactions?.reaction !== 'mark_read' && (
+          <div className="flex justify-between items-center bg-blue-700 -mb-4 p-2 rounded-t-9xl">
+            <div className="flex justify-center items-center text-white text-xs font-bold space-x-4">
+              <div>
+                <Icon name="flashIcon" />
+              </div>
+              <div className="text-xs font-bold">Announcement</div>
+            </div>
+            <Button
+              className="text-sm font-bold"
+              label={'Mark as read'}
+              size={Size.Small}
+              variant={Variant.Tertiary}
+              onClick={() => {
+                acknowledgeAnnouncement.mutate({
+                  entityId: data?.id,
+                  entityType: 'post',
+                  type: 'acknowledge',
+                  reaction: 'mark_read',
+                });
+              }}
+            />
+          </div>
+        )}
+      </div>
       <div className="flex justify-between items-center">
         <Actor visibility="Everyone" contentMode={VIEW_POST} createdTime={''} />
         <div className="relative">

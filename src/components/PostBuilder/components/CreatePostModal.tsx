@@ -39,7 +39,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     setEditorValue,
   } = useContext(CreatePostContext);
 
-  console.log(data);
+  // console.log(data);
   useEffect(() => {
     if (data) {
       setEditorValue(data.content.editor);
