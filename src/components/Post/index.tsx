@@ -5,7 +5,7 @@ import Actor from 'components/Actor';
 import { VIEW_POST } from 'components/Actor/constant';
 import CommentCard from 'components/Comments/index';
 import Likes, { ReactionType } from 'components/Reactions';
-import { RenderQuillDelta } from 'components/RenderQuillDelta';
+import { RenderPost } from 'components/RenderPost';
 import { DeltaStatic } from 'quill';
 import FeedPostMenu from './components/FeedPostMenu';
 import { announcementRead, IPost } from 'queries/post';
@@ -113,7 +113,7 @@ const Post: React.FC<PostProps> = ({ data }) => {
       </div>
       <div className="mx-6">
         {/* Post Content */}
-        <RenderQuillDelta delta={content} />
+        <RenderPost data={data} />
         {/* Media Display */}
         <div></div>
         {/* Reaction and comment repost */}

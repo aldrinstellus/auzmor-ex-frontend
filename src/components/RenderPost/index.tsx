@@ -1,14 +1,16 @@
 import React, { ReactElement } from 'react';
-import { Delta, DeltaOperation } from 'quill';
+import { DeltaOperation } from 'quill';
 import { Mention } from './components/Mention';
 import { Hashtag } from './components/Hashtag';
 import { Emoji } from './components/Emoji';
 import { Text } from './components/Text';
 import PreviewLink, { LinkMetadataProps } from 'components/PreviewLink';
 import MediaPreview, { IMedia, Mode } from 'components/MediaPreview';
+import { IGetPost } from 'queries/post';
+import { getMentionProps } from './utils';
 
-type RenderQuillDeltaProps = {
-  delta: Delta;
+type RenderPostProps = {
+  data: IGetPost;
 };
 
 const linkMetadata = {
@@ -45,13 +47,20 @@ const media = [
   },
 ] as IMedia[];
 
-export const RenderQuillDelta: React.FC<RenderQuillDeltaProps> = (
-  props: RenderQuillDeltaProps,
+export const RenderPost: React.FC<RenderPostProps> = (
+  props: RenderPostProps,
 ): ReactElement => {
-  const content = props?.delta?.ops?.map((op: DeltaOperation) => {
+  const content = props?.data?.content?.editor;
+  const mentions = props?.data?.mentions;
+  const postContent = content?.ops?.map((op: DeltaOperation) => {
     switch (true) {
       case op.insert.hasOwnProperty('mention'):
-        return <Mention value={op.insert.mention?.value} />;
+        return (
+          <Mention
+            value={op.insert.mention?.value}
+            {...getMentionProps(mentions, op.insert.mention)}
+          />
+        );
       case op.insert.hasOwnProperty('hashtag'):
         return <Hashtag value={op.insert.hashtag?.value} />;
       case op.insert.hasOwnProperty('emoji'):
@@ -76,13 +85,13 @@ export const RenderQuillDelta: React.FC<RenderQuillDeltaProps> = (
 
   return (
     <div>
-      {content}
-      <div className="mt-4">
+      {postContent}
+      {/* <div className="mt-4">
         <PreviewLink linkMetadata={linkMetadata} />
-      </div>
-      <div className="mt-4">
+      </div> */}
+      {/* <div className="mt-4">
         <MediaPreview media={media} mode={Mode.View} />
-      </div>
+      </div> */}
     </div>
   );
 };

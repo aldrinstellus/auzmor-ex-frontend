@@ -3,13 +3,20 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { DeltaStatic } from 'quill';
 import { IMyReactions } from 'pages/Feed';
 
+export interface IMention {
+  name: string;
+  entityId: string;
+  entityType: string;
+  image?: string;
+  email?: string;
+}
 export interface IPost {
   content: {
     text: string;
     html: string;
     editor: DeltaStatic;
   };
-  mentions: string[];
+  mentions: IMention[];
   hashtags:
     | [
         {
@@ -84,7 +91,7 @@ export interface IGetPost {
     html: string;
     editor: DeltaStatic;
   };
-  mentions: string[];
+  mentions: IMention[];
   hashtags:
     | [
         {

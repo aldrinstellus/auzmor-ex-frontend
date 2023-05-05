@@ -1,4 +1,4 @@
-import { formatText, getStyles } from 'components/RenderQuillDelta/utils';
+import { formatText, getStyles } from 'components/RenderPost/utils';
 import React, { ReactElement } from 'react';
 
 type TextProps = {
