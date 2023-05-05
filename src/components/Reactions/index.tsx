@@ -13,6 +13,7 @@ interface LikesProps {
   entityId: string;
   entityType: string;
   reactionId: string;
+  queryKey: string;
 }
 interface IReaction {
   name: string;
@@ -52,6 +53,7 @@ const Likes: React.FC<LikesProps> = ({
   entityId,
   entityType,
   reactionId,
+  queryKey,
 }) => {
   const nameStyle = clsx(
     {
@@ -86,7 +88,7 @@ const Likes: React.FC<LikesProps> = ({
       console.log(error);
     },
     onSuccess: (data: any, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: ['feed'] });
+      queryClient.invalidateQueries({ queryKey: [queryKey] });
     },
   });
 
@@ -97,7 +99,7 @@ const Likes: React.FC<LikesProps> = ({
       console.log(error);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feed'] });
+      queryClient.invalidateQueries({ queryKey: [queryKey] });
     },
   });
 

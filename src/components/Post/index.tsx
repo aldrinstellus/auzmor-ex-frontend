@@ -47,6 +47,7 @@ const Post: React.FC<PostProps> = ({ data }) => {
               entityId={data?.id || ''}
               entityType="post"
               reactionId={reactionId || ''}
+              queryKey="feed"
             />
 
             <button className="flex items-center ml-7">

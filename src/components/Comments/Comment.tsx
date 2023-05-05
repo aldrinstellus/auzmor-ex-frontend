@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import { IComment } from '.';
 import Popover from 'components/Popover';
 import clsx from 'clsx';
+import queryClient from 'utils/queryClient';
 
 interface CommentProps {
   comment: IComment;
@@ -22,7 +23,9 @@ export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
     onError: (error: any) => {
       console.log(error);
     },
-    onSuccess: () => {},
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments'] });
+    },
   });
 
   const handleDeleteReaction = () => {
@@ -100,6 +103,7 @@ export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
               entityId="6453b0af38cdab4ce82a91bb"
               entityType="comment"
               reactionId={comment?.myReaction?.id || ''}
+              queryKey="comments"
             />
             <div className="flex items-center ml-7" onClick={() => {}}>
               <IconButton

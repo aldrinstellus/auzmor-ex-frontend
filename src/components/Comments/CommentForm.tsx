@@ -31,10 +31,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
     },
     onSuccess: (data: any, variables, context) => {
       setEditorValue({ html: '', json: {}, text: '' });
-      queryClient.invalidateQueries([
-        'comments',
-        { entityId, entityType: 'post', limit: 30, page: 1 },
-      ]);
+      queryClient.invalidateQueries({ queryKey: ['comments'] });
     },
   });
 
