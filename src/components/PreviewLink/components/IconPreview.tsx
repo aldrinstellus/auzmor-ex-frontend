@@ -15,15 +15,15 @@ const IconPreview: React.FC<IconPreviewProps> = ({
   setIsPreviewRemove,
 }) => {
   return (
-    <Card className="bg-[#F7F8FB] h-40 mx-6 mb-11 relative">
+    <Card className="bg-[#F7F8FB] h-[166px] mx-6 mb-11 relative rounded-7xl">
       <a href={metaData?.url} target="_blank" rel="noreferrer">
         <div className="flex p-8">
           <img
             src={metaData?.favicon}
             alt={metaData?.title}
-            className="w-11 h-11"
+            className="w-[100px] h-[80px] rounded-7xl"
           />
-          <div className="flex flex-col ml-5 space-y-2">
+          <div className="flex flex-col ml-5 space-y-2 justify-center">
             <div className="text-black text-sm font-bold">
               {metaData?.title}
             </div>

@@ -20,9 +20,9 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
         <img
           src={metaData?.image}
           alt={metaData?.title}
-          className="w-full h-40 rounded-md object-cover"
+          className="w-full h-[180px] rounded-9xl object-cover"
         />
-        <div className="flex flex-col bg-neutral-50 p-4">
+        <div className="flex flex-col bg-neutral-50 p-4 rounded-s-9xl">
           <div className="font-bold text-sm text-neutral-900">
             {metaData?.title}
           </div>
