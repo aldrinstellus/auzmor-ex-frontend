@@ -11,6 +11,7 @@ import {
 } from 'contexts/CreatePostContext';
 import { PostBuilderMode } from '..';
 import { previewLinkRegex } from 'components/RichTextEditor/config';
+import queryClient from 'utils/queryClient';
 
 interface ICreatePostModal {
   showModal: boolean;
@@ -54,7 +55,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     mutationFn: createPost,
     onError: (error) => console.log(error),
     onSuccess: (data, variables, context) => {
-      console.log('data==>', data);
+      queryClient.invalidateQueries({ queryKey: [''] });
     },
   });
 
