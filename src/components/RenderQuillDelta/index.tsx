@@ -26,22 +26,22 @@ const media = [
   {
     type: 'image',
     url: 'https://images.unsplash.com/photo-1683130565572-61af42023da6?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=640',
-    className: 'object-cover w-48 h-48',
   },
   {
     type: 'image',
     url: 'https://media.tenor.com/o656qFKDzeUAAAAC/rick-astley-never-gonna-give-you-up.gif',
-    className: 'object-cover w-48 h-48',
   },
   {
     type: 'image',
     url: 'https://media.tenor.com/O2RBK9klEMYAAAAC/homer-simpson-homer.gif',
-    className: 'object-cover w-48 h-48',
   },
   {
     type: 'image',
     url: 'https://img.freepik.com/free-vector/set-ten-clover-leaves-flat-style_1017-24189.jpg',
-    className: 'object-cover w-48 h-48',
+  },
+  {
+    type: 'image',
+    url: 'https://img.freepik.com/free-vector/set-ten-clover-leaves-flat-style_1017-24189.jpg',
   },
 ] as IMedia[];
 
@@ -67,6 +67,13 @@ export const RenderQuillDelta: React.FC<RenderQuillDeltaProps> = (
     }
   });
 
+  /*
+  gallery
+  mention user card hover
+  preview card
+  slideshow
+  */
+
   return (
     <div>
       {content}
@@ -76,6 +83,9 @@ export const RenderQuillDelta: React.FC<RenderQuillDeltaProps> = (
       <div className="mt-4">
         <MediaPreview media={media} mode={Mode.View} />
       </div>
+      {/* <div>
+        <Slideshow media={media} />
+      </div> */}
     </div>
   );
 };

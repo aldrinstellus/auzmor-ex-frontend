@@ -27,7 +27,7 @@ const Post: React.FC<PostProps> = ({ data }) => {
   const content: DeltaStatic = data?.content?.editor;
 
   return (
-    <Card className="mt-5">
+    <Card className="mt-5 max-w-xl">
       <div className="flex justify-between items-center">
         <Actor
           visibility="Everyone"
