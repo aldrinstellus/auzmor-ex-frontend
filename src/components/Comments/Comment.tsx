@@ -8,6 +8,7 @@ import { IComment } from '.';
 import Popover from 'components/Popover';
 import clsx from 'clsx';
 import queryClient from 'utils/queryClient';
+import { getTime } from 'utils/time';
 
 interface CommentProps {
   comment: IComment;
@@ -15,7 +16,7 @@ interface CommentProps {
 }
 
 export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
-  const createdAt = new Date(comment.updatedAt).toLocaleDateString();
+  const createdAt = getTime(comment.updatedAt);
 
   const deleteReactionMutation = useMutation({
     mutationKey: ['delete-comment-mutation'],
@@ -100,7 +101,7 @@ export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
           <div className="flex">
             <Likes
               reaction={comment?.myReaction?.reaction || ''}
-              entityId="6453b0af38cdab4ce82a91bb"
+              entityId={comment.entityId}
               entityType="comment"
               reactionId={comment?.myReaction?.id || ''}
               queryKey="comments"

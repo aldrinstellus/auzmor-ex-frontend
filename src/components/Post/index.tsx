@@ -17,8 +17,8 @@ type PostProps = {
 const Post: React.FC<PostProps> = ({ data }) => {
   const [showComments, setShowComments] = useState(false);
 
-  const reaction = data && data.myReactions && data.myReactions[0]?.reaction;
-  const reactionId = data && data.myReactions && data.myReactions[0]?.id;
+  const reaction = data?.myReactions?.[0]?.reaction;
+  const reactionId = data?.myReactions?.[0]?.id;
 
   const content: DeltaStatic = data?.content?.editor;
 
