@@ -24,15 +24,25 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
   className,
   mode = Mode.View,
 }) => {
+  const [mediaIndex, setMediaIndex] = useState<number>(0);
   const [openSlideshow, setOpenSlideshow] = useState<boolean>(false);
   const MediaRender: React.FC<{
     data: IMedia;
     overlayCount?: number;
     localClassName?: string;
-  }> = ({ data, overlayCount = -1, localClassName }) => {
+    index: number;
+  }> = ({ data, overlayCount = -1, localClassName, index }) => {
     return (
       <div
-        className={`rounded-9xl overflow-hidden w-full h-full bg-no-repeat bg-cover relative ${data.className} ${localClassName}`}
+        className={`rounded-9xl overflow-hidden w-full h-full bg-no-repeat bg-cover relative ${
+          data.className
+        } ${localClassName} ${mode === Mode.View ? 'cursor-pointer ' : ''}`}
+        onClick={() => {
+          if (mode === Mode.View) {
+            setMediaIndex(index);
+            setOpenSlideshow(true);
+          }
+        }}
       >
         <img src={data.url} className="h-full"></img>
         {overlayCount > 0 && (
@@ -46,23 +56,23 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
   const getLayout = () => {
     if (media.length === 0) {
     } else if (media.length === 1) {
-      return <MediaRender data={media[0]} />;
+      return <MediaRender data={media[0]} index={0} />;
     } else if (media.length === 2) {
       return (
         <div className="flex w-full h-full">
-          <MediaRender data={media[0]} localClassName="mr-4" />
-          <MediaRender data={media[1]} />
+          <MediaRender data={media[0]} localClassName="mr-4" index={0} />
+          <MediaRender data={media[1]} index={1} />
         </div>
       );
     } else if (media.length === 3) {
       return (
         <div className="flex w-full h-full">
           <div className="mr-4">
-            <MediaRender data={media[0]} />
+            <MediaRender data={media[0]} index={0} />
           </div>
           <div className="flex flex-col">
-            <MediaRender data={media[1]} localClassName="mb-4" />
-            <MediaRender data={media[2]} />
+            <MediaRender data={media[1]} localClassName="mb-4" index={1} />
+            <MediaRender data={media[2]} index={2} />
           </div>
         </div>
       );
@@ -70,12 +80,12 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
       return (
         <div className="flex flex-col w-full h-full">
           <div className="flex mb-4">
-            <MediaRender data={media[0]} localClassName="mr-4" />
-            <MediaRender data={media[1]} />
+            <MediaRender data={media[0]} localClassName="mr-4" index={0} />
+            <MediaRender data={media[1]} index={1} />
           </div>
           <div className="flex">
-            <MediaRender data={media[2]} localClassName="mr-4" />
-            <MediaRender data={media[3]} />
+            <MediaRender data={media[2]} localClassName="mr-4" index={2} />
+            <MediaRender data={media[3]} index={3} />
           </div>
         </div>
       );
@@ -83,13 +93,13 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
       return (
         <div className="flex flex-col w-full h-full">
           <div className="flex mb-4">
-            <MediaRender data={media[0]} localClassName="mr-4" />
-            <MediaRender data={media[1]} />
+            <MediaRender data={media[0]} localClassName="mr-4" index={0} />
+            <MediaRender data={media[1]} index={1} />
           </div>
           <div className="flex">
-            <MediaRender data={media[2]} localClassName="mr-4" />
-            <MediaRender data={media[3]} localClassName="mr-4" />
-            <MediaRender data={media[4]} />
+            <MediaRender data={media[2]} localClassName="mr-4" index={2} />
+            <MediaRender data={media[3]} localClassName="mr-4" index={3} />
+            <MediaRender data={media[4]} index={4} />
           </div>
         </div>
       );
@@ -97,25 +107,30 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
       return (
         <div className="flex flex-col w-full h-full">
           <div className="flex mb-4">
-            <MediaRender data={media[0]} localClassName="mr-4" />
-            <MediaRender data={media[1]} />
+            <MediaRender data={media[0]} localClassName="mr-4" index={0} />
+            <MediaRender data={media[1]} index={1} />
           </div>
           <div className="flex">
-            <MediaRender data={media[2]} localClassName="mr-4" />
-            <MediaRender data={media[3]} localClassName="mr-4" />
-            <MediaRender data={media[4]} overlayCount={media.length - 5} />
+            <MediaRender data={media[2]} localClassName="mr-4" index={2} />
+            <MediaRender data={media[3]} localClassName="mr-4" index={3} />
+            <MediaRender
+              data={media[4]}
+              overlayCount={media.length - 5}
+              index={4}
+            />
           </div>
         </div>
       );
     }
   };
   return (
-    <div className={`${className}`} onClick={() => setOpenSlideshow(true)}>
+    <div className={`${className}`}>
       {getLayout()}
       <Carousel
         media={media}
         openCarousel={openSlideshow}
         setOpenCarousel={setOpenSlideshow}
+        index={mediaIndex}
       />
     </div>
   );

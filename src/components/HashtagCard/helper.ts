@@ -1,4 +1,4 @@
-export function getTextByCount(count: number): string {
+export const getTextByCount = (count: number): string => {
   switch (count) {
     case 0:
       return 'Nobody is talking about this';
@@ -7,4 +7,4 @@ export function getTextByCount(count: number): string {
     default:
       return `${count} people are talking about this`;
   }
-}
+};

@@ -1,8 +1,9 @@
-import React, { ReactNode, useState, MouseEventHandler } from 'react';
-import IconButton, {
-  Variant as IconVariant,
-  Size,
-} from 'components/IconButton';
+import React, {
+  useState,
+  MouseEventHandler,
+  useEffect,
+  ReactElement,
+} from 'react';
 
 import Image from 'components/Image';
 import Video from 'components/Video';
@@ -30,6 +31,7 @@ export type CarouselProps = {
   hashSize?: hashSize;
   openCarousel: boolean;
   setOpenCarousel: any;
+  index: number;
 };
 
 const Carousel: React.FC<CarouselProps> = ({
@@ -37,8 +39,10 @@ const Carousel: React.FC<CarouselProps> = ({
   hashSize = { width: 0, height: 0 },
   openCarousel,
   setOpenCarousel,
-}) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  index,
+}): ReactElement => {
+  const [currentIndex, setCurrentIndex] = useState<number>(index);
+  useEffect(() => setCurrentIndex(index), [index]);
 
   const prevSlide = () => {
     const isFirstSlide = currentIndex === 0;
@@ -80,39 +84,41 @@ const Carousel: React.FC<CarouselProps> = ({
     '!top-[2%] !right-2 !absolute !right-8 !rounded-lg !p-1 !px-2': true,
   });
 
-  return (
-    <Modal open={openCarousel}>
-      <div className={containerStyles}>
-        <div className={mediaDivStyles}>
-          {media[currentIndex].type === 'image' ? (
-            <Image image={media[currentIndex]} hashSize={hashSize} />
-          ) : (
-            <Video video={media[currentIndex]} />
-          )}
-        </div>
+  if (media.length > 0) {
+    return (
+      <Modal open={openCarousel}>
+        <div className={containerStyles}>
+          <div className={mediaDivStyles}>
+            {media[currentIndex].type === 'image' ? (
+              <Image image={media[currentIndex]} hashSize={hashSize} />
+            ) : (
+              <Video video={media[currentIndex]} />
+            )}
+          </div>
 
-        <div className={currentIndexDivStyles}>
-          {currentIndex + 1} of {Object.keys(media).length}
-        </div>
+          <div className={currentIndexDivStyles}>
+            {currentIndex + 1} of {Object.keys(media).length}
+          </div>
 
-        <Icon
-          name="carouselLeft"
-          onClick={prevSlide}
-          className={leftArrowIconStyles}
-        />
-        <Icon
-          name="carouselRight"
-          onClick={nextSlide}
-          className={rightArrowIconStyles}
-        />
-        <Icon
-          name="carouselClose"
-          className={crossIconStyles}
-          onClick={() => setOpenCarousel(false)}
-        />
-      </div>
-    </Modal>
-  );
+          <Icon
+            name="carouselLeft"
+            onClick={prevSlide}
+            className={leftArrowIconStyles}
+          />
+          <Icon
+            name="carouselRight"
+            onClick={nextSlide}
+            className={rightArrowIconStyles}
+          />
+          <Icon
+            name="carouselClose"
+            className={crossIconStyles}
+            onClick={() => setOpenCarousel(false)}
+          />
+        </div>
+      </Modal>
+    );
+  } else return <></>;
 };
 
 export default Carousel;
