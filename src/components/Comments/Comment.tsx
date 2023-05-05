@@ -70,7 +70,7 @@ export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
                 }
                 className="left-0"
               >
-                <div className="rounded--10xl shadow-xl flex flex-col w-20 flex-start">
+                <div className="rounded-10xl shadow-xl flex flex-col w-20">
                   <div className={menuItemStyle} onClick={() => {}}>
                     Edit{' '}
                   </div>
