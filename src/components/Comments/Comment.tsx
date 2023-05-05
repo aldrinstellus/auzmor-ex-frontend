@@ -1,6 +1,9 @@
 import React from 'react';
 import Likes from 'components/Reactions';
-import IconButton, { Variant as IconVariant } from 'components/IconButton';
+import IconButton, {
+  Variant as IconVariant,
+  Size as SizeVariant,
+} from 'components/IconButton';
 import Avatar from 'components/Avatar';
 import { deleteComment } from 'queries/reaction';
 import { useMutation } from '@tanstack/react-query';
@@ -11,6 +14,7 @@ import queryClient from 'utils/queryClient';
 import { getTime } from 'utils/time';
 import { iconsStyle } from 'components/Post';
 import { MyObjectType } from 'queries/post';
+import useAuth from 'hooks/useAuth';
 
 interface CommentProps {
   comment: IComment;
@@ -18,6 +22,7 @@ interface CommentProps {
 }
 
 export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
+  const { user } = useAuth();
   const createdAt = getTime(comment.updatedAt);
 
   const deleteReactionMutation = useMutation({
@@ -73,32 +78,34 @@ export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
             <div className="text-neutral-500 font-normal text-xs">
               {createdAt}
             </div>
-            <div className="ml-4">
-              <Popover
-                triggerNode={
-                  <IconButton
-                    icon={'more'}
-                    className="!p-0 !bg-inherit"
-                    variant={IconVariant.Primary}
-                  />
-                }
-                className="left-0"
-              >
-                <div className="rounded-10xl shadow-xl flex flex-col w-20">
-                  <div className={menuItemStyle} onClick={() => {}}>
-                    Edit{' '}
+            {user?.id === comment.createdBy.userId && (
+              <div className="ml-4">
+                <Popover
+                  triggerNode={
+                    <IconButton
+                      icon={'more'}
+                      className="!p-0 !bg-inherit"
+                      variant={IconVariant.Primary}
+                    />
+                  }
+                  className="left-0"
+                >
+                  <div className="rounded-10xl shadow-xl flex flex-col w-20">
+                    <div className={menuItemStyle} onClick={() => {}}>
+                      Edit{' '}
+                    </div>
+                    <div
+                      className={menuItemStyle}
+                      onClick={() => {
+                        handleDeleteReaction();
+                      }}
+                    >
+                      Delete
+                    </div>
                   </div>
-                  <div
-                    className={menuItemStyle}
-                    onClick={() => {
-                      handleDeleteReaction();
-                    }}
-                  >
-                    Delete
-                  </div>
-                </div>
-              </Popover>
-            </div>
+                </Popover>
+              </div>
+            )}
           </div>
         </div>
 
@@ -115,9 +122,12 @@ export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
                   <IconButton
                     icon={key}
                     key={key}
+                    size={SizeVariant.Small}
                     className={`!p-1 ${
                       keys > 1 ? 'absolute' : 'mr-2'
-                    } rounded-17xl ml-${3 * i} z-${i * 5} ${iconsStyle(key)}`}
+                    } rounded-17xl ml-${3 * i} z-${i * 5} ${iconsStyle(
+                      key,
+                    )} hover:${iconsStyle(key)}`}
                     variant={IconVariant.Primary}
                   />
                 ))}
@@ -132,7 +142,7 @@ export const Comment: React.FC<CommentProps> = ({ comment, className }) => {
           </div>
 
           <div className="flex flex-row text-sm font-normal text-neutral-500 space-x-7 items-center">
-            <div>0 reposts</div>
+            <div>0 replies</div>
           </div>
         </div>
 

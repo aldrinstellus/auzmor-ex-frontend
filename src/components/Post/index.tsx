@@ -90,7 +90,9 @@ const Post: React.FC<PostProps> = ({ data }) => {
                     key={key}
                     className={`!p-1 ${
                       keys > 1 ? 'absolute' : 'mr-2'
-                    }  rounded-17xl ml-${3 * i} z-${i * 5} ${iconsStyle(key)}`}
+                    }  rounded-17xl ml-${3 * i} z-${i * 5} ${iconsStyle(
+                      key,
+                    )} hover:${iconsStyle(key)} `}
                     variant={IconVariant.Primary}
                   />
                 ))}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import IconButton, {
   Variant as IconVariant,
   Size as SizeVariant,
@@ -7,6 +7,8 @@ import RichTextEditor from 'components/RichTextEditor';
 import { useMutation } from '@tanstack/react-query';
 import { createComments } from 'queries/reaction';
 import queryClient from 'utils/queryClient';
+import ReactQuill from 'react-quill';
+import { DeltaStatic } from 'quill';
 
 interface CommentFormProps {
   className?: string;
@@ -17,11 +19,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
   className = '',
   entityId,
 }) => {
-  const [editorValue, setEditorValue] = useState<{
-    html: string;
-    text: string;
-    json: Record<string, any>;
-  }>({ html: '', json: {}, text: '' });
+  const quillRef = useRef<ReactQuill>(null);
 
   const createCommentMutation = useMutation({
     mutationKey: ['create-comment-mutation'],
@@ -30,33 +28,43 @@ export const CommentForm: React.FC<CommentFormProps> = ({
       console.log(error);
     },
     onSuccess: (data: any, variables, context) => {
-      setEditorValue({ html: '', json: {}, text: '' });
+      quillRef.current?.setEditorContents(quillRef.current?.getEditor(), '');
       queryClient.invalidateQueries({ queryKey: ['comments'] });
     },
   });
 
   const onSubmit = () => {
+    const commentData = {
+      text:
+        quillRef.current
+          ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
+          .getText() || '',
+      html:
+        quillRef.current
+          ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
+          .getHTML() || '',
+      editor: quillRef.current
+        ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
+        .getContents() as DeltaStatic,
+    };
     const data = {
       entityId: entityId || '',
       entityType: 'post',
-      content: {
-        text: editorValue.text,
-        html: editorValue.html,
-        editor: editorValue.json,
-      },
+      content: commentData,
       hashtags: [],
       mentions: [],
     };
 
     createCommentMutation.mutate(data);
   };
+
   return (
     <div className={`flex flex-row ${className} `}>
-      <div className="flex flex-row items-center py-3 gap-2 border border-neutral-200 rounded-19xl border-solid w-full">
+      <div className="flex items-center py-3 gap-2 border border-neutral-200 rounded-19xl border-solid w-full">
         <RichTextEditor
           placeholder="Leave a Comment..."
-          className="max-h-6 overflow-y-auto w-full min-h-[24px] "
-          onChangeEditor={(content) => setEditorValue({ ...content })}
+          className="max-h-6 overflow-y-auto w-full"
+          ref={quillRef}
         />
       </div>
 
@@ -75,7 +83,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
         />
         <IconButton
           icon={'send'}
-          className="mx-2 !p-0 cursor-pointer !bg-inherit hover:bg-inherit disabled:bg-inherit "
+          className="mx-2 !p-0 !bg-inherit hover:bg-inherit disabled:bg-inherit disabled:cursor-auto "
           size={SizeVariant.Large}
           variant={IconVariant.Primary}
           onClick={() => {

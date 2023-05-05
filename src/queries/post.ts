@@ -79,11 +79,6 @@ export const createPost = async (payload: IPost) => {
   return data;
 };
 
-export const fetchFeed = ({ pageParam = null }) => {
-  if (pageParam === null) return apiService.get('/posts');
-  else return apiService.get(pageParam);
-};
-
 export const getPreviewLink = async (previewUrl: string) => {
   const { data } = await apiService.get(`/links/unfurl?url=${previewUrl}`);
   return data;
@@ -107,14 +102,21 @@ export const deletePost = async (id: string) => {
   return data;
 };
 
+export const fetchFeed = ({ pageParam = null }) => {
+  if (pageParam === null) return apiService.get('/posts');
+  else return apiService.get(pageParam);
+};
+
 export const useInfiniteFeed = (q?: Record<string, any>) => {
-  return useInfiniteQuery(['feed', q], fetchFeed, {
+  return useInfiniteQuery({
+    queryKey: ['feed', q],
+    queryFn: fetchFeed,
     getNextPageParam: (lastPage: any) => {
       return lastPage?.data?.result?.paging?.next;
     },
     getPreviousPageParam: (currentPage: any) => {
       return currentPage?.data?.result?.paging?.prev;
     },
-    onSuccess: (data) => console.log(data),
+    staleTime: 5 * 60 * 1000,
   });
 };
