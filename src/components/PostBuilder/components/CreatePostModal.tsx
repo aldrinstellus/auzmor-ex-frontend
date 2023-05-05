@@ -18,6 +18,13 @@ interface ICreatePostModal {
   mode: PostBuilderMode;
 }
 
+interface IUserMention {
+  denotationChar?: string;
+  id: string;
+  index?: number;
+  value: string;
+}
+
 const CreatePostModal: React.FC<ICreatePostModal> = ({
   showModal,
   setShowModal,
@@ -57,6 +64,10 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
   });
 
   const handleSubmitPost = (content?: IEditorValue) => {
+    const userMentionList = content?.json?.ops
+      ?.filter((op) => op.insert.mention)
+      .map((userItem) => userItem?.insert?.mention?.id);
+
     if (mode === PostBuilderMode.Create) {
       createPostMutation.mutate({
         content: {
@@ -65,7 +76,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           editor: content?.json || editorValue.json,
         },
         type: 'UPDATE',
-        mentions: [],
+        mentions: userMentionList || [],
         hashtags: [],
         audience: {
           users: [],
@@ -83,7 +94,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           editor: content?.json || editorValue.json,
         },
         type: 'UPDATE',
-        mentions: [],
+        mentions: userMentionList || [],
         hashtags: [],
         audience: {
           users: [],
