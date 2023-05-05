@@ -127,10 +127,10 @@ const Feed: React.FC<IFeedProps> = () => {
   }) as IPost[];
 
   return (
-    <div className="mb-12 flex">
+    <div className="mb-12 flex justify-center">
       <div className="">User card here</div>
-      <div className="w-[70%]">
-        <div className="max-">
+      <div className="max-w-2xl">
+        <div className="">
           <CreatePostCard setShowModal={setShowModal} />
           {isLoading ? (
             <div>loading...</div>
