@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
 
 export interface IMedia {
-  name: string;
-  src: string;
+  name?: string;
+  url: string;
   type: string;
   hash?: string;
   coverPage?: string;
@@ -25,7 +25,7 @@ const Video = ({ video }: VideoProps) => {
       </div>
       <video
         className="w-full h-full"
-        src={video.src}
+        src={video.url}
         controls={true}
         ref={videoRef}
       />

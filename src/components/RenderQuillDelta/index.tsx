@@ -83,9 +83,6 @@ export const RenderQuillDelta: React.FC<RenderQuillDeltaProps> = (
       <div className="mt-4">
         <MediaPreview media={media} mode={Mode.View} />
       </div>
-      {/* <div>
-        <Slideshow media={media} />
-      </div> */}
     </div>
   );
 };

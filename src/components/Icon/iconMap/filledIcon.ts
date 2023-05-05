@@ -23,6 +23,9 @@ import SvgDraftFilled from '../components/Draft/DraftFilled';
 import SvgArrowLeftFilled from '../components/ArrowLeft/ArrowLeftFilled';
 import SvgOrangeHashtagFilled from '../components/OrangeHashtag/HashtagFilled';
 import SvgSlackFilled from '../components/Slack/SlackFilled';
+import SvgCarouselLeftFilled from '../components/CarouselLeft/CarouselLeftFilled';
+import SvgCarouselRightFilled from '../components/CarouselRight/CarouselRightFilled';
+import SvgCarouselCloseFilled from '../components/CarouselClose/CarouselCloseFilled';
 
 export const filledIcon = {
   arrowLeftFilled: SvgArrowLeftFilled,
@@ -50,4 +53,7 @@ export const filledIcon = {
   videoFilled: SvgVideoFilled,
   hashtagFilled: SvgOrangeHashtagFilled,
   slackFilled: SvgSlackFilled,
+  carouselLeftFilled: SvgCarouselLeftFilled,
+  carouselRightFilled: SvgCarouselRightFilled,
+  carouselCloseFilled: SvgCarouselCloseFilled,
 };

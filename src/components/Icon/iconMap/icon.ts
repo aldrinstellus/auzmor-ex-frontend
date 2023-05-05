@@ -36,6 +36,9 @@ import MenuNotificationIcon from '../components/MenuNotificationIcon';
 import OrangeHashtagIcon from '../components/OrangeHashtag';
 import MailIcon from '../components/Mail';
 import SlackIcon from '../components/Slack';
+import CarouselLeftIcon from '../components/CarouselLeft';
+import CarouselRightIcon from '../components/CarouselRight';
+import CarouselCloseIcon from '../components/CarouselClose';
 
 export const icon = {
   admin: AdminIcon,
@@ -76,4 +79,7 @@ export const icon = {
   orangeHashtag: OrangeHashtagIcon,
   mail: MailIcon,
   slack: SlackIcon,
+  carouselLeft: CarouselLeftIcon,
+  carouselRight: CarouselRightIcon,
+  carouselClose: CarouselCloseIcon,
 };

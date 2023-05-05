@@ -1,4 +1,5 @@
-import React from 'react';
+import Carousel from 'components/Carousel';
+import React, { useState } from 'react';
 
 export interface IMedia {
   type: 'image' | 'video' | 'document';
@@ -23,6 +24,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
   className,
   mode = Mode.View,
 }) => {
+  const [openSlideshow, setOpenSlideshow] = useState<boolean>(false);
   const MediaRender: React.FC<{
     data: IMedia;
     overlayCount?: number;
@@ -107,7 +109,16 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
       );
     }
   };
-  return <div className={`${className}`}>{getLayout()}</div>;
+  return (
+    <div className={`${className}`} onClick={() => setOpenSlideshow(true)}>
+      {getLayout()}
+      <Carousel
+        media={media}
+        openCarousel={openSlideshow}
+        setOpenCarousel={setOpenSlideshow}
+      />
+    </div>
+  );
 };
 
 export default MediaPreview;

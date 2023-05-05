@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Blurhash } from 'react-blurhash';
+// import { Blurhash } from 'react-blurhash';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 export interface IMedia {
-  name: string;
-  src: string;
+  name?: string;
+  url: string;
   type: string;
   hash?: string;
 }
@@ -20,7 +20,7 @@ export type ImageProps = {
 };
 
 const Image: React.FC<ImageProps> = ({
-  image = { hash: '', name: '', src: '', type: '' },
+  image = { hash: '', name: '', url: '', type: '' },
   hashSize,
 }) => {
   const [isLoaded, setLoaded] = useState(false);
@@ -40,7 +40,7 @@ const Image: React.FC<ImageProps> = ({
 
   return (
     <div className="w-full h-full relative">
-      {image.hash && hashSize && !isLoaded && isLoadStarted && (
+      {/* {image.hash && hashSize && !isLoaded && isLoadStarted && (
         <Blurhash
           className="!absolute z-20 top-0 left-0"
           width={hashSize.width}
@@ -50,12 +50,12 @@ const Image: React.FC<ImageProps> = ({
           resolutionY={32}
           punch={1}
         />
-      )}
+      )} */}
       <LazyLoadImage
         className="w-full h-full"
         key={image.name}
         alt={image.name}
-        src={image.src}
+        src={image.url}
         // @ts-ignore
         onLoad={handleLoad}
         beforeLoad={handleLoadStarted}

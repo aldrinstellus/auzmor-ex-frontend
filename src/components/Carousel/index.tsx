@@ -8,16 +8,13 @@ import Image from 'components/Image';
 import Video from 'components/Video';
 
 import clsx from 'clsx';
-
-export enum MediaEnum {
-  Video = 'VIDEO',
-  Image = 'IMAGE',
-}
+import Modal from 'components/Modal';
+import Icon from 'components/Icon';
 
 export interface IMedia {
-  name: string;
-  src: string;
-  type: MediaEnum;
+  name?: string;
+  url: string;
+  type: 'image' | 'video' | 'document';
   hash?: string;
   coverPage?: string;
 }
@@ -31,12 +28,15 @@ export type CarouselProps = {
   media: IMedia[];
   onClose?: MouseEventHandler<Element>;
   hashSize?: hashSize;
+  openCarousel: boolean;
+  setOpenCarousel: any;
 };
 
 const Carousel: React.FC<CarouselProps> = ({
   media,
-  onClose = () => {},
   hashSize = { width: 0, height: 0 },
+  openCarousel,
+  setOpenCarousel,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -68,56 +68,50 @@ const Carousel: React.FC<CarouselProps> = ({
   });
 
   const leftArrowIconStyles = clsx({
-    '!bg-white !absolute !top-[50%] !left-8 !rounded-lg !text-neutral-900 !cursor-pointer !p-1 !px-3':
-      true,
+    '!absolute !top-[50%] !left-8 !rounded-lg !cursor-pointer !p-1 !px-3': true,
   });
 
   const rightArrowIconStyles = clsx({
-    '!bg-white !absolute !top-[50%] !right-8 !rounded-lg !text-black !cursor-pointer !p-1 !px-3':
+    '!absolute !top-[50%] !right-8 !rounded-lg !cursor-pointer !p-1 !px-3':
       true,
   });
 
   const crossIconStyles = clsx({
-    '!bg-white !top-[5%] !text-neutral-900 !absolute !right-8 !rounded-lg !p-1 !px-2':
-      true,
+    '!top-[2%] !right-2 !absolute !right-8 !rounded-lg !p-1 !px-2': true,
   });
 
   return (
-    <div className={containerStyles}>
-      <div className={mediaDivStyles}>
-        {media[currentIndex].type === MediaEnum.Image ? (
-          <Image image={media[currentIndex]} hashSize={hashSize} />
-        ) : (
-          <Video video={media[currentIndex]} />
-        )}
-      </div>
+    <Modal open={openCarousel}>
+      <div className={containerStyles}>
+        <div className={mediaDivStyles}>
+          {media[currentIndex].type === 'image' ? (
+            <Image image={media[currentIndex]} hashSize={hashSize} />
+          ) : (
+            <Video video={media[currentIndex]} />
+          )}
+        </div>
 
-      <div className={currentIndexDivStyles}>
-        {currentIndex + 1} of {Object.keys(media).length}
-      </div>
+        <div className={currentIndexDivStyles}>
+          {currentIndex + 1} of {Object.keys(media).length}
+        </div>
 
-      <IconButton
-        icon={'<'}
-        className={leftArrowIconStyles}
-        variant={IconVariant.Primary}
-        size={Size.Medium}
-        onClick={prevSlide}
-      />
-      <IconButton
-        icon={'>'}
-        className={rightArrowIconStyles}
-        variant={IconVariant.Primary}
-        size={Size.Medium}
-        onClick={nextSlide}
-      />
-      <IconButton
-        icon={'X'}
-        onClick={onClose}
-        className={crossIconStyles}
-        variant={IconVariant.Primary}
-        size={Size.Medium}
-      />
-    </div>
+        <Icon
+          name="carouselLeft"
+          onClick={prevSlide}
+          className={leftArrowIconStyles}
+        />
+        <Icon
+          name="carouselRight"
+          onClick={nextSlide}
+          className={rightArrowIconStyles}
+        />
+        <Icon
+          name="carouselClose"
+          className={crossIconStyles}
+          onClick={() => setOpenCarousel(false)}
+        />
+      </div>
+    </Modal>
   );
 };
 
