@@ -34,6 +34,19 @@ import DeleteIcon from '../components/DeleteIcon';
 import MenuEditIcon from '../components/MenuEditIcon';
 import MenuNotificationIcon from '../components/MenuNotificationIcon';
 import FlashIcon from '../components/FlashIcon';
+import Send from '../components/Send';
+import IconLinear from '../components/IconLinear';
+import EmojiHappy from '../components/EmojiHappy';
+import Celebrate from '../components/Celebrate';
+import Insightful from '../components/Insightful';
+import Funny from '../components/Funny';
+import Like from '../components/Like';
+import Love from '../components/Love';
+import Support from '../components/Support';
+import Trash from '../components/Trash';
+import CrossCircle from '../components/CrossCircle';
+import Reply from '../components/Reply';
+import LikeIcon from '../components/LikeIcon';
 
 export const icon = {
   admin: AdminIcon,
@@ -65,6 +78,15 @@ export const icon = {
   convertShape: ConvertShape,
   user: UsersIcon,
   video: VideoIcon,
+  send: Send,
+  iconLinear: IconLinear,
+  emojiHappy: EmojiHappy,
+  celebrate: Celebrate,
+  insightful: Insightful,
+  funny: Funny,
+  like: Like,
+  love: Love,
+  support: Support,
   bookmarkOutline: BookmarkOutline,
   analyticsIconOutline: AnalyticsOutline,
   copyLink: CopyLink,
@@ -72,4 +94,8 @@ export const icon = {
   editIcon: MenuEditIcon,
   notificationIcon: MenuNotificationIcon,
   flashIcon: FlashIcon,
+  trash: Trash,
+  crossCircle: CrossCircle,
+  reply: Reply,
+  likeIcon: LikeIcon,
 };

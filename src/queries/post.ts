@@ -1,6 +1,7 @@
 import apiService from 'utils/apiService';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { DeltaStatic } from 'quill';
+import { IMyReactions } from 'pages/Feed';
 
 export interface IPost {
   content: {
@@ -52,7 +53,83 @@ export interface IReaction {
   entityType: string;
   type: string;
   reaction: string;
+  myReactions?: [
+    {
+      createdBy: {
+        department?: string;
+        designation?: string;
+        fullName?: string;
+        profileImage: {
+          blurHash?: string;
+        };
+        status?: string;
+        userId?: string;
+        workLocation?: string;
+      };
+      reaction: string;
+      type: string;
+      id: string;
+    },
+  ];
+  reactionCount?: object;
 }
+
+export interface MyObjectType {
+  [key: string]: number;
+}
+
+export interface IGetPost {
+  content: {
+    text: string;
+    html: string;
+    editor: DeltaStatic;
+  };
+  mentions: string[];
+  hashtags:
+    | [
+        {
+          name: string;
+          id: string;
+        },
+      ]
+    | [];
+  files: string[];
+  type: string;
+  audience: {
+    users: string[];
+  };
+  isAnnouncement: boolean;
+  announcement: {
+    end: string;
+  };
+
+  id: string;
+  // myReactions: IMyReactions[];
+  myReactions?: [
+    {
+      createdBy: {
+        department?: string;
+        designation?: string;
+        fullName?: string;
+        profileImage: {
+          blurHash?: string;
+        };
+        status?: string;
+        userId?: string;
+        workLocation?: string;
+      };
+      reaction: string;
+      type: string;
+      id: string;
+    },
+  ];
+  reactionsCount: MyObjectType;
+  turnOffComments: boolean;
+  commentsCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface IDeletePost {
   id: string;
 }

@@ -4,7 +4,7 @@ import React from 'react';
 import SortByDropdown from './components/SortByDropdown';
 import ClockIcon from 'components/Icon/components/Clock';
 import FeedFilter from './components/FeedFilters';
-import { IPost } from 'queries/post';
+import { IGetPost } from 'queries/post';
 
 import { InfiniteScroll } from 'components/InfiniteScroll';
 import CreatePostCard from 'components/PostBuilder/components/CreatePostCard';
@@ -12,6 +12,7 @@ import Icon from 'components/Icon';
 
 type ActivityFeedProps = {
   activityFeed: any;
+  // activityFeed: IGetPost[];
   loadMore: any; // Change this type to something more appropriate for functions
   setShowModal: (flag: boolean) => void;
   isLoading?: boolean;
