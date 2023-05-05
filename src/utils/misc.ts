@@ -1,5 +1,6 @@
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from 'components/../../tailwind.config.js';
+import { IMedia } from 'components/MediaPreview';
 
 export const twConfig: any = resolveConfig(tailwindConfig);
 
@@ -19,4 +20,15 @@ export const redirectWithToken = (redirectUrl: string, token: string) => {
   } else {
     window.location.replace(`${redirectUrl}/feed?accessToken=${token}`);
   }
+};
+
+export const getBlobUrls = (fileList: File[]) => {
+  const data: IMedia[] = [];
+  fileList.forEach((file: File) => {
+    data.push({
+      type: 'image',
+      url: URL.createObjectURL(file as Blob),
+    });
+  });
+  return data;
 };

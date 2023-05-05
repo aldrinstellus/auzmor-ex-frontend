@@ -14,9 +14,11 @@ import EmojiBlot from './blots/emoji';
 import EmojiToolbar from './emoji';
 import { mention, previewLinkRegex } from './config';
 import Icon from 'components/Icon';
-import { twConfig } from 'utils/misc';
+import { getBlobUrls, twConfig } from 'utils/misc';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
 import moment from 'moment';
+import MediaPreview from 'components/MediaPreview';
+import { useUpload } from 'queries/files';
 
 export interface IEditorContentChanged {
   text: string;
@@ -51,7 +53,7 @@ const RichTextEditor = React.forwardRef(
     }: IQuillEditorProps,
     ref,
   ) => {
-    const { announcement, setActiveFlow, setEditorValue } =
+    const { announcement, setActiveFlow, setEditorValue, media } =
       useContext(CreatePostContext);
 
     const [isCharLimit, setIsCharLimit] = useState<boolean>(false);
@@ -92,7 +94,6 @@ const RichTextEditor = React.forwardRef(
           editor.getLength() - charLimit,
         );
         setIsCharLimit(true);
-        console.log('limit reached');
       } else {
         setIsCharLimit(false);
       }
@@ -125,15 +126,9 @@ const RichTextEditor = React.forwardRef(
           onChange={onChangeEditorContent}
           defaultValue={defaultValue}
         />
-        {/* <MediaPreview
-        media={[
-          {
-            type: 'image',
-            url: 'https://cdn.pixabay.com/photo/2012/08/27/14/19/mountains-55067_1280.png',
-          },
-        ]}
-        className="m-6"
-      /> */}
+        {media.length && (
+          <MediaPreview media={[...getBlobUrls(media)]} className="m-6" />
+        )}
         {announcement && (
           <div className="flex justify-between bg-primary-100 px-4 py-2 m-4">
             <div className="flex items-center">

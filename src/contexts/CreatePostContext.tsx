@@ -22,6 +22,8 @@ export interface ICreatePostContext {
   setAnnouncement: any;
   editorValue: IEditorValue;
   setEditorValue: any;
+  media: File[];
+  setMedia: any;
 }
 
 export interface IEditorValue {
@@ -37,6 +39,8 @@ export const CreatePostContext = createContext<ICreatePostContext>({
   setAnnouncement: () => {},
   editorValue: { html: '', json: {} as DeltaStatic, text: '' },
   setEditorValue: () => {},
+  media: [],
+  setMedia: () => {},
 });
 
 const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
@@ -49,7 +53,7 @@ const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
     json: {} as DeltaStatic,
     text: '',
   });
-  const quillRef = useRef(null);
+  const [media, setMedia] = useState<any[]>([]);
   return (
     <CreatePostContext.Provider
       value={{
@@ -59,6 +63,8 @@ const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
         setAnnouncement,
         editorValue,
         setEditorValue,
+        media,
+        setMedia,
       }}
     >
       {children}

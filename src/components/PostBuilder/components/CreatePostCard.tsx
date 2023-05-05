@@ -1,12 +1,90 @@
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
-import Divider from 'components/Divider';
+import Divider, { Variant } from 'components/Divider';
+import Icon from 'components/Icon';
+import { IPostTypeIcon } from 'pages/Feed';
 import React from 'react';
-import { postTypeMapIcons } from '../../../pages/Feed';
+import { twConfig } from 'utils/misc';
 
 export interface ICreatePostCardProps {
   setShowModal: (flag: boolean) => void;
 }
+
+export const postTypeMapIcons: IPostTypeIcon[] = [
+  {
+    id: 1,
+    label: 'Media',
+    icon: <Icon name="imageFilled" fill="#000000" size={14} />,
+    menuItems: [
+      {
+        renderNode: (
+          <div className="flex px-6 py-3 items-center hover:bg-primary-50">
+            <Icon
+              name="image"
+              size={16}
+              className="p-2 rounded-7xl border mr-2.5 bg-white"
+              fill={twConfig.theme.colors.primary['500']}
+            />
+            <div className="text-sm text-neutral-900 font-medium">
+              Upload a photo
+            </div>
+          </div>
+        ),
+      },
+      {
+        renderNode: (
+          <div className="flex px-6 py-3 items-center hover:bg-primary-50">
+            <Icon
+              name="video"
+              size={16}
+              className="p-2 rounded-7xl border mr-2.5 bg-white"
+              fill={twConfig.theme.colors.primary['500']}
+            />
+            <div className="text-sm text-neutral-900 font-medium">
+              Upload a video
+            </div>
+          </div>
+        ),
+      },
+      {
+        renderNode: (
+          <div className="flex px-6 py-3 items-center hover:bg-primary-50">
+            <Icon
+              name="document"
+              size={16}
+              className="p-2 rounded-7xl border mr-2.5 bg-white"
+              fill={twConfig.theme.colors.primary['500']}
+            />
+            <div className="text-sm text-neutral-900 font-medium">
+              Share a document
+            </div>
+          </div>
+        ),
+      },
+    ],
+    divider: <Divider variant={Variant.Vertical} />,
+  },
+  {
+    id: 2,
+    label: 'Shoutout',
+    icon: <Icon name="magicStarFilled" fill="#000000" size={14} />,
+    menuItems: [],
+    divider: <Divider variant={Variant.Vertical} />,
+  },
+  {
+    id: 3,
+    label: 'Events',
+    icon: <Icon name="calendarFilledTwo" fill="#000000" size={14} />,
+    menuItems: [],
+    divider: <Divider variant={Variant.Vertical} />,
+  },
+  {
+    id: 4,
+    label: 'Polls',
+    icon: <Icon name="chartFilled" fill="#000000" size={14} />,
+    menuItems: [],
+  },
+];
 
 const CreatePostCard: React.FC<ICreatePostCardProps> = ({ setShowModal }) => {
   return (

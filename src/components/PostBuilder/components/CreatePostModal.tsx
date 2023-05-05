@@ -10,6 +10,7 @@ import {
   IEditorValue,
 } from 'contexts/CreatePostContext';
 import { PostBuilderMode } from '..';
+import { EntityType, useUpload } from 'queries/files';
 
 interface ICreatePostModal {
   showModal: boolean;
@@ -32,7 +33,12 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     setEditorValue,
   } = useContext(CreatePostContext);
 
-  console.log(data);
+  const { uploadMedia, getUploadedMediaList, uploadStatus } = useUpload();
+
+  useEffect(() => {
+    console.log(uploadStatus);
+  }, [uploadStatus]);
+
   useEffect(() => {
     if (data) {
       setEditorValue(data.content.editor);
@@ -57,7 +63,10 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       updatePost(payload.id || '', payload as IPost),
   });
 
-  const handleSubmitPost = (content?: IEditorValue) => {
+  const handleSubmitPost = (content?: IEditorValue, media?: File[]) => {
+    if (media?.length) {
+      uploadMedia(media, EntityType.Post);
+    }
     if (mode === PostBuilderMode.Create) {
       createPostMutation.mutate({
         content: {
@@ -66,6 +75,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           editor: content?.json || editorValue.json,
         },
         type: 'UPDATE',
+        files: getUploadedMediaList().map((media) => media.id) || [],
         mentions: [],
         hashtags: [],
         audience: {
@@ -96,6 +106,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         id: data?.id,
       });
     }
+    // setShowModal(false);
   };
 
   return (
