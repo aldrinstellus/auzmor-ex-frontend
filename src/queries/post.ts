@@ -2,6 +2,7 @@ import apiService from 'utils/apiService';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { DeltaStatic } from 'quill';
 import { isValidUrl } from 'utils/misc';
+import { Metadata } from 'components/PreviewLink/types';
 
 export interface IPost {
   content: {
@@ -28,6 +29,7 @@ export interface IPost {
     end: string;
   };
   id?: string;
+  link?: string;
 }
 interface IDeletePost {
   id: string;
@@ -44,6 +46,9 @@ export const fetchFeed = ({ pageParam = null }) => {
 };
 
 export const getPreviewLink = async (previewUrl: string) => {
+  if (!previewUrl) {
+    return null;
+  }
   const { data } = await apiService.get(`/links/unfurl?url=${previewUrl}`);
   return data;
 };

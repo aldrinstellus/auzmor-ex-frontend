@@ -1,40 +1,24 @@
+import IconPreview from 'components/PreviewLink/components/IconPreview';
+import ImagePreview from 'components/PreviewLink/components/ImagePreview';
+import { Metadata } from 'components/PreviewLink/types';
 import React, { useMemo } from 'react';
-import { Metadata } from '../types';
-import ImagePreview from './ImagePreview';
-import IconPreview from './IconPreview';
 
 type PreviewCardProps = {
   metaData: Metadata;
-  setPreviewUrl: (previewUrl: string) => void;
-  setIsPreviewRemove: (isPreviewRemove: boolean) => void;
-  isLoading: boolean;
-  isError: boolean;
+  isLoading?: boolean;
+  isError?: boolean;
 };
 
 const PreviewCard: React.FC<PreviewCardProps> = ({
   metaData,
-  setPreviewUrl,
-  setIsPreviewRemove,
   isLoading,
   isError,
 }) =>
   useMemo(() => {
     if (metaData?.image) {
-      return (
-        <ImagePreview
-          metaData={metaData}
-          setPreviewUrl={setPreviewUrl}
-          setIsPreviewRemove={setIsPreviewRemove}
-        />
-      );
+      return <ImagePreview metaData={metaData} />;
     } else if (metaData?.favicon) {
-      return (
-        <IconPreview
-          metaData={metaData}
-          setPreviewUrl={setPreviewUrl}
-          setIsPreviewRemove={setIsPreviewRemove}
-        />
-      );
+      return <IconPreview metaData={metaData} />;
     } else if (isLoading) {
       return (
         <div className="flex justify-center items-center mb-14">

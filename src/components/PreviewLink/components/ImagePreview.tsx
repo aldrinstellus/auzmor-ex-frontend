@@ -1,21 +1,14 @@
 import React from 'react';
 import { Metadata } from '../types';
 import Card from 'components/Card';
-import ClosePreview from './ClosePreview';
 
 type ImagePreviewProps = {
   metaData: Metadata;
-  setPreviewUrl: (previewUrl: string) => void;
-  setIsPreviewRemove: (isPreviewRemove: boolean) => void;
 };
 
-const ImagePreview: React.FC<ImagePreviewProps> = ({
-  metaData,
-  setPreviewUrl,
-  setIsPreviewRemove,
-}) => {
+const ImagePreview: React.FC<ImagePreviewProps> = ({ metaData }) => {
   return (
-    <Card className="mx-6 mb-9 cursor-pointer relative">
+    <Card className="mx-6 mb-9 cursor-pointer">
       <a href={metaData.url} target="_blank" rel="noreferrer">
         <img
           src={metaData?.image}
@@ -31,10 +24,6 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
           </div>
         </div>
       </a>
-      <ClosePreview
-        setPreviewUrl={setPreviewUrl}
-        setIsPreviewRemove={setIsPreviewRemove}
-      />
     </Card>
   );
 };

@@ -12,6 +12,8 @@ import { RenderQuillDelta } from 'components/RenderQuillDelta';
 import { DeltaStatic } from 'quill';
 import FeedPostMenu from './components/FeedPostMenu';
 import { IPost } from 'queries/post';
+import PreviewCard from 'components/PreviewCard';
+import { Metadata } from 'components/PreviewLink/types';
 
 type PostProps = {
   data: IPost;
@@ -25,6 +27,8 @@ const Post: React.FC<PostProps> = ({ data }) => {
     useState<string>('text-neutral-500');
 
   const content: DeltaStatic = data?.content?.editor;
+
+  console.log(data, '232342342342');
 
   return (
     <Card className="mt-5">
@@ -43,6 +47,7 @@ const Post: React.FC<PostProps> = ({ data }) => {
         <RenderQuillDelta delta={content} />
         {/* Media Display */}
         <div></div>
+        <PreviewCard metaData={data?.link as Metadata} />
         {/* Reaction and comment repost */}
         <div className="flex justify-between pt-4 pb-6">
           <div className="flex ">

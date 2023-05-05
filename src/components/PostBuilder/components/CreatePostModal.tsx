@@ -10,6 +10,7 @@ import {
   IEditorValue,
 } from 'contexts/CreatePostContext';
 import { PostBuilderMode } from '..';
+import { previewLinkRegex } from 'components/RichTextEditor/config';
 
 interface ICreatePostModal {
   showModal: boolean;
@@ -69,6 +70,8 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       ?.filter((op) => op.insert.mention)
       .map((userItem) => userItem?.insert?.mention?.id);
 
+    const previewUrl = content?.text.match(previewLinkRegex) as string[];
+
     if (mode === PostBuilderMode.Create) {
       createPostMutation.mutate({
         content: {
@@ -86,6 +89,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         announcement: {
           end: announcement?.value || '',
         },
+        link: previewUrl[0],
       });
     } else if (PostBuilderMode.Edit) {
       updatePostMutation.mutate({
@@ -105,6 +109,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           end: announcement?.value || '',
         },
         id: data?.id,
+        link: previewUrl[0],
       });
     }
   };

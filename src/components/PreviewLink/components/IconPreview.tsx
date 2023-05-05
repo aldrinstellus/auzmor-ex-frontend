@@ -1,21 +1,14 @@
 import Card from 'components/Card';
 import React from 'react';
 import { Metadata } from '../types';
-import ClosePreview from './ClosePreview';
 
 type IconPreviewProps = {
   metaData: Metadata;
-  setPreviewUrl: (previewUrl: string) => void;
-  setIsPreviewRemove: (isPreviewRemove: boolean) => void;
 };
 
-const IconPreview: React.FC<IconPreviewProps> = ({
-  metaData,
-  setPreviewUrl,
-  setIsPreviewRemove,
-}) => {
+const IconPreview: React.FC<IconPreviewProps> = ({ metaData }) => {
   return (
-    <Card className="bg-[#F7F8FB] h-[166px] mx-6 mb-11 relative rounded-7xl">
+    <Card className="bg-[#F7F8FB] h-[166px] mx-6 mb-11 rounded-7xl">
       <a href={metaData?.url} target="_blank" rel="noreferrer">
         <div className="flex p-8">
           <img
@@ -33,10 +26,6 @@ const IconPreview: React.FC<IconPreviewProps> = ({
           </div>
         </div>
       </a>
-      <ClosePreview
-        setPreviewUrl={setPreviewUrl}
-        setIsPreviewRemove={setIsPreviewRemove}
-      />
     </Card>
   );
 };
