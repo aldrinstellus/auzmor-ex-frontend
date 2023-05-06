@@ -20,12 +20,12 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = () => {
   const queryClient = useQueryClient();
 
   const acknowledgeAnnouncement = useMutation({
-    mutationKey: ['acknowledgeAnnouncement'],
+    mutationKey: ['acknowledge-announcement'],
     mutationFn: announcementRead,
     onError: (error) => console.log(error),
     onSuccess: async (data, variables, context) => {
       console.log('data==>', data);
-      await queryClient.invalidateQueries(['acknowledgeAnnouncement']);
+      await queryClient.invalidateQueries(['announcements-widget']);
     },
   });
 

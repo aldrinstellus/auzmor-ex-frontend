@@ -256,6 +256,7 @@ export const useAnnouncements = () =>
   useQuery({
     queryKey: ['announcements-widget'],
     queryFn: () => fetchAnnouncement('ANNOUNCEMENT', 1),
+    staleTime: 15 * 60 * 1000,
   });
 
 export const announcementRead = async (payload: IAnnounce) => {
