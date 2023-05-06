@@ -1,7 +1,9 @@
 import apiService from 'utils/apiService';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { DeltaStatic } from 'quill';
+import { isValidUrl } from 'utils/misc';
 import { IMyReactions } from 'pages/Feed';
+import { Metadata } from 'components/PreviewLink/types';
 
 export interface IPost {
   content: {
@@ -28,7 +30,49 @@ export interface IPost {
     end: string;
   };
   id?: string;
-  myReaction?: IMyReactions;
+  link?: string;
+  myReactions?: [
+    {
+      createdBy: {
+        department?: string;
+        designation?: string;
+        fullName?: string;
+        profileImage: {
+          blurHash?: string;
+        };
+        status?: string;
+        userId?: string;
+        workLocation?: string;
+      };
+      reaction: string;
+      type: string;
+      id: string;
+    },
+  ];
+}
+
+export interface IReaction {
+  entityId: any;
+  entityType: string;
+  type: string;
+  reaction: string;
+  myReactions?: {
+    createdBy: {
+      department?: string;
+      designation?: string;
+      fullName?: string;
+      profileImage: {
+        blurHash?: string;
+      };
+      status?: string;
+      userId?: string;
+      workLocation?: string;
+    };
+    reaction: string;
+    type: string;
+    id: string;
+  };
+
   reactionCount?: object;
   turnOffComments?: boolean;
   commentsCount?: number;
@@ -64,9 +108,26 @@ export interface IGetPost {
   announcement: {
     end: string;
   };
-
+  link: Metadata;
   id: string;
-  myReaction: IMyReactions;
+  myReaction: {
+    createdBy: {
+      department?: string;
+      designation?: string;
+      fullName?: string;
+      profileImage: {
+        blurHash?: string;
+        url?: string;
+      };
+      status?: string;
+      userId?: string;
+      workLocation?: string;
+    };
+    reaction: string;
+    type: string;
+    id: string;
+  };
+
   reactionsCount: MyObjectType;
   turnOffComments: boolean;
   commentsCount: number;
@@ -78,12 +139,17 @@ interface IDeletePost {
   id: string;
 }
 
+interface IAnnounce {}
+
 export const createPost = async (payload: IPost) => {
   const data = await apiService.post('/posts', payload);
   return data;
 };
 
 export const getPreviewLink = async (previewUrl: string) => {
+  if (!previewUrl) {
+    return null;
+  }
   const { data } = await apiService.get(`/links/unfurl?url=${previewUrl}`);
   return data;
 };
@@ -93,6 +159,7 @@ export const usePreviewLink = (previewUrl: string) => {
     queryKey: ['preview-link', previewUrl],
     queryFn: () => getPreviewLink(previewUrl),
     staleTime: Infinity,
+    enabled: isValidUrl(previewUrl),
   });
 };
 
@@ -102,7 +169,24 @@ export const updatePost = async (id: string, payload: IPost) => {
 
 export const deletePost = async (id: string) => {
   const data = await apiService.delete(`/posts/${id}`);
-  console.log(data, 'API');
+  return data;
+};
+
+export const fetchAnnouncement = async (postType: string, limit: number) => {
+  const data = await apiService.get(
+    `/posts?postType=${postType}&limit=${limit}`,
+  );
+  return data;
+};
+
+export const useAnnouncements = () =>
+  useQuery({
+    queryKey: ['announcements-widget'],
+    queryFn: () => fetchAnnouncement('ANNOUNCEMENT', 1),
+  });
+
+export const announcementRead = async (payload: IReaction) => {
+  const data = await apiService.post('/reactions', payload);
   return data;
 };
 

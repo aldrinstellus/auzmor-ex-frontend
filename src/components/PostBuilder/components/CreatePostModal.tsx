@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import Modal from 'components/Modal';
 import CreatePost from 'components/PostBuilder/components/CreatePost';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IPost, createPost, updatePost } from 'queries/post';
 import CreateAnnouncement from './CreateAnnouncement';
 import {
@@ -10,6 +10,7 @@ import {
   IEditorValue,
 } from 'contexts/CreatePostContext';
 import { PostBuilderMode } from '..';
+import { previewLinkRegex } from 'components/RichTextEditor/config';
 
 interface ICreatePostModal {
   showModal: boolean;
@@ -38,6 +39,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     setAnnouncement,
     setEditorValue,
   } = useContext(CreatePostContext);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (data) {
@@ -52,8 +54,9 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     mutationKey: ['createPostMutation'],
     mutationFn: createPost,
     onError: (error) => console.log(error),
-    onSuccess: (data, variables, context) => {
-      console.log('data==>', data);
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['feed']);
+      setShowModal(false);
     },
   });
 
@@ -61,12 +64,18 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     mutationKey: ['updatePostMutation'],
     mutationFn: (payload: IPost) =>
       updatePost(payload.id || '', payload as IPost),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['feed']);
+      setShowModal(false);
+    },
   });
 
   const handleSubmitPost = (content?: IEditorValue) => {
     const userMentionList = content?.json?.ops
       ?.filter((op) => op.insert.mention)
       .map((userItem) => userItem?.insert?.mention?.id);
+
+    const previewUrl = content?.text.match(previewLinkRegex) as string[];
 
     if (mode === PostBuilderMode.Create) {
       createPostMutation.mutate({
@@ -85,6 +94,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         announcement: {
           end: announcement?.value || '',
         },
+        link: previewUrl && previewUrl[0],
       });
     } else if (PostBuilderMode.Edit) {
       updatePostMutation.mutate({
@@ -104,17 +114,25 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           end: announcement?.value || '',
         },
         id: data?.id,
+        link: previewUrl && previewUrl[0],
       });
     }
   };
 
+  const loading = createPostMutation.isLoading || updatePostMutation.isLoading;
   return (
     <Modal open={showModal} closeModal={() => setShowModal(false)}>
       {activeFlow === CreatePostFlow.CreatePost && (
         <CreatePost
           data={data}
-          closeModal={() => setShowModal(false)}
+          closeModal={() => {
+            if (loading) {
+              return null;
+            }
+            return setShowModal(false);
+          }}
           handleSubmitPost={handleSubmitPost}
+          isLoading={loading}
         />
       )}
       {activeFlow === CreatePostFlow.CreateAnnouncement && (
