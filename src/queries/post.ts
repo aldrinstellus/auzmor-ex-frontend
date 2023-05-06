@@ -28,8 +28,12 @@ export interface IPost {
     end: string;
   };
   id?: string;
-  myReactions?: IMyReactions[];
+  myReaction?: IMyReactions;
   reactionCount?: object;
+  turnOffComments?: boolean;
+  commentsCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface MyObjectType {
@@ -62,7 +66,7 @@ export interface IGetPost {
   };
 
   id: string;
-  myReactions: IMyReactions[];
+  myReaction: IMyReactions;
   reactionsCount: MyObjectType;
   turnOffComments: boolean;
   commentsCount: number;

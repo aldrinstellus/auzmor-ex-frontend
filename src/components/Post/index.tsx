@@ -22,7 +22,7 @@ type PostProps = {
 export const iconsStyle = (key: string) => {
   const iconStyle = clsx(
     {
-      'bg-blue-100': key === ReactionType.Like,
+      'bg-indigo-100': key === ReactionType.Like,
     },
 
     {
@@ -35,7 +35,7 @@ export const iconsStyle = (key: string) => {
       'bg-red-100': key === ReactionType.Love,
     },
     {
-      'bg-amber-100': key === ReactionType.Funny,
+      'bg-yellow-100': key === ReactionType.Funny,
     },
     {
       'bg-yellow-100': key === ReactionType.Insightful,
@@ -48,8 +48,8 @@ export const iconsStyle = (key: string) => {
 const Post: React.FC<PostProps> = ({ data }) => {
   const [showComments, setShowComments] = useState(false);
 
-  const reaction = data?.myReactions?.[0]?.reaction;
-  const reactionId = data?.myReactions?.[0]?.id;
+  const reaction = data?.myReaction?.reaction;
+  const reactionId = data?.myReaction?.id;
 
   const content: DeltaStatic = data?.content?.editor;
   const keys = Object.keys(data.reactionsCount).length;
@@ -77,8 +77,8 @@ const Post: React.FC<PostProps> = ({ data }) => {
         <div></div>
         {/* Reaction and comment repost */}
 
-        <div className="border-b border-neutral-100 mt-4"></div>
-        <div className="flex flex-row justify-between my-3">
+        <div className="border-b border-neutral-100 mt-4 mb-3"></div>
+        <div className="flex flex-row justify-between">
           <div className={`flex flex-row`}>
             {keys > 0 && (
               <div className="mr-2">
@@ -89,16 +89,16 @@ const Post: React.FC<PostProps> = ({ data }) => {
                       icon={key}
                       size={SizeVariant.Small}
                       key={key}
-                      className={`!p-1 rounded-17xl  ${iconsStyle(
-                        key,
-                      )} hover:${iconsStyle(key)} `}
+                      className={`!p-1 rounded-17xl ${
+                        i > 0 ? '-ml-2 z-1' : ''
+                      } ${iconsStyle(key)} hover:${iconsStyle(key)} `}
                       variant={IconVariant.Primary}
                     />
                   ))}
               </div>
             )}
 
-            <div className={`flex text-sm font-normal text-neutral-500 mt-1  `}>
+            <div className={`flex text-sm font-normal text-neutral-500 mt-0.5`}>
               {totalCount} reacted
             </div>
           </div>
@@ -109,9 +109,9 @@ const Post: React.FC<PostProps> = ({ data }) => {
           </div>
         </div>
 
-        <div className="border-b border-neutral-100"></div>
+        <div className="border-b border-neutral-100 mt-3"></div>
 
-        <div className="flex justify-between pt-4 pb-6">
+        <div className="flex justify-between mt-3 pb-6">
           <div className="flex ">
             <Likes
               reaction={reaction || ''}
