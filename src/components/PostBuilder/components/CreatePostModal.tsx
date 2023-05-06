@@ -40,7 +40,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     setEditorValue,
   } = useContext(CreatePostContext);
 
-  const { uploadMedia, getUploadedMediaList } = useUpload();
+  const { uploadMedia } = useUpload();
 
   useEffect(() => {
     if (data) {
@@ -66,58 +66,59 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       updatePost(payload.id || '', payload as IPost),
   });
 
-  const handleSubmitPost = (content?: IEditorValue, media?: File[]) => {
+  const handleSubmitPost = async (content?: IEditorValue, media?: File[]) => {
+    let fileIds: string[] = [];
     if (media?.length) {
-      uploadMedia(media, EntityType.Post);
+      fileIds = await uploadMedia(media, EntityType.Post);
     }
     const userMentionList = content?.json?.ops
       ?.filter((op) => op.insert.mention)
       .map((userItem) => userItem?.insert?.mention?.id);
-    setTimeout(
-      () => {
-        if (mode === PostBuilderMode.Create) {
-          createPostMutation.mutate({
-            content: {
-              text: content?.text || editorValue.text,
-              html: content?.html || editorValue.html,
-              editor: content?.json || editorValue.json,
-            },
-            type: 'UPDATE',
-            files: getUploadedMediaList().map((media) => media.id) || [],
-            mentions: userMentionList || [],
-            hashtags: [],
-            audience: {
-              users: [],
-            },
-            isAnnouncement: !!announcement,
-            announcement: {
-              end: announcement?.value || '',
-            },
-          });
-        } else if (PostBuilderMode.Edit) {
-          updatePostMutation.mutate({
-            content: {
-              text: content?.text || editorValue.text,
-              html: content?.html || editorValue.html,
-              editor: content?.json || editorValue.json,
-            },
-            type: 'UPDATE',
-            mentions: userMentionList || [],
-            hashtags: [],
-            audience: {
-              users: [],
-            },
-            isAnnouncement: !!announcement,
-            announcement: {
-              end: announcement?.value || '',
-            },
-            id: data?.id,
-          });
-        }
-        setShowModal(false);
-      },
-      media?.length ? 5000 : 0,
-    );
+    if (mode === PostBuilderMode.Create) {
+      createPostMutation.mutate(
+        {
+          content: {
+            text: content?.text || editorValue.text,
+            html: content?.html || editorValue.html,
+            editor: content?.json || editorValue.json,
+          },
+          type: 'UPDATE',
+          files: fileIds,
+          mentions: userMentionList || [],
+          hashtags: [],
+          audience: {
+            users: [],
+          },
+          isAnnouncement: !!announcement,
+          announcement: {
+            end: announcement?.value || '',
+          },
+        },
+        { onSuccess: () => setShowModal(false) },
+      );
+    } else if (PostBuilderMode.Edit) {
+      updatePostMutation.mutate(
+        {
+          content: {
+            text: content?.text || editorValue.text,
+            html: content?.html || editorValue.html,
+            editor: content?.json || editorValue.json,
+          },
+          type: 'UPDATE',
+          mentions: userMentionList || [],
+          hashtags: [],
+          audience: {
+            users: [],
+          },
+          isAnnouncement: !!announcement,
+          announcement: {
+            end: announcement?.value || '',
+          },
+          id: data?.id,
+        },
+        { onSuccess: () => setShowModal(false) },
+      );
+    }
   };
 
   return (

@@ -46,6 +46,16 @@ interface ICreateFileResponse {
   uploadUrl: string;
 }
 
+interface IETag {
+  partnumber: number;
+  etag: string;
+}
+
+interface IUploadToGcpResposne {
+  id?: string;
+  etags?: IETag[];
+}
+
 export enum UploadStatus {
   YetToStart = 'YET_TO_START',
   Uploading = 'UPLOADING',
@@ -53,31 +63,14 @@ export enum UploadStatus {
 }
 
 export const useUpload = () => {
-  const uploadedMediaListRef = useRef<any[]>([]);
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>(
     UploadStatus.YetToStart,
   );
   const [totalMedia, setTotalMedia] = useState<number>(0);
   const chunksize = 1048576 * 8; // 8 MB
 
-  useEffect(() => {
-    console.log(uploadedMediaListRef.current.length);
-    if (totalMedia === uploadedMediaListRef.current.length) {
-      setUploadStatus(UploadStatus.Finished);
-    }
-  }, [totalMedia, uploadedMediaListRef, setUploadStatus]);
-
-  const createFile = async (
-    payload: IFile,
-    entityType: EntityType,
-    onSuccess: (data: { result: { data: ICreateFileResponse } }) => void,
-  ) => {
-    const data = await apiService.post(
-      `/files?entityType=${entityType}`,
-      payload,
-    );
-    onSuccess(data);
-  };
+  const createFile = async (payload: IFile, entityType: EntityType) =>
+    await apiService.post(`/files?entityType=${entityType}`, payload);
 
   const uploadToGCP = async (res: ICreateFileResponse, file: any) => {
     const promises = [];
@@ -110,14 +103,12 @@ export const useUpload = () => {
           eTags.push({ partnumber, etag: etag.replaceAll('"', '').toString() });
         }
       });
-      postETags(res.id, { etags: eTags });
+      return { id: res.id, etags: eTags } as IUploadToGcpResposne;
     }
   };
 
-  const postETags = async (id: string, etags: any) => {
-    const data: any = await apiService.patch(`/files/${id}`, etags);
-    uploadedMediaListRef.current.push(data.result.data);
-  };
+  const postETags = async (id?: string, etags?: IETag[]) =>
+    await apiService.patch(`/files/${id}`, { etags: etags });
 
   function getChunk(partNumber: number, file: any) {
     const beginchunk = (partNumber - 1) * chunksize;
@@ -130,7 +121,11 @@ export const useUpload = () => {
     return file.slice(beginchunk, endchunk);
   }
 
-  const uploadMedia = (fileList: File[], entityType: EntityType) => {
+  const uploadMedia = async (fileList: File[], entityType: EntityType) => {
+    const fileIds: string[] = [];
+    const createFilePromises: Promise<ICreateFileResponse>[] = [];
+    const uploadToGCPPromises: Promise<IUploadToGcpResposne | undefined>[] = [];
+    const uploadETagPromises: Promise<any>[] = [];
     setUploadStatus(UploadStatus.Uploading);
     const files: IFile[] = [];
     fileList.forEach((file: File) => {
@@ -149,13 +144,72 @@ export const useUpload = () => {
     });
     setTotalMedia(files.length);
     files.forEach((file: IFile, index: number) => {
-      createFile(file, entityType, (data) => {
-        uploadToGCP(data.result.data, fileList[index]);
-      });
+      createFilePromises.push(createFile(file, entityType));
     });
+
+    if (createFilePromises.length > 0) {
+      const promisesRes = await Promise.allSettled(createFilePromises);
+      promisesRes.forEach(
+        (promiseRes: PromiseSettledResult<ICreateFileResponse>) => {
+          if (promiseRes.status === 'fulfilled') {
+            console.log('uploading to gcp...');
+            console.log((promiseRes.value as any).result.data);
+            uploadToGCPPromises.push(
+              uploadToGCP(
+                (promiseRes.value as any).result.data as ICreateFileResponse,
+                fileList.find(
+                  (file: File) =>
+                    file.name === (promiseRes.value as any).result.data.name,
+                ),
+              ),
+            );
+          } else {
+            console.log(promiseRes);
+            console.log('create file failed');
+          }
+        },
+      );
+    } else {
+      setUploadStatus(UploadStatus.Finished);
+      return fileIds;
+    }
+
+    if (uploadToGCPPromises.length > 0) {
+      const promisesRes = await Promise.allSettled(uploadToGCPPromises);
+      promisesRes.forEach(
+        (
+          promiseRes: PromiseSettledResult<IUploadToGcpResposne | undefined>,
+        ) => {
+          if (promiseRes.status === 'fulfilled') {
+            console.log('uploading etags...');
+            uploadETagPromises.push(
+              postETags(promiseRes.value?.id, promiseRes.value?.etags),
+            );
+          } else {
+            console.log(promiseRes);
+            console.log('upload to gcp faild');
+          }
+        },
+      );
+    } else {
+      setUploadStatus(UploadStatus.Finished);
+      return fileIds;
+    }
+
+    if (uploadETagPromises.length > 0) {
+      const promisesRes = await Promise.allSettled(uploadETagPromises);
+      promisesRes.forEach((promiseRes: PromiseSettledResult<any>) => {
+        if (promiseRes.status === 'fulfilled') {
+          fileIds.push(promiseRes.value.result.data.id);
+        } else {
+          console.log(promiseRes);
+          console.log('etag upload failed');
+        }
+      });
+    }
+    setUploadStatus(UploadStatus.Finished);
+    return fileIds;
   };
 
-  const getUploadedMediaList = () => uploadedMediaListRef.current;
-
-  return { uploadMedia, getUploadedMediaList, uploadStatus };
+  return { uploadMedia, uploadStatus };
 };
