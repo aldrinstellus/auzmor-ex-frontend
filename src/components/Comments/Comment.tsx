@@ -197,7 +197,7 @@ export const Comment: React.FC<CommentProps> = ({
               />
               <div className="text-xs font-normal text-neutral-500 ml-1.5">
                 {comment?.repliesCount}
-                {comment.repliesCount > 0 ? 'Replies' : 'Reply'}
+                {comment.repliesCount > 0 ? ' Replies' : ' Reply'}
               </div>
             </div>
           </div>
