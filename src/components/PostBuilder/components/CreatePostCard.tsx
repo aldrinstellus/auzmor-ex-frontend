@@ -1,13 +1,22 @@
+import React, { ReactNode } from 'react';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
-import Divider, { Variant } from 'components/Divider';
+import useAuth from 'hooks/useAuth';
 import Icon from 'components/Icon';
-import { IPostTypeIcon } from 'pages/Feed';
-import React from 'react';
 import { twConfig } from 'utils/misc';
+import clsx from 'clsx';
+import { IMenuItem } from 'components/PopupMenu';
 
 export interface ICreatePostCardProps {
   setShowModal: (flag: boolean) => void;
+}
+
+export interface IPostTypeIcon {
+  id: number;
+  label: string;
+  icon: ReactNode;
+  menuItems: IMenuItem[];
+  divider?: boolean;
 }
 
 export const postTypeMapIcons: IPostTypeIcon[] = [
@@ -62,21 +71,21 @@ export const postTypeMapIcons: IPostTypeIcon[] = [
         ),
       },
     ],
-    divider: <Divider variant={Variant.Vertical} />,
+    divider: true,
   },
   {
     id: 2,
     label: 'Shoutout',
     icon: <Icon name="magicStarFilled" fill="#000000" size={14} />,
     menuItems: [],
-    divider: <Divider variant={Variant.Vertical} />,
+    divider: true,
   },
   {
     id: 3,
     label: 'Events',
     icon: <Icon name="calendarFilledTwo" fill="#000000" size={14} />,
     menuItems: [],
-    divider: <Divider variant={Variant.Vertical} />,
+    divider: true,
   },
   {
     id: 4,
@@ -87,33 +96,34 @@ export const postTypeMapIcons: IPostTypeIcon[] = [
 ];
 
 const CreatePostCard: React.FC<ICreatePostCardProps> = ({ setShowModal }) => {
+  const { user } = useAuth();
+
+  const tabStyle = (hasDivider = false) =>
+    clsx(
+      { 'flex justify-center items-center mx-2 px-4': true },
+      { 'border-r border-neutral-100': hasDivider },
+    );
+
   return (
-    <Card className="bg-white">
-      <div className="flex items-center px-6 pt-6 pb-3">
-        <Avatar
-          size={32}
-          image="https://png.pngtree.com/png-clipart/20210619/ourlarge/pngtree-instagram-lady-social-media-flat-style-avatar-png-image_3483977.jpg"
-          name={'Anish Sarkar'}
-          active={false}
-        />
+    <Card className="bg-white px-2">
+      <div className="flex items-center px-4 pt-6 pb-4">
+        <Avatar size={32} name={user?.name} active={false} />
         {/* replace with component library */}
         <input
           type="input"
-          className="w-135.25 h-11 border border-neutral-200 rounded-19xl ml-3 px-5 py-3 text-sm font-medium outline-none text-neutral-500"
+          className="w-full h-11 border border-neutral-200 rounded-19xl ml-3 px-5 py-3 text-sm font-medium outline-none text-neutral-500"
           readOnly
           onClick={() => setShowModal(true)}
           placeholder="What's on your mind?"
         />
       </div>
-      <Divider className="flex justify-center items-center " />
-      <div className="flex justify-between mx-8.5">
+      <div className="flex justify-between border-t border-neutral-100 mx-8.5">
         {postTypeMapIcons.map((type) => (
-          <div key={type.id} className="flex justify-center items-center">
+          <div key={type.id} className={tabStyle(type.divider)}>
             <div className="mt-3 mb-3 flex justify-center items-center py-3 rounded-7xl border-1 border-neutral-200 bg-neutral-200 w-8 h-8">
               {type.icon}
             </div>
-            <div className="mr-10 ml-3">{type.label}</div>
-            {type.divider}
+            <div className="ml-3">{type.label}</div>
           </div>
         ))}
       </div>

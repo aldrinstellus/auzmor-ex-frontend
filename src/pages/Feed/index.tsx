@@ -1,15 +1,12 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { DeltaStatic } from 'quill';
-// import ActivityFeed from 'components/ActivityFeed';
-import Icon from 'components/Icon';
-import { IMenuItem } from 'components/PopupMenu';
-import { twConfig } from 'utils/misc';
-import Divider, { Variant } from 'components/Divider';
 import PostBuilder from 'components/PostBuilder';
+import UserCard from 'components/UserWidget';
+import AnnouncementCard from 'components/AnnouncementWidget';
 import { IGetPost, useInfiniteFeed } from 'queries/post';
 import CreatePostCard from 'components/PostBuilder/components/CreatePostCard';
 import Post from 'components/Post';
 import { useInView } from 'react-intersection-observer';
+import { IMenuItem } from 'components/PopupMenu';
 
 interface IFeedProps {}
 
@@ -66,10 +63,12 @@ const Feed: React.FC<IFeedProps> = () => {
   }) as IGetPost[];
 
   return (
-    <div className="mb-12 flex justify-center">
-      <div className="">User card here</div>
+    <div className="mb-12 flex space-x-8 relative">
+      <div>
+        <UserCard />
+      </div>
       <div className="max-w-2xl">
-        <div className="">
+        <div className="max-">
           <CreatePostCard setShowModal={setShowModal} />
           {isLoading ? (
             <div>loading...</div>
@@ -87,7 +86,9 @@ const Feed: React.FC<IFeedProps> = () => {
           {isFetchingNextPage && <div>Loading more...</div>}
         </div>
       </div>
-      <div className="">Announcmeent here</div>
+      <div className="max-w-xs">
+        <AnnouncementCard />
+      </div>
       {/* <ActivityFeed
         activityFeed={feed}
         loadMore={fetchNextPage}

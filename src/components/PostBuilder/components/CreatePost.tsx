@@ -1,10 +1,4 @@
-import React, {
-  LegacyRef,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useContext, useRef } from 'react';
 import RichTextEditor from 'components/RichTextEditor';
 import Actor from 'components/Actor';
 import { CREATE_POST } from 'components/Actor/constant';
@@ -26,18 +20,18 @@ import Toolbar from 'components/RichTextEditor/toolbar';
 import PreviewLink from 'components/PreviewLink';
 import { IPost } from 'queries/post';
 import { IPostTypeIcon } from 'pages/Feed';
-import { EntityType, IFile, useUpload } from 'queries/files';
-
 interface ICreatePostProps {
   closeModal: () => void;
   handleSubmitPost: (content: IEditorValue, media: File[]) => void;
   data?: IPost;
+  isLoading?: boolean;
 }
 
 const CreatePost: React.FC<ICreatePostProps> = ({
   data,
   closeModal,
   handleSubmitPost,
+  isLoading = false,
 }) => {
   const quillRef = useRef<ReactQuill>(null);
   const inputImgRef = useRef<HTMLInputElement>(null);
@@ -50,14 +44,16 @@ const CreatePost: React.FC<ICreatePostProps> = ({
       <div className="text-lg text-black p-4 font-extrabold flex-[50%]">
         Create a post
       </div>
-      <IconButton
-        onClick={() => {
-          closeModal && closeModal();
-        }}
-        icon={'close'}
-        className="!flex-[0] !text-right !p-1 !mx-4 !my-3 !bg-inherit !text-neutral-900"
-        variant={IconVariant.Primary}
-      />
+      {!isLoading && (
+        <IconButton
+          onClick={() => {
+            closeModal && closeModal();
+          }}
+          icon={'close'}
+          className="!flex-[0] !text-right !p-1 !mx-4 !my-3 !bg-inherit !text-neutral-900"
+          variant={IconVariant.Primary}
+        />
+      )}
     </div>
   );
   const Body: React.FC = () => (
