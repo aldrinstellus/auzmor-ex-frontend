@@ -1,7 +1,9 @@
 import apiService from 'utils/apiService';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { DeltaStatic } from 'quill';
+import { isValidUrl } from 'utils/misc';
 import { IMyReactions } from 'pages/Feed';
+import { Metadata } from 'components/PreviewLink/types';
 
 export interface IMention {
   name: string;
@@ -57,6 +59,7 @@ export interface IPost {
     end: string;
   };
   id?: string;
+  link?: string;
   myReactions?: [
     {
       createdBy: {
@@ -131,7 +134,7 @@ export interface IGetPost {
   announcement: {
     end: string;
   };
-
+  link: Metadata;
   id: string;
   // myReactions: IMyReactions[];
   myReactions?: [
@@ -172,6 +175,9 @@ export const createPost = async (payload: IPost) => {
 };
 
 export const getPreviewLink = async (previewUrl: string) => {
+  if (!previewUrl) {
+    return null;
+  }
   const { data } = await apiService.get(`/links/unfurl?url=${previewUrl}`);
   return data;
 };
@@ -181,6 +187,7 @@ export const usePreviewLink = (previewUrl: string) => {
     queryKey: ['preview-link', previewUrl],
     queryFn: () => getPreviewLink(previewUrl),
     staleTime: Infinity,
+    enabled: isValidUrl(previewUrl),
   });
 };
 

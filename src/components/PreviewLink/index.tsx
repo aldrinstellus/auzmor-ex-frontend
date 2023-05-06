@@ -1,7 +1,11 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { usePreviewLink } from 'queries/post';
-import ImagePreview from './components/ImagePreview';
-import IconPreview from './components/IconPreview';
+import { useDebounce } from 'hooks/useDebounce';
+import IconButton, {
+  Variant as IconVariant,
+  Size,
+} from 'components/IconButton';
+import PreviewCard from 'components/PreviewCard';
 
 export type LinkMetadataProps = {
   title?: string;
@@ -20,57 +24,34 @@ export type PreviewLinkProps = {
 };
 
 const PreviewLink: React.FC<PreviewLinkProps> = ({
-  previewUrl,
-  setPreviewUrl,
-  setIsPreviewRemove,
+  previewUrl = '',
+  setPreviewUrl = () => {},
+  setIsPreviewRemove = () => {},
   linkMetadata,
 }) => {
-  let data: LinkMetadataProps,
-    isLoading = false;
-
-  if (linkMetadata !== null) {
-    data = linkMetadata as LinkMetadataProps;
-  } else {
-    const previewLinkData = usePreviewLink(previewUrl as string);
-    data = previewLinkData?.data as LinkMetadataProps;
-    isLoading = previewLinkData?.isLoading;
+  const debouncePreviewUrl = useDebounce(previewUrl, 1000);
+  const { data, isLoading, isError } = usePreviewLink(debouncePreviewUrl);
+  if (!previewUrl) {
+    return null;
   }
-
-  const preview = useMemo(() => {
-    if (data?.image) {
-      return (
-        <ImagePreview
-          metaData={data}
-          setPreviewUrl={setPreviewUrl}
-          setIsPreviewRemove={setIsPreviewRemove}
-          showClose={linkMetadata === null}
-        />
-      );
-    } else if (data?.favicon) {
-      return (
-        <IconPreview
-          metaData={data}
-          setPreviewUrl={setPreviewUrl}
-          setIsPreviewRemove={setIsPreviewRemove}
-          showClose={linkMetadata === null}
-        />
-      );
-    } else if (isLoading) {
-      return (
-        <div className="flex justify-center items-center mb-14">
-          <div className="text-neutral-900 text-xs font-normal">
-            Loading Preview
-          </div>
-        </div>
-      );
-    } else {
-      return <div></div>;
-    }
-  }, [data, isLoading]);
-
   return (
-    <div className="w-full">
-      {previewUrl || linkMetadata ? <div>{preview}</div> : null}
+    <div className="relative">
+      <IconButton
+        icon="closeOutline"
+        className="absolute bg-white top-0 right-0 border-1 border-neutral-200 border-solid rounded-7xl mx-8 my-4 p-2"
+        variant={IconVariant.Secondary}
+        size={Size.Small}
+        onClick={() => {
+          setPreviewUrl('');
+          setIsPreviewRemove(true);
+        }}
+      />
+      <PreviewCard
+        metaData={data}
+        isLoading={isLoading}
+        isError={isError}
+        className="mx-6 mb-9"
+      />
     </div>
   );
 };
