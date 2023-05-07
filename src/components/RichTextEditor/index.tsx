@@ -13,10 +13,10 @@ import EmojiBlot from './blots/emoji';
 import EmojiToolbar from './emoji';
 import { mention, previewLinkRegex } from './config';
 import Icon from 'components/Icon';
-import { getBlobUrls, twConfig } from 'utils/misc';
+import { twConfig } from 'utils/misc';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
 import moment from 'moment';
-import MediaPreview from 'components/MediaPreview';
+import MediaPreview, { Mode } from 'components/MediaPreview';
 import { useUpload } from 'queries/files';
 
 export interface IEditorContentChanged {
@@ -52,8 +52,14 @@ const RichTextEditor = React.forwardRef(
     }: IQuillEditorProps,
     ref,
   ) => {
-    const { announcement, setActiveFlow, setEditorValue, media } =
-      useContext(CreatePostContext);
+    const {
+      announcement,
+      setActiveFlow,
+      setEditorValue,
+      media,
+      inputImgRef,
+      setMedia,
+    } = useContext(CreatePostContext);
 
     const [isCharLimit, setIsCharLimit] = useState<boolean>(false);
     const [previewUrl, setPreviewUrl] = useState<string>('');
@@ -112,6 +118,20 @@ const RichTextEditor = React.forwardRef(
       }
     };
 
+    const updateContext = () => {
+      setEditorValue({
+        text: (ref as any).current
+          ?.makeUnprivilegedEditor((ref as any).current?.getEditor())
+          .getText(),
+        html: (ref as any).current
+          ?.makeUnprivilegedEditor((ref as any).current?.getEditor())
+          .getHTML(),
+        json: (ref as any).current
+          ?.makeUnprivilegedEditor((ref as any).current?.getEditor())
+          .getContents(),
+      });
+    };
+
     return (
       <>
         <ReactQuill
@@ -126,7 +146,17 @@ const RichTextEditor = React.forwardRef(
           defaultValue={defaultValue}
         />
         {media.length && (
-          <MediaPreview media={[...getBlobUrls(media)]} className="m-6" />
+          <MediaPreview
+            media={media}
+            className="m-6"
+            mode={Mode.Edit}
+            onAddButtonClick={() => inputImgRef?.current?.click()}
+            onCloseButtonClick={() => setMedia([])}
+            onEditButtonClick={() => {
+              updateContext();
+              setActiveFlow(CreatePostFlow.EditPost);
+            }}
+          />
         )}
         {announcement && (
           <div className="flex justify-between bg-primary-100 px-4 py-2 m-4">
@@ -146,17 +176,7 @@ const RichTextEditor = React.forwardRef(
             <div
               className="flex items-center cursor-pointer"
               onClick={() => {
-                setEditorValue({
-                  text: (ref as any).current
-                    ?.makeUnprivilegedEditor((ref as any).current?.getEditor())
-                    .getText(),
-                  html: (ref as any).current
-                    ?.makeUnprivilegedEditor((ref as any).current?.getEditor())
-                    .getHTML(),
-                  json: (ref as any).current
-                    ?.makeUnprivilegedEditor((ref as any).current?.getEditor())
-                    .getContents(),
-                });
+                updateContext();
                 setActiveFlow(CreatePostFlow.CreateAnnouncement);
               }}
             >

@@ -3,7 +3,7 @@ import RichTextEditor from 'components/RichTextEditor';
 import Actor from 'components/Actor';
 import { CREATE_POST } from 'components/Actor/constant';
 import Icon from 'components/Icon';
-import { twConfig } from 'utils/misc';
+import { getMediaObj, twConfig } from 'utils/misc';
 import IconButton, { Variant as IconVariant } from 'components/IconButton';
 import PopupMenu from 'components/PopupMenu';
 import Tooltip from 'components/Tooltip';
@@ -12,7 +12,11 @@ import Divider, {
   Variant,
 } from 'components/Divider';
 import Button from 'components/Button';
-import { CreatePostContext, IEditorValue } from 'contexts/CreatePostContext';
+import {
+  CreatePostContext,
+  IEditorValue,
+  IMedia,
+} from 'contexts/CreatePostContext';
 import { CreatePostFlow } from 'contexts/CreatePostContext';
 import ReactQuill from 'react-quill';
 import { DeltaStatic } from 'quill';
@@ -22,7 +26,7 @@ import { IPost } from 'queries/post';
 import { IPostTypeIcon } from 'pages/Feed';
 interface ICreatePostProps {
   closeModal: () => void;
-  handleSubmitPost: (content: IEditorValue, media: File[]) => void;
+  handleSubmitPost: (content: IEditorValue, files: File[]) => void;
   data?: IPost;
   isLoading?: boolean;
 }
@@ -34,10 +38,15 @@ const CreatePost: React.FC<ICreatePostProps> = ({
   isLoading = false,
 }) => {
   const quillRef = useRef<ReactQuill>(null);
-  const inputImgRef = useRef<HTMLInputElement>(null);
-  const inputVideoRef = useRef<HTMLInputElement>(null);
-  const { setActiveFlow, setEditorValue, editorValue, setMedia, media } =
-    useContext(CreatePostContext);
+  const {
+    setActiveFlow,
+    setEditorValue,
+    editorValue,
+    inputImgRef,
+    inputVideoRef,
+    setUploads,
+    files,
+  } = useContext(CreatePostContext);
 
   const Header: React.FC = () => (
     <div className="flex flex-wrap border-b-1 border-neutral-200 items-center">
@@ -274,7 +283,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({
                     ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
                     .getContents() as DeltaStatic,
                 },
-                media,
+                files,
               )
             }
           />
@@ -287,8 +296,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({
         accept="image/*"
         onChange={(e) => {
           if (e.target.files?.length) {
-            setMedia([...media, ...Array.prototype.slice.call(e.target.files)]);
-            // uploadMedia(e.target.files, EntityType.Post);
+            setUploads(Array.prototype.slice.call(e.target.files));
           }
         }}
         multiple
@@ -300,7 +308,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({
         accept="video/*"
         onChange={(e) => {
           if (e.target.files?.length) {
-            // setMedia([...media, ...e.target.files]);
+            // setUploads(Array.prototype.slice.call(e.target.files));
           }
         }}
         multiple

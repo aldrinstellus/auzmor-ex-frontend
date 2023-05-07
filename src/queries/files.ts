@@ -1,6 +1,9 @@
 import apiService from 'utils/apiService';
 import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import { getType } from 'utils/misc';
+
+export const validImageTypes = ['image/png', 'image/jpg', 'image/jpeg'];
 
 export interface IFile {
   name: string;
@@ -66,13 +69,12 @@ export const useUpload = () => {
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>(
     UploadStatus.YetToStart,
   );
-  const [totalMedia, setTotalMedia] = useState<number>(0);
   const chunksize = 1048576 * 8; // 8 MB
 
   const createFile = async (payload: IFile, entityType: EntityType) =>
     await apiService.post(`/files?entityType=${entityType}`, payload);
 
-  const uploadToGCP = async (res: ICreateFileResponse, file: any) => {
+  const uploadToGCP = async (res: ICreateFileResponse, file: File) => {
     const promises = [];
     const totalPartsCount =
       parseInt(res.size) % chunksize === 0
@@ -132,7 +134,7 @@ export const useUpload = () => {
       files.push({
         name: file?.name,
         contentType: file?.type,
-        type: 'IMAGE',
+        type: getType(file.type),
         size: file?.size.toString(),
         altText: 'no image',
         audience: {
@@ -142,7 +144,6 @@ export const useUpload = () => {
         },
       });
     });
-    setTotalMedia(files.length);
     files.forEach((file: IFile, index: number) => {
       createFilePromises.push(createFile(file, entityType));
     });
@@ -160,7 +161,7 @@ export const useUpload = () => {
                 fileList.find(
                   (file: File) =>
                     file.name === (promiseRes.value as any).result.data.name,
-                ),
+                )!,
               ),
             );
           } else {

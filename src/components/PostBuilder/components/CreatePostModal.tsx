@@ -12,6 +12,7 @@ import {
 import { PostBuilderMode } from '..';
 import { EntityType, useUpload } from 'queries/files';
 import { previewLinkRegex } from 'components/RichTextEditor/config';
+import EditPost from './EditPost';
 
 interface ICreatePostModal {
   showModal: boolean;
@@ -73,10 +74,10 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     },
   });
 
-  const handleSubmitPost = async (content?: IEditorValue, media?: File[]) => {
+  const handleSubmitPost = async (content?: IEditorValue, files?: File[]) => {
     let fileIds: string[] = [];
-    if (media?.length) {
-      fileIds = await uploadMedia(media, EntityType.Post);
+    if (files?.length) {
+      fileIds = await uploadMedia(files, EntityType.Post);
     }
     const userMentionList = content?.json?.ops
       ?.filter((op) => op.insert.mention)
@@ -151,6 +152,9 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       )}
       {activeFlow === CreatePostFlow.CreateAnnouncement && (
         <CreateAnnouncement closeModal={() => setShowModal(false)} />
+      )}
+      {activeFlow === CreatePostFlow.EditPost && (
+        <EditPost closeModal={() => setShowModal(false)} />
       )}
     </Modal>
   );
