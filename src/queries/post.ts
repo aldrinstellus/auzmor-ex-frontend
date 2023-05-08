@@ -21,6 +21,17 @@ export interface IPost {
     editor: DeltaStatic;
   };
   mentions?: IMention[];
+  createdBy?: {
+    department?: string;
+    designation?: string;
+    fullName?: string;
+    profileImage: {
+      blurHash?: string;
+    };
+    status?: string;
+    userId?: string;
+    workLocation?: string;
+  };
   hashtags:
     | [
         {
@@ -39,6 +50,22 @@ export interface IPost {
     end: string;
   };
   id?: string;
+  myAcknowledgement?: {
+    // createdBy: {
+    //   department?: string;
+    //   designation?: string;
+    //   fullName?: string;
+    //   profileImage: {
+    //     blurHash?: string;
+    //   };
+    //   status?: string;
+    //   userId?: string;
+    //   workLocation?: string;
+    // };
+    reaction: string;
+    type: string;
+    id: string;
+  };
   link?: string;
   myReactions?: [
     {
@@ -61,29 +88,48 @@ export interface IPost {
 }
 
 export interface IReaction {
-  entityId: any;
+  id: any;
   entityType: string;
   type: string;
   reaction: string;
-  myReactions?: [
-    {
-      createdBy: {
-        department?: string;
-        designation?: string;
-        fullName?: string;
-        profileImage: {
-          blurHash?: string;
-        };
-        status?: string;
-        userId?: string;
-        workLocation?: string;
+  myReactions?: {
+    createdBy: {
+      department?: string;
+      designation?: string;
+      fullName?: string;
+      profileImage: {
+        blurHash?: string;
       };
-      reaction: string;
-      type: string;
-      id: string;
-    },
-  ];
+      status?: string;
+      userId?: string;
+      workLocation?: string;
+    };
+    reaction: string;
+    type: string;
+    id: string;
+  };
+  myAcknowledgement?: {
+    // createdBy: {
+    //   department?: string;
+    //   designation?: string;
+    //   fullName?: string;
+    //   profileImage: {
+    //     blurHash?: string;
+    //   };
+    //   status?: string;
+    //   userId?: string;
+    //   workLocation?: string;
+    // };
+    reaction: string;
+    type: string;
+    id: string;
+  };
+
   reactionCount?: object;
+  turnOffComments?: boolean;
+  commentsCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface MyObjectType {
@@ -97,6 +143,17 @@ export interface IGetPost {
     editor: DeltaStatic;
   };
   mentions?: IMention[];
+  createdBy?: {
+    department?: string;
+    designation?: string;
+    fullName?: string;
+    profileImage: {
+      blurHash?: string;
+    };
+    status?: string;
+    userId?: string;
+    workLocation?: string;
+  };
   hashtags:
     | [
         {
@@ -116,25 +173,39 @@ export interface IGetPost {
   };
   link: Metadata;
   id: string;
-  // myReactions: IMyReactions[];
-  myReactions?: [
-    {
-      createdBy: {
-        department?: string;
-        designation?: string;
-        fullName?: string;
-        profileImage: {
-          blurHash?: string;
-        };
-        status?: string;
-        userId?: string;
-        workLocation?: string;
+  myReaction: {
+    createdBy: {
+      department?: string;
+      designation?: string;
+      fullName?: string;
+      profileImage: {
+        blurHash?: string;
+        url?: string;
       };
-      reaction: string;
-      type: string;
-      id: string;
-    },
-  ];
+      status?: string;
+      userId?: string;
+      workLocation?: string;
+    };
+    reaction: string;
+    type: string;
+    id: string;
+  };
+  myAcknowledgement?: {
+    // createdBy: {
+    //   department?: string;
+    //   designation?: string;
+    //   fullName?: string;
+    //   profileImage: {
+    //     blurHash?: string;
+    //   };
+    //   status?: string;
+    //   userId?: string;
+    //   workLocation?: string;
+    // };
+    reaction: string;
+    type: string;
+    id: string;
+  };
   reactionsCount: MyObjectType;
   turnOffComments: boolean;
   commentsCount: number;
@@ -146,7 +217,12 @@ interface IDeletePost {
   id: string;
 }
 
-interface IAnnounce {}
+interface IAnnounce {
+  entityId: string;
+  entityType: string;
+  type: string;
+  reaction: string;
+}
 
 export const createPost = async (payload: IPost) => {
   const data = await apiService.post('/posts', payload);
@@ -180,9 +256,7 @@ export const deletePost = async (id: string) => {
 };
 
 export const fetchAnnouncement = async (postType: string, limit: number) => {
-  const data = await apiService.get(
-    `/posts?postType=${postType}&limit=${limit}`,
-  );
+  const data = await apiService.get(`/posts?feed=${postType}&limit=${limit}`);
   return data;
 };
 
@@ -190,9 +264,10 @@ export const useAnnouncements = () =>
   useQuery({
     queryKey: ['announcements-widget'],
     queryFn: () => fetchAnnouncement('ANNOUNCEMENT', 1),
+    staleTime: 15 * 60 * 1000,
   });
 
-export const announcementRead = async (payload: IReaction) => {
+export const announcementRead = async (payload: IAnnounce) => {
   const data = await apiService.post('/reactions', payload);
   return data;
 };
