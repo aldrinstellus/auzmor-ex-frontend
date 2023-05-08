@@ -69,13 +69,14 @@ const Post: React.FC<PostProps> = ({ data }) => {
 
   const isAnnouncement = data?.isAnnouncement;
 
-  const acknowledgeAnnouncement = useMutation({
-    mutationKey: ['acknowledgeAnnouncement'],
+  const acknowledgeMutation = useMutation({
+    mutationKey: ['acknowledge-announcement'],
     mutationFn: announcementRead,
     onError: (error) => console.log(error),
     onSuccess: async (data, variables, context) => {
       console.log('data==>', data);
-      await queryClient.invalidateQueries(['acknowledgeAnnouncement']);
+      await queryClient.invalidateQueries(['feed']);
+      await queryClient.invalidateQueries(['announcements-widget']);
     },
   });
 
@@ -96,8 +97,9 @@ const Post: React.FC<PostProps> = ({ data }) => {
                 label={'Mark as read'}
                 size={Size.Small}
                 variant={Variant.Tertiary}
+                loading={acknowledgeMutation.isLoading}
                 onClick={() => {
-                  acknowledgeAnnouncement.mutate({
+                  acknowledgeMutation.mutate({
                     entityId: data?.id,
                     entityType: 'post',
                     type: 'acknowledge',
