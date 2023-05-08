@@ -4,6 +4,7 @@ import { DeltaStatic } from 'quill';
 import { isValidUrl } from 'utils/misc';
 import { IMyReactions } from 'pages/Feed';
 import { Metadata } from 'components/PreviewLink/types';
+import { IMedia } from 'contexts/CreatePostContext';
 
 export interface IMention {
   name: string;
@@ -13,19 +14,6 @@ export interface IMention {
   email?: string;
 }
 
-export interface IFile {
-  id: string;
-  name?: string;
-  type: string;
-  contentType: string;
-  size: string;
-  altText?: string;
-  originalUrl: string;
-  thumbnailUrl?: string;
-  blurhash?: string;
-  isDeleted: boolean;
-  isPublic: boolean;
-}
 export interface IPost {
   content: {
     text: string;
@@ -41,7 +29,7 @@ export interface IPost {
         },
       ]
     | [];
-  files?: IFile[];
+  files?: string[];
   type: string;
   audience: {
     users: string[];
@@ -117,7 +105,7 @@ export interface IGetPost {
         },
       ]
     | [];
-  files?: IFile[];
+  files?: IMedia[];
   type: string;
   audience: {
     users: string[];

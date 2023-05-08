@@ -7,7 +7,7 @@ import { Text } from './components/Text';
 import PreviewLink from 'components/PreviewLink';
 import MediaPreview, { Mode } from 'components/MediaPreview';
 import { IGetPost } from 'queries/post';
-import { IFileToIMedia, getMentionProps } from './utils';
+import { getMentionProps } from './utils';
 
 type RenderPostProps = {
   data: IGetPost;
@@ -20,7 +20,7 @@ export const RenderPost: React.FC<RenderPostProps> = ({
   const content = data?.content?.editor;
   const mentions = data?.mentions ? data.mentions : [];
   const link = data?.link;
-  const media = data?.files ? IFileToIMedia(data.files) : null;
+  const media = data?.files;
 
   const postContent = content?.ops?.map((op: DeltaOperation) => {
     switch (true) {
