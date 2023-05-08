@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Blurhash } from 'react-blurhash';
+// import { Blurhash } from 'react-blurhash';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { IMedia } from 'contexts/CreatePostContext';
 
@@ -34,7 +34,7 @@ const Image: React.FC<ImageProps> = ({
 
   return (
     <div className="w-full h-full relative">
-      {image.blurhash && hashSize && !isLoaded && isLoadStarted && (
+      {/* {image.blurhash && hashSize && !isLoaded && isLoadStarted && (
         <Blurhash
           className="!absolute z-20 top-0 left-0"
           width={hashSize.width}
@@ -44,7 +44,7 @@ const Image: React.FC<ImageProps> = ({
           resolutionY={32}
           punch={1}
         />
-      )}
+      )} */}
       <LazyLoadImage
         className="w-full h-full"
         key={image.name}
