@@ -206,7 +206,10 @@ const CreatePost: React.FC<ICreatePostProps> = ({
             <PopupMenu
               triggerNode={
                 <div className="mr-4">
-                  <Tooltip tooltipContent={type.label}>
+                  <Tooltip
+                    tooltipContent={type.label}
+                    className="cursor-pointer"
+                  >
                     <div className="flex justify-center items-center w-8 h-8 bg-white border border-neutral-200 rounded-7xl">
                       {type.icon}
                     </div>
