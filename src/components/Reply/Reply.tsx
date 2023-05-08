@@ -7,7 +7,7 @@ import IconButton, {
 import Avatar from 'components/Avatar';
 import { deleteComment, useComments } from 'queries/reaction';
 import { useMutation } from '@tanstack/react-query';
-import { IComment, activeCommentsDataType } from '.';
+import { IComment, activeCommentsDataType } from '../Comments';
 import Popover from 'components/Popover';
 import clsx from 'clsx';
 import queryClient from 'utils/queryClient';
@@ -15,29 +15,24 @@ import { getTime } from 'utils/time';
 import { iconsStyle } from 'components/Post';
 import { MyObjectType } from 'queries/post';
 import useAuth from 'hooks/useAuth';
-import { CommentForm } from './CommentForm';
+import Icon from 'components/Icon';
 
 interface ReplyProps {
   comment: IComment;
   className?: string;
-  activeComment: activeCommentsDataType | null;
-  setActiveComment: (activeComment: activeCommentsDataType) => void;
 }
 
-export const Reply: React.FC<ReplyProps> = ({
-  comment,
-  className,
-  activeComment,
-  setActiveComment,
-}) => {
-  const [replyInputBox, setReplyInputBox] = useState(false);
+export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
   const { user } = useAuth();
   const createdAt = getTime(comment.updatedAt);
 
-  const isReplying =
-    activeComment &&
-    activeComment.id === comment.id &&
-    activeComment.type === 'replying';
+  const handleClick = () => {
+    console.log('con');
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
 
   const deleteReactionMutation = useMutation({
     mutationKey: ['delete-comment-mutation'],
@@ -128,23 +123,23 @@ export const Reply: React.FC<ReplyProps> = ({
         <div className="flex flex-row justify-between mt-3 cursor-pointer">
           <div className={`flex flex-row`}>
             {keys > 0 && (
-              <div className="mr-2">
+              <div className="mr-2 flex flex-row">
                 {Object.keys(reactionCount)
                   .slice(0, 3)
                   .map((key, i) => (
-                    <IconButton
-                      icon={key}
-                      size={SizeVariant.Small}
-                      key={key}
-                      className={`!p-1 rounded-17xl ${
-                        i > 0 ? '-ml-2 z-1' : ''
-                      } ${iconsStyle(key)} hover:${iconsStyle(key)} `}
-                      variant={IconVariant.Primary}
-                    />
+                    <div className={` ${i > 0 ? '-ml-2 z-1' : ''}  `} key={key}>
+                      <Icon
+                        name={key}
+                        size={12}
+                        className={`p-0.5 rounded-17xl cursor-pointer border-white border border-solid ${iconsStyle(
+                          key,
+                        )}`}
+                      />
+                    </div>
                   ))}
               </div>
             )}
-            <div className={`flex text-sm font-normal text-neutral-500 mt-0.5`}>
+            <div className={`flex text-sm font-normal text-neutral-500`}>
               {totalCount} reacted
             </div>
           </div>
@@ -158,17 +153,7 @@ export const Reply: React.FC<ReplyProps> = ({
               reactionId={comment?.myReaction?.id || ''}
               queryKey="comments"
             />
-            <div
-              className="flex items-center ml-7"
-              onClick={() => {
-                if (replyInputBox) {
-                  setReplyInputBox(false);
-                } else {
-                  setReplyInputBox(true);
-                }
-                setActiveComment({ id: comment.id, type: 'replying' });
-              }}
-            >
+            <div className="flex items-center ml-7" onClick={handleClick}>
               <IconButton
                 icon={'reply'}
                 className="!p-0 !bg-inherit"
@@ -181,15 +166,6 @@ export const Reply: React.FC<ReplyProps> = ({
           </div>
           <div></div>
         </div>
-
-        {replyInputBox && (
-          <CommentForm
-            className="my-1"
-            entityId={comment.entityId}
-            entityType="comment"
-            setReplyInputBox={setReplyInputBox}
-          />
-        )}
       </div>
     </div>
   );
