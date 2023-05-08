@@ -53,6 +53,9 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       if (data.isAnnouncement) {
         setAnnouncement({ label: 'Custom Date', value: data.announcement.end });
       }
+      if (data?.files?.length) {
+        setMedia(data?.files);
+      }
     }
   }, []);
 
