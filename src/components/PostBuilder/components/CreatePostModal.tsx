@@ -41,6 +41,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     editorValue,
     setAnnouncement,
     setEditorValue,
+    setMedia,
   } = useContext(CreatePostContext);
   const queryClient = useQueryClient();
 
@@ -107,7 +108,12 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           },
           link: previewUrl && previewUrl[0],
         },
-        { onSuccess: () => setShowModal(false) },
+        {
+          onSuccess: () => {
+            setShowModal(false);
+            setMedia([]);
+          },
+        },
       );
     } else if (PostBuilderMode.Edit) {
       updatePostMutation.mutate(
@@ -141,7 +147,14 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     uploadStatus === UploadStatus.Uploading;
 
   return (
-    <Modal open={showModal} closeModal={() => setShowModal(false)}>
+    <Modal
+      open={showModal}
+      closeModal={() => {
+        setShowModal(false);
+        setMedia([]);
+        setEditorValue({});
+      }}
+    >
       {activeFlow === CreatePostFlow.CreatePost && (
         <CreatePost
           data={data}
