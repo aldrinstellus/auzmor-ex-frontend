@@ -38,7 +38,7 @@ export interface ICreatePostContext {
   inputVideoRef: React.RefObject<HTMLInputElement> | null;
   setUploads: (uploads: File[]) => void;
   replaceMedia: (index: number, data: File) => void;
-  removeMedia: (index: number) => void;
+  removeMedia: (index: number, callback?: () => void) => void;
 }
 
 export interface IEditorValue {
@@ -115,10 +115,11 @@ const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
     );
   };
 
-  const removeMedia = (index: number) => {
+  const removeMedia = (index: number, callback?: () => void) => {
     const fileName = media[index].name;
     setMedia([...media.filter((file: IMedia) => file.name !== fileName)]);
     setFiles([...files.filter((file: File) => file.name !== fileName)]);
+    callback && callback();
   };
   return (
     <CreatePostContext.Provider

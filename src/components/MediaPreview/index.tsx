@@ -6,6 +6,7 @@ import { twConfig } from 'utils/misc';
 import Icon from 'components/Icon';
 import { IMedia } from 'contexts/CreatePostContext';
 import useModal from 'hooks/useModal';
+import './index.css';
 
 export enum Mode {
   View = 'VIEW',
@@ -76,7 +77,6 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
               }
             }}
           />
-
           <MediaRender
             data={media[1]}
             onClick={(e) => {

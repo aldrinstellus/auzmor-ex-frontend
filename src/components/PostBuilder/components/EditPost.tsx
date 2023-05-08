@@ -59,7 +59,11 @@ const EditPost: React.FC<IEditPostProps> = ({ closeModal }) => {
         media={media}
         className="m-6"
         onClose={(e, data, index) => {
-          removeMedia(index);
+          removeMedia(index, () => {
+            if (media.length === 1) {
+              setActiveFlow(CreatePostFlow.CreatePost);
+            }
+          });
         }}
         currentIndex={currentIndex}
         prevSlide={prevSlide}

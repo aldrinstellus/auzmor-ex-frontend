@@ -12,11 +12,7 @@ import Divider, {
   Variant,
 } from 'components/Divider';
 import Button from 'components/Button';
-import {
-  CreatePostContext,
-  IEditorValue,
-  IMedia,
-} from 'contexts/CreatePostContext';
+import { CreatePostContext, IEditorValue } from 'contexts/CreatePostContext';
 import { CreatePostFlow } from 'contexts/CreatePostContext';
 import ReactQuill from 'react-quill';
 import { DeltaStatic } from 'quill';
@@ -308,7 +304,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({
         accept="video/*"
         onChange={(e) => {
           if (e.target.files?.length) {
-            // setUploads(Array.prototype.slice.call(e.target.files));
+            setUploads(Array.prototype.slice.call(e.target.files));
           }
         }}
         multiple
