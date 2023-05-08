@@ -8,6 +8,7 @@ import {
   CreatePostFlow,
   CreatePostContext,
   IEditorValue,
+  IMedia,
 } from 'contexts/CreatePostContext';
 import { PostBuilderMode } from '..';
 import { EntityType, useUpload } from 'queries/files';
@@ -43,6 +44,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     setEditorValue,
     setMedia,
     clearPostContext,
+    media,
   } = useContext(CreatePostContext);
   const queryClient = useQueryClient();
 
@@ -85,6 +87,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
   const handleSubmitPost = async (content?: IEditorValue, files?: File[]) => {
     let fileIds: string[] = [];
     if (files?.length) {
+      console.log(files.length, '<=== length');
       fileIds = await uploadMedia(files, EntityType.Post);
     }
     const userMentionList = content?.json?.ops
@@ -130,6 +133,12 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
             editor: content?.json || editorValue.json,
           },
           type: 'UPDATE',
+          files: [
+            ...fileIds,
+            ...media
+              .filter((eachMedia: IMedia) => eachMedia.id !== '')
+              .map((eachMedia: IMedia) => eachMedia.id),
+          ],
           mentions: userMentionList || [],
           hashtags: [],
           audience: {
