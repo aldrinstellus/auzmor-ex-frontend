@@ -127,14 +127,16 @@ const CreateAnnouncement: React.FC<ICreateAnnouncementProps> = ({
                   control,
                   minDate: new Date(),
                   defaultValue: announcement?.value || '',
-                  onDateChange: (date: Value) =>
+                  onDateChange: (date: Value) => {
+                    const dateValue = date?.toString();
                     setValue('expityOption', {
                       label: 'Custom Date',
                       value:
-                        new Date(date?.toLocaleString() || '')
+                        new Date(dateValue || '')
                           .toISOString()
                           .substring(0, 19) + 'Z',
-                    }),
+                    });
+                  },
                 },
               ]}
               className="mt-6"
