@@ -32,27 +32,23 @@ const Image: React.FC<ImageProps> = ({
     setLoadStarted(true);
   };
 
+  const handleLoadEnd = () => {
+    setLoaded(true);
+    setLoadStarted(false);
+  };
+
   return (
     <div className="w-full h-full relative">
-      {/* {image.blurhash && hashSize && !isLoaded && isLoadStarted && (
-        <Blurhash
-          className="!absolute z-20 top-0 left-0"
-          width={hashSize.width}
-          height={hashSize.height}
-          hash={image.blurhash}
-          resolutionX={32}
-          resolutionY={32}
-          punch={1}
-        />
-      )} */}
       <LazyLoadImage
-        className="w-full h-full"
+        className="w-[65vw] h-[80vh] object-cover"
         key={image.name}
         alt={image.name}
         src={image.originalUrl}
         // @ts-ignore
         onLoad={handleLoad}
         beforeLoad={handleLoadStarted}
+        afterLoad={handleLoadEnd}
+        placeholderSrc="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif"
       />
     </div>
   );
