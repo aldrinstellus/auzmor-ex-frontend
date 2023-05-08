@@ -12,11 +12,7 @@ import Divider, {
   Variant,
 } from 'components/Divider';
 import Button from 'components/Button';
-import {
-  CreatePostContext,
-  IEditorValue,
-  IMedia,
-} from 'contexts/CreatePostContext';
+import { CreatePostContext, IEditorValue } from 'contexts/CreatePostContext';
 import { CreatePostFlow } from 'contexts/CreatePostContext';
 import ReactQuill from 'react-quill';
 import { DeltaStatic } from 'quill';
@@ -43,6 +39,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({
     setActiveFlow,
     setEditorValue,
     editorValue,
+    setAnnouncement,
     inputImgRef,
     inputVideoRef,
     setUploads,
@@ -58,6 +55,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({
         <IconButton
           onClick={() => {
             closeModal && closeModal();
+            setAnnouncement({});
           }}
           icon={'close'}
           className="!flex-[0] !text-right !p-1 !mx-4 !my-3 !bg-inherit !text-neutral-900"
@@ -206,7 +204,10 @@ const CreatePost: React.FC<ICreatePostProps> = ({
             <PopupMenu
               triggerNode={
                 <div className="mr-4">
-                  <Tooltip tooltipContent={type.label}>
+                  <Tooltip
+                    tooltipContent={type.label}
+                    className="cursor-pointer"
+                  >
                     <div className="flex justify-center items-center w-8 h-8 bg-white border border-neutral-200 rounded-7xl">
                       {type.icon}
                     </div>
@@ -310,7 +311,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({
         accept="video/*"
         onChange={(e) => {
           if (e.target.files?.length) {
-            // setUploads(Array.prototype.slice.call(e.target.files));
+            setUploads(Array.prototype.slice.call(e.target.files));
           }
         }}
         multiple

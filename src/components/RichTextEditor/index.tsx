@@ -145,7 +145,7 @@ const RichTextEditor = React.forwardRef(
           onChange={onChangeEditorContent}
           defaultValue={defaultValue}
         />
-        {media.length && (
+        {media.length > 0 && (
           <MediaPreview
             media={media}
             className="m-6"
@@ -158,7 +158,7 @@ const RichTextEditor = React.forwardRef(
             }}
           />
         )}
-        {announcement && (
+        {announcement?.label && (
           <div className="flex justify-between bg-primary-100 px-4 py-2 m-4">
             <div className="flex items-center">
               <Icon
