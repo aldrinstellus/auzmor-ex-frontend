@@ -43,6 +43,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     setAnnouncement,
     setEditorValue,
     setMedia,
+    clearPostContext,
     media,
   } = useContext(CreatePostContext);
   const queryClient = useQueryClient();
@@ -118,8 +119,8 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         },
         {
           onSuccess: () => {
+            clearPostContext();
             setShowModal(false);
-            setMedia([]);
           },
         },
       );
@@ -164,9 +165,8 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     <Modal
       open={showModal}
       closeModal={() => {
+        clearPostContext();
         setShowModal(false);
-        setMedia([]);
-        setEditorValue({});
       }}
     >
       {activeFlow === CreatePostFlow.CreatePost && (
