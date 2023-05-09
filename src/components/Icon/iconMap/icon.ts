@@ -55,6 +55,7 @@ import Reply from '../components/Reply';
 import LikeIcon from '../components/LikeIcon';
 import ArrowRightIcon from '../components/ArrowRight';
 import PlayIcon from '../components/Play';
+import BriefcaseIcon from '../components/Briefcase';
 
 export const icon = {
   add: Add,
@@ -114,4 +115,5 @@ export const icon = {
   carouselLeft: CarouselLeftIcon,
   carouselRight: CarouselRightIcon,
   carouselClose: CarouselCloseIcon,
+  briefcase: BriefcaseIcon,
 };
