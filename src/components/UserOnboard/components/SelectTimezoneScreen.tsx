@@ -5,7 +5,14 @@ import Layout, { FieldType } from 'components/Form';
 import { useForm } from 'react-hook-form';
 import Button, { Type } from 'components/Button';
 
-const SelectTimezoneScreen: React.FC = (): ReactElement => {
+type SelectTimezoneScreenProps = {
+  setOnNextButtonClick?: any;
+  setNextButtonLoading?: (active: boolean) => void;
+};
+
+const SelectTimezoneScreen: React.FC<
+  SelectTimezoneScreenProps
+> = (): ReactElement => {
   // Note: The timezone selector dropdown has to be a form component here.
   // console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const {

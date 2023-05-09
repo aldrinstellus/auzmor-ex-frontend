@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useMemo } from 'react';
+import React, { MouseEventHandler, ReactNode, useMemo } from 'react';
 import clsx from 'clsx';
 import isDarkColor from 'is-dark-color';
 import { getInitials } from 'utils/misc';
@@ -11,10 +11,11 @@ export type AvatarProps = {
   image?: string;
   round?: boolean;
   showActiveIndicator?: boolean;
-  showEditIcon?: boolean;
   active?: boolean;
   size?: number;
   bgColor?: string;
+  showEditIcon?: boolean;
+  editIconComponent?: ReactNode;
 };
 
 const Avatar: React.FC<AvatarProps> = ({
@@ -28,6 +29,7 @@ const Avatar: React.FC<AvatarProps> = ({
   showActiveIndicator = false,
   bgColor = '#343434',
   showEditIcon = false,
+  editIconComponent,
 }) => {
   const containerStyles = useMemo(
     () =>
@@ -66,14 +68,6 @@ const Avatar: React.FC<AvatarProps> = ({
     { '-top-1 -right-1': !round },
   );
 
-  const editIconStyles = clsx(
-    {
-      'absolute bg-primary-500 border-1 border-white rounded-full p-2 cursor-pointer':
-        true,
-    },
-    { 'top-0 right-0': round },
-  );
-
   const divStyle = useMemo(
     () => ({
       height: `${size}px`,
@@ -95,14 +89,7 @@ const Avatar: React.FC<AvatarProps> = ({
   }, []);
 
   const editIcon = useMemo(() => {
-    return (
-      <Icon
-        name="edit"
-        className={editIconStyles}
-        stroke="#ffffff"
-        hover={false}
-      />
-    );
+    return editIconComponent;
   }, []);
 
   const isBgDark = isDarkColor(bgColor);

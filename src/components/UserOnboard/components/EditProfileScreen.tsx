@@ -1,16 +1,36 @@
 import Avatar from 'components/Avatar';
 import Icon from 'components/Icon';
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import EditIcon from './EditIcon';
+import { EntityType, useUpload } from 'queries/files';
+import Button from 'components/Button';
 
 type EditProfileScreenProps = {
   fullName: string;
+  setOnNextButtonClick?: any;
+  setNextButtonLoading?: (active: boolean) => void;
 };
 
 const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
   fullName,
+  setOnNextButtonClick,
+  setNextButtonLoading,
 }): ReactElement => {
   const [disableEdit, setDisableEdit] = useState<boolean>(true);
   const nameRef = useRef<HTMLInputElement>(null);
+
+  const [profilePicture, setProfilePicture] = useState<File[]>();
+  const [uploadedProfilePicture, setUploadedProfilePicture] = useState<any>();
+  const { uploadMedia, uploadStatus } = useUpload();
+
+  const updateProfile = async () => {
+    let fileIds;
+    if (profilePicture) {
+      fileIds = await uploadMedia(profilePicture, EntityType.UserProfileImage);
+    }
+    const updatedName = nameRef.current?.value;
+    console.log({ fileIds, updatedName });
+  };
 
   useEffect(() => {
     if (disableEdit) nameRef?.current?.setAttribute('disabled', 'true');
@@ -42,7 +62,13 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
           />
         </div>
       </div>
-      <Avatar size={144} showEditIcon name={fullName} bgColor="#DBEAFE" />
+      <Avatar
+        size={144}
+        showEditIcon
+        editIconComponent={<EditIcon setProfilePicture={setProfilePicture} />}
+        name={fullName}
+        bgColor="#DBEAFE"
+      />
       <p className="font-bold text-neutral-900 text-2xl">
         Set your profile photo
       </p>
@@ -55,6 +81,7 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
           recognise you.
         </p>
       </div>
+      <Button label="Upload" />
     </div>
   );
 };
