@@ -3,9 +3,12 @@ import Card from 'components/Card';
 import Icon from 'components/Icon';
 import Button, { Variant } from 'components/Button';
 
-export interface IContactCardProps {}
+export interface IContactCardProps {
+  email?: string;
+  contact?: string;
+}
 
-const ContactCard: React.FC<IContactCardProps> = () => {
+const ContactCard: React.FC<IContactCardProps> = ({ email, contact }) => {
   return (
     <div>
       <Card className="p-6 rounded-9xl space-y-6">
@@ -18,7 +21,7 @@ const ContactCard: React.FC<IContactCardProps> = () => {
               <div>
                 <Icon name="people" />
               </div>
-              <div>anish.sarkar@auzmor.com</div>
+              <div>{email}</div>
             </div>
             <div>
               <Icon name="people" />
@@ -29,7 +32,7 @@ const ContactCard: React.FC<IContactCardProps> = () => {
               <div>
                 <Icon name="people" />
               </div>
-              <div>anish.sarkar@auzmor.com</div>
+              <div>{contact}</div>
             </div>
           </div>
         </div>
