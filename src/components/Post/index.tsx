@@ -58,7 +58,7 @@ const Post: React.FC<PostProps> = ({ data }) => {
   );
 
   return (
-    <Card>
+    <Card className="mb-4">
       <AcknowledgementBanner data={data} />
       <div className="flex justify-between items-center">
         <Actor
