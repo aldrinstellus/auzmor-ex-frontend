@@ -6,18 +6,23 @@ import WelcomeScreen from './components/WelcomeScreen';
 import EditProfileScreen from './components/EditProfileScreen';
 import SelectTimezoneScreen from './components/SelectTimezoneScreen';
 import AllDoneScreen from './components/AllDoneScreen';
+import useModal from 'hooks/useModal';
+import Modal from 'components/Modal';
 
 type UserOnboardProps = {
-  name?: string;
+  fullName: string;
 };
 
-const UserOnboard: React.FC<UserOnboardProps> = ({ name }): ReactElement => {
+const UserOnboard: React.FC<UserOnboardProps> = ({
+  fullName,
+}): ReactElement => {
+  const [open, openModal, closeModal] = useModal(true);
   const screens = [
     {
       screen: <WelcomeScreen />,
     },
     {
-      screen: <EditProfileScreen />,
+      screen: <EditProfileScreen fullName={fullName} />,
       backText: 'Skip this step',
       backButtonAction: BackButtonAction.SKIP,
     },
@@ -31,7 +36,11 @@ const UserOnboard: React.FC<UserOnboardProps> = ({ name }): ReactElement => {
     },
   ];
 
-  return <ProfileSetupModal screens={screens} />;
+  return (
+    <Modal open={open}>
+      <ProfileSetupModal closeModal={closeModal} screens={screens} />
+    </Modal>
+  );
 };
 
 export default UserOnboard;
