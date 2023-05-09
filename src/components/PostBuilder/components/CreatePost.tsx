@@ -272,7 +272,8 @@ const CreatePost: React.FC<ICreatePostProps> = ({
             label={isLoading ? <Spinner color="#FFFFFF" /> : 'Post'}
             className="w-24"
             disabled={isLoading}
-            onClick={() =>
+            onClick={() => {
+              updateContext();
               handleSubmitPost(
                 {
                   text:
@@ -288,8 +289,8 @@ const CreatePost: React.FC<ICreatePostProps> = ({
                     .getContents() as DeltaStatic,
                 },
                 files,
-              )
-            }
+              );
+            }}
           />
         </div>
       </div>

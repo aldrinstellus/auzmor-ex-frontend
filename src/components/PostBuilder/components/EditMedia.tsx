@@ -64,6 +64,8 @@ const EditMedia: React.FC<IEditMediaProps> = ({ closeModal }) => {
           removeMedia(index, () => {
             if (media.length === 1) {
               setActiveFlow(CreatePostFlow.CreatePost);
+            } else if (media.length - 1 === currentIndex) {
+              nextSlide();
             }
           });
         }}
