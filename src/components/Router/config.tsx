@@ -73,8 +73,6 @@ const routers = createBrowserRouter(
           path="/profile"
           element={<UserDetail />}
           loader={() => {
-            // const { state } = useLocation();
-            // console.log('state', state);
             return '';
           }}
         />
