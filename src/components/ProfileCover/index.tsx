@@ -4,6 +4,9 @@ import Avatar from 'components/Avatar';
 import Divider, { Variant as DividerVariant } from 'components/Divider';
 import Button, { Variant as ButtonVariant } from 'components/Button';
 import Icon from 'components/Icon';
+import OutOfOffice from 'images/out-of-office.svg';
+import Location from 'images/Location.svg';
+import Briefcase from 'images/Briefcase.svg';
 
 export interface IProfileCoverProps {
   fullName?: string;
@@ -36,8 +39,9 @@ const ProfileCover: React.FC<IProfileCoverProps> = ({
           <div className="flex justify-between w-[1150px] ">
             <div className="flex space-x-4">
               <div className=" text-2xl font-bold">{fullName}</div>
-              <div className="bg-red-100 border-1 border-red-200 rounded-full px-3 flex justify-center items-center">
-                {status}
+              <div className="bg-red-100 border-1 border-red-200 rounded-full px-3 flex justify-center items-center space-x-2">
+                <img src={OutOfOffice} alt="" width={24} height={24} />
+                <div>{status}</div>
               </div>
             </div>
             <div className="text-sm font-bold">
@@ -59,9 +63,11 @@ const ProfileCover: React.FC<IProfileCoverProps> = ({
             </div>
 
             <div className="flex justify-center items-center space-x-4">
-              <div className="">
+              {/* <div className="">
                 <Icon name="briefcase" size={24} />
-              </div>
+              </div> */}
+              <img src={Briefcase} alt="" />
+
               <div className="text-xs font-normal">{department}</div>
             </div>
 
@@ -70,9 +76,10 @@ const ProfileCover: React.FC<IProfileCoverProps> = ({
             </div>
 
             <div className="flex justify-center items-center space-x-4">
-              <div className="">
+              {/* <div className="">
                 <Icon name="briefcase" size={24} />
-              </div>
+              </div> */}
+              <img src={Location} alt="" />
               <div className="text-xs font-normal">{location}</div>
             </div>
           </div>

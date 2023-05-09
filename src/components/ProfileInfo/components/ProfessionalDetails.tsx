@@ -1,6 +1,7 @@
 import Card from 'components/Card';
 import Divider from 'components/Divider';
 import React from 'react';
+import Time from 'images/time.svg';
 
 export interface IProfessionalDetailsProps {
   dateOfJoin: string;
@@ -24,7 +25,7 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
             Date of Joining
           </div>
           <div className="flex space-x-3">
-            <div>i</div>
+            <img src={Time} alt="" />
             <div className="text-neutral-900 text-base font-medium ">
               Joined on {joiningDate.toDateString()}
             </div>
@@ -33,7 +34,7 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
         <div className="space-y-2">
           <div className="text-neutral-500 text-sm font-bold">Timezone</div>
           <div className="flex space-x-3">
-            <div>i</div>
+            <img src={Time} alt="" />
             <div className="text-neutral-900 text-base font-medium ">
               Joined on {timezone?.toString()}
             </div>
