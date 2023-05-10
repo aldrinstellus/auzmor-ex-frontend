@@ -11,14 +11,6 @@ import UserOnboard from 'components/UserOnboard';
 
 interface IFeedProps {}
 
-export interface IPostTypeIcon {
-  id: number;
-  label: string;
-  icon: ReactNode;
-  menuItems: IMenuItem[];
-  divider?: ReactNode;
-}
-
 export interface IProfileImage {
   blurHash: string;
   url: string;
