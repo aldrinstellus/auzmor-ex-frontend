@@ -56,6 +56,13 @@ import LikeIcon from '../components/LikeIcon';
 import ArrowRightIcon from '../components/ArrowRight';
 import PlayIcon from '../components/Play';
 import BriefcaseIcon from '../components/Briefcase';
+import LocationIcon from '../components/Location';
+import EmailIcon from '../components/Email';
+import FolderConnectionIcon from '../components/FolderConnection';
+import CakeIcon from '../components/Cake';
+import FemaleIcon from '../components/Female';
+import MarriedIcon from '../components/Married';
+import CopyIcon from '../components/Copy';
 
 export const icon = {
   add: Add,
@@ -116,4 +123,11 @@ export const icon = {
   carouselRight: CarouselRightIcon,
   carouselClose: CarouselCloseIcon,
   briefcase: BriefcaseIcon,
+  location: LocationIcon,
+  email: EmailIcon,
+  folderConnection: FolderConnectionIcon,
+  cake: CakeIcon,
+  femaleicon: FemaleIcon,
+  marriedIcon: MarriedIcon,
+  copyIcon: CopyIcon,
 };
