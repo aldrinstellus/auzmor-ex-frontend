@@ -10,16 +10,12 @@ import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import useCarousel from 'hooks/useCarousel';
 
-type UserOnboardProps = {
-  fullName: string;
-};
-
 export type IScreen = {
   screen: ReactNode;
   cardText?: string;
 };
 
-const UserOnboard: React.FC<UserOnboardProps> = ({ fullName }): ReactNode => {
+const UserOnboard: React.FC = (): ReactNode => {
   const [open, openModal, closeModal] = useModal(true);
   const [currentScreen, prev, next] = useCarousel(0, 4);
 
@@ -28,7 +24,7 @@ const UserOnboard: React.FC<UserOnboardProps> = ({ fullName }): ReactNode => {
       screen: <WelcomeScreen next={next} />,
     },
     {
-      screen: <EditProfileScreen fullName={fullName} next={next} />,
+      screen: <EditProfileScreen next={next} />,
     },
     {
       screen: <SelectTimezoneScreen next={next} />,

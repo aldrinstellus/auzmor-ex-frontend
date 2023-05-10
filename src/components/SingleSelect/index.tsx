@@ -13,7 +13,8 @@ export interface ISingleSelectProps {
   control?: Control<Record<string, any>>;
   label?: string;
   placeholder?: string;
-  options: any[];
+  options: HTMLOptionElement[];
+  menuPlacement?: string;
 }
 
 const SingleSelect: React.FC<ISingleSelectProps> = ({
@@ -27,6 +28,7 @@ const SingleSelect: React.FC<ISingleSelectProps> = ({
   placeholder = '',
   options,
   defaultValue,
+  menuPlacement = undefined,
 }) => {
   const { field } = useController({
     name,
@@ -82,6 +84,7 @@ const SingleSelect: React.FC<ISingleSelectProps> = ({
               options={options}
               {...field}
               defaultValue={defaultValue}
+              menuPlacement={'bottom' || menuPlacement}
             />
           )}
         />

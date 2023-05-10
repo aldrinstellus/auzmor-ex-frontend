@@ -36,7 +36,7 @@ const SelectTimezoneScreen: React.FC<SelectTimezoneScreenProps> = ({
         </p>
         <form onSubmit={() => console.log('submitted')}>
           <Layout
-            className="min-w-[450px] max-w-[450px] z-50"
+            className="min-w-[450px] max-w-[450px]"
             fields={[
               {
                 type: FieldType.SingleSelect,
@@ -45,9 +45,11 @@ const SelectTimezoneScreen: React.FC<SelectTimezoneScreenProps> = ({
                 options: timezones.map((timezone) => ({
                   label: timezone.text,
                   value: timezone.abbr,
+                  className: '!hover:bg-green-900',
                 })),
                 // defaultValue: '(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi',
                 placeholder: 'Select your timezone',
+                menuPlacement: 'top',
               },
             ]}
           />

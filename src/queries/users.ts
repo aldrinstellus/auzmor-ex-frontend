@@ -5,8 +5,8 @@ export interface IProfileImage {
   fileId: string;
   originalUrl: string;
 }
-export interface IUserOnboardUpdate {
-  preferredName?: string;
+export interface IUserUpdate {
+  id: string;
   profileImage?: IProfileImage;
   timezone?: string;
 }
@@ -38,18 +38,8 @@ export const deleteUser = async (id: string) => {
   });
 };
 
-export const updateUserOnboard = async (
-  id: string,
-  params: IUserOnboardUpdate,
-) => {
-  const data = await apiService.patch(`/users/${id}`, { params });
+export const updateUserOnboard = async (user: IUserUpdate) => {
+  const { id, ...rest } = user;
+  const data = await apiService.patch(`/users/${user.id}`, { ...rest });
   return data;
-};
-
-export const useOnboardUser = (id: string, params: IUserOnboardUpdate) => {
-  return useQuery({
-    queryKey: ['userOnboard'],
-    queryFn: () => updateUserOnboard(id, params),
-    staleTime: Infinity,
-  });
 };

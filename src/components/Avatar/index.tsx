@@ -14,8 +14,7 @@ export type AvatarProps = {
   active?: boolean;
   size?: number;
   bgColor?: string;
-  showEditIcon?: boolean;
-  editIconComponent?: ReactNode;
+  indicatorIcon?: ReactNode;
 };
 
 const Avatar: React.FC<AvatarProps> = ({
@@ -28,8 +27,7 @@ const Avatar: React.FC<AvatarProps> = ({
   size = 48,
   showActiveIndicator = false,
   bgColor = '#343434',
-  showEditIcon = false,
-  editIconComponent,
+  indicatorIcon = null,
 }) => {
   const containerStyles = useMemo(
     () =>
@@ -87,11 +85,6 @@ const Avatar: React.FC<AvatarProps> = ({
       )
     );
   }, []);
-
-  const editIcon = useMemo(() => {
-    return editIconComponent;
-  }, []);
-
   const isBgDark = isDarkColor(bgColor);
 
   const textStyles = clsx(
@@ -109,8 +102,7 @@ const Avatar: React.FC<AvatarProps> = ({
           {name && getInitials(name)}
         </span>
       )}
-      {showActiveIndicator && activeIndicator}
-      {showEditIcon && editIcon}
+      {!!indicatorIcon ? indicatorIcon : showActiveIndicator && activeIndicator}
     </div>
   );
 };
