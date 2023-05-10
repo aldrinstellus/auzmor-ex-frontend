@@ -1,5 +1,5 @@
 import Card from 'components/Card';
-import React from 'react';
+import React, { useContext, useRef } from 'react';
 import Avatar from 'components/Avatar';
 import Divider, { Variant as DividerVariant } from 'components/Divider';
 import Button, {
@@ -15,6 +15,7 @@ import IconButton, {
   Variant as IconVariant,
 } from 'components/IconButton';
 import EditProfileModal from './components/EditProfileModal';
+import { CreatePostContext } from 'contexts/CreatePostContext';
 
 export interface IProfileCoverProps {
   profileCoverData: Record<string, any>;
@@ -27,6 +28,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
   showModal,
   setShowModal,
 }) => {
+  const coverImageRef = useRef<HTMLInputElement>(null);
   return (
     <>
       <Card className="bg-white pb-1 w-full h-[290.56px]">
@@ -122,8 +124,18 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           data={profileCoverData}
           showModal={showModal}
           setShowModal={setShowModal}
+          coverImageRef={coverImageRef}
         />
       </Card>
+      <input
+        type="file"
+        className="hidden"
+        ref={coverImageRef}
+        accept="image/*"
+        onChange={(e) => {
+          console.log('wwwww', e.target.files);
+        }}
+      />
     </>
   );
 };

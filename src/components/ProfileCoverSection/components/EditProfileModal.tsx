@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
 import Modal from 'components/Modal';
@@ -12,6 +12,9 @@ import Button, {
 } from 'components/Button';
 import Avatar from 'components/Avatar';
 import { Variant as InputVariant } from 'components/Input';
+import { CreatePostContext } from 'contexts/CreatePostContext';
+import { updateCurrentUser } from 'queries/users';
+import { useMutation } from '@tanstack/react-query';
 
 interface IForm {}
 
@@ -19,12 +22,14 @@ interface IEditProfileModal {
   data: Record<string, any>;
   showModal: boolean;
   setShowModal: (flag: boolean) => void;
+  coverImageRef: React.RefObject<HTMLInputElement> | null;
 }
 
 const EditProfileModal: React.FC<IEditProfileModal> = ({
   data,
   showModal,
   setShowModal,
+  coverImageRef,
 }) => {
   const {
     watch,
@@ -32,6 +37,20 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     handleSubmit,
     formState: { errors, isValid },
   } = useForm<IForm>({});
+
+  const updateCurrentUserMutation = useMutation(
+    (userData: Record<string, any>) => updateCurrentUser(userData),
+    {
+      onSuccess: (data) => {
+        console.log('success', data);
+      },
+    },
+  );
+
+  const onSubmit = (userData: Record<string, any>) => {
+    updateCurrentUserMutation.mutate(userData);
+  };
+
   const Header: React.FC = () => (
     <div className="flex flex-wrap border-b-1 border-neutral-200 items-center">
       <div className="text-lg text-black p-4 font-extrabold flex-[50%]">
@@ -62,7 +81,10 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
         label={'Save Changes'}
         size={Size.Small}
         type={ButtonType.Submit}
-        onClick={() => {}}
+        onClick={() => {
+          //get the payload and update by passing all as key value pair
+          // handleSubmit(onSubmit);
+        }}
       />
     </div>
   );
@@ -137,15 +159,12 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
           className="object-cover w-full h-[108px]"
           src="https://libg.s3.us-east-2.amazonaws.com/download/Blue-And-Red-Over-The-Mountains.jpg"
         />
-        {/* only show when you are in my profile */}
         <IconButton
           icon="edit"
           className="bg-white m-4 absolute top-0 right-0 p-3 text-black"
           variant={IconVariant.Secondary}
           size={Size.Medium}
-          onClick={() => {
-            setShowModal(true);
-          }}
+          onClick={() => coverImageRef?.current?.click()}
         />
       </div>
       <div className="ml-8 mb-8 flex items-center">
@@ -166,7 +185,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                 className="bg-white m-0 absolute top-0 right-0 p-[7px] text-black"
                 variant={IconVariant.Secondary}
                 size={Size.Medium}
-                onClick={() => {}}
+                onClick={() => coverImageRef?.current?.click()}
               />
             </div>
           </div>
