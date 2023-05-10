@@ -25,7 +25,7 @@ const ProfileCover: React.FC<IProfileCoverProps> = ({
 }) => {
   return (
     <Card className="bg-white rounded-9xl pb-1">
-      <div className="bg-[url(images/CoverImage.png)] bg-no-repeat bg-cover rounded-9xl w-[1328px] h-[180px]" />
+      <div className="bg-[url(images/CoverImage.png)] bg-no-repeat bg-cover rounded-9xl w-auto h-[180px]" />
       <div className="ml-8 mb-8 flex items-center space-x-4">
         <div className="-mt-28">
           <Avatar
