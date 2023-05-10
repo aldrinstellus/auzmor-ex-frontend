@@ -7,6 +7,7 @@ import Location from 'images/Location.svg';
 import Married from 'images/married.svg';
 import clsx from 'clsx';
 import useHover from 'hooks/useHover';
+import Icon from 'components/Icon';
 
 export interface IPersonalDetailsProps {
   dateOfBirth: string;
@@ -26,18 +27,25 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
   const [isHovered, eventHandlers] = useHover();
 
   const onHoverStyles = useMemo(
-    () => clsx({ 'mb-8': true }, { 'shadow-xl': isHovered }),
+    () => clsx({ 'mb-8 px-6': true }, { 'shadow-xl': isHovered }),
     [isHovered],
   );
 
   return (
     <div {...eventHandlers}>
       <Card className={onHoverStyles}>
-        <div className="text-neutral-900 font-bold text-base px-6 pt-6 pb-4">
-          Personal Details
+        <div className="flex justify-between items-center">
+          <div className="text-neutral-900 font-bold text-base pt-6 pb-4">
+            Personal Details
+          </div>
+          {isHovered && (
+            <div>
+              <Icon name="edit" />
+            </div>
+          )}
         </div>
         <Divider />
-        <div className="p-6">
+        <div className="py-6">
           <div className="pb-4 space-y-3">
             <div className="flex space-x-3">
               <img src={Cake} alt="" />
