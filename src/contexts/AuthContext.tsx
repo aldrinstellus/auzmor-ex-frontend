@@ -17,16 +17,19 @@ interface IUser {
   name: string;
   email: string;
   organization: IOrganization;
+  profileImage?: string;
 }
 
 interface IAuthContext {
   user: IUser | null;
   reset: () => void;
+  set: (user: IUser) => void;
 }
 
 export const AuthContext = createContext<IAuthContext>({
   user: null,
   reset: () => {},
+  set: () => {},
 });
 
 const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
@@ -58,13 +61,15 @@ const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
     if (token) {
       const userData = await fetchMe();
       setUser({
-        id: userData.user.id,
-        name: userData.user.fullName,
-        email: userData.user.workEmail,
+        id: userData?.result?.data?.id,
+        name: userData?.result?.data?.fullName,
+        email: userData?.result?.data?.workEmail,
         organization: {
-          id: userData.organization.id,
-          domain: userData.organization.domain,
+          id: userData?.result?.data?.org.id,
+          domain: userData?.result?.data?.org.domain,
         },
+        profileImage:
+          userData?.result?.data.profileImage?.originalUrl || undefined,
       });
     }
     setLoading(false);
@@ -79,11 +84,14 @@ const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
     queryClient.clear();
     removeAllItems();
   };
+
+  const set = (user: IUser) => setUser(user);
+
   if (loading) {
     return <>Loading...</>;
   }
   return (
-    <AuthContext.Provider value={{ user, reset }}>
+    <AuthContext.Provider value={{ user, reset, set }}>
       {children}
     </AuthContext.Provider>
   );
