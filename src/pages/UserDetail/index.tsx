@@ -1,12 +1,11 @@
-import { useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
 import ContactCard from 'components/ContactCard';
-import ProfileCover from 'components/ProfileCover';
+import ProfileCoverSection from 'components/ProfileCoverSection';
 import { useSingleUser } from 'queries/users';
 import ProfileInfo from 'components/ProfileInfo';
 import Spinner from 'components/Spinner';
 // import TabSwitcher from 'pages/Users/components/TabSwitch';
-import React from 'react';
-import { useLoaderData, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 interface IUserDetailProps {}
 
 // const tabs = [
@@ -25,8 +24,10 @@ interface IUserDetailProps {}
 // ];
 
 const UserDetail: React.FC<IUserDetailProps> = () => {
+  const [showModal, setShowModal] = useState<boolean>(false);
   const params = useParams(); // get from users list
   const { state } = useLocation(); // get from user/me
+
   const {
     data: userProfileDetails,
     isError,
@@ -43,16 +44,12 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
 
   const profileData = userProfileDetails?.data?.result?.data;
   return (
-    <div className="flex flex-col space-y-9">
-      <div className="">
-        <ProfileCover
-          fullName={profileData?.fullName}
-          status={profileData?.status}
-          designation={profileData?.fullName}
-          department={profileData?.fullName}
-          location={profileData?.fullName}
-        />
-      </div>
+    <div className="flex flex-col space-y-9 w-full">
+      <ProfileCoverSection
+        profileCoverData={profileData}
+        showModal={showModal}
+        setShowModal={setShowModal}
+      />
       <div className="mb-32 space-x-8 flex">
         {/* Contact Widget  */}
         <ContactCard
@@ -64,11 +61,7 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
           {/* <TabSwitcher tabs={tabs} /> */}
           <ProfileInfo profileDetails={profileData} />
         </div>
-        {/* Other Widget */}
-        <ContactCard
-          email={profileData?.workEmail}
-          contact={profileData?.workEmail}
-        />
+        <div></div>
       </div>
     </div>
   );
