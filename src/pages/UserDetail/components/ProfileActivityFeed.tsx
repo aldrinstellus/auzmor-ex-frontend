@@ -13,13 +13,16 @@ export interface IProfileActivityFeedProps {
 const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
   pathname,
 }) => {
-  const { data, isLoading } = useInfiniteMyProfileFeed();
+  const {
+    data: myProfileActivityFeed,
+    isLoading: isMyProfileActivityFeedLoading,
+  } = useInfiniteMyProfileFeed();
   const { data: peopleProfileFeedData, isLoading: isPeopleProfileFeedLoading } =
     useInfinitePeopleProfileFeed();
 
-  console.log(data, 'FEED', peopleProfileFeedData);
+  console.log(myProfileActivityFeed, 'FEED', peopleProfileFeedData);
 
-  const myProfileFeed = data?.pages.flatMap((page) => {
+  const myProfileFeed = myProfileActivityFeed?.pages.flatMap((page) => {
     return page.data?.result?.data.map((post: any) => {
       try {
         return post;
@@ -29,7 +32,7 @@ const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
     });
   }) as IGetPost[];
 
-  const peopleProfileFeed = data?.pages.flatMap((page) => {
+  const peopleProfileFeed = peopleProfileFeedData?.pages.flatMap((page) => {
     return page.data?.result?.data.map((post: any) => {
       try {
         return post;
@@ -40,27 +43,29 @@ const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
   }) as IGetPost[];
 
   return (
-    <div>
-      {isLoading ? (
-        <div className="mt-4">loading...</div>
-      ) : (
-        <div className="mt-4">
-          {pathname === '/profile' ? (
-            <>
-              {myProfileFeed.map((post) => (
-                <Post data={post} key={post.id} />
-              ))}
-            </>
-          ) : (
-            <>
-              {peopleProfileFeed.map((post) => (
-                <Post data={post} key={post.id} />
-              ))}
-            </>
+    <>
+      {pathname === '/profile' ? (
+        <div>
+          {isMyProfileActivityFeedLoading && (
+            <div className="mt-4">loading...</div>
           )}
+          <div className="mt-4">
+            {myProfileFeed?.map((post) => (
+              <Post data={post} key={post.id} />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div>
+          {isPeopleProfileFeedLoading && <div className="mt-4">loading...</div>}
+          <div className="mt-4">
+            {peopleProfileFeed?.map((post) => (
+              <Post data={post} key={post.id} />
+            ))}
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
