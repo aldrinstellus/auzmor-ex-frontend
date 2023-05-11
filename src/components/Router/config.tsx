@@ -4,12 +4,10 @@ import {
   createRoutesFromElements,
   Navigate,
   Route,
-  useLocation,
 } from 'react-router-dom';
 import queryClient from 'utils/queryClient';
 // import { loader as homeLoader } from 'pages/Home';
 import RequireAuth from 'components/RequireAuth';
-import { useSingleUser } from 'queries/users';
 
 const ErrorBoundary = React.lazy(() => import('components/ErrorBoundary'));
 const Login = React.lazy(() => import('pages/Login'));

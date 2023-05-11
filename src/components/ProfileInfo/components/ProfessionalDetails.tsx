@@ -9,11 +9,13 @@ import Icon from 'components/Icon';
 export interface IProfessionalDetailsProps {
   dateOfJoin: string;
   timezone: string;
+  canEdit?: boolean;
 }
 
 const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
   dateOfJoin,
   timezone,
+  canEdit,
 }) => {
   const [isHovered, eventHandlers] = useHover();
 
@@ -30,7 +32,7 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
           <div className="text-neutral-900 font-bold text-base pt-6 pb-4">
             Professional Details
           </div>
-          {isHovered && (
+          {canEdit && isHovered && (
             <div>
               <Icon name="edit" />
             </div>

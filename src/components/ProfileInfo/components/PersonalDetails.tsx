@@ -11,6 +11,7 @@ export interface IPersonalDetailsProps {
   address: string;
   maritalStatus: string;
   skills: string[];
+  canEdit?: boolean;
 }
 
 const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
@@ -19,6 +20,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
   address,
   maritalStatus,
   skills,
+  canEdit,
 }) => {
   const [isHovered, eventHandlers] = useHover();
 
@@ -34,7 +36,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
           <div className="text-neutral-900 font-bold text-base pt-6 pb-4">
             Personal Details
           </div>
-          {isHovered && (
+          {canEdit && isHovered && (
             <div>
               <Icon name="edit" />
             </div>

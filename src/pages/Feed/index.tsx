@@ -44,8 +44,6 @@ const Feed: React.FC<IFeedProps> = () => {
     }
   }, [inView]);
 
-  console.log(data, 'FEED');
-
   const feed = data?.pages.flatMap((page) => {
     return page.data?.result?.data.map((post: any) => {
       try {

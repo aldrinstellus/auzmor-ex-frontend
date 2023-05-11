@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import ContactCard from 'components/ContactCard';
+import ContactWidget from 'components/ContactWidget';
 import ProfileCoverSection from 'components/ProfileCoverSection';
 import { useCurrentUser, useSingleUser } from 'queries/users';
 import ProfileInfo from 'components/ProfileInfo';
 import Spinner from 'components/Spinner';
 import { useLocation, useParams } from 'react-router-dom';
 import TabSwitcher from 'pages/Users/components/TabSwitch';
-import ProfileActivityFeed from './ProfileActivityFeed';
+import ProfileActivityFeed from './components/ProfileActivityFeed';
 interface IUserDetailProps {}
 
 const UserDetail: React.FC<IUserDetailProps> = () => {
@@ -36,12 +36,17 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
     {
       id: 1,
       title: 'Profile',
-      content: <ProfileInfo profileDetails={profileData} />,
+      content: (
+        <ProfileInfo
+          profileDetails={profileData}
+          canEdit={pathname === '/profile'}
+        />
+      ),
     },
     {
       id: 2,
       title: 'Activity',
-      content: <ProfileActivityFeed />,
+      content: <ProfileActivityFeed pathname={pathname} />,
     },
     { id: 3, title: 'Recognitions', content: <div>Content for Tab 3</div> },
   ];
@@ -54,15 +59,12 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
         setShowModal={setShowModal}
         canEdit={pathname === '/profile'}
       />
-      <div className="mb-32 space-x-8 flex">
-        <ContactCard
-          email={profileData?.workEmail}
-          contact={profileData?.workEmail}
-        />
-        <div className="max-w-2xl w-[638px]">
+      <div className="mb-32 space-x-8 flex w-full">
+        <ContactWidget contactCardData={profileData} className="w-1/4" />
+        <div className="w-1/2">
           <TabSwitcher tabs={tabs} />
         </div>
-        <div></div>
+        <div className="w-1/4"></div>
       </div>
     </div>
   );

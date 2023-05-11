@@ -72,12 +72,15 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                   </div>
                   <div className="bg-red-100 border-1 border-red-200 rounded-full px-3 flex justify-center items-center space-x-2">
                     <img src={OutOfOffice} alt="" width={24} height={24} />
-                    <div>{profileCoverData?.status}</div>
+                    <div className="text-xxs font-medium">
+                      {profileCoverData?.status}
+                    </div>
                   </div>
                 </div>
                 {canEdit ? (
                   <Button
                     className="flex"
+                    leftIconClassName="mr-2"
                     label="Edit Profile"
                     leftIcon="edit"
                     size={ButtonSize.Small}

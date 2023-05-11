@@ -272,15 +272,15 @@ export const announcementRead = async (payload: IAnnounce) => {
   return data;
 };
 
-export const fetchFeed = ({ pageParam = null }) => {
-  if (pageParam === null) return apiService.get('/posts');
+export const myProfileFeed = ({ pageParam = null }) => {
+  if (pageParam === null) return apiService.get('/posts/my-profile');
   else return apiService.get(pageParam);
 };
 
-export const useProfileFeed = (q?: Record<string, any>) => {
+export const useInfiniteMyProfileFeed = (q?: Record<string, any>) => {
   return useInfiniteQuery({
-    queryKey: ['feed', q],
-    queryFn: fetchFeed,
+    queryKey: ['my-profile-feed', q],
+    queryFn: myProfileFeed,
     getNextPageParam: (lastPage: any) => {
       return lastPage?.data?.result?.paging?.next;
     },
@@ -289,6 +289,30 @@ export const useProfileFeed = (q?: Record<string, any>) => {
     },
     staleTime: 5 * 60 * 1000,
   });
+};
+
+export const peopleProfileFeed = ({ pageParam = null }) => {
+  if (pageParam === null) return apiService.get('/posts/people-profile');
+  else return apiService.get(pageParam);
+};
+
+export const useInfinitePeopleProfileFeed = (q?: Record<string, any>) => {
+  return useInfiniteQuery({
+    queryKey: ['people-profile-feed', q],
+    queryFn: peopleProfileFeed,
+    getNextPageParam: (lastPage: any) => {
+      return lastPage?.data?.result?.paging?.next;
+    },
+    getPreviousPageParam: (currentPage: any) => {
+      return currentPage?.data?.result?.paging?.prev;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const fetchFeed = ({ pageParam = null }) => {
+  if (pageParam === null) return apiService.get('/posts');
+  else return apiService.get(pageParam);
 };
 
 export const useInfiniteFeed = (q?: Record<string, any>) => {

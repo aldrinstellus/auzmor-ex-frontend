@@ -7,9 +7,10 @@ import React, { useMemo } from 'react';
 
 export interface IAboutMeProps {
   aboutMe: string;
+  canEdit?: boolean;
 }
 
-const AboutMe: React.FC<IAboutMeProps> = ({ aboutMe }) => {
+const AboutMe: React.FC<IAboutMeProps> = ({ aboutMe, canEdit }) => {
   const [isHovered, eventHandlers] = useHover();
 
   const onHoverStyles = useMemo(
@@ -24,7 +25,7 @@ const AboutMe: React.FC<IAboutMeProps> = ({ aboutMe }) => {
           <div className="text-neutral-900 font-bold text-base pt-6 pb-4">
             About me
           </div>
-          {isHovered && (
+          {canEdit && isHovered && (
             <div>
               <Icon name="edit" />
             </div>

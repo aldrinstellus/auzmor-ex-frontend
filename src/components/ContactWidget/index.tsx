@@ -4,13 +4,16 @@ import Icon from 'components/Icon';
 import Button, { Variant } from 'components/Button';
 
 export interface IContactCardProps {
-  email?: string;
-  contact?: string;
+  contactCardData: any;
+  className?: string;
 }
 
-const ContactCard: React.FC<IContactCardProps> = ({ email, contact }) => {
+const ContactWidget: React.FC<IContactCardProps> = ({
+  contactCardData,
+  className,
+}) => {
   return (
-    <div>
+    <div className={className}>
       <Card className="p-6 rounded-9xl space-y-6">
         <div className="flex justify-between items-center">
           <div>Contact Info</div>
@@ -21,7 +24,7 @@ const ContactCard: React.FC<IContactCardProps> = ({ email, contact }) => {
               <div>
                 <Icon name="email" />
               </div>
-              <div>{email}</div>
+              <div>{contactCardData?.workEmail}</div>
             </div>
             <div>
               <Icon name="copyIcon" />
@@ -32,7 +35,7 @@ const ContactCard: React.FC<IContactCardProps> = ({ email, contact }) => {
               <div>
                 <Icon name="email" />
               </div>
-              <div>{contact}</div>
+              <div>{contactCardData?.contact || '9999999999'}</div>
             </div>
           </div>
         </div>
@@ -48,4 +51,4 @@ const ContactCard: React.FC<IContactCardProps> = ({ email, contact }) => {
   );
 };
 
-export default ContactCard;
+export default ContactWidget;

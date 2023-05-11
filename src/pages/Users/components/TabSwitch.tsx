@@ -10,9 +10,10 @@ interface ITab {
 
 interface TabSwitcherProps {
   tabs: ITab[];
+  canEdit?: boolean;
 }
 
-const TabSwitcher: React.FC<TabSwitcherProps> = ({ tabs }) => {
+const TabSwitcher: React.FC<TabSwitcherProps> = ({ tabs, canEdit }) => {
   const [activeTab, setActiveTab] = useState(1);
 
   const handleTabClick = (tabId: number) => {
