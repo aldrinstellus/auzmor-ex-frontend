@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Variant as InputVariant } from 'components/Input';
 import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
@@ -8,9 +8,9 @@ import Button, { Size, Type as ButtonType } from 'components/Button';
 import { Logo } from 'components/Logo';
 import { useMutation } from '@tanstack/react-query';
 import { redirectWithToken } from 'utils/misc';
-import { acceptInviteSetPassword, signup } from 'queries/account';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
 import { useSearchParams } from 'react-router-dom';
+import { acceptInviteSetPassword, useVerifyInviteLink } from 'queries/users';
 
 interface IForm {
   workEmail: string;
@@ -40,16 +40,12 @@ export interface IAcceptInviteProps {}
 const AcceptInvite: React.FC<IAcceptInviteProps> = () => {
   const [searchParams, _] = useSearchParams();
   const token = searchParams.get('token');
-  const email = searchParams.get('email') || '';
-  const domain = searchParams.get('domain') || '';
+  const orgId = searchParams.get('orgId');
 
-  const signupMutation = useMutation(
-    (formData: IForm) => signup({ ...formData, domain }),
-    {
-      onSuccess: (data) =>
-        redirectWithToken(data.result.data.redirectUrl, data.result.data.uat),
-    },
-  );
+  const { data, isLoading, isError } = useVerifyInviteLink({
+    token,
+    orgId,
+  });
 
   const acceptInviteMutation = useMutation({
     mutationFn: acceptInviteSetPassword,
@@ -70,17 +66,8 @@ const AcceptInvite: React.FC<IAcceptInviteProps> = () => {
   });
 
   useEffect(() => {
-    signupMutation.reset();
-  }, [
-    watch('workEmail'),
-    watch('password'),
-    watch('confirmPassword'),
-    watch('privacyPolicy'),
-  ]);
-
-  useEffect(() => {
-    setValue('workEmail', email);
-  }, []);
+    acceptInviteMutation.reset();
+  }, [watch('password'), watch('confirmPassword'), watch('privacyPolicy')]);
 
   const fields = [
     {
@@ -95,7 +82,6 @@ const AcceptInvite: React.FC<IAcceptInviteProps> = () => {
       disabled: true,
       className:
         'text-neutral-400 disabled:border-none disabled:bg-neutral-200',
-      defaultValue: email,
     },
     {
       type: FieldType.Password,
@@ -132,8 +118,20 @@ const AcceptInvite: React.FC<IAcceptInviteProps> = () => {
 
   const onSubmit = (formData: IForm) => {
     console.log({ formData });
-    // signupMutation.mutate(formData);
+    acceptInviteMutation.mutate({ ...formData, token, orgId });
   };
+
+  if (isLoading) {
+    return <div>Loading</div>;
+  }
+
+  if (isError) {
+    return <div>Error</div>;
+  }
+
+  if (data) {
+    setValue('workEmail', data.result.data);
+  }
 
   return (
     <div className="flex h-screen w-screen">
@@ -147,11 +145,12 @@ const AcceptInvite: React.FC<IAcceptInviteProps> = () => {
             Sign Up
           </div>
           <form className="mt-12" onSubmit={handleSubmit(onSubmit)}>
-            {!!signupMutation.isError && (
+            {!!acceptInviteMutation.isError && (
               <div className="mb-8">
                 <Banner
                   title={
-                    signupMutation.error?.toString() || 'Something went wrong'
+                    acceptInviteMutation.error?.toString() ||
+                    'Something went wrong'
                   }
                   variant={BannerVariant.Error}
                 />
@@ -164,7 +163,7 @@ const AcceptInvite: React.FC<IAcceptInviteProps> = () => {
               className="w-full mt-8"
               type={ButtonType.Submit}
               size={Size.Large}
-              loading={signupMutation.isLoading}
+              loading={acceptInviteMutation.isLoading}
             />
           </form>
         </div>
