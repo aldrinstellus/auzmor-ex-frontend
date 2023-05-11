@@ -65,6 +65,20 @@ const SelectTimezoneScreen: React.FC<SelectTimezoneScreenProps> = ({
 
   const { isLoading, isError } = updateUserTimezoneMutation;
 
+  const fields = [
+    {
+      type: FieldType.SingleSelect,
+      name: 'timezone',
+      control,
+      options: timezones.map((timezone) => ({
+        label: timezone.timezoneName,
+        value: timezone.iana,
+      })),
+      defaultValue: defaultTimezone,
+      menuPlacement: 'top',
+    },
+  ];
+
   return (
     <div className="flex flex-col min-h-full justify-between min-w-full">
       <div className="flex items-center flex-col justify-between gap-y-3 px-10 mt-6">
@@ -80,22 +94,7 @@ const SelectTimezoneScreen: React.FC<SelectTimezoneScreenProps> = ({
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-y-4 items-center"
       >
-        <Layout
-          className="min-w-[450px] max-w-[450px]"
-          fields={[
-            {
-              type: FieldType.SingleSelect,
-              name: 'timezone',
-              control,
-              options: timezones.map((timezone) => ({
-                label: timezone.timezoneName,
-                value: timezone.iana,
-              })),
-              defaultValue: defaultTimezone,
-              menuPlacement: 'top',
-            },
-          ]}
-        />
+        <Layout className="min-w-[450px] max-w-[450px]" fields={fields} />
         <div className="min-w-full">
           <div>
             <Banner
