@@ -1,29 +1,34 @@
+import React, { useState } from 'react';
 import ContactCard from 'components/ContactCard';
-import ProfileCover from 'components/ProfileCover';
-import { useSingleUser } from 'queries/users';
+import ProfileCoverSection from 'components/ProfileCoverSection';
+import { useCurrentUser, useSingleUser } from 'queries/users';
 import ProfileInfo from 'components/ProfileInfo';
 import Spinner from 'components/Spinner';
-import React from 'react';
-import { useLoaderData, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import TabSwitcher from 'pages/Users/components/TabSwitch';
 import ProfileActivityFeed from './ProfileActivityFeed';
 interface IUserDetailProps {}
 
 const UserDetail: React.FC<IUserDetailProps> = () => {
+  const [showModal, setShowModal] = useState<boolean>(false);
   const params = useParams(); // get from users list
-  const { state } = useLocation(); // get from user/me
-  const {
-    data: userProfileDetails,
-    isError,
-    isLoading,
-  } = useSingleUser(params?.userId || state?.userId || '');
-  const profileData = userProfileDetails?.data?.result?.data;
+  const { state, pathname } = useLocation(); // get from user/me
 
-  if (isLoading) {
+  let userData;
+
+  if (pathname === '/profile') {
+    userData = useCurrentUser();
+  } else {
+    userData = useSingleUser(params?.userId || '');
+  }
+
+  const profileData = userData?.data?.data?.result?.data;
+
+  if (userData?.isLoading) {
     return <Spinner color="#000" />;
   }
 
-  if (isError) {
+  if (userData?.isError) {
     return <div></div>;
   }
 
@@ -42,18 +47,14 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
   ];
 
   return (
-    <div className="flex flex-col space-y-9">
-      <div className="">
-        <ProfileCover
-          fullName={profileData?.fullName}
-          status={profileData?.status}
-          designation={profileData?.fullName}
-          department={profileData?.fullName}
-          location={profileData?.fullName}
-        />
-      </div>
+    <div className="flex flex-col space-y-9 w-full">
+      <ProfileCoverSection
+        profileCoverData={profileData}
+        showModal={showModal}
+        setShowModal={setShowModal}
+        canEdit={pathname === '/profile'}
+      />
       <div className="mb-32 space-x-8 flex">
-        {/* Contact Widget  */}
         <ContactCard
           email={profileData?.workEmail}
           contact={profileData?.workEmail}
@@ -61,11 +62,7 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
         <div className="max-w-2xl w-[638px]">
           <TabSwitcher tabs={tabs} />
         </div>
-        {/* Other Widget */}
-        <ContactCard
-          email={profileData?.workEmail}
-          contact={profileData?.workEmail}
-        />
+        <div></div>
       </div>
     </div>
   );
