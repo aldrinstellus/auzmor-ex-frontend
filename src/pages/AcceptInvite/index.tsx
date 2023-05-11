@@ -50,7 +50,8 @@ const AcceptInvite: React.FC<IAcceptInviteProps> = () => {
   const acceptInviteMutation = useMutation({
     mutationFn: acceptInviteSetPassword,
     mutationKey: ['accept-invite-mutation'],
-    onSuccess: () => {},
+    onSuccess: (data) =>
+      redirectWithToken(data.result.data.redirectUrl, data.result.data.uat),
     onError: () => {},
   });
 
@@ -121,19 +122,15 @@ const AcceptInvite: React.FC<IAcceptInviteProps> = () => {
     acceptInviteMutation.mutate({ ...formData, token, orgId });
   };
 
-  if (isLoading) {
-    return <div>Loading</div>;
-  }
+  useEffect(() => {
+    setValue('workEmail', data.result.data.email);
+  }, [data]);
 
-  if (isError) {
-    return <div>Error</div>;
-  }
-
-  if (data) {
-    setValue('workEmail', data.result.data);
-  }
-
-  return (
+  return isLoading ? (
+    <div>Loading</div>
+  ) : isError ? (
+    <div>Error</div>
+  ) : (
     <div className="flex h-screen w-screen">
       <div className="bg-[url(images/welcomeToOffice.png)] w-1/2 h-full bg-no-repeat bg-cover"></div>
       <div className="w-1/2 flex justify-center items-center relative bg-white">
