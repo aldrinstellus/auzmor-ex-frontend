@@ -71,7 +71,6 @@ const ResetPassword = () => {
       control,
       onChange: (e: any) => {
         const value = e.target.value;
-        // validatePassword(value);
       },
       dataTestId: 'new-password',
     },
