@@ -13,13 +13,13 @@ const AllDoneScreen: React.FC<AllDoneScreenProps> = ({
     <div className="flex flex-col min-h-full justify-between min-w-full">
       <div className="flex items-center flex-col justify-between gap-y-4 px-10 mt-6">
         <img src={OnboardFinish} />
-        <p className="font-bold text-neutral-900 text-2xl">All Done!</p>
+        <p className="font-bold text-neutral-900 text-2xl mt-8">All Done!</p>
         <p className="font-normal text-sm text-neutral-500">
           You are all set to start using Auzmor office
         </p>
       </div>
       <div className="bg-blue-50">
-        <div className="p-4 flex items-center justify-between">
+        <div className="p-3 flex items-center justify-between">
           <div />
           <Button
             className="font-bold"

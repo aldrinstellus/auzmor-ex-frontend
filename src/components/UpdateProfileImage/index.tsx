@@ -67,7 +67,7 @@ const UpdateProfileImage: React.FC<UpdateProfileImageProps> = ({
 
   return (
     <Avatar
-      size={144}
+      size={200}
       indicatorIcon={<EditIcon setProfilePicture={setProfilePicture} />}
       name={user?.name}
       image={user?.profileImage || ''}

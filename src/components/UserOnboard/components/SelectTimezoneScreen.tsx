@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef } from 'react';
+import React, { ReactElement } from 'react';
 import timezones from 'utils/timezones.json';
 import OnboardTimezone from 'images/onboard-timezone.png';
 import Layout, { FieldType } from 'components/Form';
@@ -14,7 +14,7 @@ import { OptionType } from 'components/SingleSelect';
 import Banner, { Variant } from 'components/Banner';
 
 type SelectTimezoneScreenProps = {
-  next: any;
+  next: () => void;
 };
 
 interface IForm {
@@ -68,7 +68,7 @@ const SelectTimezoneScreen: React.FC<SelectTimezoneScreenProps> = ({
 
   return (
     <div className="flex flex-col min-h-full justify-between min-w-full">
-      <div className="flex items-center flex-col justify-between gap-y-4 px-10 mt-6">
+      <div className="flex items-center flex-col justify-between gap-y-3 px-10 mt-6">
         <img src={OnboardTimezone} />
         <p className="font-bold text-neutral-900 text-2xl">
           Select your timezone
@@ -82,7 +82,7 @@ const SelectTimezoneScreen: React.FC<SelectTimezoneScreenProps> = ({
         className="flex flex-col gap-y-4 items-center"
       >
         <Layout
-          className="min-w-[450px] max-w-[450px] mb-3"
+          className="min-w-[450px] max-w-[450px]"
           fields={[
             {
               type: FieldType.SingleSelect,
@@ -97,16 +97,18 @@ const SelectTimezoneScreen: React.FC<SelectTimezoneScreenProps> = ({
             },
           ]}
         />
-        <div className="min-w-full flex flex-col items-center">
-          {isError && !isLoading && (
+        <div className="min-w-full">
+          <div>
             <Banner
               variant={Variant.Error}
               title="Failed to set timezone. Please try again!"
-              className="min-w-full"
+              className={`min-w-full ${
+                isError && !isLoading ? 'visible' : 'invisible'
+              }`}
             />
-          )}
+          </div>
           <div className="bg-blue-50 min-w-full">
-            <div className="p-4 flex items-center justify-between">
+            <div className="p-3 flex items-center justify-between">
               <div />
               <Button
                 className="font-bold"
