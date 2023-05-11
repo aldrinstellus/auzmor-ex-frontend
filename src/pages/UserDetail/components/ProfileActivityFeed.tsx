@@ -7,20 +7,20 @@ import {
 } from 'queries/post';
 
 export interface IProfileActivityFeedProps {
+  userId: string;
   pathname?: string;
 }
 
 const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
   pathname,
+  userId,
 }) => {
   const {
     data: myProfileActivityFeed,
     isLoading: isMyProfileActivityFeedLoading,
   } = useInfiniteMyProfileFeed();
   const { data: peopleProfileFeedData, isLoading: isPeopleProfileFeedLoading } =
-    useInfinitePeopleProfileFeed();
-
-  console.log(myProfileActivityFeed, 'FEED', peopleProfileFeedData);
+    useInfinitePeopleProfileFeed(userId, {});
 
   const myProfileFeed = myProfileActivityFeed?.pages.flatMap((page) => {
     return page.data?.result?.data.map((post: any) => {
@@ -42,6 +42,8 @@ const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
     });
   }) as IGetPost[];
 
+  console.log(myProfileFeed, 'FEED', peopleProfileFeed);
+
   return (
     <>
       {pathname === '/profile' ? (
@@ -50,18 +52,30 @@ const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
             <div className="mt-4">loading...</div>
           )}
           <div className="mt-4">
-            {myProfileFeed?.map((post) => (
-              <Post data={post} key={post.id} />
-            ))}
+            {myProfileFeed?.length === 0 ? (
+              <div>No User activity feed data available</div>
+            ) : (
+              <>
+                {myProfileFeed?.map((post) => (
+                  <Post data={post} key={post.id} />
+                ))}
+              </>
+            )}
           </div>
         </div>
       ) : (
         <div>
           {isPeopleProfileFeedLoading && <div className="mt-4">loading...</div>}
           <div className="mt-4">
-            {peopleProfileFeed?.map((post) => (
-              <Post data={post} key={post.id} />
-            ))}
+            {myProfileFeed?.length === 0 ? (
+              <div>No People activity feed data available</div>
+            ) : (
+              <>
+                {peopleProfileFeed?.map((post) => (
+                  <Post data={post} key={post.id} />
+                ))}
+              </>
+            )}
           </div>
         </div>
       )}
