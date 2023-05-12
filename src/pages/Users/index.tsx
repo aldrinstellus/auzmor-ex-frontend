@@ -80,7 +80,11 @@ const Users: React.FC<IUsersProps> = () => {
       </div>
 
       <div className="absolute right-6 bottom-6">
-        <TablePagination total={1000} page={page} onPageChange={setPage} />
+        <TablePagination
+          total={users?.result?.totalCount}
+          page={page}
+          onPageChange={setPage}
+        />
       </div>
       {showAddUserModal && (
         <InviteUserModal
