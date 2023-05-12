@@ -5,15 +5,24 @@ import {
   useInfiniteMyProfileFeed,
   useInfinitePeopleProfileFeed,
 } from 'queries/post';
+import CreatePostCard from 'components/PostBuilder/components/CreatePostCard';
+import NoDataCard from './NoDataCard';
+import PostBuilder from 'components/PostBuilder';
 
 export interface IProfileActivityFeedProps {
+  data: any;
   userId: string;
+  showFeedModal: boolean;
+  setShowFeedModal: (flag: boolean) => void;
   pathname?: string;
 }
 
 const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
+  data,
   pathname,
   userId,
+  showFeedModal,
+  setShowFeedModal,
 }) => {
   const {
     data: myProfileActivityFeed,
@@ -46,12 +55,17 @@ const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
     <>
       {pathname === '/profile' ? (
         <div>
+          <CreatePostCard setShowModal={setShowFeedModal} />
+          <PostBuilder
+            showModal={showFeedModal}
+            setShowModal={setShowFeedModal}
+          />
           {isMyProfileActivityFeedLoading && (
             <div className="mt-4">loading...</div>
           )}
           <div className="mt-4">
             {myProfileFeed?.length === 0 ? (
-              <div>No User activity feed data available</div>
+              <NoDataCard user={data?.fullName} />
             ) : (
               <>
                 {myProfileFeed?.map((post) => (
@@ -63,10 +77,15 @@ const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
         </div>
       ) : (
         <div>
+          <CreatePostCard setShowModal={setShowFeedModal} />
+          <PostBuilder
+            showModal={showFeedModal}
+            setShowModal={setShowFeedModal}
+          />
           {isPeopleProfileFeedLoading && <div className="mt-4">loading...</div>}
           <div className="mt-4">
             {myProfileFeed?.length === 0 ? (
-              <div>No People activity feed data available</div>
+              <NoDataCard user={data?.fullName} />
             ) : (
               <>
                 {peopleProfileFeed?.map((post) => (

@@ -11,6 +11,8 @@ interface IUserDetailProps {}
 
 const UserDetail: React.FC<IUserDetailProps> = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [showFeedModal, setShowFeedModal] = useState<boolean>(false);
+
   const params = useParams(); // get from users list
   const { state, pathname } = useLocation(); // get from user/me
 
@@ -50,6 +52,9 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
         <ProfileActivityFeed
           pathname={pathname}
           userId={params?.userId || ''}
+          showFeedModal={showFeedModal}
+          setShowFeedModal={setShowFeedModal}
+          data={profileData}
         />
       ),
     },
