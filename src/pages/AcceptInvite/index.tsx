@@ -50,7 +50,11 @@ const AcceptInvite: React.FC<IAcceptInviteProps> = () => {
     onSuccess: (data) => {
       console.log({ data });
       // Not getting any data as a part of response here.
-      redirectWithToken(data.result.data.redirectUrl, data.result.data.uat);
+      redirectWithToken(
+        data.result.data.redirectUrl,
+        data.result.data.uat,
+        true,
+      );
     },
     onError: () => {},
   });
