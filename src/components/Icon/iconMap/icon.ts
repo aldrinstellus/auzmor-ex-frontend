@@ -64,6 +64,8 @@ import FemaleIcon from '../components/Female';
 import MarriedIcon from '../components/Married';
 import CopyIcon from '../components/Copy';
 import OutOfOfficeIcon from '../components/OutOfOffice';
+import TickCircleIcon from '../components/TickCircle';
+import CloseCircleIcon from '../components/CloseCircle';
 
 export const icon = {
   add: Add,
@@ -74,10 +76,14 @@ export const icon = {
   arrowRight: ArrowRightIcon,
   bookmarkOutline: BookmarkOutline,
   calendarTwo: CalendarIconTwo,
+  carouselClose: CarouselCloseIcon,
+  carouselLeft: CarouselLeftIcon,
+  carouselRight: CarouselRightIcon,
   celebrate: Celebrate,
   chart: ChartIcon,
   clock: ClockIcon,
   close: CloseIcon,
+  closeCircle: CloseCircleIcon,
   convertShape: ConvertShape,
   copyLink: CopyLink,
   crossCircle: CrossCircle,
@@ -105,24 +111,22 @@ export const icon = {
   likeIcon: LikeIcon,
   love: Love,
   magicStar: MagicStarIcon,
+  mail: MailIcon,
   more: MoreIcon,
   notification: NotificationIcon,
   notificationIcon: MenuNotificationIcon,
+  orangeHashtag: OrangeHashtagIcon,
   people: PeopleIcon,
   play: PlayIcon,
   reply: Reply,
   send: Send,
+  slack: SlackIcon,
   speaker: SpeakerIcon,
   support: Support,
+  tickCircle: TickCircleIcon,
   trash: Trash,
   user: UsersIcon,
   video: VideoIcon,
-  orangeHashtag: OrangeHashtagIcon,
-  mail: MailIcon,
-  slack: SlackIcon,
-  carouselLeft: CarouselLeftIcon,
-  carouselRight: CarouselRightIcon,
-  carouselClose: CarouselCloseIcon,
   briefcase: BriefcaseIcon,
   location: LocationIcon,
   email: EmailIcon,
