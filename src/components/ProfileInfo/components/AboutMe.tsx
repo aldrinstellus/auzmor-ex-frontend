@@ -6,7 +6,7 @@ import useHover from 'hooks/useHover';
 import React, { useMemo } from 'react';
 
 export interface IAboutMeProps {
-  aboutMe: string;
+  aboutMe: any;
   canEdit?: boolean;
 }
 
@@ -33,7 +33,7 @@ const AboutMe: React.FC<IAboutMeProps> = ({ aboutMe, canEdit }) => {
         </div>
         <Divider />
         <div className="text-neutral-900 text-sm font-normal pt-4 pb-6">
-          {aboutMe}
+          {aboutMe?.fullName}
         </div>
       </Card>
     </div>

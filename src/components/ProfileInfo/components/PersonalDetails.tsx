@@ -4,21 +4,17 @@ import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import useHover from 'hooks/useHover';
 import Icon from 'components/Icon';
+import moment from 'moment';
+// import 'moment-timezone';
 
 export interface IPersonalDetailsProps {
-  dateOfBirth: string;
-  gender: string;
-  address: string;
-  maritalStatus: string;
+  personalDetails: any;
   skills: string[];
   canEdit?: boolean;
 }
 
 const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
-  dateOfBirth,
-  gender,
-  address,
-  maritalStatus,
+  personalDetails,
   skills,
   canEdit,
 }) => {
@@ -28,6 +24,10 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
     () => clsx({ 'mb-8 px-6': true }, { 'shadow-xl': isHovered }),
     [isHovered],
   );
+
+  const timestamp = personalDetails?.createdAt;
+
+  const formattedDate = moment(timestamp).format('Do MMMM');
 
   return (
     <div {...eventHandlers}>
@@ -48,13 +48,13 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
             <div className="flex space-x-3">
               <Icon name="cake" />
               <div className="text-neutral-900 text-base font-medium">
-                Born on {dateOfBirth}
+                Born on {formattedDate}
               </div>
             </div>
             <div className="flex space-x-3">
               <Icon name="femaleicon" />
               <div className="text-neutral-900 text-base font-medium">
-                {gender}
+                {personalDetails?.personal?.gender || 'Female'}
               </div>
             </div>
           </div>
@@ -65,7 +65,8 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
             <div className="flex space-x-3">
               <Icon name="location" />
               <div className="text-neutral-900 text-base font-medium">
-                {address}
+                {personalDetails?.personal?.permanentAddress ||
+                  '4517 Washington Ave. Manchester, Kentucky 39495'}
               </div>
             </div>
           </div>
@@ -76,7 +77,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
             <div className="flex space-x-3">
               <Icon name="marriedIcon" />
               <div className="text-neutral-900 text-base font-medium">
-                {maritalStatus}
+                {personalDetails?.personal?.maritalStatus || 'Married'}
               </div>
             </div>
           </div>

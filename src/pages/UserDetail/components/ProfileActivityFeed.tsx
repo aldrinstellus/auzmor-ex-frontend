@@ -42,8 +42,6 @@ const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
     });
   }) as IGetPost[];
 
-  console.log(myProfileFeed, 'FEED', peopleProfileFeed);
-
   return (
     <>
       {pathname === '/profile' ? (

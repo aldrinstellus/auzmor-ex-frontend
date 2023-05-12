@@ -14,18 +14,14 @@ const ProfileInfo: React.FC<IProfileInfoProps> = ({
 }) => {
   return (
     <>
-      <AboutMe aboutMe={profileDetails?.fullName} canEdit={canEdit} />
+      <AboutMe aboutMe={profileDetails} canEdit={canEdit} />
       <ProfessionalDetails
-        dateOfJoin={profileDetails?.createdAt}
-        timezone={profileDetails?.createdAt}
+        professionalDetails={profileDetails}
         canEdit={canEdit}
       />
       <PersonalDetails
+        personalDetails={profileDetails}
         canEdit={canEdit}
-        dateOfBirth={profileDetails?.createdAt}
-        gender="s'he"
-        address="4517 Washington Ave. Manchester, Kentucky 39495"
-        maritalStatus="Married"
         skills={[
           'Techinal Analysis',
           'Fundamental Analysis',
