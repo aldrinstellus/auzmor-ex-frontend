@@ -18,16 +18,21 @@ export type IScreen = {
 const UserOnboard: React.FC = (): ReactNode => {
   const [open, openModal, closeModal] = useModal(true);
   const [currentScreen, prev, next] = useCarousel(0, 4);
+  const [disableClose, setDisableClose] = useState<boolean>(false);
 
   const screens: IScreen[] = [
     {
       screen: <WelcomeScreen next={next} />,
     },
     {
-      screen: <EditProfileScreen next={next} />,
+      screen: (
+        <EditProfileScreen next={next} setDisableClose={setDisableClose} />
+      ),
     },
     {
-      screen: <SelectTimezoneScreen next={next} />,
+      screen: (
+        <SelectTimezoneScreen next={next} setDisableClose={setDisableClose} />
+      ),
     },
     {
       screen: <AllDoneScreen closeModal={closeModal} />,
@@ -43,9 +48,12 @@ const UserOnboard: React.FC = (): ReactNode => {
             {screens[currentScreen].cardText || 'Profile Setup'}
           </span>
           <Icon
+            className={`${
+              disableClose ? 'cursor-not-allowed' : 'cursor-pointer'
+            }`}
             name="close"
             fill="#000000"
-            onClick={closeModal}
+            onClick={disableClose ? undefined : closeModal}
             hover={false}
           />
         </div>

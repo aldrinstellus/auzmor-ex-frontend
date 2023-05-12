@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import timezones from 'utils/timezones.json';
 import OnboardTimezone from 'images/onboard-timezone.png';
 import Layout, { FieldType } from 'components/Form';
@@ -14,6 +14,7 @@ import Banner, { Variant } from 'components/Banner';
 
 type SelectTimezoneScreenProps = {
   next: () => void;
+  setDisableClose: (disableClose: boolean) => void;
 };
 
 interface IForm {
@@ -27,10 +28,9 @@ export type OptionType = {
 
 const SelectTimezoneScreen: React.FC<SelectTimezoneScreenProps> = ({
   next,
+  setDisableClose,
 }): ReactElement => {
-  // Note: The timezone selector dropdown has to be a form component here.
   const defaultTimezone = getDefaultTimezoneOption();
-  console.log({ defaultTimezone });
 
   const schema = yup.object({
     timezone: yup.object(),
@@ -64,6 +64,8 @@ const SelectTimezoneScreen: React.FC<SelectTimezoneScreenProps> = ({
   };
 
   const { isLoading, isError } = updateUserTimezoneMutation;
+
+  useEffect(() => setDisableClose(isLoading), [isLoading]);
 
   const fields = [
     {
@@ -112,7 +114,6 @@ const SelectTimezoneScreen: React.FC<SelectTimezoneScreenProps> = ({
                 className="font-bold"
                 label="Next"
                 type={Type.Submit}
-                loading={isLoading}
                 disabled={isLoading}
               ></Button>
             </div>

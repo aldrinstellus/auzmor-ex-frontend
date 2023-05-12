@@ -1,17 +1,21 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import Button from 'components/Button';
 import UpdateProfileImage from 'components/UpdateProfileImage';
 import Banner, { Variant } from 'components/Banner';
 
 type EditProfileScreenProps = {
   next: () => void;
+  setDisableClose: (disableClose: boolean) => void;
 };
 
 const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
   next,
+  setDisableClose,
 }): ReactElement => {
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => setDisableClose(loading), [loading]);
 
   return (
     <div className="flex flex-col min-h-full justify-between min-w-full">
@@ -42,15 +46,16 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
         <div className="bg-blue-50 ">
           <div className="p-3 flex items-center justify-between">
             <div
-              className="font-bold text-neutral-900 cursor-pointer"
-              onClick={next}
+              className={`font-bold text-neutral-900 ${
+                loading ? 'cursor-not-allowed' : 'cursor-pointer'
+              } `}
+              onClick={loading ? undefined : next}
             >
               Skip this step
             </div>
             <Button
               className="font-bold"
               label="Next"
-              loading={loading}
               disabled={loading}
               onClick={next}
             />
