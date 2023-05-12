@@ -4,6 +4,8 @@ import UserCard from './components/UserCard';
 import TabSwitch from './components/TabSwitch';
 import { IPostUsersResponse, useUsers } from 'queries/users';
 import InviteUserModal from './components/InviteUserModal';
+import TablePagination from 'components/TablePagination';
+import ReactPaginate from 'react-paginate';
 
 interface IUsersProps {}
 
@@ -17,12 +19,13 @@ const tabs = [
 ];
 
 const Users: React.FC<IUsersProps> = () => {
-  const { data: users, isLoading } = useUsers({});
+  const [page, setPage] = useState(1);
+  const { data: users, isLoading } = useUsers({ next: page });
   const [showAddUserModal, setShowAddUserModal] = useState(false);
 
   return (
-    <>
-      <div className="bg-white px-8 py-9 rounded-9xl w-[100%] h-[100%]">
+    <div className="w-full h-[85vh] bg-white px-8 py-9 rounded-9xl relative">
+      <div className="">
         <div className="flex justify-between">
           <span className="text-2xl font-bold">People Hub</span>
           <div className="flex">
@@ -76,12 +79,17 @@ const Users: React.FC<IUsersProps> = () => {
         </div>
       </div>
 
-      <InviteUserModal
-        showModal={showAddUserModal}
-        setShowAddUserModal={setShowAddUserModal}
-        closeModal={() => setShowAddUserModal(false)}
-      />
-    </>
+      <div className="absolute right-6 bottom-6">
+        <TablePagination total={1000} page={page} onPageChange={setPage} />
+      </div>
+      {showAddUserModal && (
+        <InviteUserModal
+          showModal={showAddUserModal}
+          setShowAddUserModal={setShowAddUserModal}
+          closeModal={() => setShowAddUserModal(false)}
+        />
+      )}
+    </div>
   );
 };
 
