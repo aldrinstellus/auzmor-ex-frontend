@@ -40,6 +40,7 @@ import CarouselLeftIcon from '../components/CarouselLeft';
 import CarouselRightIcon from '../components/CarouselRight';
 import CarouselCloseIcon from '../components/CarouselClose';
 import FlashIcon from '../components/FlashIcon';
+import Search from '../components/Search';
 import Send from '../components/Send';
 import IconLinear from '../components/IconLinear';
 import EmojiHappy from '../components/EmojiHappy';
@@ -57,6 +58,7 @@ import ArrowRightIcon from '../components/ArrowRight';
 import PlayIcon from '../components/Play';
 import TickCircleIcon from '../components/TickCircle';
 import CloseCircleIcon from '../components/CloseCircle';
+import FilterLinear from '../components/FilterLinear';
 
 export const icon = {
   add: Add,
@@ -89,6 +91,7 @@ export const icon = {
   eye: EyeIcon,
   eyeSlash: EyeSlashIcon,
   feed: FeedIcon,
+  filterLinear: FilterLinear,
   filter: FilterIcon,
   flashIcon: FlashIcon,
   funny: Funny,
@@ -111,6 +114,7 @@ export const icon = {
   play: PlayIcon,
   reply: Reply,
   send: Send,
+  search: Search,
   slack: SlackIcon,
   speaker: SpeakerIcon,
   support: Support,

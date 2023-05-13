@@ -5,9 +5,15 @@ import TabSwitch from './components/TabSwitch';
 import { IPostUsersResponse, useUsers } from 'queries/users';
 import InviteUserModal from './components/InviteUserModal';
 import TablePagination from 'components/TablePagination';
-import Icon from 'components/Icon';
 import Card from 'components/Card';
 import Spinner from 'components/Spinner';
+import Layout, { FieldType } from 'components/Form';
+import { Size as InputSize } from 'components/Input';
+import { useForm } from 'react-hook-form';
+import IconButton, {
+  Variant as IconVariant,
+  Size as IconSize,
+} from 'components/IconButton';
 
 interface IUsersProps {}
 
@@ -25,10 +31,19 @@ const Users: React.FC<IUsersProps> = () => {
   const { data: users, isLoading } = useUsers({ next: page });
   const [showAddUserModal, setShowAddUserModal] = useState(false);
 
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: 'onChange',
+  });
+
   return (
-    <Card className="px-8 py-9 w-full h-fit">
+    <Card className="px-8 pt-9 pb-8 w-full h-[1109px] space-y-6">
       {/* Top People Directory Section */}
-      <div className="space-y-7">
+      <div className="space-y-7 h-[25%]">
         <div className="flex justify-between">
           <div className="text-2xl font-bold">People Hub</div>
           <div className="flex space-x-2">
@@ -48,11 +63,12 @@ const Users: React.FC<IUsersProps> = () => {
             />
           </div>
         </div>
+
         {/* Tab Switcher */}
         <TabSwitch tabs={tabs} />
 
         {/* People Directory Filter */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center bg-red-200">
           <div className="flex space-x-4">
             <Button
               label="My Teams"
@@ -66,65 +82,80 @@ const Users: React.FC<IUsersProps> = () => {
               size={Size.Small}
               variant={Variant.Secondary}
             />
-            {/* <Layout
+            <Layout
+              className=""
+              fields={[
+                {
+                  type: FieldType.SingleSelect,
+                  control,
+                  name: 'role',
+                  defaultValue: 'ADMIN',
+                  options: [
+                    {
+                      id: 1,
+                      label: 'ADMIN',
+                    },
+                    {
+                      id: 2,
+                      label: 'SUPER ADMIN',
+                    },
+                  ],
+                },
+              ]}
+            />
+          </div>
+          <div className="flex space-x-2 justify-center items-center">
+            <IconButton
+              icon="filterLinear"
+              variant={IconVariant.Secondary}
+              size={IconSize.Small}
+              className="bg-white"
+            />
+
+            <IconButton
+              icon="filter"
+              variant={IconVariant.Secondary}
+              size={IconSize.Small}
+              className="bg-white"
+            />
+            <div>
+              <Layout
                 fields={[
                   {
-                    type: FieldType.SingleSelect,
+                    type: FieldType.Input,
+                    size: InputSize.Small,
+                    leftIcon: 'search',
                     control,
-                    name: 'role',
-                    defaultValue: 'Role',
-                    options: [
-                      {
-                        id: 1,
-                        label: 'ADMIN',
-                      },
-                      {
-                        id: 2,
-                        label: 'SUPER ADMIN',
-                      },
-                    ],
+                    name: 'search',
+                    placeholder: 'Search members',
                   },
                 ]}
-              /> */}
-          </div>
-          <div className="flex space-x-2">
-            <div className="border border-solid border-neutral-200 p-[10px] rounded-17xl">
-              <Icon name="filter" />
+              />
             </div>
-            <div className="border border-solid border-neutral-200 p-[10px] rounded-17xl">
-              <Icon name="filter" />
-            </div>
-            {/* <div>
-                <Layout
-                  fields={[
-                    {
-                      type: FieldType.Input,
-                      control,
-                      name: 'search',
-                      placeholder: 'Search members',
-                    },
-                  ]}
-                />
-              </div> */}
           </div>
         </div>
+
         <div className=" text-neutral-500">
           Showing {!isLoading && users.result.data.length} results
         </div>
+      </div>
+
+      <div className="overflow-y-auto h-[65%]">
         <div className="flex flex-wrap gap-6">
           {users?.result?.data?.length > 0 &&
             users?.result?.data?.map((user: any) => (
               <UserCard key={user.id} {...user} />
             ))}
-          {isLoading && <Spinner />}
+          {isLoading && <Spinner color="#000" />}
         </div>
-        <div className="absolute right-6 bottom-6">
-          <TablePagination
-            total={users?.result?.totalCount}
-            page={page}
-            onPageChange={setPage}
-          />
-        </div>
+      </div>
+
+      <div className="float-right h-[10%]">
+        <TablePagination
+          total={users?.result?.totalCount}
+          page={page}
+          onPageChange={setPage}
+        />
       </div>
 
       {showAddUserModal && (
