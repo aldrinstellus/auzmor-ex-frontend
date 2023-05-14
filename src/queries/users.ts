@@ -44,6 +44,11 @@ const getAllUsers = async (q: Record<string, any>) => {
   return data;
 };
 
+export const isUserExist = async (q: { email: string }) => {
+  const { data } = await apiService.get('/users/exists', q);
+  return data;
+};
+
 export const useUsers = (q: Record<string, any>) => {
   return useQuery({
     queryKey: ['users', q],
