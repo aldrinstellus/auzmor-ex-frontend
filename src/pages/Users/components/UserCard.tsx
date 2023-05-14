@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import _ from 'lodash';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import useHover from 'hooks/useHover';
@@ -7,9 +8,11 @@ import clsx from 'clsx';
 import { useMutation } from '@tanstack/react-query';
 import { deleteUser } from 'queries/users';
 import ConfirmationBox from 'components/ConfirmationBox';
-import _ from 'lodash';
-
 import queryClient from 'utils/queryClient';
+import IconButton, {
+  Variant as IconVariant,
+  Size as IconSize,
+} from 'components/IconButton';
 import { useNavigate } from 'react-router-dom';
 import useAuth from 'hooks/useAuth';
 
@@ -75,21 +78,30 @@ const UserCard: React.FC<IUserCardProps> = ({
     () =>
       clsx(
         {
-          'w-[234px] h-[234px] border-solid border border-neutral-200 flex flex-col items-center justify-center p-6 bg-white relative':
+          'relative w-[234px] border-solid border border-neutral-200 flex flex-col items-center justify-center p-6 bg-white':
             true,
         },
         {
-          '-mb-6 transition-all duration-900 h-72 z-10 shadow-xl ': isHovered,
+          'z-10 shadow-xl visible': isHovered,
         },
         {
-          'z-0': !isHovered,
+          'mb-0 z-0': !isHovered,
         },
       ),
     [isHovered],
   );
 
   return (
-    <div {...hoverEvents}>
+    <div
+      {...hoverEvents}
+      className="cursor-pointer"
+      onClick={() => {
+        if (id === user?.id) {
+          return navigate('/profile');
+        }
+        return navigate(`/users/${id}`);
+      }}
+    >
       <Card className={`${hoverStyle}`}>
         <div
           style={{ backgroundColor: statusColorMap[role] }}
@@ -108,41 +120,44 @@ const UserCard: React.FC<IUserCardProps> = ({
           <div className="mt-1 truncate text-neutral-900 text-xs font-normal">
             {designation || role}
           </div>
-          <div className="flex justify-center items-center px-3 py-1 mt-2 bg-orange-100 rounded-xl">
+          <div className="flex justify-center items-center px-3 py-1 mt-2 rounded-xl">
             <div></div>
             <div className="text-neutral-900 text-xxs font-medium truncate">
-              {department || '-'}
+              {department}
             </div>
           </div>
           <div className="flex space-x-[6px] mt-3">
             <div></div>
             <div className="text-neutral-500 text-xs font-normal truncate">
-              {location || '-'}
+              {location}
             </div>
           </div>
-          {isHovered && (
-            <div className="flex justify-between items-center mt-4 space-x-3">
-              <Button
-                variant={Variant.Secondary}
-                label={'O'}
+        </div>
+        {isHovered && (
+          <div className="flex justify-between items-center mt-4 space-x-4">
+            <div className="rounded-7xl border border-solid border-neutral-200">
+              <IconButton
+                icon="draft"
+                variant={IconVariant.Secondary}
+                size={IconSize.Medium}
+                className="rounded-7xl"
                 onClick={() => {
                   if (user?.id === id) {
                     navigate('/profile', { state: { userId: id } });
                   } else navigate(`/users/${id}`);
                 }}
-                className="!p-2 !gap-2 !rounded-[8px] !border !border-neutral-200 !border-solid"
-              />
-              <Button
-                variant={Variant.Secondary}
-                label={'X'}
-                onClick={() => {
-                  setShowDeleteModal(true);
-                }}
-                className="!p-2 !gap-2 !rounded-[8px] !border !border-neutral-200 !border-solid"
               />
             </div>
-          )}
-        </div>
+            <div className="rounded-7xl border border-solid border-neutral-200">
+              <IconButton
+                icon="slack"
+                variant={IconVariant.Secondary}
+                size={IconSize.Medium}
+                className="rounded-7xl"
+              />
+            </div>
+          </div>
+        )}
       </Card>
 
       <ConfirmationBox
