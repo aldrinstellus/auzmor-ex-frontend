@@ -68,27 +68,30 @@ const Users: React.FC<IUsersProps> = () => {
         <TabSwitch tabs={tabs} />
 
         {/* People Directory Filter */}
-        <div className="flex justify-between items-center bg-red-200">
+        <div className="flex justify-between items-center">
           <div className="flex space-x-4">
             <Button
               label="My Teams"
               size={Size.Small}
               variant={Variant.Secondary}
               disabled
-              className="cursor-not-allowed"
+              className="cursor-not-allowed h-9 grow-0"
             />
             <Button
               label="All Members"
               size={Size.Small}
               variant={Variant.Secondary}
+              className="h-9 grow-0"
             />
             <Layout
-              className=""
               fields={[
                 {
                   type: FieldType.SingleSelect,
                   control,
+                  className: 'h-9 w-44',
                   name: 'role',
+                  placeholder: 'Role',
+                  size: InputSize.Small,
                   defaultValue: 'ADMIN',
                   options: [
                     {
@@ -109,13 +112,14 @@ const Users: React.FC<IUsersProps> = () => {
               icon="filterLinear"
               variant={IconVariant.Secondary}
               size={IconSize.Small}
+              borderAround
               className="bg-white"
             />
-
             <IconButton
               icon="filter"
               variant={IconVariant.Secondary}
               size={IconSize.Small}
+              borderAround
               className="bg-white"
             />
             <div>
