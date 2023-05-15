@@ -150,6 +150,7 @@ const InviteUserModal: React.FC<IInviteUserModalProps> = ({
         workEmail: yup
           .string()
           .required('Please enter Email')
+          // .email('Please enter valid email address'),
           .matches(new RegExp(EMAIL_REGX), 'Please enter valid email address')
           .test(
             'Email exist',
@@ -229,7 +230,7 @@ const InviteUserModal: React.FC<IInviteUserModalProps> = ({
         {/*---------- {<>Footer</>} ---------*/}
         <div className="flex justify-end items-center h-16 p-6 bg-blue-50">
           <Button
-            label="Cancle"
+            label="Cancel"
             variant={ButtonVariant.Secondary}
             disabled={false}
             className="mr-4"
