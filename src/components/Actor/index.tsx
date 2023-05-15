@@ -23,11 +23,7 @@ const Actor: React.FC<ActorProps> = ({
     <div className={`flex justify-between items-center mx-6 mt-6 mb-4`}>
       <div className="flex items-center">
         <div>
-          <Avatar
-            name={createdBy || user?.name || 'U'}
-            size={32}
-            image={user?.profileImage}
-          />
+          <Avatar name={createdBy || user?.name || 'U'} size={32} />
         </div>
         <div className="ml-3">
           <div className="font-bold text-sm text-neutral-900">

@@ -40,7 +40,9 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
         <Banner
           variant={Variant.Error}
           title="Failed to upload media. Please try again!"
-          className={`min-w-full ${error && !loading ? 'visible' : 'visible'}`}
+          className={`min-w-full ${
+            error && !loading ? 'visible' : 'invisible'
+          }`}
         />
         <div className="bg-blue-50 ">
           <div className="p-3 flex items-center justify-between">
