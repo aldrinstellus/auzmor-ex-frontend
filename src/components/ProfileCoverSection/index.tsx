@@ -13,7 +13,6 @@ import IconButton, {
 } from 'components/IconButton';
 import EditProfileModal from './components/EditProfileModal';
 import IconWrapper, { Type } from 'components/Icon/components/IconWrapper';
-import { useUpload } from 'queries/files';
 
 export interface IProfileCoverProps {
   profileCoverData: Record<string, any>;
@@ -36,7 +35,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
         <div className="relative cursor-pointer">
           <img
             className="object-cover w-full h-[179.56px] rounded-9xl"
-            src="https://libg.s3.us-east-2.amazonaws.com/download/Blue-And-Red-Over-The-Mountains.jpg"
+            src={profileCoverData?.coverImage?.original}
           />
           {canEdit && (
             <IconButton
@@ -66,7 +65,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
               <div className="mr-6 mt-2 flex justify-between w-full">
                 <div className="flex space-x-4">
                   <div className="text-2xl font-bold">
-                    {profileCoverData?.userName || 'Megan Berry'}
+                    {profileCoverData?.fullName}
                   </div>
                   {!canEdit && (
                     <div className="bg-red-100 border-1 border-red-200 rounded-full px-3 flex justify-center items-center space-x-2">
@@ -106,30 +105,34 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
             </div>
             <div className="flex space-x-4 items-center">
               <div className="text-xs font-normal text-neutral-900">
-                <div>{profileCoverData?.designation || 'Tech Lead'}</div>
+                <div>{profileCoverData?.designation}</div>
               </div>
-              <div className="bg-neutral-100">
-                <Divider variant={DividerVariant.Vertical} />
-              </div>
-              <div className="flex space-x-3 items-center">
-                <IconWrapper type={Type.Square} className="cursor-pointer">
-                  <Icon name="briefcase" size={16} />
-                </IconWrapper>
-                <div className="text-xs font-normal text-neutral-900">
-                  {profileCoverData?.department || 'Engineering'}
-                </div>
-              </div>
-              <div className="bg-neutral-100">
-                <Divider variant={DividerVariant.Vertical} />
-              </div>
-              <div className="flex space-x-3 items-center">
-                <IconWrapper type={Type.Square} className="cursor-pointer">
-                  <Icon name="location" size={16} />
-                </IconWrapper>
-                <div className="text-xs font-normal text-neutral-900">
-                  {profileCoverData?.location || 'Mumbai, India'}
-                </div>
-              </div>
+              {profileCoverData?.department && (
+                <>
+                  <Divider variant={DividerVariant.Vertical} />
+                  <div className="flex space-x-3 items-center">
+                    <IconWrapper type={Type.Square} className="cursor-pointer">
+                      <Icon name="briefcase" size={16} />
+                    </IconWrapper>
+                    <div className="text-xs font-normal text-neutral-900">
+                      {profileCoverData?.department}
+                    </div>
+                  </div>
+                </>
+              )}
+              {profileCoverData?.location && (
+                <>
+                  <Divider variant={DividerVariant.Vertical} />
+                  <div className="flex space-x-3 items-center">
+                    <IconWrapper type={Type.Square} className="cursor-pointer">
+                      <Icon name="location" size={16} />
+                    </IconWrapper>
+                    <div className="text-xs font-normal text-neutral-900">
+                      {profileCoverData?.location}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -140,15 +143,6 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           coverImageRef={coverImageRef}
         />
       </Card>
-      <input
-        type="file"
-        className="hidden"
-        ref={coverImageRef}
-        accept="image/*"
-        onChange={(e) => {
-          console.log('wwwww', e.target.files);
-        }}
-      />
     </>
   );
 };

@@ -12,9 +12,6 @@ import Button, {
 } from 'components/Button';
 import Avatar from 'components/Avatar';
 import { Variant as InputVariant } from 'components/Input';
-import { updateCurrentUser, updateUserById } from 'queries/users';
-import { useMutation } from '@tanstack/react-query';
-import UpdateProfileImage from 'components/UpdateProfileImage';
 
 export interface IUpdateProfileForm {
   fullName: string;
