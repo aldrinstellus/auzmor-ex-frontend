@@ -140,7 +140,6 @@ const UserCard: React.FC<IUserCardProps> = ({
                 icon="draft"
                 variant={IconVariant.Secondary}
                 size={IconSize.Medium}
-                className="rounded-7xl"
                 onClick={() => {
                   if (user?.id === id) {
                     navigate('/profile', { state: { userId: id } });
@@ -153,7 +152,6 @@ const UserCard: React.FC<IUserCardProps> = ({
                 icon="slack"
                 variant={IconVariant.Secondary}
                 size={IconSize.Medium}
-                className="rounded-7xl"
               />
             </div>
           </div>

@@ -1,5 +1,5 @@
 import Card from 'components/Card';
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 import Avatar from 'components/Avatar';
 import Divider, { Variant as DividerVariant } from 'components/Divider';
 import Button, {
@@ -7,13 +7,13 @@ import Button, {
   Variant as ButtonVariant,
 } from 'components/Button';
 import Icon from 'components/Icon';
-import OutOfOffice from 'images/out-of-office.svg';
 import IconButton, {
   Size,
   Variant as IconVariant,
 } from 'components/IconButton';
 import EditProfileModal from './components/EditProfileModal';
 import IconWrapper, { Type } from 'components/Icon/components/IconWrapper';
+import { useUpload } from 'queries/files';
 
 export interface IProfileCoverProps {
   profileCoverData: Record<string, any>;
@@ -54,11 +54,8 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           {/* Profile Picture */}
           <div className="-mt-20 ml-8">
             <Avatar
-              name={profileCoverData?.fullName || 'U'}
-              image={
-                profileCoverData?.profileImage?.original ||
-                'https://play-lh.googleusercontent.com/7Ac5TgaL15Ra4bvFVHJKCdJp4qvnL4djZj5bKc6RN-MZjzrvkeHbJytek0NPTSdZcp8'
-              }
+              name={profileCoverData?.fullName}
+              image={profileCoverData?.profileImage?.original}
               size={96}
               className="border-2 border-white mt-8"
             />
