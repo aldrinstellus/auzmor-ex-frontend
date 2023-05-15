@@ -1,20 +1,18 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import _ from 'lodash';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import useHover from 'hooks/useHover';
-import Button, { Variant } from 'components/Button';
 import clsx from 'clsx';
-import { useMutation } from '@tanstack/react-query';
-import { deleteUser } from 'queries/users';
-import ConfirmationBox from 'components/ConfirmationBox';
-import queryClient from 'utils/queryClient';
 import IconButton, {
   Variant as IconVariant,
   Size as IconSize,
 } from 'components/IconButton';
 import { useNavigate } from 'react-router-dom';
 import useAuth from 'hooks/useAuth';
+import Icon from 'components/Icon';
+import PopupMenu from 'components/PopupMenu';
+import DeleteUserModal from './DeleteUserModal';
 
 export interface IUserCardProps {
   id: string;
@@ -57,22 +55,23 @@ const UserCard: React.FC<IUserCardProps> = ({
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-
   const [isHovered, hoverEvents] = useHover();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const deleteUserMutation = useMutation({
-    mutationKey: ['delete-user', id],
-    mutationFn: deleteUser,
-    onError: (error) => {
-      console.log(error);
+  const postOptions = [
+    {
+      icon: 'redo',
+      label: 'Resend Invite',
+      onClick: () => null,
     },
-    onSuccess: (data, variables, context) => {
-      setShowDeleteModal(false);
-      alert('Successfully Deleted');
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+    {
+      icon: 'userRemove',
+      label: 'Remove',
+      onClick: () => {
+        setShowDeleteModal(true);
+      },
     },
-  });
+  ];
 
   const hoverStyle = useMemo(
     () =>
@@ -82,34 +81,48 @@ const UserCard: React.FC<IUserCardProps> = ({
             true,
         },
         {
-          'z-10 shadow-xl visible': isHovered,
+          '-mb-6 z-10 shadow-xl ': isHovered,
         },
         {
-          'mb-0 z-0': !isHovered,
+          'mb-6 z-0': !isHovered,
         },
       ),
     [isHovered],
   );
 
   return (
-    <div
-      {...hoverEvents}
-      className="cursor-pointer"
-      onClick={() => {
-        if (id === user?.id) {
-          return navigate('/profile');
-        }
-        return navigate(`/users/${id}`);
-      }}
-    >
-      <Card className={`${hoverStyle}`}>
+    <div {...hoverEvents} className="cursor-pointer">
+      <Card className={hoverStyle}>
+        {isHovered && (
+          <PopupMenu
+            triggerNode={
+              <div className="cursor-pointer">
+                <Icon
+                  name="dotsVertical"
+                  stroke="#000"
+                  className="absolute top-2 right-2"
+                  hover={false}
+                />
+              </div>
+            }
+            menuItems={postOptions}
+          />
+        )}
         <div
           style={{ backgroundColor: statusColorMap[role] }}
           className="absolute top-0 left-0 text-white rounded-tl-[12px] rounded-br-[12px] px-3 py-1 text-xs font-medium"
         >
           {role}
         </div>
-        <div className="my-6 flex flex-col items-center">
+        <div
+          className="my-6 flex flex-col items-center"
+          onClick={() => {
+            if (id === user?.id) {
+              return navigate('/profile');
+            }
+            return navigate(`/users/${id}`);
+          }}
+        >
           <Avatar size={80} name={fullName} image={image} active={active} />
           <div className="mt-1 truncate text-neutral-900 text-base font-bold">
             {_.truncate(fullName, {
@@ -134,56 +147,30 @@ const UserCard: React.FC<IUserCardProps> = ({
           </div>
         </div>
         {isHovered && (
-          <div className="flex justify-between items-center mt-4 space-x-4">
-            <div className="rounded-7xl border border-solid border-neutral-200">
-              <IconButton
-                icon="draft"
-                variant={IconVariant.Secondary}
-                size={IconSize.Medium}
-                className="rounded-7xl"
-                onClick={() => {
-                  if (user?.id === id) {
-                    navigate('/profile', { state: { userId: id } });
-                  } else navigate(`/users/${id}`);
-                }}
-              />
-            </div>
-            <div className="rounded-7xl border border-solid border-neutral-200">
-              <IconButton
-                icon="slack"
-                variant={IconVariant.Secondary}
-                size={IconSize.Medium}
-                className="rounded-7xl"
-              />
+          <div className="">
+            <div className="flex justify-between items-center mt-0 space-x-4">
+              <div className="rounded-7xl border border-solid border-neutral-200">
+                <IconButton
+                  icon="email"
+                  variant={IconVariant.Secondary}
+                  size={IconSize.Medium}
+                />
+              </div>
+              <div className="rounded-7xl border border-solid border-neutral-200">
+                <IconButton
+                  icon="slack"
+                  variant={IconVariant.Secondary}
+                  size={IconSize.Medium}
+                />
+              </div>
             </div>
           </div>
         )}
       </Card>
-
-      <ConfirmationBox
-        open={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        title="Delete User?"
-        description={
-          <span>
-            Are you sure you want to delete this member?
-            <br /> This cannot be undone.
-          </span>
-        }
-        success={{
-          label: 'Delete',
-          className: 'bg-red-500 text-white ',
-          onSubmit: () => {
-            deleteUserMutation.mutate(id);
-          },
-        }}
-        discard={{
-          label: 'cancel',
-          className: 'text-neutral-900 bg-white ',
-          onCancel: () => {
-            setShowDeleteModal(false);
-          },
-        }}
+      <DeleteUserModal
+        showModal={showDeleteModal}
+        setShowModal={setShowDeleteModal}
+        userId={id}
       />
     </div>
   );
