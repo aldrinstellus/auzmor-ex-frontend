@@ -229,9 +229,9 @@ const InviteUserModal: React.FC<IInviteUserModalProps> = ({
         {/*---------- {<>Footer</>} ---------*/}
         <div className="flex justify-end items-center h-16 p-6 bg-blue-50">
           <Button
-            label="Cancle"
+            label="Cancel"
             variant={ButtonVariant.Secondary}
-            disabled={false}
+            disabled={inviteUsersMutation.isLoading}
             className="mr-4"
             onClick={close}
           />
