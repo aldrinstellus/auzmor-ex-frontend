@@ -40,6 +40,7 @@ import CarouselLeftIcon from '../components/CarouselLeft';
 import CarouselRightIcon from '../components/CarouselRight';
 import CarouselCloseIcon from '../components/CarouselClose';
 import FlashIcon from '../components/FlashIcon';
+import Search from '../components/Search';
 import Send from '../components/Send';
 import IconLinear from '../components/IconLinear';
 import EmojiHappy from '../components/EmojiHappy';
@@ -55,8 +56,19 @@ import Reply from '../components/Reply';
 import LikeIcon from '../components/LikeIcon';
 import ArrowRightIcon from '../components/ArrowRight';
 import PlayIcon from '../components/Play';
+import BriefcaseIcon from '../components/Briefcase';
+import LocationIcon from '../components/Location';
+import EmailIcon from '../components/Email';
+import FolderConnectionIcon from '../components/FolderConnection';
+import CakeIcon from '../components/Cake';
+import FemaleIcon from '../components/Female';
+import MarriedIcon from '../components/Married';
+import CopyIcon from '../components/Copy';
+import OutOfOfficeIcon from '../components/OutOfOffice';
 import TickCircleIcon from '../components/TickCircle';
 import CloseCircleIcon from '../components/CloseCircle';
+import FilterLinear from '../components/FilterLinear';
+import ArrowSwap from '../components/ArrowSwap';
 
 export const icon = {
   add: Add,
@@ -65,6 +77,7 @@ export const icon = {
   analyticsIconOutline: AnalyticsOutline,
   arrowLeft: ArrowLeftIcon,
   arrowRight: ArrowRightIcon,
+  arrowSwap: ArrowSwap,
   bookmarkOutline: BookmarkOutline,
   calendarTwo: CalendarIconTwo,
   carouselClose: CarouselCloseIcon,
@@ -89,6 +102,7 @@ export const icon = {
   eye: EyeIcon,
   eyeSlash: EyeSlashIcon,
   feed: FeedIcon,
+  filterLinear: FilterLinear,
   filter: FilterIcon,
   flashIcon: FlashIcon,
   funny: Funny,
@@ -111,6 +125,7 @@ export const icon = {
   play: PlayIcon,
   reply: Reply,
   send: Send,
+  search: Search,
   slack: SlackIcon,
   speaker: SpeakerIcon,
   support: Support,
@@ -118,4 +133,13 @@ export const icon = {
   trash: Trash,
   user: UsersIcon,
   video: VideoIcon,
+  briefcase: BriefcaseIcon,
+  location: LocationIcon,
+  email: EmailIcon,
+  folderConnection: FolderConnectionIcon,
+  cake: CakeIcon,
+  femaleIcon: FemaleIcon,
+  marriedIcon: MarriedIcon,
+  copyIcon: CopyIcon,
+  outOfOfficeIcon: OutOfOfficeIcon,
 };
