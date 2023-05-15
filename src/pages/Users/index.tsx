@@ -118,7 +118,7 @@ const Users: React.FC<IUsersProps> = () => {
               <UserCard
                 key={user.id}
                 {...user}
-                image={user?.profileImage?.originalUrl}
+                image={user?.profileImage?.original}
               />
             ))}
           {isLoading && <Spinner color="#000" />}
