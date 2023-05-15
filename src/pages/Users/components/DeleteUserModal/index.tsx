@@ -11,7 +11,7 @@ import Modal from 'components/Modal';
 import { deleteUser } from 'queries/users';
 import { useMutation } from '@tanstack/react-query';
 import queryClient from 'utils/queryClient';
-import { Variant } from 'components/Button';
+import Spinner from 'components/Spinner';
 
 export interface IDeleteUserModalProps {
   showModal: boolean;
@@ -32,7 +32,6 @@ const DeleteUserModal: React.FC<IDeleteUserModalProps> = ({
     },
     onSuccess: (data, variables, context) => {
       setShowModal(false);
-      alert('Successfully Deleted');
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
@@ -64,7 +63,8 @@ const DeleteUserModal: React.FC<IDeleteUserModalProps> = ({
       />
       <Button
         label={'Delete'}
-        className="!bg-red-500 !text-white"
+        className="!bg-red-500 !text-white flex"
+        loading={deleteUserMutation.isLoading}
         size={Size.Small}
         type={ButtonType.Submit}
         onClick={() => deleteUserMutation.mutate(userId)}

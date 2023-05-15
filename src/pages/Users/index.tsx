@@ -19,7 +19,7 @@ interface IUsersProps {}
 
 const Users: React.FC<IUsersProps> = () => {
   const [page, setPage] = useState(1);
-  const { data: users, isLoading } = useUsers({ next: page });
+  const { data: users, isLoading } = useUsers({ limit: 30, next: page });
   const [showAddUserModal, setShowAddUserModal] = useState(false);
 
   const {

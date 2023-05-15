@@ -164,7 +164,6 @@ const UserCard: React.FC<IUserCardProps> = ({
                   stroke="#000"
                   className="absolute top-4 right-4"
                   hover={false}
-                  onClick={() => console.log('4')}
                 />
               </div>
             }
