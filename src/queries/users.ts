@@ -159,3 +159,16 @@ export const useCurrentUser = () => {
     staleTime: 15 * 60 * 1000,
   });
 };
+
+export const useResendInvitation = (id: string) => {
+  const resendInvitation = async (id: string) => {
+    const { data } = await apiService.put(`/users/${id}/resend-invitation`);
+    return data;
+  };
+
+  return useQuery({
+    queryKey: ['resend-invitation'],
+    queryFn: () => resendInvitation(id),
+    staleTime: 1000,
+  });
+};
