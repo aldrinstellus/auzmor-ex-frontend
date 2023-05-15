@@ -173,7 +173,7 @@ const InviteUserModal: React.FC<IInviteUserModalProps> = ({
     formState: { errors, isValid },
   } = useForm<IUserForm>({
     resolver: yupResolver(schema),
-    mode: 'onSubmit',
+    mode: 'onChange',
     defaultValues: {
       members: [{ fullName: '', workEmail: '', role: roleOptions[0] }],
     },
@@ -258,7 +258,7 @@ const InviteUserModal: React.FC<IInviteUserModalProps> = ({
             <Button
               label="Send Invite"
               onClick={handleSubmit(onSubmit)}
-              disabled={inviteUsersMutation.isLoading}
+              disabled={inviteUsersMutation.isLoading || !isValid}
               loading={inviteUsersMutation.isLoading}
             />
           )}
