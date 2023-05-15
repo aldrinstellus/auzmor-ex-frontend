@@ -242,7 +242,11 @@ const InviteUserModal: React.FC<IInviteUserModalProps> = ({
                 setShowInvitedMembers(false);
                 remove();
                 invitedUsersResponse
-                  .filter((user) => user.status === UserStatus.Failed)
+                  .filter(
+                    (user) =>
+                      user.status === UserStatus.Failed ||
+                      user.status === UserStatus.Created,
+                  )
                   .forEach((user: IPostUsersResponse) => {
                     append({
                       fullName: user.fullName,
