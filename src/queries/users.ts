@@ -3,7 +3,7 @@ import apiService from 'utils/apiService';
 
 export interface IProfileImage {
   fileId: string;
-  originalUrl: string;
+  original: string;
 }
 export interface IUserUpdate {
   id: string;
