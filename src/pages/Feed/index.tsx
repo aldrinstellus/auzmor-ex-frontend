@@ -7,6 +7,7 @@ import CreatePostCard from 'components/PostBuilder/components/CreatePostCard';
 import Post from 'components/Post';
 import { useInView } from 'react-intersection-observer';
 import { IMenuItem } from 'components/PopupMenu';
+import UserOnboard from 'components/UserOnboard';
 
 interface IFeedProps {}
 

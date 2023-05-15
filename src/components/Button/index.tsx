@@ -30,6 +30,7 @@ export type ButtonProps = {
   disabled?: boolean;
   loading?: boolean;
   onClick?: MouseEventHandler<Element>;
+  leftIconSize?: number;
   leftIcon?: any; // should accept the react element
   rightIcon?: any; // should accept the string and react element
   className?: string;
@@ -51,6 +52,7 @@ const Button = ({
   className = '',
   iconFill,
   iconStroke,
+  leftIconSize,
   leftIconClassName,
   rightIconClassName,
   onClick = () => {},
@@ -96,25 +98,29 @@ const Button = ({
       disabled={disabled || loading}
       onClick={onClick}
     >
-      {leftIcon && (
-        <Icon
-          name={leftIcon}
-          fill={iconFill}
-          stroke={iconStroke}
-          className={leftIconClassName}
-          size={size === Size.Small ? 16 : 24}
-        />
-      )}
-      {label}
-      {rightIcon && (
-        <Icon
-          name={rightIcon}
-          fill={iconFill}
-          stroke={iconStroke}
-          className={rightIconClassName}
-          size={size === Size.Small ? 16 : 24}
-        />
-      )}
+      <div>
+        {leftIcon && (
+          <Icon
+            name={leftIcon}
+            fill={iconFill}
+            stroke={iconStroke}
+            className={leftIconClassName}
+            size={leftIconSize || (size === Size.Small ? 16 : 24)}
+          />
+        )}
+      </div>
+      <div>{label}</div>
+      <div>
+        {rightIcon && (
+          <Icon
+            name={rightIcon}
+            fill={iconFill}
+            stroke={iconStroke}
+            className={rightIconClassName}
+            size={size === Size.Small ? 16 : 24}
+          />
+        )}
+      </div>
       {loading && <Spinner className="ml-2" color={PRIMARY_COLOR} />}
     </button>
   );

@@ -1,6 +1,34 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import apiService from 'utils/apiService';
 
+export interface IProfileImage {
+  fileId: string;
+  originalUrl: string;
+}
+export interface IUserUpdate {
+  id: string;
+  profileImage?: IProfileImage;
+  timezone?: string;
+}
+
+interface UserQueryParams {
+  q?: string;
+  limit?: number;
+  prev?: number;
+  next?: number;
+  name?: string;
+  email?: string;
+  status?: string;
+}
+
+const getAllUsers = async ({ limit, prev, next }: UserQueryParams) => {
+  const { data } = await apiService.get(`/users`, {
+    limit: limit,
+    prev: prev,
+    next: next,
+  });
+  return data;
+};
 export interface IPostUser {
   fullName: string;
   workEmail: string;
@@ -39,8 +67,8 @@ export interface IPostUsersResponse {
   workEmail: string;
 }
 
-const getAllUsers = async (q: Record<string, any>) => {
-  const { data } = await apiService.get('/users', q);
+export const isUserExist = async (q: { email: string }) => {
+  const { data } = await apiService.get('/users/exists', q);
   return data;
 };
 
@@ -78,10 +106,10 @@ export const deleteUser = async (id: string) => {
 };
 
 // use react query to get all users
-export const useUsers = (q: Record<string, any>) => {
+export const useUsers = ({ limit, prev, next }: UserQueryParams) => {
   return useQuery({
-    queryKey: ['users', q],
-    queryFn: () => getAllUsers(q),
+    queryKey: ['users', limit, prev, next],
+    queryFn: () => getAllUsers({ limit, prev, next }),
     staleTime: 15 * 60 * 1000,
   });
 };
@@ -100,6 +128,27 @@ export const inviteUsers = async (payload: IPostUsers) => {
   return new Promise((res) => {
     res(data);
   });
+};
+
+export const updateUserAPI = async (user: IUserUpdate) => {
+  const { id, ...rest } = user;
+  const data = await apiService.patch(`/users/${user.id}`, { ...rest });
+  return data;
+};
+export const verifyInviteLink = async (q: Record<string, any>) => {
+  const { data } = await apiService.get('/users/invite/verify', q);
+  return data;
+};
+
+export const useVerifyInviteLink = (q: Record<string, any>) => {
+  return useQuery({
+    queryKey: ['users-invite', q],
+    queryFn: () => verifyInviteLink(q),
+  });
+};
+
+export const acceptInviteSetPassword = async (q: Record<string, any>) => {
+  return await apiService.put('/users/invite/reset-password', q);
 };
 
 // use react query to get current user
