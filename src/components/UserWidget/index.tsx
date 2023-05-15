@@ -15,7 +15,7 @@ const UserCard: React.FC<IUserCardProps> = () => {
           <div className="bg-blue-700 w-full h-20 absolute top-0 rounded-t-9xl"></div>
           <Avatar
             name={user?.name || ''}
-            image={''}
+            image={user?.profileImage}
             size={96}
             className="border-4 border-white mt-8"
           />

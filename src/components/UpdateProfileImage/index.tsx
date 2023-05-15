@@ -37,7 +37,7 @@ const UpdateProfileImage: React.FC<UpdateProfileImageProps> = ({
           id: response?.result?.data?.org?.id,
           domain: response?.result?.data?.org?.domain,
         },
-        profileImage: response?.result?.data?.profileImage?.original,
+        profileImage: response?.result?.data?.profileImage?.originalUrl,
       });
     },
   });
@@ -78,7 +78,7 @@ const UpdateProfileImage: React.FC<UpdateProfileImageProps> = ({
       size={200}
       indicatorIcon={<EditIcon setProfilePicture={setProfilePicture} />}
       name={user?.name}
-      image={user?.profileImage || ''}
+      image={user?.profileImage}
       bgColor="#DBEAFE"
       loading={isLoading || uploadStatus === UploadStatus.Uploading}
     />

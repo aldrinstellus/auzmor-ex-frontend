@@ -32,7 +32,12 @@ const AccountCard = () => {
     >
       <div className="rounded-9xl flex flex-col items-center w-64">
         <div className="px-4 py-5 flex flex-col items-center">
-          <Avatar size={80} name={user?.name || 'U'} showActiveIndicator />
+          <Avatar
+            size={80}
+            name={user?.name || 'U'}
+            image={user?.profileImage}
+            showActiveIndicator
+          />
           <div className="text-sm font-bold mt-4">{user?.name}</div>
           <div className="text-neutral-500 text-xs">{user?.email}</div>
         </div>
