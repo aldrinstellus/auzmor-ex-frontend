@@ -13,7 +13,7 @@ import Button, {
 } from 'components/Button';
 import Divider from 'components/Divider';
 import { Logo } from 'components/Logo';
-import { redirectWithToken } from 'utils/misc';
+import { readFirstAxiosError, redirectWithToken } from 'utils/misc';
 import { Link } from 'react-router-dom';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
 
@@ -38,7 +38,6 @@ const Login: React.FC<ILoginProps> = () => {
   const loginMutation = useMutation((formData: IForm) => login(formData), {
     onSuccess: (data) =>
       redirectWithToken(data.result.data.redirectUrl, data.result.data.uat),
-    onError: (err: any) => {},
   });
 
   const {
@@ -97,7 +96,10 @@ const Login: React.FC<ILoginProps> = () => {
             {!!loginMutation.isError && (
               <div className="mb-8">
                 <Banner
-                  title="Email address or password is incorrect"
+                  title={
+                    readFirstAxiosError(loginMutation.error) ||
+                    'Email address or password is incorrect'
+                  }
                   variant={BannerVariant.Error}
                 />
               </div>
