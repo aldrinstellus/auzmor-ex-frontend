@@ -38,6 +38,7 @@ const Login: React.FC<ILoginProps> = () => {
   const loginMutation = useMutation((formData: IForm) => login(formData), {
     onSuccess: (data) =>
       redirectWithToken(data.result.data.redirectUrl, data.result.data.uat),
+    onError: (err: any) => {},
   });
 
   const {
@@ -78,8 +79,6 @@ const Login: React.FC<ILoginProps> = () => {
       showChecks: false,
     },
   ];
-
-  useEffect(() => {}, []); // Is this needed?
 
   const onSubmit = (formData: IForm) => {
     loginMutation.mutate(formData);
