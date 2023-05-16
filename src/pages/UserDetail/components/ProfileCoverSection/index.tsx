@@ -1,5 +1,5 @@
 import Card from 'components/Card';
-import React, { useRef } from 'react';
+import React from 'react';
 import Avatar from 'components/Avatar';
 import Divider, { Variant as DividerVariant } from 'components/Divider';
 import Button, {
@@ -11,8 +11,8 @@ import IconButton, {
   Size,
   Variant as IconVariant,
 } from 'components/IconButton';
-import EditProfileModal from './components/EditProfileModal';
 import IconWrapper, { Type } from 'components/Icon/components/IconWrapper';
+import EditProfileModal from '../EditProfileModal';
 
 export interface IProfileCoverProps {
   profileCoverData: Record<string, any>;
@@ -27,15 +27,16 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
   setShowModal,
   canEdit,
 }) => {
-  const coverImageRef = useRef<HTMLInputElement>(null);
   return (
     <>
       <Card className="bg-white pb-1 w-full h-[290.56px]">
-        {/* Image Cover */}
         <div className="relative cursor-pointer">
           <img
             className="object-cover w-full h-[179.56px] rounded-9xl"
-            src={profileCoverData?.coverImage?.original}
+            src={
+              profileCoverData?.coverImage?.original ||
+              'https://media.licdn.com/dms/image/C5612AQE3gQaJTdIl7w/article-inline_image-shrink_1500_2232/0/1561363847115?e=1689206400&v=beta&t=XDO3IsgVZIyfQ27wdfY7hwHfjaZNJxoJB1HZ-VZzSxM'
+            }
           />
           {canEdit && (
             <IconButton
@@ -50,7 +51,6 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           )}
         </div>
         <div className="flex">
-          {/* Profile Picture */}
           <div className="-mt-20 ml-8">
             <Avatar
               name={profileCoverData?.fullName}
@@ -59,13 +59,12 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
               className="border-2 border-white mt-8"
             />
           </div>
-
           <div className="ml-4 mb-7 flex flex-col space-y-5 w-full">
             <div className="flex items-center">
               <div className="mr-6 mt-2 flex justify-between w-full">
                 <div className="flex space-x-4">
                   <div className="text-2xl font-bold">
-                    {profileCoverData?.fullName}
+                    {profileCoverData?.fullName || 'Darshak Parmar'}
                   </div>
                   <div className="p-1">
                     {!canEdit && (
@@ -93,9 +92,11 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
             </div>
             <div className="flex space-x-4 items-center">
               <div className="text-xs font-normal text-neutral-900">
-                <div>{profileCoverData?.designation}</div>
+                <div>
+                  {profileCoverData?.designation || 'Software Enginner'}
+                </div>
               </div>
-              {profileCoverData?.department && (
+              {!profileCoverData?.department && (
                 <>
                   <Divider variant={DividerVariant.Vertical} />
                   <div className="flex space-x-3 items-center">
@@ -103,12 +104,12 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                       <Icon name="briefcase" size={16} />
                     </IconWrapper>
                     <div className="text-xs font-normal text-neutral-900">
-                      {profileCoverData?.department}
+                      {profileCoverData?.department || 'Engineering'}
                     </div>
                   </div>
                 </>
               )}
-              {profileCoverData?.location && (
+              {!profileCoverData?.location && (
                 <>
                   <Divider variant={DividerVariant.Vertical} />
                   <div className="flex space-x-3 items-center">
@@ -116,7 +117,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                       <Icon name="location" size={16} />
                     </IconWrapper>
                     <div className="text-xs font-normal text-neutral-900">
-                      {profileCoverData?.location}
+                      {profileCoverData?.location || 'Mumbai, MH India'}
                     </div>
                   </div>
                 </>
@@ -128,7 +129,6 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           data={profileCoverData}
           showModal={showModal}
           setShowModal={setShowModal}
-          coverImageRef={coverImageRef}
         />
       </Card>
     </>

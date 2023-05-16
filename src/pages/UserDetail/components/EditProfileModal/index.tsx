@@ -26,14 +26,12 @@ interface IEditProfileModal {
   data: Record<string, any>;
   showModal: boolean;
   setShowModal: (flag: boolean) => void;
-  coverImageRef: React.RefObject<HTMLInputElement> | null;
 }
 
 const EditProfileModal: React.FC<IEditProfileModal> = ({
   data,
   showModal,
   setShowModal,
-  coverImageRef,
 }) => {
   const {
     control,
@@ -169,7 +167,6 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
           className="bg-white m-4 absolute top-0 right-0 p-3 text-black"
           variant={IconVariant.Secondary}
           size={Size.Medium}
-          onClick={() => coverImageRef?.current?.click()}
         />
       </div>
       <div className="ml-8 mb-8 flex items-center">
@@ -187,7 +184,6 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                 className="bg-white m-0 absolute top-0 right-0 p-[7px] text-black"
                 variant={IconVariant.Secondary}
                 size={Size.Medium}
-                onClick={() => coverImageRef?.current?.click()}
               />
             </div>
             <div></div>
