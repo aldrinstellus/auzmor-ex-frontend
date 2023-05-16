@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
 import Modal from 'components/Modal';
@@ -12,6 +12,7 @@ import Button, {
 } from 'components/Button';
 import Avatar from 'components/Avatar';
 import { Variant as InputVariant } from 'components/Input';
+import { Type } from 'components/Button';
 
 export interface IUpdateProfileForm {
   fullName: string;
@@ -26,12 +27,16 @@ interface IEditProfileModal {
   data: Record<string, any>;
   showModal: boolean;
   setShowModal: (flag: boolean) => void;
+  userProfileImageRef: React.RefObject<HTMLInputElement> | null;
+  media: File;
 }
 
 const EditProfileModal: React.FC<IEditProfileModal> = ({
   data,
   showModal,
   setShowModal,
+  userProfileImageRef,
+  media,
 }) => {
   const {
     control,
@@ -68,25 +73,8 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       />
     </div>
   );
-  const Footer: React.FC = () => (
-    <div className="flex justify-end items-center h-16 p-6 bg-blue-50">
-      <Button
-        variant={ButtonVariant.Secondary}
-        size={Size.Small}
-        label={'Cancel'}
-        className="mr-3"
-        onClick={() => {
-          setShowModal(false);
-        }}
-      />
-      <Button
-        label={'Save Changes'}
-        size={Size.Small}
-        type={ButtonType.Submit}
-        onClick={handleSubmit(onSubmit)}
-      />
-    </div>
-  );
+
+  console.log(media, 'sdfsdf');
 
   const nameField = [
     {
@@ -155,54 +143,72 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
         setShowModal(false);
       }}
     >
-      <Header />
-      <div className="relative cursor-pointer">
-        <img
-          className="object-cover w-full h-[108px]"
-          style={data?.coverImage?.original || { backgroundColor: '#3F83F8' }}
-          src={data?.coverImage?.original}
-        />
-        <IconButton
-          icon="edit"
-          className="bg-white m-4 absolute top-0 right-0 p-3 text-black"
-          variant={IconVariant.Secondary}
-          size={Size.Medium}
-        />
-      </div>
-      <div className="ml-8 mb-8 flex items-center">
-        <div className="-mt-20">
-          <div className="relative">
-            <Avatar
-              name={data?.fullName}
-              image={data?.profileImage?.original}
-              size={96}
-              className="border-2 border-white mt-8"
-            />
-            <div>
-              <IconButton
-                icon="edit"
-                className="bg-white m-0 absolute top-0 right-0 p-[7px] text-black"
-                variant={IconVariant.Secondary}
-                size={Size.Medium}
+      <form
+        onSubmit={handleSubmit((data) => {
+          console.log(data);
+        })}
+      >
+        <Header />
+        <div className="relative cursor-pointer">
+          <img
+            className="object-cover w-full h-[108px]"
+            style={data?.coverImage?.original || { backgroundColor: '#3F83F8' }}
+            src={data?.coverImage?.original}
+          />
+          <IconButton
+            icon="edit"
+            className="bg-white m-4 absolute top-0 right-0 p-3 text-black"
+            variant={IconVariant.Secondary}
+            size={Size.Medium}
+          />
+        </div>
+        <div className="ml-8 mb-8 flex items-center">
+          <div className="-mt-20">
+            <div className="relative">
+              <Avatar
+                name={data?.fullName}
+                image={data?.profileImage?.original}
+                size={96}
+                className="border-2 border-white mt-8"
               />
+              <div>
+                <IconButton
+                  icon="edit"
+                  className="bg-white m-0 absolute top-0 right-0 p-[7px] text-black"
+                  variant={IconVariant.Secondary}
+                  size={Size.Medium}
+                  onClick={() => userProfileImageRef?.current?.click()}
+                />
+              </div>
+              <div></div>
             </div>
-            <div></div>
           </div>
         </div>
-      </div>
-      <div className="mx-6 mb-14 space-y-6 overflow-y-auto">
-        <Layout fields={nameField} />
-        <div className="w-full flex space-x-6">
-          <div className="w-[50%]">
-            <Layout fields={positionTitlefields} />
+        <div className="mx-6 mb-14 space-y-6 overflow-y-auto">
+          <Layout fields={nameField} />
+          <div className="w-full flex space-x-6">
+            <div className="w-[50%]">
+              <Layout fields={positionTitlefields} />
+            </div>
+            <div className="w-[50%]">
+              <Layout fields={departmentField} />
+            </div>
           </div>
-          <div className="w-[50%]">
-            <Layout fields={departmentField} />
-          </div>
+          <Layout fields={locationField} />
         </div>
-        <Layout fields={locationField} />
-      </div>
-      <Footer />
+        <div className="flex justify-end items-center h-16 p-6 bg-blue-50">
+          <Button
+            variant={ButtonVariant.Secondary}
+            size={Size.Small}
+            label={'Cancel'}
+            className="mr-3"
+            onClick={() => {
+              setShowModal(false);
+            }}
+          />
+          <Button label={'Save Changes'} size={Size.Small} type={Type.Submit} />
+        </div>
+      </form>
     </Modal>
   );
 };

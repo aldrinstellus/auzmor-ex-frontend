@@ -13,12 +13,16 @@ import IconButton, {
 } from 'components/IconButton';
 import IconWrapper, { Type } from 'components/Icon/components/IconWrapper';
 import EditProfileModal from '../EditProfileModal';
+import { extraMedia } from 'pages/UserDetail/utils';
 
 export interface IProfileCoverProps {
   profileCoverData: Record<string, any>;
   showModal: boolean;
   setShowModal: (flag: boolean) => void;
   canEdit: boolean;
+  userProfileImageRef: React.RefObject<HTMLInputElement> | null;
+  media: File;
+  setMedia: (media: File) => void;
 }
 
 const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
@@ -26,6 +30,9 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
   showModal,
   setShowModal,
   canEdit,
+  userProfileImageRef,
+  media,
+  setMedia,
 }) => {
   return (
     <>
@@ -33,10 +40,12 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
         <div className="relative cursor-pointer">
           <img
             className="object-cover w-full h-[179.56px] rounded-9xl"
-            src={
-              profileCoverData?.coverImage?.original ||
-              'https://media.licdn.com/dms/image/C5612AQE3gQaJTdIl7w/article-inline_image-shrink_1500_2232/0/1561363847115?e=1689206400&v=beta&t=XDO3IsgVZIyfQ27wdfY7hwHfjaZNJxoJB1HZ-VZzSxM'
-            }
+            src={profileCoverData?.coverImage?.original || ''}
+            style={{
+              backgroundColor:
+                profileCoverData?.coverImage?.original || '#3F83F8',
+            }}
+            alt=""
           />
           {canEdit && (
             <IconButton
@@ -129,6 +138,21 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           data={profileCoverData}
           showModal={showModal}
           setShowModal={setShowModal}
+          userProfileImageRef={userProfileImageRef}
+          media={media}
+        />
+        <input
+          id="file-input"
+          type="file"
+          ref={userProfileImageRef}
+          className="hidden"
+          accept="image/*"
+          multiple={false}
+          onChange={(e) => {
+            if (e.target.files?.length) {
+              setMedia(extraMedia(e.target.files[0]));
+            }
+          }}
         />
       </Card>
     </>
