@@ -7,9 +7,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Button, { Size, Type as ButtonType } from 'components/Button';
 import { Logo } from 'components/Logo';
 import { useMutation } from '@tanstack/react-query';
-import { readFirstAxiosError, redirectWithToken } from 'utils/misc';
+import { redirectWithToken } from 'utils/misc';
 import { signup } from 'queries/account';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
+import { useDebounce } from 'hooks/useDebounce';
+import { useDomainExists } from 'queries/users';
 
 interface IForm {
   workEmail: string;
@@ -33,9 +35,17 @@ const schema = yup.object({
   privacyPolicy: yup.boolean().required('Required field').oneOf([true]),
 });
 
-export interface ISignupProps {}
+export interface ISignupProps {
+  setErrorValidationErrors?: any;
+  emailValidationErrors?: any;
+  // setErrorValidationErrors?: IEmailValidationErrors | null;
+  // emailValidationErrors?: (errors: IEmailValidationErrors | null) => void;
+}
 
-const Signup: React.FC<ISignupProps> = () => {
+const Signup: React.FC<ISignupProps> = ({
+  setErrorValidationErrors,
+  emailValidationErrors,
+}) => {
   const signupMutation = useMutation((formData: IForm) => signup(formData), {
     onSuccess: (data) =>
       redirectWithToken(
@@ -131,6 +141,24 @@ const Signup: React.FC<ISignupProps> = () => {
     signupMutation.mutate(formData);
   };
 
+  // const debouncedEmailValue = useDebounce(getValues().workEmail, 500);
+  // const { isLoading: isEmailLoading, data: isEmailData } =
+  //   useIsUserExist(debouncedEmailValue);
+
+  const debouncedDomainValue = useDebounce(getValues().domain, 500);
+  const { isLoading: isDomainLoading, data: isDomainData } =
+    useDomainExists(debouncedDomainValue);
+
+  console.log(isDomainData, 'LLLLLL');
+
+  // useEffect(() => {
+  //   setErrorValidationErrors({
+  //     ...emailValidationErrors,
+  //     isError: data ? !!data.result.data.userExists : false,
+  //     isLoading,
+  //   });
+  // }, [isLoading, data]);
+
   return (
     <div className="flex h-screen w-screen">
       <div className="bg-[url(images/welcomeToOffice.png)] w-1/2 h-full bg-no-repeat bg-cover"></div>
@@ -147,8 +175,7 @@ const Signup: React.FC<ISignupProps> = () => {
               <div className="mb-8">
                 <Banner
                   title={
-                    readFirstAxiosError(signupMutation.error) ||
-                    'Something went wrong'
+                    signupMutation.error?.toString() || 'Something went wrong'
                   }
                   variant={BannerVariant.Error}
                 />
