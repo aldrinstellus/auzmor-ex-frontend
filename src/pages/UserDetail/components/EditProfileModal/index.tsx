@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
 import Modal from 'components/Modal';
@@ -6,38 +6,53 @@ import IconButton, {
   Size,
   Variant as IconVariant,
 } from 'components/IconButton';
-import Button, {
-  Variant as ButtonVariant,
-  Type as ButtonType,
-} from 'components/Button';
+import Button, { Variant as ButtonVariant } from 'components/Button';
 import Avatar from 'components/Avatar';
 import { Variant as InputVariant } from 'components/Input';
-import { Type } from 'components/Button';
+import { getBlobUrl } from 'utils/misc';
+import { IUpdateProfileImage } from 'pages/UserDetail';
+import { EntityType, UploadStatus, useUpload } from 'queries/files';
+import { useMutation } from '@tanstack/react-query';
+import { updateCurrentUser } from 'queries/users';
+import useAuth from 'hooks/useAuth';
+import queryClient from 'utils/queryClient';
+import Header from 'components/ModalHeader';
+// import PopupMenu from 'components/PopupMenu';
+
+interface IOptions {
+  value: string;
+  label: string;
+}
 
 export interface IUpdateProfileForm {
   fullName: string;
-  designation: string;
-  department: string;
-  location: string;
-  profileImage: string;
-  coverImage: string;
+  firstName: string;
+  designation: IOptions;
+  department: IOptions;
+  preferredName: string;
+  workLocation: IOptions;
 }
 
 interface IEditProfileModal {
   data: Record<string, any>;
   showModal: boolean;
   setShowModal: (flag: boolean) => void;
+  file: IUpdateProfileImage | Record<string, any>;
+  setFile: (file: IUpdateProfileImage | Record<string, any>) => void;
   userProfileImageRef: React.RefObject<HTMLInputElement> | null;
-  media: File;
+  userCoverImageRef: React.RefObject<HTMLInputElement> | null;
 }
 
 const EditProfileModal: React.FC<IEditProfileModal> = ({
   data,
   showModal,
   setShowModal,
+  file,
+  setFile,
   userProfileImageRef,
-  media,
+  userCoverImageRef,
 }) => {
+  const { uploadMedia, uploadStatus } = useUpload();
   const {
     control,
     handleSubmit,
@@ -45,94 +60,170 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
   } = useForm<IUpdateProfileForm>({
     mode: 'onSubmit',
     defaultValues: {
-      fullName: '',
-      designation: '',
-      department: '',
-      location: '',
-      profileImage: '',
-      coverImage: '',
+      firstName: data?.firstName,
+      fullName: data?.fullName,
+      preferredName: data?.preferredName,
+      designation: data?.designation,
+      workLocation: data?.workLocation,
+      department: data?.department,
     },
   });
 
-  const onSubmit = (userData: Record<string, any>) => {
-    console.log('called?', userData);
+  const { updateUser } = useAuth();
+
+  const updateUsersMutation = useMutation({
+    mutationFn: updateCurrentUser,
+    mutationKey: ['update-users-mutation'],
+    onError: (error: any) => {
+      console.log('API call resulted in error: ', error);
+    },
+    // need to change the response type
+    onSuccess: async (response: Record<string, any>) => {
+      setShowModal(false);
+      console.log('API call success', response);
+      const userUpdateResponse = response?.result?.data;
+      updateUser({
+        name: userUpdateResponse.fullName,
+        id: userUpdateResponse.id,
+        email: userUpdateResponse.primaryEmail,
+        organization: {
+          id: userUpdateResponse.org?.id,
+          domain: userUpdateResponse.org?.domain,
+        },
+        workLocation: userUpdateResponse.workLocation,
+        preferredName: userUpdateResponse.preferredName,
+        designation: userUpdateResponse.designation,
+        // department: userUpdateResponse.department,
+        location: userUpdateResponse.location,
+        profileImage: userUpdateResponse.profileImage?.original,
+        coverImage: userUpdateResponse.profileImage?.original,
+      });
+      await queryClient.invalidateQueries({ queryKey: ['current-user-me'] });
+      setFile({});
+    },
+  });
+
+  const onSubmit = async (user: IUpdateProfileForm) => {
+    let profileImageUploadResponse;
+    let coverImageUploadResponse;
+    // optimize with one uploadMedia function - taking time to upload the files
+    if (Object.keys(file).length) {
+      profileImageUploadResponse = await uploadMedia(
+        [file?.profileImage],
+        EntityType.UserProfileImage,
+      );
+      coverImageUploadResponse = await uploadMedia(
+        [file?.coverImage],
+        EntityType.UserCoverImage,
+      );
+    }
+    const profileImageFile = profileImageUploadResponse
+      ? {
+          profileImage: {
+            fileId: profileImageUploadResponse[0]?.id,
+            original: profileImageUploadResponse[0].original,
+          },
+        }
+      : {};
+    const coverImageFile = coverImageUploadResponse
+      ? {
+          coverImage: {
+            fileId: coverImageUploadResponse[0]?.id,
+            original: coverImageUploadResponse[0]?.original,
+          },
+        }
+      : {};
+    updateUsersMutation.mutate({
+      fullName: user.fullName,
+      designation: user?.designation?.value,
+      preferredName: user?.firstName,
+      // department: user?.department?.value,
+      workLocation: user?.workLocation?.value,
+      ...profileImageFile,
+      ...coverImageFile,
+    });
   };
-
-  const Header: React.FC = () => (
-    <div className="flex flex-wrap border-b-1 border-neutral-200 items-center">
-      <div className="text-lg text-black p-4 font-extrabold flex-[50%]">
-        Edit Profile
-      </div>
-      <IconButton
-        onClick={() => {
-          setShowModal(false);
-        }}
-        icon={'close'}
-        className="!flex-[0] !text-right !p-1 !mx-4 !my-3 !bg-inherit !text-neutral-900"
-        variant={IconVariant.Primary}
-      />
-    </div>
-  );
-
-  console.log(media, 'sdfsdf');
 
   const nameField = [
     {
       type: FieldType.Input,
       variant: InputVariant.Text,
-      placeholder: data?.userName,
-      name: 'name',
-      label: 'Name*',
+      name: 'fullName',
+      label: 'Name',
       dataTestId: 'user-profile-name',
       control,
-      disabled: true,
+    },
+  ];
+
+  const preferredNameField = [
+    {
+      type: FieldType.Input,
+      variant: InputVariant.Text,
+      // placeholder: 'Nickname or first name',
+      name: 'preferredName',
+      label: 'Preferred Name',
+      dataTestId: '',
+      control,
     },
   ];
 
   const positionTitlefields = [
     {
       type: FieldType.SingleSelect,
-      name: 'position',
-      placeholder: 'Software Engineer',
+      name: 'designation',
+      // placeholder: 'ex. Tech Lead',
       label: 'Position title',
-      defaultValue: '',
       options: [
-        { id: '1', label: 'Software Engineer' },
-        { id: '2', label: 'Research Analyst' },
+        { value: 'Software Engineer', label: 'Software Engineer' },
+        { value: 'Research Analyst', label: 'Research Analyst' },
       ],
       control,
     },
   ];
 
-  const departmentField = [
-    {
-      type: FieldType.SingleSelect,
-      name: 'department',
-      placeholder: 'Engineering',
-      label: 'Department',
-      defaultValue: '',
-      options: [
-        { id: '1', label: 'Sales and Marketing' },
-        { id: '2', label: 'Engineering' },
-      ],
-      classname: 'bg-red-400',
-      control,
-    },
-  ];
+  // const departmentField = [
+  //   {
+  //     type: FieldType.SingleSelect,
+  //     name: 'department',
+  //     // defaultValue: data?.department,
+  //     // placeholder: 'ex. Engineering',
+  //     label: 'Department',
+  //     options: [
+  //       { value: 'Sales and Marketing', label: 'Sales and Marketing' },
+  //       { value: 'Engineering', label: 'Engineering' },
+  //     ],
+  //     control,
+  //   },
+  // ];
 
   const locationField = [
     {
       type: FieldType.SingleSelect,
-      name: 'location',
-      placeholder: 'Mumbai, MH India',
+      name: 'workLocation',
       label: 'Location',
-      defaultValue: 'Mumbai, India',
       options: [
-        { id: '1', label: 'Mumbai, India' },
-        { id: '2', label: 'Hydrabad, Talangana' },
+        { value: 'Mumbai, India', label: 'Mumbai, India' },
+        { value: 'Hydrabad, Talangana', label: 'Hydrabad, Talangana' },
       ],
-      classname: 'bg-red-400',
       control,
+    },
+  ];
+
+  const coverImageOption = [
+    {
+      icon: 'bookmarkOutline',
+      label: 'Upload a photo',
+      onClick: () => userCoverImageRef?.current?.click(),
+    },
+    {
+      icon: 'copyLink',
+      label: 'Reposition',
+      onClick: () => null,
+    },
+    {
+      icon: 'copyLink',
+      label: 'Delete post',
+      onClick: () => null,
     },
   ];
 
@@ -140,26 +231,45 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     <Modal
       open={showModal}
       closeModal={() => {
-        setShowModal(false);
+        if (
+          updateUsersMutation.isLoading ||
+          uploadStatus === UploadStatus.Uploading
+        ) {
+          return null;
+        }
+        return setShowModal(false);
       }}
     >
-      <form
-        onSubmit={handleSubmit((data) => {
-          console.log(data);
-        })}
-      >
-        <Header />
+      <form>
+        <Header title="Edit Profile" onClose={() => setShowModal(false)} />
         <div className="relative cursor-pointer">
           <img
             className="object-cover w-full h-[108px]"
-            style={data?.coverImage?.original || { backgroundColor: '#3F83F8' }}
-            src={data?.coverImage?.original}
+            src={
+              (file?.coverImage && getBlobUrl(file?.coverImage)) ||
+              data?.coverImage?.original
+            }
           />
+          {/* <PopupMenu
+            triggerNode={
+              <div className="cursor-pointer p-2">
+                <IconButton
+                  icon="edit"
+                  className="bg-white m-4 absolute top-0 right-0 p-3 text-black"
+                  variant={IconVariant.Secondary}
+                  size={Size.Medium}
+                  onClick={() => userCoverImageRef?.current?.click()}
+                />
+              </div>
+            }
+            menuItems={coverImageOption}
+          /> */}
           <IconButton
             icon="edit"
             className="bg-white m-4 absolute top-0 right-0 p-3 text-black"
             variant={IconVariant.Secondary}
             size={Size.Medium}
+            onClick={() => userCoverImageRef?.current?.click()}
           />
         </div>
         <div className="ml-8 mb-8 flex items-center">
@@ -167,7 +277,10 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
             <div className="relative">
               <Avatar
                 name={data?.fullName}
-                image={data?.profileImage?.original}
+                image={
+                  (file?.profileImage && getBlobUrl(file?.profileImage)) ||
+                  data?.profileImage?.original
+                }
                 size={96}
                 className="border-2 border-white mt-8"
               />
@@ -185,15 +298,12 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
           </div>
         </div>
         <div className="mx-6 mb-14 space-y-6 overflow-y-auto">
-          <Layout fields={nameField} />
           <div className="w-full flex space-x-6">
-            <div className="w-[50%]">
-              <Layout fields={positionTitlefields} />
-            </div>
-            <div className="w-[50%]">
-              <Layout fields={departmentField} />
-            </div>
+            <Layout fields={nameField} className="w-2/4" />
+            <Layout fields={preferredNameField} className="w-2/4" />
           </div>
+          <Layout fields={positionTitlefields} />
+          {/* <Layout fields={departmentField} className="w-2/4" /> */}
           <Layout fields={locationField} />
         </div>
         <div className="flex justify-end items-center h-16 p-6 bg-blue-50">
@@ -206,7 +316,15 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
               setShowModal(false);
             }}
           />
-          <Button label={'Save Changes'} size={Size.Small} type={Type.Submit} />
+          <Button
+            label={'Save Changes'}
+            size={Size.Small}
+            onClick={handleSubmit(onSubmit)}
+            loading={
+              uploadStatus === UploadStatus.Uploading ||
+              updateUsersMutation.isLoading
+            }
+          />
         </div>
       </form>
     </Modal>

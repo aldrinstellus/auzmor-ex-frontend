@@ -1,5 +1,5 @@
 import Card from 'components/Card';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import Avatar from 'components/Avatar';
 import Divider, { Variant as DividerVariant } from 'components/Divider';
 import Button, {
@@ -13,16 +13,13 @@ import IconButton, {
 } from 'components/IconButton';
 import IconWrapper, { Type } from 'components/Icon/components/IconWrapper';
 import EditProfileModal from '../EditProfileModal';
-import { extraMedia } from 'pages/UserDetail/utils';
+import { IUpdateProfileImage } from 'pages/UserDetail';
 
 export interface IProfileCoverProps {
   profileCoverData: Record<string, any>;
   showModal: boolean;
   setShowModal: (flag: boolean) => void;
   canEdit: boolean;
-  userProfileImageRef: React.RefObject<HTMLInputElement> | null;
-  media: File;
-  setMedia: (media: File) => void;
 }
 
 const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
@@ -30,22 +27,20 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
   showModal,
   setShowModal,
   canEdit,
-  userProfileImageRef,
-  media,
-  setMedia,
 }) => {
+  const [file, setFile] = useState<IUpdateProfileImage | Record<string, any>>(
+    {},
+  );
+  const userProfileImageRef = useRef<HTMLInputElement>(null);
+  const userCoverImageRef = useRef<HTMLInputElement>(null);
+
   return (
     <>
       <Card className="bg-white pb-1 w-full h-[290.56px]">
         <div className="relative cursor-pointer">
           <img
             className="object-cover w-full h-[179.56px] rounded-9xl"
-            src={profileCoverData?.coverImage?.original || ''}
-            style={{
-              backgroundColor:
-                profileCoverData?.coverImage?.original || '#3F83F8',
-            }}
-            alt=""
+            src={profileCoverData?.coverImage?.original}
           />
           {canEdit && (
             <IconButton
@@ -73,7 +68,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
               <div className="mr-6 mt-2 flex justify-between w-full">
                 <div className="flex space-x-4">
                   <div className="text-2xl font-bold">
-                    {profileCoverData?.fullName || 'Darshak Parmar'}
+                    {profileCoverData?.fullName}
                   </div>
                   <div className="p-1">
                     {!canEdit && (
@@ -101,11 +96,9 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
             </div>
             <div className="flex space-x-4 items-center">
               <div className="text-xs font-normal text-neutral-900">
-                <div>
-                  {profileCoverData?.designation || 'Software Enginner'}
-                </div>
+                <div>{profileCoverData?.designation}</div>
               </div>
-              {!profileCoverData?.department && (
+              {profileCoverData?.department && (
                 <>
                   <Divider variant={DividerVariant.Vertical} />
                   <div className="flex space-x-3 items-center">
@@ -113,12 +106,12 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                       <Icon name="briefcase" size={16} />
                     </IconWrapper>
                     <div className="text-xs font-normal text-neutral-900">
-                      {profileCoverData?.department || 'Engineering'}
+                      {profileCoverData?.department}
                     </div>
                   </div>
                 </>
               )}
-              {!profileCoverData?.location && (
+              {profileCoverData?.workLocation && (
                 <>
                   <Divider variant={DividerVariant.Vertical} />
                   <div className="flex space-x-3 items-center">
@@ -126,7 +119,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                       <Icon name="location" size={16} />
                     </IconWrapper>
                     <div className="text-xs font-normal text-neutral-900">
-                      {profileCoverData?.location || 'Mumbai, MH India'}
+                      {profileCoverData?.workLocation}
                     </div>
                   </div>
                 </>
@@ -134,13 +127,18 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
             </div>
           </div>
         </div>
-        <EditProfileModal
-          data={profileCoverData}
-          showModal={showModal}
-          setShowModal={setShowModal}
-          userProfileImageRef={userProfileImageRef}
-          media={media}
-        />
+        {showModal && (
+          <EditProfileModal
+            data={profileCoverData}
+            showModal={showModal}
+            setShowModal={setShowModal}
+            userProfileImageRef={userProfileImageRef}
+            userCoverImageRef={userCoverImageRef}
+            file={file}
+            setFile={setFile}
+            key={'edit-profile'}
+          />
+        )}
         <input
           id="file-input"
           type="file"
@@ -150,7 +148,26 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           multiple={false}
           onChange={(e) => {
             if (e.target.files?.length) {
-              setMedia(extraMedia(e.target.files[0]));
+              setFile({
+                ...file,
+                profileImage: Array.prototype.slice.call(e.target.files)[0],
+              });
+            }
+          }}
+        />
+        <input
+          id="file-input"
+          type="file"
+          ref={userCoverImageRef}
+          className="hidden"
+          accept="image/*"
+          multiple={false}
+          onChange={(e) => {
+            if (e.target.files?.length) {
+              setFile({
+                ...file,
+                coverImage: Array.prototype.slice.call(e.target.files)[0],
+              });
             }
           }}
         />

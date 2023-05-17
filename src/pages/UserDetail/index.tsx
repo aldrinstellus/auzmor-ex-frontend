@@ -10,15 +10,9 @@ import useAuth from 'hooks/useAuth';
 import NoDataCard from './components/NoDataCard';
 import ProfileCoverSection from './components/ProfileCoverSection';
 
-export interface IMedia {
-  altText: string;
-  id: string;
-  original: string;
-  thumbnail: string;
-  small: string;
-  medium: string;
-  large: string;
-  blurHash: string;
+export interface IUpdateProfileImage {
+  profileImage: File;
+  coverImage: File;
 }
 
 interface IUserDetailProps {}
@@ -27,9 +21,6 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showFeedModal, setShowFeedModal] = useState<boolean>(false);
   const { user } = useAuth();
-
-  const userProfileImageRef = useRef<HTMLInputElement>(null);
-  const [media, setMedia] = useState<File>();
 
   const params = useParams();
   const { state, pathname } = useLocation();
@@ -92,9 +83,6 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
         showModal={showModal}
         setShowModal={setShowModal}
         canEdit={pathname === '/profile'}
-        userProfileImageRef={userProfileImageRef}
-        media={media as File}
-        setMedia={setMedia}
       />
       <div className="mb-32 space-x-8 flex w-full">
         <ContactWidget contactCardData={profileData} className="w-1/4" />
