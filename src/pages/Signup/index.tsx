@@ -19,6 +19,7 @@ interface IForm {
   password: string;
   confirmPassword: string;
   privacyPolicy: boolean;
+  customError?: string;
 }
 
 const schema = yup.object({
@@ -52,12 +53,12 @@ const Signup: React.FC<ISignupProps> = () => {
   const isEmailValid = () => {
     if (emailValidationErrors) {
       let error = true;
-      Object.keys(emailValidationErrors).forEach((key: string) => {
-        if (emailValidationErrors.isError || emailValidationErrors.isLoading) {
-          error = false;
-          return;
-        }
-      });
+      // Object.keys(emailValidationErrors).forEach((key: string) => {
+      if (emailValidationErrors.isError || emailValidationErrors.isLoading) {
+        error = false;
+        return;
+      }
+      // });
       return error;
     } else return true;
   };
@@ -65,15 +66,12 @@ const Signup: React.FC<ISignupProps> = () => {
   const isDomainValid = () => {
     if (domainValidationErrors) {
       let error = true;
-      Object.keys(domainValidationErrors).forEach((key: string) => {
-        if (
-          domainValidationErrors.isError ||
-          domainValidationErrors.isLoading
-        ) {
-          error = false;
-          return;
-        }
-      });
+      // Object.keys(domainValidationErrors).forEach((key: string) => {
+      if (domainValidationErrors.isError || domainValidationErrors.isLoading) {
+        error = false;
+        return;
+      }
+      // });
       return error;
     } else return true;
   };
@@ -93,12 +91,14 @@ const Signup: React.FC<ISignupProps> = () => {
     handleSubmit,
     getValues,
     formState: { errors, isValid },
+    setError,
   } = useForm<IForm>({
     resolver: yupResolver(schema),
     defaultValues: {
       workEmail: '',
       password: '',
       confirmPassword: '',
+      domain: '',
     },
     mode: 'onChange',
   });
@@ -120,9 +120,7 @@ const Signup: React.FC<ISignupProps> = () => {
       placeholder: 'Enter your email address',
       name: 'workEmail',
       label: 'Work Email*',
-      error:
-        errors.workEmail?.message ||
-        (emailValidationErrors?.isError && 'User already exists'),
+      error: errors.workEmail?.message || errors.workEmail?.types?.userExists,
       dataTestId: 'sign-up-email',
       control,
     },
@@ -132,9 +130,7 @@ const Signup: React.FC<ISignupProps> = () => {
       placeholder: 'Enter domain',
       name: 'domain',
       label: 'Domain*',
-      error:
-        errors.domain?.message ||
-        (domainValidationErrors?.isError && 'Domain already exists'),
+      error: errors.domain?.message || errors.domain?.types?.domainExists,
       dataTestId: 'sign-up-domain',
       control,
     },
@@ -186,19 +182,21 @@ const Signup: React.FC<ISignupProps> = () => {
     useDomainExists(debouncedDomainValue);
 
   useEffect(() => {
-    setEmailValidationErrors({
-      ...emailValidationErrors,
-      isError: isEmailData ? !!isEmailData.result.data.userExists : false,
-      isLoading: isEmailLoading,
-    });
+    isEmailData?.result?.data?.userExists &&
+      setError('workEmail', {
+        types: {
+          userExists: 'User already exists',
+        },
+      });
   }, [isEmailLoading, isEmailData]);
 
   useEffect(() => {
-    setDomainValidationErrors({
-      ...domainValidationErrors,
-      isError: isDomainData ? !!isDomainData.data.exists : false,
-      isLoading: isDomainLoading,
-    });
+    isDomainData?.data?.exists &&
+      setError('domain', {
+        types: {
+          domainExists: 'Domain already exists',
+        },
+      });
   }, [isDomainLoading, isDomainData]);
 
   return (
