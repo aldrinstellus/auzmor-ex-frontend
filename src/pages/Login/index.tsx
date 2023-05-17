@@ -85,14 +85,21 @@ const Login: React.FC<ILoginProps> = () => {
 
   return (
     <div className="flex h-screen w-screen">
-      <div className="bg-[url(images/welcomeToOffice.png)] w-1/2 h-full bg-no-repeat bg-cover"></div>
+      <div
+        className="bg-[url(images/welcomeToOffice.png)] w-1/2 h-full bg-no-repeat bg-cover"
+        data-testid="signin-cover-image"
+      ></div>
       <div className="w-1/2 h-full flex justify-center items-center relative bg-white">
-        <div className="absolute top-8 right-8">
+        <div className="absolute top-8 right-8" data-testid="signin-logo-image">
           <Logo />
         </div>
         <div className="w-full max-w-[440px]">
           <div className="font-extrabold text-neutral-900 text-4xl">Signin</div>
-          <form className="mt-16" onSubmit={handleSubmit(onSubmit)}>
+          <form
+            className="mt-16"
+            onSubmit={handleSubmit(onSubmit)}
+            data-testid="signin-form"
+          >
             {!!loginMutation.isError && (
               <div className="mb-8">
                 <Banner
