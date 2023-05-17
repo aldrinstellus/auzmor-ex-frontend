@@ -5,7 +5,11 @@ import Divider from 'components/Divider';
 import TextArea from 'components/TextArea';
 import useHover from 'hooks/useHover';
 import Header from './Header';
+import { useForm } from 'react-hook-form';
 
+export interface IUpdateAboutMe {
+  messageText: string;
+}
 export interface IAboutMeProps {
   aboutMe: any;
   canEdit?: boolean;
@@ -14,6 +18,9 @@ export interface IAboutMeProps {
 const AboutMe: React.FC<IAboutMeProps> = ({ aboutMe, canEdit }) => {
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isHovered, eventHandlers] = useHover();
+  const { control, handleSubmit } = useForm<IUpdateAboutMe>({
+    mode: 'onSubmit',
+  });
   const onHoverStyles = useMemo(
     () => clsx({ 'mb-8': true }, { 'shadow-xl': isHovered && canEdit }),
     [isHovered],

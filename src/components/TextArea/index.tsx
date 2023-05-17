@@ -1,5 +1,6 @@
-import clsx from 'clsx';
 import React, { ReactElement } from 'react';
+import { Control, useController } from 'react-hook-form';
+import clsx from 'clsx';
 
 export type TextAreaProps = {
   placeholder?: string;
@@ -8,6 +9,12 @@ export type TextAreaProps = {
   className?: string;
   rows?: number;
   children?: ReactElement;
+  name?: string;
+  dataTestId?: string;
+  control?: Control<Record<string, any>>;
+  error?: string;
+  helpText?: string;
+  showCounter?: boolean;
 };
 
 const TextArea: React.FC<TextAreaProps> = ({
@@ -16,6 +23,13 @@ const TextArea: React.FC<TextAreaProps> = ({
   className = '',
   rows = 1,
   children,
+  control,
+  name,
+  dataTestId = '',
+  defaultValue = '',
+  error,
+  helpText,
+  showCounter = false,
 }) => {
   const style = clsx(
     {

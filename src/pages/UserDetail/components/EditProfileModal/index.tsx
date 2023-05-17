@@ -26,7 +26,6 @@ interface IOptions {
 
 export interface IUpdateProfileForm {
   fullName: string;
-  firstName: string;
   designation: IOptions;
   department: IOptions;
   preferredName: string;
@@ -56,11 +55,11 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors, isValid },
   } = useForm<IUpdateProfileForm>({
     mode: 'onSubmit',
     defaultValues: {
-      firstName: data?.firstName,
       fullName: data?.fullName,
       preferredName: data?.preferredName,
       designation: data?.designation,
@@ -72,6 +71,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     {
       type: FieldType.Input,
       variant: InputVariant.Text,
+      defaultValue: getValues().fullName,
       name: 'fullName',
       label: 'Name',
       dataTestId: 'user-profile-name',
@@ -83,7 +83,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     {
       type: FieldType.Input,
       variant: InputVariant.Text,
-      // placeholder: 'Nickname or first name',
+      defaultValue: getValues().preferredName,
       name: 'preferredName',
       label: 'Preferred Name',
       dataTestId: '',
@@ -95,7 +95,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     {
       type: FieldType.SingleSelect,
       name: 'designation',
-      // placeholder: 'ex. Tech Lead',
+      defaultValue: getValues().designation,
       label: 'Position title',
       options: [
         { value: 'Software Engineer', label: 'Software Engineer' },
@@ -124,6 +124,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     {
       type: FieldType.SingleSelect,
       name: 'workLocation',
+      defaultValue: getValues().workLocation?.label,
       label: 'Location',
       options: [
         { value: 'Mumbai, India', label: 'Mumbai, India' },
@@ -216,7 +217,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     updateUsersMutation.mutate({
       fullName: user.fullName,
       designation: user?.designation?.value,
-      preferredName: user?.firstName,
+      preferredName: user?.preferredName,
       // department: user?.department?.value,
       workLocation: user?.workLocation?.value,
       ...profileImageFile,
