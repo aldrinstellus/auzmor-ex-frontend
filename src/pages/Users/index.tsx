@@ -14,6 +14,7 @@ import IconButton, {
   Variant as IconVariant,
   Size as IconSize,
 } from 'components/IconButton';
+import FilterModal from './components/FilterModal';
 
 interface IUsersProps {}
 
@@ -21,6 +22,7 @@ const Users: React.FC<IUsersProps> = () => {
   const [page, setPage] = useState(1);
   const { data: users, isLoading } = useUsers({ limit: 30, next: page });
   const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
   const {
     control,
@@ -76,6 +78,9 @@ const Users: React.FC<IUsersProps> = () => {
           </div>
           <div className="flex space-x-2 justify-center items-center">
             <IconButton
+              onClick={() => {
+                setShowFilterModal(true);
+              }}
               icon="filterLinear"
               variant={IconVariant.Secondary}
               size={IconSize.Medium}
@@ -137,6 +142,12 @@ const Users: React.FC<IUsersProps> = () => {
         showModal={showAddUserModal}
         setShowAddUserModal={setShowAddUserModal}
         closeModal={() => setShowAddUserModal(false)}
+      />
+
+      <FilterModal
+        showModal={showFilterModal}
+        setShowFilterModal={setShowFilterModal}
+        closeModal={() => setShowFilterModal(false)}
       />
     </div>
   );
