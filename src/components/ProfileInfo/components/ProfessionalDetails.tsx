@@ -62,7 +62,6 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
 
   const onSubmit = async () => {
     const selectedTimezone = getValues();
-    console.log(selectedTimezone, '33333');
     let timezoneValue;
     if (selectedTimezone.timeZone === undefined) {
       timezoneValue = defaultTimezone.value[0];

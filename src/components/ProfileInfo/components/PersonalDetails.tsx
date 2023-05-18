@@ -1,6 +1,6 @@
 import Card from 'components/Card';
 import Divider from 'components/Divider';
-import React, { useMemo, useState } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import useHover from 'hooks/useHover';
 import Icon from 'components/Icon';
@@ -9,11 +9,21 @@ import IconWrapper, { Type } from 'components/Icon/components/IconWrapper';
 import Header from './Header';
 import Layout, { FieldType } from 'components/Form';
 import { useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { updateCurrentUser } from 'queries/users';
+import queryClient from 'utils/queryClient';
 
 export interface IPersonalDetailsProps {
   personalDetails: any;
   skills: string[];
   canEdit?: boolean;
+}
+
+interface IPersonalDetailsForm {
+  dateOfBirth: string;
+  gender: string;
+  permanentAddress: string;
+  maritalStatus: string;
 }
 
 const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
@@ -24,8 +34,16 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
   const [isHovered, eventHandlers] = useHover();
   const [isEditable, setIsEditable] = useState<boolean>(false);
 
-  const { control, handleSubmit } = useForm({
+  console.log('person', personalDetails);
+
+  const { control, handleSubmit, getValues } = useForm<IPersonalDetailsForm>({
     mode: 'onChange',
+    defaultValues: {
+      dateOfBirth: personalDetails?.personal?.birthDate,
+      gender: personalDetails?.personal?.gender,
+      permanentAddress: personalDetails?.personal?.permanentLocation,
+      maritalStatus: personalDetails?.personal?.maritalStatus,
+    },
   });
 
   const onHoverStyles = useMemo(
@@ -33,16 +51,40 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
     [isHovered],
   );
 
-  const onSubmit = (data: any) => {
-    console.log('dafdasdf', data);
+  const updateUserPersonalDetailsMutation = useMutation({
+    mutationFn: updateCurrentUser,
+    mutationKey: ['update-user-personal-details-mutation'],
+    onError: (error: any) => {
+      console.log('Error while updating the user: ', error);
+    },
+    onSuccess: (response: any) => {
+      console.log('Updated User data successfully', response);
+    },
+  });
+
+  const onSubmit = async (personalDetailData: any) => {
+    // await updateUserPersonalDetailsMutation.mutateAsync({
+    //   ...personalDetails,
+    //   personal: {
+    //     about: 'Hello I am groot',
+    //     birthDate: personalDetailData?.dateOfBirth.toISOString(),
+    //     permanentLocation: personalDetailData?.permanentAddress,
+    //     gender: personalDetailData?.gender?.value,
+    //     maritalStatus: personalDetailData?.maritalStatus?.value,
+    //     // skills: personalDetails?.skills, // array of string
+    //     skills: ['Nodejs'],
+    //   },
+    // });
+    await queryClient.invalidateQueries(['current-user-me']);
+    setIsEditable(false);
   };
 
   const fields = [
     {
       type: FieldType.DatePicker,
-      name: 'date',
+      name: 'dateOfBirth',
       control,
-      dataTestId: '',
+      dataTestId: getValues().dateOfBirth,
       defaultValue: '08/08/2001',
     },
     {
@@ -50,46 +92,46 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
       name: 'gender',
       placeholder: 'Select Gender',
       label: 'Gender',
-      defaultValue: '',
+      defaultValue: getValues().gender,
       dataTestId: '',
       options: [
-        { id: '1', label: 'Male' },
-        { id: '2', label: 'Female' },
+        { value: 'MALE', label: 'Male' },
+        { value: 'FEMALE', label: 'Female' },
       ],
       control,
     },
     {
       type: FieldType.Input,
-      name: 'address',
+      name: 'permanentAddress',
       placeholder: 'Ex - Flat no, line Address',
       label: 'Permanent Address',
-      defaultValue: '',
+      defaultValue: getValues().permanentAddress,
       dataTestId: '',
       control,
     },
     {
       type: FieldType.SingleSelect,
-      name: 'marital status',
+      name: 'maritalStatus',
       placeholder: '',
       label: 'Marital Status',
-      defaultValue: '',
+      defaultValue: getValues().maritalStatus,
       dataTestId: '',
       options: [
-        { id: '1', label: 'Married' },
-        { id: '2', label: 'Unmarried' },
-        { id: '2', label: 'Single' },
+        { value: 'MARRIED', label: 'Married' },
+        { value: 'UNMARRIED', label: 'Unmarried' },
+        { value: 'SINGLE', label: 'Single' },
       ],
       control,
     },
-    {
-      type: FieldType.Input,
-      name: 'skills',
-      placeholder: 'Search for Skills',
-      label: 'Skills',
-      defaultValue: '',
-      dataTestId: '',
-      control,
-    },
+    // {
+    //   type: FieldType.Input,
+    //   name: 'skills',
+    //   placeholder: 'Search for Skills',
+    //   label: 'Skills',
+    //   defaultValue: '',
+    //   dataTestId: '',
+    //   control,
+    // },
   ];
 
   return (
@@ -103,6 +145,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
           canEdit={canEdit}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
+          isLoading={updateUserPersonalDetailsMutation.isLoading}
         />
         <Divider />
         <div className="p-6">
@@ -166,14 +209,12 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
                 </div>
               </>
             ) : (
-              <>
+              <form>
                 <div className="text-neutral-900 text-sm font-bold">
                   Date of Birth
                 </div>
-                <form>
-                  <Layout fields={fields} />
-                </form>
-              </>
+                <Layout fields={fields} />
+              </form>
             )}
           </div>
         </div>
@@ -182,4 +223,4 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
   );
 };
 
-export default PersonalDetails;
+export default memo(PersonalDetails);
