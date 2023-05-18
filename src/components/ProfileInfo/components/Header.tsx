@@ -5,6 +5,7 @@ import Button, {
 } from 'components/Button';
 import Icon from 'components/Icon';
 import IconWrapper, { Type } from 'components/Icon/components/IconWrapper';
+import { FieldValues, UseFormHandleSubmit } from 'react-hook-form';
 
 export type HeaderProps = {
   title: string;
@@ -12,6 +13,9 @@ export type HeaderProps = {
   isEditable: boolean;
   setIsEditable: (hide: boolean) => void;
   canEdit?: boolean;
+  onSubmit?: any;
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  isLoading?: boolean;
 };
 
 const Header: React.FC<HeaderProps> = ({
@@ -20,6 +24,9 @@ const Header: React.FC<HeaderProps> = ({
   isEditable,
   setIsEditable,
   canEdit,
+  onSubmit,
+  handleSubmit,
+  isLoading,
 }) => {
   return (
     <div className="flex justify-between items-center px-6">
@@ -47,10 +54,8 @@ const Header: React.FC<HeaderProps> = ({
             <Button
               label={'Save'}
               size={ButtonSize.Small}
-              onClick={() => {
-                // need to make an api call here
-                // how idk
-              }}
+              onClick={handleSubmit(onSubmit)}
+              loading={isLoading}
             />
           </div>
         )

@@ -24,7 +24,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
   const [isHovered, eventHandlers] = useHover();
   const [isEditable, setIsEditable] = useState<boolean>(false);
 
-  const { control } = useForm({
+  const { control, handleSubmit } = useForm({
     mode: 'onChange',
   });
 
@@ -32,6 +32,10 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
     () => clsx({ 'mb-8': true }, { 'shadow-xl': isHovered && canEdit }),
     [isHovered],
   );
+
+  const onSubmit = (data: any) => {
+    console.log('dafdasdf', data);
+  };
 
   const fields = [
     {
@@ -97,6 +101,8 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
           isEditable={isEditable}
           setIsEditable={setIsEditable}
           canEdit={canEdit}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
         />
         <Divider />
         <div className="p-6">
@@ -160,12 +166,14 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
                 </div>
               </>
             ) : (
-              <div>
+              <>
                 <div className="text-neutral-900 text-sm font-bold">
                   Date of Birth
                 </div>
-                <Layout fields={fields} />
-              </div>
+                <form>
+                  <Layout fields={fields} />
+                </form>
+              </>
             )}
           </div>
         </div>

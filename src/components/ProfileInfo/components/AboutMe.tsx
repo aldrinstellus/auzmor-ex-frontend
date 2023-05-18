@@ -26,6 +26,10 @@ const AboutMe: React.FC<IAboutMeProps> = ({ aboutMe, canEdit }) => {
     [isHovered],
   );
 
+  const onSubmit = (data: any) => {
+    console.log('dafdasdf', data);
+  };
+
   return (
     <div {...eventHandlers}>
       <Card className={onHoverStyles}>
@@ -35,6 +39,8 @@ const AboutMe: React.FC<IAboutMeProps> = ({ aboutMe, canEdit }) => {
           isEditable={isEditable}
           setIsEditable={setIsEditable}
           canEdit={canEdit}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
         />
         <Divider />
         <div className="text-neutral-900 text-sm font-normal pt-4 pb-6 px-6">

@@ -13,6 +13,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import SelectTimeZone from 'components/UserOnboard/components/SelectTimeZone';
 import { OptionType } from 'components/UserOnboard/components/SelectTimezoneScreen';
+import { useMutation } from '@tanstack/react-query';
+import { updateCurrentUser } from 'queries/users';
+import { getDefaultTimezoneOption } from 'components/UserOnboard/utils';
+import queryClient from 'utils/queryClient';
 
 interface IForm {
   timeZone: OptionType;
@@ -28,29 +32,49 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
 }) => {
   const [isHovered, eventHandlers] = useHover();
   const [isEditable, setIsEditable] = useState<boolean>(false);
+  const defaultTimezone = getDefaultTimezoneOption();
+
+  const schema = yup.object({
+    timeZone: yup.object(),
+  });
+
+  // professional handlesubmit only
+  const { handleSubmit, control, getValues } = useForm<any>({
+    mode: 'onSubmit',
+    resolver: yupResolver(schema),
+  });
 
   const onHoverStyles = useMemo(
     () => clsx({ 'mb-8': true }, { 'shadow-xl': isHovered && canEdit }),
     [isHovered],
   );
 
-  const schema = yup.object({
-    timeZone: yup.object(),
+  const updateUserTimezoneMutation = useMutation({
+    mutationFn: updateCurrentUser,
+    mutationKey: ['update-user-timeZone-mutation'],
+    onError: (error: any) => {
+      console.log('Error while updating timezone: ', error);
+    },
+    onSuccess: (response: any) => {
+      console.log('Updated timezone successfully', response);
+    },
   });
 
-  const { control, handleSubmit, getValues } = useForm<IForm>({
-    mode: 'onChange',
-    resolver: yupResolver(schema),
-  });
-
-  const timestamp = professionalDetails?.createdAt;
-
-  const formattedTime = moment
-    .utc(timestamp)
-    .tz('America/New_York')
-    .format('(UTC-05:00) z');
-
-  const formattedDate = moment(timestamp).format('Do MMMM YYYY');
+  const onSubmit = async () => {
+    const selectedTimezone = getValues();
+    console.log(selectedTimezone, '33333');
+    let timezoneValue;
+    if (selectedTimezone.timeZone === undefined) {
+      timezoneValue = defaultTimezone.value[0];
+    } else {
+      timezoneValue = selectedTimezone.timeZone.value[0];
+    }
+    await updateUserTimezoneMutation.mutateAsync({
+      timeZone: timezoneValue,
+    });
+    await queryClient.invalidateQueries(['current-user-me']);
+    setIsEditable(false);
+  };
 
   return (
     <div {...eventHandlers}>
@@ -61,6 +85,9 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
           isEditable={isEditable}
           setIsEditable={setIsEditable}
           canEdit={canEdit}
+          onSubmit={onSubmit}
+          handleSubmit={handleSubmit}
+          isLoading={updateUserTimezoneMutation.isLoading}
         />
         <Divider />
         <form>
@@ -74,21 +101,27 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
                   <Icon name="clock" size={16} />
                 </IconWrapper>
                 <div className="text-neutral-900 text-base font-medium ">
-                  Joined on {formattedDate}
+                  Joined on{' '}
+                  {moment(professionalDetails?.createdAt).format(
+                    'Do MMMM YYYY',
+                  )}
                 </div>
               </div>
             </div>
             <div className="space-y-2">
               <div className="text-neutral-500 text-sm font-bold">Timezone</div>
               {isEditable ? (
-                <SelectTimeZone control={control} />
+                <SelectTimeZone
+                  control={control}
+                  defaultTimezone={defaultTimezone}
+                />
               ) : (
                 <div className="flex space-x-3">
                   <IconWrapper type={Type.Square}>
                     <Icon name="clock" size={16} />
                   </IconWrapper>
                   <div className="text-neutral-900 text-base font-medium ">
-                    {formattedTime}
+                    {professionalDetails?.timeZone}
                   </div>
                 </div>
               )}
