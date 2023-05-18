@@ -36,7 +36,10 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
 
   return (
     <>
-      <Card className="bg-white pb-1 w-full h-[290.56px]">
+      <Card
+        className="bg-white pb-1 w-full h-[290.56px]"
+        data-testid="profile-details"
+      >
         <div className="relative cursor-pointer">
           <img
             className="object-cover w-full h-[179.56px] rounded-9xl"
@@ -51,6 +54,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
               onClick={() => {
                 setShowModal(true);
               }}
+              dataTestId="edit-cover-pic"
             />
           )}
         </div>
@@ -91,6 +95,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                   onClick={() => {
                     canEdit && setShowModal(true);
                   }}
+                  dataTestId={canEdit ? 'edit-profile' : 'follow'}
                 />
               </div>
             </div>
@@ -137,6 +142,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
             file={file}
             setFile={setFile}
             key={'edit-profile'}
+            dataTestId="edit-profile"
           />
         )}
         <input

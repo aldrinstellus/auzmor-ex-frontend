@@ -64,6 +64,7 @@ const TextArea: React.FC<TextAreaProps> = ({
         readOnly={readOnly}
         required={required}
         className={textAreaStyle}
+        data-testid={dataTestId}
       >
         {defaultValue}
       </textarea>

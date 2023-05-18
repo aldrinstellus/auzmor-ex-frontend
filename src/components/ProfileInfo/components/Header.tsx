@@ -9,6 +9,7 @@ import { FieldValues, UseFormHandleSubmit } from 'react-hook-form';
 
 export type HeaderProps = {
   title: string;
+  dataTestId?: string;
   isHovered: boolean;
   isEditable: boolean;
   setIsEditable: (hide: boolean) => void;
@@ -20,6 +21,7 @@ export type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = ({
   title,
+  dataTestId,
   isHovered,
   isEditable,
   setIsEditable,
@@ -30,11 +32,18 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <div className="flex justify-between items-center px-6">
-      <div className="text-neutral-900 font-bold text-base pt-6 pb-4">
+      <div
+        className="text-neutral-900 font-bold text-base pt-6 pb-4"
+        data-testid={dataTestId}
+      >
         {title}
       </div>
       {canEdit && isHovered && !isEditable ? (
-        <IconWrapper type={Type.Square} className="cursor-pointer">
+        <IconWrapper
+          type={Type.Square}
+          className="cursor-pointer"
+          dataTestId={`edit-${dataTestId}`}
+        >
           <Icon
             name="edit"
             size={16}
@@ -50,11 +59,13 @@ const Header: React.FC<HeaderProps> = ({
               label={'Cancel'}
               size={ButtonSize.Small}
               onClick={() => setIsEditable(false)}
+              dataTestId={`${dataTestId}-cancel`}
             />
             <Button
               label={'Save'}
               size={ButtonSize.Small}
               onClick={handleSubmit(onSubmit)}
+              dataTestId={`${dataTestId}-save`}
               loading={isLoading}
             />
           </div>

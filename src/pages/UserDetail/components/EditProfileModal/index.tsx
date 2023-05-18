@@ -40,6 +40,7 @@ interface IEditProfileModal {
   setFile: (file: IUpdateProfileImage | Record<string, any>) => void;
   userProfileImageRef: React.RefObject<HTMLInputElement> | null;
   userCoverImageRef: React.RefObject<HTMLInputElement> | null;
+  dataTestId?: string;
 }
 
 const EditProfileModal: React.FC<IEditProfileModal> = ({
@@ -50,6 +51,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
   setFile,
   userProfileImageRef,
   userCoverImageRef,
+  dataTestId,
 }) => {
   const { uploadMedia, uploadStatus } = useUpload();
   const {
@@ -74,7 +76,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       defaultValue: getValues().fullName,
       name: 'fullName',
       label: 'Name',
-      dataTestId: 'user-profile-name',
+      dataTestId: `${dataTestId}-name`,
       control,
     },
   ];
@@ -86,7 +88,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       defaultValue: getValues().preferredName,
       name: 'preferredName',
       label: 'Preferred Name',
-      dataTestId: '',
+      dataTestId: `${dataTestId}-perferred-name`,
       control,
     },
   ];
@@ -96,6 +98,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       type: FieldType.SingleSelect,
       name: 'designation',
       defaultValue: getValues().designation,
+      dataTestId: `${dataTestId}`,
       label: 'Position title',
       options: [
         { value: 'Software Engineer', label: 'Software Engineer' },
@@ -112,6 +115,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
   //     // defaultValue: data?.department,
   //     // placeholder: 'ex. Engineering',
   //     label: 'Department',
+  //     dataTestId: `${dataTestId}`,
   //     options: [
   //       { value: 'Sales and Marketing', label: 'Sales and Marketing' },
   //       { value: 'Engineering', label: 'Engineering' },
@@ -125,6 +129,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       type: FieldType.SingleSelect,
       name: 'workLocation',
       defaultValue: getValues().workLocation?.label,
+      dataTestId: `${dataTestId}`,
       label: 'Location',
       options: [
         { value: 'Mumbai, India', label: 'Mumbai, India' },
@@ -268,6 +273,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
             variant={IconVariant.Secondary}
             size={Size.Medium}
             onClick={() => userCoverImageRef?.current?.click()}
+            dataTestId={`${dataTestId}-coverpic`}
           />
         </div>
         <div className="ml-8 mb-8 flex items-center">
@@ -289,6 +295,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                   variant={IconVariant.Secondary}
                   size={Size.Medium}
                   onClick={() => userProfileImageRef?.current?.click()}
+                  dataTestId={`${dataTestId}-profilepic`}
                 />
               </div>
               <div></div>
@@ -314,6 +321,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
               setShowModal(false);
               setFile({});
             }}
+            dataTestId={`${dataTestId}-savechanges`}
           />
           <Button
             label={'Save Changes'}
@@ -323,6 +331,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
               uploadStatus === UploadStatus.Uploading ||
               updateUsersMutation.isLoading
             }
+            dataTestId={`${dataTestId}-cancel`}
           />
         </div>
       </form>

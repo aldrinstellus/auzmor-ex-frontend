@@ -81,6 +81,7 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
       <Card className={onHoverStyles}>
         <Header
           title="Professinal Details"
+          dataTestId="professional-details"
           isHovered={isHovered}
           isEditable={isEditable}
           setIsEditable={setIsEditable}
@@ -100,7 +101,10 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
                 <IconWrapper type={Type.Square}>
                   <Icon name="clock" size={16} />
                 </IconWrapper>
-                <div className="text-neutral-900 text-base font-medium ">
+                <div
+                  className="text-neutral-900 text-base font-medium"
+                  data-testid="professional-details-joining-date"
+                >
                   Joined on{' '}
                   {moment(professionalDetails?.createdAt).format(
                     'Do MMMM YYYY',
@@ -114,6 +118,7 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
                 <SelectTimeZone
                   control={control}
                   defaultTimezone={defaultTimezone}
+                  dataTestId="professional-details-timezone"
                 />
               ) : (
                 <div className="flex space-x-3">

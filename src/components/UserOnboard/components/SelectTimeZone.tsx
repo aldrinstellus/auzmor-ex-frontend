@@ -9,12 +9,14 @@ export type SelectTimeZoneProps = {
   control: any;
   className?: string;
   defaultTimezone: OptionType;
+  dataTestId?: string;
 };
 
 const SelectTimeZone: React.FC<SelectTimeZoneProps> = ({
   control,
   className,
   defaultTimezone,
+  dataTestId,
 }) => {
   const fields = [
     {
@@ -27,6 +29,7 @@ const SelectTimeZone: React.FC<SelectTimeZoneProps> = ({
       })),
       defaultValue: defaultTimezone,
       menuPlacement: 'top',
+      dataTestId: dataTestId,
     },
   ];
 

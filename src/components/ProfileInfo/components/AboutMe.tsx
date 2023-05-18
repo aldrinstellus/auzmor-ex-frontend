@@ -41,7 +41,7 @@ const AboutMe: React.FC<IAboutMeProps> = ({ aboutMeData, canEdit }) => {
       name: 'about',
       placeholder: 'write here',
       defaultValue: getValues().about,
-      dataTestId: '',
+      dataTestId: 'about-me-edit-text',
       control,
       className: 'w-full',
       rows: 3,
@@ -63,12 +63,9 @@ const AboutMe: React.FC<IAboutMeProps> = ({ aboutMeData, canEdit }) => {
   });
 
   const onSubmit = async (message: Record<string, string>) => {
-    await updateUserAboutMeMutation.mutateAsync({
-      // ...aboutMeData,
-      personal: {
-        about: message?.about,
-      },
-    });
+    // await updateUserAboutMeMutation.mutateAsync({
+    //   about: message?.about,
+    // });
     await queryClient.invalidateQueries(['current-user-me']);
     setIsEditable(false);
   };
@@ -78,6 +75,7 @@ const AboutMe: React.FC<IAboutMeProps> = ({ aboutMeData, canEdit }) => {
       <Card className={onHoverStyles}>
         <Header
           title="About Me"
+          dataTestId="about-me"
           isHovered={isHovered}
           isEditable={isEditable}
           setIsEditable={setIsEditable}

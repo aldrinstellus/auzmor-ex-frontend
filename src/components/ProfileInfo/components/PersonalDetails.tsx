@@ -34,8 +34,6 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
   const [isHovered, eventHandlers] = useHover();
   const [isEditable, setIsEditable] = useState<boolean>(false);
 
-  console.log('person', personalDetails);
-
   const { control, handleSubmit, getValues } = useForm<IPersonalDetailsForm>({
     mode: 'onChange',
     defaultValues: {
@@ -65,16 +63,13 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
 
   const onSubmit = async (personalDetailData: any) => {
     // await updateUserPersonalDetailsMutation.mutateAsync({
-    //   ...personalDetails,
-    //   personal: {
-    //     about: 'Hello I am groot',
-    //     birthDate: personalDetailData?.dateOfBirth.toISOString(),
-    //     permanentLocation: personalDetailData?.permanentAddress,
-    //     gender: personalDetailData?.gender?.value,
-    //     maritalStatus: personalDetailData?.maritalStatus?.value,
-    //     // skills: personalDetails?.skills, // array of string
-    //     skills: ['Nodejs'],
-    //   },
+    //   about: 'Hello I am groot',
+    //   birthDate: moment(personalDetailData?.dateOfBirth).toISOString(),
+    //   permanentLocation: personalDetailData?.permanentAddress,
+    //   gender: personalDetailData?.gender?.value,
+    //   maritalStatus: personalDetailData?.maritalStatus?.value,
+    //   // skills: personalDetails?.skills, // array of string
+    //   skills: ['Nodejs'],
     // });
     await queryClient.invalidateQueries(['current-user-me']);
     setIsEditable(false);
@@ -85,8 +80,8 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
       type: FieldType.DatePicker,
       name: 'dateOfBirth',
       control,
-      dataTestId: getValues().dateOfBirth,
-      defaultValue: '08/08/2001',
+      dataTestId: 'personal-details-dob',
+      defaultValue: getValues().dateOfBirth,
     },
     {
       type: FieldType.SingleSelect,
@@ -94,7 +89,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
       placeholder: 'Select Gender',
       label: 'Gender',
       defaultValue: getValues().gender,
-      dataTestId: '',
+      dataTestId: 'personal-details-gender',
       options: [
         { value: 'MALE', label: 'Male' },
         { value: 'FEMALE', label: 'Female' },
@@ -107,7 +102,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
       placeholder: 'Ex - Flat no, line Address',
       label: 'Permanent Address',
       defaultValue: getValues().permanentAddress,
-      dataTestId: '',
+      dataTestId: 'personal-details-address',
       control,
     },
     {
@@ -116,7 +111,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
       placeholder: '',
       label: 'Marital Status',
       defaultValue: getValues().maritalStatus,
-      dataTestId: '',
+      dataTestId: 'personal-details-marital-status',
       options: [
         { value: 'MARRIED', label: 'Married' },
         { value: 'UNMARRIED', label: 'Unmarried' },
@@ -130,7 +125,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
     //   placeholder: 'Search for Skills',
     //   label: 'Skills',
     //   defaultValue: '',
-    //   dataTestId: '',
+    //   dataTestId: 'personal-details-skills',
     //   control,
     // },
   ];
@@ -140,6 +135,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
       <Card className={onHoverStyles}>
         <Header
           title="Personal Details"
+          dataTestId="personal-details"
           isHovered={isHovered}
           isEditable={isEditable}
           setIsEditable={setIsEditable}
