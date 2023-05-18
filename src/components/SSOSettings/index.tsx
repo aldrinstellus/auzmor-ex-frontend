@@ -8,6 +8,7 @@ import SAML from 'images/saml.png';
 import useModal from 'hooks/useModal';
 import ConfigureGenericSSO from './components/ConfigureGenericSSO';
 import { IdentityProvider } from 'queries/organization';
+import ConfigureLDAP from './components/ConfigureLDAP';
 
 enum ConfigureScreen {
   GENERIC = 'GENERIC',
@@ -21,7 +22,7 @@ const ssoIntegrations = [
       'LDAP (Lightweight Directory Access Protocol) an internet protocol, which is used to look up user data from a server.',
     key: 'Active Directory',
     idp: IdentityProvider.CUSTOM_LDAP,
-    configureScreen: ConfigureScreen.GENERIC,
+    configureScreen: ConfigureScreen.LDAP,
   },
   {
     logo: MicrosoftAD,
@@ -91,6 +92,9 @@ const SSOSettings: React.FC = (): ReactElement => {
           closeModal={closeModal}
           open={open}
         />
+      )}
+      {open && ssoSetting?.configureScreen === ConfigureScreen.LDAP && (
+        <ConfigureLDAP open={open} closeModal={closeModal} />
       )}
     </div>
   );
