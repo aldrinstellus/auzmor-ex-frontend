@@ -49,7 +49,7 @@ const Feed: React.FC<IFeedProps> = () => {
   const { ref, inView } = useInView();
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfiniteFeed({ postType: appliedFeedFilters });
+    useInfiniteFeed(appliedFeedFilters);
 
   useEffect(() => {
     if (inView) {
@@ -69,7 +69,10 @@ const Feed: React.FC<IFeedProps> = () => {
 
   const clearAppliedFilters = () => {
     setAppliedFeedFilters({
+      ...appliedFeedFilters,
       [PostFilterKeys.PostType]: [],
+      [PostFilterKeys.MyPosts]: false,
+      [PostFilterKeys.MentionedInPost]: false,
     });
   };
 

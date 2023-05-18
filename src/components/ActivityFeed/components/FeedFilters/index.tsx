@@ -212,7 +212,7 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative mr-6">
       <button
         className="box-border font-bold flex flex-row justify-center items-center p-1 gap-4 border-none relative"
         onClick={() => {
