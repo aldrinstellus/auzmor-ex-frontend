@@ -1,3 +1,4 @@
+import qs from 'qs';
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 import { getItem } from './persist';
@@ -32,44 +33,30 @@ class ApiService {
   }
 
   async get(url: string, params = {}) {
-    return await this.instance.get(url, { params });
+    const _params = qs.stringify(params, { arrayFormat: 'repeat' });
+    let _url = url;
+    if (_params) {
+      _url += `?${_params}`;
+    }
+    return await this.instance.get(_url);
   }
 
-  async put(url: string, data = {}, headers = {}) {
-    try {
-      console.log({ headers });
-      const { data: res } = await this.instance.put(url, data, {
-        headers,
-      });
-      return res;
-    } catch (e: any) {
-      throw new Error(e.response.data.message);
-    }
+  async put(url: string, data = {}) {
+    const { data: res } = await this.instance.put(url, data);
+    return res;
   }
   async post(url: string, data = {}) {
-    try {
-      const { data: res } = await this.instance.post(url, data);
-      return res;
-    } catch (e: any) {
-      throw new Error(e.response.data.message);
-    }
+    const { data: res } = await this.instance.post(url, data);
+    return res;
   }
 
   async delete(url: string, params = {}) {
-    try {
-      return this.instance.delete(url, { params });
-    } catch (e: any) {
-      throw new Error(e.response.data.message);
-    }
+    return this.instance.delete(url, { params });
   }
 
   async patch(url: string, data = {}) {
-    try {
-      const { data: res } = await this.instance.patch(url, data);
-      return res;
-    } catch (e: any) {
-      throw new Error(e.response.data.message);
-    }
+    const { data: res } = await this.instance.patch(url, data);
+    return res;
   }
 }
 

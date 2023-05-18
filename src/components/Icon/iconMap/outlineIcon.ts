@@ -49,6 +49,7 @@ import SvgLinkOutline from '../components/Link/LinkOutline';
 import SvgMarketplaceOutline from '../components/Marketplace/MarketplaceOutline';
 import SvgArrowUpOutline from '../components/ArrowUp/ArrowUpOutline';
 import SvgArrowDownOutline from '../components/ArrowDown/ArrowDownOutline';
+import SvgDeleteOutline from '../components/Delete/DeleteOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -63,6 +64,7 @@ export const outlineIcon = {
   closeOutline: SvgCloseOutline,
   convertShapeOutline: SvgConvertShapeOutline,
   crossCircleOutline: SvgCrossCircleOutline,
+  deleteOutline: SvgDeleteOutline,
   documentOutline: SvgDocumentOutline,
   dotsVerticalOutline: SvgDotsVerticalOutline,
   draftOutline: SvgDraftOutline,
