@@ -76,7 +76,7 @@ const SingleSelect: React.FC<ISingleSelectProps> = ({
       <div>
         {/* remove top margin provide it to parent div if required */}
         <Controller
-          name={placeholder}
+          name={name}
           control={control}
           rules={{
             required: true,

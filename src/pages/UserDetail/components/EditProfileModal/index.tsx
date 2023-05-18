@@ -62,9 +62,9 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     defaultValues: {
       fullName: data?.fullName,
       preferredName: data?.preferredName,
-      designation: data?.designation,
-      workLocation: data?.workLocation,
-      department: data?.department,
+      designation: { value: data?.designation, label: data?.designation },
+      workLocation: { value: data?.workLocation, label: data?.workLocation },
+      department: { value: data?.department, label: data?.department },
     },
   });
   const nameField = [
