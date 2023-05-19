@@ -1,6 +1,22 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import apiService from 'utils/apiService';
 
+// for future filters
+export enum PeopleFilterKeys {
+  PeopleFilterType = 'type',
+}
+
+export enum FilterType {
+  Status = 'STATUS',
+  Location = 'LOCATION',
+  Depratment = 'DEPARTMENT',
+  Reporter = 'REPORTER',
+}
+
+export interface IPeopleFilters {
+  [PeopleFilterKeys.PeopleFilterType]?: FilterType[];
+}
+
 export interface IProfileImage {
   fileId: string;
   original: string;

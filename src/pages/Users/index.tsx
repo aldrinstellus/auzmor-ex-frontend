@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Button, { Size, Variant } from 'components/Button';
 import UserCard from './components/UserCard';
 import TabSwitch from './components/TabSwitch';
-import { IPostUsersResponse, useUsers } from 'queries/users';
+import {
+  PeopleFilterKeys,
+  IPeopleFilters,
+  useUsers,
+  FilterType,
+} from 'queries/users';
 import { Variant as InputVariant } from 'components/Input';
 import InviteUserModal from './components/InviteUserModal';
 import TablePagination from 'components/TablePagination';
@@ -17,7 +22,8 @@ import IconButton, {
 } from 'components/IconButton';
 import FilterModal from './components/FilterModal';
 import { useDebounce } from 'hooks/useDebounce';
-import Chip from 'components/Chip';
+import Icon from 'components/Icon';
+import { twConfig } from 'utils/misc';
 
 interface IForm {
   search?: string;
@@ -29,6 +35,9 @@ const Users: React.FC<IUsersProps> = () => {
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [userStatus, setUserStatus] = useState<string>('');
+  const [peopleFilters, setPeopleFilters] = useState<IPeopleFilters>({
+    [PeopleFilterKeys.PeopleFilterType]: [],
+  }); // for future filters
 
   const {
     control,
@@ -38,6 +47,20 @@ const Users: React.FC<IUsersProps> = () => {
   } = useForm<IForm>({
     mode: 'onChange',
   });
+
+  const clearAppliedFilters = () => {
+    setUserStatus('');
+  };
+
+  const getAppliedFiltersCount = () => {
+    return userStatus?.length || 0;
+  };
+
+  const removePostTypeFilter = (filter: FilterType) => {
+    if (userStatus) {
+      setUserStatus('');
+    }
+  };
 
   const searchValue = watch('search');
 
@@ -134,8 +157,18 @@ const Users: React.FC<IUsersProps> = () => {
           Showing {!isLoading && users.result.data.length} results
         </div>
 
-        <div className="mb-3">
-          <Chip label="Hello" onClose={() => {}} icon="X" />
+        <div className="mb-4 flex">
+          {userStatus && (
+            <div className="border border-neutral-200 rounded-17xl px-3 py-2 flex bg-white capitalize text-sm font-medium items-center mr-1">
+              <div className="mr-1">{userStatus}</div>
+              <Icon
+                name="closeCircleOutline"
+                stroke={twConfig.theme.colors.neutral['900']}
+                className="cursor-pointer"
+                onClick={() => setUserStatus('')}
+              />
+            </div>
+          )}
         </div>
       </div>
 

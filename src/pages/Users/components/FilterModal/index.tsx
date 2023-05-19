@@ -13,6 +13,7 @@ export interface IFilterModalProps {
   setUserStatus: (status: string) => void;
   closeModal: () => void;
   setShowFilterModal: (flag: boolean) => void;
+  setPeopleFilters?: any; // for future filters
   page?: number;
 }
 
@@ -32,6 +33,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
   closeModal,
   setShowFilterModal,
   setUserStatus,
+  setPeopleFilters,
 }) => {
   const { control, handleSubmit, getValues } = useForm({
     mode: 'onChange',
