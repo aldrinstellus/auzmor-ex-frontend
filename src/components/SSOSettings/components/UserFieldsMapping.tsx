@@ -17,6 +17,7 @@ type UserFieldsMappingProps = {
   workMobile?: string;
   userObjectFilter?: string;
   setData: (data: IUserFieldsMappingForm) => void;
+  setError: (error: boolean) => void;
   closeModal: () => void;
   next: () => void;
 };
@@ -47,6 +48,7 @@ const UserFieldsMapping: React.FC<UserFieldsMappingProps> = ({
   workMobile = '',
   userObjectFilter = '',
   setData,
+  setError,
   closeModal,
   next,
 }): ReactElement => {
@@ -131,6 +133,7 @@ const UserFieldsMapping: React.FC<UserFieldsMappingProps> = ({
 
   const onSubmit = () => {
     setData(getValues());
+    setError(false);
     next();
   };
 

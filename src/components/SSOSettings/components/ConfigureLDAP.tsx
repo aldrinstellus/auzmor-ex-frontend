@@ -81,6 +81,7 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
           userObjectFilter={userFieldsMappingData?.userObjectFilter}
           workMobile={userFieldsMappingData?.workMobile}
           setData={setUserFieldsMappingData}
+          setError={setUserFieldsMappingError}
           closeModal={closeModal}
           next={next}
         />
