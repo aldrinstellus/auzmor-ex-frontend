@@ -17,6 +17,7 @@ import IconButton, {
 } from 'components/IconButton';
 import FilterModal from './components/FilterModal';
 import { useDebounce } from 'hooks/useDebounce';
+import Chip from 'components/Chip';
 
 interface IForm {
   search?: string;
@@ -27,13 +28,13 @@ const Users: React.FC<IUsersProps> = () => {
   const [page, setPage] = useState(1);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [userStatus, setUserStatus] = useState<string>('');
 
   const {
     control,
-    handleSubmit,
     watch,
     getValues,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<IForm>({
     mode: 'onChange',
   });
@@ -41,11 +42,11 @@ const Users: React.FC<IUsersProps> = () => {
   const searchValue = watch('search');
 
   const debouncedSearchValue = useDebounce(searchValue || '', 500);
-  console.log(debouncedSearchValue, 'KKKK');
   const { isLoading, data: users } = useUsers({
     q: debouncedSearchValue,
     limit: 30,
     next: page,
+    status: userStatus,
   });
 
   const peopleHubNode = (
@@ -129,8 +130,12 @@ const Users: React.FC<IUsersProps> = () => {
           </div>
         </div>
 
-        <div className=" text-neutral-500 mt-6 mb-3">
+        <div className="text-neutral-500 mt-6 mb-3">
           Showing {!isLoading && users.result.data.length} results
+        </div>
+
+        <div className="mb-3">
+          <Chip label="Hello" onClose={() => {}} icon="X" />
         </div>
       </div>
 
@@ -163,6 +168,8 @@ const Users: React.FC<IUsersProps> = () => {
       />
 
       <FilterModal
+        setUserStatus={setUserStatus}
+        page={page}
         showModal={showFilterModal}
         setShowFilterModal={setShowFilterModal}
         closeModal={() => setShowFilterModal(false)}

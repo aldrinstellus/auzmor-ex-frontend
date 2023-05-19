@@ -60,12 +60,28 @@ interface UserQueryParams {
 }
 
 // get all users people listing
-const getAllUsers = async ({ limit, prev, next, ...rest }: UserQueryParams) => {
+const getAllUsers = async ({
+  limit,
+  prev,
+  next,
+  q,
+  status,
+}: UserQueryParams) => {
+  if (!status) {
+    const { data } = await apiService.get(`/users`, {
+      limit: limit,
+      prev: prev,
+      next: next,
+      q: q,
+    });
+    return data;
+  }
   const { data } = await apiService.get(`/users`, {
     limit: limit,
     prev: prev,
     next: next,
-    ...rest,
+    q: q,
+    status: status,
   });
   return data;
 };

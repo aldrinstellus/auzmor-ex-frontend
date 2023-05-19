@@ -3,56 +3,28 @@ import Divider from 'components/Divider';
 import React, { useMemo } from 'react';
 import { Control, useController } from 'react-hook-form';
 
-export enum Variant {
-  Radio = 'RADIO',
-}
-
-export enum Size {
-  Small = 'SMALL',
-  Medium = 'MEDIUM',
-  Large = 'LARGE',
-}
-
-export interface IRadioButtonProps {
+type RadioButtonProps = {
   name: string;
   id?: string;
-  variant?: Variant;
-  size?: Size;
-  rightIcon?: string;
-  leftIcon?: string;
-  defaultValue?: string;
-  placeholder?: string;
-  loading?: boolean;
   disabled?: boolean;
   error?: string;
   helpText?: string;
   className?: string;
   dataTestId?: string;
   control?: Control<Record<string, any>>;
-  label?: string;
-  onLeftIconClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  onRightIconClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-}
+  options?: Record<string, any>;
+  radioList?: Array<Record<string, any>>;
+};
 
-const RadioGroup: React.FC<IRadioButtonProps> = ({
+const RadioGroup: React.FC<RadioButtonProps> = ({
   name,
   id,
-  variant = Variant.Radio,
-  size = Size.Medium,
-  rightIcon = null,
-  leftIcon = null,
-  defaultValue = '',
-  placeholder = '',
-  loading = false,
   disabled = false,
-  className = '',
   dataTestId = '',
   error,
-  helpText,
   control,
-  label,
-  onLeftIconClick,
-  onRightIconClick,
+  options,
+  radioList,
 }) => {
   const { field } = useController({
     name,
@@ -62,32 +34,39 @@ const RadioGroup: React.FC<IRadioButtonProps> = ({
   const radioStyles = useMemo(
     () =>
       clsx({
-        'border-1 border-neutral-200 focus:outline-none': true,
+        'border-1 border-neutral-200 focus:outline-none cursor-pointer': true,
       }),
-    [error, size],
+    [error],
   );
 
   return (
     <>
-      <div className="pt-3 pl-6 pb-3">
-        <div className="flex justify-start items-center space-x-4">
-          <input
-            id={id}
-            name={field.name}
-            type={variant?.toLowerCase()}
-            className={radioStyles}
-            disabled={loading || disabled}
-            placeholder={placeholder}
-            data-testid={dataTestId}
-            defaultValue={defaultValue}
-            ref={field.ref}
-            onChange={field.onChange}
-            onBlur={field.onBlur}
-          />
-          <label htmlFor={field.name}>{field.name}</label>
+      <div className="pt-3">
+        <div className="flex flex-col">
+          {radioList?.map((item, index) => (
+            <>
+              <div key={index} className=" space-x-4 pb-2 pt-2 pl-6">
+                <input
+                  id={id}
+                  name={name}
+                  type="radio"
+                  className={radioStyles}
+                  disabled={disabled}
+                  data-testid={dataTestId}
+                  ref={field.ref}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  value={item?.options?.value}
+                />
+                <label htmlFor={item?.options?.label}>
+                  {item?.options?.label}
+                </label>
+              </div>
+              <Divider />
+            </>
+          ))}
         </div>
       </div>
-      <Divider />
     </>
   );
 };
