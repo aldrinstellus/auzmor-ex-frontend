@@ -23,13 +23,11 @@ export const loginViaSSO = async (params: ILoginViaSSOParam) => {
 
 export const useLoginViaSSO = (
   params: ILoginViaSSOParam,
-  enabled: boolean,
-  onSuccess?: (data: any) => void,
+  config: Record<string, any>,
 ) => {
   return useQuery({
     queryKey: ['login-via-sso', params],
     queryFn: () => loginViaSSO(params),
-    enabled,
-    onSuccess,
+    ...config,
   });
 };
