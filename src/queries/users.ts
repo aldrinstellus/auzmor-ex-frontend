@@ -67,7 +67,7 @@ const getAllUsers = async ({
   q,
   status,
 }: UserQueryParams) => {
-  if (!status) {
+  if (!status || status === 'ALL') {
     const { data } = await apiService.get(`/users`, {
       limit: limit,
       prev: prev,
