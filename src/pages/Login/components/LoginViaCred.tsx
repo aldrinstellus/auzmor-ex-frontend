@@ -55,7 +55,14 @@ const LoginViaCred: React.FC<ILoginViaCredProps> = ({ setViaSSO }) => {
 
   const { refetch } = useLoginViaSSO(
     { domain },
-    { enabled: false, onSuccess: (data: any) => console.log(data) },
+    {
+      enabled: false,
+      onSuccess: (data: any) => {
+        if (data && data.redirectUrl) {
+          window.location = data.redirectUrl;
+        }
+      },
+    },
   );
 
   const {

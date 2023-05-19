@@ -1,8 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import Layout, { FieldType } from 'components/Form';
 import { useLoginViaSSO } from 'queries/auth';
-import { useGetSSOFromDomain } from 'queries/organization';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { Variant as InputVariant } from 'components/Input';
@@ -23,16 +22,6 @@ const schema = yup.object({
     .required('Required field'),
 });
 
-const errorMappings = {
-  USER_IS_DEACTIVATED: 'The email address you entered was deleted',
-  USER_EMAIL_NOT_FOUND:
-    "The email address you entered isn't connected to an account",
-  USER_IS_NOT_ACTIVE:
-    "The email address you entered isn't active. Please contact admin",
-  SSO_DISABLED:
-    'SSO is not configured for this email and please try entering the password',
-};
-
 const LoginViaSSO: React.FC<ILoginViaSSOProps> = ({ setViaSSO }) => {
   const {
     watch,
@@ -47,21 +36,23 @@ const LoginViaSSO: React.FC<ILoginViaSSOProps> = ({ setViaSSO }) => {
 
   const email = watch('email');
 
-  const {
-    refetch,
-    isFetching,
-    data: ssoResponse,
-  } = useLoginViaSSO(
+  const { refetch, isFetching, error } = useLoginViaSSO(
     { email },
     {
       enabled: false,
       onError: (error: any) => {
-        setError('email', {
-          type: 'custom',
-          message: 'Server error, Please try again with diffrent email id',
-        });
+        if (error.response.data.errors.length) {
+          setError('email', {
+            type: 'custom',
+            message: error.response.data.errors[0].message,
+          });
+        }
       },
-      onSuccess: (data: any) => console.log(data),
+      onSuccess: (data: any) => {
+        if (data && data.redirectUrl) {
+          window.location = data.redirectUrl;
+        }
+      },
     },
   );
 
@@ -70,14 +61,17 @@ const LoginViaSSO: React.FC<ILoginViaSSOProps> = ({ setViaSSO }) => {
   };
 
   const getDataTestIdForValidationErrors = () => {
-    const status = 'USER_IS_DEACTIVATED';
-    if (status === 'USER_IS_DEACTIVATED') {
+    if (!error || !!!(error as any)?.response) {
+      return '';
+    }
+    const errorCode = (error as any).response.data.errors[0].code; //error.response.data.errors[0].message;
+    if (errorCode === 'USER_IS_DEACTIVATED') {
       return 'sso-deleted-email-msg';
-    } else if (status === 'USER_EMAIL_NOT_FOUND') {
+    } else if (errorCode === 'USER_EMAIL_NOT_FOUND') {
       return 'sso-invalid-email-msg';
-    } else if (status === 'USER_IS_NOT_ACTIVE') {
+    } else if (errorCode === 'USER_IS_NOT_ACTIVE') {
       return 'sso-inactive-email-msg';
-    } else if (status === 'SSO_DISABLED') {
+    } else if (errorCode === 'SSO_DISABLED') {
       return 'sso-email-not-provisioned-msg';
     }
   };
