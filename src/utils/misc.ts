@@ -79,9 +79,6 @@ export const readFirstAxiosError = (err: any) => {
 };
 
 export const getSubDomain = (host: string) => {
-  if (process.env.NODE_ENV === 'development') {
-    return ''; //incendia or domain123 or ''
-  }
   const domains = host.split('.');
   if (domains.length >= 3) {
     return domains[0];
