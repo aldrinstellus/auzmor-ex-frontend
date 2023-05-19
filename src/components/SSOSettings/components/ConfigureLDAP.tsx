@@ -1,34 +1,106 @@
-import { yupResolver } from '@hookform/resolvers/yup';
-import Divider from 'components/Divider';
+import Divider, { Variant } from 'components/Divider';
 import Icon from 'components/Icon';
 import Link from 'components/Link';
 import Modal from 'components/Modal';
-import useModal from 'hooks/useModal';
-import React, { ReactElement } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
+import ConnectionSettings, {
+  IConnectionSettingsForm,
+} from './ConnectionSettings';
+import Button, {
+  Variant as ButtonVariant,
+  Type as ButtonType,
+} from 'components/Button';
+import UserFieldsMapping, { IUserFieldsMappingForm } from './UserFieldsMapping';
+import GroupFieldsMapping, {
+  IGroupFieldsMappingForm,
+} from './GroupFieldsMapping';
+import useCarousel from 'hooks/useCarousel';
 
 type ConfigureLDAPProps = {
   open: boolean;
   closeModal: () => void;
 };
 
-// interface IForm{
-//   config
-// }
+type LdapForm = {
+  label: string;
+  id: string;
+  form: ReactNode;
+  nextButtonText?: string;
+};
 
 const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
   open,
   closeModal,
 }): ReactElement => {
-  // const { control, handleSubmit, getValues } = useForm<IForm>({
-  //   resolver: yupResolver(schema),
-  //   mode: 'onSubmit',
-  // });
+  const [currentScreen, prev, next, setCurrentScreen] = useCarousel(0, 3);
+  // Data from all three forms
+  const [connectionSettingsData, setConnectionSettingsData] =
+    useState<IConnectionSettingsForm>();
+  const [userFieldsMappingData, setUserFieldsMappingData] =
+    useState<IUserFieldsMappingForm>();
+  const [groupFieldsMappingData, setGroupFieldsMappingData] =
+    useState<IGroupFieldsMappingForm>();
+
+  useEffect(() => {
+    console.log({ connectionSettingsData });
+  }, [connectionSettingsData]);
+
+  const ldapForms = [
+    {
+      label: 'Connection Settings',
+      id: 'connection-settings',
+      form: (
+        <ConnectionSettings
+          hostname=""
+          port=""
+          baseDN=""
+          groupBaseDN=""
+          upnSuffix=""
+          administratorDN=""
+          password=""
+          allowFallback={false}
+          setData={setConnectionSettingsData}
+          closeModal={closeModal}
+          next={next}
+        />
+      ),
+    },
+    {
+      label: 'User Fields Mapping',
+      id: 'user-fields-mapping',
+      form: (
+        <UserFieldsMapping
+          email=""
+          fullName=""
+          title=""
+          username=""
+          userObjectFilter=""
+          workMobile=""
+        />
+      ),
+    },
+    {
+      label: 'Group Fields Mapping',
+      id: 'group-fields-mapping',
+      form: (
+        <GroupFieldsMapping
+          groupName=""
+          groupMemberUid=""
+          groupObjectFilter=""
+        />
+      ),
+      nextButtonText: 'Activate',
+    },
+  ] as LdapForm[];
+
+  const onNextClick = () => {
+    next();
+  };
 
   return (
-    <Modal open={open}>
+    <Modal open={open} className="max-w-2xl max-h-[600px] overflow-y-visible">
       {/* Header */}
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-start justify-between p-4">
         <div>
           <p className="font-extrabold text-black text-lg">Active Directory</p>
           <p className="font-normal text-neutral-500 text-sm flex items-center gap-x-1">
@@ -39,8 +111,57 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
         <Icon onClick={closeModal} name="close" hover={false} stroke="#000" />
       </div>
 
+      {/* Content */}
       <Divider className="!bg-neutral-100" />
-      <form></form>
+      <div className="flex flex-col justify-between min-h-[500px]">
+        <div className="flex">
+          <div className="flex-col min-w-fit">
+            {ldapForms &&
+              ldapForms.map((form, index) => (
+                <div key={form.id}>
+                  <div
+                    className={`${
+                      ldapForms[currentScreen].id === form.id
+                        ? 'bg-primary-50'
+                        : 'hover:bg-primary-50 cursor-pointer'
+                    }`}
+                    onClick={() => setCurrentScreen(index)}
+                  >
+                    <p className="font-medium text-sm text-neutral-900 px-6 py-4">
+                      {form.label}
+                    </p>
+                  </div>
+                  {index !== ldapForms.length - 1 && (
+                    <Divider className="!bg-gray-100" />
+                  )}
+                </div>
+              ))}
+          </div>
+          <Divider variant={Variant.Vertical} />
+          <div className="max-h-[400px] w-[450px] overflow-y-auto">
+            {ldapForms[currentScreen].form}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="bg-blue-50 mt-4 p-0">
+          <div className="p-3 flex items-center justify-end gap-x-3">
+            <Button
+              className="font-bold"
+              label="Cancel"
+              onClick={closeModal}
+              variant={ButtonVariant.Primary}
+            />
+            <Button
+              className="font-bold"
+              label="Continue"
+              variant={ButtonVariant.Primary}
+              type={ButtonType.Submit}
+              onClick={onNextClick}
+            />
+          </div>
+        </div>
+      </div>
     </Modal>
   );
 };
