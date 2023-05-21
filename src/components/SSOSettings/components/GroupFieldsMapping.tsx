@@ -17,13 +17,13 @@ import Banner, { Variant as BannerVariant } from 'components/Banner';
 
 const schema = yup.object({
   groupName: yup.string(),
-  groupMemberUid: yup.string(),
+  groupMemberUID: yup.string(),
   groupObjectFilter: yup.string(),
 });
 
 type GroupFieldsMappingProps = {
   groupName?: string;
-  groupMemberUid?: string;
+  groupMemberUID?: string;
   groupObjectFilter?: string;
   closeModal: () => void;
   setData: (data: IGroupFieldsMappingForm) => void;
@@ -32,17 +32,18 @@ type GroupFieldsMappingProps = {
   userFieldsMappingData?: IUserFieldsMappingForm;
   setConnectionSettingsError: (error: boolean) => void;
   setUserFieldsMappingError: (error: boolean) => void;
+  refetch: any;
 };
 
 export interface IGroupFieldsMappingForm {
   groupName?: string;
-  groupMemberUid?: string;
+  groupMemberUID?: string;
   groupObjectFilter?: string;
 }
 
 const GroupFieldsMapping: React.FC<GroupFieldsMappingProps> = ({
   groupName = '',
-  groupMemberUid = '',
+  groupMemberUID = '',
   groupObjectFilter = '',
   closeModal,
   setData,
@@ -50,6 +51,7 @@ const GroupFieldsMapping: React.FC<GroupFieldsMappingProps> = ({
   userFieldsMappingData,
   setConnectionSettingsError,
   setUserFieldsMappingError,
+  refetch,
 }): ReactElement => {
   const {
     control,
@@ -61,7 +63,7 @@ const GroupFieldsMapping: React.FC<GroupFieldsMappingProps> = ({
     mode: 'onChange',
     defaultValues: {
       groupName,
-      groupMemberUid,
+      groupMemberUID,
       groupObjectFilter,
     },
   });
@@ -80,10 +82,10 @@ const GroupFieldsMapping: React.FC<GroupFieldsMappingProps> = ({
       type: FieldType.Input,
       variant: Variant.Text,
       placeholder: '',
-      name: 'groupMemberUid',
+      name: 'groupMemberUID',
       label: 'Group Member UID',
       control,
-      defaultValue: groupMemberUid,
+      defaultValue: groupMemberUID,
     },
     {
       type: FieldType.Input,
@@ -104,6 +106,7 @@ const GroupFieldsMapping: React.FC<GroupFieldsMappingProps> = ({
     },
     onSuccess: (response: any) => {
       console.log('Updated LDAP successfully', response);
+      refetch();
       closeModal();
     },
   });
@@ -127,7 +130,7 @@ const GroupFieldsMapping: React.FC<GroupFieldsMappingProps> = ({
       // Connection settings data
       formData.append(
         'config[connection][hostName]',
-        connectionSettingsData.hostname,
+        connectionSettingsData.hostName,
       );
       formData.append('config[connection][port]', connectionSettingsData.port);
       formData.append(
@@ -156,7 +159,7 @@ const GroupFieldsMapping: React.FC<GroupFieldsMappingProps> = ({
       // UserFieldMap data
       formData.append(
         'config[userFieldMap][userName]',
-        userFieldsMappingData.username,
+        userFieldsMappingData.userName,
       );
       formData.append(
         'config[userFieldMap][fullName]',
@@ -189,10 +192,10 @@ const GroupFieldsMapping: React.FC<GroupFieldsMappingProps> = ({
           groupFieldsMappingData.groupName,
         );
       }
-      if (groupFieldsMappingData.groupMemberUid) {
+      if (groupFieldsMappingData.groupMemberUID) {
         formData.append(
           'config[groupFieldMap][groupMemberUID]',
-          groupFieldsMappingData.groupMemberUid,
+          groupFieldsMappingData.groupMemberUID,
         );
       }
       if (groupFieldsMappingData.groupObjectFilter) {
@@ -220,7 +223,7 @@ const GroupFieldsMapping: React.FC<GroupFieldsMappingProps> = ({
       <Layout fields={userFields} />
       <Banner
         variant={BannerVariant.Error}
-        title={`Failed to integrate with your LDAP. Please try again.`}
+        title="Failed to integrate with your LDAP. Please try again."
         className={`${
           isError && !isLoading ? 'visible' : 'invisible'
         } mt-4 absolute bottom-20 left-0 right-0`}

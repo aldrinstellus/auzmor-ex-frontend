@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import apiService from 'utils/apiService';
 
 export enum IdentityProvider {
@@ -14,13 +15,29 @@ export interface IUpdateSSO {
 }
 
 export const updateSso = async (params: IUpdateSSO) => {
-  // console.log(IdentityProvider[3]);
-  // console.log({ params });
   return await apiService.put(
     `organizations/sso?idp=${IdentityProvider[params.idp]}`,
     params.formData,
     {
       'Content-Type': 'multipart/form-data',
     },
+  );
+};
+
+const getSSO = async () => {
+  const result = await apiService.get('/organizations/sso');
+  return result.data;
+};
+
+export const useGetSSO = () => {
+  return useQuery({
+    queryKey: ['get-sso'],
+    queryFn: getSSO,
+  });
+};
+
+export const deleteSSO = async (idp: IdentityProvider) => {
+  return await apiService.delete(
+    `/organizations/sso?idp=${IdentityProvider[idp]}`,
   );
 };

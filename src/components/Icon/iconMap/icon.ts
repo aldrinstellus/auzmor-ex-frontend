@@ -79,6 +79,7 @@ import Link from '../components/Link';
 import Marketplace from '../components/Marketplace';
 import DocumentUpload from '../components/DocumentUpload';
 import ArrowUp from '../components/ArrowUp';
+import ThreeDots from '../components/ThreeDots';
 
 export const icon = {
   add: Add,
@@ -162,4 +163,5 @@ export const icon = {
   marketplace: Marketplace,
   documentUpload: DocumentUpload,
   arrowUp: ArrowUp,
+  threeDots: ThreeDots,
 };

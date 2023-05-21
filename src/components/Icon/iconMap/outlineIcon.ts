@@ -50,6 +50,7 @@ import SvgMarketplaceOutline from '../components/Marketplace/MarketplaceOutline'
 import SvgArrowUpOutline from '../components/ArrowUp/ArrowUpOutline';
 import SvgArrowDownOutline from '../components/ArrowDown/ArrowDownOutline';
 import SvgDeleteOutline from '../components/Delete/DeleteOutline';
+import SvgThreeDotsOutline from '../components/ThreeDots/ThreeDotsOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -104,4 +105,5 @@ export const outlineIcon = {
   marketplaceOutline: SvgMarketplaceOutline,
   arrowUpOutline: SvgArrowUpOutline,
   arrowDownOutline: SvgArrowDownOutline,
+  threeDotsOutline: SvgThreeDotsOutline,
 };

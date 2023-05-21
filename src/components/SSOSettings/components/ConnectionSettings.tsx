@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 type ConnectionSettingsProps = {
-  hostname?: string;
+  hostName?: string;
   port?: string;
   baseDN?: string;
   groupBaseDN?: string;
@@ -26,7 +26,7 @@ type ConnectionSettingsProps = {
 };
 
 export interface IConnectionSettingsForm {
-  hostname: string;
+  hostName: string;
   port: string;
   baseDN: string;
   groupBaseDN?: string;
@@ -37,7 +37,7 @@ export interface IConnectionSettingsForm {
 }
 
 const schema = yup.object({
-  hostname: yup.string().required('Required field'),
+  hostName: yup.string().required('Required field'),
   port: yup.string().required('Required field'),
   baseDN: yup.string().required('Required field'),
   groupBaseDN: yup.string(),
@@ -47,7 +47,7 @@ const schema = yup.object({
 });
 
 const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
-  hostname = '',
+  hostName = '',
   port = '',
   baseDN = '',
   groupBaseDN = '',
@@ -69,7 +69,7 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
-      hostname,
+      hostName,
       port,
       baseDN,
       groupBaseDN,
@@ -85,11 +85,11 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
       type: FieldType.Input,
       variant: Variant.Text,
       placeholder: '',
-      name: 'hostname',
+      name: 'hostName',
       label: 'Hostname*',
       control,
-      defaultValue: hostname,
-      error: errors.hostname?.message,
+      defaultValue: hostName,
+      error: errors.hostName?.message,
     },
     {
       type: FieldType.Input,

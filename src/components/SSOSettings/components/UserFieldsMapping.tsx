@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 type UserFieldsMappingProps = {
-  username?: string;
+  userName?: string;
   fullName?: string;
   email?: string;
   title?: string;
@@ -23,7 +23,7 @@ type UserFieldsMappingProps = {
 };
 
 export interface IUserFieldsMappingForm {
-  username: string;
+  userName: string;
   fullName: string;
   email: string;
   title: string;
@@ -32,7 +32,7 @@ export interface IUserFieldsMappingForm {
 }
 
 const schema = yup.object({
-  username: yup.string().required('Required field'),
+  userName: yup.string().required('Required field'),
   fullName: yup.string().required('Required field'),
   email: yup.string().email('Enter valid email').required('Required field'),
   title: yup.string().required('Required field'),
@@ -41,7 +41,7 @@ const schema = yup.object({
 });
 
 const UserFieldsMapping: React.FC<UserFieldsMappingProps> = ({
-  username = '',
+  userName = '',
   fullName = '',
   email = '',
   title = '',
@@ -61,7 +61,7 @@ const UserFieldsMapping: React.FC<UserFieldsMappingProps> = ({
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
-      username,
+      userName,
       fullName,
       email,
       title,
@@ -75,11 +75,11 @@ const UserFieldsMapping: React.FC<UserFieldsMappingProps> = ({
       type: FieldType.Input,
       variant: Variant.Text,
       placeholder: '',
-      name: 'username',
+      name: 'userName',
       label: 'User Name*',
       control,
-      defaultValue: username,
-      error: errors.username?.message,
+      defaultValue: userName,
+      error: errors.userName?.message,
     },
     {
       type: FieldType.Input,

@@ -11,10 +11,13 @@ import GroupFieldsMapping, {
   IGroupFieldsMappingForm,
 } from './GroupFieldsMapping';
 import useCarousel from 'hooks/useCarousel';
+import { ISSOSetting } from '..';
 
 type ConfigureLDAPProps = {
   open: boolean;
   closeModal: () => void;
+  refetch: any;
+  ssoSetting?: ISSOSetting;
 };
 
 type LdapForm = {
@@ -28,15 +31,44 @@ type LdapForm = {
 const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
   open,
   closeModal,
+  refetch,
+  ssoSetting,
 }): ReactElement => {
   const [currentScreen, prev, next, setCurrentScreen] = useCarousel(0, 3);
   // Data from all three forms
+
+  const connectionSettingsConfig = ssoSetting?.config?.connection;
+  const userFieldMapConfig = ssoSetting?.config?.userFieldMap;
+  const groupFieldMapConfig = ssoSetting?.config?.groupFieldMap;
+
   const [connectionSettingsData, setConnectionSettingsData] =
-    useState<IConnectionSettingsForm>();
+    useState<IConnectionSettingsForm>({
+      hostName: connectionSettingsConfig?.hostName,
+      port: connectionSettingsConfig?.port,
+      baseDN: connectionSettingsConfig?.baseDN,
+      groupBaseDN: connectionSettingsConfig?.groupBaseDN,
+      upnSuffix: connectionSettingsConfig?.upnSuffix,
+      administratorDN: connectionSettingsConfig?.authentication?.adminDN,
+      password: connectionSettingsConfig?.authentication?.password,
+      allowFallback: ssoSetting?.allowFallback,
+    });
+
   const [userFieldsMappingData, setUserFieldsMappingData] =
-    useState<IUserFieldsMappingForm>();
+    useState<IUserFieldsMappingForm>({
+      userName: userFieldMapConfig?.userName,
+      fullName: userFieldMapConfig?.fullName,
+      email: userFieldMapConfig?.email,
+      title: userFieldMapConfig?.title,
+      workMobile: userFieldMapConfig?.workMobile,
+      userObjectFilter: userFieldMapConfig?.userObjectFilter,
+    });
+
   const [groupFieldsMappingData, setGroupFieldsMappingData] =
-    useState<IGroupFieldsMappingForm>();
+    useState<IGroupFieldsMappingForm>({
+      groupName: groupFieldMapConfig?.groupName,
+      groupMemberUID: groupFieldMapConfig?.groupMemberUID,
+      groupObjectFilter: groupFieldMapConfig?.groupObjectFilter,
+    });
 
   const [connectionSettingsError, setConnectionSettingsError] =
     useState<boolean>(false);
@@ -49,7 +81,7 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       id: 'connection-settings',
       form: (
         <ConnectionSettings
-          hostname={connectionSettingsData?.hostname}
+          hostName={connectionSettingsData?.hostName}
           port={connectionSettingsData?.port}
           baseDN={connectionSettingsData?.baseDN}
           groupBaseDN={connectionSettingsData?.groupBaseDN}
@@ -73,7 +105,7 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
           email={userFieldsMappingData?.email}
           fullName={userFieldsMappingData?.fullName}
           title={userFieldsMappingData?.title}
-          username={userFieldsMappingData?.username}
+          userName={userFieldsMappingData?.userName}
           userObjectFilter={userFieldsMappingData?.userObjectFilter}
           workMobile={userFieldsMappingData?.workMobile}
           setData={setUserFieldsMappingData}
@@ -90,7 +122,7 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       form: (
         <GroupFieldsMapping
           groupName={groupFieldsMappingData?.groupName}
-          groupMemberUid={groupFieldsMappingData?.groupMemberUid}
+          groupMemberUID={groupFieldsMappingData?.groupMemberUID}
           groupObjectFilter={groupFieldsMappingData?.groupObjectFilter}
           connectionSettingsData={connectionSettingsData}
           userFieldsMappingData={userFieldsMappingData}
@@ -98,6 +130,7 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
           setUserFieldsMappingError={setUserFieldsMappingError}
           setData={setGroupFieldsMappingData}
           closeModal={closeModal}
+          refetch={refetch}
         />
       ),
       nextButtonText: 'Activate',
