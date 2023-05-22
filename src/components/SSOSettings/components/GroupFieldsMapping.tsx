@@ -2,12 +2,15 @@ import Button, {
   Variant as ButtonVariant,
   Type as ButtonType,
 } from 'components/Button';
-import Layout from 'components/Form';
+import Layout, { FieldType } from 'components/Form';
 import React, { ReactElement } from 'react';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
+import { Variant } from 'components/Input';
+import { IGroupFieldsMappingForm } from './ConfigureLDAP';
 
 type GroupFieldsMappingProps = {
-  groupFieldMappingFields: any;
+  groupFieldsMappingData: IGroupFieldsMappingForm;
+  groupFieldMappingControl: any;
   handleSubmit: any;
   onSubmit: any;
   closeModal: () => void;
@@ -16,13 +19,44 @@ type GroupFieldsMappingProps = {
 };
 
 const GroupFieldsMapping: React.FC<GroupFieldsMappingProps> = ({
-  groupFieldMappingFields,
+  groupFieldsMappingData,
+  groupFieldMappingControl,
   handleSubmit,
   closeModal,
   onSubmit,
   isError,
   isLoading,
 }): ReactElement => {
+  const groupFieldMappingFields = [
+    {
+      type: FieldType.Input,
+      variant: Variant.Text,
+      placeholder: '',
+      name: 'groupName',
+      label: 'Group Name',
+      control: groupFieldMappingControl,
+      defaultValue: groupFieldsMappingData?.groupName,
+    },
+    {
+      type: FieldType.Input,
+      variant: Variant.Text,
+      placeholder: '',
+      name: 'groupMemberUID',
+      label: 'Group Member UID',
+      control: groupFieldMappingControl,
+      defaultValue: groupFieldsMappingData?.groupMemberUID,
+    },
+    {
+      type: FieldType.Input,
+      variant: Variant.Text,
+      placeholder: '',
+      name: 'groupObjectFilter',
+      label: 'Group Object Filter',
+      control: groupFieldMappingControl,
+      defaultValue: groupFieldsMappingData?.groupObjectFilter,
+    },
+  ];
+
   return (
     <form
       className="mt-8 ml-6 w-[450px] overflow-y-auto pr-6 "

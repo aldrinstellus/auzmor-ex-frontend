@@ -11,8 +11,6 @@ import { ISSOSetting } from '..';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FieldType } from 'components/Form';
-import { Variant } from 'components/Input';
 import { useMutation } from '@tanstack/react-query';
 import { IdentityProvider, updateSso } from 'queries/organization';
 
@@ -136,94 +134,6 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
     },
   });
 
-  const connectionSettingFields = [
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'hostName',
-      label: 'Hostname*',
-      control: connectionSettingsControl,
-      defaultValue: connectionSettingsData?.hostName,
-      error: connectionSettingsFormState.errors.hostName?.message,
-    },
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'port',
-      label: 'Port*',
-      control: connectionSettingsControl,
-      defaultValue: connectionSettingsData?.port,
-      error: connectionSettingsFormState.errors.port?.message,
-    },
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'baseDN',
-      label: 'Base DN*',
-      control: connectionSettingsControl,
-      defaultValue: connectionSettingsData?.baseDN,
-      error: connectionSettingsFormState.errors.baseDN?.message,
-    },
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'groupBaseDN',
-      label: 'Group Base DN',
-      control: connectionSettingsControl,
-      defaultValue: connectionSettingsData?.groupBaseDN,
-    },
-  ];
-
-  const userSettingFields = [
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'upnSuffix',
-      label: 'UPN Suffix*',
-      control: connectionSettingsControl,
-      defaultValue: connectionSettingsData?.upnSuffix,
-      error: connectionSettingsFormState.errors.upnSuffix?.message,
-    },
-  ];
-
-  const authenticationSettingFields = [
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'administratorDN',
-      label: 'Administrator DN*',
-      control: connectionSettingsControl,
-      defaultValue: connectionSettingsData?.administratorDN,
-      error: connectionSettingsFormState.errors.administratorDN?.message,
-    },
-    {
-      type: FieldType.Input,
-      variant: Variant.Password,
-      placeholder: '',
-      name: 'password',
-      label: 'Password*',
-      control: connectionSettingsControl,
-      defaultValue: connectionSettingsData?.password,
-      error: connectionSettingsFormState.errors.password?.message,
-    },
-    {
-      type: FieldType.Checkbox,
-      label: 'Allow Auzmor Office to authenticate as a fallback mechanism',
-      labelDescription:
-        'When the LDAP is down, Auzmor Office can authenticate the user. Organization Primary Admin can control this behavior by enabling/disabling the flag.',
-      name: 'allowFallback',
-      control: connectionSettingsControl,
-      defaultValue: connectionSettingsData?.allowFallback,
-      error: connectionSettingsFormState.errors.allowFallback?.message,
-    },
-  ];
-
   const connectionSettingsOnSubmit = () => {
     setConnectionSettingsData(connectionSettingsGetValues());
     setConnectionSettingsError(false);
@@ -262,67 +172,6 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
     },
   });
 
-  const userFieldMappingFields = [
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'userName',
-      label: 'User Name*',
-      control: userFieldMappingControl,
-      defaultValue: userFieldsMappingData?.userName,
-      error: userFieldMappingFormState.errors.userName?.message,
-    },
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'fullName',
-      label: 'Full Name*',
-      control: userFieldMappingControl,
-      defaultValue: userFieldsMappingData?.fullName,
-      error: userFieldMappingFormState.errors.fullName?.message,
-    },
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'email',
-      label: 'Email*',
-      control: userFieldMappingControl,
-      defaultValue: userFieldsMappingData?.email,
-      error: userFieldMappingFormState.errors.email?.message,
-    },
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'title',
-      label: 'Title*',
-      control: userFieldMappingControl,
-      defaultValue: userFieldsMappingData?.title,
-      error: userFieldMappingFormState.errors.title?.message,
-    },
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'workMobile',
-      label: 'Work Mobile',
-      control: userFieldMappingControl,
-      defaultValue: userFieldsMappingData?.workMobile,
-    },
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'userObjectFilter',
-      label: 'User Object Filter',
-      control: userFieldMappingControl,
-      defaultValue: userFieldsMappingData?.userObjectFilter,
-    },
-  ];
-
   const userFieldMappingOnSubmit = () => {
     setUserFieldsMappingData(userFieldMappingGetValues());
     setUserFieldsMappingError(false);
@@ -353,36 +202,6 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
     },
   });
 
-  const groupFieldMappingFields = [
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'groupName',
-      label: 'Group Name',
-      control: groupFieldMappingControl,
-      defaultValue: groupFieldsMappingData?.groupName,
-    },
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'groupMemberUID',
-      label: 'Group Member UID',
-      control: groupFieldMappingControl,
-      defaultValue: groupFieldsMappingData?.groupMemberUID,
-    },
-    {
-      type: FieldType.Input,
-      variant: Variant.Text,
-      placeholder: '',
-      name: 'groupObjectFilter',
-      label: 'Group Object Filter',
-      control: groupFieldMappingControl,
-      defaultValue: groupFieldsMappingData?.groupObjectFilter,
-    },
-  ];
-
   const updateSsoMutation = useMutation({
     mutationKey: ['update-sso-mutation-ldap'],
     mutationFn: updateSso,
@@ -401,7 +220,7 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
     isLoading: groupFieldMappingLoading,
   } = updateSsoMutation;
 
-  const checkIfFormsAreValid = async () => {
+  const checkIfFormsAreValid = () => {
     if (
       connectionSettingsData.hostName === undefined ||
       connectionSettingsData.port === undefined ||
@@ -414,16 +233,13 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       userFieldsMappingData.userName === undefined ||
       userFieldsMappingData.title === undefined
     ) {
-      await connectionSettingsTrigger();
-      await userFieldMappingTrigger();
       return false;
     }
     return true;
   };
 
   const groupFieldMappingOnSubmit = async () => {
-    if (await checkIfFormsAreValid()) {
-      console.log('inside ifff');
+    if (checkIfFormsAreValid()) {
       setConnectionSettingsError(false);
       setUserFieldsMappingError(false);
       setGroupFieldsMappingData(groupFieldMappingGetValues());
@@ -528,9 +344,9 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       id: 'connection-settings',
       form: (
         <ConnectionSettings
-          connectionSettings={connectionSettingFields}
-          userSettings={userSettingFields}
-          authenticationSettings={authenticationSettingFields}
+          connectionSettingsData={connectionSettingsData}
+          connectionSettingsControl={connectionSettingsControl}
+          connectionSettingsFormState={connectionSettingsFormState}
           closeModal={closeModal}
           isError={Object.keys(connectionSettingsFormState.errors).length > 0}
           handleSubmit={connectionSettingsHandleSubmit}
@@ -544,11 +360,13 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       id: 'user-fields-mapping',
       form: (
         <UserFieldsMapping
-          userFieldMappingFields={userFieldMappingFields}
+          userFieldsMappingData={userFieldsMappingData}
+          userFieldMappingControl={userFieldMappingControl}
+          userFieldMappingFormState={userFieldMappingFormState}
           closeModal={closeModal}
+          isError={Object.keys(userFieldMappingFormState.errors).length > 0}
           handleSubmit={userFieldMappingHandleSubmit}
           onSubmit={userFieldMappingOnSubmit}
-          isError={Object.keys(userFieldMappingFormState.errors).length > 0}
         />
       ),
       error: userFieldsMappingError,
@@ -558,7 +376,8 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       id: 'group-fields-mapping',
       form: (
         <GroupFieldsMapping
-          groupFieldMappingFields={groupFieldMappingFields}
+          groupFieldsMappingData={groupFieldsMappingData}
+          groupFieldMappingControl={groupFieldMappingControl}
           closeModal={closeModal}
           handleSubmit={groupFieldMappingHandleSubmit}
           onSubmit={groupFieldMappingOnSubmit}
