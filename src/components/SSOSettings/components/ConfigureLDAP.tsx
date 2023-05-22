@@ -1,22 +1,23 @@
-import Divider, { Variant } from 'components/Divider';
+import Divider, { Variant as DividerVariant } from 'components/Divider';
 import Icon from 'components/Icon';
 import Link from 'components/Link';
 import Modal from 'components/Modal';
-import React, { ReactElement, ReactNode, useState } from 'react';
-import ConnectionSettings, {
-  IConnectionSettingsForm,
-} from './ConnectionSettings';
-import UserFieldsMapping, { IUserFieldsMappingForm } from './UserFieldsMapping';
-import GroupFieldsMapping, {
-  IGroupFieldsMappingForm,
-} from './GroupFieldsMapping';
+import React, { ReactElement, ReactNode, useRef, useState } from 'react';
+import ConnectionSettings from './ConnectionSettings';
+import UserFieldsMapping from './UserFieldsMapping';
+import GroupFieldsMapping from './GroupFieldsMapping';
 import useCarousel from 'hooks/useCarousel';
 import { ISSOSetting } from '..';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useMutation } from '@tanstack/react-query';
+import { IdentityProvider, updateSso } from 'queries/organization';
+import queryClient from 'utils/queryClient';
 
 type ConfigureLDAPProps = {
   open: boolean;
   closeModal: () => void;
-  refetch: any;
   ssoSetting?: ISSOSetting;
 };
 
@@ -28,19 +29,78 @@ type LdapForm = {
   error?: boolean;
 };
 
+// Form interfaces for Connection Settings, User Field Mapping and Group Field Mapping forms
+export interface IConnectionSettingsForm {
+  hostName: string;
+  port: string;
+  baseDN: string;
+  groupBaseDN?: string;
+  upnSuffix: string;
+  administratorDN: string;
+  password: string;
+  allowFallback?: boolean;
+}
+
+export interface IUserFieldsMappingForm {
+  userName: string;
+  fullName: string;
+  email: string;
+  title: string;
+  workMobile?: string;
+  userObjectFilter?: string;
+}
+
+export interface IGroupFieldsMappingForm {
+  groupName?: string;
+  groupMemberUID?: string;
+  groupObjectFilter?: string;
+}
+
+// Schema yub objects for Connection Settings, User Field Mapping and Group Field Mapping forms
+
+const connectionSettingsSchema = yup.object({
+  hostName: yup.string().required('Required field'),
+  port: yup.string().required('Required field'),
+  baseDN: yup.string().required('Required field'),
+  groupBaseDN: yup.string(),
+  upnSuffix: yup.string().required('Required field'),
+  administratorDN: yup.string().required('Required field'),
+  password: yup.string().required('Required field'),
+});
+
+const userFieldMappingSchema = yup.object({
+  userName: yup.string().required('Required field'),
+  fullName: yup.string().required('Required field'),
+  email: yup.string().required('Required field'),
+  title: yup.string().required('Required field'),
+  workMobile: yup.string(),
+  userObjectFilter: yup.string(),
+});
+
+const groupFieldMappingSchema = yup.object({
+  groupName: yup.string(),
+  groupMemberUID: yup.string(),
+  groupObjectFilter: yup.string(),
+});
+
 const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
   open,
   closeModal,
-  refetch,
   ssoSetting,
 }): ReactElement => {
   const [currentScreen, prev, next, setCurrentScreen] = useCarousel(0, 3);
-  // Data from all three forms
+  const [connectionSettingsError, setConnectionSettingsError] =
+    useState<boolean>(false);
+  const [userFieldsMappingError, setUserFieldsMappingError] =
+    useState<boolean>(false);
+  const groupFieldMappingRef = useRef<IGroupFieldsMappingForm>();
 
+  // Seed data for all three forms
   const connectionSettingsConfig = ssoSetting?.config?.connection;
   const userFieldMapConfig = ssoSetting?.config?.userFieldMap;
   const groupFieldMapConfig = ssoSetting?.config?.groupFieldMap;
 
+  // FORM 1: CONNECTION SETTINGS FORM
   const [connectionSettingsData, setConnectionSettingsData] =
     useState<IConnectionSettingsForm>({
       hostName: connectionSettingsConfig?.hostName,
@@ -53,6 +113,36 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       allowFallback: ssoSetting?.allowFallback,
     });
 
+  const {
+    control: connectionSettingsControl,
+    getValues: connectionSettingsGetValues,
+    handleSubmit: connectionSettingsHandleSubmit,
+    formState: connectionSettingsFormState,
+    trigger: connectionSettingsTrigger,
+  } = useForm<IConnectionSettingsForm>({
+    resolver: yupResolver(connectionSettingsSchema),
+    mode: 'onChange',
+    defaultValues: {
+      hostName: connectionSettingsData?.hostName,
+      port: connectionSettingsData?.port,
+      baseDN: connectionSettingsData?.baseDN,
+      groupBaseDN: connectionSettingsData?.groupBaseDN,
+      upnSuffix: connectionSettingsData?.upnSuffix,
+      administratorDN: connectionSettingsData?.administratorDN,
+      password: connectionSettingsData?.password,
+      allowFallback: ssoSetting?.allowFallback,
+    },
+  });
+
+  const connectionSettingsOnSubmit = () => {
+    setConnectionSettingsData(connectionSettingsGetValues());
+    setConnectionSettingsError(false);
+    next();
+  };
+
+  // -----------------------------------------------------------------------
+
+  // FORM 2: USER FIELD MAPPING FORM
   const [userFieldsMappingData, setUserFieldsMappingData] =
     useState<IUserFieldsMappingForm>({
       userName: userFieldMapConfig?.userName,
@@ -63,6 +153,34 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       userObjectFilter: userFieldMapConfig?.userObjectFilter,
     });
 
+  const {
+    control: userFieldMappingControl,
+    getValues: userFieldMappingGetValues,
+    handleSubmit: userFieldMappingHandleSubmit,
+    formState: userFieldMappingFormState,
+    trigger: userFieldMappingTrigger,
+  } = useForm<IUserFieldsMappingForm>({
+    resolver: yupResolver(userFieldMappingSchema),
+    mode: 'onChange',
+    defaultValues: {
+      userName: userFieldsMappingData?.userName,
+      fullName: userFieldsMappingData?.fullName,
+      email: userFieldsMappingData?.email,
+      title: userFieldsMappingData?.title,
+      workMobile: userFieldsMappingData?.workMobile,
+      userObjectFilter: userFieldsMappingData?.userObjectFilter,
+    },
+  });
+
+  const userFieldMappingOnSubmit = () => {
+    setUserFieldsMappingData(userFieldMappingGetValues());
+    setUserFieldsMappingError(false);
+    next();
+  };
+
+  // -----------------------------------------------------------------------
+
+  // FORM 2: GROUP FIELD MAPPING FORM
   const [groupFieldsMappingData, setGroupFieldsMappingData] =
     useState<IGroupFieldsMappingForm>({
       groupName: groupFieldMapConfig?.groupName,
@@ -70,10 +188,164 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       groupObjectFilter: groupFieldMapConfig?.groupObjectFilter,
     });
 
-  const [connectionSettingsError, setConnectionSettingsError] =
-    useState<boolean>(false);
-  const [userFieldsMappingError, setUserFieldsMappingError] =
-    useState<boolean>(false);
+  const {
+    control: groupFieldMappingControl,
+    getValues: groupFieldMappingGetValues,
+    handleSubmit: groupFieldMappingHandleSubmit,
+  } = useForm<IGroupFieldsMappingForm>({
+    resolver: yupResolver(groupFieldMappingSchema),
+    mode: 'onChange',
+    defaultValues: {
+      groupName: groupFieldsMappingData?.groupName,
+      groupMemberUID: groupFieldsMappingData?.groupMemberUID,
+      groupObjectFilter: groupFieldsMappingData?.groupObjectFilter,
+    },
+  });
+
+  const updateSsoMutation = useMutation({
+    mutationKey: ['update-sso-mutation-ldap'],
+    mutationFn: updateSso,
+    onError: (error: any) => {
+      console.log('Error while updating LDAP: ', error);
+    },
+    onSuccess: async (response: any) => {
+      console.log('Updated LDAP successfully', response);
+      await queryClient.invalidateQueries(['get-sso']);
+      closeModal();
+    },
+  });
+
+  const {
+    isError: groupFieldMappingError,
+    isLoading: groupFieldMappingLoading,
+  } = updateSsoMutation;
+
+  const checkIfFormsAreValid = () => {
+    if (
+      connectionSettingsData.hostName === undefined ||
+      connectionSettingsData.port === undefined ||
+      connectionSettingsData.baseDN === undefined ||
+      connectionSettingsData.upnSuffix === undefined ||
+      connectionSettingsData.administratorDN === undefined ||
+      connectionSettingsData.password === undefined ||
+      userFieldsMappingData.email === undefined ||
+      userFieldsMappingData.fullName === undefined ||
+      userFieldsMappingData.userName === undefined ||
+      userFieldsMappingData.title === undefined
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  const groupFieldMappingOnSubmit = async () => {
+    groupFieldMappingRef.current = groupFieldMappingGetValues();
+    configureLDAP();
+  };
+
+  const configureLDAP = async () => {
+    if (checkIfFormsAreValid()) {
+      setConnectionSettingsError(false);
+      setUserFieldsMappingError(false);
+
+      const formData = new FormData();
+
+      formData.append('active', 'true');
+      formData.append(
+        'allowFallback',
+        String(connectionSettingsData.allowFallback || false),
+      );
+
+      // Connection settings data
+      formData.append(
+        'config[connection][hostName]',
+        connectionSettingsData.hostName,
+      );
+      formData.append('config[connection][port]', connectionSettingsData.port);
+      formData.append(
+        'config[connection][baseDN]',
+        connectionSettingsData.baseDN,
+      );
+      if (connectionSettingsData.groupBaseDN) {
+        formData.append(
+          'config[connection][groupBaseDN]',
+          connectionSettingsData.groupBaseDN,
+        );
+      }
+      formData.append(
+        'config[connection][upnSuffix]',
+        connectionSettingsData.upnSuffix,
+      );
+      formData.append(
+        'config[connection][authentication][adminDN]',
+        connectionSettingsData.administratorDN,
+      );
+      formData.append(
+        'config[connection][authentication][password]',
+        connectionSettingsData.password,
+      );
+
+      // UserFieldMap data
+      formData.append(
+        'config[userFieldMap][userName]',
+        userFieldsMappingData.userName,
+      );
+      formData.append(
+        'config[userFieldMap][fullName]',
+        userFieldsMappingData.fullName,
+      );
+      formData.append(
+        'config[userFieldMap][email]',
+        userFieldsMappingData.email,
+      );
+      formData.append(
+        'config[userFieldMap][title]',
+        userFieldsMappingData.title,
+      );
+      if (userFieldsMappingData.workMobile) {
+        formData.append(
+          'config[userFieldMap][workMobile]',
+          userFieldsMappingData.workMobile,
+        );
+      }
+      if (userFieldsMappingData.userObjectFilter) {
+        formData.append(
+          'config[userFieldMap][userObjectFilter]',
+          userFieldsMappingData.userObjectFilter,
+        );
+      }
+
+      if (groupFieldMappingRef.current?.groupName) {
+        console.log('Not working?');
+        formData.append(
+          'config[groupFieldMap][groupName]',
+          groupFieldMappingRef.current?.groupName,
+        );
+      }
+      if (groupFieldMappingRef.current?.groupMemberUID) {
+        formData.append(
+          'config[groupFieldMap][groupMemberUID]',
+          groupFieldMappingRef.current?.groupMemberUID,
+        );
+      }
+      if (groupFieldMappingRef.current?.groupObjectFilter) {
+        formData.append(
+          'config[groupFieldMap][groupObjectFilter]',
+          groupFieldMappingRef.current?.groupObjectFilter,
+        );
+      }
+
+      updateSsoMutation.mutateAsync({
+        idp: IdentityProvider.CUSTOM_LDAP,
+        formData,
+      });
+    } else {
+      setConnectionSettingsError(true);
+      connectionSettingsTrigger();
+      setUserFieldsMappingError(true);
+      userFieldMappingTrigger();
+    }
+  };
 
   const ldapForms = [
     {
@@ -81,18 +353,13 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       id: 'connection-settings',
       form: (
         <ConnectionSettings
-          hostName={connectionSettingsData?.hostName}
-          port={connectionSettingsData?.port}
-          baseDN={connectionSettingsData?.baseDN}
-          groupBaseDN={connectionSettingsData?.groupBaseDN}
-          upnSuffix={connectionSettingsData?.upnSuffix}
-          administratorDN={connectionSettingsData?.administratorDN}
-          password={connectionSettingsData?.password}
-          allowFallback={false}
-          setData={setConnectionSettingsData}
-          setError={setConnectionSettingsError}
+          connectionSettingsData={connectionSettingsData}
+          connectionSettingsControl={connectionSettingsControl}
+          connectionSettingsFormState={connectionSettingsFormState}
           closeModal={closeModal}
-          next={next}
+          isError={Object.keys(connectionSettingsFormState.errors).length > 0}
+          handleSubmit={connectionSettingsHandleSubmit}
+          onSubmit={connectionSettingsOnSubmit}
         />
       ),
       error: connectionSettingsError,
@@ -102,16 +369,13 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       id: 'user-fields-mapping',
       form: (
         <UserFieldsMapping
-          email={userFieldsMappingData?.email}
-          fullName={userFieldsMappingData?.fullName}
-          title={userFieldsMappingData?.title}
-          userName={userFieldsMappingData?.userName}
-          userObjectFilter={userFieldsMappingData?.userObjectFilter}
-          workMobile={userFieldsMappingData?.workMobile}
-          setData={setUserFieldsMappingData}
-          setError={setUserFieldsMappingError}
+          userFieldsMappingData={userFieldsMappingData}
+          userFieldMappingControl={userFieldMappingControl}
+          userFieldMappingFormState={userFieldMappingFormState}
           closeModal={closeModal}
-          next={next}
+          isError={Object.keys(userFieldMappingFormState.errors).length > 0}
+          handleSubmit={userFieldMappingHandleSubmit}
+          onSubmit={userFieldMappingOnSubmit}
         />
       ),
       error: userFieldsMappingError,
@@ -121,16 +385,13 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       id: 'group-fields-mapping',
       form: (
         <GroupFieldsMapping
-          groupName={groupFieldsMappingData?.groupName}
-          groupMemberUID={groupFieldsMappingData?.groupMemberUID}
-          groupObjectFilter={groupFieldsMappingData?.groupObjectFilter}
-          connectionSettingsData={connectionSettingsData}
-          userFieldsMappingData={userFieldsMappingData}
-          setConnectionSettingsError={setConnectionSettingsError}
-          setUserFieldsMappingError={setUserFieldsMappingError}
-          setData={setGroupFieldsMappingData}
+          groupFieldsMappingData={groupFieldsMappingData}
+          groupFieldMappingControl={groupFieldMappingControl}
           closeModal={closeModal}
-          refetch={refetch}
+          handleSubmit={groupFieldMappingHandleSubmit}
+          onSubmit={groupFieldMappingOnSubmit}
+          isError={groupFieldMappingError}
+          isLoading={groupFieldMappingLoading}
         />
       ),
       nextButtonText: 'Activate',
@@ -200,7 +461,10 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
                   ))}
               </div>
             </div>
-            <Divider className="!bg-gray-100" variant={Variant.Vertical} />
+            <Divider
+              className="!bg-gray-100"
+              variant={DividerVariant.Vertical}
+            />
             {ldapForms[currentScreen].form}
           </div>
         </div>

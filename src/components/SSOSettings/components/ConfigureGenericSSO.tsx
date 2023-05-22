@@ -15,36 +15,34 @@ import { updateSso } from 'queries/organization';
 import { useMutation } from '@tanstack/react-query';
 import apiService from 'utils/apiService';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
+import queryClient from 'utils/queryClient';
 
 type ConfigureGenericSSOProps = {
   open: boolean;
   closeModal: () => void;
   ssoSetting?: ISSOSetting;
-  refetch: any;
 };
 
 interface IForm {
   allowFallback: boolean;
-  allowOnlyExistingUsers: boolean;
+  allowOnlyExistingUser: boolean;
   file: File;
 }
 
 const schema = yup.object({
   allowFallback: yup.boolean().default(false),
-  allowOnlyExistingUsers: yup.boolean().default(false),
+  allowOnlyExistingUser: yup.boolean().default(false),
 });
 
 const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
   open,
   closeModal,
   ssoSetting,
-  refetch,
 }): ReactElement => {
   const { control, handleSubmit, getValues } = useForm<IForm>({
     resolver: yupResolver(schema),
     mode: 'onSubmit',
   });
-
   const fields = [
     {
       type: FieldType.Checkbox,
@@ -53,16 +51,16 @@ const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
         'When the LDAP is down, Auzmor Office can authenticate the user. Organization Primary Admin can control this behavior by enabling/disabling the flag.',
       name: 'allowFallback',
       control,
-      defaultValue: ssoSetting?.config?.allowFallback,
+      defaultValue: ssoSetting?.allowFallback,
     },
     {
       type: FieldType.Checkbox,
       label: 'Allow only existing users to do SSO',
       labelDescription:
         'Enable this option when you do NOT want SSO to create a new user and strictly allow only existing users to login.',
-      name: 'allowOnlyExistingUsers',
+      name: 'allowOnlyExistingUser',
       control,
-      defaultValue: ssoSetting?.config?.autoAllowNewUser,
+      defaultValue: ssoSetting?.allowOnlyExistingUser,
     },
   ];
 
@@ -72,9 +70,9 @@ const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
     onError: (error: any) => {
       console.log('Error while updating SSO: ', error);
     },
-    onSuccess: (response: any) => {
+    onSuccess: async (response: any) => {
       console.log('Updated SSO successfully', response);
-      refetch();
+      await queryClient.invalidateQueries(['get-sso']);
       closeModal();
     },
   });
@@ -84,24 +82,26 @@ const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
   const [xmlFile, setXmlFile] = useState<File[]>();
 
   const onSubmit = async () => {
-    if (xmlFile && xmlFile[0] && xmlFile[0]?.type == 'text/xml' && ssoSetting) {
-      const values = getValues();
-      const formData = new FormData();
-      formData.append('active', 'true');
-      formData.append('allowFallback', String(values.allowFallback || false));
-      formData.append(
-        'allowOnlyExistingUsers',
-        String(values.allowOnlyExistingUsers || false),
-      );
-      formData.append('file', xmlFile[0]);
+    const values = getValues();
+    const formData = new FormData();
+    formData.append('active', 'true');
+    formData.append('allowFallback', String(values.allowFallback || false));
+    formData.append(
+      'allowOnlyExistingUser',
+      String(values.allowOnlyExistingUser || false),
+    );
+    if (xmlFile && xmlFile[0] && xmlFile[0]?.type == 'text/xml') {
+      formData.append('file', new Blob(xmlFile, { type: 'application/xml' }));
+    }
 
-      apiService.updateContentType('multipart/form-data');
+    apiService.updateContentType('multipart/form-data');
+    if (ssoSetting) {
       const data = await updateSsoMutation.mutateAsync({
         idp: ssoSetting.idp,
         formData,
       });
-      apiService.updateContentType('application/json');
     }
+    apiService.updateContentType('application/json');
   };
 
   return (

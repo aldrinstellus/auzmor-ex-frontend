@@ -25,14 +25,14 @@ export type ISSOSetting = {
   active?: boolean;
   config?: any;
   allowFallback?: boolean;
-  autoAllowNewUser?: boolean;
+  allowOnlyExistingUser?: boolean;
 };
 
 type SSOConfig = {
   idp: IdentityProvider;
   config: any;
   allowFallback?: boolean;
-  autoAllowNewUser?: boolean;
+  allowOnlyExistingUser?: boolean;
   active: boolean;
 };
 
@@ -43,7 +43,7 @@ const SSOSettings: React.FC = (): ReactElement => {
   // 4. If the user successfully integrates SSO, refetch list of SSOs
   // 5. If the user successfully deletes SSO, refetch list of SSOs.
 
-  const { data, isLoading, isError, refetch } = useGetSSO();
+  const { data, isLoading, isError } = useGetSSO();
   const [open, openModal, closeModal] = useModal();
   const [ssoSetting, setSsoSetting] = useState<ISSOSetting>();
   const [showErrorBanner, setShowErrorBanner] = useState<boolean>(false);
@@ -56,17 +56,17 @@ const SSOSettings: React.FC = (): ReactElement => {
     return <div>Error fetching SSO List</div>;
   }
 
-  const getSSOValues = (idp: IdentityProvider) => {
+  const getSSOValues = (idp: string) => {
     let result = {};
     const ssoSetting: SSOConfig = data.result.data.find(
-      (sso: SSOConfig) => sso.idp === idp,
+      (sso: any) => sso.idp === idp,
     );
     if (ssoSetting) {
       result = {
         active: ssoSetting.active,
         config: ssoSetting.config,
-        allowFallback: ssoSetting.allowFallback,
-        autoAllowNewUser: ssoSetting.autoAllowNewUser,
+        allowFallback: ssoSetting?.allowFallback,
+        allowOnlyExistingUser: ssoSetting?.allowOnlyExistingUser,
       };
     }
     return result;
@@ -80,7 +80,7 @@ const SSOSettings: React.FC = (): ReactElement => {
       key: 'Active Directory',
       idp: IdentityProvider.CUSTOM_LDAP,
       configureScreen: ConfigureScreen.LDAP,
-      ...getSSOValues(IdentityProvider.CUSTOM_LDAP),
+      ...getSSOValues(IdentityProvider[0]),
     },
     {
       logo: MicrosoftAD,
@@ -89,7 +89,7 @@ const SSOSettings: React.FC = (): ReactElement => {
       key: 'ADFS (SSO)',
       idp: IdentityProvider.MS_AZURE_AD,
       configureScreen: ConfigureScreen.GENERIC,
-      ...getSSOValues(IdentityProvider.MS_AZURE_AD),
+      ...getSSOValues(IdentityProvider[1]),
     },
     {
       logo: Okta,
@@ -98,7 +98,7 @@ const SSOSettings: React.FC = (): ReactElement => {
       key: 'Okta (SSO)',
       idp: IdentityProvider.OKTA,
       configureScreen: ConfigureScreen.GENERIC,
-      ...getSSOValues(IdentityProvider.OKTA),
+      ...getSSOValues(IdentityProvider[2]),
     },
     {
       logo: GSuite,
@@ -107,7 +107,7 @@ const SSOSettings: React.FC = (): ReactElement => {
       key: 'Google (SSO)',
       idp: IdentityProvider.GSUITE,
       configureScreen: ConfigureScreen.GENERIC,
-      ...getSSOValues(IdentityProvider.GSUITE),
+      ...getSSOValues(IdentityProvider[3]),
     },
     {
       logo: SAML,
@@ -116,7 +116,7 @@ const SSOSettings: React.FC = (): ReactElement => {
       key: 'SAML (SSO)',
       idp: IdentityProvider.CUSTOM_SAML,
       configureScreen: ConfigureScreen.GENERIC,
-      ...getSSOValues(IdentityProvider.CUSTOM_SAML),
+      ...getSSOValues(IdentityProvider[4]),
     },
   ];
   const onClick = (key: string) => {
@@ -126,13 +126,16 @@ const SSOSettings: React.FC = (): ReactElement => {
 
   return (
     <div>
-      {showErrorBanner && (
-        <Banner
-          variant={Variant.Error}
-          title={`Deactivate existing SSO to configure`}
-          className="mb-4"
-        />
-      )}
+      {showErrorBanner &&
+        ssoIntegrations.find((sso: ISSOSetting) => sso.active) && (
+          <Banner
+            variant={Variant.Error}
+            title={`Deactivate ${
+              ssoIntegrations.find((sso: ISSOSetting) => sso.active)?.key
+            } to configure`}
+            className="mb-4"
+          />
+        )}
       <div className="flex gap-x-6 flex-wrap gap-y-6">
         {ssoIntegrations.map((integration: ISSOSetting) => (
           <SSOCard
@@ -143,7 +146,6 @@ const SSOSettings: React.FC = (): ReactElement => {
             onClick={onClick}
             idp={integration.idp}
             active={integration.active || false}
-            refetch={refetch}
             setShowErrorBanner={setShowErrorBanner}
             activeSSO={ssoIntegrations.find((sso: ISSOSetting) => sso.active)}
           />
@@ -153,7 +155,6 @@ const SSOSettings: React.FC = (): ReactElement => {
             ssoSetting={ssoSetting}
             closeModal={closeModal}
             open={open}
-            refetch={refetch}
           />
         )}
         {open && ssoSetting?.configureScreen === ConfigureScreen.LDAP && (
@@ -161,7 +162,6 @@ const SSOSettings: React.FC = (): ReactElement => {
             ssoSetting={ssoSetting}
             closeModal={closeModal}
             open={open}
-            refetch={refetch}
           />
         )}
       </div>

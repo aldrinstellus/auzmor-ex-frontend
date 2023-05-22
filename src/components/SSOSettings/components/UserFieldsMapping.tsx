@@ -1,4 +1,3 @@
-import { yupResolver } from '@hookform/resolvers/yup';
 import Button, {
   Variant as ButtonVariant,
   Type as ButtonType,
@@ -6,80 +5,37 @@ import Button, {
 import Layout, { FieldType } from 'components/Form';
 import { Variant } from 'components/Input';
 import React, { ReactElement } from 'react';
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
+import { IUserFieldsMappingForm } from './ConfigureLDAP';
 
 type UserFieldsMappingProps = {
-  userName?: string;
-  fullName?: string;
-  email?: string;
-  title?: string;
-  workMobile?: string;
-  userObjectFilter?: string;
-  setData: (data: IUserFieldsMappingForm) => void;
-  setError: (error: boolean) => void;
+  userFieldsMappingData: IUserFieldsMappingForm;
+  userFieldMappingControl: any;
+  userFieldMappingFormState: any;
+  handleSubmit: any;
+  onSubmit: any;
   closeModal: () => void;
-  next: () => void;
+  isError: boolean;
 };
 
-export interface IUserFieldsMappingForm {
-  userName: string;
-  fullName: string;
-  email: string;
-  title: string;
-  workMobile?: string;
-  userObjectFilter?: string;
-}
-
-const schema = yup.object({
-  userName: yup.string().required('Required field'),
-  fullName: yup.string().required('Required field'),
-  email: yup.string().email('Enter valid email').required('Required field'),
-  title: yup.string().required('Required field'),
-  workMobile: yup.string(),
-  userObjectFilter: yup.string(),
-});
-
 const UserFieldsMapping: React.FC<UserFieldsMappingProps> = ({
-  userName = '',
-  fullName = '',
-  email = '',
-  title = '',
-  workMobile = '',
-  userObjectFilter = '',
-  setData,
-  setError,
+  userFieldsMappingData,
+  userFieldMappingControl,
+  userFieldMappingFormState,
+  handleSubmit,
+  onSubmit,
   closeModal,
-  next,
+  isError,
 }): ReactElement => {
-  const {
-    control,
-    getValues,
-    handleSubmit,
-    formState: { errors, isValid },
-  } = useForm<IUserFieldsMappingForm>({
-    resolver: yupResolver(schema),
-    mode: 'onChange',
-    defaultValues: {
-      userName,
-      fullName,
-      email,
-      title,
-      workMobile,
-      userObjectFilter,
-    },
-  });
-
-  const userFields = [
+  const userFieldMappingFields = [
     {
       type: FieldType.Input,
       variant: Variant.Text,
       placeholder: '',
       name: 'userName',
       label: 'User Name*',
-      control,
-      defaultValue: userName,
-      error: errors.userName?.message,
+      control: userFieldMappingControl,
+      defaultValue: userFieldsMappingData?.userName,
+      error: userFieldMappingFormState.errors.userName?.message,
     },
     {
       type: FieldType.Input,
@@ -87,9 +43,9 @@ const UserFieldsMapping: React.FC<UserFieldsMappingProps> = ({
       placeholder: '',
       name: 'fullName',
       label: 'Full Name*',
-      control,
-      defaultValue: fullName,
-      error: errors.fullName?.message,
+      control: userFieldMappingControl,
+      defaultValue: userFieldsMappingData?.fullName,
+      error: userFieldMappingFormState.errors.fullName?.message,
     },
     {
       type: FieldType.Input,
@@ -97,9 +53,9 @@ const UserFieldsMapping: React.FC<UserFieldsMappingProps> = ({
       placeholder: '',
       name: 'email',
       label: 'Email*',
-      control,
-      defaultValue: email,
-      error: errors.email?.message,
+      control: userFieldMappingControl,
+      defaultValue: userFieldsMappingData?.email,
+      error: userFieldMappingFormState.errors.email?.message,
     },
     {
       type: FieldType.Input,
@@ -107,9 +63,9 @@ const UserFieldsMapping: React.FC<UserFieldsMappingProps> = ({
       placeholder: '',
       name: 'title',
       label: 'Title*',
-      control,
-      defaultValue: title,
-      error: errors.title?.message,
+      control: userFieldMappingControl,
+      defaultValue: userFieldsMappingData?.title,
+      error: userFieldMappingFormState.errors.title?.message,
     },
     {
       type: FieldType.Input,
@@ -117,8 +73,8 @@ const UserFieldsMapping: React.FC<UserFieldsMappingProps> = ({
       placeholder: '',
       name: 'workMobile',
       label: 'Work Mobile',
-      control,
-      defaultValue: workMobile,
+      control: userFieldMappingControl,
+      defaultValue: userFieldsMappingData?.workMobile,
     },
     {
       type: FieldType.Input,
@@ -126,21 +82,14 @@ const UserFieldsMapping: React.FC<UserFieldsMappingProps> = ({
       placeholder: '',
       name: 'userObjectFilter',
       label: 'User Object Filter',
-      control,
-      defaultValue: userObjectFilter,
+      control: userFieldMappingControl,
+      defaultValue: userFieldsMappingData?.userObjectFilter,
     },
   ];
-
-  const onSubmit = () => {
-    setData(getValues());
-    setError(false);
-    next();
-  };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mt-8 ml-6 max-h-[400px] w-[450px] overflow-y-auto pb-12 pr-6">
-        <Layout fields={userFields} />
+        <Layout fields={userFieldMappingFields} />
       </div>
 
       <div className="bg-blue-50 mt-4 p-0 absolute bottom-0 left-0 right-0">
@@ -156,7 +105,7 @@ const UserFieldsMapping: React.FC<UserFieldsMappingProps> = ({
             label="Continue"
             variant={ButtonVariant.Primary}
             type={ButtonType.Submit}
-            disabled={Object.keys(errors).length > 0}
+            disabled={isError}
           />
         </div>
       </div>

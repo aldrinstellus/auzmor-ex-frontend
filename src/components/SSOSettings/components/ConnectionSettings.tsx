@@ -1,4 +1,3 @@
-import { yupResolver } from '@hookform/resolvers/yup';
 import Button, {
   Variant as ButtonVariant,
   Type as ButtonType,
@@ -7,79 +6,27 @@ import Divider from 'components/Divider';
 import Layout, { FieldType } from 'components/Form';
 import { Variant } from 'components/Input';
 import React, { ReactElement } from 'react';
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
+import { IConnectionSettingsForm } from './ConfigureLDAP';
 
 type ConnectionSettingsProps = {
-  hostName?: string;
-  port?: string;
-  baseDN?: string;
-  groupBaseDN?: string;
-  upnSuffix?: string;
-  administratorDN?: string;
-  password?: string;
-  allowFallback?: boolean;
-  setData: (data: IConnectionSettingsForm) => void;
-  setError: (error: boolean) => void;
+  connectionSettingsData: IConnectionSettingsForm;
+  connectionSettingsControl: any;
+  connectionSettingsFormState: any;
+  handleSubmit: any;
+  onSubmit: any;
   closeModal: () => void;
-  next: () => void;
+  isError: boolean;
 };
 
-export interface IConnectionSettingsForm {
-  hostName: string;
-  port: string;
-  baseDN: string;
-  groupBaseDN?: string;
-  upnSuffix: string;
-  administratorDN: string;
-  password: string;
-  allowFallback?: boolean;
-}
-
-const schema = yup.object({
-  hostName: yup.string().required('Required field'),
-  port: yup.string().required('Required field'),
-  baseDN: yup.string().required('Required field'),
-  groupBaseDN: yup.string(),
-  upnSuffix: yup.string().required('Required field'),
-  administratorDN: yup.string().required('Required field'),
-  password: yup.string().required('Required field'),
-});
-
 const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
-  hostName = '',
-  port = '',
-  baseDN = '',
-  groupBaseDN = '',
-  upnSuffix = '',
-  administratorDN = '',
-  password = '',
-  allowFallback = false,
-  setData,
-  setError,
+  connectionSettingsData,
+  connectionSettingsControl,
+  connectionSettingsFormState,
+  handleSubmit,
+  onSubmit,
   closeModal,
-  next,
+  isError,
 }): ReactElement => {
-  const {
-    control,
-    getValues,
-    handleSubmit,
-    formState: { errors, isValid },
-  } = useForm<IConnectionSettingsForm>({
-    resolver: yupResolver(schema),
-    mode: 'onChange',
-    defaultValues: {
-      hostName,
-      port,
-      baseDN,
-      groupBaseDN,
-      upnSuffix,
-      administratorDN,
-      password,
-      allowFallback,
-    },
-  });
-
   const connectionSettingFields = [
     {
       type: FieldType.Input,
@@ -87,9 +34,9 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
       placeholder: '',
       name: 'hostName',
       label: 'Hostname*',
-      control,
-      defaultValue: hostName,
-      error: errors.hostName?.message,
+      control: connectionSettingsControl,
+      defaultValue: connectionSettingsData?.hostName,
+      error: connectionSettingsFormState.errors.hostName?.message,
     },
     {
       type: FieldType.Input,
@@ -97,9 +44,9 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
       placeholder: '',
       name: 'port',
       label: 'Port*',
-      control,
-      defaultValue: port,
-      error: errors.port?.message,
+      control: connectionSettingsControl,
+      defaultValue: connectionSettingsData?.port,
+      error: connectionSettingsFormState.errors.port?.message,
     },
     {
       type: FieldType.Input,
@@ -107,9 +54,9 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
       placeholder: '',
       name: 'baseDN',
       label: 'Base DN*',
-      control,
-      defaultValue: baseDN,
-      error: errors.baseDN?.message,
+      control: connectionSettingsControl,
+      defaultValue: connectionSettingsData?.baseDN,
+      error: connectionSettingsFormState.errors.baseDN?.message,
     },
     {
       type: FieldType.Input,
@@ -117,8 +64,8 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
       placeholder: '',
       name: 'groupBaseDN',
       label: 'Group Base DN',
-      control,
-      defaultValue: groupBaseDN,
+      control: connectionSettingsControl,
+      defaultValue: connectionSettingsData?.groupBaseDN,
     },
   ];
 
@@ -129,22 +76,22 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
       placeholder: '',
       name: 'upnSuffix',
       label: 'UPN Suffix*',
-      control,
-      defaultValue: upnSuffix,
-      error: errors.upnSuffix?.message,
+      control: connectionSettingsControl,
+      defaultValue: connectionSettingsData?.upnSuffix,
+      error: connectionSettingsFormState.errors.upnSuffix?.message,
     },
   ];
 
-  const authenticationFields = [
+  const authenticationSettingFields = [
     {
       type: FieldType.Input,
       variant: Variant.Text,
       placeholder: '',
       name: 'administratorDN',
       label: 'Administrator DN*',
-      control,
-      defaultValue: administratorDN,
-      error: errors.administratorDN?.message,
+      control: connectionSettingsControl,
+      defaultValue: connectionSettingsData?.administratorDN,
+      error: connectionSettingsFormState.errors.administratorDN?.message,
     },
     {
       type: FieldType.Input,
@@ -152,9 +99,9 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
       placeholder: '',
       name: 'password',
       label: 'Password*',
-      control,
-      defaultValue: password,
-      error: errors.password?.message,
+      control: connectionSettingsControl,
+      defaultValue: connectionSettingsData?.password,
+      error: connectionSettingsFormState.errors.password?.message,
     },
     {
       type: FieldType.Checkbox,
@@ -162,17 +109,11 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
       labelDescription:
         'When the LDAP is down, Auzmor Office can authenticate the user. Organization Primary Admin can control this behavior by enabling/disabling the flag.',
       name: 'allowFallback',
-      control,
-      defaultValue: allowFallback,
+      control: connectionSettingsControl,
+      defaultValue: connectionSettingsData?.allowFallback,
+      error: connectionSettingsFormState.errors.allowFallback?.message,
     },
   ];
-
-  const onSubmit = () => {
-    setData(getValues());
-    setError(false);
-    next();
-  };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mt-8 ml-6 max-h-[400px] w-[450px] overflow-y-auto pr-6 pb-12">
@@ -188,7 +129,7 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
           Authentication:
         </p>
         <Divider className="mt-6 mb-4 !bg-neutral-100" />
-        <Layout fields={authenticationFields} />
+        <Layout fields={authenticationSettingFields} />
       </div>
       <div className="bg-blue-50 mt-4 p-0 absolute bottom-0 left-0 right-0">
         <div className="p-3 flex items-center justify-end gap-x-3">
@@ -203,7 +144,7 @@ const ConnectionSettings: React.FC<ConnectionSettingsProps> = ({
             label="Continue"
             variant={ButtonVariant.Primary}
             type={ButtonType.Submit}
-            disabled={Object.keys(errors).length > 0}
+            disabled={isError}
           />
         </div>
       </div>
