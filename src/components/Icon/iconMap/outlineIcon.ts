@@ -42,9 +42,17 @@ import SvgCloseCircleOutline from '../components/CloseCircle/CloseCircleOutline'
 import SvgDotsVerticalOutline from '../components/DotsVertical/DotsVerticalOutline';
 import SvgRedoOutline from '../components/Redo/RedoOutline';
 import SvgUserRemoveOutline from '../components/UserRemove/UserRemoveOutline';
+import SvgGearOutline from '../components/Gear/GearOutline';
+import SvgUserManagementOutline from '../components/UserManagement/UserManagementOutline';
+import SvgBrandingOutline from '../components/Branding/BrandingOutline';
+import SvgLinkOutline from '../components/Link/LinkOutline';
+import SvgMarketplaceOutline from '../components/Marketplace/MarketplaceOutline';
+import SvgArrowUpOutline from '../components/ArrowUp/ArrowUpOutline';
+import SvgArrowDownOutline from '../components/ArrowDown/ArrowDownOutline';
 import SvgDeleteOutline from '../components/Delete/DeleteOutline';
 import SvgExportOutline from '../components/Export/ExportOutline';
 import SvgMaximizeOutline from '../components/Maximize/MaximizeOutline';
+import SvgThreeDotsOutline from '../components/ThreeDots/ThreeDotsOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -94,4 +102,12 @@ export const outlineIcon = {
   userOutline: SvgUserOutline,
   userRemoveOutline: SvgUserRemoveOutline,
   videoOutline: SvgVideoOutline,
+  gearOutline: SvgGearOutline,
+  userManagementOutline: SvgUserManagementOutline,
+  brandingOutline: SvgBrandingOutline,
+  linkOutline: SvgLinkOutline,
+  marketplaceOutline: SvgMarketplaceOutline,
+  arrowUpOutline: SvgArrowUpOutline,
+  arrowDownOutline: SvgArrowDownOutline,
+  threeDotsOutline: SvgThreeDotsOutline,
 };

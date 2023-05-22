@@ -5,7 +5,7 @@ import MagicStarIcon from '../components/MagicStar';
 import UsersIcon from '../components/Users';
 import HomeIcon from '../components/Home';
 import FeedIcon from '../components/Feed';
-import DropdownArrowIcon from '../components/DropdownArrow';
+import ArrowDown from '../components/ArrowDown';
 import ClockIcon from '../components/Clock';
 import FilterIcon from '../components/Filter';
 import MoreIcon from '../components/More';
@@ -74,6 +74,14 @@ import Redo from '../components/Redo';
 import UserRemove from '../components/UserRemove';
 import ExportIcon from '../components/Export';
 import MaximizeIcon from '../components/Maximize';
+import Gear from '../components/Gear';
+import UserManagement from '../components/UserManagement';
+import Branding from '../components/Branding';
+import Link from '../components/Link';
+import Marketplace from '../components/Marketplace';
+import DocumentUpload from '../components/DocumentUpload';
+import ArrowUp from '../components/ArrowUp';
+import ThreeDots from '../components/ThreeDots';
 
 export const icon = {
   add: Add,
@@ -103,7 +111,7 @@ export const icon = {
   document: DocumentIcon,
   dotsVertical: dotsVerticalIcon,
   draft: DraftIcon,
-  dropdownArrow: DropdownArrowIcon,
+  arrowDown: ArrowDown,
   edit: EditIcon,
   editIcon: MenuEditIcon,
   email: EmailIcon,
@@ -152,4 +160,12 @@ export const icon = {
   user: UsersIcon,
   userRemove: UserRemove,
   video: VideoIcon,
+  gear: Gear,
+  userManagement: UserManagement,
+  branding: Branding,
+  link: Link,
+  marketplace: Marketplace,
+  documentUpload: DocumentUpload,
+  arrowUp: ArrowUp,
+  threeDots: ThreeDots,
 };
