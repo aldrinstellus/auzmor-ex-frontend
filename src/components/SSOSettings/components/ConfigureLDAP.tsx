@@ -71,7 +71,7 @@ const connectionSettingsSchema = yup.object({
 const userFieldMappingSchema = yup.object({
   userName: yup.string().required('Required field'),
   fullName: yup.string().required('Required field'),
-  email: yup.string().email('Enter valid email').required('Required field'),
+  email: yup.string().required('Required field'),
   title: yup.string().required('Required field'),
   workMobile: yup.string(),
   userObjectFilter: yup.string(),
@@ -246,6 +246,10 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
       const formData = new FormData();
 
       formData.append('active', 'true');
+      formData.append(
+        'allowFallback',
+        String(connectionSettingsData.allowFallback || false),
+      );
 
       // Connection settings data
       formData.append(
