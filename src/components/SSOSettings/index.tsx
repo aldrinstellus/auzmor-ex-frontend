@@ -44,6 +44,9 @@ const SSOSettings: React.FC = (): ReactElement => {
   // 5. If the user successfully deletes SSO, refetch list of SSOs.
 
   const { data, isLoading, isError, refetch } = useGetSSO();
+  const [open, openModal, closeModal] = useModal();
+  const [ssoSetting, setSsoSetting] = useState<ISSOSetting>();
+  const [showErrorBanner, setShowErrorBanner] = useState<boolean>(false);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -116,14 +119,6 @@ const SSOSettings: React.FC = (): ReactElement => {
       ...getSSOValues(IdentityProvider.CUSTOM_SAML),
     },
   ];
-
-  const [open, openModal, closeModal] = useModal();
-  const [ssoSetting, setSsoSetting] = useState<ISSOSetting>();
-  const [showErrorBanner, setShowErrorBanner] = useState<boolean>(false);
-  const [activeSSO, setActiveSSO] = useState<ISSOSetting | undefined>(
-    ssoIntegrations.find((sso: ISSOSetting) => sso.active),
-  );
-
   const onClick = (key: string) => {
     setSsoSetting(ssoIntegrations.find((item) => item.key === key));
     openModal();
@@ -134,7 +129,8 @@ const SSOSettings: React.FC = (): ReactElement => {
       {showErrorBanner && (
         <Banner
           variant={Variant.Error}
-          title={`Deactivate existing ${activeSSO?.key} to configure`}
+          title={`Deactivate existing SSO to configure`}
+          className="mb-4"
         />
       )}
       <div className="flex gap-x-6 flex-wrap gap-y-6">
@@ -149,6 +145,7 @@ const SSOSettings: React.FC = (): ReactElement => {
             active={integration.active || false}
             refetch={refetch}
             setShowErrorBanner={setShowErrorBanner}
+            activeSSO={ssoIntegrations.find((sso: ISSOSetting) => sso.active)}
           />
         ))}
         {open && ssoSetting?.configureScreen === ConfigureScreen.GENERIC && (

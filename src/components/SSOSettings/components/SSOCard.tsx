@@ -3,6 +3,7 @@ import Card from 'components/Card';
 import React, { ReactElement } from 'react';
 import SSOCardMenu from './SSOCardMenu';
 import { IdentityProvider } from 'queries/organization';
+import { ISSOSetting } from '..';
 
 export type SSOCardProps = {
   logo: string;
@@ -13,6 +14,7 @@ export type SSOCardProps = {
   idp: IdentityProvider;
   active: boolean;
   refetch: any;
+  activeSSO?: ISSOSetting;
   setShowErrorBanner: (show: boolean) => void;
 };
 
@@ -25,10 +27,11 @@ const SSOCard: React.FC<SSOCardProps> = ({
   idp,
   active = false,
   refetch,
+  activeSSO,
   setShowErrorBanner,
 }): ReactElement => {
   const customOnClick = () => {
-    if (!active) {
+    if (activeSSO && activeSSO?.idp !== idp) {
       setShowErrorBanner(true);
     } else onClick(id);
   };

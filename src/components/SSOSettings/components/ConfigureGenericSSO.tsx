@@ -53,7 +53,7 @@ const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
         'When the LDAP is down, Auzmor Office can authenticate the user. Organization Primary Admin can control this behavior by enabling/disabling the flag.',
       name: 'allowFallback',
       control,
-      defaultValue: ssoSetting?.config.allowFallback,
+      defaultValue: ssoSetting?.config?.allowFallback,
     },
     {
       type: FieldType.Checkbox,
@@ -62,7 +62,7 @@ const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
         'Enable this option when you do NOT want SSO to create a new user and strictly allow only existing users to login.',
       name: 'allowOnlyExistingUsers',
       control,
-      defaultValue: ssoSetting?.config.autoAllowNewUser,
+      defaultValue: ssoSetting?.config?.autoAllowNewUser,
     },
   ];
 
