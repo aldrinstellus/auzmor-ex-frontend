@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo, useState } from 'react';
+import React, { ReactElement, useMemo, useEffect, useState } from 'react';
 import SSOCard from './components/SSOCard';
 import ActiveDirectory from 'images/activeDirectory.png';
 import MicrosoftAD from 'images/microsoftAd.svg';
@@ -47,6 +47,10 @@ const SSOSettings: React.FC = (): ReactElement => {
   const [open, openModal, closeModal] = useModal();
   const [ssoSetting, setSsoSetting] = useState<ISSOSetting>();
   const [showErrorBanner, setShowErrorBanner] = useState<boolean>(false);
+
+  useEffect(() => {
+    setShowErrorBanner(false);
+  }, [data]);
 
   const getSSOValues = (idp: string) => {
     if (!idp) {
