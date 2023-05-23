@@ -12,7 +12,6 @@ import Button, {
   Size,
 } from 'components/Button';
 import Divider from 'components/Divider';
-import { Logo } from 'components/Logo';
 import {
   getSubDomain,
   readFirstAxiosError,
@@ -45,8 +44,6 @@ const schema = yup.object({
 
 const LoginViaCred: React.FC<ILoginViaCredProps> = ({ setViaSSO }) => {
   const { user } = useAuth();
-
-  console.log('>>>', user);
 
   const loginMutation = useMutation((formData: IForm) => login(formData), {
     onSuccess: (data) =>

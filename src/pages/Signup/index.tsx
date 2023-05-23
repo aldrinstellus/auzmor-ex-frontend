@@ -15,6 +15,7 @@ import { useDebounce } from 'hooks/useDebounce';
 import { useDomainExists, useIsUserExist } from 'queries/users';
 
 interface IForm {
+  fullName: string;
   workEmail: string;
   domain: string;
   password: string;
@@ -24,6 +25,7 @@ interface IForm {
 }
 
 const schema = yup.object({
+  fullName: yup.string().required('Required Field'),
   workEmail: yup
     .string()
     .email('Please enter valid email address')
@@ -64,6 +66,7 @@ const Signup: React.FC<ISignupProps> = () => {
   } = useForm<IForm>({
     resolver: yupResolver(schema),
     defaultValues: {
+      fullName: '',
       workEmail: '',
       password: '',
       confirmPassword: '',
@@ -75,6 +78,7 @@ const Signup: React.FC<ISignupProps> = () => {
   useEffect(() => {
     signupMutation.reset();
   }, [
+    watch('fullName'),
     watch('workEmail'),
     watch('domain'),
     watch('password'),
@@ -83,6 +87,16 @@ const Signup: React.FC<ISignupProps> = () => {
   ]);
 
   const fields = [
+    {
+      type: FieldType.Input,
+      variant: InputVariant.Text,
+      placeholder: 'Enter your name',
+      name: 'fullName',
+      label: 'Full Name*',
+      error: errors.fullName?.message,
+      dataTestId: 'sign-up-fullname',
+      control,
+    },
     {
       type: FieldType.Input,
       variant: InputVariant.Text,
@@ -134,8 +148,18 @@ const Signup: React.FC<ISignupProps> = () => {
     },
     {
       type: FieldType.Checkbox,
-      label:
-        'By Signing up you are agreeing to Auzmor Office’s Terms of Use and Privacy Policy',
+      label: (
+        <div>
+          By Signing up you are agreeing to Auzmor Office’s{' '}
+          <span className="text-primary-500">
+            <a href="https://www.auzmor.com/tc">Terms of Use</a>
+          </span>{' '}
+          and{' '}
+          <span className="text-primary-500">
+            <a href="https://www.auzmor.com/privacy-policy">Privacy Policy</a>
+          </span>
+        </div>
+      ),
       name: 'privacyPolicy',
       error: errors.privacyPolicy?.message,
       dataTestId: 'sign-up-checkbox',
@@ -180,11 +204,11 @@ const Signup: React.FC<ISignupProps> = () => {
         className="h-full w-[48%]"
         data-testid="signup-cover-image"
       />
-      <div className="w-[52%] flex justify-center items-center relative bg-white overflow-y-auto overscroll-auto">
+      <div className="w-[52%] flex justify-center items-center relative bg-white overflow-y-auto">
         <div className="absolute top-8 right-8" data-testid="signup-logo-image">
           <Logo />
         </div>
-        <div className="w-full max-w-[440px]">
+        <div className="pt-8 w-full h-full max-w-[440px]">
           <div className="font-extrabold text-neutral-900 text-4xl">
             Sign Up
           </div>
