@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { Link, NavLink } from 'react-router-dom';
 import { Logo } from 'components/Logo';
 import Icon from 'components/Icon';
 import Divider, { Variant } from 'components/Divider';
 import AccountCard from './AccountCard';
+import Notifications from 'components/Notifications';
 
 const navigations = [
   {
@@ -40,6 +41,30 @@ const navigations = [
 ];
 
 const Navbar = () => {
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  const [showNotifications, setShowNotifications] = useState<boolean>(false);
+  useEffect(() => {
+    const checkIfClickedOutside = (e: any) => {
+      // If the menu is open and the clicked target is not within the menu,
+      // then close the menu
+      if (
+        showNotifications &&
+        notifRef.current &&
+        !notifRef.current.contains(e.target)
+      ) {
+        setShowNotifications(false);
+      }
+    };
+
+    document.addEventListener('mousedown', checkIfClickedOutside);
+
+    return () => {
+      // Cleanup the event listener
+      document.removeEventListener('mousedown', checkIfClickedOutside);
+    };
+  }, [showNotifications]);
+
   return (
     <header className="sticky top-0 z-40">
       <div className="bg-white shadow h-16 w-full flex items-center justify-center px-8">
@@ -85,8 +110,18 @@ const Navbar = () => {
               <div className="text-sm mt-[1px]">Admin</div>
             </div>
           </NavLink>
-          <div>
-            <Icon name="notification" size={26} />
+          <div ref={notifRef}>
+            <button
+              className="box-border font-bold flex flex-row justify-center items-center p-1 gap-4 border-none relative"
+              onClick={() => setShowNotifications(!showNotifications)}
+            >
+              <div className="absolute rounded-full bg-red-600 text-white text-xxs -top-1 -right-1.5 flex w-4 h-4 items-center justify-center">
+                {/* Get unread notif count here */}10
+              </div>
+
+              <Icon name="notification" size={26} hover={false} />
+            </button>
+            {showNotifications && <Notifications />}
           </div>
           <div>
             <AccountCard />

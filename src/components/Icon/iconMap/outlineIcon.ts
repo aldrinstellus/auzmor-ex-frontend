@@ -53,6 +53,7 @@ import SvgDeleteOutline from '../components/Delete/DeleteOutline';
 import SvgExportOutline from '../components/Export/ExportOutline';
 import SvgMaximizeOutline from '../components/Maximize/MaximizeOutline';
 import SvgThreeDotsOutline from '../components/ThreeDots/ThreeDotsOutline';
+import SvgCheckboxOutline from '../components/Checkbox/CheckboxOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -110,4 +111,5 @@ export const outlineIcon = {
   arrowUpOutline: SvgArrowUpOutline,
   arrowDownOutline: SvgArrowDownOutline,
   threeDotsOutline: SvgThreeDotsOutline,
+  checkboxOutline: SvgCheckboxOutline,
 };
