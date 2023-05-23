@@ -11,11 +11,13 @@ import { IMedia } from 'contexts/CreatePostContext';
 type UpdateProfileImageProps = {
   setLoading?: (loading: boolean) => void;
   setError?: (error: boolean) => void;
+  dataTestId?: string;
 };
 
 const UpdateProfileImage: React.FC<UpdateProfileImageProps> = ({
   setLoading,
   setError,
+  dataTestId,
 }): ReactElement => {
   const [profilePicture, setProfilePicture] = useState<File[]>();
   const { user, updateUser } = useAuth();
@@ -76,7 +78,12 @@ const UpdateProfileImage: React.FC<UpdateProfileImageProps> = ({
   return (
     <Avatar
       size={200}
-      indicatorIcon={<EditIcon setProfilePicture={setProfilePicture} />}
+      indicatorIcon={
+        <EditIcon
+          setProfilePicture={setProfilePicture}
+          dataTestId={dataTestId}
+        />
+      }
       name={user?.name}
       image={user?.profileImage}
       bgColor="#DBEAFE"
