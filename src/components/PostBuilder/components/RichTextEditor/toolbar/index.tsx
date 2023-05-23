@@ -11,7 +11,7 @@ const Toolbar: React.FC<IToolbarProps> = ({ isCharLimit }) => {
     <div id="toolbar">
       <div className="relative">
         {isCharLimit && (
-          <div className="bg-red-50 border-y-1 border-red-300 px-4 py-2 flex justify-between absolute w-full bottom-full items-center">
+          <div className="bg-red-50 border-y-1 border-red-300 px-4 py-2 flex justify-between w-full bottom-full items-center">
             <div className="flex items-center">
               <Icon
                 name="infoCircleOutline"
