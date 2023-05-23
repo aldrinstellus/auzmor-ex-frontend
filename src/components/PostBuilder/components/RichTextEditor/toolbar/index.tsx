@@ -38,7 +38,8 @@ const Toolbar: React.FC<IToolbarProps> = ({ isCharLimit }) => {
             </span>
           </div>
           <div className="font-bold text-sm text-neutral-900">
-            <div>Add Hashtags</div>
+            {/* <div>Add Hashtags</div> */}
+            <div></div>
           </div>
         </div>
       </div>
