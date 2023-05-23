@@ -4,8 +4,8 @@ import { CreatePostContext } from 'contexts/CreatePostContext';
 import React, { useContext } from 'react';
 
 export interface IBodyProps {
-  expiryFields: any[];
-  datepickerFields: any[];
+  expiryFields: Array<Record<string, any>>;
+  datepickerFields: Array<Record<string, any>>;
   selecetedExpiry: any;
 }
 
