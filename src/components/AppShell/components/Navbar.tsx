@@ -6,6 +6,7 @@ import Icon from 'components/Icon';
 import Divider, { Variant } from 'components/Divider';
 import AccountCard from './AccountCard';
 import Notifications from 'components/Notifications';
+import useRole from 'hooks/useRole';
 
 const navigations = [
   {
@@ -64,6 +65,7 @@ const Navbar = () => {
       document.removeEventListener('mousedown', checkIfClickedOutside);
     };
   }, [showNotifications]);
+  const { isAdmin } = useRole();
 
   return (
     <header className="sticky top-0 z-40">
@@ -99,17 +101,19 @@ const Navbar = () => {
           <Divider variant={Variant.Vertical} />
         </div>
         <div className="flex items-center space-x-8">
-          <NavLink
-            to="/admin"
-            className={({ isActive }) =>
-              isActive ? 'text-primary-500' : 'text-neutral-500'
-            }
-          >
-            <div className="flex flex-col items-center">
-              <Icon name="admin" size={22} />
-              <div className="text-sm mt-[1px]">Admin</div>
-            </div>
-          </NavLink>
+          {isAdmin && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                isActive ? 'text-primary-500' : 'text-neutral-500'
+              }
+            >
+              <div className="flex flex-col items-center">
+                <Icon name="admin" size={22} />
+                <div className="text-sm mt-[1px]">Admin</div>
+              </div>
+            </NavLink>
+          )}
           <div ref={notifRef}>
             <button
               className="box-border font-bold flex flex-row justify-center items-center p-1 gap-4 border-none relative"
