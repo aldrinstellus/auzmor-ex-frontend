@@ -204,7 +204,7 @@ const Signup: React.FC<ISignupProps> = () => {
         className="h-full w-[48%]"
         data-testid="signup-cover-image"
       />
-      <div className="w-[52%] flex justify-center items-center relative bg-white overflow-y-auto">
+      <div className="w-[52%] h-full flex justify-center items-center relative bg-white overflow-y-auto">
         <div className="absolute top-8 right-8" data-testid="signup-logo-image">
           <Logo />
         </div>

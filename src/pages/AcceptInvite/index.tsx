@@ -129,7 +129,7 @@ const AcceptInvite: React.FC<IAcceptInviteProps> = () => {
   ) : (
     <div className="flex h-screen w-screen">
       <img src={WelcomeOffice} className="h-full w-[48%]" />
-      <div className="w-[52%] flex justify-center items-center relative bg-white overflow-y-auto">
+      <div className="w-[52%] flex justify-center items-center relative bg-white h-full overflow-y-auto">
         <div className="absolute top-8 right-8">
           <Logo />
         </div>
