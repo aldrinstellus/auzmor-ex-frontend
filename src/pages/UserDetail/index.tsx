@@ -47,6 +47,7 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
     {
       id: 1,
       title: 'Profile',
+      dataTestId: 'user-profile-tab',
       content: (
         <ProfileInfo
           profileDetails={profileData}
@@ -57,6 +58,7 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
     {
       id: 2,
       title: 'Activity',
+      dataTestId: 'user-actiity-tab',
       content: (
         <ProfileActivityFeed
           pathname={pathname}
@@ -70,6 +72,7 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
     {
       id: 3,
       title: 'Recognitions',
+      dataTestId: 'user-recognitions-tab',
       content: (
         <NoDataCard user={userData?.data?.data?.result?.data?.fullName} />
       ),

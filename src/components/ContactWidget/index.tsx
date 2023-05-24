@@ -26,7 +26,10 @@ const ContactWidget: React.FC<IContactCardProps> = ({
               <IconWrapper>
                 <Icon name="email" stroke="#737373" size={15} />
               </IconWrapper>
-              <div className="text-xs font-normal text-neutral-900">
+              <div
+                className="text-xs font-normal text-neutral-900"
+                data-testid="user-contact-widget-email"
+              >
                 {contactCardData?.workEmail || 'N/A'}
               </div>
             </div>
@@ -46,7 +49,10 @@ const ContactWidget: React.FC<IContactCardProps> = ({
                 <IconWrapper>
                   <Icon name="call" stroke="#737373" size={15} />
                 </IconWrapper>{' '}
-                <div className="text-xs font-normal text-neutral-900">
+                <div
+                  className="text-xs font-normal text-neutral-900"
+                  data-testid="user-contact-widget-number"
+                >
                   {contactCardData?.contact || 'N/A'}
                 </div>
               </div>
@@ -60,6 +66,7 @@ const ContactWidget: React.FC<IContactCardProps> = ({
             className="space-x-1 font-bold"
             leftIcon="connectionFolder"
             size={Size.Small}
+            dataTestId="user-view-org-chart"
           />
         </div>
       </Card>

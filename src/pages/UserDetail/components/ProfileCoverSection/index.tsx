@@ -50,7 +50,8 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                 src={
                   profileCoverData?.coverImage?.original || DefaultCoverImage
                 }
-                onClick={() => setShowModal(true)}
+                data-testid="user-cover-pic"
+                onClick={() => canEdit && setShowModal(true)}
               />
             )}
           </div>
@@ -75,13 +76,14 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
               image={profileCoverData?.profileImage?.original}
               size={80}
               className="border-2 border-white mt-8 overflow-hidden"
+              dataTestId="user-profile-pic"
             />
           </div>
           <div className="ml-4 mb-7 flex flex-col space-y-5 w-full">
             <div className="flex items-center">
               <div className="mr-6 mt-2 flex justify-between w-full">
                 <div className="flex space-x-4">
-                  <div className="text-2xl font-bold">
+                  <div className="text-2xl font-bold" data-testid="user-name">
                     {profileCoverData?.fullName}
                   </div>
                   {/* <div className="p-1">
@@ -111,7 +113,10 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
               </div>
             </div>
             <div className="flex space-x-4 items-center">
-              <div className="text-xs font-normal text-neutral-900">
+              <div
+                className="text-xs font-normal text-neutral-900"
+                data-testid="user-designation"
+              >
                 {profileCoverData?.designation || 'N/A'}
               </div>
               <Divider variant={DividerVariant.Vertical} className="h-8" />
@@ -119,7 +124,10 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                 <IconWrapper type={Type.Square} className="cursor-pointer">
                   <Icon name="briefcase" size={16} />
                 </IconWrapper>
-                <div className="text-xs font-normal text-neutral-900">
+                <div
+                  className="text-xs font-normal text-neutral-900"
+                  data-testid="user-department"
+                >
                   {profileCoverData?.department || 'N/A'}
                 </div>
               </div>
@@ -128,7 +136,10 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                 <IconWrapper type={Type.Square} className="cursor-pointer">
                   <Icon name="location" size={16} />
                 </IconWrapper>
-                <div className="text-xs font-normal text-neutral-900">
+                <div
+                  className="text-xs font-normal text-neutral-900"
+                  data-testid="user-location"
+                >
                   {profileCoverData?.workLocation || 'N/A'}
                 </div>
               </div>
