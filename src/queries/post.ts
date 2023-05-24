@@ -367,3 +367,15 @@ export const useInfiniteFeed = (q?: Record<string, any>) => {
     staleTime: 5 * 60 * 1000,
   });
 };
+
+const getPost = async (id: string) => {
+  const data = await apiService.get(`/posts/${id}`);
+  return data;
+};
+
+export const useGetPost = (id: string) => {
+  return useQuery({
+    queryKey: ['get-post', id],
+    queryFn: () => getPost(id),
+  });
+};

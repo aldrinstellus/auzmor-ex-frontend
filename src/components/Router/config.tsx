@@ -26,6 +26,7 @@ const Admin = React.lazy(() => import('pages/Admin'));
 const AcceptInvite = React.lazy(() => import('pages/AcceptInvite'));
 const PageNotFound = React.lazy(() => import('pages/PageNotFound'));
 const ServerErrorPage = React.lazy(() => import('pages/ServerErrorPage'));
+const PostPage = React.lazy(() => import('pages/Post'));
 
 const routers = createBrowserRouter(
   createRoutesFromElements(
@@ -79,6 +80,7 @@ const routers = createBrowserRouter(
         <Route path="/apps" element={<Apps />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/post/:id" element={<PostPage />} />
       </Route>
       <Route
         path="/404"
