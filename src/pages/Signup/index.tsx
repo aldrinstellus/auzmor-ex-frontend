@@ -130,6 +130,7 @@ const Signup: React.FC<ISignupProps> = () => {
       label: 'Password*',
       rightIcon: 'people',
       error: errors.password?.message,
+      setError,
       dataTestId: 'sign-up-password',
       control,
       getValues,
@@ -233,7 +234,7 @@ const Signup: React.FC<ISignupProps> = () => {
             <Button
               dataTestId="sign-up-btn"
               label={'Sign Up'}
-              disabled={!isValid}
+              disabled={!isValid || !!errors?.password?.type}
               className="w-full mt-8"
               type={ButtonType.Submit}
               size={Size.Large}

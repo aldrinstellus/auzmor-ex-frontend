@@ -45,6 +45,7 @@ const ResetPassword = () => {
     control,
     handleSubmit,
     formState: { errors, isValid },
+    setError,
   } = useForm<IForm>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -69,6 +70,7 @@ const ResetPassword = () => {
       label: 'Enter New Password',
       rightIcon: 'people',
       error: errors.newPassword?.message,
+      setError,
       control,
       onChange: (e: any) => {
         const value = e.target.value;
@@ -152,7 +154,7 @@ const ResetPassword = () => {
                             label={'Reset Password'}
                             className="w-full mt-8"
                             loading={resetPasswordMutation.isLoading}
-                            disabled={!isValid}
+                            disabled={!isValid || !!errors?.password?.type}
                             size={Size.Large}
                           />
                         </>
