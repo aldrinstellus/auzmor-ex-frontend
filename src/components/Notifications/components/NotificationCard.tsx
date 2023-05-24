@@ -25,7 +25,9 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         <Avatar
           name={actor.fullName}
           image={actor.profileImage?.original}
-          showActiveIndicator={true}
+          indicatorIcon={
+            <div className="bg-green-400 rounded-full w-3 h-3 top-0 right-0 absolute" />
+          }
           size={40}
         />
         {/* Content */}
