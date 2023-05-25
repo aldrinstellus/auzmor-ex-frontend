@@ -1,10 +1,4 @@
 import React, { memo, useMemo, useState } from 'react';
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} from 'react-beautiful-dnd';
 import { v4 as uuidv4 } from 'uuid';
 import Card from 'components/Card';
 import Divider from 'components/Divider';
@@ -23,6 +17,7 @@ import { OptionType } from 'components/UserOnboard/components/SelectTimeZone';
 import { twConfig } from 'utils/misc';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { toast } from 'react-toastify';
+import DragDropList from 'components/DragDropList';
 
 interface IPersonalDetails {
   birthDate: string;
@@ -46,9 +41,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
 }) => {
   const [isHovered, eventHandlers] = useHover();
   const [isEditable, setIsEditable] = useState<boolean>(false);
-  const [selectedValues, setSelectedValues] = useState<
-    Record<string, string>[]
-  >([]);
+  const [skills, setSkills] = useState<Record<string, string>[]>([]);
 
   const { control, handleSubmit, getValues } = useForm<IPersonalDetailsForm>({
     mode: 'onChange',
@@ -67,14 +60,16 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
     [isHovered],
   );
 
-  const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-    const { source, destination } = result;
-    const updatedItems = [...selectedValues];
-    const [removed] = updatedItems.splice(source.index, 1);
-    updatedItems.splice(destination.index, 0, removed);
-    setSelectedValues(updatedItems);
-  };
+  const personalSkillsList = personalDetails?.personal?.skills?.map(
+    (skill: string) => ({
+      id: uuidv4(),
+      value: skill,
+    }),
+  );
+
+  const updatedSkillListItem = [...personalSkillsList, ...skills];
+
+  console.log(updatedSkillListItem);
 
   const updateUserPersonalDetailsMutation = useMutation({
     mutationFn: updateCurrentUser,
@@ -107,7 +102,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
         birthDate: personalDetailData?.personal?.birthDate,
         permanentAddress: personalDetailData?.personal?.permanentAddress,
         maritalStatus: personalDetailData?.personal?.maritalStatus?.value,
-        skills: selectedValues?.map((value) => value.text),
+        skills: ['ReactJs'],
       },
     };
     await updateUserPersonalDetailsMutation.mutateAsync({
@@ -118,13 +113,13 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
   };
 
   const fields = [
-    {
-      type: FieldType.DatePicker,
-      name: 'personal.birthDate',
-      control,
-      dataTestId: 'personal-details-dob',
-      defaultValue: getValues()?.personal?.birthDate,
-    },
+    // {
+    //   type: FieldType.DatePicker,
+    //   name: 'personal.birthDate',
+    //   control,
+    //   dataTestId: 'personal-details-dob',
+    //   defaultValue: getValues()?.personal?.birthDate,
+    // },
     {
       type: FieldType.SingleSelect,
       name: 'personal.gender',
@@ -174,10 +169,10 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
           event.preventDefault();
           const skillObject = {
             id: uuidv4(),
-            text: event?.target?.value,
+            value: event?.target?.value,
           };
           console.log(skillObject);
-          setSelectedValues([...selectedValues, skillObject]);
+          setSkills([...skills, skillObject]);
         }
       },
     },
@@ -282,58 +277,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
                   Date of Birth
                 </div>
                 <Layout fields={fields} />
-                <DragDropContext onDragEnd={handleDragEnd}>
-                  <Droppable droppableId={uuidv4()}>
-                    {(provided) => (
-                      <ul
-                        className="mt-3 space-y-1"
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                      >
-                        {selectedValues.map((value, index) => (
-                          <Draggable
-                            key={index}
-                            draggableId={value.id}
-                            index={index}
-                          >
-                            {(provided) => (
-                              <li
-                                className="flex items-center justify-between border border-solid border-neutral-200 rounded-17xl py-2 px-4"
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                ref={provided.innerRef}
-                                key={value.id}
-                              >
-                                <div className="flex items-center space-x-4">
-                                  <Icon name="reorder" />
-                                  <span className="mr-2">{value.text}</span>
-                                </div>
-                                <div className="flex space-x-4 items-center">
-                                  <Icon name="edit" size={20} />
-                                  <Icon
-                                    name="delete"
-                                    stroke="#F05252"
-                                    hover={false}
-                                    fill="#F05252"
-                                    size={20}
-                                    onClick={() => {
-                                      const updatedValues =
-                                        selectedValues.filter(
-                                          (selectedValue) =>
-                                            selectedValue !== value,
-                                        );
-                                      setSelectedValues(updatedValues);
-                                    }}
-                                  />
-                                </div>
-                              </li>
-                            )}
-                          </Draggable>
-                        ))}
-                      </ul>
-                    )}
-                  </Droppable>
-                </DragDropContext>
+                <DragDropList items={updatedSkillListItem} />
               </form>
             )}
           </div>
