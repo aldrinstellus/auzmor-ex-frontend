@@ -82,6 +82,7 @@ import Marketplace from '../components/Marketplace';
 import DocumentUpload from '../components/DocumentUpload';
 import ArrowUp from '../components/ArrowUp';
 import ThreeDots from '../components/ThreeDots';
+import Reorder from '../components/Reorder';
 
 export const icon = {
   add: Add,
@@ -150,6 +151,7 @@ export const icon = {
   play: PlayIcon,
   redo: Redo,
   reply: Reply,
+  reorder: Reorder,
   search: Search,
   send: Send,
   slack: SlackIcon,
