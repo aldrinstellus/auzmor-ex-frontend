@@ -106,7 +106,9 @@ const AboutMe: React.FC<IAboutMeProps> = ({ aboutMeData, canEdit }) => {
         <Divider />
         <div className="text-neutral-900 text-sm font-normal pt-4 pb-6 px-6">
           {!isEditable ? (
-            aboutMeData?.personal?.about || 'N/A'
+            <div className="whitespace-pre-wrap">
+              {aboutMeData?.personal?.about || 'N/A'}
+            </div>
           ) : (
             <Layout fields={textAreaField} />
           )}
