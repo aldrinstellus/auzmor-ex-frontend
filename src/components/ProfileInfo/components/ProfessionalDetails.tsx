@@ -17,6 +17,7 @@ import { useMutation } from '@tanstack/react-query';
 import { updateCurrentUser } from 'queries/users';
 import { getDefaultTimezoneOption } from 'components/UserOnboard/utils';
 import queryClient from 'utils/queryClient';
+import Layout, { FieldType } from 'components/Form';
 
 interface IForm {
   timeZone: OptionType;
@@ -33,6 +34,7 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
   const [isHovered, eventHandlers] = useHover();
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const defaultTimezone = getDefaultTimezoneOption();
+  const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
   const schema = yup.object({
     timeZone: yup.object(),
@@ -60,6 +62,26 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
       setIsEditable(false);
     },
   });
+
+  const onSelectOptionItemHandler = (item: any) => {
+    setSelectedValues([...selectedValues, item]);
+  };
+
+  const skillField = [
+    {
+      name: 'skills',
+      type: FieldType.Input,
+      label: 'Skills',
+      control,
+      placeholder: 'Select skills',
+      onEnter: (event: any) => {
+        if (event?.key === 'Enter') {
+          event.preventDefault();
+          setSelectedValues([...selectedValues, event?.target?.value]);
+        }
+      },
+    },
+  ];
 
   const onSubmit = async () => {
     const selectedTimezone = getValues();
@@ -133,6 +155,43 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
                   </div>
                 </div>
               )}
+              <div>
+                <Layout fields={skillField} />
+                <ul className="mt-3 space-y-1">
+                  {selectedValues.map((value) => (
+                    <div
+                      key={value}
+                      className="bg-red-50 border border-solid border-neutral-200 rounded-17xl py-2 px-4"
+                    >
+                      <li className="flex items-center">
+                        <span className="mr-2">{value}</span>
+                        <button
+                          className="text-red-500 hover:text-red-700 focus:outline-none"
+                          onClick={() => {
+                            const updatedValues = selectedValues.filter(
+                              (selectedValue) => selectedValue !== value,
+                            );
+                            setSelectedValues(updatedValues);
+                          }}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-8.414l2.707-2.707a1 1 0 10-1.414-1.414L10 8.586 7.707 6.293a1 1 0 10-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </li>
+                    </div>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </form>
