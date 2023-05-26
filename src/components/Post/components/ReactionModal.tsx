@@ -137,8 +137,8 @@ const ReactionModal: React.FC<IReactionModalProps> = ({
               return -1;
             }
             return (
-              reactionCounts[a.tabContent.props.activeTab] -
-              reactionCounts[b.tabContent.props.activeTab]
+              reactionCounts[b.tabContent.props.activeTab] -
+              reactionCounts[a.tabContent.props.activeTab]
             );
           })}
       />
