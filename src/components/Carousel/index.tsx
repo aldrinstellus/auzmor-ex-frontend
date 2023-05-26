@@ -110,7 +110,8 @@ const Carousel: React.FC<CarouselProps> = ({
   });
 
   const downloadBtnStyle = clsx({
-    'top-4 right-4 absolute p-2.5 bg-white rounded-full cursor-pointer': true,
+    'top-4 right-4 absolute p-2.5 bg-white rounded-full cursor-pointer border-neutral-200 border':
+      true,
   });
 
   if (media.length > 0) {
