@@ -1,25 +1,39 @@
 import AnnouncementCard from 'components/AnnouncementWidget';
+import Card from 'components/Card';
+import { activeCommentsDataType } from 'components/Comments';
+import { Comment } from 'components/Comments/Comment';
 import Post from 'components/Post';
 import UserCard from 'components/UserWidget';
 import { IGetPost, useGetPost } from 'queries/post';
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 const PostPage: React.FC = () => {
   const { id } = useParams();
-
+  const [searchParams] = useSearchParams();
+  const commentId = searchParams.get('commentId') || undefined;
   if (!id) {
     return <div>Error</div>;
   }
 
-  const { data, isLoading, isError } = useGetPost(id);
+  const { data, isLoading, isError } = useGetPost(id, commentId);
+
+  const [activeComment, setActiveComment] =
+    useState<activeCommentsDataType | null>(
+      commentId
+        ? {
+            id: commentId,
+            type: 'abc',
+          }
+        : null,
+    );
+  const [replyInputBox, setReplyInputBox] = useState(false);
 
   if (isLoading) {
     return <div>Loading...</div>;
   } else if (isError) {
     return <div>Error...</div>;
   }
-  console.log({ data });
   const post = data.data?.result?.data as IGetPost;
   return (
     <>
@@ -29,7 +43,19 @@ const PostPage: React.FC = () => {
         </div>
         <div className="w-1/2">
           <div className="mt-4">
-            <Post data={post} />
+            <Card>
+              <Post data={post} />
+              {post.comment && (
+                <Comment
+                  comment={post.comment}
+                  setActiveComment={setActiveComment}
+                  activeComment={activeComment}
+                  setReplyInputBox={setReplyInputBox}
+                  replyInputBox={replyInputBox}
+                  className="m-4"
+                />
+              )}
+            </Card>
           </div>
         </div>
         <div className="w-1/4">

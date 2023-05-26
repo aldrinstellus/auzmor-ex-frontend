@@ -3,10 +3,13 @@ import React, { ReactElement } from 'react';
 import NotificationCard from './NotificationCard';
 import {
   getNotificationMessage,
-  getNotificationCardContent,
+  getNotificationElementContent,
   getTimeSinceActedAt,
 } from '../utils';
-import { NotificationProps, TargetType } from './NotificationsList';
+import { NotificationProps } from './NotificationsList';
+import { useMutation } from '@tanstack/react-query';
+import { markNotificationAsReadById } from 'queries/notifications';
+import queryClient from 'utils/queryClient';
 
 type NotificationCardProps = NotificationProps;
 
@@ -15,7 +18,7 @@ const Notification: React.FC<NotificationCardProps> = ({
   action,
   target,
   isRead,
-  message,
+  id,
 }): ReactElement => {
   const notificationMessage = getNotificationMessage(
     actor.fullName,
@@ -23,13 +26,47 @@ const Notification: React.FC<NotificationCardProps> = ({
     target[target.length - 1].type,
   );
 
-  const cardContent = getNotificationCardContent(action, target);
+  const { cardContent, redirect } = getNotificationElementContent(
+    action,
+    target,
+  );
+
+  const markNotificationAsReadMutation = useMutation({
+    mutationKey: ['mark-notification-as-read'],
+    mutationFn: markNotificationAsReadById,
+    onSuccess: (response) => {
+      console.log(
+        'Notification successfully marked as read: ',
+        JSON.stringify(response),
+      );
+      queryClient.invalidateQueries(['get-notifications']);
+    },
+    onError: (response) => {
+      console.log(
+        'Error in marking notification as read: ',
+        JSON.stringify(response),
+      );
+    },
+  });
+
+  const handleOnClick = () => {
+    // Redirect user to the post
+    if (!isRead) {
+      markNotificationAsReadMutation.mutateAsync(id);
+    }
+    window.open(
+      `/posts/${redirect?.postId}${
+        redirect?.commentId ? '?commentId=' + redirect?.commentId : ''
+      }`,
+    );
+  };
 
   return (
     <div
       className={`${
         !isRead ? 'bg-orange-50' : 'bg-white'
       } py-4 px-6 cursor-pointer`}
+      onClick={handleOnClick}
     >
       <div className="flex gap-x-4 items-start">
         {/* Avatar of the actor with indicator */}

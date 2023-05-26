@@ -81,7 +81,7 @@ const routers = createBrowserRouter(
         <Route path="/apps" element={<Apps />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/post/:id" element={<PostPage />} />
+        <Route path="/posts/:id" element={<PostPage />} />
         <Route path="/notifications" element={<Notifications />} />
       </Route>
       <Route

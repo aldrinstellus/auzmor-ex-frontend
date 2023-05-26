@@ -28,7 +28,7 @@ const NotificationsOverview: React.FC = () => {
           All
         </p>
       ),
-      tabContent: <NotificationsList />,
+      tabContent: <NotificationsList key="All" />,
     },
     {
       tabLable: (isActive: boolean) => (
@@ -40,7 +40,7 @@ const NotificationsOverview: React.FC = () => {
           Mentions
         </p>
       ),
-      tabContent: <NotificationsList mentions />,
+      tabContent: <NotificationsList key="Mentions" mentions={true} />,
     },
   ];
 
@@ -48,12 +48,12 @@ const NotificationsOverview: React.FC = () => {
     <Popover
       triggerNode={
         <div className="box-border font-bold flex flex-row justify-center items-center p-1 gap-4 border-none relative">
-          {!isLoading && !isError && (
+          {!isLoading && !isError && data?.data?.result?.unread > 0 && (
             <div className="absolute rounded-full bg-red-600 text-white text-xxs -top-1 -right-1.5 flex w-4 h-4 items-center justify-center">
               {/* Get unread notif count here */}
-              {(data?.data?.result?.unread > 10
+              {(data.data.result.unread > 10
                 ? '9+'
-                : data.data.result.unread) || 0}
+                : data.data.result.unread) || ''}
             </div>
           )}
           {isLoading && (

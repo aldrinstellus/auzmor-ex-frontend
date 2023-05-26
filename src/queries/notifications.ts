@@ -11,36 +11,22 @@ const getNotifications = async (mentions?: boolean, limit = 20) => {
 
 export const useGetNotifications = (mentions?: boolean, limit?: number) => {
   return useQuery({
-    queryKey: ['get-notifications'],
+    queryKey: ['get-notifications', mentions],
     queryFn: () => getNotifications(mentions, limit),
-    refetchOnMount: true,
+    staleTime: 0,
   });
 };
 
 // Mark all notifications as read
-const markAllNotificationsAsRead = async (limit = 20) => {
+export const markAllNotificationsAsRead = async (limit = 20) => {
   const data = await apiService.put(`/notifications?limit=${limit}`);
   return data;
 };
 
-export const useMarkAllNotificationsAsRead = (limit?: number) => {
-  return useQuery({
-    queryKey: ['mark-all-notifications-as-read', limit],
-    queryFn: () => markAllNotificationsAsRead(limit),
-  });
-};
-
 // Mark a notification as ready by its id
-const markNotificationAsReadById = async (id: string) => {
+export const markNotificationAsReadById = async (id: string) => {
   const data = await apiService.put(`/notifications/${id}`);
   return data;
-};
-
-export const useMarkNotificationAsReadyById = (id: string) => {
-  return useQuery({
-    queryKey: ['mark-notification-as-read-by-id', id],
-    queryFn: () => markNotificationAsReadById(id),
-  });
 };
 
 // Get unread notifications count

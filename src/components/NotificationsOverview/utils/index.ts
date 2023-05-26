@@ -45,101 +45,104 @@ export const getTimeSinceActedAt = (actedAt: string) => {
   }
 };
 
-/*
-action types:
-1. REACTION
-2. COMMENT
-3. MENTION 
+export type NotificationRedirect = {
+  postId?: string;
+  commentId?: string;
+};
 
-target types: 
-1. POST 
-2. COMMENT 
+export type NotificationElementProps = {
+  cardContent?: NotificationCardProps;
+  redirect?: NotificationRedirect;
+};
 
-When action = REACTION and target = POST
-then return just POST (from target)
-When action = REACTION and target = COMMENT
-then return both POST (target) and COMMENT (target)
-
-When action = COMMENT and target = POST
-then return POST (from target) and COMMENT (from action)
-when action = COMMENT and target = COMMENT
-then return COMMENT (from action) and COMMENT (from target)
-
-When action = MENTION and target = POST
-then return POST (from target)
-When action = MENTION and target = COMMENT
-then return POST (target) and COMMENT (from target)
-
-*/
-
-export const getNotificationCardContent = (
+export const getNotificationElementContent = (
   action: Action,
   target: Target[],
-): NotificationCardProps | undefined => {
+): NotificationElementProps => {
   const cardContent: NotificationCardProps = {
     BottomCardContent: undefined,
     TopCardContent: undefined,
     image: undefined,
   };
 
+  const redirect: NotificationRedirect = {
+    postId: undefined,
+    commentId: undefined,
+  };
+
   // If the action performed is a REACTION
-  if (action.type === ActionType.REACTION) {
+  if (
+    action.type === ActionType.REACTION ||
+    action.type === ActionType.MENTION
+  ) {
     // If the target has only one element, it means the reaction has been made on a POST
     if (target.length === 1) {
-      cardContent.BottomCardContent = target[0].content;
-      cardContent.image = target[0]?.image || undefined;
+      const post = target[0];
+      cardContent.BottomCardContent = post.content;
+      cardContent.image = post?.image || undefined;
+
+      redirect.postId = target[0].entityId;
     }
-    // If the target has two elements, it means that the reaction has been made on a COMMENT that is a part of a POST
+
+    // If the target has two elements, it means that the reaction has been made on a COMMENT made on a POST
     else if (target.length === 2) {
-      cardContent.BottomCardContent = target[1].content;
-      cardContent.TopCardContent = target[0].content;
-      cardContent.image = target[0]?.image || undefined;
+      const post = target[0];
+      const comment = target[1];
+      cardContent.TopCardContent = comment.content;
+      cardContent.BottomCardContent = post.content;
+      cardContent.image = post.image || undefined;
+
+      redirect.postId = post.entityId;
+      redirect.commentId = comment.entityId;
     }
-    // #TODO If the target has three elements, (reply, comment, post), find out what to render
-    // -> do you show the reply and comment?
-    // -> or do you show the reply and post?
-    // else if (target.length === 3)
+
+    // If the target has three elements, it means that the reaction has been made on a REPLY made to a COMMENT made on a POST
+    else if (target.length === 3) {
+      const post = target[0];
+      const comment = target[1];
+      const reply = target[2];
+
+      cardContent.TopCardContent = reply.content;
+      cardContent.BottomCardContent = comment.content;
+
+      redirect.postId = post.entityId;
+      redirect.commentId = reply.entityId;
+    }
   }
 
   // If the action performed is a COMMENT
   else if (action.type === ActionType.COMMENT) {
     // If the target has only one element, it means the comment was made on a POST
     if (target.length === 1) {
-      cardContent.TopCardContent = action.content;
-      cardContent.BottomCardContent = target[0].content;
-      cardContent.image = target[0]?.image || undefined;
+      const comment = action;
+      const post = target[0];
+
+      cardContent.TopCardContent = comment.content;
+      cardContent.BottomCardContent = post.content;
+      cardContent.image = post.image || undefined;
+
+      redirect.postId = post.entityId;
+      redirect.commentId = comment.entityId;
     }
 
-    // If the target has two elements, it means the comment was made on a COMMENT i.e. the action is a reply to a comment
-    // #TODO Do I show the reply and the comment here? Or the reply and the post? Or the comment and the post?
-    // Currently assuming that I have to show the reply and the comment
-    if (target.length === 2) {
-      cardContent.TopCardContent = action.content;
-      cardContent.BottomCardContent = target[0].content;
-    }
+    // If the target has two elements, it means that the comment is a reply to a COMMENT made on a POST.
+    else if (target.length === 2) {
+      const reply = action;
+      const post = target[0];
+      const comment = target[1];
 
-    // #TODO AFAIK, there's no possibility for 3 items in target when action = COMMENT
+      cardContent.TopCardContent = reply.content;
+      cardContent.BottomCardContent = comment.content;
+
+      redirect.commentId = reply.entityId;
+      redirect.postId = post.entityId;
+    }
   }
 
-  // If the action performed is a MENTION
-  else if (action.type === ActionType.MENTION) {
-    // If the target has only one element, it means the user was mentioned in a post
-    // #TODO confirm what the action object looks like when type = MENTION. Ensure that it does not have any content.
-    if (target.length === 1) {
-      cardContent.BottomCardContent = target[0].content;
-      cardContent.image = target[0].image || undefined;
-    }
-
-    // If the target has two elements, it means the user was mentioned in a comment of a post
-    if (target.length === 2) {
-      cardContent.TopCardContent = target[0].content;
-      cardContent.BottomCardContent = target[1].content;
-      cardContent.image = target[1].image || undefined;
-    }
-
-    // #TODO check if you can have 3 elements here, [{reply}, {comment}, {post}] and see what needs to be rendered
-  }
-  return cardContent;
+  return {
+    cardContent,
+    redirect,
+  };
 };
 
 export const getNotificationMessage = (
