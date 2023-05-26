@@ -262,7 +262,10 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
                   <div className="text-neutral-500 text-sm font-bold">
                     Skills
                   </div>
-                  <div className="text-neutral-900 text-base font-medium px-4">
+                  <div
+                    className="text-neutral-900 text-base font-medium px-4"
+                    data-testid="added-skills"
+                  >
                     {(personalDetails?.personal?.skills?.length > 0 &&
                       personalDetails?.personal?.skills.map(
                         (skill: string, index: number) => (
@@ -284,6 +287,8 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
                 <DragDropList
                   draggableItems={skills}
                   setDraggableItems={setSkills}
+                  dataTestIdEdit={'edit-button'}
+                  dataTestIdDelete={'delete-button'}
                 />
               </form>
             )}
