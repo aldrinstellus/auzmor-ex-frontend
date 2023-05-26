@@ -1,16 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-
+import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Logo } from 'components/Logo';
 import Icon from 'components/Icon';
 import Divider, { Variant } from 'components/Divider';
 import AccountCard from './AccountCard';
-import Notifications from 'components/Notifications';
+import NotificationsOverview from 'components/NotificationsOverview';
 import useRole from 'hooks/useRole';
-import notifications from './dummy.json';
-import { useGetNotifications } from 'queries/notifications';
-import Spinner from 'components/Spinner';
-import queryClient from 'utils/queryClient';
 import Layout, { FieldType } from 'components/Form';
 import { useForm } from 'react-hook-form';
 
@@ -58,52 +53,12 @@ export enum NotificationType {
 }
 
 const Navbar = () => {
-  const notifRef = useRef<HTMLDivElement>(null);
   const { isAdmin } = useRole();
-
-  const [showNotifications, setShowNotifications] = useState<boolean>(false);
-  const [notificationType, setNotificationType] = useState<NotificationType>(
-    NotificationType.ALL,
-  );
-
-  useEffect(() => {
-    const checkIfClickedOutside = (e: any) => {
-      // If the menu is open and the clicked target is not within the menu,
-      // then close the menu
-      if (
-        showNotifications &&
-        notifRef.current &&
-        !notifRef.current.contains(e.target)
-      ) {
-        setShowNotifications(false);
-      }
-    };
-
-    document.addEventListener('mousedown', checkIfClickedOutside);
-
-    return () => {
-      // Cleanup the event listener
-      document.removeEventListener('mousedown', checkIfClickedOutside);
-    };
-  }, [showNotifications]);
-
-  const { data, isLoading, isError } = useGetNotifications(
-    notificationType === NotificationType.MENTIONS,
-  );
-
-  useEffect(() => {
-    console.log({ notificationType });
-    console.log(notificationType === NotificationType.MENTIONS);
-    queryClient.invalidateQueries(['get-notifications']);
-  }, [notificationType]);
-
-  useEffect(() => {
-    console.log({ data });
-  }, [data]);
 
   const { control } = useForm({
     mode: 'onChange',
   });
+
   return (
     <header className="sticky top-0 z-40">
       <div className="bg-white shadow h-16 w-full flex items-center justify-center px-8">
@@ -163,33 +118,8 @@ const Navbar = () => {
               </div>
             </NavLink>
           )}
-          <div ref={notifRef} className="relative cursor-pointer">
-            <div
-              className="box-border font-bold flex flex-row justify-center items-center p-1 gap-4 border-none relative"
-              onClick={() => setShowNotifications(!showNotifications)}
-            >
-              {!isLoading && (
-                <div className="absolute rounded-full bg-red-600 text-white text-xxs -top-1 -right-1.5 flex w-4 h-4 items-center justify-center">
-                  {/* Get unread notif count here */}10
-                </div>
-              )}
-              {isLoading && (
-                <Spinner
-                  className="absolute -top-1 -right-1.5 w-3 h-3 border-2"
-                  color="#dc2626"
-                />
-              )}
-
-              <Icon name="notification" size={26} disabled={true} />
-            </div>
-            {showNotifications && (
-              <Notifications
-                notifications={notifications.data}
-                setShowNotifications={setShowNotifications}
-                isLoading={isLoading}
-                setNotificationType={setNotificationType}
-              />
-            )}
+          <div>
+            <NotificationsOverview />
           </div>
           <div>
             <AccountCard />

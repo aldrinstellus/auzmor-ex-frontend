@@ -3,9 +3,8 @@ import apiService from 'utils/apiService';
 
 // Get all notifications
 const getNotifications = async (mentions?: boolean, limit = 20) => {
-  console.log('hey', { mentions });
   const data = await apiService.get(
-    `/notifications?limit=${limit}${mentions ? '&mentions=true' : ''}`,
+    `/notifications?limit=${limit}${!!mentions ? '&mentions=true' : ''}`,
   );
   return data;
 };
@@ -14,6 +13,7 @@ export const useGetNotifications = (mentions?: boolean, limit?: number) => {
   return useQuery({
     queryKey: ['get-notifications'],
     queryFn: () => getNotifications(mentions, limit),
+    refetchOnMount: true,
   });
 };
 
@@ -40,5 +40,19 @@ export const useMarkNotificationAsReadyById = (id: string) => {
   return useQuery({
     queryKey: ['mark-notification-as-read-by-id', id],
     queryFn: () => markNotificationAsReadById(id),
+  });
+};
+
+// Get unread notifications count
+const getUnreadNotificationsCount = async () => {
+  const data = await apiService.get('/notifications/unread/count');
+  return data;
+};
+
+export const useGetUnreadNotificationsCount = () => {
+  return useQuery({
+    queryKey: ['get-unread-notifications-count'],
+    queryFn: () => getUnreadNotificationsCount(),
+    refetchInterval: 60 * 1000,
   });
 };

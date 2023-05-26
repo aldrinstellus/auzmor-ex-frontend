@@ -1,17 +1,20 @@
 import Avatar from 'components/Avatar';
 import React, { ReactElement } from 'react';
-import PostCard from './PostCard';
-import { Notification } from '..';
-import { getTimeSinceActedAt } from '../utils';
+import NotificationCard from './NotificationCard';
+import {
+  getNotificationMessage,
+  getTargetContentByTargetType,
+  getTimeSinceActedAt,
+} from '../utils';
+import { NotificationProps, TargetType } from './NotificationsList';
 
-type NotificationCardProps = Notification;
+type NotificationCardProps = NotificationProps;
 
-const NotificationCard: React.FC<NotificationCardProps> = ({
+const Notification: React.FC<NotificationCardProps> = ({
   actor,
   action,
   target,
   isRead,
-  createdAt,
   message,
 }): ReactElement => {
   return (
@@ -34,12 +37,25 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         <div className="flex items-start gap-x-3">
           <div className="flex flex-col gap-y-1">
             <p className="text-neutral-900">
-              {actor.fullName} {message}
+              {actor.fullName}{' '}
+              {getNotificationMessage(
+                action.type,
+                target[target.length - 1].type,
+                actor.fullName,
+              )}
             </p>
             <p className="text-sm text-neutral-500 font-normal">
               {getTimeSinceActedAt(action.actedAt)}
             </p>
-            <PostCard content={action.content} />
+            <NotificationCard
+              post={
+                getTargetContentByTargetType(target, TargetType.POST)?.content
+              }
+              comment={
+                getTargetContentByTargetType(target, TargetType.COMMENT)
+                  ?.content
+              }
+            />
           </div>
           {/* Unread indicator (orange dot) */}
           {!isRead && (
@@ -53,4 +69,4 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   );
 };
 
-export default NotificationCard;
+export default Notification;
