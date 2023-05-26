@@ -20,7 +20,7 @@ import { toast } from 'react-toastify';
 import DragDropList from 'components/DragDropList';
 
 interface IPersonalDetails {
-  birthDate: string;
+  birthDate: Date | string;
   gender: OptionType;
   permanentAddress: string;
   maritalStatus: OptionType;
@@ -47,7 +47,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
     mode: 'onChange',
     defaultValues: {
       personal: {
-        birthDate: personalDetails?.personal?.birthDate,
+        birthDate: new Date(personalDetails?.personal?.birthDate),
         gender: personalDetails?.personal?.gender,
         permanentAddress: personalDetails?.personal?.permanentLocation,
         maritalStatus: personalDetails?.personal?.maritalStatus,
