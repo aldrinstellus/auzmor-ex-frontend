@@ -36,6 +36,7 @@ export type InputProps = {
   label?: string;
   onLeftIconClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onRightIconClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onEnter?: any;
 };
 
 const Input: React.FC<InputProps> = ({
@@ -59,6 +60,7 @@ const Input: React.FC<InputProps> = ({
   label,
   onLeftIconClick,
   onRightIconClick,
+  onEnter,
 }) => {
   const { field } = useController({
     name,
@@ -155,6 +157,7 @@ const Input: React.FC<InputProps> = ({
             defaultValue={defaultValue}
             ref={field.ref}
             onChange={field.onChange}
+            onKeyDown={onEnter}
             onBlur={field.onBlur}
           />
         </div>

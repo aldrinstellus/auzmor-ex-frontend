@@ -1,6 +1,7 @@
+import React, { memo, useEffect, useMemo, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import Card from 'components/Card';
 import Divider from 'components/Divider';
-import React, { memo, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import useHover from 'hooks/useHover';
 import Icon from 'components/Icon';
@@ -16,6 +17,7 @@ import { OptionType } from 'components/UserOnboard/components/SelectTimeZone';
 import { twConfig } from 'utils/misc';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { toast } from 'react-toastify';
+import DragDropList from 'components/DragDropList';
 
 interface IPersonalDetails {
   birthDate: string;
@@ -39,6 +41,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
 }) => {
   const [isHovered, eventHandlers] = useHover();
   const [isEditable, setIsEditable] = useState<boolean>(false);
+  const [skills, setSkills] = useState<Record<string, string>[]>([]);
 
   const { control, handleSubmit, getValues } = useForm<IPersonalDetailsForm>({
     mode: 'onChange',
@@ -56,6 +59,20 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
     () => clsx({ 'mb-8': true }, { 'shadow-xl': isHovered && canEdit }),
     [isHovered],
   );
+
+  const setInitialSkills = () => {
+    const personalSkillsList = personalDetails?.personal?.skills?.map(
+      (skill: string) => ({
+        id: uuidv4(),
+        value: skill,
+      }),
+    );
+    setSkills(personalSkillsList);
+  };
+
+  useEffect(() => {
+    setInitialSkills();
+  }, []);
 
   const updateUserPersonalDetailsMutation = useMutation({
     mutationFn: updateCurrentUser,
@@ -88,7 +105,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
         birthDate: personalDetailData?.personal?.birthDate,
         permanentAddress: personalDetailData?.personal?.permanentAddress,
         maritalStatus: personalDetailData?.personal?.maritalStatus?.value,
-        skills: ['ReactJs'],
+        skills: skills.map((skill: Record<string, string>) => skill.value),
       },
     };
     await updateUserPersonalDetailsMutation.mutateAsync({
@@ -99,13 +116,13 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
   };
 
   const fields = [
-    {
-      type: FieldType.DatePicker,
-      name: 'personal.birthDate',
-      control,
-      dataTestId: 'personal-details-dob',
-      defaultValue: getValues()?.personal?.birthDate,
-    },
+    // {
+    //   type: FieldType.DatePicker,
+    //   name: 'personal.birthDate',
+    //   control,
+    //   dataTestId: 'personal-details-dob',
+    //   defaultValue: getValues()?.personal?.birthDate,
+    // },
     {
       type: FieldType.SingleSelect,
       name: 'personal.gender',
@@ -142,15 +159,26 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
       control,
       menuPlacement: 'top',
     },
-    // {
-    //   type: FieldType.Input,
-    //   name: 'personal.skills',
-    //   placeholder: 'Search for Skills',
-    //   label: 'Skills',
-    //   defaultValue: getValues()?.personal?.skills,
-    //   dataTestId: 'personal-details-skills',
-    //   control,
-    // },
+    {
+      name: 'personal.skills',
+      type: FieldType.Input,
+      label: 'Skills',
+      control,
+      placeholder: 'Search for Skills',
+      dataTestId: 'personal-details-skills',
+      defaultValue: getValues()?.personal?.skills,
+      onEnter: (event: any) => {
+        if (event?.key === 'Enter') {
+          event.preventDefault();
+          const skillObject = {
+            id: uuidv4(),
+            value: event?.target?.value,
+          };
+          console.log(skillObject);
+          setSkills([...skills, skillObject]);
+        }
+      },
+    },
   ];
 
   return (
@@ -165,6 +193,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
           canEdit={canEdit}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
+          setInitialSkills={setInitialSkills}
           isLoading={updateUserPersonalDetailsMutation.isLoading}
         />
         <Divider />
@@ -252,6 +281,10 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
                   Date of Birth
                 </div>
                 <Layout fields={fields} />
+                <DragDropList
+                  draggableItems={skills}
+                  setDraggableItems={setSkills}
+                />
               </form>
             )}
           </div>
