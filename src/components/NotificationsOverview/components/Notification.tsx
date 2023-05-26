@@ -3,7 +3,7 @@ import React, { ReactElement } from 'react';
 import NotificationCard from './NotificationCard';
 import {
   getNotificationMessage,
-  getTargetContentByTargetType,
+  getNotificationCardContent,
   getTimeSinceActedAt,
 } from '../utils';
 import { NotificationProps, TargetType } from './NotificationsList';
@@ -17,6 +17,14 @@ const Notification: React.FC<NotificationCardProps> = ({
   isRead,
   message,
 }): ReactElement => {
+  const notificationMessage = getNotificationMessage(
+    actor.fullName,
+    action.type,
+    target[target.length - 1].type,
+  );
+
+  const cardContent = getNotificationCardContent(action, target);
+
   return (
     <div
       className={`${
@@ -34,27 +42,16 @@ const Notification: React.FC<NotificationCardProps> = ({
           size={40}
         />
         {/* Content */}
-        <div className="flex items-start gap-x-3">
-          <div className="flex flex-col gap-y-1">
-            <p className="text-neutral-900">
-              {actor.fullName}{' '}
-              {getNotificationMessage(
-                action.type,
-                target[target.length - 1].type,
-                actor.fullName,
-              )}
-            </p>
+        <div className="flex items-start justify-between w-full">
+          <div className="flex flex-col gap-y-1 w-11/12">
+            <p className="text-neutral-900">{notificationMessage}</p>
             <p className="text-sm text-neutral-500 font-normal">
               {getTimeSinceActedAt(action.actedAt)}
             </p>
             <NotificationCard
-              post={
-                getTargetContentByTargetType(target, TargetType.POST)?.content
-              }
-              comment={
-                getTargetContentByTargetType(target, TargetType.COMMENT)
-                  ?.content
-              }
+              TopCardContent={cardContent?.TopCardContent}
+              BottomCardContent={cardContent?.BottomCardContent}
+              image={cardContent?.image}
             />
           </div>
           {/* Unread indicator (orange dot) */}

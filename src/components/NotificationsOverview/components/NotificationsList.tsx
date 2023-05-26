@@ -11,10 +11,9 @@ type NotificationsList = {
 };
 
 export enum ActionType {
-  REACTED = 'REACTED',
-  COMMENTED = 'COMMENTED',
-  MENTIONED = 'MENTIONED',
-  REPOSTED = 'REPOSTED',
+  REACTION = 'REACTION',
+  COMMENT = 'COMMENT',
+  MENTION = 'MENTION',
 }
 
 export enum TargetType {

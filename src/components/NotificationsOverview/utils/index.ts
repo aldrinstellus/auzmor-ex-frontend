@@ -1,3 +1,4 @@
+import { NotificationCardProps } from '../components/NotificationCard';
 import {
   Action,
   ActionType,
@@ -44,11 +45,101 @@ export const getTimeSinceActedAt = (actedAt: string) => {
   }
 };
 
-export const getTargetContentByTargetType = (
+/*
+action types:
+1. REACTION
+2. COMMENT
+3. MENTION 
+
+target types: 
+1. POST 
+2. COMMENT 
+
+When action = REACTION and target = POST
+then return just POST (from target)
+When action = REACTION and target = COMMENT
+then return both POST (target) and COMMENT (target)
+
+When action = COMMENT and target = POST
+then return POST (from target) and COMMENT (from action)
+when action = COMMENT and target = COMMENT
+then return COMMENT (from action) and COMMENT (from target)
+
+When action = MENTION and target = POST
+then return POST (from target)
+When action = MENTION and target = COMMENT
+then return POST (target) and COMMENT (from target)
+
+*/
+
+export const getNotificationCardContent = (
+  action: Action,
   target: Target[],
-  targetType: TargetType,
-) => {
-  return target.find((item) => item.type === TargetType[targetType]);
+): NotificationCardProps | undefined => {
+  const cardContent: NotificationCardProps = {
+    BottomCardContent: undefined,
+    TopCardContent: undefined,
+    image: undefined,
+  };
+
+  // If the action performed is a REACTION
+  if (action.type === ActionType.REACTION) {
+    // If the target has only one element, it means the reaction has been made on a POST
+    if (target.length === 1) {
+      cardContent.BottomCardContent = target[0].content;
+      cardContent.image = target[0]?.image || undefined;
+    }
+    // If the target has two elements, it means that the reaction has been made on a COMMENT that is a part of a POST
+    else if (target.length === 2) {
+      cardContent.BottomCardContent = target[1].content;
+      cardContent.TopCardContent = target[0].content;
+      cardContent.image = target[0]?.image || undefined;
+    }
+    // #TODO If the target has three elements, (reply, comment, post), find out what to render
+    // -> do you show the reply and comment?
+    // -> or do you show the reply and post?
+    // else if (target.length === 3)
+  }
+
+  // If the action performed is a COMMENT
+  else if (action.type === ActionType.COMMENT) {
+    // If the target has only one element, it means the comment was made on a POST
+    if (target.length === 1) {
+      cardContent.TopCardContent = action.content;
+      cardContent.BottomCardContent = target[0].content;
+      cardContent.image = target[0]?.image || undefined;
+    }
+
+    // If the target has two elements, it means the comment was made on a COMMENT i.e. the action is a reply to a comment
+    // #TODO Do I show the reply and the comment here? Or the reply and the post? Or the comment and the post?
+    // Currently assuming that I have to show the reply and the comment
+    if (target.length === 2) {
+      cardContent.TopCardContent = action.content;
+      cardContent.BottomCardContent = target[0].content;
+    }
+
+    // #TODO AFAIK, there's no possibility for 3 items in target when action = COMMENT
+  }
+
+  // If the action performed is a MENTION
+  else if (action.type === ActionType.MENTION) {
+    // If the target has only one element, it means the user was mentioned in a post
+    // #TODO confirm what the action object looks like when type = MENTION. Ensure that it does not have any content.
+    if (target.length === 1) {
+      cardContent.BottomCardContent = target[0].content;
+      cardContent.image = target[0].image || undefined;
+    }
+
+    // If the target has two elements, it means the user was mentioned in a comment of a post
+    if (target.length === 2) {
+      cardContent.TopCardContent = target[0].content;
+      cardContent.BottomCardContent = target[1].content;
+      cardContent.image = target[1].image || undefined;
+    }
+
+    // #TODO check if you can have 3 elements here, [{reply}, {comment}, {post}] and see what needs to be rendered
+  }
+  return cardContent;
 };
 
 export const getNotificationMessage = (
@@ -56,23 +147,21 @@ export const getNotificationMessage = (
   actionType: string,
   targetType: string,
 ) => {
-  let message = actorName;
-  if (targetType === TargetType.POST) {
-    if (actionType === ActionType.COMMENTED) {
+  let message = actorName + ' ';
+  if (targetType === TargetType[TargetType.POST]) {
+    if (actionType === ActionType[ActionType.COMMENT]) {
       message += 'commented on your post';
-    } else if (actionType === ActionType.MENTIONED) {
+    } else if (actionType === ActionType[ActionType.MENTION]) {
       message += 'mentioned you in a post';
-    } else if (actionType === ActionType.REACTED) {
+    } else if (actionType === ActionType[ActionType.REACTION]) {
       message += 'reacted to your post';
-    } else if (actionType === ActionType.REPOSTED) {
-      message += 'reposted your post';
     }
-  } else if (targetType === TargetType.COMMENT) {
-    if (actionType === ActionType.COMMENTED) {
+  } else if (targetType === TargetType[TargetType.COMMENT]) {
+    if (actionType === ActionType[ActionType.COMMENT]) {
       message += 'replied to your comment';
-    } else if (actionType === ActionType.MENTIONED) {
+    } else if (actionType === ActionType[ActionType.MENTION]) {
       message += 'mentioned you in a comment';
-    } else if (actionType === ActionType.REACTED) {
+    } else if (actionType === ActionType[ActionType.REACTION]) {
       message += 'reacted to your comment';
     }
   }
