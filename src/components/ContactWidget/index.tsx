@@ -203,10 +203,10 @@ const ContactWidget: React.FC<IContactCardProps> = ({
                     Contact No.:
                   </div>
                   <div className="flex items-center space-x-2 w-full">
-                    <div className="w-[70%]">
+                    <div className="w-[35%]">
                       <Layout fields={countryCodeField} />
                     </div>
-                    <div className="w-[30%]">
+                    <div className="w-[65%]">
                       <Layout fields={phoneField} />
                     </div>
                   </div>
