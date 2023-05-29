@@ -13,12 +13,11 @@ import ConfirmationBox from 'components/ConfirmationBox';
 const AccountCard = () => {
   const navigate = useNavigate();
   const { user, reset } = useAuth();
-  const [confirm, showConfirm, closeConfirm] = useModal();
 
   const logoutMutation = useMutation(logout, {
     onSuccess: async () => {
       reset();
-      navigate('/login');
+      navigate('/logout');
     },
   });
 
@@ -88,7 +87,7 @@ const AccountCard = () => {
             </div>
             <div
               className={menuItemStyle}
-              onClick={showConfirm}
+              onClick={() => logoutMutation.mutate()}
               data-testId="user-menu-signout-cta"
             >
               Sign out
@@ -96,19 +95,6 @@ const AccountCard = () => {
           </div>
         </div>
       </Popover>
-      <ConfirmationBox
-        open={confirm}
-        onClose={closeConfirm}
-        title="Are you sure you want to logout?"
-        description="You will be logged out of the system"
-        discard={{ label: 'Cancel', onCancel: closeConfirm, className: '' }}
-        success={{
-          label: 'Logout',
-          onSubmit: () => logoutMutation.mutate(),
-          className: '',
-        }}
-        isLoading={logoutMutation.isLoading}
-      />
     </>
   );
 };

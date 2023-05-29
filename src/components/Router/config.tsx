@@ -28,6 +28,7 @@ const AcceptInvite = React.lazy(() => import('pages/AcceptInvite'));
 const PageNotFound = React.lazy(() => import('pages/PageNotFound'));
 const ServerErrorPage = React.lazy(() => import('pages/ServerErrorPage'));
 const PostPage = React.lazy(() => import('pages/Post'));
+const Logout = React.lazy(() => import('pages/Logout'));
 
 const routers = createBrowserRouter(
   createRoutesFromElements(
@@ -35,6 +36,7 @@ const routers = createBrowserRouter(
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/register" element={<Registration />} />
+      <Route path="/logout" element={<Logout />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/accept-invite" element={<AcceptInvite />} />
