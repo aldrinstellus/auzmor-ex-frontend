@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import ReactCrop, { type Crop } from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
-import './index.css';
 import { IUpdateProfileImage } from 'pages/UserDetail';
 import Header from 'components/ModalHeader';
 import Button, { Size, Variant } from 'components/Button';
@@ -31,19 +28,13 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
   userCoverImageRef,
   userProfileImageRef,
 }) => {
-  const [crop, setCrop] = useState<Crop>({
-    unit: 'px',
-    x: 25,
-    y: 25,
-    width: 50,
-    height: 50,
-  });
-
   const disableClosed = () => {
     setShowPictureCropModal(false);
     setShowEditProfileModal(true);
     setFile([{}]);
   };
+
+  console.log(file);
 
   return (
     <Modal
@@ -56,26 +47,15 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
       <Header title={title} onClose={disableClosed} />
       <>
         <div className="h-[320px] ">
-          <ReactCrop
-            crop={crop}
-            // circularCrop={true}
-            onChange={(_, pixel) => setCrop(pixel)}
-            aspect={16 / 9}
-            className="w-full h-full"
-          >
-            {file?.profileImage && (
-              <img
-                src={file?.profileImage && getBlobUrl(file?.profileImage)}
-                alt="profile image crop"
-                // style={{
-                //   transform: `scale(${scale}) rotate(${rotate}deg)`,
-                // }}
-              />
-            )}
-            {file?.coverImage && (
-              <img src={file?.coverImage && getBlobUrl(file?.coverImage)} />
-            )}
-          </ReactCrop>
+          {file?.profileImage && (
+            <img
+              src={file?.profileImage && getBlobUrl(file?.profileImage)}
+              alt="profile image crop"
+            />
+          )}
+          {file?.coverImage && (
+            <img src={file?.coverImage && getBlobUrl(file?.coverImage)} />
+          )}
         </div>
         <Divider />
         <div className="h-[53px] px-6 flex justify-between items-center">
