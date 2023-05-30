@@ -65,11 +65,6 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
   // 3. rotate functionality on going..
   // const rotate = (angle: number) => cropperRef?.current?.rotate(angle);
 
-  // 4. Onchange will called each and everytime you set the cropped image
-  const onChange = (cropper: CropperRef) => {
-    console.log(cropper.getCanvas());
-  };
-
   const { updateUser } = useAuth();
 
   useEffect(() => {
@@ -100,7 +95,6 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
     },
     onSuccess: async (response: Record<string, any>) => {
       const userUpdateResponse = response?.result?.data;
-      console.log('user pdate', userUpdateResponse);
       updateUser({
         name: userUpdateResponse.fullName,
         id: userUpdateResponse.id,
@@ -113,7 +107,7 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
         profileImage: userUpdateResponse.profileImage?.original,
       });
       setFile({});
-      toast(<SuccessToast content={'User Profile Updated Successfully'} />, {
+      toast(<SuccessToast content={'Profile Picture Updated Successfully'} />, {
         closeButton: (
           <Icon
             name="closeCircleOutline"
@@ -134,6 +128,30 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
       await queryClient.invalidateQueries({ queryKey: ['current-user-me'] });
     },
   });
+
+  const onSubmit = async () => {
+    const canvas = cropperRef?.current?.getCanvas();
+    canvas?.toBlob((blobImage) => {
+      setCropperBlobImage(blobImage);
+    }, 'image/jpeg');
+    const newFile = cropperBlobImage
+      ? BlobToFile(cropperBlobImage, 'newFile')
+      : null;
+    let profileImageUploadResponse;
+    if (newFile) {
+      profileImageUploadResponse = await uploadMedia(
+        [newFile],
+        EntityType.UserProfileImage,
+      );
+    }
+    updateUsersMutation.mutate({
+      profileImage: {
+        fileId: profileImageUploadResponse && profileImageUploadResponse[0]?.id,
+        original:
+          profileImageUploadResponse && profileImageUploadResponse[0].original,
+      },
+    });
+  };
 
   return (
     <Modal
@@ -206,10 +224,10 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
           </div>
           <div
             onClick={() => {
-              console.log('rotate image');
+              cropperRef?.current?.rotateImage(90);
             }}
           >
-            <Icon name="plus" />
+            <Icon name="rotateLeft" />
           </div>
         </div>
         <div className="flex justify-between items-center h-16 p-6 bg-blue-50">
@@ -229,32 +247,7 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
             />
             <Button
               label="Apply"
-              onClick={async () => {
-                const canvas = cropperRef?.current?.getCanvas();
-                canvas?.toBlob((blobImage) => {
-                  setCropperBlobImage(blobImage);
-                }, 'image/jpeg');
-                const newFile = cropperBlobImage
-                  ? BlobToFile(cropperBlobImage, 'newFile')
-                  : null;
-                let profileImageUploadResponse;
-                if (newFile) {
-                  profileImageUploadResponse = await uploadMedia(
-                    [newFile],
-                    EntityType.UserProfileImage,
-                  );
-                }
-                updateUsersMutation.mutate({
-                  profileImage: {
-                    fileId:
-                      profileImageUploadResponse &&
-                      profileImageUploadResponse[0]?.id,
-                    original:
-                      profileImageUploadResponse &&
-                      profileImageUploadResponse[0].original,
-                  },
-                });
-              }}
+              onClick={onSubmit}
               disabled={updateUsersMutation?.isLoading}
               loading={updateUsersMutation?.isLoading}
             />

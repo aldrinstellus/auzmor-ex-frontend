@@ -90,6 +90,7 @@ import Male from '../components/Male';
 import ImportIcon from '../components/Import';
 import Minus from '../components/Minus';
 import Plus from '../components/Plus';
+import RotateLeft from '../components/RotateLeft';
 
 export const icon = {
   add: Add,
@@ -170,6 +171,7 @@ export const icon = {
   redo: Redo,
   reorder: Reorder,
   reply: Reply,
+  rotateLeft: RotateLeft,
   search: Search,
   send: Send,
   slack: SlackIcon,
