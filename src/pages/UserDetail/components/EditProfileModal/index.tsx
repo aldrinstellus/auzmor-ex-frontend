@@ -313,11 +313,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
               {!isCoverImageRemoved && (
                 <img
                   className="object-cover w-full"
-                  src={
-                    (file?.coverImage && getBlobUrl(file?.coverImage)) ||
-                    data?.coverImage?.original ||
-                    DefaultCoverImage
-                  }
+                  src={data?.coverImage?.original || DefaultCoverImage}
                 />
               )}
             </div>
@@ -342,10 +338,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
               <div className="relative">
                 <Avatar
                   name={data?.fullName}
-                  image={
-                    (file?.profileImage && getBlobUrl(file?.profileImage)) ||
-                    data?.profileImage?.original
-                  }
+                  image={data?.profileImage?.original}
                   size={96}
                   className="border-2 border-white overflow-hidden"
                 />

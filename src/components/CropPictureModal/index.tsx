@@ -1,11 +1,30 @@
-import React, { useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  CropperRef,
+  Cropper,
+  CircleStencil,
+  Coordinates,
+  Scale,
+  FixedCropper,
+  ImageRestriction,
+} from 'react-advanced-cropper';
+import 'react-advanced-cropper/dist/style.css';
+import './index.css';
+
 import { IUpdateProfileImage } from 'pages/UserDetail';
 import Header from 'components/ModalHeader';
 import Button, { Size, Variant } from 'components/Button';
 import Icon from 'components/Icon';
 import Divider from 'components/Divider';
-import { getBlobUrl } from 'utils/misc';
+import { BlobToFile, getBlobUrl, twConfig } from 'utils/misc';
 import Modal from 'components/Modal';
+import { EntityType, useUpload } from 'queries/files';
+import queryClient from 'utils/queryClient';
+import SuccessToast from 'components/Toast/variants/SuccessToast';
+import { toast } from 'react-toastify';
+import useAuth from 'hooks/useAuth';
+import { updateCurrentUser } from 'queries/users';
+import { useMutation } from '@tanstack/react-query';
 
 export interface ICropPictureModalProps {
   title: string;
@@ -32,11 +51,89 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
   profileImage,
   coverImage,
 }) => {
+  const { uploadMedia, uploadStatus } = useUpload();
+
+  const cropperRef = useRef<CropperRef>(null);
+  const [cropperBlobImage, setCropperBlobImage] = useState<Blob | null>(null);
+  const [zoomValue, setZoomValue] = useState<number | Scale>(0);
+
+  // 1. current blob image to show the image in cropper modal
+
+  // 2. zoom functionality on going...
+  const zoom = () => cropperRef?.current?.zoomImage(zoomValue);
+
+  // 3. rotate functionality on going..
+  // const rotate = (angle: number) => cropperRef?.current?.rotate(angle);
+
+  // 4. Onchange will called each and everytime you set the cropped image
+  const onChange = (cropper: CropperRef) => {
+    console.log(cropper.getCanvas());
+  };
+
+  const { updateUser } = useAuth();
+
+  useEffect(() => {
+    const getBlobProfileImage =
+      file?.profileImage && getBlobUrl(file?.profileImage);
+    const getBlobCoverImage = file?.coverImage && getBlobUrl(file?.coverImage);
+    // Revoke the object URL, to allow the garbage collector to destroy the uploaded before file
+    return () => {
+      if (getBlobProfileImage) {
+        URL.revokeObjectURL(getBlobProfileImage);
+      } else {
+        URL.revokeObjectURL(getBlobCoverImage);
+      }
+    };
+  }, []);
+
   const disableClosed = () => {
     setShowPictureCropModal(false);
     setShowEditProfileModal(true);
     setFile([{}]);
   };
+
+  const updateUsersMutation = useMutation({
+    mutationFn: updateCurrentUser,
+    mutationKey: ['update-users-mutation'],
+    onError: (error: any) => {
+      console.log('API call resulted in error: ', error);
+    },
+    onSuccess: async (response: Record<string, any>) => {
+      const userUpdateResponse = response?.result?.data;
+      console.log('user pdate', userUpdateResponse);
+      updateUser({
+        name: userUpdateResponse.fullName,
+        id: userUpdateResponse.id,
+        email: userUpdateResponse.primaryEmail,
+        role: userUpdateResponse.role,
+        organization: {
+          id: userUpdateResponse.org?.id,
+          domain: userUpdateResponse.org?.domain,
+        },
+        profileImage: userUpdateResponse.profileImage?.original,
+      });
+      setFile({});
+      toast(<SuccessToast content={'User Profile Updated Successfully'} />, {
+        closeButton: (
+          <Icon
+            name="closeCircleOutline"
+            stroke={twConfig.theme.colors.primary['500']}
+            size={20}
+          />
+        ),
+        style: {
+          border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+          borderRadius: '6px',
+          display: 'flex',
+          alignItems: 'center',
+        },
+        autoClose: 2000,
+      });
+      setShowEditProfileModal(true);
+      setShowPictureCropModal(false);
+      await queryClient.invalidateQueries({ queryKey: ['current-user-me'] });
+    },
+  });
 
   return (
     <Modal
@@ -49,25 +146,44 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
       <Header title={title} onClose={disableClosed} />
       <div>
         {file?.profileImage ? (
-          <img
+          <Cropper
             src={
               (file?.profileImage && getBlobUrl(file?.profileImage)) ||
               profileImage?.original
             }
-            alt="profile image crop"
-            className="h-[320px] w-full"
-          />
-        ) : file?.coverImage ? (
-          <img
-            src={file?.coverImage && getBlobUrl(file?.coverImage)}
-            alt="Cover Image Crop"
-            className="h-[320px] w-full"
+            ref={cropperRef}
+            stencilComponent={CircleStencil}
+            stencilProps={{
+              aspectRatio: 6 / 9,
+              movable: true,
+              resizable: true,
+              // className: '', // define the entire stecil
+              // movingClassName: '', // define moving the stecil
+              // resizingClassName: '', // define while resizing the stecil
+              previewClassName: 'preview', // define the preview inside
+              overlayClassName: 'overlay',
+              // boundingBoxClassName: '',
+              handlerClassNames: '',
+            }}
+            className={'cropper'}
           />
         ) : (
-          <img
-            src={coverImage?.original}
-            alt="Cover Image Crop"
-            className="h-[320px] w-full"
+          <FixedCropper
+            src={
+              (file?.coverImage && getBlobUrl(file?.coverImage)) ||
+              coverImage?.original
+            }
+            stencilProps={{
+              handlers: false,
+              lines: false,
+              movable: true,
+              resizable: false,
+            }}
+            stencilSize={{
+              width: 507,
+              height: 209,
+            }}
+            imageRestriction={ImageRestriction.stencil}
           />
         )}
         <Divider />
@@ -79,8 +195,11 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
               <input
                 type="range"
                 className="appearance-none w-[136px] h-1 bg-neutral-200 text-red-400 rounded"
-                min="-10"
+                min="1"
                 max="10"
+                onChange={(e) => {
+                  setZoomValue(parseInt(e?.target?.value));
+                }}
               />
               <Icon name="plus" size={16} />
             </div>
@@ -110,9 +229,34 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
             />
             <Button
               label="Apply"
-              onClick={() => {
-                console.log('Applying....');
+              onClick={async () => {
+                const canvas = cropperRef?.current?.getCanvas();
+                canvas?.toBlob((blobImage) => {
+                  setCropperBlobImage(blobImage);
+                }, 'image/jpeg');
+                const newFile = cropperBlobImage
+                  ? BlobToFile(cropperBlobImage, 'newFile')
+                  : null;
+                let profileImageUploadResponse;
+                if (newFile) {
+                  profileImageUploadResponse = await uploadMedia(
+                    [newFile],
+                    EntityType.UserProfileImage,
+                  );
+                }
+                updateUsersMutation.mutate({
+                  profileImage: {
+                    fileId:
+                      profileImageUploadResponse &&
+                      profileImageUploadResponse[0]?.id,
+                    original:
+                      profileImageUploadResponse &&
+                      profileImageUploadResponse[0].original,
+                  },
+                });
               }}
+              disabled={updateUsersMutation?.isLoading}
+              loading={updateUsersMutation?.isLoading}
             />
           </div>
         </div>
@@ -121,4 +265,4 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
   );
 };
 
-export default CropPictureModal;
+export default memo(CropPictureModal);
