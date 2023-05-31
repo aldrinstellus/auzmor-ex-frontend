@@ -36,6 +36,7 @@ export const redirectWithToken = ({
   showOnboard = false,
 }: IRedirect) => {
   let url = getItem('redirect_post_login_to') || '/feed';
+  if (url === '/') url = '/feed';
   removeItem('redirect_post_login_to');
   if (token) {
     url = `${url}?accessToken=${token}`;
@@ -127,4 +128,9 @@ export const downloadURI = (uri: string, name: string) => {
     }, 100);
   };
   link.click();
+};
+
+export const BlobToFile = (blob: Blob, fileName: string): File => {
+  const file = new File([blob], fileName, { type: 'image/jpeg' });
+  return file;
 };

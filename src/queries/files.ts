@@ -111,8 +111,11 @@ export const useUpload = () => {
     }
   };
 
-  const postETags = async (id?: string, etags?: IETag[]) =>
-    await apiService.patch(`/files/${id}`, { etags: etags });
+  const postETags = async (
+    id?: string,
+    etags?: IETag[],
+    coverImageUrl?: string,
+  ) => await apiService.patch(`/files/${id}`, { etags: etags, coverImageUrl });
 
   function getChunk(partNumber: number, file: any) {
     const beginchunk = (partNumber - 1) * chunksize;
@@ -218,5 +221,49 @@ export const useUpload = () => {
     return uploadedFiles;
   };
 
-  return { uploadMedia, uploadStatus };
+  const useUploadCoverImage = async (
+    mappings: { fileId: string; coverImageUrl: string }[],
+  ) => {
+    setUploadStatus(UploadStatus.Uploading);
+    const updateFilePromises: Promise<any>[] = [];
+    mappings.forEach((mapping) => {
+      updateFilePromises.push(
+        postETags(mapping.fileId, [], mapping.coverImageUrl),
+      );
+    });
+    if (updateFilePromises.length > 0) {
+      const promisesRes = await Promise.allSettled(updateFilePromises);
+      promisesRes.forEach((promiseRes: PromiseSettledResult<IMedia>) => {
+        if (promiseRes.status === 'fulfilled') {
+          console.log(promiseRes, 'Upload cover image response');
+        } else {
+          console.log(promiseRes);
+          console.log('upload cover image failed');
+        }
+      });
+    }
+    setUploadStatus(UploadStatus.Finished);
+  };
+
+  const removeCoverImage = async (fileIds: string[]) => {
+    setUploadStatus(UploadStatus.Uploading);
+    const updateFilePromises: Promise<any>[] = [];
+    fileIds.forEach((fileId) => {
+      updateFilePromises.push(postETags(fileId, [], ''));
+    });
+    if (updateFilePromises.length > 0) {
+      const promisesRes = await Promise.allSettled(updateFilePromises);
+      promisesRes.forEach((promiseRes: PromiseSettledResult<IMedia>) => {
+        if (promiseRes.status === 'fulfilled') {
+          console.log(promiseRes, 'Rmove cover image response');
+        } else {
+          console.log(promiseRes);
+          console.log('Remove cover image failed');
+        }
+      });
+    }
+    setUploadStatus(UploadStatus.Finished);
+  };
+
+  return { uploadMedia, uploadStatus, useUploadCoverImage, removeCoverImage };
 };
