@@ -59,7 +59,7 @@ const SSOCard: React.FC<SSOCardProps> = ({
         </div>
         <Button
           onClick={customOnClick}
-          className="mb-6 max-w-fit"
+          className={`mb-6 max-w-fit ${active ? 'invisible' : 'visible'}`}
           label={buttonText}
           dataTestId={`${dataTestId}-submit`}
         ></Button>
