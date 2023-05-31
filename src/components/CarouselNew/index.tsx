@@ -15,6 +15,7 @@ export interface ICarouselProps {
   currentIndex: number;
   prevSlide: () => void;
   nextSlide: () => void;
+  coverImageUrl?: string;
 }
 
 const Carousel: React.FC<ICarouselProps> = ({
@@ -24,6 +25,7 @@ const Carousel: React.FC<ICarouselProps> = ({
   onClose = () => {},
   prevSlide = () => {},
   nextSlide = () => {},
+  coverImageUrl = '',
 }) => {
   const style = useMemo(
     () =>
@@ -37,10 +39,10 @@ const Carousel: React.FC<ICarouselProps> = ({
     <div className={style}>
       {media[currentIndex].type === 'IMAGE' ? (
         <img src={media[currentIndex].original} />
+      ) : coverImageUrl ? (
+        <video poster={coverImageUrl} src={media[currentIndex].original} />
       ) : (
-        <video>
-          <source src={media[currentIndex].original} />
-        </video>
+        <video src={media[currentIndex].original} />
       )}
 
       <div className="top-0 absolute p-4 justify-between flex w-full">

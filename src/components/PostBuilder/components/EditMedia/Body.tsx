@@ -9,7 +9,13 @@ export interface IBodyProps {
 }
 
 const Body: React.FC<IBodyProps> = ({ currentIndex, nextSlide, prevSlide }) => {
-  const { setActiveFlow, media, removeMedia } = useContext(CreatePostContext);
+  const {
+    setActiveFlow,
+    media,
+    removeMedia,
+    deleteCoverImageMap,
+    getCoverImageBlobURL,
+  } = useContext(CreatePostContext);
   return (
     <Carousel
       media={media}
@@ -26,6 +32,7 @@ const Body: React.FC<IBodyProps> = ({ currentIndex, nextSlide, prevSlide }) => {
       currentIndex={currentIndex}
       prevSlide={prevSlide}
       nextSlide={nextSlide}
+      coverImageUrl={getCoverImageBlobURL(media[currentIndex])}
     />
   );
 };
