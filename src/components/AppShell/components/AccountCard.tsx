@@ -77,12 +77,14 @@ const AccountCard = () => {
                 User Settings
               </div>
             </Link>
-            <div
-              className={menuItemStyle}
-              data-testId="user-menu-admin-settings"
-            >
-              Admin Settings
-            </div>
+            <Link to="/admin">
+              <div
+                className={menuItemStyle}
+                data-testId="user-menu-admin-settings"
+              >
+                Admin Settings
+              </div>
+            </Link>
             <div
               className={menuItemStyle}
               onClick={() => logoutMutation.mutate()}
