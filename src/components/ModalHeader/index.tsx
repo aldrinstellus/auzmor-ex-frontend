@@ -34,6 +34,7 @@ const Header: React.FC<IHeaderProps> = ({
         icon={'close'}
         className="!flex-[0] !text-right !p-1 !mx-4 !my-3 !bg-inherit !text-neutral-900"
         variant={IconVariant.Primary}
+        dataTestId="invite-people-close"
       />
     </div>
   );
