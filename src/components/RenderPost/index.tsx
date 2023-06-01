@@ -66,6 +66,7 @@ export const RenderPost: React.FC<RenderPostProps> = ({
           <Mention
             value={op.insert.mention?.value}
             {...getMentionProps(mentions, op.insert.mention)}
+            userId={op.insert.mention.id}
           />
         );
       case op.insert.hasOwnProperty('hashtag'):

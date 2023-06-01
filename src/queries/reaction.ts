@@ -115,6 +115,16 @@ export const useComments = (q: IComments) => {
   });
 };
 
+export const useInfiniteComments = (q: IComments) => {
+  return useInfiniteQuery({
+    queryKey: ['comments', q],
+    queryFn: () => getComments(q),
+    getNextPageParam: (lastPage: any) => lastPage?.result?.paging?.next,
+    getPreviousPageParam: (currentPage: any) =>
+      currentPage?.result?.paging?.prev,
+  });
+};
+
 export const createComments = async (payload: IComments) => {
   const { data } = await apiService.post(`/comments`, payload);
   return data;

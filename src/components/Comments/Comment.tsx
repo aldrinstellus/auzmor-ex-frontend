@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import Likes from 'components/Reactions';
 import IconButton, { Variant as IconVariant } from 'components/IconButton';
 import Avatar from 'components/Avatar';
-import { deleteComment, useComments } from 'queries/reaction';
+import { deleteComment } from 'queries/reaction';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IComment, activeCommentsDataType } from '.';
 import Popover from 'components/Popover';
@@ -13,6 +13,7 @@ import { MyObjectType } from 'queries/post';
 import useAuth from 'hooks/useAuth';
 import Reply from '../Reply';
 import Icon from 'components/Icon';
+import { Link } from 'react-router-dom';
 
 interface CommentProps {
   comment: IComment;
@@ -81,16 +82,34 @@ export const Comment: React.FC<CommentProps> = ({
         <div className="flex justify-between p-0">
           <div className="flex flex-row">
             <div className="mr-4">
-              <Avatar
-                name={comment?.createdBy?.fullName}
-                size={32}
-                image={comment?.createdBy?.profileImage?.original}
-              />
+              <Link
+                to={
+                  comment?.createdBy?.userId &&
+                  comment.createdBy.userId !== user?.id
+                    ? '/users/' + comment.createdBy.userId
+                    : '/profile'
+                }
+              >
+                <Avatar
+                  name={comment?.createdBy?.fullName}
+                  size={32}
+                  image={comment?.createdBy?.profileImage?.original}
+                />
+              </Link>
             </div>
             <div className="flex flex-col items-start p-0 w-64">
-              <div className="text-neutral-900 font-bold text-sm">
-                {comment?.createdBy?.fullName}
-              </div>
+              <Link
+                to={
+                  comment?.createdBy?.userId &&
+                  comment.createdBy.userId !== user?.id
+                    ? '/users/' + comment.createdBy.userId
+                    : '/profile'
+                }
+              >
+                <div className="text-neutral-900 font-bold text-sm">
+                  {comment?.createdBy?.fullName}
+                </div>
+              </Link>
               <div className="font-normal text-neutral-500 text-sm ">
                 {comment?.createdBy?.designation}
               </div>
@@ -131,6 +150,7 @@ export const Comment: React.FC<CommentProps> = ({
           </div>
         </div>
         <div className=" text-neutral-900  font-normal text-sm mt-4">
+          {/* Need to link mentions here */}
           {comment.content.text}
         </div>
         <div className="flex flex-row justify-between mt-4 cursor-pointer">
