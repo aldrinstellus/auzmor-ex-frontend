@@ -47,6 +47,7 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
   userCoverImageRef,
   userProfileImageRef,
   openModal,
+  coverImage,
   setError,
   setLoading,
 }) => {
@@ -56,6 +57,7 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
 
   const cropperProfilePictureRef = useRef<CropperRef>(null);
   const cropperCoverPictureRef = useRef<CropperRef>(null);
+  const cropperCoverRepositionRef = useRef<CropperRef>(null);
 
   const [cropperBlobProfileImage, setCropperBlobProfileImage] =
     useState<Blob | null>(null);
@@ -150,7 +152,6 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
       cropperCoverPictureRef?.current?.getCanvas()?.toBlob((blobImage) => {
         setCropperBlobCoverImage(blobImage);
       }, 'image/jpeg');
-
       let coverImageUploadResponse;
       const newFile =
         cropperBlobCoverImage &&
@@ -170,6 +171,26 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
       }
     } else {
       console.log('repositioning.....');
+      cropperCoverRepositionRef?.current?.getCanvas()?.toBlob((blobImage) => {
+        setCropperBlobCoverImage(blobImage);
+      }, 'image/jpeg');
+      let coverImageUploadResponse;
+      const newFile =
+        cropperBlobCoverImage &&
+        BlobToFile(cropperBlobCoverImage, 'newCroppedOriginal');
+      if (newFile) {
+        coverImageUploadResponse = await uploadMedia(
+          [newFile],
+          EntityType.UserProfileImage,
+        );
+        updateUsersPictureMutation.mutate({
+          coverImage: {
+            fileId: coverImageUploadResponse && coverImageUploadResponse[0]?.id,
+            original:
+              coverImageUploadResponse && coverImageUploadResponse[0].original,
+          },
+        });
+      }
     }
   };
 
@@ -187,28 +208,34 @@ const CropPictureModal: React.FC<ICropPictureModalProps> = ({
       setUserProfilePictureFile && setUserProfilePictureFile([]);
     }
   };
+
+  const Rectangle = file?.coverImage ? (
+    <RectangleCropper
+      blobFile={getBlobUrl(file?.coverImage)}
+      cropperRef={cropperCoverPictureRef}
+    />
+  ) : (
+    <RectangleCropper
+      blobFile={coverImage?.original}
+      cropperRef={cropperCoverRepositionRef}
+    />
+  );
+
   const Circle =
     file?.profileImage || userProfilePictureFile ? (
       <CircleCropper
         blobFile={getBlobUrl(file?.profileImage || userProfilePictureFile)}
         cropperRef={cropperProfilePictureRef}
       />
-    ) : null;
-  const Rectangle = file?.coverImage ? (
-    <RectangleCropper
-      blobFile={getBlobUrl(file?.coverImage)}
-      cropperRef={cropperCoverPictureRef}
-    />
-  ) : null;
+    ) : (
+      Rectangle
+    );
 
   return (
     <Modal open={showPictureCropModal} closeModal={disableClosed}>
       <Header title={title} onClose={disableClosed} />
       <div>
-        <div className="min-h-[320px]">
-          {Circle}
-          {Rectangle}
-        </div>
+        <div className="min-h-[320px]">{Circle}</div>
         <Footer
           userProfileImageRef={userProfileImageRef}
           userCoverImageRef={userCoverImageRef}
