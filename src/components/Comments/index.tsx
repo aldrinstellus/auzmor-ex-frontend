@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Comment } from './Comment';
 import { CommentForm } from './CommentForm';
 import { useInfiniteComments } from 'queries/reaction';
@@ -6,7 +6,7 @@ import { DeltaStatic } from 'quill';
 import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
 import { ICreated, IMyReactions } from 'pages/Feed';
-import { MyObjectType } from 'queries/post';
+import { IMention, MyObjectType } from 'queries/post';
 import Spinner from 'components/Spinner';
 import { PRIMARY_COLOR } from 'utils/constants';
 import Button, { Type, Variant } from 'components/Button';
@@ -26,7 +26,7 @@ export interface IComment {
     html: string;
     editor: DeltaStatic;
   };
-  mentions: object[];
+  mentions: IMention[];
   hashtags: string[];
   latestComments: object[];
   entityType: string;
