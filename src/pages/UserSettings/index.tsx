@@ -1,12 +1,9 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import Card from 'components/Card';
 import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import AccountSecurity from './AccountSecurity';
-import Button from 'components/Button';
-import { Link, useLocation } from 'react-router-dom';
-import { divide } from 'lodash';
-import ChangePassword from './ChangePassword';
+import clsx from 'clsx';
 interface IUserSettingsProps {}
 
 interface ISetting {
@@ -20,9 +17,7 @@ interface ISetting {
 }
 
 const UserSettings: React.FC<IUserSettingsProps> = () => {
-  const [isSettings, setIsSettings] = useState(false);
-
-  const { pathname } = useLocation();
+  const [isHeaderVisible, setIsHeaderVisible] = useState(false);
 
   const settings = [
     {
@@ -74,16 +69,7 @@ const UserSettings: React.FC<IUserSettingsProps> = () => {
       label: 'Account Security',
       icon: 'notification',
       key: 'account-security-settings',
-      component:
-        pathname === '/change-password' ? (
-          // isSettings ? (
-          <ChangePassword />
-        ) : (
-          <AccountSecurity
-            setIsSettings={setIsSettings}
-            isSettings={isSettings}
-          />
-        ),
+      component: <AccountSecurity setIsHeaderVisible={setIsHeaderVisible} />,
       disabled: false,
       hidden: false,
       dataTestId: 'account-security-notifications',
@@ -103,13 +89,17 @@ const UserSettings: React.FC<IUserSettingsProps> = () => {
     settings[0],
   );
 
+  const componentStyle = clsx({
+    'border-1 border-neutral-100 p-6 rounded-3xl w-[100%]': !isHeaderVisible,
+  });
+
   return (
     <div
       className="flex justify-between w-full gap-x-14"
       data-testid="admin-settings"
     >
       <Card
-        className="min-w-[300px] max-h-[400px]"
+        className="w-[25%] max-h-[400px]"
         dataTestId="admin-settings-controls"
       >
         <p className="text-neutral-900 text-base font-bold p-4">
@@ -149,15 +139,17 @@ const UserSettings: React.FC<IUserSettingsProps> = () => {
           ))}
         </div>
       </Card>
-      <div className="flex flex-col w-full gap-y-4">
+      <div className="flex flex-col w-[75%] gap-y-4">
         <Card className="py-4 px-6 space-y-4">
-          <div className="text-neutral-900 text-base font-bold">
-            {activeSettingsPage.label}
-          </div>
-          <Divider />
-          <div className="border-1 border-neutral-100 p-6 rounded-3xl">
-            {activeSettingsPage.component}
-          </div>
+          {!isHeaderVisible && (
+            <>
+              <div className="text-neutral-900 text-base font-bold">
+                {activeSettingsPage.label}
+              </div>
+              <Divider />
+            </>
+          )}
+          <div className={componentStyle}>{activeSettingsPage.component}</div>
         </Card>
       </div>
     </div>

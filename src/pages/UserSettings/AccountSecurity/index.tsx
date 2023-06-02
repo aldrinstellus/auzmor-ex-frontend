@@ -10,7 +10,6 @@ import { Variant as InputVariant } from 'components/Input';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import ChangePassword from '../ChangePassword';
 
 interface IForm {
   currentPassword: string;
@@ -19,8 +18,7 @@ interface IForm {
 }
 
 interface IAccountSecurity {
-  setIsSettings?: any;
-  isSettings?: boolean;
+  setIsHeaderVisible?: any;
 }
 
 const schema = yup.object({
@@ -39,8 +37,7 @@ const schema = yup.object({
 });
 
 const AccountSecurity: React.FC<IAccountSecurity> = ({
-  setIsSettings,
-  isSettings,
+  setIsHeaderVisible,
 }) => {
   const [err, setErr] = useState(false);
 
@@ -87,7 +84,7 @@ const AccountSecurity: React.FC<IAccountSecurity> = ({
     {
       type: FieldType.Password,
       InputVariant: InputVariant.Password,
-      className: 'w-1/2',
+      className: 'w-1/3',
       placeholder: 'Current password',
       name: 'currentPassword',
       label: 'Current Password',
@@ -102,7 +99,7 @@ const AccountSecurity: React.FC<IAccountSecurity> = ({
     {
       type: FieldType.Password,
       InputVariant: InputVariant.Password,
-      className: 'w-1/2 mt-6',
+      className: 'w-1/3 mt-6',
       placeholder: 'New password',
       name: 'newPassword',
       label: 'New Password',
@@ -119,7 +116,7 @@ const AccountSecurity: React.FC<IAccountSecurity> = ({
     {
       type: FieldType.Password,
       InputVariant: InputVariant.Password,
-      className: 'w-1/2 mt-6',
+      className: 'w-1/3 mt-6',
       placeholder: 'Re-enter Password',
       name: 'confirmPassword',
       label: 'Confirm Password',
@@ -140,21 +137,57 @@ const AccountSecurity: React.FC<IAccountSecurity> = ({
     });
   };
 
-  const navigate = useNavigate();
+  const [isSettings, setIsSettings] = useState(false);
 
   return (
-    // <Link to="/change-password">
-    <div className="flex justify-between items-center">
-      <div>Password</div>
-      <Button
-        label="Change Password"
-        onClick={() => {
-          setIsSettings(true);
-          navigate('/change-password');
-        }}
-      />
+    <div className="w-full">
+      {!isSettings ? (
+        <div className="flex justify-between items-center">
+          <div>Password</div>
+          <Button
+            label="Change Password"
+            onClick={() => {
+              setIsSettings(true);
+              setIsHeaderVisible(true);
+            }}
+          />
+        </div>
+      ) : (
+        <div className="flex justify-between items-center space-x-14 w-full">
+          <div className="bg-white rounded-9xl w-full">
+            <div
+              className="flex mb-4 cursor-pointer"
+              onClick={() => {
+                setIsSettings(false);
+                setIsHeaderVisible(false);
+              }}
+            >
+              <Icon className="rotate-90" name={'arrowDown'} />
+              <div className="text-base font-bold">Change Password</div>
+            </div>
+            <Divider className="mb-10" />
+            <form className="" onSubmit={handleSubmit(onSubmit)}>
+              <Layout fields={passwordField} className="mb-4" />
+              <Layout fields={confirmPasswordField} />
+              <div className="flex justify-between items-center mt-28">
+                <div className="text-primary-500 text-base font-bold">
+                  <Link to="/forgot-password">Forgot Password</Link>
+                </div>
+                <div className="">
+                  <Button
+                    type={Type.Submit}
+                    label={'Change Password'}
+                    className="w-full"
+                    loading={changePasswordMutation.isLoading}
+                    disabled={!isValid}
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
-    // </Link>
   );
 };
 
