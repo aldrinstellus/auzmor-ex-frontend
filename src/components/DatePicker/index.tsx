@@ -22,6 +22,7 @@ export interface IDatePickerInputProps {
   defaultValue?: string;
   portalContainer?: HTMLElement | null;
   calendarClassName?: string;
+  dataTestId?: string;
   onDateChange?: (date: Date) => void;
 }
 
@@ -35,6 +36,7 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
   className,
   calendarClassName,
   onDateChange,
+  dataTestId,
   error,
 }) => {
   const { field } = useController({
@@ -56,13 +58,13 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
   );
 
   return (
-    <div>
+    <div data-testid={dataTestId}>
       {!!label && <div className={labelStyle}>{label}</div>}
       <DatePicker
         selected={field.value}
         onChange={field.onChange}
         calendarClassName={calendarClassName}
-        className={`flex border relative z-[99999] rounded-19xl w-full px-5 py-2.5 ${className}`}
+        className={`flex border relative rounded-19xl w-full px-5 py-2.5 ${className}`}
         // calendarIcon={<Icon name="calendarTwo" size={16} />}
         // format="dd/MM/yyyy"
         // dayPlaceholder="DD"

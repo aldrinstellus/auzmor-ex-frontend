@@ -12,7 +12,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({ content }): ReactElement => {
   return (
     <div>
       <Icon
-        name="copyIcon"
+        name="copy"
         size={16}
         onClick={() => {
           navigator.clipboard.writeText(content);

@@ -114,6 +114,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
                   label="Load more"
                   variant={Variant.Tertiary}
                   onClick={() => fetchNextPage()}
+                  dataTestId="comments-loadmorecta"
                 />
               </div>
             )}
