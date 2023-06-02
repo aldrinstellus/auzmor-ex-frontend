@@ -20,6 +20,7 @@ import queryClient from 'utils/queryClient';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { toast } from 'react-toastify';
 import { twConfig } from 'utils/misc';
+import { getTimezoneNameFromIANA } from 'utils/time';
 
 interface IForm {
   timeZone: OptionType;
@@ -147,7 +148,8 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
                     className="text-neutral-900 text-base font-medium"
                     data-testid="professional-details-timezone"
                   >
-                    {professionalDetails?.timeZone || 'N/A'}
+                    {getTimezoneNameFromIANA(professionalDetails?.timeZone) ||
+                      'N/A'}
                   </div>
                 </div>
               )}
