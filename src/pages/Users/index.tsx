@@ -268,7 +268,7 @@ const Users: React.FC<IUsersProps> = () => {
                 onClick={() => {
                   setShowAddUserModal(true);
                 }}
-                dataTestId="people-invite-users"
+                dataTestId="add-members-btn"
               />
             )}
           </div>
