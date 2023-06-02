@@ -167,13 +167,17 @@ const Users: React.FC<IUsersProps> = () => {
 
         <div className="mb-4 flex">
           {userStatus && (
-            <div className="border border-neutral-200 rounded-17xl px-3 py-2 flex bg-white capitalize text-sm font-medium items-center mr-1">
+            <div
+              className="border border-neutral-200 rounded-17xl px-3 py-2 flex bg-white capitalize text-sm font-medium items-center mr-1"
+              data-testid={`people-filterby-${userStatus}`}
+            >
               <div className="mr-1">{userStatus}</div>
               <Icon
                 name="closeCircleOutline"
                 stroke={twConfig.theme.colors.neutral['900']}
                 className="cursor-pointer"
                 onClick={() => setUserStatus('')}
+                dataTestId={`people-filterby-close-${userStatus}`}
               />
             </div>
           )}

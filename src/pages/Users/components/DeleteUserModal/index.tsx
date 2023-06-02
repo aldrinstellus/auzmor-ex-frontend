@@ -46,6 +46,7 @@ const DeleteUserModal: React.FC<IDeleteUserModalProps> = ({
           setShowModal(false);
         }}
         icon={'close'}
+        dataTestId="delete-user-close"
         className="!flex-[0] !text-right !p-1 !mx-4 !my-3 !bg-inherit !text-neutral-900"
         variant={IconVariant.Primary}
       />
@@ -57,6 +58,7 @@ const DeleteUserModal: React.FC<IDeleteUserModalProps> = ({
         variant={ButtonVariant.Secondary}
         size={Size.Small}
         label={'Cancel'}
+        dataTestId="delete-user-cancel"
         onClick={() => {
           setShowModal(false);
         }}
@@ -67,6 +69,7 @@ const DeleteUserModal: React.FC<IDeleteUserModalProps> = ({
         loading={deleteUserMutation.isLoading}
         size={Size.Small}
         type={ButtonType.Submit}
+        dataTestId="delete-user-delete"
         onClick={() => deleteUserMutation.mutate(userId)}
       />
     </div>

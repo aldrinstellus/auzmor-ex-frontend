@@ -95,7 +95,7 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
     <div {...eventHandlers}>
       <Card className={onHoverStyles}>
         <Header
-          title="Professinal Details"
+          title="Professional Details"
           dataTestId="professional-details"
           isHovered={isHovered}
           isEditable={isEditable}
@@ -116,14 +116,13 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
                 <IconWrapper type={Type.Square}>
                   <Icon name="clock" size={16} />
                 </IconWrapper>
-                <div
-                  className="text-neutral-900 text-base font-medium"
-                  data-testid="professional-details-joining-date"
-                >
+                <div className="text-neutral-900 text-base font-medium">
                   Joined on{' '}
-                  {moment(professionalDetails?.createdAt).format(
-                    'Do MMMM YYYY',
-                  ) || 'N//A'}
+                  <span data-testid="professional-details-joining-date">
+                    {moment(professionalDetails?.createdAt).format(
+                      'Do MMMM YYYY',
+                    ) || 'N//A'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -144,7 +143,10 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
                   <IconWrapper type={Type.Square}>
                     <Icon name="clock" size={16} />
                   </IconWrapper>
-                  <div className="text-neutral-900 text-base font-medium ">
+                  <div
+                    className="text-neutral-900 text-base font-medium"
+                    data-testid="professional-details-timezone"
+                  >
                     {professionalDetails?.timeZone || 'N/A'}
                   </div>
                 </div>
