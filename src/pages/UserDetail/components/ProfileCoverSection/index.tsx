@@ -65,7 +65,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
               <img
                 className="object-cover w-full"
                 src={userDetails?.coverImage?.original}
-                alt={userDetails?.coverImage}
+                alt={'User Cover Picture Profile'}
                 data-testid="user-cover-pic"
                 onClick={() => canEdit && openEditProfileModal()}
               />
@@ -99,7 +99,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
               image={userDetails?.profileImage?.original}
               size={80}
               className="border-2 border-white mt-8 overflow-hidden"
-              dataTestId={profileImageName}
+              dataTestId={profileImageName || 'edit-profile-pic'}
             />
           </div>
           <div className="ml-4 mb-7 flex flex-col space-y-5 w-full">
@@ -121,7 +121,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                     )}
                   </div> */}
                 </div>
-                <Button
+                {/* <Button
                   className="flex"
                   leftIconClassName="mr-2"
                   label={canEdit ? 'Edit Profile' : 'Follow'}
@@ -132,7 +132,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                     canEdit && openEditProfileModal();
                   }}
                   dataTestId={canEdit ? 'edit-profile' : 'follow'}
-                />
+                /> */}
               </div>
             </div>
             <div className="flex space-x-4 items-center">
@@ -207,46 +207,50 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           />
         )}
 
-        <input
-          id="file-input"
-          type="file"
-          ref={userProfileImageRef}
-          data-testid="edit-profile-profilepic"
-          className="hidden"
-          accept="image/*"
-          multiple={false}
-          onChange={(e) => {
-            if (e.target.files?.length) {
-              setFile({
-                ...file,
-                profileImage: Array.prototype.slice.call(e.target.files)[0],
-              });
-              setProfileImageName(e?.target?.files[0]?.name);
-              openEditImageModal();
-              closeEditProfileModal();
-            }
-          }}
-        />
-        <input
-          id="file-input"
-          type="file"
-          ref={userCoverImageRef}
-          className="hidden"
-          accept="image/*"
-          multiple={false}
-          data-testid="edit-profile-coverpic"
-          onChange={(e) => {
-            if (e.target.files?.length) {
-              setFile({
-                ...file,
-                coverImage: Array.prototype.slice.call(e.target.files)[0],
-              });
-              setCoverImageName(e?.target?.files[0]?.name);
-              openEditImageModal();
-              closeEditProfileModal();
-            }
-          }}
-        />
+        {canEdit && (
+          <div>
+            <input
+              id="file-input"
+              type="file"
+              ref={userProfileImageRef}
+              data-testid="edit-profile-profilepic"
+              className="hidden"
+              accept="image/*"
+              multiple={false}
+              onChange={(e) => {
+                if (e.target.files?.length) {
+                  setFile({
+                    ...file,
+                    profileImage: Array.prototype.slice.call(e.target.files)[0],
+                  });
+                  setProfileImageName(e?.target?.files[0]?.name);
+                  openEditImageModal();
+                  closeEditProfileModal();
+                }
+              }}
+            />
+            <input
+              id="file-input"
+              type="file"
+              ref={userCoverImageRef}
+              className="hidden"
+              accept="image/*"
+              multiple={false}
+              data-testid="edit-profile-coverpic"
+              onChange={(e) => {
+                if (e.target.files?.length) {
+                  setFile({
+                    ...file,
+                    coverImage: Array.prototype.slice.call(e.target.files)[0],
+                  });
+                  setCoverImageName(e?.target?.files[0]?.name);
+                  openEditImageModal();
+                  closeEditProfileModal();
+                }
+              }}
+            />
+          </div>
+        )}
       </Card>
     </div>
   );

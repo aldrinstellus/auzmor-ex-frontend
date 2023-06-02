@@ -18,11 +18,13 @@ export interface IDatePickerInputProps {
   className?: string;
   control?: Control<Record<string, any>>;
   minDate?: Date;
+  placeholder?: string;
   error?: string;
   defaultValue?: string;
   portalContainer?: HTMLElement | null;
   calendarClassName?: string;
   onDateChange?: (date: Date) => void;
+  dataTestId?: string;
 }
 
 const DatePickerInput: React.FC<IDatePickerInputProps> = ({
@@ -30,12 +32,14 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
   name,
   label = '',
   minDate,
+  placeholder,
   defaultValue,
   portalContainer = null,
   className,
   calendarClassName,
   onDateChange,
   error,
+  dataTestId,
 }) => {
   const { field } = useController({
     name,
@@ -56,12 +60,13 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
   );
 
   return (
-    <div>
+    <div data-testid={dataTestId}>
       {!!label && <div className={labelStyle}>{label}</div>}
       <DatePicker
         selected={field.value}
         onChange={field.onChange}
         calendarClassName={calendarClassName}
+        data-testid={dataTestId}
         className={`flex border relative z-[99999] rounded-19xl w-full px-5 py-2.5 ${className}`}
         // calendarIcon={<Icon name="calendarTwo" size={16} />}
         // format="dd/MM/yyyy"
@@ -73,6 +78,7 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
         minDate={minDate}
         // portalContainer={portalContainer}
         portalId="root"
+        placeholderText={placeholder}
         popperProps={{
           positionFixed: true,
           strategy: 'fixed',
