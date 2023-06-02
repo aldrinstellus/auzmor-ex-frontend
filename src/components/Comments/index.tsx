@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Comment } from './Comment';
-import { CommentForm } from './CommentForm';
+import { Comment } from './components/Comment';
+import { CommentForm } from './components/CommentForm';
 import { useInfiniteComments } from 'queries/reaction';
 import { DeltaStatic } from 'quill';
 import useAuth from 'hooks/useAuth';
@@ -10,6 +10,7 @@ import { IMention, MyObjectType } from 'queries/post';
 import Spinner from 'components/Spinner';
 import { PRIMARY_COLOR } from 'utils/constants';
 import Button, { Type, Variant } from 'components/Button';
+import LoadMore from './components/LoadMore';
 
 interface CommentsProps {
   entityId: string;
@@ -109,13 +110,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
               />
             ))}
             {hasNextPage && !isFetchingNextPage && (
-              <div className="flex justify-center items-center py-10">
-                <Button
-                  label="Load more"
-                  variant={Variant.Tertiary}
-                  onClick={() => fetchNextPage()}
-                />
-              </div>
+              <LoadMore onClick={fetchNextPage} label="Load more comments" />
             )}
             {isFetchingNextPage && (
               <div className="flex justify-center items-center py-10">
