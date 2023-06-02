@@ -11,7 +11,6 @@ import Modal from 'components/Modal';
 import { deleteUser } from 'queries/users';
 import { useMutation } from '@tanstack/react-query';
 import queryClient from 'utils/queryClient';
-import Spinner from 'components/Spinner';
 
 export interface IDeleteUserModalProps {
   showModal: boolean;
@@ -80,6 +79,7 @@ const DeleteUserModal: React.FC<IDeleteUserModalProps> = ({
       closeModal={() => {
         setShowModal(false);
       }}
+      className="max-w-sm"
     >
       <Header />
       <div className="text-sm font-medium text-neutral-500 mx-6 mt-6 mb-8">
