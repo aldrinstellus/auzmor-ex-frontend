@@ -18,6 +18,7 @@ import { UserStatus, useResendInvitation } from 'queries/users';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { twConfig } from 'utils/misc';
+import { PRIMARY_COLOR } from 'utils/constants';
 
 export interface IUserCardProps {
   id: string;
@@ -45,7 +46,7 @@ const statusColorMap: Record<string, string> = {
   [Status.PENDING]: '#EA580C',
   [Status.OWNER]: '#171717',
   [Status.MEMBER]: '#c6cc8d',
-  [Status.SUPERADMIN]: '#10B981',
+  [Status.SUPERADMIN]: PRIMARY_COLOR,
 };
 
 const UserCard: React.FC<IUserCardProps> = ({
