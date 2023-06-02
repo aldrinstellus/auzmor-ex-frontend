@@ -1,14 +1,16 @@
-import React, { useRef, useState } from 'react';
-import { useComments } from 'queries/reaction';
+import React, { useRef } from 'react';
+import { useInfiniteComments } from 'queries/reaction';
 import { DeltaStatic } from 'quill';
 import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
 import { ICreated, IMyReactions } from 'pages/Feed';
 import { MyObjectType } from 'queries/post';
 import { Reply } from 'components/Reply/Reply';
-import { CommentForm } from 'components/Comments/CommentForm';
+import { CommentForm } from 'components/Comments/components/CommentForm';
 import Spinner from 'components/Spinner';
-import ReactQuill from 'react-quill';
+import Button, { Variant } from 'components/Button';
+import { PRIMARY_COLOR } from 'utils/constants';
+import LoadMore from 'components/Comments/components/LoadMore';
 
 interface CommentsProps {
   entityId: string;
@@ -43,15 +45,34 @@ export interface IComment {
 
 const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
   const { user } = useAuth();
-  const { data, isLoading } = useComments({
+
+  const {
+    data,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+    error,
+  } = useInfiniteComments({
     entityId: entityId,
     entityType: 'comment',
-    limit: 30,
-    page: 1,
+    // Limit here is arbitrary, need to check with product team.
+    // Linkedin loads 2 by default and then 10 each time you click 'Load more'
+    limit: 4,
+  });
+
+  const replies = data?.pages.flatMap((page) => {
+    console.log({ page });
+    return page?.result?.data.map((comment: any) => {
+      try {
+        return comment;
+      } catch (e) {
+        console.log('Error', { comment });
+      }
+    });
   });
   const quillRef = useRef<HTMLDivElement>(null);
-
-  const replies = data?.result?.data;
 
   const handleClick = () => {
     // quillRef.current?.animate({
@@ -63,7 +84,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
     <div className={className}>
       {isLoading ? (
         <div className="flex justify-center items-center py-10">
-          <Spinner color="#FFFFFF" />
+          <Spinner color={PRIMARY_COLOR} />
         </div>
       ) : (
         <div className="ml-8">
@@ -82,7 +103,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
               inputRef={quillRef}
             />
           </div>
-          {replies?.length > 0 && (
+          {replies && replies.length > 0 && (
             <div>
               {replies.map((reply: any) => (
                 <Reply
@@ -91,6 +112,14 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
                   key={reply.id}
                 />
               ))}
+              {hasNextPage && !isFetchingNextPage && (
+                <LoadMore onClick={fetchNextPage} label="Load more replies" />
+              )}
+              {isFetchingNextPage && (
+                <div className="flex justify-center items-center py-10">
+                  <Spinner color={PRIMARY_COLOR} />
+                </div>
+              )}
             </div>
           )}
         </div>

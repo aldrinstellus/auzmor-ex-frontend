@@ -25,7 +25,7 @@ const schema = yup.object({
   workEmail: yup.string(),
   password: yup
     .string()
-    .min(6, 'At leaset 6 digits')
+    .min(6, 'Password should be atleast 6 characters')
     .required('Required field'),
   confirmPassword: yup
     .string()
@@ -97,7 +97,6 @@ const AcceptInvite: React.FC<IAcceptInviteProps> = () => {
       error: errors.password?.message,
       dataTestId: 'signup-work-password',
       control,
-      showChecks: false,
     },
     {
       type: FieldType.Password,

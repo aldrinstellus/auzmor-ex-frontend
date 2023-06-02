@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Comment } from './Comment';
-import { CommentForm } from './CommentForm';
-import { useComments } from 'queries/reaction';
+import { Comment } from './components/Comment';
+import { CommentForm } from './components/CommentForm';
+import { useInfiniteComments } from 'queries/reaction';
 import { DeltaStatic } from 'quill';
 import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
 import { ICreated, IMyReactions } from 'pages/Feed';
-import { MyObjectType } from 'queries/post';
+import { IMention, MyObjectType } from 'queries/post';
 import Spinner from 'components/Spinner';
+import { PRIMARY_COLOR } from 'utils/constants';
+import Button, { Type, Variant } from 'components/Button';
+import LoadMore from './components/LoadMore';
 
 interface CommentsProps {
   entityId: string;
@@ -24,7 +27,7 @@ export interface IComment {
     html: string;
     editor: DeltaStatic;
   };
-  mentions: object[];
+  mentions: IMention[];
   hashtags: string[];
   latestComments: object[];
   entityType: string;
@@ -42,14 +45,33 @@ export interface IComment {
 
 const Comments: React.FC<CommentsProps> = ({ entityId }) => {
   const { user } = useAuth();
-  const { data, isLoading } = useComments({
+
+  const {
+    data,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+    error,
+  } = useInfiniteComments({
     entityId: entityId,
     entityType: 'post',
-    limit: 30,
-    page: 1,
+    // Limit here is arbitrary, need to check with product team.
+    // Linkedin loads 2 by default and then 10 each time you click 'Load more'
+    limit: 4,
   });
 
-  const commentData = data?.result?.data;
+  const commentData = data?.pages.flatMap((page) => {
+    console.log({ page });
+    return page?.result?.data.map((comment: any) => {
+      try {
+        return comment;
+      } catch (e) {
+        console.log('Error', { comment });
+      }
+    });
+  });
 
   const [activeComment, setActiveComment] =
     useState<activeCommentsDataType | null>(null);
@@ -71,7 +93,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
 
       {isLoading ? (
         <div className="flex justify-center items-center py-10">
-          <Spinner color="#FFFFFF" />
+          <Spinner color={PRIMARY_COLOR} />
         </div>
       ) : (
         commentData && (
@@ -87,6 +109,14 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
                 replyInputBox={replyInputBox}
               />
             ))}
+            {hasNextPage && !isFetchingNextPage && (
+              <LoadMore onClick={fetchNextPage} label="Load more comments" />
+            )}
+            {isFetchingNextPage && (
+              <div className="flex justify-center items-center py-10">
+                <Spinner color={PRIMARY_COLOR} />
+              </div>
+            )}
           </div>
         )
       )}
