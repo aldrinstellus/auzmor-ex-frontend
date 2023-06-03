@@ -63,7 +63,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           >
             {userDetails?.coverImage?.original && !isCoverImageRemoved ? (
               <img
-                className="object-cover w-full"
+                className="object-cover h-[179.56px] w-full"
                 src={userDetails?.coverImage?.original}
                 alt={'User Cover Picture Profile'}
                 data-testid="user-cover-pic"
@@ -121,7 +121,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                     )}
                   </div> */}
                 </div>
-                {/* <Button
+                <Button
                   className="flex"
                   leftIconClassName="mr-2"
                   label={canEdit ? 'Edit Profile' : 'Follow'}
@@ -132,7 +132,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                     canEdit && openEditProfileModal();
                   }}
                   dataTestId={canEdit ? 'edit-profile' : 'follow'}
-                /> */}
+                />
               </div>
             </div>
             <div className="flex space-x-4 items-center">
