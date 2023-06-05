@@ -3,7 +3,8 @@ import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import { IUpdateProfileImage } from 'pages/UserDetail';
 import { UploadStatus } from 'queries/files';
-import React from 'react';
+import React, { useRef } from 'react';
+import { CropperRef } from 'react-advanced-cropper';
 
 export interface IFooterProps {
   userProfileImageRef: React.RefObject<HTMLInputElement> | null;
@@ -12,6 +13,7 @@ export interface IFooterProps {
   uploadStatus: UploadStatus;
   isLoading: boolean;
   onSubmit: any;
+  cropperRef: React.RefObject<CropperRef>;
 }
 
 const Footer: React.FC<IFooterProps> = ({
@@ -21,7 +23,20 @@ const Footer: React.FC<IFooterProps> = ({
   uploadStatus,
   isLoading,
   onSubmit,
+  cropperRef,
 }) => {
+  const sliderValueRef = useRef<number>(0);
+  const zoomIn = () => {
+    if (cropperRef.current) {
+      cropperRef.current.zoomImage({ factor: 1.1 }, { immediately: true }); // zoom-in 2x
+    }
+  };
+
+  const zoomOut = () => {
+    if (cropperRef.current) {
+      cropperRef.current.zoomImage({ factor: 0.9 }, { immediately: true }); // zoom-out 2x
+    }
+  };
   return (
     <div>
       <Divider />
@@ -33,13 +48,24 @@ const Footer: React.FC<IFooterProps> = ({
             <input
               type="range"
               className="appearance-none w-[136px] h-1 bg-neutral-200 text-red-400 rounded"
-              min="1"
-              max="10"
+              min={1}
+              max={10}
+              defaultValue={0}
+              onChange={(e) => {
+                if (sliderValueRef.current > parseInt(e.target.value)) {
+                  zoomOut();
+                } else if (sliderValueRef.current < parseInt(e.target.value)) {
+                  zoomIn();
+                }
+                sliderValueRef.current = parseInt(e.target.value);
+              }}
             />
             <Icon name="plus" size={16} />
           </div>
         </div>
-        <div>
+        <div
+          onClick={() => cropperRef?.current?.transformImage({ rotate: 90 })}
+        >
           <Icon name="rotateLeft" />
         </div>
       </div>

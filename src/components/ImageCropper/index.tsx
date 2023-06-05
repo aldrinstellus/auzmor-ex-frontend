@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import './index.css';
 import clsx from 'clsx';
 import {
@@ -6,6 +6,7 @@ import {
   Cropper,
   CropperRef,
   ImageRestriction,
+  Priority,
 } from 'react-advanced-cropper';
 
 export enum Shape {
@@ -54,14 +55,13 @@ const ImageCropper = ({
           src={src}
           ref={cropperRef}
           stencilProps={{
-            aspectRatio: 16 / 9,
             handlers: false,
             lines: false,
-            movable: false,
             resizable: false,
           }}
-          imageRestriction={ImageRestriction.stencil}
           className="cropper"
+          maxHeight={180}
+          priority={Priority.visibleArea}
         />
       )}
     </div>

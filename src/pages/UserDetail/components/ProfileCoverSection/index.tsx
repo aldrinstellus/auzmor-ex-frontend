@@ -58,12 +58,12 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
       >
         <div className="relative cursor-pointer">
           <div
-            className="w-full h-[179.56px] overflow-hidden rounded-9xl"
+            className="w-full h-[180px] overflow-hidden rounded-9xl"
             data-testid={coverImageName}
           >
             {userDetails?.coverImage?.original && !isCoverImageRemoved ? (
               <img
-                className="object-cover h-[179.56px] w-full"
+                className="object-cover h-[180px] w-full"
                 src={userDetails?.coverImage?.original}
                 alt={'User Cover Picture Profile'}
                 data-testid="user-cover-pic"

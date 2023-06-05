@@ -108,7 +108,10 @@ const EditImageModal: React.FC<IEditImageModalProps> = ({
 
   const uploadMediaFn = async () => {
     if (blob) {
-      const newFile = BlobToFile(blob, imageName);
+      const newFile = BlobToFile(
+        blob,
+        imageName || `id-${Math.random().toString(16).slice(2)}`,
+      );
       let profileImageUploadResponse;
       if (newFile) {
         profileImageUploadResponse = await uploadMedia(
@@ -184,6 +187,7 @@ const EditImageModal: React.FC<IEditImageModalProps> = ({
           }
         />
         <Footer
+          cropperRef={cropperRef}
           userProfileImageRef={userProfileImageRef}
           userCoverImageRef={userCoverImageRef}
           imageFile={imageFile}
