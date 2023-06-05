@@ -96,15 +96,22 @@ const SingleSelect: React.FC<ISingleSelectProps> = ({
               {...field}
               defaultValue={defaultValue}
               menuPlacement={menuPlacement ? menuPlacement : undefined}
+              data-testId={options.dataTestId}
               components={{
-                Option: ({ innerProps, data, isDisabled, isSelected }) => {
+                Option: ({
+                  innerProps,
+                  data,
+                  isDisabled,
+                  isSelected,
+                  options,
+                }) => {
                   return (
                     <div
                       {...innerProps}
                       className={`px-6 py-3 hover:bg-primary-50 font-medium text-sm ${
                         isDisabled ? 'cursor-default' : 'cursor-pointer'
                       } ${isSelected && 'bg-primary-50'}`}
-                      data-testid={data.dataTestId}
+                      data-testid={options}
                     >
                       {data.label}
                     </div>
