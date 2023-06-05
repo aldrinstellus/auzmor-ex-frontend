@@ -67,9 +67,8 @@ export const getReactions = async ({
   pageParam = null,
   queryKey,
 }: QueryFunctionContext<any>) => {
-  const { data } = await apiService.get(`reactions`, {
+  const { data } = await apiService.get(!!pageParam ? pageParam : `reactions`, {
     ...queryKey[1],
-    cursor: pageParam,
   });
   return data;
 };
