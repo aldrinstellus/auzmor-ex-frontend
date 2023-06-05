@@ -47,9 +47,9 @@ const LoginViaCred: React.FC<ILoginViaCredProps> = ({ setViaSSO }) => {
 
   const checkLoginMutation = useMutation(() => checkLogin(), {
     onSuccess: (data) => {
-      if (data?.data?.code === 200) {
-        redirectWithToken({ redirectUrl: '' });
-      }
+      // if (data?.data?.code === 200) {
+      //   redirectWithToken({ redirectUrl: '' });
+      // }
     },
   });
 
