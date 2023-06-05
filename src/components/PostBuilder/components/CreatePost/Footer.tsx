@@ -8,10 +8,10 @@ import {
   CreatePostFlow,
   IEditorValue,
 } from 'contexts/CreatePostContext';
+import useRole from 'hooks/useRole';
 import { DeltaStatic } from 'quill';
-import React, { ForwardedRef, useContext, useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import ReactQuill from 'react-quill';
-import { twConfig } from 'utils/misc';
 
 export interface IFooterProps {
   isLoading: boolean;
@@ -24,6 +24,7 @@ const Footer: React.FC<IFooterProps> = ({
   quillRef,
   handleSubmitPost,
 }) => {
+  const { isMember } = useRole();
   const {
     setActiveFlow,
     setEditorValue,
@@ -121,6 +122,7 @@ const Footer: React.FC<IFooterProps> = ({
               updateContext();
               setActiveFlow(CreatePostFlow.CreateAnnouncement);
             },
+            disabled: isMember,
             iconClassName: 'p-2 rounded-7xl border mr-2.5 bg-white',
             dataTestId: 'feed-createpost-shareasannouncement',
           },
