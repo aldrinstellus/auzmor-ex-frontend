@@ -6,12 +6,16 @@ import ConfirmationBox from 'components/ConfirmationBox';
 import { IPost, deletePost } from 'queries/post';
 import PostBuilder, { PostBuilderMode } from 'components/PostBuilder';
 import useModal from 'hooks/useModal';
+import useAuth from 'hooks/useAuth';
+import useRole from 'hooks/useRole';
 
 export interface IFeedPostMenuProps {
   data: IPost;
 }
 
 const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
+  const { user } = useAuth();
+  const { isMember } = useRole();
   const [confirm, showConfirm, closeConfirm] = useModal();
   const [showModal, setShowModal] = useState(false);
   const queryClient = useQueryClient();
@@ -65,7 +69,17 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
       onClick: () => null,
       disabled: true,
     },
-  ];
+  ].filter((menuItem) => {
+    //remove edit post and delete post if [its created by same -- and -- is not admin or superadmin -- and -- option is delete __ or __ edit ]
+    if (
+      data.createdBy?.userId !== user?.id &&
+      isMember &&
+      (menuItem.label === 'Edit Post' || menuItem.label === 'Delete post')
+    ) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <>
