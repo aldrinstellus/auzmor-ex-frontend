@@ -28,6 +28,7 @@ export interface IUser {
   location?: string;
   profileImage?: string;
   coverImage?: string;
+  permissions?: [];
 }
 
 interface IAuthContext {
@@ -65,7 +66,7 @@ const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
         updatedUrl += `?${queryParams}`;
       }
 
-      window.history.pushState({ path: updatedUrl }, '', updatedUrl);
+      return window.history.pushState({ path: updatedUrl }, '', updatedUrl);
     }
 
     // if token in LS, make /me api call and update setUser
@@ -114,6 +115,7 @@ const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
       </div>
     );
   }
+
   return (
     <AuthContext.Provider value={{ user, reset, updateUser }}>
       {children}

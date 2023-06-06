@@ -6,12 +6,17 @@ import ConfirmationBox from 'components/ConfirmationBox';
 import { IPost, deletePost } from 'queries/post';
 import PostBuilder, { PostBuilderMode } from 'components/PostBuilder';
 import useModal from 'hooks/useModal';
+import useAuth from 'hooks/useAuth';
+import useRole from 'hooks/useRole';
+import { isSubset } from 'utils/misc';
 
 export interface IFeedPostMenuProps {
   data: IPost;
 }
 
 const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
+  const { user } = useAuth();
+  const { isMember } = useRole();
   const [confirm, showConfirm, closeConfirm] = useModal();
   const [showModal, setShowModal] = useState(false);
   const queryClient = useQueryClient();
@@ -41,31 +46,47 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
       icon: 'copyLink',
       label: 'Copy link to post',
       onClick: () => null,
+      dataTestId: 'post-ellipsis-copy-link-to-post',
       disabled: true,
     },
     {
       icon: 'edit',
       label: 'Edit Post',
       onClick: () => setShowModal(true),
+      dataTestId: 'post-ellipsis-edit-post',
+      permissions: ['UPDATE_MY_POSTS'],
     },
     {
       icon: 'delete',
       label: 'Delete post',
       onClick: () => showConfirm(),
+      dataTestId: 'post-ellipsis-delete-post',
+      permissions: ['DELETE_MY_POSTS'],
     },
     {
       icon: 'clipboardClose',
       label: 'Turn off commenting',
       onClick: () => null,
+      dataTestId: 'post-ellipsis-turn-off-commenting',
       disabled: true,
     },
     {
       icon: 'chart',
       label: 'View Post analytics',
       onClick: () => null,
+      dataTestId: 'post-ellipsis-view-post-anlytics',
       disabled: true,
     },
-  ];
+  ].filter((menuItem) => {
+    if (
+      menuItem.permissions &&
+      !isSubset(menuItem.permissions, user?.permissions) &&
+      isMember
+    ) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <>
