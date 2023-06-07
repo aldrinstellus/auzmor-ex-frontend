@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { Variant as InputVariant } from 'components/Input';
 import Button, { Type as ButtonType, Size } from 'components/Button';
-import { validateEmail } from 'utils/misc';
+import 'utils/custom-yup-validators/email/validateEmail';
 
 export interface ILoginViaSSOProps {
   setViaSSO: (flag: boolean) => void;
@@ -17,12 +17,7 @@ interface IForm {
 }
 
 const schema = yup.object({
-  email: yup
-    .string()
-    .required('Required field')
-    .test('is-valid-email', 'Please enter a valid email address', (value) =>
-      validateEmail(value),
-    ),
+  email: yup.string().required('Required field').validateEmail(),
 });
 
 const LoginViaSSO: React.FC<ILoginViaSSOProps> = ({ setViaSSO }) => {

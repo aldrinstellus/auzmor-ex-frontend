@@ -16,9 +16,10 @@ import {
 import ConfirmationBox from 'components/ConfirmationBox';
 import { toast } from 'react-toastify';
 import Icon from 'components/Icon';
-import { twConfig, validateEmail } from 'utils/misc';
+import { twConfig } from 'utils/misc';
 import InvitedUsersList from './InvitedUsersList';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
+import 'utils/custom-yup-validators/email/validateEmail';
 
 export interface IInviteUserModalProps {
   showModal: boolean;
@@ -159,14 +160,7 @@ const InviteUserModal: React.FC<IInviteUserModalProps> = ({
     members: yup.array().of(
       yup.object().shape({
         fullName: yup.string().required('Please enter Name'),
-        workEmail: yup
-          .string()
-          .required('Please enter Email')
-          .test(
-            'is-valid-email',
-            'Please enter a valid email address',
-            (value) => validateEmail(value),
-          ),
+        workEmail: yup.string().required('Please enter Email').validateEmail(),
         role: yup.object().required('please enter role'),
       }),
     ),

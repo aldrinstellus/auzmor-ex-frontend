@@ -17,8 +17,9 @@ const YUP_EMAIL_METHOD = 'validateEmail';
 Yup.addMethod(
   Yup.string,
   YUP_EMAIL_METHOD,
-  function (errMsg = 'Please enter a valid email.') {
+  function (errMsg = 'Please enter a valid email address.') {
     // @ts-ignore
+    // Found this method here - https://github.com/manishsaraan/email-validator/blob/master/index.js
     return this.test(YUP_EMAIL_METHOD, errMsg, (value?: string) => {
       try {
         if (value === undefined) {

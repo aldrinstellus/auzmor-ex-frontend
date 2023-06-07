@@ -140,29 +140,3 @@ export const isSubset = (subset?: string[], set?: string[]) => {
   }
   return false;
 };
-
-// Found this method here - https://github.com/manishsaraan/email-validator/blob/master/index.js
-export const validateEmail = (email: string) => {
-  if (!email) return false;
-
-  const emailParts = email.split('@');
-
-  if (emailParts.length !== 2) return false;
-
-  const account = emailParts[0];
-  const address = emailParts[1];
-
-  if (account.length > 64) return false;
-  else if (address.length > 255) return false;
-
-  const domainParts = address.split('.');
-
-  if (
-    domainParts.some(function (part) {
-      return part.length > 63;
-    })
-  )
-    return false;
-
-  return EMAIL_REGEX.test(email);
-};

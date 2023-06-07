@@ -16,13 +16,13 @@ import {
   getSubDomain,
   readFirstAxiosError,
   redirectWithToken,
-  validateEmail,
 } from 'utils/misc';
 import { Link } from 'react-router-dom';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
 import { useGetSSOFromDomain } from 'queries/organization';
 import { useLoginViaSSO } from 'queries/auth';
 import useAuth from 'hooks/useAuth';
+import 'utils/custom-yup-validators/email/validateEmail';
 
 export interface ILoginViaCredProps {
   setViaSSO: (flag: boolean) => void;
@@ -38,10 +38,8 @@ const schema = yup.object({
   email: yup
     .string()
     .required('Required field')
-    .test(
-      'is-valid-email',
+    .validateEmail(
       'Invalid email address. Please enter a valid email address.',
-      (value) => validateEmail(value),
     ),
   password: yup.string().required('Required field'),
   domain: yup.string(),
