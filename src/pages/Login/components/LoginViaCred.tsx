@@ -16,6 +16,7 @@ import {
   getSubDomain,
   readFirstAxiosError,
   redirectWithToken,
+  validateEmail,
 } from 'utils/misc';
 import { Link } from 'react-router-dom';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
@@ -36,8 +37,12 @@ interface IForm {
 const schema = yup.object({
   email: yup
     .string()
-    .email('Invalid email address. Please enter a valid email address.')
-    .required('Required field'),
+    .required('Required field')
+    .test(
+      'is-valid-email',
+      'Invalid email address. Please enter a valid email address.',
+      (value) => validateEmail(value),
+    ),
   password: yup.string().required('Required field'),
   domain: yup.string(),
 });

@@ -8,7 +8,7 @@ import Button, { Size, Type as ButtonType } from 'components/Button';
 import { Logo } from 'components/Logo';
 import WelcomeOffice from 'images/welcomeToOffice.png';
 import { useMutation } from '@tanstack/react-query';
-import { redirectWithToken } from 'utils/misc';
+import { redirectWithToken, validateEmail } from 'utils/misc';
 import { signup } from 'queries/account';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
 import { useDebounce } from 'hooks/useDebounce';
@@ -28,8 +28,12 @@ const schema = yup.object({
   fullName: yup.string().required('Required Field'),
   workEmail: yup
     .string()
-    .email('The email address you entered is invalid')
-    .required('Required field'),
+    .required('Required field')
+    .test(
+      'is-valid-email',
+      'The email address you entered is invalid',
+      (value) => validateEmail(value),
+    ),
   domain: yup
     .string()
     .min(3, 'The minimum length required is 3 characters for domain name')

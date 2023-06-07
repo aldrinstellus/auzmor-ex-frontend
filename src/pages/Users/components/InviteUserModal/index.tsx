@@ -16,9 +16,8 @@ import {
 import ConfirmationBox from 'components/ConfirmationBox';
 import { toast } from 'react-toastify';
 import Icon from 'components/Icon';
-import { twConfig } from 'utils/misc';
+import { twConfig, validateEmail } from 'utils/misc';
 import InvitedUsersList from './InvitedUsersList';
-import { EMAIL_REGX } from 'utils/constants';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 
 export interface IInviteUserModalProps {
@@ -163,7 +162,11 @@ const InviteUserModal: React.FC<IInviteUserModalProps> = ({
         workEmail: yup
           .string()
           .required('Please enter Email')
-          .matches(new RegExp(EMAIL_REGX), 'Please enter valid email address'),
+          .test(
+            'is-valid-email',
+            'Please enter a valid email address',
+            (value) => validateEmail(value),
+          ),
         role: yup.object().required('please enter role'),
       }),
     ),

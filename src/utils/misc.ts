@@ -5,6 +5,7 @@ import { validImageTypes } from 'queries/files';
 import { getItem, removeItem } from './persist';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
+import { EMAIL_REGX } from './constants';
 
 export const twConfig: any = resolveConfig(tailwindConfig);
 
@@ -140,4 +141,30 @@ export const isSubset = (subset?: string[], set?: string[]) => {
     return subset.every((ele) => set.includes(ele));
   }
   return false;
+};
+
+// Found this method here - https://github.com/manishsaraan/email-validator/blob/master/index.js
+export const validateEmail = (email: string) => {
+  if (!email) return false;
+
+  const emailParts = email.split('@');
+
+  if (emailParts.length !== 2) return false;
+
+  const account = emailParts[0];
+  const address = emailParts[1];
+
+  if (account.length > 64) return false;
+  else if (address.length > 255) return false;
+
+  const domainParts = address.split('.');
+
+  if (
+    domainParts.some(function (part) {
+      return part.length > 63;
+    })
+  )
+    return false;
+
+  return EMAIL_REGX.test(email);
 };
