@@ -55,6 +55,7 @@ const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
     const _showOnboard = query.get('showOnboard');
     setShowOnboard(!!_showOnboard);
 
+    console.log('TOKEN1>>>', token);
     if (token) {
       setItem(process.env.SESSION_KEY || 'uat', token);
       query.delete('accessToken');
@@ -66,11 +67,12 @@ const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
         updatedUrl += `?${queryParams}`;
       }
 
-      return window.history.pushState({ path: updatedUrl }, '', updatedUrl);
+      window.history.pushState({ path: updatedUrl }, '', updatedUrl);
     }
 
     // if token in LS, make /me api call and update setUser
     token = getItem(process.env.SESSION_KEY || 'uat');
+    console.log('TOKEN2>>>', token);
     if (token) {
       try {
         const userData = await fetchMe();
@@ -87,6 +89,7 @@ const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
           profileImage: data?.profileImage?.original,
         });
       } catch (e: any) {
+        console.log('ERROR in fetch me >>>', e);
         if (e?.response?.status === 401) {
           removeAllItems();
           queryClient.clear();
