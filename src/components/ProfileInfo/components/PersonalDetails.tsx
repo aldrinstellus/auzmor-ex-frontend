@@ -173,8 +173,8 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
       },
       dataTestId: 'personal-details-marital-status',
       options: [
-        { value: 'MARRIED', label: 'Married' },
-        { value: 'SINGLE', label: 'Single' },
+        { value: 'MARRIED', label: 'Married', dataTestId: 'user-married' },
+        { value: 'SINGLE', label: 'Single', dataTestId: 'user-single' },
       ],
       control,
       menuPlacement: 'top',
@@ -228,7 +228,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
                   </IconWrapper>
                   <div className="text-neutral-900 text-base font-medium">
                     Born on{' '}
-                    <span data-testid="personal-details-dob">
+                    <span data-testid="user-dob">
                       {(personalDetails?.personal?.birthDate &&
                         moment(personalDetails?.personal?.birthDate).format(
                           'DD MMMM YYYY',
@@ -283,7 +283,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
                     </IconWrapper>
                     <div
                       className="text-neutral-900 text-base font-medium"
-                      data-testid={`personal-details-marital-status`}
+                      data-testid={`user-marital-status`}
                     >
                       {personalDetails?.personal?.maritalStatus?.charAt(0) +
                         personalDetails?.personal?.maritalStatus
