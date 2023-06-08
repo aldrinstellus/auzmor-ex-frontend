@@ -17,8 +17,9 @@ import { IUpdateProfileImage } from 'pages/UserDetail';
 import DefaultCoverImage from 'images/png/CoverImage.png';
 import useModal from 'hooks/useModal';
 import EditImageModal from 'components/EditImageModal';
-import { getBlobUrl } from 'utils/misc';
+import { getBlobUrl, twConfig } from 'utils/misc';
 import { EntityType } from 'queries/files';
+import PopupMenu from 'components/PopupMenu';
 
 export interface IProfileCoverProps {
   userDetails: Record<string, any>;
@@ -46,17 +47,53 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
   const [profileImageName, setProfileImageName] = useState<string>('');
   const [coverImageName, setCoverImageName] = useState<string>('');
 
+  const showEditProfile = useRef<boolean>(true);
+
   const getBlobFile = file?.profileImage
     ? getBlobUrl(file?.profileImage)
     : file?.coverImage && getBlobUrl(file?.coverImage);
 
+  const coverImageOption = [
+    {
+      icon: 'exportOutline',
+      label: 'Upload a photo',
+      stroke: twConfig.theme.colors.neutral['900'],
+      onClick: () => {
+        userCoverImageRef?.current?.click();
+      },
+    },
+    {
+      icon: 'maximizeOutline',
+      label: 'Reposition',
+      stroke: twConfig.theme.colors.neutral['900'],
+      onClick: () => {
+        openEditImageModal();
+        closeEditProfileModal();
+      },
+    },
+    {
+      icon: 'trashOutline',
+      label: 'Delete post',
+      stroke: twConfig.theme.colors.neutral['900'],
+      onClick: () => {
+        if (file?.coverImage) {
+          if (file?.profileImage) {
+            setFile({
+              profileImage: file?.profileImage,
+            });
+          } else {
+            setFile({});
+          }
+        }
+        setIsCoverImageRemoved(true);
+      },
+    },
+  ];
+
   return (
     <div>
-      <Card
-        className="bg-white pb-1 w-full h-[290.56px]"
-        data-testid="profile-details"
-      >
-        <div className="relative cursor-pointer">
+      <Card className="bg-white pb-1 w-full h-80" data-testid="profile-details">
+        <div className="relative">
           <div
             className="w-full h-[180px] overflow-hidden rounded-9xl"
             data-testid={coverImageName}
@@ -67,7 +104,6 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                 src={userDetails?.coverImage?.original}
                 alt={'User Cover Picture Profile'}
                 data-testid="user-cover-pic"
-                onClick={() => canEdit && openEditProfileModal()}
               />
             ) : (
               <img
@@ -75,20 +111,23 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                 src={DefaultCoverImage}
                 alt="Default Image"
                 data-testid="user-cover-pic"
-                onClick={() => canEdit && openEditProfileModal()}
               />
             )}
           </div>
           {canEdit && (
-            <IconButton
-              icon="edit"
-              className="bg-white m-4 absolute top-0 right-0 p-3 text-black"
-              variant={IconVariant.Secondary}
-              size={Size.Medium}
-              onClick={() => {
-                openEditProfileModal();
-              }}
-              dataTestId="edit-cover-pic"
+            <PopupMenu
+              triggerNode={
+                <IconButton
+                  icon="edit"
+                  className="bg-white m-4 absolute top-0 right-0 p-3 text-black"
+                  variant={IconVariant.Secondary}
+                  size={Size.Medium}
+                  dataTestId="edit-cover-pic"
+                  onClick={() => (showEditProfile.current = false)}
+                />
+              }
+              className="top-16 right-4"
+              menuItems={coverImageOption}
             />
           )}
         </div>
@@ -130,6 +169,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                   variant={ButtonVariant.Secondary}
                   onClick={() => {
                     canEdit && openEditProfileModal();
+                    showEditProfile.current = true;
                   }}
                   dataTestId={canEdit ? 'edit-profile' : 'follow'}
                 />
@@ -170,29 +210,29 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           </div>
         </div>
 
-        {openEditProfile && (
-          <EditProfileModal
-            userDetails={userDetails}
-            openEditProfile={openEditProfile}
-            openEditImageModal={openEditImageModal}
-            closeEditProfileModal={closeEditProfileModal}
-            userProfileImageRef={userProfileImageRef}
-            userCoverImageRef={userCoverImageRef}
-            key={'edit-profile'}
-            dataTestId="edit-profile"
-            isCoverImageRemoved={isCoverImageRemoved}
-            setIsCoverImageRemoved={setIsCoverImageRemoved}
-            setImageFile={setFile}
-            imageFile={file}
-          />
-        )}
+        <EditProfileModal
+          userDetails={userDetails}
+          openEditProfile={openEditProfile}
+          openEditImageModal={openEditImageModal}
+          closeEditProfileModal={closeEditProfileModal}
+          userProfileImageRef={userProfileImageRef}
+          userCoverImageRef={userCoverImageRef}
+          key={'edit-profile'}
+          dataTestId="edit-profile"
+          isCoverImageRemoved={isCoverImageRemoved}
+          setIsCoverImageRemoved={setIsCoverImageRemoved}
+          setImageFile={setFile}
+          imageFile={file}
+        />
 
         {openEditImage && (
           <EditImageModal
             title={getBlobFile ? 'Apply Changes' : 'Reposition'}
             openEditImage={openEditImage}
             closeEditImageModal={closeEditImageModal}
-            openEditProfileModal={openEditProfileModal}
+            openEditProfileModal={
+              showEditProfile.current ? openEditProfileModal : undefined
+            }
             image={getBlobFile || userDetails?.coverImage?.original}
             userCoverImageRef={userCoverImageRef}
             setImageFile={setFile}

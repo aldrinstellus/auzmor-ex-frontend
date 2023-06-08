@@ -119,6 +119,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       defaultValue: getValues().designation,
       dataTestId: `${dataTestId}`,
       label: 'Position title',
+      disabled: true,
       options: [
         { value: 'Software Engineer', label: 'Software Engineer' },
         { value: 'Research Analyst', label: 'Research Analyst' },
@@ -148,6 +149,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     {
       type: FieldType.SingleSelect,
       name: 'workLocation',
+      disabled: true,
       defaultValue: getValues().workLocation?.label,
       dataTestId: `${dataTestId}`,
       label: 'Location',
@@ -274,7 +276,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     <Modal open={openEditProfile} closeModal={disableClosed}>
       <form>
         <Header title="Edit Profile" onClose={disableClosed} />
-        <div className="relative cursor-pointer">
+        <div className="relative">
           <div className="w-full h-[108px] overflow-hidden">
             {userDetails?.coverImage?.original && !isCoverImageRemoved ? (
               <img
