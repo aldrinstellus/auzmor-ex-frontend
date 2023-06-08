@@ -34,7 +34,7 @@ const PopupMenu: React.FC<IPopupMenuProps> = ({
     <Menu>
       <Menu.Button>{triggerNode}</Menu.Button>
       <Menu.Items
-        className={`bg-white rounded-9xl shadow-lg absolute z-[99999]  overflow-hidden ${className}`}
+        className={`bg-white rounded-9xl shadow-lg absolute z-[99999] overflow-hidden ${className}`}
       >
         {menuItems.map((menuItem: IMenuItem, index: number) => (
           <>
