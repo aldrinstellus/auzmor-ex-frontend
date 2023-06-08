@@ -47,6 +47,8 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
   const [profileImageName, setProfileImageName] = useState<string>('');
   const [coverImageName, setCoverImageName] = useState<string>('');
 
+  const showEditProfile = useRef<boolean>(true);
+
   const getBlobFile = file?.profileImage
     ? getBlobUrl(file?.profileImage)
     : file?.coverImage && getBlobUrl(file?.coverImage);
@@ -121,6 +123,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                   variant={IconVariant.Secondary}
                   size={Size.Medium}
                   dataTestId="edit-cover-pic"
+                  onClick={() => (showEditProfile.current = false)}
                 />
               }
               className="top-16 right-4"
@@ -166,6 +169,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                   variant={ButtonVariant.Secondary}
                   onClick={() => {
                     canEdit && openEditProfileModal();
+                    showEditProfile.current = true;
                   }}
                   dataTestId={canEdit ? 'edit-profile' : 'follow'}
                 />
@@ -228,7 +232,9 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
             title={getBlobFile ? 'Apply Changes' : 'Reposition'}
             openEditImage={openEditImage}
             closeEditImageModal={closeEditImageModal}
-            openEditProfileModal={openEditProfileModal}
+            openEditProfileModal={
+              showEditProfile.current ? openEditProfileModal : undefined
+            }
             image={getBlobFile || userDetails?.coverImage?.original}
             userCoverImageRef={userCoverImageRef}
             setImageFile={setFile}
