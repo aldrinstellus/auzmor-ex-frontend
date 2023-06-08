@@ -274,7 +274,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     <Modal open={openEditProfile} closeModal={disableClosed}>
       <form>
         <Header title="Edit Profile" onClose={disableClosed} />
-        <div className="relative cursor-pointer">
+        <div className="relative">
           <div className="w-full h-[108px] overflow-hidden">
             {userDetails?.coverImage?.original && !isCoverImageRemoved ? (
               <img

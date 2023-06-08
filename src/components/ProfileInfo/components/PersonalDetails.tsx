@@ -297,13 +297,13 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
                     Skills
                   </div>
                   <div
-                    className="text-neutral-900 text-base font-medium px-4"
+                    className="text-neutral-900 text-base font-medium pl-5"
                     data-testid="added-skills"
                   >
                     {(personalDetails?.personal?.skills?.length > 0 &&
                       personalDetails?.personal?.skills.map(
                         (skill: string, index: number) => (
-                          <ul key={index} className="list-disc">
+                          <ul key={index} className="list-disc mb-1 mt-2">
                             <li data-testid={`personal-details-skill-${skill}`}>
                               {skill}
                             </li>
