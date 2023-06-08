@@ -121,6 +121,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({
           }
         }}
         multiple
+        data-testid="feed-createpost-uploadphoto"
       />
       <input
         type="file"
@@ -190,6 +191,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({
           }
         }}
         multiple
+        data-testid="feed-createpost-uploadvideo"
       />
     </>
   );
