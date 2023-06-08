@@ -52,6 +52,8 @@ export interface ICreatePostContext {
   getCoverImageBlobURL: (media: IMedia) => string;
   removedCoverimageFileIds: string[];
   setRemovedCoverimageFileIds: (fileIds: string[]) => void;
+  showFullscreenVideo: IMedia | false;
+  setShowFullscreenVideo: (showFullscreenVideo: IMedia | false) => void;
 }
 
 export interface IEditorValue {
@@ -110,6 +112,8 @@ export const CreatePostContext = createContext<ICreatePostContext>({
   getCoverImageBlobURL: () => '',
   removedCoverimageFileIds: [],
   setRemovedCoverimageFileIds: () => {},
+  showFullscreenVideo: false,
+  setShowFullscreenVideo: () => {},
 });
 
 const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
@@ -132,6 +136,9 @@ const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
   const [removedCoverimageFileIds, setRemovedCoverimageFileIds] = useState<
     string[]
   >([]);
+  const [showFullscreenVideo, setShowFullscreenVideo] = useState<
+    IMedia | false
+  >(false);
 
   const setUploads = (uploads: File[], isCoverImage?: boolean) => {
     if (!isCoverImage) {
@@ -217,6 +224,7 @@ const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
     setIsCharLimit(false);
     setCoverImageMap([]);
     setRemovedCoverimageFileIds([]);
+    setShowFullscreenVideo(false);
   };
 
   const updateCoverImageMap = (map: ICoverImageMap) => {
@@ -318,6 +326,8 @@ const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
         getCoverImageBlobURL,
         removedCoverimageFileIds,
         setRemovedCoverimageFileIds,
+        showFullscreenVideo,
+        setShowFullscreenVideo,
       }}
     >
       {children}
