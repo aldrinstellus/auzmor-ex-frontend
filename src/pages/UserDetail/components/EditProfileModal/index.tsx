@@ -276,7 +276,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
   };
 
   return (
-    <Modal open={openEditProfile} closeModal={disableClosed}>
+    <Modal open={openEditProfile}>
       <form>
         <Header title="Edit Profile" onClose={disableClosed} />
         <div className="relative">
