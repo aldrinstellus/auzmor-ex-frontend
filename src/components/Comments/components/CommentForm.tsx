@@ -66,6 +66,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
     <div className={`flex flex-row ${className} `}>
       <div className="flex items-center py-3 gap-2 border border-neutral-200 rounded-19xl border-solid w-full">
         <RichTextEditor
+          toolbarId={`toolbar-${entityId}`}
           placeholder="Leave a Comment..."
           className="max-h-18 w-[70%] max-w-[70%]"
           ref={quillRef}
@@ -73,8 +74,8 @@ export const CommentForm: React.FC<CommentFormProps> = ({
           dataTestId="postcomment-textbox"
           renderToolbar={() => (
             <div
-              className="flex flex-row items-center z-10 -ml-32 absolute top-0 right-2"
-              id="toolbar"
+              className="flex flex-row items-center z-10 -ml-32 absolute top-0 right-2 quill-toolbar"
+              id={`toolbar-${entityId}-toolbar`}
             >
               {/* <IconButton
                 icon={'iconLinear'}
