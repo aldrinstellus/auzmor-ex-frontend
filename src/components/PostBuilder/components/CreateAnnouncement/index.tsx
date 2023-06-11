@@ -42,6 +42,7 @@ const CreateAnnouncement: React.FC<ICreateAnnouncementProps> = ({
   const expiryFields = [
     {
       type: FieldType.SingleSelect,
+      label: 'Announcement Expiry',
       name: 'expityOption',
       control,
       options: [
