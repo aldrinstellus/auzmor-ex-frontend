@@ -1,8 +1,5 @@
 import React, { useMemo } from 'react';
 import { Control, Controller, useController } from 'react-hook-form';
-// import DatePicker from 'react-date-picker';
-// import 'react-date-picker/dist/DatePicker.css';
-// import 'react-calendar/dist/Calendar.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -10,7 +7,6 @@ import './index.css';
 
 import Icon from 'components/Icon';
 import clsx from 'clsx';
-// import { Value as DateValue } from 'react-date-picker/dist/cjs/shared/types';
 
 export interface IDatePickerInputProps {
   name: string;
@@ -63,7 +59,7 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
     <div data-testid={dataTestId} className="relative">
       {!!label && <div className={labelStyle}>{label}</div>}
       <DatePicker
-        selected={field.value}
+        selected={new Date(defaultValue!)}
         onChange={field.onChange}
         calendarClassName={calendarClassName}
         data-testid={dataTestId}
