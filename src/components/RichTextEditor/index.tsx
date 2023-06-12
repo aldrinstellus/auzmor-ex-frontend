@@ -169,7 +169,7 @@ const RichTextEditor = React.forwardRef(
                 stroke={twConfig.theme.colors.neutral['900']}
               />
               <div className="ml-2.5">
-                Post will be scheduled for{' '}
+                Announcement will expire on{' '}
                 {moment(new Date(announcement.value)).format(
                   'ddd, MMM DD [at] h:mm a',
                 )}

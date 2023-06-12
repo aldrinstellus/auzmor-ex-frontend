@@ -263,7 +263,7 @@ const RichTextEditor = React.forwardRef(
                 className="ml-2.5"
                 data-testid="announcement-scheduled-toaster"
               >
-                Post will be scheduled for{' '}
+                Announcement will expire on{' '}
                 {moment(new Date(announcement.value)).format(
                   'ddd, MMM DD [at] h:mm a',
                 )}
