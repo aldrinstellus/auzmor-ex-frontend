@@ -20,6 +20,8 @@ import EditImageModal from 'components/EditImageModal';
 import { getBlobUrl, twConfig } from 'utils/misc';
 import { EntityType } from 'queries/files';
 import PopupMenu from 'components/PopupMenu';
+import { useMutation } from '@tanstack/react-query';
+import { updateCurrentUser } from 'queries/users';
 
 export interface IProfileCoverProps {
   userDetails: Record<string, any>;
@@ -53,6 +55,17 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
     ? getBlobUrl(file?.profileImage)
     : file?.coverImage && getBlobUrl(file?.coverImage);
 
+  const deleteCoverImageMutation = useMutation({
+    mutationFn: updateCurrentUser,
+    mutationKey: ['update-users-mutation'],
+    onError: (error: any) => {
+      console.log('API call resulted in error: ', error);
+    },
+    onSuccess: (data) => {
+      console.log('Successfully deleted user cover image', data);
+    },
+  });
+
   const coverImageOption = [
     {
       icon: 'exportOutline',
@@ -75,7 +88,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
     },
     {
       icon: 'trashOutline',
-      label: 'Delete post',
+      label: 'Delete photo',
       stroke: twConfig.theme.colors.neutral['900'],
       onClick: () => {
         if (file?.coverImage) {
@@ -88,6 +101,11 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           }
         }
         setIsCoverImageRemoved(true);
+        deleteCoverImageMutation.mutate({
+          coverImage: {
+            fileId: '',
+          },
+        });
       },
       dataTestId: 'edit-coverpic-deletepost',
     },
