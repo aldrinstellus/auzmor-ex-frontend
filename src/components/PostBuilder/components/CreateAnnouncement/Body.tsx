@@ -15,7 +15,6 @@ const Body: React.FC<IBodyProps> = ({
   datepickerFields,
 }) => {
   const { announcement } = useContext(CreatePostContext);
-  console.log(selecetedExpiry, announcement, 'announcement ');
   return (
     <div className="text-sm text-neutral-900">
       <div className="m-4 min-h-[300px]">
