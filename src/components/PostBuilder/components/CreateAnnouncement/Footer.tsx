@@ -9,8 +9,7 @@ export interface IFooterProps {
 }
 
 const Footer: React.FC<IFooterProps> = ({ handleSubmit, isValid }) => {
-  const { setAnnouncement, setActiveFlow, clearPostContext } =
-    useContext(CreatePostContext);
+  const { setAnnouncement, setActiveFlow } = useContext(CreatePostContext);
   const onSubmit = (data: any) => {
     setAnnouncement({
       label: data.expityOption.label,
