@@ -6,6 +6,7 @@ import { twConfig } from 'utils/misc';
 
 const MIN = 0;
 const MAX = 100;
+const SEEK_FORWARD_TIME = 5;
 
 export interface ICarouselProps {
   media: IMedia[];
@@ -141,7 +142,7 @@ const Carousel: React.FC<ICarouselProps> = ({
               onClick={() => videoRef?.current?.pause()}
             >
               <Icon
-                name="pauseFilled"
+                name="pause"
                 size={14}
                 fill={twConfig.theme.colors.primary['500']}
               />
@@ -189,26 +190,32 @@ const Carousel: React.FC<ICarouselProps> = ({
               {getFormatedTime(progress?.duration)}
             </div>
           </div>
+          <div
+            className="cursor-pointer"
+            onClick={() =>
+              (videoRef!.current!.currentTime += SEEK_FORWARD_TIME)
+            }
+          >
+            <Icon name="seekForward" />
+          </div>
           {isMuted ? (
-            <div onClick={() => setIsMuted(false)}>
-              <Icon name="speaker" stroke="#fff" />
+            <div onClick={() => setIsMuted(false)} className="cursor-pointer">
+              <Icon name="mute" stroke="#fff" />
             </div>
           ) : (
-            <div onClick={() => setIsMuted(true)}>
+            <div onClick={() => setIsMuted(true)} className="cursor-pointer">
               <Icon name="speaker" stroke="#fff" />
             </div>
           )}
-          <div>
-            <Icon name="speaker" stroke="#fff" />
-          </div>
           <div
             onClick={() => {
               setShowFullscreenVideo &&
                 setShowFullscreenVideo(media[currentIndex]);
               videoRef.current!.pause();
             }}
+            className="cursor-pointer"
           >
-            <Icon name="speaker" stroke="#fff" />
+            <Icon name="fullScreen" />
           </div>
         </div>
       )}

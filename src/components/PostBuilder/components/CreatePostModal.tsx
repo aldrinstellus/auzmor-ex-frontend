@@ -238,8 +238,6 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       {!!showFullscreenVideo && (
         <Modal
           open={!!showFullscreenVideo}
-          className="!fixed !w-screen !h-screen !top-0 !left-0 z-50 flex items-center justify-center bg-black/10"
-          showModalCloseBtn
           closeModal={() => setShowFullscreenVideo(false)}
         >
           {!!showFullscreenVideo && (
