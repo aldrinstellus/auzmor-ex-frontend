@@ -104,6 +104,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           return {
             fileId:
               uploadedMedia.find((media) => media.name === map.videoName)?.id ||
+              media.find((media) => media.name === map.videoName)?.id ||
               '',
             coverImageUrl:
               uploadedMedia.find((media) => media.name === map.coverImageName)
