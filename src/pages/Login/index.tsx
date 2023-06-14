@@ -33,10 +33,13 @@ const Login: React.FC<ILoginProps> = () => {
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
+      setLoading(false);
       return;
     }
     if (!user && !domain) {
       checkLoginMutation.mutate();
+    } else {
+      setLoading(false);
     }
   }, [domain, user]);
 
