@@ -14,6 +14,7 @@ export const validImageTypes = [
   'image/svg+xml',
   'image/tiff',
   'image/webp',
+  'image/x-icon',
 ];
 
 export interface IFile {

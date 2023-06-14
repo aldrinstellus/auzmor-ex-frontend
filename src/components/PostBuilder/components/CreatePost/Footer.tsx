@@ -33,6 +33,7 @@ const Footer: React.FC<IFooterProps> = ({
     inputVideoRef,
     files,
     isCharLimit,
+    mediaValidationErrors,
   } = useContext(CreatePostContext);
   const updateContext = () => {
     setEditorValue({
@@ -202,7 +203,7 @@ const Footer: React.FC<IFooterProps> = ({
         <Button
           label="Post"
           className="w-24"
-          disabled={isLoading || isCharLimit}
+          disabled={isLoading || isCharLimit || !!mediaValidationErrors?.length}
           onClick={() => {
             updateContext();
             handleSubmitPost(
