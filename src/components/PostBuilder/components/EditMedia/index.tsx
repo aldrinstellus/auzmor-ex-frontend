@@ -132,10 +132,6 @@ const EditMedia: React.FC<IEditMediaProps> = ({ closeModal }) => {
               currentIndex,
               Array.prototype.slice.call(e.target.files)[0],
             );
-            deleteCoverImageMap({
-              videoName: media[currentIndex].name,
-              coverImageName: '',
-            });
           }
         }}
       />
