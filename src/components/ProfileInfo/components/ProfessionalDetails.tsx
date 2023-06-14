@@ -23,9 +23,6 @@ import { twConfig } from 'utils/misc';
 import { getTimezoneNameFromIANA } from 'utils/time';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 
-interface IForm {
-  timeZone: OptionType;
-}
 export interface IProfessionalDetailsProps {
   professionalDetails: any;
   canEdit?: boolean;
@@ -82,7 +79,7 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
     const selectedTimezone = getValues();
     let timezoneValue;
     if (selectedTimezone.timeZone === undefined) {
-      timezoneValue = defaultTimezone.value[0];
+      timezoneValue = professionalDetails?.timeZone || defaultTimezone.value[0];
     } else {
       timezoneValue = selectedTimezone.timeZone.value[0];
     }
