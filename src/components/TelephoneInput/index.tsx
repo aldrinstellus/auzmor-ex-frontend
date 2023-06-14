@@ -57,6 +57,7 @@ const TelephoneInput: React.FC<TelephoneInputProps> = ({
   // const updatedPhone = useRef<string>();
   const updatedPhone = formattedPhone
     .replace(new RegExp(`^\\${selectedCountry.dialCode}`), '')
+    .replaceAll(new RegExp(`[^0-9a-zA-Z]*$`, 'g'), '')
     .trim();
 
   // Every time updatedPhone changes, call the field.onChange method to update the value
