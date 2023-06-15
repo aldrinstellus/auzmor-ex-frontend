@@ -25,7 +25,7 @@ const Body: React.FC<IBodyProps> = ({
   return (
     <Carousel
       media={media}
-      className="m-6"
+      className="m-6 max-h-[60vh] overflow-y-auto"
       onClose={(e, data, index) => {
         removeMedia(index, () => {
           if (media.length === 1) {
