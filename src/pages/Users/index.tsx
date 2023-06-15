@@ -65,6 +65,7 @@ const Users: React.FC<IUsersProps> = () => {
     next: page,
     offset: (page - 1) * 30,
     status: userStatus,
+    role: role?.value,
   });
 
   const roleFields = [
