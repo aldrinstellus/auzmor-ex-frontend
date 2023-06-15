@@ -55,6 +55,8 @@ import SvgLogoutFilled from '../components/Logout/LogoutFilled';
 import SvgCopyFilled from '../components/Copy/CopyFilled';
 import SvgCopyLinkFilled from '../components/CopyLink/CopyLinkFilled';
 import SvgClipboardCloseFilled from '../components/ClipboardClose/ClipboardCloseFilled';
+import SvgSeekForwardFilled from '../components/SeekForward/SeekForwardFilled';
+import SvgFullScreenFilled from '../components/FullScreen/FullScreenFilled';
 
 export const filledIcon = {
   addCircleFilled: SvgAddCircleFilled,
@@ -86,6 +88,7 @@ export const filledIcon = {
   eyeSlashFilled: SvgEyeSlashFilled,
   filterFilled: SvgFilterFilled,
   filterLinearFilled: SvgFilterLinearFilled,
+  fullScreenFilled: SvgFullScreenFilled,
   funnyFilled: SvgFunnyFilled,
   hashtagFilled: SvgOrangeHashtagFilled,
   iconLinearFilled: SvgIconLinearFilled,
@@ -104,6 +107,7 @@ export const filledIcon = {
   playFilled: SvgPlayFilled,
   replyFilled: SvgReplyFilled,
   searchFilled: SvgSearchFilled,
+  seekForwardFilled: SvgSeekForwardFilled,
   sendFilled: SvgSendFilled,
   settingFilled: SvgSettingFilled,
   settingThreeFilled: SvgSettingThreeFilled,

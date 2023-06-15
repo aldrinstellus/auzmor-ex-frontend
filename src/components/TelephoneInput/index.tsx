@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { Control, useController } from 'react-hook-form';
 import { usePhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
@@ -16,7 +16,6 @@ type TelephoneInputProps = {
   control?: Control<Record<string, any>>;
   dataTestId?: string;
   errorDataTestId?: string;
-  setValue?: any;
 };
 
 const TelephoneInput: React.FC<TelephoneInputProps> = ({
@@ -27,28 +26,44 @@ const TelephoneInput: React.FC<TelephoneInputProps> = ({
   control,
   dataTestId,
   errorDataTestId,
-  setValue,
 }): ReactElement => {
   const { field } = useController({
     name,
     control,
   });
 
+  // Guess country and formatted phone by using the usePhoneInput hook
   const { country: countryIso2, phone: formattedPhone } = usePhoneInput({
     value: field.value || '',
   });
 
+  // The defaultCountry will be equal to the country which we guessed using usePhoneInput
   const defaultCountry = CountryList.findOneByCountryCode(countryIso2);
+
+  // If determining the defaultCountry is not possible for whatever reason,
+  // fallbackCountry is determined by guessing the user's timezone from his browser.
+  // If that fails as well, assume that the default country is United States.
   const fallbackCountry =
     CountryList.findOneByCountryCode(
       Intl.DateTimeFormat().resolvedOptions().timeZone.toLowerCase(),
     ) || CountryList.findByCountryCode('us')[0];
 
+  // The selectedCountry will either be defaultCountry or fallbackCountry,
+  // whichever is truthy
   const selectedCountry = defaultCountry || fallbackCountry;
+
+  // The updatedPhone is the formattedPhone that we got from the usePhoneInput hook,
+  // after we remove the dial code.
+  // const updatedPhone = useRef<string>();
   const updatedPhone = formattedPhone
     .replace(new RegExp(`^\\${selectedCountry.dialCode}`), '')
     .replaceAll(new RegExp(`[^0-9a-zA-Z]*$`, 'g'), '')
     .trim();
+
+  // Every time updatedPhone changes, call the field.onChange method to update the value
+  useEffect(() => {
+    field.onChange(selectedCountry.dialCode + ' ' + updatedPhone);
+  }, [updatedPhone]);
 
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<string>('');

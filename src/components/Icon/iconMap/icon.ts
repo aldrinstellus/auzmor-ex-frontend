@@ -91,6 +91,10 @@ import SettingIcon from '../components/Setting';
 import SettingThreeIcon from '../components/SettingThree';
 import LogoutIcon from '../components/Logout';
 import ClipboardCloseIcon from '../components/ClipboardClose';
+import SeekForwardIcon from '../components/SeekForward';
+import FullScreenIcon from '../components/FullScreen';
+import PauseIcon from '../components/Pause';
+import MuteIcon from '../components/Mute';
 
 export const icon = {
   add: Add,
@@ -139,6 +143,7 @@ export const icon = {
   filterLinear: FilterLinear,
   flashIcon: FlashIcon,
   folderConnection: FolderConnectionIcon,
+  fullScreen: FullScreenIcon,
   funny: Funny,
   gear: Gear,
   home: HomeIcon,
@@ -162,9 +167,11 @@ export const icon = {
   maximize: MaximizeIcon,
   minus: Minus,
   more: MoreIcon,
+  mute: MuteIcon,
   notification: NotificationIcon,
   orangeHashtag: OrangeHashtagIcon,
   outOfOfficeIcon: OutOfOfficeIcon,
+  pause: PauseIcon,
   people: PeopleIcon,
   play: PlayIcon,
   plus: Plus,
@@ -173,6 +180,7 @@ export const icon = {
   reply: Reply,
   rotateLeft: RotateLeft,
   search: Search,
+  seekForward: SeekForwardIcon,
   send: Send,
   setting: SettingIcon,
   settingThree: SettingThreeIcon,

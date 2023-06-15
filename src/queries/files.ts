@@ -4,7 +4,18 @@ import { useState } from 'react';
 import { getType } from 'utils/misc';
 import { IMedia } from 'contexts/CreatePostContext';
 
-export const validImageTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+export const validImageTypes = [
+  'image/png',
+  'image/jpg',
+  'image/jpeg',
+  'image/avif',
+  'image/bmp',
+  'image/gif',
+  'image/svg+xml',
+  'image/tiff',
+  'image/webp',
+  'image/x-icon',
+];
 
 export interface IFile {
   name: string;

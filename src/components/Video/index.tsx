@@ -13,9 +13,6 @@ const Video = ({ video }: VideoProps) => {
   };
   return (
     <div className="w-full h-full flex items-center ">
-      <div onClick={() => videoHandler()} className="absolute left-[50%]">
-        Play
-      </div>
       <video
         className="w-full h-full"
         src={video.original}
