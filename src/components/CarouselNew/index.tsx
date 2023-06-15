@@ -51,9 +51,12 @@ const Carousel: React.FC<ICarouselProps> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const getFormatedTime = (time: number) => {
+    if (time === Infinity) {
+      return '00:00';
+    }
     const seconds = Math.floor(time);
     const min = Math.floor(seconds / 60);
-    return `${min.toString().padStart(2, '0')}:${seconds
+    return `${min.toString().padStart(2, '0')}:${(seconds - min * 60)
       .toString()
       .padStart(2, '0')}`;
   };
@@ -169,6 +172,9 @@ const Carousel: React.FC<ICarouselProps> = ({
               max={MAX}
               defaultValue={0}
               onChange={(e) => {
+                if (videoRef.current!.duration === Infinity) {
+                  return;
+                }
                 const mappedCurrentTime = mapRanges(
                   MIN,
                   MAX,
