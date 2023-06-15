@@ -63,6 +63,8 @@ import SvgLogoutOutline from '../components/Logout/LogoutOutline';
 import SvgCopyOutline from '../components/Copy/CopyOutline';
 import SvgCopyLinkOutline from '../components/CopyLink/CopyLinkOutline';
 import SvgClipboardCloseOutline from '../components/ClipboardClose/ClipboardCloseOutline';
+import SvgSeekForwardOutline from '../components/SeekForward/SeekForwardOutline';
+import SvgFullScreenOutline from '../components/FullScreen/FullScreenOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -95,6 +97,7 @@ export const outlineIcon = {
   eyeOutline: SvgEyeOutline,
   eyeSlashOutline: SvgEyeSlashOutline,
   filterLinearOutline: SvgFilterLinearOutline,
+  fullScreenOutline: SvgFullScreenOutline,
   funnyOutline: SvgFunnyOutline,
   gearOutline: SvgGearOutline,
   iconLinearOutline: SvgIconLinearOutline,
@@ -118,6 +121,7 @@ export const outlineIcon = {
   redoOutline: SvgRedoOutline,
   replyOutline: SvgReplyOutline,
   searchOutline: SvgSearchOutline,
+  seekForwardOutline: SvgSeekForwardOutline,
   sendOutline: SvgSendOutline,
   settingOutline: SvgSettingOutline,
   settingThreeOutline: SvgSettingThreeOutline,
