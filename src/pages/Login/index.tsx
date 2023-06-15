@@ -22,7 +22,7 @@ const Login: React.FC<ILoginProps> = () => {
   const checkLoginMutation = useMutation(() => checkLogin(), {
     onSuccess: (data) => {
       if (data?.data?.code === 200) {
-        return navigate(data?.data?.result?.data?.redirectUrl);
+        return window.location.replace(data?.data?.result?.data?.redirectUrl);
       }
       setLoading(false);
     },
