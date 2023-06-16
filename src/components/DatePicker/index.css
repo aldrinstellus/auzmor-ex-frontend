@@ -105,3 +105,13 @@ abbr {
 .react-calendar__navigation button:enabled:focus {
   background-color: #047857;
 }
+
+.react-calendar__navigation button:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  color: #a3a3a3;
+}
+
+.react-calendar__tile:disabled {
+  cursor: not-allowed;
+}
