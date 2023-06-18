@@ -163,7 +163,7 @@ const Users: React.FC<IUsersProps> = () => {
         </div>
 
         <div className="text-neutral-500 mt-6 mb-3">
-          Showing {!isLoading && users.result.data.length} results
+          Showing {!isLoading && users?.result?.data?.length} results
         </div>
 
         <div className="mb-4 flex">
@@ -255,7 +255,6 @@ const Users: React.FC<IUsersProps> = () => {
         userStatus={userStatus}
         page={page}
         showModal={showFilterModal}
-        setShowFilterModal={setShowFilterModal}
         closeModal={() => setShowFilterModal(false)}
       />
     </div>
@@ -310,7 +309,6 @@ const Users: React.FC<IUsersProps> = () => {
             )}
           </div>
         </div>
-
         {/* Tab Switcher */}
         <TabSwitch tabs={tabs} />
       </div>
