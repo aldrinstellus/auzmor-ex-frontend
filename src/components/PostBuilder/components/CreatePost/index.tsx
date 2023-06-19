@@ -116,7 +116,6 @@ const CreatePost: React.FC<ICreatePostProps> = ({
                     ),
                 ),
             );
-            console.log(mediaErrors);
             setMediaValidationErrors([...mediaErrors]);
           }
         }}
