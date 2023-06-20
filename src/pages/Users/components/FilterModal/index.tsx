@@ -173,7 +173,10 @@ const FilterModal: React.FC<IFilterModalProps> = ({
           <Button
             label="Clear Fiters"
             variant={ButtonVariant.Secondary}
-            onClick={close}
+            onClick={() => {
+              setUserStatus('');
+              closeModal();
+            }}
             className="mr-4"
             dataTestId="clear-filters"
           />
