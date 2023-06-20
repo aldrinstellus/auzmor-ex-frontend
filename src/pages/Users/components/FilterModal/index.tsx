@@ -13,8 +13,6 @@ export interface IFilterModalProps {
   setUserStatus: (status: string) => void;
   closeModal: () => void;
   setShowFilterModal: (flag: boolean) => void;
-  setPeopleFilters?: any; // for future filters
-  page?: number;
   userStatus: string;
 }
 
@@ -29,12 +27,10 @@ interface IFilters {
 }
 
 const FilterModal: React.FC<IFilterModalProps> = ({
-  page = 1,
   showModal,
   closeModal,
   setShowFilterModal,
   setUserStatus,
-  setPeopleFilters,
   userStatus,
 }) => {
   const { control, handleSubmit, getValues } = useForm({
@@ -51,14 +47,6 @@ const FilterModal: React.FC<IFilterModalProps> = ({
     setUserStatus(status);
     closeModal();
   };
-
-  const radioDivStyles = useMemo(
-    () =>
-      clsx({
-        'hover:bg-green-50 cursor-pointer': true,
-      }),
-    [],
-  );
 
   const fields = [
     {
