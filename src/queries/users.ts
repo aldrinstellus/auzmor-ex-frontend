@@ -1,14 +1,9 @@
-<<<<<<< HEAD
-import { QueryFunctionContext, useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
-import { error } from 'console';
-=======
 import {
   QueryFunctionContext,
   useInfiniteQuery,
   useMutation,
   useQuery,
 } from '@tanstack/react-query';
->>>>>>> develop
 import apiService from 'utils/apiService';
 
 // for future filters
