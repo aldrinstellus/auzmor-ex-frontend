@@ -25,6 +25,7 @@ import { useInView } from 'react-intersection-observer';
 import PageLoader from 'components/PageLoader';
 import clsx from 'clsx';
 import Tabs from 'components/Tabs';
+import UsersSkeleton from './components/UsersSkeleton';
 
 interface IForm {
   search?: string;
@@ -199,8 +200,13 @@ const Users: React.FC<IUsersProps> = () => {
       <div className="">
         <div className="flex flex-wrap gap-6">
           {(() => {
+            const totalUserLoader = 30;
+            const loaders = [];
             if (isLoading) {
-              return <Spinner color="#000" />;
+              for (let count = 0; count < totalUserLoader; count++) {
+                loaders?.push(<UsersSkeleton key={count} />);
+              }
+              return loaders;
             }
             if (usersData && usersData?.length > 0) {
               return (
