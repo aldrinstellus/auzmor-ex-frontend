@@ -125,7 +125,7 @@ const NotificationsListing: React.FC<NotificationsListing> = ({
           </div>
         </div>
       )}
-      {!isLoading && <NotificationSkeleton />}
+      {isLoading && <NotificationSkeleton />}
       {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
       {isFetchingNextPage && (
         <div className="flex items-center justify-center p-6">
