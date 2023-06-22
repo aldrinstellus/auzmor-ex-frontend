@@ -51,7 +51,6 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
   const reaction = post?.myReaction?.reaction;
   const reactionId = post?.myReaction?.id;
 
-  const keys = Object.keys(post.reactionsCount!).length;
   const totalCount = Object.values(post.reactionsCount!).reduce(
     (total, count) => total + count,
     0,
@@ -88,7 +87,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
               className={`flex flex-row`}
               data-testid="feed-post-reactioncount"
             >
-              {keys > 0 && (
+              {totalCount > 0 && (
                 <div className="flex flex-row mr-2">
                   {Object.keys(post.reactionsCount!)
                     .slice(0, 3)

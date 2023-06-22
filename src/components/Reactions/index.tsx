@@ -99,6 +99,7 @@ const Likes: React.FC<LikesProps> = ({
     mutationKey: ['create-reaction-mutation'],
     mutationFn: createReaction,
     onMutate: (variables) => {
+      const previousPost = feed[variables.entityId];
       updateFeed(variables.entityId, {
         ...feed[variables.entityId],
         myReaction: {
@@ -119,9 +120,10 @@ const Likes: React.FC<LikesProps> = ({
               }
             : { [variables.reaction as string]: 1 },
       });
+      return { previousPost };
     },
-    onError: (error: any) => {
-      console.log(error);
+    onError: (error, variables, context) => {
+      updateFeed(context!.previousPost.id!, context!.previousPost);
     },
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: [queryKey] });
@@ -131,8 +133,23 @@ const Likes: React.FC<LikesProps> = ({
   const deleteReactionMutation = useMutation({
     mutationKey: ['delete-reaction-mutation'],
     mutationFn: deleteReaction,
-    onError: (error: any) => {
-      console.log(error);
+    onMutate: (variables) => {
+      const previousPost = feed[variables.entityId];
+      updateFeed(variables.entityId, {
+        ...feed[variables.entityId],
+        myReaction: undefined,
+        reactionsCount: {
+          ...feed[variables.entityId].reactionsCount,
+          [feed[variables.entityId]!.myReaction!.reaction!]:
+            feed[variables.entityId].reactionsCount[
+              feed[variables.entityId]!.myReaction!.reaction!
+            ] - 1,
+        },
+      });
+      return { previousPost };
+    },
+    onError: (error, variables, context) => {
+      updateFeed(context!.previousPost.id!, context!.previousPost);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [queryKey] });
