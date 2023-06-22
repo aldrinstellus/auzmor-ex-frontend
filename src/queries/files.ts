@@ -17,6 +17,17 @@ export const validImageTypes = [
   'image/x-icon',
 ];
 
+export const validVideoTypes = [
+  'video/x-msvideo',
+  'video/mp4',
+  'video/mpeg',
+  'video/ogg',
+  'video/mp2t',
+  'video/webm',
+  'video/3gpp',
+  'video/3gpp2',
+];
+
 export interface IFile {
   name: string;
   contentType: string;
