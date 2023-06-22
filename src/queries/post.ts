@@ -9,6 +9,8 @@ import { isValidUrl } from 'utils/misc';
 import { IMedia } from 'contexts/CreatePostContext';
 import { IComment } from 'components/Comments';
 import { Metadata } from 'components/PreviewLink/types';
+import { useFeedStore } from 'stores/feedStore';
+import _ from 'lodash';
 
 export interface IReactionsCount {
   [key: string]: number;
@@ -336,31 +338,58 @@ export const useInfinitePeopleProfileFeed = (
   });
 };
 
-export const fetchFeed = ({
-  pageParam = null,
-  queryKey,
-}: QueryFunctionContext<(string | Record<string, any> | undefined)[], any>) => {
-  if (pageParam === null) return apiService.get('/posts', queryKey[1]);
-  else return apiService.get(pageParam, queryKey[1]);
+export const fetchFeed = async (
+  context: QueryFunctionContext<
+    (string | Record<string, any> | undefined)[],
+    any
+  >,
+  feed: {
+    [key: string]: IPost;
+  },
+  setFeed: (feed: { [key: string]: IPost }) => void,
+) => {
+  let response = null;
+  if (!!!context.pageParam) {
+    response = await apiService.get('/posts', context.queryKey[1]);
+    setFeed(_.chain(response.data.result.data).keyBy('id').value());
+    response.data.result.data = response.data.result.data.map(
+      (eachPost: IPost) => ({ id: eachPost.id }),
+    );
+    return response;
+  } else {
+    response = await apiService.get(context.pageParam, context.queryKey[1]);
+    setFeed({
+      ...feed,
+      ..._.chain(response.data.result.data).keyBy('id').value(),
+    });
+    response.data.result.data = response.data.result.data.map(
+      (eachPost: IPost) => ({ id: eachPost.id }),
+    );
+    return response;
+  }
 };
 
 export const useInfiniteFeed = (q?: Record<string, any>) => {
-  return useInfiniteQuery({
-    queryKey: ['feed', q],
-    queryFn: fetchFeed,
-    getNextPageParam: (lastPage: any) => {
-      const pageDataLen = lastPage?.data?.result?.data?.length;
-      const pageLimit = lastPage?.data?.result?.paging?.limit;
-      if (pageDataLen < pageLimit) {
-        return null;
-      }
-      return lastPage?.data?.result?.paging?.next;
-    },
-    getPreviousPageParam: (currentPage: any) => {
-      return currentPage?.data?.result?.paging?.prev;
-    },
-    staleTime: 5 * 60 * 1000,
-  });
+  const { feed, setFeed } = useFeedStore();
+  return {
+    ...useInfiniteQuery({
+      queryKey: ['feed', q],
+      queryFn: (context) => fetchFeed(context, feed, setFeed),
+      getNextPageParam: (lastPage: any) => {
+        const pageDataLen = lastPage?.data?.result?.data?.length;
+        const pageLimit = lastPage?.data?.result?.paging?.limit;
+        if (pageDataLen < pageLimit) {
+          return null;
+        }
+        return lastPage?.data?.result?.paging?.next;
+      },
+      getPreviousPageParam: (currentPage: any) => {
+        return currentPage?.data?.result?.paging?.prev;
+      },
+      staleTime: 5 * 60 * 1000,
+    }),
+    feed,
+  };
 };
 
 const getPost = async (id: string, commentId?: string) => {

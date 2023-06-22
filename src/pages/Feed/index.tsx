@@ -3,7 +3,6 @@ import PostBuilder from 'components/PostBuilder';
 import UserCard from 'components/UserWidget';
 import AnnouncementCard from 'components/AnnouncementWidget';
 import {
-  IPost,
   IPostFilters,
   PostFilterKeys,
   PostType,
@@ -51,8 +50,14 @@ const Feed: React.FC<IFeedProps> = () => {
   });
   const { ref, inView } = useInView();
 
-  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfiniteFeed(appliedFeedFilters);
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+    feed,
+  } = useInfiniteFeed(appliedFeedFilters);
 
   useEffect(() => {
     if (inView) {
@@ -60,7 +65,7 @@ const Feed: React.FC<IFeedProps> = () => {
     }
   }, [inView]);
 
-  const feed = data?.pages.flatMap((page) => {
+  const feedIds = data?.pages.flatMap((page) => {
     return page.data?.result?.data.map((post: any) => {
       try {
         return post;
@@ -68,7 +73,7 @@ const Feed: React.FC<IFeedProps> = () => {
         console.log('Error', { post });
       }
     });
-  }) as IPost[];
+  }) as { id: string }[];
 
   const clearAppliedFilters = () => {
     setAppliedFeedFilters({
@@ -153,9 +158,9 @@ const Feed: React.FC<IFeedProps> = () => {
               <PageLoader />
             ) : (
               <div className="mt-4">
-                {feed.map((post, index) => (
-                  <div data-testid={`feed-post-${index}`} key={post.id}>
-                    <Post post={post} />
+                {feedIds.map((feedId, index) => (
+                  <div data-testid={`feed-post-${index}`} key={feedId.id}>
+                    <Post post={feed[feedId.id!]} />
                   </div>
                 ))}
               </div>

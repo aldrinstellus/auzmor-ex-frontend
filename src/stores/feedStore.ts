@@ -1,10 +1,15 @@
 import { IPost } from 'queries/post';
 import { create } from 'zustand';
 
-export const useFeedStore = create((set) => ({
+export interface IFeedStore {
+  feed: { [key: string]: IPost };
+  setFeed: (feed: { [key: string]: IPost }) => void;
+}
+
+export const useFeedStore = create<IFeedStore>((set) => ({
   feed: {},
-  setFeed: () =>
-    set((state: { feed: { [key: string]: IPost } }) => ({
-      feed: { ...state.feed },
+  setFeed: (feed) =>
+    set(() => ({
+      feed: { ...feed },
     })),
 }));
