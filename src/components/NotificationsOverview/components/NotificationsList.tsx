@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import Divider from 'components/Divider';
 import { useGetNotifications } from 'queries/notifications';
 import NotificationProps from './Notification';
@@ -59,45 +59,46 @@ export type NotificationProps = {
   id: string;
 };
 
-const NotificationsList: React.FC<NotificationsList> = ({
-  mentions = false,
-  className,
-}): ReactElement => {
-  const { data, isLoading, isError } = useGetNotifications(mentions);
+const NotificationsList = React.forwardRef(
+  ({ mentions = false, className }: NotificationsList, ref: any) => {
+    const { data, isLoading, isError } = useGetNotifications(mentions);
 
-  return (
-    <div>
-      {!isLoading && !isError && (
-        <div className={`flex flex-col overflow-y-auto ${className}`}>
-          {data.data?.result?.data?.map(
-            (notification: NotificationProps, index: number) => (
-              <div key={index}>
-                <Notification
-                  action={notification.action}
-                  actor={notification.actor}
-                  target={notification.target}
-                  isRead={notification.isRead}
-                  createdAt={notification.createdAt}
-                  id={notification.id}
-                />
-                <Divider className="bg-gray-200" />
-              </div>
-            ),
-          )}
-          <Divider />
-          <div className="text-neutral-500 text-sm font-normal flex justify-center py-4">
-            That&apos;s all for now
+    return (
+      <div>
+        {!isLoading && !isError && (
+          <div className={`flex flex-col overflow-y-auto ${className}`}>
+            {data.data?.result?.data?.map(
+              (notification: NotificationProps, index: number) => (
+                <div key={index} onClick={() => ref?.current?.click()}>
+                  <Notification
+                    action={notification.action}
+                    actor={notification.actor}
+                    target={notification.target}
+                    isRead={notification.isRead}
+                    createdAt={notification.createdAt}
+                    id={notification.id}
+                  />
+                  <Divider className="bg-gray-200" />
+                </div>
+              ),
+            )}
+            <Divider />
+            <div className="text-neutral-500 text-sm font-normal flex justify-center py-4">
+              That&apos;s all for now
+            </div>
           </div>
-        </div>
-      )}
-      {isLoading && <NotificationsOverviewSkeleton />}
-      {isError && (
-        <div className="flex items-center justify-center p-6">
-          Error loading notifications
-        </div>
-      )}
-    </div>
-  );
-};
+        )}
+        {isLoading && <NotificationsOverviewSkeleton />}
+        {isError && (
+          <div className="flex items-center justify-center p-6">
+            Error loading notifications
+          </div>
+        )}
+      </div>
+    );
+  },
+);
+
+NotificationsList.displayName = 'NotificationsList';
 
 export default NotificationsList;

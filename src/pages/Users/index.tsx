@@ -200,7 +200,7 @@ const Users: React.FC<IUsersProps> = () => {
       <div className="">
         <div className="flex flex-wrap gap-6">
           {(() => {
-            if (!isLoading) {
+            if (isLoading) {
               const loaders = [...Array(30)].map((element) => (
                 <div key={element}>
                   <UsersSkeleton />
