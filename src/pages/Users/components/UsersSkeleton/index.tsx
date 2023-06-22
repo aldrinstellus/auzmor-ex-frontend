@@ -18,19 +18,17 @@ const UsersSkeleton: React.FC = (): ReactElement => {
         <Skeleton circle className="!h-20 !w-20" containerClassName="flex-1" />
         <Skeleton
           className="mt-1"
-          count={1}
           style={{ width: 150 }}
           containerClassName="flex-1"
           borderRadius={100}
         />
         <Skeleton
           className="mt-1"
-          count={1}
           style={{ width: 100 }}
           containerClassName="flex-1"
           borderRadius={100}
         />
-        <Skeleton count={1} />
+        <Skeleton />
       </div>
     </Card>
   );
