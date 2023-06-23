@@ -16,6 +16,8 @@ import Icon from 'components/Icon';
 import { Link } from 'react-router-dom';
 import RenderQuillContent from 'components/RenderQuillContent';
 import ReactionModal from 'components/Post/components/ReactionModal';
+import useModal from 'hooks/useModal';
+import DeleteCommentModal from './DeleteCommentModal';
 
 interface CommentProps {
   comment: IComment;
@@ -39,25 +41,13 @@ export const Comment: React.FC<CommentProps> = ({
   const queryClient = useQueryClient();
 
   const [showReactionModal, setShowReactionModal] = useState(false);
+  const [deleteCommentModal, openDeleteCommentModal, closedDeleteCommentModal] =
+    useModal(false);
 
   const { user } = useAuth();
   const createdAt = humanizeTime(comment.updatedAt);
 
   const [showReplies, setShowReplies] = useState(false);
-  const deleteReactionMutation = useMutation({
-    mutationKey: ['delete-comment-mutation'],
-    mutationFn: deleteComment,
-    onError: (error: any) => {
-      console.log(error);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments'] });
-    },
-  });
-
-  const handleDeleteReaction = () => {
-    deleteReactionMutation.mutate(comment.id);
-  };
 
   const menuItemStyle = clsx({
     ' flex flex-row items-center py-3 px-6 gap-2.5 border-b text-sm hover:bg-primary-50 cursor-pointer ':
@@ -139,12 +129,12 @@ export const Comment: React.FC<CommentProps> = ({
                   >
                     <div className="rounded-10xl shadow-xl flex flex-col w-20">
                       <div className={menuItemStyle} onClick={() => {}}>
-                        Edit{' '}
+                        Edit
                       </div>
                       <div
                         className={menuItemStyle}
                         onClick={() => {
-                          handleDeleteReaction();
+                          openDeleteCommentModal();
                         }}
                       >
                         Delete
@@ -226,7 +216,7 @@ export const Comment: React.FC<CommentProps> = ({
                 data-testid="comment-replies-count"
               >
                 {comment?.repliesCount}
-                {comment.repliesCount > 0 ? ' Replies' : ' Reply'}
+                {comment?.repliesCount > 0 ? ' Replies' : ' Reply'}
               </div>
             </div>
           </div>
@@ -247,6 +237,13 @@ export const Comment: React.FC<CommentProps> = ({
           reactionCounts={comment.reactionsCount || {}}
           postId={comment.id}
           entityType="comment"
+        />
+      )}
+      {deleteCommentModal && (
+        <DeleteCommentModal
+          showModal={deleteCommentModal}
+          closedModal={closedDeleteCommentModal}
+          commentId={comment?.id}
         />
       )}
     </div>
