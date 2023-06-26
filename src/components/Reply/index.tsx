@@ -7,6 +7,7 @@ import { CommentForm } from 'components/Comments/components/CommentForm';
 import Spinner from 'components/Spinner';
 import { PRIMARY_COLOR } from 'utils/constants';
 import LoadMore from 'components/Comments/components/LoadMore';
+import { useCommentStore } from 'stores/commentStore';
 
 interface CommentsProps {
   entityId: string;
@@ -37,16 +38,17 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
     limit: 4,
   });
 
-  const replies = data?.pages.flatMap((page) => {
-    console.log({ page });
-    return page?.result?.data.map((comment: any) => {
+  const { comment } = useCommentStore();
+
+  const repliesIds = data?.pages.flatMap((page) => {
+    return page.data?.result?.data.map((reply: { id: string }) => {
       try {
-        return comment;
+        return reply;
       } catch (e) {
-        console.log('Error', { comment });
+        console.log('Error', { reply });
       }
     });
-  });
+  }) as { id: string }[];
 
   return (
     <div className={className}>
@@ -70,12 +72,12 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
               entityType="comment"
             />
           </div>
-          {replies && replies.length > 0 && (
+          {repliesIds && repliesIds.length > 0 && (
             <div>
-              {replies.map((reply: any) => (
+              {repliesIds.map((reply) => (
                 <Reply
                   // handleClick={handleClick}
-                  comment={reply}
+                  comment={comment[reply.id]}
                   key={reply.id}
                 />
               ))}

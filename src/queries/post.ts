@@ -351,7 +351,10 @@ export const fetchFeed = async (
   let response = null;
   if (!!!context.pageParam) {
     response = await apiService.get('/posts', context.queryKey[1]);
-    setFeed(_.chain(response.data.result.data).keyBy('id').value());
+    setFeed({
+      ...feed,
+      ..._.chain(response.data.result.data).keyBy('id').value(),
+    });
     response.data.result.data = response.data.result.data.map(
       (eachPost: IPost) => ({ id: eachPost.id }),
     );

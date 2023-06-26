@@ -36,10 +36,10 @@ export interface ICreated {
   profileImage: IProfileImage;
 }
 export interface IMyReactions {
-  id: string;
-  type: string;
-  reaction: string;
-  createdBy: ICreated;
+  id?: string;
+  type?: string;
+  reaction?: string;
+  createdBy?: ICreated;
 }
 
 const Feed: React.FC<IFeedProps> = () => {

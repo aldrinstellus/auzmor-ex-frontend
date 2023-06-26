@@ -53,6 +53,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
     fetchNextPage,
     hasNextPage,
     error,
+    comment,
   } = useInfiniteComments({
     entityId: entityId,
     entityType: 'post',
@@ -61,16 +62,15 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
     limit: 4,
   });
 
-  const commentData = data?.pages.flatMap((page) => {
-    console.log({ page });
-    return page?.result?.data.map((comment: any) => {
+  const commentIds = data?.pages.flatMap((page) => {
+    return page.data?.result?.data.map((comment: { id: string }) => {
       try {
         return comment;
       } catch (e) {
         console.log('Error', { comment });
       }
     });
-  });
+  }) as { id: string }[];
 
   const [activeComment, setActiveComment] =
     useState<activeCommentsDataType | null>(null);
@@ -95,12 +95,12 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
           <Spinner color={PRIMARY_COLOR} />
         </div>
       ) : (
-        commentData && (
+        commentIds && (
           <div>
-            {commentData.map((rootComment: IComment, i: any) => (
+            {commentIds.map((rootComment, i: any) => (
               <Comment
                 key={rootComment.id}
-                comment={rootComment}
+                comment={comment[rootComment.id]}
                 className=""
                 setActiveComment={setActiveComment}
                 activeComment={activeComment}

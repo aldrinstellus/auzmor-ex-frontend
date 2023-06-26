@@ -8,6 +8,7 @@ import { createReaction, deleteReaction } from 'queries/reaction';
 import clsx from 'clsx';
 import { useFeedStore } from 'stores/feedStore';
 import { produce } from 'immer';
+import { useCommentStore } from 'stores/commentStore';
 
 interface LikesProps {
   reaction: string;
@@ -61,6 +62,7 @@ const Likes: React.FC<LikesProps> = ({
   dataTestIdPrefix,
 }) => {
   const { feed, updateFeed } = useFeedStore();
+  const { comment, updateComment } = useCommentStore();
   const queryClient = useQueryClient();
   const [showTooltip, setShowTooltip] = useState(true);
 
@@ -100,30 +102,45 @@ const Likes: React.FC<LikesProps> = ({
     mutationKey: ['create-reaction-mutation'],
     mutationFn: createReaction,
     onMutate: (variables) => {
-      const previousPost = feed[variables.entityId];
-      updateFeed(
-        variables.entityId,
-        produce(feed[variables.entityId], (draft) => {
-          (draft.myReaction = { reaction: variables.reaction }),
-            (draft.reactionsCount =
-              feed[variables.entityId].reactionsCount &&
-              Object.keys(feed[variables.entityId].reactionsCount)
-                ? {
-                    ...feed[variables.entityId].reactionsCount,
-                    [variables.reaction as string]: feed[variables.entityId]
-                      .reactionsCount[variables.reaction as string]
-                      ? feed[variables.entityId].reactionsCount[
-                          variables.reaction as string
-                        ] + 1
-                      : 1,
-                  }
-                : { [variables.reaction as string]: 1 });
-        }),
-      );
-      return { previousPost };
+      if (variables.entityType === 'post') {
+        const previousPost = feed[variables.entityId];
+        updateFeed(
+          variables.entityId,
+          produce(feed[variables.entityId], (draft) => {
+            (draft.myReaction = { reaction: variables.reaction }),
+              (draft.reactionsCount =
+                feed[variables.entityId].reactionsCount &&
+                Object.keys(feed[variables.entityId].reactionsCount)
+                  ? {
+                      ...feed[variables.entityId].reactionsCount,
+                      [variables.reaction as string]: feed[variables.entityId]
+                        .reactionsCount[variables.reaction as string]
+                        ? feed[variables.entityId].reactionsCount[
+                            variables.reaction as string
+                          ] + 1
+                        : 1,
+                    }
+                  : { [variables.reaction as string]: 1 });
+          }),
+        );
+        return { previousPost };
+      } else if (variables.entityType === 'comment') {
+        const previousComment = comment[variables.entityId];
+        updateComment(
+          variables.entityId,
+          produce(comment[variables.entityId], (draft) => {
+            draft.myReaction = { reaction: variables.reaction };
+          }),
+        );
+        return { previousComment };
+      }
     },
     onError: (error, variables, context) => {
-      updateFeed(context!.previousPost.id!, context!.previousPost);
+      if (variables.entityType === 'post') {
+        updateFeed(context!.previousPost!.id!, context!.previousPost!);
+      } else if (variables.entityType === 'comment') {
+        updateComment(context!.previousComment!.id!, context!.previousComment!);
+      }
     },
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: [queryKey] });

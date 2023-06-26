@@ -1,10 +1,12 @@
 import {
-  useQuery,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   QueryFunctionContext,
 } from '@tanstack/react-query';
+import { IComment } from 'components/Comments';
+import { useCommentStore } from 'stores/commentStore';
 import apiService from 'utils/apiService';
+import _ from 'lodash';
 
 export interface IReactions {
   entityId: string;
@@ -101,33 +103,55 @@ export const deleteComment = async (id: string) => {
   await apiService.delete(`/comments/${id}`);
 };
 
-export const getComments = async (payload: IComments) => {
-  const { data } = await apiService.get(`/comments`, payload);
-  return data;
-};
-
-export const useComments = (q: IComments) => {
-  return useQuery({
-    queryKey: ['comments', q],
-    queryFn: () => getComments(q),
-  });
+export const getComments = async (
+  context: QueryFunctionContext<
+    (string | Record<string, any> | undefined)[],
+    any
+  >,
+  comment: {
+    [key: string]: IComment;
+  },
+  setComment: (feed: { [key: string]: IComment }) => void,
+) => {
+  let response = null;
+  if (!!!context.pageParam) {
+    response = await apiService.get('/comments', context.queryKey[1]);
+    setComment({
+      ...comment,
+      ..._.chain(response.data.result.data).keyBy('id').value(),
+    });
+    response.data.result.data = response.data.result.data.map(
+      (eachPost: IComment) => ({ id: eachPost.id }),
+    );
+    return response;
+  } else {
+    response = await apiService.get(context.pageParam);
+    setComment({
+      ...comment,
+      ..._.chain(response.data.result.data).keyBy('id').value(),
+    });
+    response.data.result.data = response.data.result.data.map(
+      (eachPost: IComment) => ({ id: eachPost.id }),
+    );
+    return response;
+  }
 };
 
 export const useInfiniteComments = (q: IComments) => {
-  return useInfiniteQuery({
-    queryKey: ['comments', q],
-    queryFn: () => getComments(q),
-    getNextPageParam: (lastPage: any) => {
-      const pageDataLen = lastPage?.result?.data?.length;
-      const pageLimit = lastPage?.result?.paging?.limit;
-      if (pageDataLen < pageLimit) {
-        return null;
-      }
-      return lastPage?.result?.paging?.next;
-    },
-    getPreviousPageParam: (currentPage: any) =>
-      currentPage?.result?.paging?.prev,
-  });
+  const { comment, setComment } = useCommentStore();
+  return {
+    ...useInfiniteQuery({
+      queryKey: ['comments', q],
+      queryFn: (context) => getComments(context, comment, setComment),
+      getNextPageParam: (lastPage: any) => {
+        return lastPage?.data?.result?.paging?.next;
+      },
+      getPreviousPageParam: (currentPage: any) => {
+        return currentPage?.data?.result?.paging?.prev;
+      },
+    }),
+    comment,
+  };
 };
 
 export const createComments = async (payload: IComments) => {

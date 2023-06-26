@@ -52,6 +52,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     coverImageMap,
     showFullscreenVideo,
     setShowFullscreenVideo,
+    setActiveFlow,
   } = useContext(CreatePostContext);
   const queryClient = useQueryClient();
 
