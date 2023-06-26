@@ -76,16 +76,25 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
       dataTestId: 'post-ellipsis-promote-announcement',
       permissions: ['CREATE_ANNOUNCEMENTS'],
       disabled: data.isAnnouncement,
-      fill: 'none',
+    },
+    {
+      icon: 'editReceipt',
+      label: 'Edit announcement',
+      onClick: () => {
+        setCustomActiveFlow(CreatePostFlow.CreateAnnouncement);
+        setShowModal(true);
+      },
+      dataTestId: 'post-ellipsis-edit-announcement',
+      permissions: ['UPDATE_ANNOUNCEMENTS'],
+      disabled: !data.isAnnouncement,
     },
     {
       icon: 'cyclicArrow',
       label: 'Change to regular post',
       onClick: () => showRemoveAnnouncement(),
-      dataTestId: 'post-ellipsis-promote-announcement',
+      dataTestId: 'post-ellipsis-remove-announcement',
       permissions: ['UPDATE_ANNOUNCEMENTS'],
       disabled: !data.isAnnouncement,
-      fill: 'none',
     },
     {
       icon: 'edit',

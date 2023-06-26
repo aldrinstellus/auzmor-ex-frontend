@@ -58,6 +58,7 @@ import SvgClipboardCloseFilled from '../components/ClipboardClose/ClipboardClose
 import SvgSeekForwardFilled from '../components/SeekForward/SeekForwardFilled';
 import SvgFullScreenFilled from '../components/FullScreen/FullScreenFilled';
 import SvgCyclicArrowFilled from '../components/CyclicArrow/CyclicArrowFilled';
+import SvgEditReceiptFilled from '../components/EditReceipt/EditReceiptFilled';
 
 export const filledIcon = {
   addCircleFilled: SvgAddCircleFilled,
@@ -120,4 +121,5 @@ export const filledIcon = {
   userFilled: SvgUsersFilled,
   videoFilled: SvgVideoFilled,
   cyclicArrowFilled: SvgCyclicArrowFilled,
+  editReceiptFilled: SvgEditReceiptFilled,
 };
