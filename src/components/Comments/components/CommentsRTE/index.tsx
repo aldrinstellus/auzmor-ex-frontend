@@ -26,7 +26,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
   className = '',
   entityId,
   entityType,
-  mode,
+  mode = PostCommentMode.Create,
 }) => {
   const queryClient = useQueryClient();
   const quillRef = useRef<ReactQuill>(null);

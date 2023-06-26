@@ -165,17 +165,17 @@ export const Comment: React.FC<CommentProps> = ({
               </div>
             </div>
           </div>
-          {editComment ? (
+          {/* {editComment ? (
             <CommentsRTE
               entityId={entityId}
               entityType="post"
               mode={PostCommentMode.Edit}
             />
-          ) : (
-            <div className="text-neutral-900  font-normal text-sm mt-4">
-              <RenderQuillContent data={comment} />
-            </div>
-          )}
+          ) : ( */}
+          <div className="text-neutral-900  font-normal text-sm mt-4">
+            <RenderQuillContent data={comment} />
+          </div>
+          {/* )} */}
         </div>
         <div className="flex flex-row justify-between mt-4 cursor-pointer">
           <div className={`flex flex-row`}>
