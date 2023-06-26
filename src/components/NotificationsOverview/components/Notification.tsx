@@ -40,6 +40,7 @@ const Notification: React.FC<NotificationCardProps> = ({
         JSON.stringify(response),
       );
       queryClient.invalidateQueries(['get-notifications']);
+      queryClient.invalidateQueries(['unread-count']);
       queryClient.refetchQueries(['notifications-page']);
     },
     onError: (response) => {
