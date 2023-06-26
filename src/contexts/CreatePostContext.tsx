@@ -62,12 +62,15 @@ export interface ICreatePostContext {
   setMediaValidationErrors: (
     mediaValidationErrors: IMediaValidationError[],
   ) => void;
+  mediaOpenIndex: number;
+  setMediaOpenIndex: (index: number) => void;
 }
 
 export enum MediaValidationError {
   ImageSizeExceed = 'IMAGE_SIZE_EXCEED',
   VideoSizeExceed = 'VIDEO_SIZE_EXCEED',
   MediaLengthExceed = 'MEDIA_LENGTH_EXCEED',
+  FileTypeNotSupported = 'FILE_TYPE_NOT_SUPPORTED',
 }
 
 export interface IMediaValidationError {
@@ -80,6 +83,12 @@ export interface IEditorValue {
   text: string;
   html: string;
   json: DeltaStatic;
+}
+
+export interface ITranscodedData {
+  l: string;
+  m: string;
+  s: string;
 }
 
 export interface IMedia {
@@ -95,6 +104,7 @@ export interface IMedia {
   thumbnailUrl: string;
   type: 'IMAGE' | 'VIDEO';
   coverImage?: { original: string } | null;
+  transcodedData?: { image: ITranscodedData };
 }
 
 export interface ICoverImageMap {
@@ -136,6 +146,8 @@ export const CreatePostContext = createContext<ICreatePostContext>({
   setShowFullscreenVideo: () => {},
   mediaValidationErrors: [],
   setMediaValidationErrors: () => {},
+  mediaOpenIndex: 0,
+  setMediaOpenIndex: () => {},
 });
 
 const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
@@ -164,6 +176,7 @@ const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
   const [mediaValidationErrors, setMediaValidationErrors] = useState<
     IMediaValidationError[]
   >([]);
+  const [mediaOpenIndex, setMediaOpenIndex] = useState<number>(-1);
 
   const setUploads = (uploads: File[], isCoverImage?: boolean) => {
     if (!isCoverImage) {
@@ -356,6 +369,8 @@ const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
         setShowFullscreenVideo,
         mediaValidationErrors,
         setMediaValidationErrors,
+        mediaOpenIndex,
+        setMediaOpenIndex,
       }}
     >
       {children}

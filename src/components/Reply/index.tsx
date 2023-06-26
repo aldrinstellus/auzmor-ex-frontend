@@ -8,6 +8,7 @@ import Spinner from 'components/Spinner';
 import { PRIMARY_COLOR } from 'utils/constants';
 import LoadMore from 'components/Comments/components/LoadMore';
 import { useCommentStore } from 'stores/commentStore';
+import CommentSkeleton from 'components/Comments/components/CommentSkeleton';
 
 interface CommentsProps {
   entityId: string;
@@ -53,8 +54,8 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
   return (
     <div className={className}>
       {isLoading ? (
-        <div className="flex justify-center items-center py-10">
-          <Spinner color={PRIMARY_COLOR} />
+        <div className="ml-8">
+          <CommentSkeleton />
         </div>
       ) : (
         <div className="ml-8">

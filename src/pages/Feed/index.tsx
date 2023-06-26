@@ -18,6 +18,7 @@ import Icon from 'components/Icon';
 import { twConfig } from 'utils/misc';
 import PageLoader from 'components/PageLoader';
 import useScrollTop from 'hooks/useScrollTop';
+import SkeletonLoader from './components/SkeletonLoader';
 
 interface IFeedProps {}
 
@@ -155,7 +156,7 @@ const Feed: React.FC<IFeedProps> = () => {
               )}
             </div>
             {isLoading ? (
-              <PageLoader />
+              <SkeletonLoader />
             ) : (
               <div className="mt-4">
                 {feedIds.map((feedId, index) => (
@@ -175,13 +176,6 @@ const Feed: React.FC<IFeedProps> = () => {
         <div className="w-1/4">
           <AnnouncementCard />
         </div>
-        {/* <ActivityFeed
-      activityFeed={feed}
-      loadMore={fetchNextPage}
-      setShowModal={setShowModal}
-      isLoading={isLoading}
-      isFetchingNextPage={isFetchingNextPage}
-    /> */}
       </div>
       <PostBuilder showModal={showModal} setShowModal={setShowModal} />
     </>

@@ -17,6 +17,17 @@ export const validImageTypes = [
   'image/x-icon',
 ];
 
+export const validVideoTypes = [
+  'video/x-msvideo',
+  'video/mp4',
+  'video/mpeg',
+  'video/ogg',
+  'video/mp2t',
+  'video/webm',
+  'video/3gpp',
+  'video/3gpp2',
+];
+
 export interface IFile {
   name: string;
   contentType: string;
@@ -93,13 +104,11 @@ export const useUpload = () => {
       parseInt(res.size) % chunksize === 0
         ? parseInt(res.size) / chunksize
         : Math.floor(parseInt(res.size) / chunksize) + 1;
-    const remainingparts = [1];
-    for (let i = 0; i < remainingparts.length; i++) {
-      const partnumber = remainingparts[i];
+    for (let i = 0; i < totalPartsCount; i++) {
       promises.push(
         axios.put(
-          `${res.uploadUrl}?partNumber=${partnumber}&uploadId=${res.uploadId}`,
-          getChunk(partnumber, file),
+          `${res.uploadUrl}?partNumber=${i + 1}&uploadId=${res.uploadId}`,
+          getChunk(i + 1, file),
           { headers: { authorization: `Bearer ${res.accessToken}` } },
         ),
       );
@@ -170,8 +179,8 @@ export const useUpload = () => {
       promisesRes.forEach(
         (promiseRes: PromiseSettledResult<ICreateFileResponse>) => {
           if (promiseRes.status === 'fulfilled') {
-            console.log('uploading to gcp...');
-            console.log((promiseRes.value as any).result.data);
+            // console.log('uploading to gcp...');
+            // console.log((promiseRes.value as any).result.data);
             uploadToGCPPromises.push(
               uploadToGCP(
                 (promiseRes.value as any).result.data as ICreateFileResponse,
@@ -200,7 +209,7 @@ export const useUpload = () => {
           promiseRes: PromiseSettledResult<IUploadToGcpResposne | undefined>,
         ) => {
           if (promiseRes.status === 'fulfilled') {
-            console.log('uploading etags...');
+            // console.log('uploading etags...');
             uploadETagPromises.push(
               postETags(promiseRes.value?.id, promiseRes.value?.etags),
             );
@@ -266,7 +275,7 @@ export const useUpload = () => {
       const promisesRes = await Promise.allSettled(updateFilePromises);
       promisesRes.forEach((promiseRes: PromiseSettledResult<IMedia>) => {
         if (promiseRes.status === 'fulfilled') {
-          console.log(promiseRes, 'Rmove cover image response');
+          console.log(promiseRes, 'Remove cover image response');
         } else {
           console.log(promiseRes);
           console.log('Remove cover image failed');

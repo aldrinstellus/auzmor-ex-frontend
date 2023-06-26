@@ -259,7 +259,7 @@ const Likes: React.FC<LikesProps> = ({
               dataTestId={`${dataTestIdPrefix}-support`}
             />
             <Reactions
-              name="Funny"
+              name="Laugh"
               icon="funny"
               type={ReactionType.Funny}
               setShowTooltip={setShowTooltip}

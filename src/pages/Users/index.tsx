@@ -25,6 +25,7 @@ import { useInView } from 'react-intersection-observer';
 import PageLoader from 'components/PageLoader';
 import clsx from 'clsx';
 import Tabs from 'components/Tabs';
+import UsersSkeleton from './components/UsersSkeleton';
 
 interface IForm {
   search?: string;
@@ -200,7 +201,12 @@ const Users: React.FC<IUsersProps> = () => {
         <div className="flex flex-wrap gap-6">
           {(() => {
             if (isLoading) {
-              return <Spinner color="#000" />;
+              const loaders = [...Array(30)].map((element) => (
+                <div key={element}>
+                  <UsersSkeleton />
+                </div>
+              ));
+              return loaders;
             }
             if (usersData && usersData?.length > 0) {
               return (
@@ -287,10 +293,11 @@ const Users: React.FC<IUsersProps> = () => {
       title: 'Teams',
       dataTestId: 'people-view-teams',
       content: <div>Teams</div>,
+      disable: true,
     },
   ];
 
-  const tabStyles = (active: boolean) =>
+  const tabStyles = (active: boolean, disabled = false) =>
     clsx(
       {
         'font-bold px-4 cursor-pointer py-1': true,
@@ -300,6 +307,9 @@ const Users: React.FC<IUsersProps> = () => {
       },
       {
         'bg-neutral-50 rounded-lg': !active,
+      },
+      {
+        'bg-opacity-50 text-gray-400': disabled,
       },
     );
 
@@ -315,10 +325,11 @@ const Users: React.FC<IUsersProps> = () => {
     {
       id: 2,
       tabLable: (isActive: boolean) => (
-        <div className={tabStyles(isActive)}>Teams</div>
+        <div className={tabStyles(isActive, true)}>Teams</div>
       ),
       dataTestId: 'people-view-teams',
       tabContent: <div>Teams</div>,
+      disabled: true,
     },
   ];
   return (

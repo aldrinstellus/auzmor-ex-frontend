@@ -7,6 +7,7 @@ import {
 import CreatePostCard from 'components/PostBuilder/components/CreatePostCard';
 import NoDataCard from './NoDataCard';
 import PostBuilder from 'components/PostBuilder';
+import SkeletonLoader from 'pages/Feed/components/SkeletonLoader';
 
 export interface IProfileActivityFeedProps {
   data: any;
@@ -34,7 +35,7 @@ const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
           showModal={showFeedModal}
           setShowModal={setShowFeedModal}
         />
-        {myProfileFeedLoading && <div className="mt-4">loading...</div>}
+        {myProfileFeedLoading && <SkeletonLoader />}
         <div className="mt-4">
           {myProfileFeed?.pages?.[0].data?.result?.data.length === 0 ? (
             <NoDataCard user={data?.fullName} />
@@ -56,7 +57,7 @@ const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
 
     return (
       <div>
-        {isPeopleProfileFeedLoading && <div className="mt-4">loading...</div>}
+        {isPeopleProfileFeedLoading && <SkeletonLoader />}
         <div className="mt-4">
           {peopleProfileFeed?.pages?.[0].data?.result?.data.length === 0 ? (
             <NoDataCard user={data?.fullName} />

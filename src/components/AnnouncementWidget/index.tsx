@@ -7,8 +7,7 @@ import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
 import Icon from 'components/Icon';
 import { humanizeTime } from 'utils/time';
-import Spinner from 'components/Spinner';
-import { PRIMARY_COLOR } from 'utils/constants';
+import SkeletonLoader from './components/SkeletonLoader';
 
 export interface IAnnouncementCardProps {}
 
@@ -46,15 +45,13 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = () => {
             <div className="text-base font-bold">Announcement</div>
           </div>
           {isLoading ? (
-            <div className="p-6 flex items-center justify-center">
-              <Spinner color={PRIMARY_COLOR} />
-            </div>
+            <SkeletonLoader />
           ) : (
             <div>
               {itemCount && isAcknowledged ? (
-                <div className="flex flex-col justify-center items-center">
-                  <div className="px-3 mt-5">
-                    <div className="flex items-center space-x-3">
+                <div className="flex flex-col justify-center">
+                  <div className="mt-4 px-3">
+                    <div className="flex space-x-3">
                       <div>
                         <Avatar
                           name={
@@ -70,7 +67,9 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = () => {
                       </div>
                       <div>
                         <div className="space-x-1 text-sm">
-                          <b>{user?.name}</b>
+                          <b>
+                            {data?.data?.result?.data?.[0]?.createdBy?.fullName}
+                          </b>
                           <span>Shared a post</span>
                         </div>
                         <div className="text-xs">
@@ -80,24 +79,26 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="mt-5 flex justify-center items-center">
+                    <div className="mt-5 flex ">
                       {data?.data?.result?.data[0]?.content?.text}
                     </div>
                   </div>
-                  <Button
-                    label="Mark as read"
-                    variant={Variant.Secondary}
-                    className="border-2 border-neutral-200 mt-4 w-[75%]"
-                    loading={acknowledgeAnnouncement.isLoading}
-                    onClick={() => {
-                      acknowledgeAnnouncement.mutate({
-                        entityId: data?.data?.result?.data[0].id,
-                        entityType: 'post',
-                        type: 'acknowledge',
-                        reaction: 'mark_read',
-                      });
-                    }}
-                  />
+                  <div className="w-full flex justify-center">
+                    <Button
+                      label="Mark as read"
+                      variant={Variant.Secondary}
+                      className="border-2 border-neutral-200 mt-4 w-[75%]"
+                      loading={acknowledgeAnnouncement.isLoading}
+                      onClick={() => {
+                        acknowledgeAnnouncement.mutate({
+                          entityId: data?.data?.result?.data[0].id,
+                          entityType: 'post',
+                          type: 'acknowledge',
+                          reaction: 'mark_read',
+                        });
+                      }}
+                    />
+                  </div>
                 </div>
               ) : (
                 <div className="flex justify-center items-center p-6">

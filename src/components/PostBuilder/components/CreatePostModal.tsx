@@ -11,7 +11,7 @@ import {
   IMedia,
 } from 'contexts/CreatePostContext';
 import { PostBuilderMode } from '..';
-import { EntityType, useUpload } from 'queries/files';
+import { EntityType, IFile, useUpload } from 'queries/files';
 import { previewLinkRegex } from 'components/RichTextEditor/config';
 import EditMedia from './EditMedia';
 import { UploadStatus } from 'queries/files';
@@ -98,8 +98,9 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
 
   const handleSubmitPost = async (content?: IEditorValue, files?: File[]) => {
     let fileIds: string[] = [];
+    let uploadedMedia: IMedia[] = [];
     if (files?.length) {
-      const uploadedMedia = await uploadMedia(files, EntityType.Post);
+      uploadedMedia = await uploadMedia(files, EntityType.Post);
       await useUploadCoverImage(
         coverImageMap.map((map) => {
           return {
@@ -120,6 +121,13 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
               (map) => map.coverImageName === media.name,
             );
           } else return true;
+        })
+        .sort((a: IMedia, b: IMedia) => {
+          const aIndex = files.findIndex((file: File) => file.name === a.name);
+          const bIndex = files.findIndex((file: File) => file.name === b.name);
+          if (aIndex && bIndex) {
+            return aIndex - bIndex;
+          } else return 0;
         })
         .map((media: IMedia) => media.id);
     }
@@ -160,6 +168,26 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         },
       );
     } else if (PostBuilderMode.Edit) {
+      const sortedIds = [
+        ...fileIds,
+        ...media
+          .filter((eachMedia: IMedia) => eachMedia.id !== '')
+          .map((eachMedia: IMedia) => eachMedia.id),
+      ].sort((a: string, b: string) => {
+        const aIndex = media.findIndex(
+          (eachMedia: IMedia) =>
+            eachMedia.name ===
+            (media.find((value: IMedia) => value.id === a)?.name ||
+              uploadedMedia.find((value: IMedia) => value.id === a)?.name),
+        );
+        const bIndex = media.findIndex(
+          (eachMedia: IMedia) =>
+            eachMedia.name ===
+            (media.find((value: IMedia) => value.id === b)?.name ||
+              uploadedMedia.find((value: IMedia) => value.id === b)?.name),
+        );
+        return aIndex - bIndex;
+      });
       updatePostMutation.mutate(
         {
           content: {
@@ -168,12 +196,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
             editor: content?.json || editorValue.json,
           },
           type: 'UPDATE',
-          files: [
-            ...fileIds,
-            ...media
-              .filter((eachMedia: IMedia) => eachMedia.id !== '')
-              .map((eachMedia: IMedia) => eachMedia.id),
-          ],
+          files: sortedIds,
           mentions: userMentionList || [],
           hashtags: [],
           audience: {
