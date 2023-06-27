@@ -165,3 +165,11 @@ export const hideEmojiPalette = (id = 'emoji-close-div') => {
   const ele = document.getElementById(id);
   ele?.click();
 };
+
+export const getNouns = (label: string, count: number) => {
+  if (count <= 1) {
+    return label;
+  } else {
+    return label + 's';
+  }
+};

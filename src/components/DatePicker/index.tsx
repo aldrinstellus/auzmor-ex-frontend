@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Control, Controller, useController } from 'react-hook-form';
 
 import DatePicker from 'react-date-picker';
@@ -6,9 +6,6 @@ import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 
 import { Value as DateValue } from 'react-date-picker/dist/cjs/shared/types';
-
-// import DatePicker from 'react-datepicker';
-// import 'react-datepicker/dist/react-datepicker.css';
 
 import './index.css';
 
@@ -71,36 +68,26 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
           fieldState: { invalid, isDirty },
           formState: { errors },
         }) => (
-          // <DatePicker
-          //   {...field}
-          //   selected={field.value || (defaultValue && new Date(defaultValue))}
-          //   calendarClassName={calendarClassName}
-          //   data-testid={dataTestId}
-          //   className={`flex border relative rounded-19xl w-full px-5 py-2.5 focus:!border-primary-500 hover:border-primary-500 ${className}`}
-          //   minDate={minDate}
-          //   portalId="root"
-          //   placeholderText={placeholder}
-          //   popperProps={{
-          //     positionFixed: true,
-          //     strategy: 'fixed',
-          //   }}
-          // />
-
           <DatePicker
-            value={value}
+            autoFocus={true}
+            calendarAriaLabel="Toggle Calendar"
+            clearAriaLabel={'Clear value'}
+            calendarClassName={calendarClassName}
+            calendarIcon={<Icon name="calendarTwo" size={16} />}
+            className={`flex border relative rounded-19xl w-full px-5 py-2.5 focus:!border-primary-500 hover:border-primary-500 ${className}`}
+            clearIcon={null}
+            data-testid={dataTestId}
+            value={value || defaultValue}
             onChange={(date: DateValue) => {
               onChange(date);
               onDateChange && onDateChange(date);
             }}
-            className={`flex border relative rounded-19xl w-full px-5 py-2.5 focus:!border-primary-500 hover:border-primary-500 ${className}`}
-            calendarIcon={<Icon name="calendarTwo" size={16} />}
             format="dd/MM/yyyy"
             dayPlaceholder="DD"
             monthPlaceholder="MM"
             yearPlaceholder="YYYY"
-            clearIcon={null}
-            data-testid={dataTestId}
             minDate={minDate}
+            portalContainer={portalContainer}
             id="react-date-picker-calendar"
           />
         )}
@@ -114,4 +101,4 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
   );
 };
 
-export default DatePickerInput;
+export default memo(DatePickerInput);
