@@ -11,7 +11,7 @@ import useMediaQuery from 'hooks/useMediaQuery';
 import Unsupported from 'pages/Unsupported';
 
 function App() {
-  const isDesktop = useMediaQuery('(min-width: 960px)');
+  const isDesktop = useMediaQuery('(min-width: 1440px)');
   return isDesktop ? (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
