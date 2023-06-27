@@ -41,7 +41,7 @@ const getUnreadNotificationsCount = async () => {
 
 export const useGetUnreadNotificationsCount = () => {
   return useQuery({
-    queryKey: ['get-unread-notifications-count'],
+    queryKey: ['unread-count'],
     queryFn: () => getUnreadNotificationsCount(),
     refetchInterval: 60 * 1000,
   });
