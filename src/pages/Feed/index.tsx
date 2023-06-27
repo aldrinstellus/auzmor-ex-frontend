@@ -19,6 +19,7 @@ import { twConfig } from 'utils/misc';
 import PageLoader from 'components/PageLoader';
 import useScrollTop from 'hooks/useScrollTop';
 import SkeletonLoader from './components/SkeletonLoader';
+import { useFeedStore } from 'stores/feedStore';
 
 interface IFeedProps {}
 
@@ -51,14 +52,10 @@ const Feed: React.FC<IFeedProps> = () => {
   });
   const { ref, inView } = useInView();
 
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-    feed,
-  } = useInfiniteFeed(appliedFeedFilters);
+  const { feed } = useFeedStore();
+
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfiniteFeed(appliedFeedFilters);
 
   useEffect(() => {
     if (inView) {
@@ -159,11 +156,13 @@ const Feed: React.FC<IFeedProps> = () => {
               <SkeletonLoader />
             ) : (
               <div className="mt-4">
-                {feedIds.map((feedId, index) => (
-                  <div data-testid={`feed-post-${index}`} key={feedId.id}>
-                    <Post post={feed[feedId.id!]} />
-                  </div>
-                ))}
+                {feedIds
+                  .filter(({ id }) => !!feed[id])
+                  .map((feedId, index) => (
+                    <div data-testid={`feed-post-${index}`} key={feedId.id}>
+                      <Post post={feed[feedId.id!]} />
+                    </div>
+                  ))}
               </div>
             )}
 

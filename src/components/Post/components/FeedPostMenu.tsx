@@ -9,6 +9,8 @@ import useModal from 'hooks/useModal';
 import useAuth from 'hooks/useAuth';
 import useRole from 'hooks/useRole';
 import { isSubset } from 'utils/misc';
+import { useFeedStore } from 'stores/feedStore';
+import _ from 'lodash';
 
 export interface IFeedPostMenuProps {
   data: IPost;
@@ -20,11 +22,21 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
   const [confirm, showConfirm, closeConfirm] = useModal();
   const [showModal, setShowModal] = useState(false);
   const queryClient = useQueryClient();
+  const { feed, setFeed } = useFeedStore();
 
   const deletePostMutation = useMutation({
     mutationKey: ['deletePostMutation', data.id],
     mutationFn: deletePost,
-    onError: (error) => console.log(error),
+    onMutate: (variables) => {
+      const previousFeed = feed;
+      setFeed({ ..._.omit(feed, [variables]) });
+      return { previousFeed };
+    },
+    onError: (error, variables, context) => {
+      if (context?.previousFeed) {
+        setFeed(context?.previousFeed);
+      }
+    },
     onSuccess: async (data, variables, context) => {
       await queryClient.invalidateQueries(['feed']);
       await queryClient.invalidateQueries(['announcements-widget']);
