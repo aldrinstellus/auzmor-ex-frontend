@@ -50,7 +50,7 @@ const ItemList: React.FC<IItemListProps> = ({
               style={{ border: 'none', outline: 'none' }}
               onChange={(event) => {
                 setNewEnteredValue(event?.target?.value);
-                updateInitialSkillsets(item.id, newEnteredValue);
+                updateInitialSkillsets(item.id, event?.target?.value);
               }}
             />
           ) : (
