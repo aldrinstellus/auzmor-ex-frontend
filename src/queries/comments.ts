@@ -69,6 +69,11 @@ export const useInfiniteComments = (q: IComments) => {
       queryKey: ['comments', q],
       queryFn: (context) => getComments(context, comment, setComment),
       getNextPageParam: (lastPage: any) => {
+        const pageDataLen = lastPage?.data?.result?.data?.length;
+        const pageLimit = lastPage?.data?.result?.paging?.limit;
+        if (pageDataLen < pageLimit) {
+          return null;
+        }
         return lastPage?.data?.result?.paging?.next;
       },
       getPreviousPageParam: (currentPage: any) => {

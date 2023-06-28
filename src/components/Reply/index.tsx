@@ -1,5 +1,5 @@
 import React from 'react';
-import { useInfiniteComments } from 'queries/reaction';
+import { useInfiniteReplies } from 'queries/reaction';
 import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
 import { Reply } from 'components/Reply/Reply';
@@ -23,23 +23,16 @@ export interface activeCommentsDataType {
 const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
   const { user } = useAuth();
 
-  const {
-    data,
-    isLoading,
-    isError,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-    error,
-  } = useInfiniteComments({
-    entityId: entityId,
-    entityType: 'comment',
-    limit: 4,
-  });
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfiniteReplies({
+      entityId: entityId,
+      entityType: 'comment',
+      limit: 4,
+    });
 
   const { comment } = useCommentStore();
 
-  const repliesIds = data?.pages.flatMap((page) => {
+  const replyIds = data?.pages.flatMap((page) => {
     return page.data?.result?.data.map((reply: { id: string }) => {
       try {
         return reply;
@@ -71,9 +64,9 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
               entityType="comment"
             />
           </div>
-          {repliesIds && repliesIds.length > 0 && (
+          {replyIds && replyIds.length > 0 && (
             <div>
-              {repliesIds
+              {replyIds
                 .filter(({ id }) => !!comment[id])
                 .map(({ id }) => (
                   <Reply
