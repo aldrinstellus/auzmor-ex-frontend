@@ -11,8 +11,8 @@ import useMediaQuery from 'hooks/useMediaQuery';
 import Unsupported from 'pages/Unsupported';
 
 function App() {
-  const isDesktop = useMediaQuery('(min-width: 1440px)');
-  return isDesktop ? (
+  // const isDesktop = useMediaQuery('(min-width: 1440px)');
+  return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         {process.env.NODE_ENV === 'development' ? (
@@ -22,8 +22,6 @@ function App() {
         <Toast />
       </AuthProvider>
     </QueryClientProvider>
-  ) : (
-    <Unsupported />
   );
 }
 
