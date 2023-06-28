@@ -186,7 +186,11 @@ const EditImageModal: React.FC<IEditImageModalProps> = ({
   };
 
   return (
-    <Modal open={openEditImage} closeModal={disableClosed}>
+    <Modal
+      open={openEditImage}
+      closeModal={disableClosed}
+      className="max-w-5xl flex flex-col justify-between"
+    >
       <Header
         title={title}
         onClose={disableClosed}
@@ -196,31 +200,30 @@ const EditImageModal: React.FC<IEditImageModalProps> = ({
             : 'reposition-close'
         }
       />
-      <div>
-        <ImageCropper
-          src={image}
-          cropperRef={cropperRef}
-          shape={
-            imageFile?.profileImage || onBoardImageFile
-              ? Shape.Circle
-              : Shape.Rectangle
-          }
-        />
-        <Footer
-          cropperRef={cropperRef}
-          userProfileImageRef={userProfileImageRef}
-          userCoverImageRef={userCoverImageRef}
-          imageFile={imageFile}
-          uploadStatus={uploadStatus}
-          isLoading={isLoading}
-          onSubmit={onSubmit}
-          dataTestId={
-            imageFile?.profileImage || onBoardImageFile
-              ? 'profile-pic'
-              : 'reposition'
-          }
-        />
-      </div>
+
+      <ImageCropper
+        src={image}
+        cropperRef={cropperRef}
+        shape={
+          imageFile?.profileImage || onBoardImageFile
+            ? Shape.Circle
+            : Shape.Rectangle
+        }
+      />
+      <Footer
+        cropperRef={cropperRef}
+        userProfileImageRef={userProfileImageRef}
+        userCoverImageRef={userCoverImageRef}
+        imageFile={imageFile}
+        uploadStatus={uploadStatus}
+        isLoading={isLoading}
+        onSubmit={onSubmit}
+        dataTestId={
+          imageFile?.profileImage || onBoardImageFile
+            ? 'profile-pic'
+            : 'reposition'
+        }
+      />
     </Modal>
   );
 };

@@ -5,7 +5,6 @@ import {
   CircleStencil,
   Cropper,
   CropperRef,
-  ImageRestriction,
   Priority,
 } from 'react-advanced-cropper';
 
@@ -28,7 +27,7 @@ const ImageCropper = ({
   cropperRef,
 }: ImageCropperProps) => {
   const imageWrapperStyle = useMemo(
-    () => clsx({ 'h-[320px]': true }, { [className]: true }),
+    () => clsx({ 'h-[550px]': true }, { [className]: true }),
     [className],
   );
 
@@ -58,6 +57,13 @@ const ImageCropper = ({
             handlers: false,
             lines: false,
             resizable: false,
+          }}
+          // Modify the width and height to modify the stencil
+          defaultVisibleArea={{
+            width: 1000,
+            height: 1000,
+            left: 0,
+            top: 0,
           }}
           className="cropper"
           maxHeight={180}
