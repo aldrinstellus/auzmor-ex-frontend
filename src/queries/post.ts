@@ -130,7 +130,7 @@ export interface IPostPayload {
   announcement: {
     end: string;
   };
-  link?: string;
+  link?: Metadata | string;
 }
 
 export interface IReaction {

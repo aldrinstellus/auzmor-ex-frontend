@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Comment } from './components/Comment';
-import { CommentForm } from './components/CommentForm';
-import { useInfiniteComments } from 'queries/reaction';
+import { useInfiniteComments } from 'queries/comments';
 import { DeltaStatic } from 'quill';
 import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
@@ -11,14 +10,10 @@ import Spinner from 'components/Spinner';
 import { PRIMARY_COLOR } from 'utils/constants';
 import LoadMore from './components/LoadMore';
 import CommentSkeleton from './components/CommentSkeleton';
+import { CommentsRTE } from './components/CommentsRTE';
 
 interface CommentsProps {
   entityId: string;
-}
-
-export interface activeCommentsDataType {
-  id: string;
-  type: string;
 }
 
 export interface IComment {
@@ -49,17 +44,13 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
   const {
     data,
     isLoading,
-    isError,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-    error,
     comment,
   } = useInfiniteComments({
     entityId: entityId,
     entityType: 'post',
-    // Limit here is arbitrary, need to check with product team.
-    // Linkedin loads 2 by default and then 10 each time you click 'Load more'
     limit: 4,
   });
 
@@ -73,10 +64,6 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
     });
   }) as { id: string }[];
 
-  const [activeComment, setActiveComment] =
-    useState<activeCommentsDataType | null>(null);
-  const [replyInputBox, setReplyInputBox] = useState(false);
-
   return (
     <div>
       <div className="flex flex-row items-center justify-between p-0">
@@ -87,7 +74,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
             image={user?.profileImage}
           />
         </div>
-        <CommentForm className="w-full" entityId={entityId} entityType="post" />
+        <CommentsRTE className="w-full" entityId={entityId} entityType="post" />
       </div>
       <div className="border-b border-neutral-200 my-4"></div>
 
@@ -97,17 +84,9 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
         commentIds && (
           <div>
             {commentIds
-              .filter(({ id }) => !!comment[id])
-              .map((rootComment, i: any) => (
-                <Comment
-                  key={rootComment.id}
-                  comment={comment[rootComment.id]}
-                  className=""
-                  setActiveComment={setActiveComment}
-                  activeComment={activeComment}
-                  setReplyInputBox={setReplyInputBox}
-                  replyInputBox={replyInputBox}
-                />
+              ?.filter(({ id }) => !!comment[id])
+              .map(({ id }, i: any) => (
+                <Comment key={id} comment={comment[id]} />
               ))}
             {hasNextPage && !isFetchingNextPage && (
               <LoadMore

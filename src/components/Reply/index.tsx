@@ -3,12 +3,12 @@ import { useInfiniteComments } from 'queries/reaction';
 import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
 import { Reply } from 'components/Reply/Reply';
-import { CommentForm } from 'components/Comments/components/CommentForm';
 import Spinner from 'components/Spinner';
 import { PRIMARY_COLOR } from 'utils/constants';
 import LoadMore from 'components/Comments/components/LoadMore';
 import { useCommentStore } from 'stores/commentStore';
 import CommentSkeleton from 'components/Comments/components/CommentSkeleton';
+import { CommentsRTE } from 'components/Comments/components/CommentsRTE';
 
 interface CommentsProps {
   entityId: string;
@@ -34,8 +34,6 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
   } = useInfiniteComments({
     entityId: entityId,
     entityType: 'comment',
-    // Limit here is arbitrary, need to check with product team.
-    // Linkedin loads 2 by default and then 10 each time you click 'Load more'
     limit: 4,
   });
 
@@ -67,7 +65,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
                 image={user?.profileImage}
               />
             </div>
-            <CommentForm
+            <CommentsRTE
               className="w-full py-1"
               entityId={entityId}
               entityType="comment"

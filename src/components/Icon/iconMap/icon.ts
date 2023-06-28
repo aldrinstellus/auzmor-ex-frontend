@@ -95,6 +95,9 @@ import SeekForwardIcon from '../components/SeekForward';
 import FullScreenIcon from '../components/FullScreen';
 import PauseIcon from '../components/Pause';
 import MuteIcon from '../components/Mute';
+import CyclicArrow from '../components/CyclicArrow';
+import EditReceipt from '../components/EditReceipt';
+import DeleteCrossIcon from '../components/DeleteCross';
 
 export const icon = {
   add: Add,
@@ -194,4 +197,7 @@ export const icon = {
   userManagement: UserManagement,
   userRemove: UserRemove,
   video: VideoIcon,
+  cyclicArrow: CyclicArrow,
+  editReceipt: EditReceipt,
+  deleteCross: DeleteCrossIcon,
 };

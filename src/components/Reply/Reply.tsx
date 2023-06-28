@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import Likes from 'components/Reactions';
 import IconButton, { Variant as IconVariant } from 'components/IconButton';
 import Avatar from 'components/Avatar';
-import { deleteComment } from 'queries/reaction';
+import { deleteComment } from 'queries/comments';
 import { useMutation } from '@tanstack/react-query';
-import { IComment } from '../Comments';
 import Popover from 'components/Popover';
 import clsx from 'clsx';
 import queryClient from 'utils/queryClient';
@@ -17,18 +16,14 @@ import { IReactionsCount } from 'queries/post';
 import RenderQuillContent from 'components/RenderQuillContent';
 import { useCommentStore } from 'stores/commentStore';
 import _ from 'lodash';
+import { IComment } from 'components/Comments';
 
 interface ReplyProps {
   comment: IComment;
   className?: string;
-  // handleClick: () => void;
 }
 
-export const Reply: React.FC<ReplyProps> = ({
-  comment,
-  className,
-  // handleClick,
-}) => {
+export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
   const { user } = useAuth();
   const createdAt = humanizeTime(comment.createdAt);
   const [showReactionModal, setShowReactionModal] = useState(false);

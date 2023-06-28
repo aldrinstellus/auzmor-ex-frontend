@@ -1,12 +1,9 @@
-import {
-  useInfiniteQuery,
-  UseInfiniteQueryOptions,
-  QueryFunctionContext,
-} from '@tanstack/react-query';
+import { useInfiniteQuery, QueryFunctionContext } from '@tanstack/react-query';
 import { IComment } from 'components/Comments';
 import { useCommentStore } from 'stores/commentStore';
 import apiService from 'utils/apiService';
 import _ from 'lodash';
+import { IComments } from './comments';
 
 export interface IReactions {
   entityId: string;
@@ -20,22 +17,6 @@ interface IDelete {
   entityId: string;
   entityType: string;
   id: string;
-}
-
-interface IContent {
-  html: string;
-  text: string;
-  editor: Record<string, any>;
-}
-
-interface IComments {
-  entityId: string;
-  entityType: string;
-  limit?: number;
-  page?: number;
-  content?: IContent;
-  hashtags?: Array<object>;
-  mentions?: Array<object>;
 }
 
 export interface IGetReaction {
@@ -69,27 +50,24 @@ export const getReactions = async ({
   pageParam = null,
   queryKey,
 }: QueryFunctionContext<any>) => {
-  const { data } = await apiService.get(!!pageParam ? pageParam : `reactions`, {
-    ...queryKey[1],
-  });
-  return data;
+  if (pageParam === null) {
+    return apiService.get('/reactions', queryKey[1]);
+  } else {
+    return apiService.get(pageParam);
+  }
 };
 
-export const useReactions = (
-  q: IReactions,
-  config?: UseInfiniteQueryOptions,
-) => {
+export const useInfiniteReactions = (q: IReactions) => {
   return useInfiniteQuery({
     queryKey: ['reactions', q],
     queryFn: getReactions,
-    staleTime: 0,
     getNextPageParam: (lastPage: any) => {
-      return lastPage?.paging?.next;
+      return lastPage?.data?.paging?.next;
     },
     getPreviousPageParam: (currentPage: any) => {
-      return currentPage?.paging?.previous;
+      return currentPage?.data?.paging?.prev;
     },
-    ...config,
+    staleTime: 0,
   });
 };
 
@@ -152,9 +130,4 @@ export const useInfiniteComments = (q: IComments) => {
     }),
     comment,
   };
-};
-
-export const createComments = async (payload: IComments) => {
-  const { data } = await apiService.post(`/comments`, payload);
-  return data;
 };

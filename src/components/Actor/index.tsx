@@ -72,7 +72,9 @@ const Actor: React.FC<ActorProps> = ({
             <Avatar
               name={createdBy?.fullName || 'U'}
               size={32}
-              image={createdBy?.profileImage.original || user?.profileImage}
+              image={
+                createdBy ? createdBy.profileImage.original : user?.profileImage
+              }
             />
           </Link>
         </div>

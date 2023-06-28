@@ -2,7 +2,7 @@ import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import Link from 'components/Link';
 import Modal from 'components/Modal';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import SAMLDetail from './SAMLDetail';
 import Collapse from 'components/Collapse';
 import Button, { Type, Variant } from 'components/Button';
@@ -22,7 +22,7 @@ import { PRIMARY_COLOR } from 'utils/constants';
 type ConfigureGenericSSOProps = {
   open: boolean;
   closeModal: () => void;
-  ssoSetting?: ISSOSetting;
+  ssoSetting: ISSOSetting;
 };
 
 interface IForm {
@@ -42,7 +42,8 @@ const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
   ssoSetting,
 }): ReactElement => {
   const { user } = useAuth();
-
+  const [xmlFile, setXmlFile] = useState<File[]>();
+  const inputRef = useRef<HTMLInputElement>(null);
   const { control, handleSubmit, getValues } = useForm<IForm>({
     resolver: yupResolver(schema),
     mode: 'onSubmit',
@@ -68,6 +69,18 @@ const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
     },
   ];
 
+  const clearInput = () => {
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+    setXmlFile([]);
+  };
+
+  const closeModalAndClearInput = () => {
+    closeModal();
+    clearInput();
+  };
+
   const updateSsoMutation = useMutation({
     mutationKey: ['update-sso-mutation'],
     mutationFn: updateSso,
@@ -77,13 +90,11 @@ const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
     onSuccess: async (response: any) => {
       console.log('Updated SSO successfully', response);
       await queryClient.invalidateQueries(['get-sso']);
-      closeModal();
+      closeModalAndClearInput();
     },
   });
 
   const { isLoading, isError } = updateSsoMutation;
-
-  const [xmlFile, setXmlFile] = useState<File[]>();
 
   const onSubmit = async () => {
     const values = getValues();
@@ -100,7 +111,7 @@ const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
 
     apiService.updateContentType('multipart/form-data');
     if (ssoSetting) {
-      const data = await updateSsoMutation.mutateAsync({
+      await updateSsoMutation.mutateAsync({
         idp: ssoSetting.idp,
         formData,
       });
@@ -109,15 +120,12 @@ const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
   };
 
   return (
-    <Modal
-      open={open}
-      className="max-w-2xl max-h-[600px] overflow-y-visible overflow-hidden"
-    >
+    <Modal open={open} className="max-w-2xl ">
       {/* Header */}
       <div className="flex items-center justify-between p-4">
         <p className="font-extrabold text-black text-lg">{ssoSetting?.key}</p>
         <Icon
-          onClick={closeModal}
+          onClick={closeModalAndClearInput}
           name="close"
           hover={false}
           stroke="#000"
@@ -128,76 +136,101 @@ const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
       <Divider className="!bg-neutral-100" />
 
       {/* Content */}
-      <div className="mt-4 max-w-full">
-        <p className="flex p-4 items-center text-sm font-normal text-neutral-500">
-          Seamlessly control access to anyone in your organization.&nbsp;
-          <Link label="Learn more." to="#" />
-        </p>
-        <p className="text-neutral-900 px-4 text-base font-bold mt-6">
-          Details necessary to create your SAML application.
-        </p>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="mt-4 max-w-full max-h-[450px] overflow-y-visible overflow-hidden">
+          <p className="flex p-4 items-center text-sm font-normal text-neutral-500">
+            Seamlessly control access to anyone in your organization.&nbsp;
+            <Link label="Learn more." to="#" />
+          </p>
+          <p className="text-neutral-900 px-4 text-base font-bold mt-6">
+            Details necessary to create your SAML application.
+          </p>
 
-        <div className="mt-2 px-4 bg-primary-50 rounded-9xl">
-          <SAMLDetail
-            prop="ACS URL"
-            value={process.env.REACT_APP_ACS_URL || ''}
-          />
-          <SAMLDetail
-            prop="Entity ID"
-            value={process.env.REACT_APP_ENTITY_ID || ''}
-          />
-          <SAMLDetail
-            prop="Relay State/Start URL"
-            value={`{"domain": "${user?.organization.domain}"}`}
-          />
-        </div>
-
-        <Divider className="!bg-neutral-100 my-8 px-4" />
-
-        <div className="flex justify-between items-start px-4">
-          <div>
-            <p className="font-extrabold text-neutral-900 flex-col tex-base">
-              Add metadata XML file
-            </p>
-            <p className="text-neutral-500 font-normal text-sm mt-1">
-              This is required to enable SSO in your organization.
-            </p>
-            <p className="text-neutral-900 font-normal mt-4 text-sm">
-              Important:&nbsp;
-              <span className="font-bold">Upload Your XML File</span>
-            </p>
+          <div className="mt-2 px-4 bg-primary-50 rounded-9xl">
+            <SAMLDetail
+              prop="ACS URL"
+              value={process.env.REACT_APP_ACS_URL || ''}
+            />
+            <SAMLDetail
+              prop="Entity ID"
+              value={process.env.REACT_APP_ENTITY_ID || ''}
+            />
+            <SAMLDetail
+              prop="Relay State/Start URL"
+              value={`{"domain": "${user?.organization.domain}"}`}
+            />
           </div>
 
-          {/* Upload XML  */}
-          <label
-            htmlFor="xml-file-input"
-            className="flex cursor-pointer gap-x-2 px-4"
-          >
-            <input
-              id="xml-file-input"
-              type="file"
-              className="hidden"
-              accept="text/xml"
-              onChange={(e) => {
-                if (e.target.files?.length) {
-                  setXmlFile(Array.prototype.slice.call(e.target.files));
-                }
-              }}
-            />
-            <div className="flex items-center gap-x-2">
-              <Icon name="documentUpload" stroke={PRIMARY_COLOR} />
-              <p className="text-primary-500 text-base">Upload Metadata Xml</p>
+          <Divider className="!bg-neutral-100 my-8 px-4" />
+
+          <div className="flex justify-between items-start px-4">
+            <div>
+              <p className="font-extrabold text-neutral-900 flex-col tex-base">
+                Add metadata XML file
+              </p>
+              <p className="text-neutral-500 font-normal text-sm mt-1">
+                This is required to enable SSO in your organization.
+              </p>
+              <p className="text-neutral-900 font-normal mt-4 text-sm">
+                Important:&nbsp;
+                <span className="font-bold">Upload Your XML File</span>
+              </p>
             </div>
-          </label>
-        </div>
-        <Divider className="!bg-neutral-100 my-8 px-4" />
-        <form onSubmit={handleSubmit(onSubmit)}>
+
+            {/* Upload XML  */}
+            <div className="flex flex-col items-center gap-y-1">
+              <label
+                htmlFor={`xml-file-input-sso-config-${ssoSetting?.idp}`}
+                className="flex cursor-pointer gap-x-2 px-4"
+              >
+                <input
+                  id={`xml-file-input-sso-config-${ssoSetting?.idp}`}
+                  ref={inputRef}
+                  type="file"
+                  className="hidden"
+                  accept="text/xml"
+                  onChange={(e) => {
+                    if (e.target.files?.length) {
+                      setXmlFile(Array.prototype.slice.call(e.target.files));
+                    }
+                  }}
+                  onClick={() => {
+                    if (inputRef.current) {
+                      inputRef.current.value = '';
+                    }
+                  }}
+                />
+                <Icon name="documentUpload" stroke={PRIMARY_COLOR} />
+                <p className="text-primary-500 text-base">
+                  Upload Metadata Xml
+                </p>
+              </label>
+              <div
+                className={`flex ${
+                  xmlFile && xmlFile[0] && xmlFile[0].name ? 'block' : 'hidden'
+                }`}
+              >
+                <p className="text-sm cursor-default overflow-hidden text-ellipsis w-fit whitespace-nowrap max-w-[150px]">
+                  {xmlFile && xmlFile[0] && xmlFile[0].name
+                    ? xmlFile[0].name
+                    : ''}
+                </p>
+                <Icon
+                  name="deleteCross"
+                  size={18}
+                  className="cursor-pointer"
+                  onClick={clearInput}
+                />
+              </div>
+            </div>
+          </div>
+          <Divider className="!bg-neutral-100 my-8 px-4" />
+
           <div className="px-4">
             <Collapse label="Advanced Settings">
               <Layout fields={fields} />
             </Collapse>
           </div>
-          {/* Footer */}
           <Banner
             variant={BannerVariant.Error}
             title={`Failed to integrate with ${ssoSetting?.key}. Please try again.`}
@@ -205,25 +238,26 @@ const ConfigureGenericSSO: React.FC<ConfigureGenericSSOProps> = ({
               isError && !isLoading ? 'visible' : 'invisible'
             } mt-4`}
           />
-          <div className="bg-blue-50 p-0 rounded-b-9xl">
-            <div className="p-3 flex items-center justify-end gap-x-3">
-              <Button
-                className="font-bold"
-                label="Cancel"
-                onClick={closeModal}
-                variant={Variant.Secondary}
-              />
-              <Button
-                className="font-bold"
-                label="Done"
-                variant={Variant.Primary}
-                type={Type.Submit}
-                loading={isLoading}
-              />
-            </div>
+        </div>
+        {/* Footer */}
+        <div className="bg-blue-50 p-0 rounded-b-9xl">
+          <div className="p-3 flex items-center justify-end gap-x-3">
+            <Button
+              className="font-bold"
+              label="Cancel"
+              onClick={closeModalAndClearInput}
+              variant={Variant.Secondary}
+            />
+            <Button
+              className="font-bold"
+              label="Done"
+              variant={Variant.Primary}
+              type={Type.Submit}
+              loading={isLoading}
+            />
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </Modal>
   );
 };

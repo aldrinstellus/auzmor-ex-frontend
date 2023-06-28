@@ -80,9 +80,9 @@ const RichTextEditor = React.forwardRef(
       mediaValidationErrors,
       setMediaValidationErrors,
       setMediaOpenIndex,
+      previewUrl,
+      setPreviewUrl,
     } = useContext(CreatePostContext);
-
-    const [previewUrl, setPreviewUrl] = useState<string>('');
 
     const formats = [
       'bold',
@@ -245,7 +245,7 @@ const RichTextEditor = React.forwardRef(
     return (
       <div data-testid={`${dataTestId}-content`}>
         <ReactQuill
-          id="quill"
+          id="createpost-quill"
           className={className}
           modules={{ ...modules }}
           placeholder={placeholder}

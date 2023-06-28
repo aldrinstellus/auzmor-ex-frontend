@@ -1,12 +1,11 @@
+import React from 'react';
 import AnnouncementCard from 'components/AnnouncementWidget';
-import { activeCommentsDataType } from 'components/Comments';
 import { Comment } from 'components/Comments/components/Comment';
 import PageLoader from 'components/PageLoader';
 import Post from 'components/Post';
 import { Reply } from 'components/Reply/Reply';
 import UserCard from 'components/UserWidget';
 import { IPost, useGetPost } from 'queries/post';
-import React, { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 const PostPage: React.FC = () => {
@@ -18,10 +17,6 @@ const PostPage: React.FC = () => {
   }
 
   const { data, isLoading, isError } = useGetPost(id, commentId);
-
-  const [activeComment, setActiveComment] =
-    useState<activeCommentsDataType | null>(null);
-  const [replyInputBox, setReplyInputBox] = useState(false);
 
   if (isLoading) {
     return <PageLoader />;
@@ -43,10 +38,6 @@ const PostPage: React.FC = () => {
                 post?.comment && (
                   <Comment
                     comment={post.comment}
-                    setActiveComment={setActiveComment}
-                    activeComment={activeComment}
-                    setReplyInputBox={setReplyInputBox}
-                    replyInputBox={replyInputBox}
                     customNode={
                       post?.comment?.comment ? (
                         <Reply comment={post?.comment?.comment} />

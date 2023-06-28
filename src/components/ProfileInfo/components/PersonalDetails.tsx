@@ -155,6 +155,9 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
     {
       type: FieldType.DatePicker,
       name: 'personal.birthDate',
+      className: '',
+      minDate: new Date(moment().subtract(100, 'years').toISOString()),
+      maxDate: new Date(moment().toISOString()),
       control,
       dataTestId: 'personal-details-dob',
       defaultValue: getValues()?.personal?.birthDate,
@@ -346,10 +349,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
                 </div>
               </>
             ) : (
-              <form>
-                <div className="text-neutral-900 text-sm font-bold">
-                  Date of Birth
-                </div>
+              <>
                 <Layout fields={fields} />
                 <DragDropList
                   draggableItems={skills}
@@ -357,7 +357,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
                   dataTestIdEdit={'edit-button'}
                   dataTestIdDelete={'delete-button'}
                 />
-              </form>
+              </>
             )}
           </div>
         </div>
