@@ -108,15 +108,13 @@ export const Reply: React.FC<ReplyProps> = ({
                   >
                     <div className="rounded-10xl shadow-xl flex flex-col w-20">
                       <div className={menuItemStyle} onClick={() => {}}>
-                        Edit{' '}
+                        Edit reply
                       </div>
                       <div
                         className={menuItemStyle}
-                        onClick={() => {
-                          handleDeleteReply();
-                        }}
+                        onClick={handleDeleteReply}
                       >
-                        Delete
+                        Delete reply
                       </div>
                     </div>
                   </Popover>

@@ -151,9 +151,7 @@ export const Comment: React.FC<CommentProps> = ({
                       </div>
                       <div
                         className={menuItemStyle}
-                        onClick={() => {
-                          handleDeleteComment();
-                        }}
+                        onClick={handleDeleteComment}
                       >
                         Delete
                       </div>
