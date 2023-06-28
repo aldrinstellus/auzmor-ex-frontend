@@ -165,6 +165,7 @@ export const Comment: React.FC<CommentProps> = ({
               </div>
             </div>
           </div>
+          {/* Comment Edit at Post level type Post */}
           {editComment ? (
             <CommentsRTE
               entityId={comment?.id}
