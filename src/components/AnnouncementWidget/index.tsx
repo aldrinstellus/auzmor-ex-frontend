@@ -39,7 +39,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = () => {
         {/* <div className="text-sm font-bold">View All</div> */}
       </div>
       <div className="mt-2">
-        <Card className="pb-6 flex flex-col items-center rounded-9xl">
+        <Card className="pb-6 flex flex-col rounded-9xl">
           <div className="rounded-t-9xl bg-blue-700 text-white py-3 w-full flex justify-start space-x-1 px-3">
             <Icon name="flashIcon" />
             <div className="text-base font-bold">Announcement</div>
@@ -47,10 +47,10 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = () => {
           {isLoading ? (
             <SkeletonLoader />
           ) : (
-            <div>
+            <div className="w-full px-6">
               {itemCount && isAcknowledged ? (
-                <div className="flex flex-col justify-center">
-                  <div className="mt-4 px-3">
+                <div className="flex flex-col items-start">
+                  <div className="mt-4">
                     <div className="flex space-x-3">
                       <div>
                         <Avatar
@@ -72,7 +72,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = () => {
                           </b>
                           <span>Shared a post</span>
                         </div>
-                        <div className="text-xs">
+                        <div className="text-xs text-gray-500">
                           {humanizeTime(
                             data?.data?.result?.data?.[0]?.createdAt,
                           )}
@@ -87,7 +87,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = () => {
                     <Button
                       label="Mark as read"
                       variant={Variant.Secondary}
-                      className="border-2 border-neutral-200 mt-4 w-[75%]"
+                      className="border-2 border-neutral-200 mt-4 w-full"
                       loading={acknowledgeAnnouncement.isLoading}
                       onClick={() => {
                         acknowledgeAnnouncement.mutate({
