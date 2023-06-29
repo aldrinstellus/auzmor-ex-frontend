@@ -109,17 +109,28 @@ const Likes: React.FC<LikesProps> = ({
           produce(feed[variables.entityId], (draft) => {
             (draft.myReaction = { reaction: variables.reaction }),
               (draft.reactionsCount =
-                feed[variables.entityId].reactionsCount &&
-                Object.keys(feed[variables.entityId].reactionsCount)
-                  ? {
-                      ...feed[variables.entityId].reactionsCount,
-                      [variables.reaction as string]: feed[variables.entityId]
-                        .reactionsCount[variables.reaction as string]
-                        ? feed[variables.entityId].reactionsCount[
-                            variables.reaction as string
-                          ] + 1
-                        : 1,
-                    }
+                draft.reactionsCount && Object.keys(draft.reactionsCount)
+                  ? Object.keys(draft.myReaction)
+                    ? {
+                        [draft.myReaction.reaction as string]:
+                          draft.reactionsCount[
+                            draft.myReaction.reaction as string
+                          ] - 1,
+                        [variables.reaction as string]: draft.reactionsCount[
+                          variables.reaction as string
+                        ]
+                          ? draft.reactionsCount[variables.reaction as string] +
+                            1
+                          : 1,
+                      }
+                    : {
+                        [variables.reaction as string]: draft.reactionsCount[
+                          variables.reaction as string
+                        ]
+                          ? draft.reactionsCount[variables.reaction as string] +
+                            1
+                          : 1,
+                      }
                   : { [variables.reaction as string]: 1 });
           }),
         );
@@ -155,9 +166,6 @@ const Likes: React.FC<LikesProps> = ({
       } else if (variables.entityType === 'comment') {
         updateComment(context!.previousComment!.id!, context!.previousComment!);
       }
-    },
-    onSuccess: (data: any) => {
-      queryClient.invalidateQueries({ queryKey: [queryKey] });
     },
   });
 
@@ -205,9 +213,6 @@ const Likes: React.FC<LikesProps> = ({
       } else if (variables.entityType === 'comment') {
         updateComment(context!.previousComment!.id!, context!.previousComment!);
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [queryKey] });
     },
   });
 

@@ -58,8 +58,8 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
             ];
           }),
       );
-      setComment({ ...comment, [data.id]: { ...data } });
       if (entityType === 'post' && entityId) {
+        setComment({ ...comment, [data.id]: { ...data } });
         updateFeed(
           entityId,
           produce(feed[entityId], (draft) => {
@@ -67,12 +67,14 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
           }),
         );
       } else if (entityType === 'comment' && entityId) {
-        updateStoredComment(
-          entityId,
-          produce(comment[entityId], (draft) => {
-            draft.repliesCount = draft.repliesCount + 1;
-          }),
-        );
+        const updatedComment = produce(comment[entityId], (draft) => {
+          draft.repliesCount = draft.repliesCount + 1;
+        });
+        setComment({
+          ...comment,
+          [data.id]: { ...data },
+          [entityId]: updatedComment,
+        });
       }
     },
   });

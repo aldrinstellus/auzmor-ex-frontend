@@ -5,7 +5,6 @@ import IconButton, {
   Size,
 } from 'components/IconButton';
 import Avatar from 'components/Avatar';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Popover from 'components/Popover';
 import clsx from 'clsx';
 import { humanizeTime } from 'utils/time';
@@ -17,14 +16,11 @@ import Icon from 'components/Icon';
 import { Link } from 'react-router-dom';
 import RenderQuillContent from 'components/RenderQuillContent';
 import ReactionModal from 'components/Post/components/ReactionModal';
-import { useCommentStore } from 'stores/commentStore';
 import _ from 'lodash';
 import useModal from 'hooks/useModal';
 import DeleteCommentModal from './DeleteCommentModal';
 import { twConfig } from 'utils/misc';
 import { IComment } from '..';
-import { CommentsRTE, PostCommentMode } from './CommentsRTE';
-import { deleteComment } from 'queries/reaction';
 
 interface CommentProps {
   comment: IComment;
@@ -39,9 +35,6 @@ export const Comment: React.FC<CommentProps> = ({
   customNode = null,
   entityId,
 }) => {
-  const { comment: storedComments, setComment } = useCommentStore();
-  const queryClient = useQueryClient();
-
   const [showReactionModal, setShowReactionModal] = useState(false);
   const [deleteCommentModal, openDeleteCommentModal, closedDeleteCommentModal] =
     useModal(false);
