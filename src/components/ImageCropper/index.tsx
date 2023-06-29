@@ -18,6 +18,10 @@ export type ImageCropperProps = {
   shape?: Shape;
   className?: string;
   cropperRef: React.RefObject<CropperRef>;
+  customHeight: number;
+  customWidth: number;
+  customTop: number;
+  customLeft: number;
 };
 
 const ImageCropper = ({
@@ -25,6 +29,10 @@ const ImageCropper = ({
   shape = Shape.Circle,
   className = '',
   cropperRef,
+  customHeight,
+  customWidth,
+  customTop,
+  customLeft,
 }: ImageCropperProps) => {
   const imageWrapperStyle = useMemo(
     () => clsx({ 'h-[550px]': true }, { [className]: true }),
@@ -40,7 +48,16 @@ const ImageCropper = ({
           stencilComponent={CircleStencil}
           stencilProps={{
             aspectRatio: 6 / 9,
-            handlers: false,
+            handlers: {
+              north: false,
+              eastNorth: true,
+              westNorth: true,
+              east: false,
+              west: false,
+              south: false,
+              westSouth: true,
+              eastSouth: true,
+            },
             movable: true,
             resizable: true,
             lines: false,
@@ -54,16 +71,25 @@ const ImageCropper = ({
           src={src}
           ref={cropperRef}
           stencilProps={{
-            handlers: false,
+            handlers: {
+              north: false,
+              eastNorth: true,
+              westNorth: true,
+              east: false,
+              west: false,
+              south: false,
+              westSouth: true,
+              eastSouth: true,
+            },
             lines: false,
-            resizable: false,
+            resizable: true,
           }}
           // Modify the width and height to modify the stencil
           defaultVisibleArea={{
-            width: 1000,
-            height: 1000,
-            left: 0,
-            top: 0,
+            width: customWidth,
+            height: customHeight,
+            top: customTop,
+            left: customLeft,
           }}
           className="cropper"
           maxHeight={180}
