@@ -168,8 +168,6 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
     }
   };
 
-  console.log(commentData, '$$$');
-
   return (
     <div className={`flex flex-row ${className} `}>
       <div className="flex items-center py-3 gap-2 border border-neutral-200 rounded-19xl border-solid w-full">
