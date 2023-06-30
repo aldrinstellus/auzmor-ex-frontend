@@ -41,7 +41,7 @@ const Image: React.FC<ImageProps> = ({
   return (
     <div className="w-full h-full relative">
       <LazyLoadImage
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain"
         key={image.name}
         alt={image.name}
         src={image.original}
