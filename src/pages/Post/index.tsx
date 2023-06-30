@@ -50,7 +50,7 @@ const PostPage: React.FC = () => {
           </div>
         </div>
         <div className="w-1/4">
-          <AnnouncementCard />
+          <AnnouncementCard postId={post.id} />
         </div>
       </div>
     </>

@@ -182,10 +182,6 @@ export interface ICreatedBy {
   workLocation?: string;
 }
 
-interface IDeletePost {
-  id: string;
-}
-
 interface IAnnounce {
   entityId: string;
   entityType: string;
@@ -279,17 +275,27 @@ export const deletePost = async (id: string) => {
   return data;
 };
 
-export const fetchAnnouncement = async (postType: string, limit: number) => {
-  const data = await apiService.get(`/posts?feed=${postType}&limit=${limit}`);
-  return data;
+export const fetchAnnouncement = ({ pageParam = null }) => {
+  if (pageParam === null)
+    return apiService.get(`/posts?feed=ANNOUNCEMENT&limit=1`);
+  else apiService.get(pageParam);
 };
 
-export const useAnnouncementsWidget = () =>
-  useQuery({
-    queryKey: ['announcements-widget'],
-    queryFn: () => fetchAnnouncement('ANNOUNCEMENT', 1),
+export const useInfiniteFetchAnnouncement = (q?: Record<string, any>) => {
+  return useInfiniteQuery({
+    queryKey: ['announcements-widget', q],
+    queryFn: fetchAnnouncement,
     staleTime: 15 * 60 * 1000,
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage?.data?.result?.data?.length === 0) return null;
+      return lastPage?.data?.result?.paging?.next;
+    },
+    getPreviousPageParam: (currentPage: any) => {
+      if (currentPage?.data?.result?.data?.length === 0) return null;
+      return currentPage?.data?.result?.paging?.prev;
+    },
   });
+};
 
 export const announcementRead = async (payload: IAnnounce) => {
   const data = await apiService.post('/reactions', payload);
