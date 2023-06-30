@@ -3,7 +3,6 @@ import PostBuilder from 'components/PostBuilder';
 import UserCard from 'components/UserWidget';
 import AnnouncementCard from 'components/AnnouncementWidget';
 import {
-  IGetPost,
   IPostFilters,
   PostFilterKeys,
   PostType,
@@ -20,6 +19,7 @@ import { twConfig } from 'utils/misc';
 import PageLoader from 'components/PageLoader';
 import useScrollTop from 'hooks/useScrollTop';
 import SkeletonLoader from './components/SkeletonLoader';
+import { useFeedStore } from 'stores/feedStore';
 
 interface IFeedProps {}
 
@@ -38,10 +38,10 @@ export interface ICreated {
   profileImage: IProfileImage;
 }
 export interface IMyReactions {
-  id: string;
-  type: string;
-  reaction: string;
-  createdBy: ICreated;
+  id?: string;
+  type?: string;
+  reaction?: string;
+  createdBy?: ICreated;
 }
 
 const Feed: React.FC<IFeedProps> = () => {
@@ -52,6 +52,8 @@ const Feed: React.FC<IFeedProps> = () => {
   });
   const { ref, inView } = useInView();
 
+  const { feed } = useFeedStore();
+
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteFeed(appliedFeedFilters);
 
@@ -61,7 +63,7 @@ const Feed: React.FC<IFeedProps> = () => {
     }
   }, [inView]);
 
-  const feed = data?.pages.flatMap((page) => {
+  const feedIds = data?.pages.flatMap((page) => {
     return page.data?.result?.data.map((post: any) => {
       try {
         return post;
@@ -69,7 +71,7 @@ const Feed: React.FC<IFeedProps> = () => {
         console.log('Error', { post });
       }
     });
-  }) as IGetPost[];
+  }) as { id: string }[];
 
   const clearAppliedFilters = () => {
     setAppliedFeedFilters({
@@ -154,11 +156,13 @@ const Feed: React.FC<IFeedProps> = () => {
               <SkeletonLoader />
             ) : (
               <div className="mt-4">
-                {feed?.map((post, index) => (
-                  <div data-testid={`feed-post-${index}`} key={post.id}>
-                    <Post data={post} />
-                  </div>
-                ))}
+                {feedIds
+                  .filter(({ id }) => !!feed[id])
+                  .map((feedId, index) => (
+                    <div data-testid={`feed-post-${index}`} key={feedId.id}>
+                      <Post post={feed[feedId.id!]} />
+                    </div>
+                  ))}
               </div>
             )}
 

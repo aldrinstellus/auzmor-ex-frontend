@@ -6,6 +6,9 @@ import IconButton, {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createReaction, deleteReaction } from 'queries/reaction';
 import clsx from 'clsx';
+import { useFeedStore } from 'stores/feedStore';
+import { produce } from 'immer';
+import { useCommentStore } from 'stores/commentStore';
 
 interface LikesProps {
   reaction: string;
@@ -58,7 +61,8 @@ const Likes: React.FC<LikesProps> = ({
   queryKey,
   dataTestIdPrefix,
 }) => {
-  const queryClient = useQueryClient();
+  const { feed, updateFeed } = useFeedStore();
+  const { comment, updateComment } = useCommentStore();
   const [showTooltip, setShowTooltip] = useState(true);
 
   const tooltipRef = useRef<HTMLSpanElement>(null);
@@ -96,23 +100,127 @@ const Likes: React.FC<LikesProps> = ({
   const createReactionMutation = useMutation({
     mutationKey: ['create-reaction-mutation'],
     mutationFn: createReaction,
-
-    onError: (error: any) => {
-      console.log(error);
-    },
-    onSuccess: (data: any) => {
-      queryClient.invalidateQueries({ queryKey: [queryKey] });
+    onSuccess: (data, variables) => {
+      if (variables.entityType === 'post') {
+        updateFeed(
+          variables.entityId,
+          produce(feed[variables.entityId], (draft) => {
+            (draft.myReaction = {
+              reaction: data.reaction,
+              createdBy: data.createdBy,
+              id: data.id,
+              type: data.type,
+            }),
+              (draft.reactionsCount =
+                draft.reactionsCount && Object.keys(draft.reactionsCount)
+                  ? Object.keys(draft.myReaction)
+                    ? {
+                        [draft.myReaction.reaction as string]:
+                          draft.reactionsCount[
+                            draft.myReaction.reaction as string
+                          ] - 1,
+                        [variables.reaction as string]: draft.reactionsCount[
+                          variables.reaction as string
+                        ]
+                          ? draft.reactionsCount[variables.reaction as string] +
+                            1
+                          : 1,
+                      }
+                    : {
+                        [variables.reaction as string]: draft.reactionsCount[
+                          variables.reaction as string
+                        ]
+                          ? draft.reactionsCount[variables.reaction as string] +
+                            1
+                          : 1,
+                      }
+                  : { [variables.reaction as string]: 1 });
+          }),
+        );
+      } else if (variables.entityType === 'comment') {
+        updateComment(
+          variables.entityId,
+          produce(comment[variables.entityId], (draft) => {
+            (draft.myReaction = {
+              reaction: data.reaction,
+              createdBy: data.createdBy,
+              id: data.id,
+              type: data.type,
+            }),
+              (draft.reactionsCount =
+                draft.reactionsCount && Object.keys(draft.reactionsCount)
+                  ? Object.keys(draft.myReaction)
+                    ? {
+                        [draft.myReaction.reaction as string]:
+                          draft.reactionsCount[
+                            draft.myReaction.reaction as string
+                          ] - 1,
+                        [variables.reaction as string]: draft.reactionsCount[
+                          variables.reaction as string
+                        ]
+                          ? draft.reactionsCount[variables.reaction as string] +
+                            1
+                          : 1,
+                      }
+                    : {
+                        [variables.reaction as string]: draft.reactionsCount[
+                          variables.reaction as string
+                        ]
+                          ? draft.reactionsCount[variables.reaction as string] +
+                            1
+                          : 1,
+                      }
+                  : { [variables.reaction as string]: 1 });
+          }),
+        );
+      }
     },
   });
 
   const deleteReactionMutation = useMutation({
     mutationKey: ['delete-reaction-mutation'],
     mutationFn: deleteReaction,
-    onError: (error: any) => {
-      console.log(error);
+    onMutate: (variables) => {
+      if (variables.entityType === 'post') {
+        const previousPost = feed[variables.entityId];
+        updateFeed(
+          variables.entityId,
+          produce(feed[variables.entityId], (draft) => {
+            (draft.myReaction = undefined),
+              (draft.reactionsCount = {
+                ...feed[variables.entityId].reactionsCount,
+                [feed[variables.entityId]!.myReaction!.reaction!]:
+                  feed[variables.entityId].reactionsCount[
+                    feed[variables.entityId]!.myReaction!.reaction!
+                  ] - 1,
+              });
+          }),
+        );
+        return { previousPost };
+      } else if (variables.entityType === 'comment') {
+        const previousComment = comment[variables.entityId];
+        updateComment(
+          variables.entityId,
+          produce(comment[variables.entityId], (draft) => {
+            (draft.myReaction = undefined),
+              (draft.reactionsCount = {
+                ...comment[variables.entityId].reactionsCount,
+                [comment[variables.entityId]!.myReaction!.reaction!]:
+                  comment[variables.entityId].reactionsCount[
+                    comment[variables.entityId]!.myReaction!.reaction!
+                  ] - 1,
+              });
+          }),
+        );
+        return { previousComment };
+      }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [queryKey] });
+    onError: (error, variables, context) => {
+      if (variables.entityType === 'post') {
+        updateFeed(context!.previousPost!.id!, context!.previousPost!);
+      } else if (variables.entityType === 'comment') {
+        updateComment(context!.previousComment!.id!, context!.previousComment!);
+      }
     },
   });
 

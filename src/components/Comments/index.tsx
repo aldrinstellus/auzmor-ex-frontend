@@ -6,7 +6,7 @@ import { DeltaStatic } from 'quill';
 import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
 import { ICreated, IMyReactions } from 'pages/Feed';
-import { IMention, MyObjectType } from 'queries/post';
+import { IMention, IReactionsCount } from 'queries/post';
 import Spinner from 'components/Spinner';
 import { PRIMARY_COLOR } from 'utils/constants';
 import LoadMore from './components/LoadMore';
@@ -33,8 +33,8 @@ export interface IComment {
   updatedAt: string;
   createdBy: ICreated;
   id: string;
-  myReaction: IMyReactions;
-  reactionsCount: MyObjectType;
+  myReaction?: IMyReactions;
+  reactionsCount: IReactionsCount;
   repliesCount: number;
   comment: IComment;
 }
@@ -42,24 +42,28 @@ export interface IComment {
 const Comments: React.FC<CommentsProps> = ({ entityId }) => {
   const { user } = useAuth();
 
-  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfiniteComments({
-      entityId: entityId,
-      entityType: 'post',
-      // Limit here is arbitrary, need to check with product team.
-      // Linkedin loads 2 by default and then 10 each time you click 'Load more'
-      limit: 4,
-    });
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+    comment,
+  } = useInfiniteComments({
+    entityId: entityId,
+    entityType: 'post',
+    limit: 4,
+  });
 
-  const comments = data?.pages.flatMap((page) => {
-    return page?.result?.data.map((comment: any) => {
+  const commentIds = data?.pages.flatMap((page) => {
+    return page.data?.result?.data.map((comment: { id: string }) => {
       try {
         return comment;
       } catch (e) {
         console.log('Error', { comment });
       }
     });
-  });
+  }) as { id: string }[];
 
   return (
     <div>
@@ -78,11 +82,13 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
       {isLoading ? (
         <CommentSkeleton />
       ) : (
-        comments && (
+        commentIds && (
           <div>
-            {comments?.map((comment: IComment, i: any) => (
-              <Comment key={comment.id} comment={comment} />
-            ))}
+            {commentIds
+              ?.filter(({ id }) => !!comment[id])
+              .map(({ id }, i: any) => (
+                <Comment key={id} comment={comment[id]} />
+              ))}
             {hasNextPage && !isFetchingNextPage && (
               <LoadMore
                 onClick={fetchNextPage}

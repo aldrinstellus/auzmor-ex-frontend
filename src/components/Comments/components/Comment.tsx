@@ -5,18 +5,18 @@ import IconButton, {
   Size,
 } from 'components/IconButton';
 import Avatar from 'components/Avatar';
-import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import Popover from 'components/Popover';
 import clsx from 'clsx';
 import { humanizeTime } from 'utils/time';
 import { iconsStyle } from 'components/Post';
-import { MyObjectType } from 'queries/post';
 import useAuth from 'hooks/useAuth';
 import Reply from '../../Reply';
 import Icon from 'components/Icon';
 import { Link } from 'react-router-dom';
 import RenderQuillContent from 'components/RenderQuillContent';
 import ReactionModal from 'components/Post/components/ReactionModal';
+import _ from 'lodash';
 import useModal from 'hooks/useModal';
 import { twConfig } from 'utils/misc';
 import { IComment } from '..';
@@ -28,6 +28,9 @@ import { toast } from 'react-toastify';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import { deleteComment } from 'queries/comments';
+import { useFeedStore } from 'stores/feedStore';
+import { useCommentStore } from 'stores/commentStore';
+import { produce } from 'immer';
 
 interface CommentProps {
   comment: IComment;
@@ -38,7 +41,8 @@ export const Comment: React.FC<CommentProps> = ({
   comment,
   customNode = null,
 }) => {
-  const queryClient = useQueryClient();
+  const { feed, updateFeed } = useFeedStore();
+  const { comment: storedcomments, setComment } = useCommentStore();
   const [showReactionModal, setShowReactionModal] = useState(false);
   const [confirm, showConfirm, closeConfirm] = useModal();
   const [editComment, setEditComment] = useState(false);
@@ -51,14 +55,11 @@ export const Comment: React.FC<CommentProps> = ({
   const { user } = useAuth();
 
   const menuItemStyle = clsx({
-    'flex flex-row items-center py-3 px-6 gap-2.5 border-b text-sm hover:bg-primary-50 cursor-pointer':
+    'flex flex-row items-center py-3 px-6 gap-2.5 border-b text-sm hover:bg-primary-50 cursor-pointer rounded-b-9xl':
       true,
   });
 
-  const reactionCount: MyObjectType = comment?.reactionsCount || {};
-
-  const keys = Object.keys(reactionCount).length;
-  const totalCount = Object.values(reactionCount).reduce(
+  const totalCount = Object.values(comment?.reactionsCount || {}).reduce(
     (total, count) => total + count,
     0,
   );
@@ -69,9 +70,21 @@ export const Comment: React.FC<CommentProps> = ({
     }
   }, [showReplies]);
 
-  const deleteReactionMutation = useMutation({
+  const deleteCommentMutation = useMutation({
     mutationKey: ['delete-comment-mutation'],
     mutationFn: deleteComment,
+    onMutate: (variables) => {
+      const previousData = storedcomments;
+      updateFeed(
+        feed[storedcomments[variables].entityId].id!,
+        produce(feed[storedcomments[variables].entityId], (draft) => {
+          draft.commentsCount = draft.commentsCount - 1;
+        }),
+      );
+      setComment({ ..._.omit(storedcomments, [variables]) });
+      closeConfirm();
+      return { previousData };
+    },
     onError: (error: any) => {
       console.log(error);
       toast(
@@ -99,7 +112,6 @@ export const Comment: React.FC<CommentProps> = ({
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments'] });
       toast(
         <SuccessToast
           content="Comment has been deleted"
@@ -252,9 +264,9 @@ export const Comment: React.FC<CommentProps> = ({
         </div>
         <div className="flex flex-row justify-between mt-4 cursor-pointer">
           <div className={`flex flex-row`}>
-            {keys > 0 && (
+            {totalCount > 0 && (
               <div className="mr-2 flex flex-row">
-                {Object.keys(reactionCount)
+                {Object.keys(comment.reactionsCount!)
                   .slice(0, 3)
                   .map((key, i) => (
                     <div className={` ${i > 0 ? '-ml-2 z-1' : ''}  `} key={key}>
@@ -343,7 +355,7 @@ export const Comment: React.FC<CommentProps> = ({
           label: 'Delete',
           className: 'bg-red-500 text-white ',
           onSubmit: () => {
-            deleteReactionMutation.mutate(comment?.id || '');
+            deleteCommentMutation.mutate(comment?.id || '');
           },
         }}
         discard={{
@@ -351,7 +363,7 @@ export const Comment: React.FC<CommentProps> = ({
           className: 'text-neutral-900 bg-white ',
           onCancel: closeConfirm,
         }}
-        isLoading={deleteReactionMutation?.isLoading}
+        isLoading={deleteCommentMutation?.isLoading}
       />
     </div>
   );

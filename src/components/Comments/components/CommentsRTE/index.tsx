@@ -10,6 +10,9 @@ import ReactQuill from 'react-quill';
 import { DeltaStatic } from 'quill';
 import { toast } from 'react-toastify';
 import { twConfig } from 'utils/misc';
+import { produce } from 'immer';
+import { useCommentStore } from 'stores/commentStore';
+import { useFeedStore } from 'stores/feedStore';
 import FailureToast from 'components/Toast/variants/FailureToast';
 import Icon from 'components/Icon';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
@@ -40,6 +43,12 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
   commentData,
   setEditComment,
 }) => {
+  const {
+    comment,
+    setComment,
+    updateComment: updateStoredComment,
+  } = useCommentStore();
+  const { feed, updateFeed } = useFeedStore();
   const queryClient = useQueryClient();
   const quillRef = useRef<ReactQuill>(null);
 
@@ -49,9 +58,36 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
     onError: (error: any) => {
       console.log(error);
     },
-    onSuccess: (data: any, variables, context) => {
+    onSuccess: async (data: any, variables, context) => {
       quillRef.current?.setEditorContents(quillRef.current?.getEditor(), '');
-      queryClient.invalidateQueries({ queryKey: ['comments'] });
+      await queryClient.setQueryData(
+        ['comments', { entityId, entityType, limit: 4 }],
+        (oldData) =>
+          produce(oldData, (draft: any) => {
+            draft.pages[0].data.result.data = [
+              { id: data.id },
+              ...draft.pages[0].data.result.data,
+            ];
+          }),
+      );
+      if (entityType === 'post' && entityId) {
+        setComment({ ...comment, [data.id]: { ...data } });
+        updateFeed(
+          entityId,
+          produce(feed[entityId], (draft) => {
+            draft.commentsCount = draft.commentsCount + 1;
+          }),
+        );
+      } else if (entityType === 'comment' && entityId) {
+        const updatedComment = produce(comment[entityId], (draft) => {
+          draft.repliesCount = draft.repliesCount + 1;
+        });
+        setComment({
+          ...comment,
+          [data.id]: { ...data },
+          [entityId]: updatedComment,
+        });
+      }
     },
   });
 

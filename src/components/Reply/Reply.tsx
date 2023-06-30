@@ -9,13 +9,21 @@ import clsx from 'clsx';
 import queryClient from 'utils/queryClient';
 import { humanizeTime } from 'utils/time';
 import { iconsStyle } from 'components/Post';
-import { MyObjectType } from 'queries/post';
 import useAuth from 'hooks/useAuth';
 import Icon from 'components/Icon';
 import ReactionModal from 'components/Post/components/ReactionModal';
+import { IReactionsCount } from 'queries/post';
 import RenderQuillContent from 'components/RenderQuillContent';
+import { useCommentStore } from 'stores/commentStore';
+import _ from 'lodash';
 import { IComment } from 'components/Comments';
 import { twConfig } from 'utils/misc';
+import { produce } from 'immer';
+import { toast } from 'react-toastify';
+import FailureToast from 'components/Toast/variants/FailureToast';
+import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
+import { slideInAndOutTop } from 'utils/react-toastify';
+import SuccessToast from 'components/Toast/variants/SuccessToast';
 import ConfirmationBox from 'components/ConfirmationBox';
 import useModal from 'hooks/useModal';
 import {
@@ -33,16 +41,75 @@ export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
   const [confirm, showConfirm, closeConfirm] = useModal();
   const [showReactionModal, setShowReactionModal] = useState(false);
   const [editReply, setEditReply] = useState<boolean>(false);
+  const { comment: storedComments, setComment } = useCommentStore();
 
-  const deleteReplyCommentMutation = useMutation({
+  const deleteReplyMutation = useMutation({
     mutationKey: ['delete-reply-comment-mutation'],
     mutationFn: deleteComment,
+    onMutate: (variables) => {
+      const previousData = comment;
+      const updatedComment = produce(
+        storedComments[storedComments[variables].entityId],
+        (draft) => {
+          draft.repliesCount = draft.repliesCount - 1;
+        },
+      );
+      setComment({
+        ..._.omit(storedComments, [variables]),
+        [storedComments[variables].entityId]: { ...updatedComment },
+      });
+      closeConfirm();
+      return { previousData };
+    },
     onError: (error: any) => {
-      console.log(error);
+      toast(
+        <FailureToast
+          content="Error deleting reply"
+          dataTestId="reply-toaster"
+        />,
+        {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              stroke={twConfig.theme.colors.red['500']}
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.red['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+        },
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments'] });
-      closeConfirm();
+      toast(
+        <SuccessToast
+          content="Reply has been deleted"
+          dataTestId="comment-toaster"
+        />,
+        {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              stroke={twConfig.theme.colors.primary['500']}
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+        },
+      );
     },
   });
 
@@ -51,10 +118,7 @@ export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
       true,
   });
 
-  const reactionCount: MyObjectType = comment?.reactionsCount || {};
-
-  const keys = Object.keys(reactionCount).length;
-  const totalCount = Object.values(reactionCount).reduce(
+  const totalCount = Object.values(comment?.reactionsCount || {}).reduce(
     (total, count) => total + count,
     0,
   );
@@ -164,9 +228,9 @@ export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
         </div>
         <div className="flex flex-row justify-between mt-3 cursor-pointer">
           <div className={`flex flex-row`}>
-            {keys > 0 && (
+            {totalCount > 0 && (
               <div className="mr-2 flex flex-row">
-                {Object.keys(reactionCount)
+                {Object.keys(comment?.reactionsCount || {})
                   .slice(0, 3)
                   .map((key, i) => (
                     <div className={` ${i > 0 ? '-ml-2 z-1' : ''}  `} key={key}>
@@ -216,7 +280,7 @@ export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
           label: 'Delete',
           className: 'bg-red-500 text-white ',
           onSubmit: () => {
-            deleteReplyCommentMutation.mutate(comment.id || '');
+            deleteReplyMutation.mutate(comment.id || '');
           },
         }}
         discard={{
@@ -224,7 +288,7 @@ export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
           className: 'text-neutral-900 bg-white ',
           onCancel: closeConfirm,
         }}
-        isLoading={deleteReplyCommentMutation.isLoading}
+        isLoading={deleteReplyMutation.isLoading}
       />
       {showReactionModal && (
         <ReactionModal

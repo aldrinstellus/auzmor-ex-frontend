@@ -1,5 +1,6 @@
+import React from 'react';
+import { useInfiniteReplies } from 'queries/reaction';
 /* Comment Level RTE - Comment on the comment level 2 */
-import React, { useState } from 'react';
 import { useInfiniteComments } from 'queries/comments';
 import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
@@ -7,6 +8,7 @@ import { Reply } from 'components/Reply/Reply';
 import Spinner from 'components/Spinner';
 import { PRIMARY_COLOR } from 'utils/constants';
 import LoadMore from 'components/Comments/components/LoadMore';
+import { useCommentStore } from 'stores/commentStore';
 import CommentSkeleton from 'components/Comments/components/CommentSkeleton';
 import { CommentsRTE } from 'components/Comments/components/CommentsRTE';
 
@@ -24,23 +26,23 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
   const { user } = useAuth();
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfiniteComments({
+    useInfiniteReplies({
       entityId: entityId,
       entityType: 'comment',
-      // Limit here is arbitrary, need to check with product team.
-      // Linkedin loads 2 by default and then 10 each time you click 'Load more'
       limit: 4,
     });
 
-  const replies = data?.pages.flatMap((page) => {
-    return page?.result?.data.map((comment: any) => {
+  const { comment } = useCommentStore();
+
+  const replyIds = data?.pages.flatMap((page) => {
+    return page.data?.result?.data.map((reply: { id: string }) => {
       try {
-        return comment;
+        return reply;
       } catch (e) {
-        console.log('Error', { comment });
+        console.log('Error', { reply });
       }
     });
-  });
+  }) as { id: string }[];
 
   return (
     <div className={className}>
@@ -64,11 +66,17 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
               entityType="comment"
             />
           </div>
-          {replies && replies.length > 0 && (
+          {replyIds && replyIds.length > 0 && (
             <div>
-              {replies.map((reply: any) => (
-                <Reply comment={reply} key={reply.id} />
-              ))}
+              {replyIds
+                .filter(({ id }) => !!comment[id])
+                .map(({ id }) => (
+                  <Reply
+                    // handleClick={handleClick}
+                    comment={comment[id]}
+                    key={id}
+                  />
+                ))}
               {hasNextPage && !isFetchingNextPage && (
                 <LoadMore onClick={fetchNextPage} label="Load more replies" />
               )}
