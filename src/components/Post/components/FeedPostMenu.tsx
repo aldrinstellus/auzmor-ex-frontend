@@ -3,18 +3,24 @@ import Icon from 'components/Icon';
 import PopupMenu from 'components/PopupMenu';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import ConfirmationBox from 'components/ConfirmationBox';
-import { IPost, deletePost, updatePost } from 'queries/post';
+import { IPost, IPostPayload, deletePost, updatePost } from 'queries/post';
 import PostBuilder, { PostBuilderMode } from 'components/PostBuilder';
 import useModal from 'hooks/useModal';
 import useAuth from 'hooks/useAuth';
 import useRole from 'hooks/useRole';
-import { isSubset } from 'utils/misc';
+import { isSubset, twConfig } from 'utils/misc';
 import { useFeedStore } from 'stores/feedStore';
 import _ from 'lodash';
 import { CreatePostFlow } from 'contexts/CreatePostContext';
 import Modal from 'components/Modal';
 import Divider from 'components/Divider';
 import Button, { Variant } from 'components/Button';
+import { produce } from 'immer';
+import SuccessToast from 'components/Toast/variants/SuccessToast';
+import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
+import { slideInAndOutTop } from 'utils/react-toastify';
+import { toast } from 'react-toastify';
+import FailureToast from 'components/Toast/variants/FailureToast';
 
 export interface IFeedPostMenuProps {
   data: IPost;
@@ -32,7 +38,7 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
   );
 
   const queryClient = useQueryClient();
-  const { feed, setFeed } = useFeedStore();
+  const { feed, setFeed, updateFeed } = useFeedStore();
 
   const deletePostMutation = useMutation({
     mutationKey: ['deletePostMutation', data.id],
@@ -40,40 +46,85 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
     onMutate: (variables) => {
       const previousFeed = feed;
       setFeed({ ..._.omit(feed, [variables]) });
+      closeConfirm();
       return { previousFeed };
     },
     onError: (error, variables, context) => {
+      toast(
+        <FailureToast
+          content="Error deleting post"
+          dataTestId="post-delete-toaster-failure"
+        />,
+        {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              stroke={twConfig.theme.colors.red['500']}
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.red['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+        },
+      );
       if (context?.previousFeed) {
         setFeed(context?.previousFeed);
       }
     },
     onSuccess: async (data, variables, context) => {
-      await queryClient.invalidateQueries(['feed']);
+      toast(
+        <SuccessToast
+          content="Post deleted successfully"
+          dataTestId="post-delete-toaster-success"
+        />,
+        {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              stroke={twConfig.theme.colors.primary['500']}
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+        },
+      );
       await queryClient.invalidateQueries(['announcements-widget']);
-      await queryClient.invalidateQueries(['my-profile-feed']);
-      await queryClient.invalidateQueries(['people-profile-feed']);
-      closeConfirm();
     },
   });
 
   const removeAnnouncementMutation = useMutation({
     mutationKey: ['removeAnnouncementMutation', data.id],
-    mutationFn: async () => {
-      const fileIds = data.files?.map((file: any) => file.id);
-      const payload = {
-        ...data,
-        files: fileIds,
-        isAnnouncement: false,
-        announcement: {
-          end: '',
-        },
-      };
-      if (payload.id) await updatePost(payload.id, payload);
-    },
-    onError: (error) => console.log(error),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(['feed']);
+    mutationFn: (payload: IPostPayload) =>
+      updatePost(payload.id || '', payload),
+    onMutate: (variables) => {
+      const previousPost = feed[variables.id!];
+      updateFeed(
+        variables.id!,
+        produce(feed[variables.id!], (draft) => {
+          (draft.announcement = { end: '' }), (draft.isAnnouncement = false);
+        }),
+      );
       closeRemoveAnnouncement();
+      return { previousPost };
+    },
+    onError: (error, variables, context) => {
+      updateFeed(context!.previousPost.id!, context!.previousPost!);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['announcements-widget']);
     },
   });
 
@@ -214,7 +265,18 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
           <Button
             variant={Variant.Primary}
             label="Yes"
-            onClick={() => removeAnnouncementMutation.mutate()}
+            onClick={() => {
+              const fileIds = data.files?.map((file: any) => file.id);
+              const payload = {
+                ...data,
+                files: fileIds,
+                isAnnouncement: false,
+                announcement: {
+                  end: '',
+                },
+              };
+              removeAnnouncementMutation.mutate(payload);
+            }}
             loading={removeAnnouncementLoading}
             dataTestId="changeto-regularpost-accept"
           />

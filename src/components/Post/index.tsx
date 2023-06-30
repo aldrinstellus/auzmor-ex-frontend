@@ -51,7 +51,6 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
   const [showReactionModal, setShowReactionModal] = useState(false);
 
   const reaction = post?.myReaction?.reaction;
-  const reactionId = post?.myReaction?.id;
 
   const totalCount = Object.values(post.reactionsCount || {}).reduce(
     (total, count) => total + count,
@@ -148,7 +147,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
                 reaction={reaction || ''}
                 entityId={post?.id || ''}
                 entityType="post"
-                reactionId={reactionId || ''}
+                reactionId={post?.myReaction?.id || ''}
                 queryKey="feed"
                 dataTestIdPrefix="post-reaction"
               />

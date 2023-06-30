@@ -63,7 +63,6 @@ const Likes: React.FC<LikesProps> = ({
 }) => {
   const { feed, updateFeed } = useFeedStore();
   const { comment, updateComment } = useCommentStore();
-  const queryClient = useQueryClient();
   const [showTooltip, setShowTooltip] = useState(true);
 
   const tooltipRef = useRef<HTMLSpanElement>(null);
@@ -101,13 +100,17 @@ const Likes: React.FC<LikesProps> = ({
   const createReactionMutation = useMutation({
     mutationKey: ['create-reaction-mutation'],
     mutationFn: createReaction,
-    onMutate: (variables) => {
+    onSuccess: (data, variables) => {
       if (variables.entityType === 'post') {
-        const previousPost = feed[variables.entityId];
         updateFeed(
           variables.entityId,
           produce(feed[variables.entityId], (draft) => {
-            (draft.myReaction = { reaction: variables.reaction }),
+            (draft.myReaction = {
+              reaction: data.reaction,
+              createdBy: data.createdBy,
+              id: data.id,
+              type: data.type,
+            }),
               (draft.reactionsCount =
                 draft.reactionsCount && Object.keys(draft.reactionsCount)
                   ? Object.keys(draft.myReaction)
@@ -134,13 +137,16 @@ const Likes: React.FC<LikesProps> = ({
                   : { [variables.reaction as string]: 1 });
           }),
         );
-        return { previousPost };
       } else if (variables.entityType === 'comment') {
-        const previousComment = comment[variables.entityId];
         updateComment(
           variables.entityId,
           produce(comment[variables.entityId], (draft) => {
-            (draft.myReaction = { reaction: variables.reaction }),
+            (draft.myReaction = {
+              reaction: data.reaction,
+              createdBy: data.createdBy,
+              id: data.id,
+              type: data.type,
+            }),
               (draft.reactionsCount =
                 draft.reactionsCount && Object.keys(draft.reactionsCount)
                   ? Object.keys(draft.myReaction)
@@ -167,14 +173,6 @@ const Likes: React.FC<LikesProps> = ({
                   : { [variables.reaction as string]: 1 });
           }),
         );
-        return { previousComment };
-      }
-    },
-    onError: (error, variables, context) => {
-      if (variables.entityType === 'post') {
-        updateFeed(context!.previousPost!.id!, context!.previousPost!);
-      } else if (variables.entityType === 'comment') {
-        updateComment(context!.previousComment!.id!, context!.previousComment!);
       }
     },
   });

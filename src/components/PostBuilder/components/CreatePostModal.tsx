@@ -126,6 +126,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       );
       clearPostContext();
       setShowModal(false);
+      await queryClient.invalidateQueries(['announcements-widget']);
     },
   });
 
@@ -202,6 +203,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           transition: slideInAndOutTop,
         },
       );
+      await queryClient.invalidateQueries(['announcements-widget']);
     },
   });
 

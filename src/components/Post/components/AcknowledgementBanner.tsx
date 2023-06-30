@@ -3,7 +3,9 @@ import Button, { Size, Variant } from 'components/Button';
 import Icon from 'components/Icon';
 import { announcementRead } from 'queries/post';
 import React from 'react';
+import { useFeedStore } from 'stores/feedStore';
 import { hasDatePassed } from 'utils/time';
+import { produce } from 'immer';
 
 export interface IAcknowledgementBannerProps {
   data: any;
@@ -12,6 +14,7 @@ export interface IAcknowledgementBannerProps {
 const AcknowledgementBanner: React.FC<IAcknowledgementBannerProps> = ({
   data,
 }) => {
+  const { feed, updateFeed } = useFeedStore();
   const queryClient = useQueryClient();
 
   const isAnnouncement = data?.isAnnouncement;
@@ -19,9 +22,19 @@ const AcknowledgementBanner: React.FC<IAcknowledgementBannerProps> = ({
   const acknowledgeMutation = useMutation({
     mutationKey: ['acknowledge-announcement'],
     mutationFn: announcementRead,
-    onError: (error) => console.log(error),
+    onMutate: (variables) => {
+      const previousPost = feed[variables.entityId];
+      updateFeed(
+        variables.entityId,
+        produce(feed[variables.entityId], (draft) => {
+          (draft.announcement = { end: '' }), (draft.isAnnouncement = false);
+        }),
+      );
+      return { previousPost };
+    },
+    onError: (error, variables, context) =>
+      updateFeed(context!.previousPost.id!, context!.previousPost!),
     onSuccess: async (data, variables, context) => {
-      await queryClient.invalidateQueries(['feed']);
       await queryClient.invalidateQueries(['announcements-widget']);
     },
   });
