@@ -278,7 +278,7 @@ export const deletePost = async (id: string) => {
 export const fetchAnnouncement = ({ pageParam = null }) => {
   if (pageParam === null)
     return apiService.get(`/posts?feed=ANNOUNCEMENT&limit=1`);
-  else apiService.get(pageParam);
+  return apiService.get(pageParam);
 };
 
 export const useInfiniteFetchAnnouncement = (q?: Record<string, any>) => {

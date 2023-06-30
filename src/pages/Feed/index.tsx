@@ -54,10 +54,10 @@ const Feed: React.FC<IFeedProps> = () => {
 
   const { feed } = useFeedStore();
 
-  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage} =
     useInfiniteFeed(appliedFeedFilters);
 
-  useEffect(() => {
+    useEffect(() => {
     if (inView) {
       fetchNextPage();
     }

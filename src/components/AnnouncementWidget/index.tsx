@@ -21,7 +21,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({ postId }) => {
     mutationKey: ['acknowledge-announcement'],
     mutationFn: announcementRead,
     onError: (error) => console.log(error),
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries(['announcements-widget']);
       await queryClient.invalidateQueries(['feed']);
     },
@@ -30,7 +30,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({ postId }) => {
   const { data, isLoading, fetchNextPage, isFetchingNextPage } =
     useInfiniteFetchAnnouncement();
 
-  const result = data?.pages[0]?.data?.result?.data;
+  const result = data?.pages[data?.pages?.length - 1]?.data?.result?.data;
   const itemCount = result?.length;
   const postData = result?.[0];
   const isAcknowledged = postData?.myAcknowledgement?.reaction !== 'mark_read';
@@ -52,7 +52,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({ postId }) => {
             <Icon name="flashIcon" />
             <div className="text-base font-bold">Announcement</div>
           </div>
-          {isLoading || dataPostId === postId ? (
+          {isLoading || dataPostId === postId || isFetchingNextPage ? (
             <SkeletonLoader />
           ) : (
             <div className="w-full px-6">
