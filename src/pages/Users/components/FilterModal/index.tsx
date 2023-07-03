@@ -36,6 +36,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
   });
 
   const onSubmit = () => {
+    if(!!!getValues().status) {closeModal(); return}
     const status = getValues().status;
     setUserStatus(status);
     closeModal();
