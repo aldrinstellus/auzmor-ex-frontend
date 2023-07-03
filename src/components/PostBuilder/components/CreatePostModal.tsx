@@ -1,8 +1,14 @@
-import React, { ReactNode, useContext, useEffect, useMemo } from 'react';
+import React, {
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import Modal from 'components/Modal';
 import CreatePost from 'components/PostBuilder/components/CreatePost';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { IPost, createPost, updatePost } from 'queries/post';
+import { IPost, IPostPayload, createPost, updatePost } from 'queries/post';
 import CreateAnnouncement, {
   CreateAnnouncementMode,
 } from './CreateAnnouncement';
@@ -19,7 +25,14 @@ import EditMedia from './EditMedia';
 import { UploadStatus } from 'queries/files';
 import { IMenuItem } from 'components/PopupMenu';
 import Icon from 'components/Icon';
-import { hideEmojiPalette } from 'utils/misc';
+import { hideEmojiPalette, twConfig } from 'utils/misc';
+import { useFeedStore } from 'stores/feedStore';
+import { toast } from 'react-toastify';
+import SuccessToast from 'components/Toast/variants/SuccessToast';
+import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
+import { slideInAndOutTop } from 'utils/react-toastify';
+import FailureToast from 'components/Toast/variants/FailureToast';
+import { produce } from 'immer';
 
 export interface IPostMenu {
   id: number;
@@ -60,6 +73,10 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     setShowFullscreenVideo,
   } = useContext(CreatePostContext);
 
+  const mediaRef = useRef<IMedia[]>([]);
+
+  const { feed, updateFeed, setFeed } = useFeedStore();
+
   const queryClient = useQueryClient();
 
   const { uploadMedia, uploadStatus, useUploadCoverImage } = useUpload();
@@ -91,25 +108,102 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     mutationKey: ['createPostMutation'],
     mutationFn: createPost,
     onError: (error) => console.log(error),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(['feed']);
-      await queryClient.invalidateQueries(['announcements-widget']);
-      await queryClient.invalidateQueries(['my-profile-feed']);
-      await queryClient.invalidateQueries(['people-profile-feed']);
+    onSuccess: async ({
+      result,
+    }: {
+      code: number;
+      message: string;
+      result: { data: IPost };
+    }) => {
+      setFeed({ ...feed, [result.data.id!]: { ...result.data } });
+      await queryClient.setQueryData(['feed', { type: [] }], (oldData: any) =>
+        produce(oldData, (draft: any) => {
+          draft.pages[0].data.result.data = [
+            { id: result.data.id },
+            ...draft.pages[0].data.result.data,
+          ];
+        }),
+      );
+      clearPostContext();
       setShowModal(false);
+      await queryClient.invalidateQueries(['announcements-widget']);
     },
   });
 
   const updatePostMutation = useMutation({
     mutationKey: ['updatePostMutation'],
-    mutationFn: (payload: IPost) =>
-      updatePost(payload.id || '', payload as IPost),
+    mutationFn: (payload: IPostPayload) =>
+      updatePost(payload.id || '', payload as IPostPayload),
+    onMutate: (variables) => {
+      if (variables?.id) {
+        const previousData = feed[variables.id];
+        updateFeed(variables.id, {
+          ...feed[variables.id],
+          ...variables,
+          files: [
+            ...mediaRef.current.filter(
+              (media) => !!(variables.files as string[])?.includes(media.id),
+            ),
+          ],
+        } as IPost);
+        clearPostContext();
+        setShowModal(false);
+        return { previousData };
+      }
+    },
+    onError: (error, variables, context) => {
+      if (context?.previousData && variables?.id) {
+        updateFeed(variables.id, context?.previousData);
+      }
+      toast(
+        <FailureToast
+          content="Error updating post"
+          dataTestId="post-update-toaster"
+        />,
+        {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              stroke={twConfig.theme.colors.red['500']}
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.red['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+        },
+      );
+    },
     onSuccess: async () => {
-      await queryClient.invalidateQueries(['feed']);
+      toast(
+        <SuccessToast
+          content="Post updated successfully"
+          dataTestId="post-update-toaster"
+        />,
+        {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              stroke={twConfig.theme.colors.primary['500']}
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+        },
+      );
       await queryClient.invalidateQueries(['announcements-widget']);
-      await queryClient.invalidateQueries(['my-profile-feed']);
-      await queryClient.invalidateQueries(['people-profile-feed']);
-      setShowModal(false);
     },
   });
 
@@ -157,34 +251,27 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       : (content?.text.match(previewLinkRegex) as string[]);
 
     if (mode === PostBuilderMode.Create) {
-      createPostMutation.mutate(
-        {
-          content: {
-            text: content?.text || editorValue.text,
-            html: content?.html || editorValue.html,
-            editor: content?.json || editorValue.json,
-          },
-          type: 'UPDATE',
-          files: fileIds,
-          mentions: userMentionList || [],
-          hashtags: [],
-          audience: {
-            users: [],
-          },
-          isAnnouncement: !!announcement,
-          announcement: {
-            end: announcement?.value || '',
-          },
-          link: previewUrl && previewUrl[0],
+      createPostMutation.mutate({
+        content: {
+          text: content?.text || editorValue.text,
+          html: content?.html || editorValue.html,
+          editor: content?.json || editorValue.json,
         },
-        {
-          onSuccess: () => {
-            clearPostContext();
-            setShowModal(false);
-          },
+        type: 'UPDATE',
+        files: fileIds,
+        mentions: userMentionList || [],
+        hashtags: [],
+        audience: {
+          users: [],
         },
-      );
+        isAnnouncement: !!announcement,
+        announcement: {
+          end: announcement?.value || '',
+        },
+        link: previewUrl && previewUrl[0],
+      });
     } else if (PostBuilderMode.Edit) {
+      mediaRef.current = [...media, ...uploadedMedia];
       const sortedIds = [
         ...fileIds,
         ...media
@@ -205,29 +292,29 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         );
         return aIndex - bIndex;
       });
-      updatePostMutation.mutate(
-        {
-          content: {
-            text: content?.text || editorValue.text,
-            html: content?.html || editorValue.html,
-            editor: content?.json || editorValue.json,
-          },
-          type: 'UPDATE',
-          files: sortedIds,
-          mentions: userMentionList || [],
-          hashtags: [],
-          audience: {
-            users: [],
-          },
-          isAnnouncement: !!announcement,
-          announcement: {
-            end: announcement?.value || '',
-          },
-          id: data?.id,
-          link: previewUrl && previewUrl[0],
-        },
-        { onSuccess: () => setShowModal(false) },
+      mediaRef.current = sortedIds.map(
+        (id: string) => mediaRef.current.find((media) => media.id === id)!,
       );
+      updatePostMutation.mutate({
+        content: {
+          text: content?.text || editorValue.text,
+          html: content?.html || editorValue.html,
+          editor: content?.json || editorValue.json,
+        },
+        type: 'UPDATE',
+        files: sortedIds,
+        mentions: userMentionList || [],
+        hashtags: [],
+        audience: {
+          users: [],
+        },
+        isAnnouncement: !!announcement,
+        announcement: {
+          end: announcement?.value || '',
+        },
+        id: data?.id,
+        link: previewUrl && previewUrl[0],
+      });
     }
   };
 

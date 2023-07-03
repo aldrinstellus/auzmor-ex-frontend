@@ -84,12 +84,12 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(0);
               } else {
-                onClick(e, 1, media[0]);
+                onClick(e, 0, media[0]);
               }
             }}
             coverImageUrl={
               coverImageMap?.find((map) => map.videoName === media[0].name)
-                ?.blobUrl || media[1]?.coverImage?.original
+                ?.blobUrl || media[0]?.coverImage?.original
             }
           />
           <MediaRender
@@ -99,12 +99,12 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(1);
               } else {
-                onClick(e, 2, media[1]);
+                onClick(e, 1, media[1]);
               }
             }}
             coverImageUrl={
               coverImageMap?.find((map) => map.videoName === media[1].name)
-                ?.blobUrl || media[2]?.coverImage?.original
+                ?.blobUrl || media[1]?.coverImage?.original
             }
           />
         </div>
@@ -166,7 +166,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
     } else if (media.length === 4) {
       return (
         <div className="flex flex-col w-full h-64">
-          <div className="flex mb-2 !h-1/2">
+          <div className="flex !h-1/2 pb-2">
             <MediaRender
               data={media[0]}
               localClassName="!w-1/2 !mr-2"
@@ -198,7 +198,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
               }
             />
           </div>
-          <div className="flex mt-2 !h-1/2">
+          <div className="flex !h-1/2 pb-2">
             <MediaRender
               data={media[2]}
               localClassName="!w-1/2 mr-2"
@@ -457,12 +457,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           closeModal={closeModal}
           showModalCloseBtn
         >
-          <Carousel
-            media={media}
-            index={mediaIndex}
-            open={open}
-            closeModal={closeModalAndResetMediaIndex}
-          />
+          <Carousel media={media} index={mediaIndex} />
         </Modal>
       )}
     </div>
