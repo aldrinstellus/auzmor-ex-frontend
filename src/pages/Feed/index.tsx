@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PostBuilder from 'components/PostBuilder';
 import UserCard from 'components/UserWidget';
-import AnnouncementCard from 'components/AnnouncementWidget';
+import AnnouncementCard from 'components/AnnouncementWidget/FeedAnnouncementWidget';
 import {
   IPostFilters,
   PostFilterKeys,
@@ -54,10 +54,10 @@ const Feed: React.FC<IFeedProps> = () => {
 
   const { feed } = useFeedStore();
 
-  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage} =
     useInfiniteFeed(appliedFeedFilters);
 
-  useEffect(() => {
+    useEffect(() => {
     if (inView) {
       fetchNextPage();
     }

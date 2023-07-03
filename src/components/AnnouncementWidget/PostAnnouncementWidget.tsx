@@ -1,37 +1,44 @@
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Card from 'components/Card';
-import { announcementRead, useAnnouncementsWidget } from 'queries/post';
+import { announcementRead, useInfiniteFetchAnnouncement } from 'queries/post';
 import Button, { Variant } from 'components/Button';
-import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
 import Icon from 'components/Icon';
 import { humanizeTime } from 'utils/time';
 import SkeletonLoader from './components/SkeletonLoader';
 import RenderQuillContent from 'components/RenderQuillContent';
+import { Link } from 'react-router-dom';
 
-export interface IAnnouncementCardProps {}
+export interface IAnnouncementCardProps {
+  postId?: string;
+}
 
-const AnnouncementCard: React.FC<IAnnouncementCardProps> = () => {
+const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({ postId }) => {
   const queryClient = useQueryClient();
 
   const acknowledgeAnnouncement = useMutation({
     mutationKey: ['acknowledge-announcement'],
     mutationFn: announcementRead,
     onError: (error) => console.log(error),
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries(['announcements-widget']);
       await queryClient.invalidateQueries(['feed']);
     },
   });
 
-  const { data, isLoading } = useAnnouncementsWidget();
+  const { data, isLoading, fetchNextPage, isFetchingNextPage } =
+    useInfiniteFetchAnnouncement();
 
-  const { user } = useAuth();
+  const result = data?.pages[data?.pages?.length - 1]?.data?.result?.data;
+  const itemCount = result?.length;
+  const postData = result?.[0];
+  const isAcknowledged = postData?.myAcknowledgement?.reaction !== 'mark_read';
+  const dataPostId = postData?.id;
 
-  const itemCount = data?.data?.result?.data.length;
-  const isAcknowledged =
-    data?.data?.result?.data?.[0]?.myAcknowledgement?.reaction !== 'mark_read';
+  if (dataPostId === postId) {
+    fetchNextPage();
+  }
 
   return (
     <div className="min-w-[240px] sticky top-24">
@@ -45,7 +52,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = () => {
             <Icon name="flashIcon" />
             <div className="text-base font-bold">Announcement</div>
           </div>
-          {isLoading ? (
+          {isLoading || dataPostId === postId || isFetchingNextPage ? (
             <SkeletonLoader />
           ) : (
             <div className="w-full px-6">
@@ -55,36 +62,30 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = () => {
                     <div className="flex space-x-3">
                       <div>
                         <Avatar
-                          name={
-                            data?.data?.result?.data?.[0]?.createdBy
-                              ?.fullName || 'U'
-                          }
-                          image={
-                            data?.data?.result?.data?.[0]?.createdBy
-                              ?.profileImage?.original
-                          }
+                          name={postData?.createdBy?.fullName || 'U'}
+                          image={postData?.createdBy?.profileImage?.original}
                           size={40}
                         />
                       </div>
                       <div>
                         <div className="space-x-1 text-sm">
                           <span className="text-neutral-900 font-bold">
-                            {data?.data?.result?.data?.[0]?.createdBy?.fullName}
+                            {postData?.createdBy?.fullName}
                           </span>
                           <span className="text-neutral-900 font-normal">
                             shared a post
                           </span>
                         </div>
                         <div className="text-xs text-gray-500">
-                          {humanizeTime(
-                            data?.data?.result?.data?.[0]?.createdAt,
-                          )}
+                          {humanizeTime(postData?.createdAt)}
                         </div>
                       </div>
                     </div>
-                    <div className="mt-5 flex ">
-                      <RenderQuillContent data={data?.data?.result?.data[0]} />
-                    </div>
+                    <Link to={`/posts/${dataPostId}`}>
+                      <div className="mt-5 flex">
+                        <RenderQuillContent data={postData} />
+                      </div>
+                    </Link>
                   </div>
                   <div className="w-full flex justify-center">
                     <Button
@@ -94,7 +95,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = () => {
                       loading={acknowledgeAnnouncement.isLoading}
                       onClick={() => {
                         acknowledgeAnnouncement.mutate({
-                          entityId: data?.data?.result?.data[0].id,
+                          entityId: postData.id,
                           entityType: 'post',
                           type: 'acknowledge',
                           reaction: 'mark_read',

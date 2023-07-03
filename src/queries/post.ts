@@ -182,10 +182,6 @@ export interface ICreatedBy {
   workLocation?: string;
 }
 
-interface IDeletePost {
-  id: string;
-}
-
 interface IAnnounce {
   entityId: string;
   entityType: string;
@@ -290,6 +286,28 @@ export const useAnnouncementsWidget = () =>
     queryFn: () => fetchAnnouncement('ANNOUNCEMENT', 1),
     staleTime: 15 * 60 * 1000,
   });
+
+export const fetchInfiniteAnnouncement = ({ pageParam = null }) => {
+  if (pageParam === null)
+    return apiService.get(`/posts?feed=ANNOUNCEMENT&limit=1`);
+  return apiService.get(pageParam);
+};
+
+export const useInfiniteFetchAnnouncement = (q?: Record<string, any>) => {
+  return useInfiniteQuery({
+    queryKey: ['announcements-widget', q],
+    queryFn: fetchInfiniteAnnouncement,
+    staleTime: 15 * 60 * 1000,
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage?.data?.result?.data?.length === 0) return null;
+      return lastPage?.data?.result?.paging?.next;
+    },
+    getPreviousPageParam: (currentPage: any) => {
+      if (currentPage?.data?.result?.data?.length === 0) return null;
+      return currentPage?.data?.result?.paging?.prev;
+    },
+  });
+};
 
 export const announcementRead = async (payload: IAnnounce) => {
   const data = await apiService.post('/reactions', payload);
