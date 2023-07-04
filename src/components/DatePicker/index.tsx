@@ -80,10 +80,11 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
         format="MM/DD/YYYY"
         data-testid={dataTestId}
         placeholder="MM/DD/YYYY"
-        defaultValue={dayjs(
-          getDateInMMDDYYYY(field.value as Date),
-          'MM/DD/YYYY',
-        )}
+        defaultValue={
+          field.value
+            ? dayjs(getDateInMMDDYYYY(field.value as Date), 'MM/DD/YYYY')
+            : undefined
+        }
         suffixIcon={<Icon name="calendarTwo" size={16} />}
         className={`flex border relative rounded-19xl w-full px-5 py-2.5 focus:!border-primary-500 hover:border-primary-500 ${className}`}
         onChange={(date) => {
