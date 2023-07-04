@@ -1,17 +1,10 @@
-import React, { memo, useMemo, useState } from 'react';
-import { Control, Controller, useController } from 'react-hook-form';
-
-import DatePicker from 'react-date-picker';
-import 'react-date-picker/dist/DatePicker.css';
-import 'react-calendar/dist/Calendar.css';
-
-import { Value as DateValue } from 'react-date-picker/dist/cjs/shared/types';
-
+import React, { useMemo } from 'react';
+import { Control, useController } from 'react-hook-form';
+import { DatePicker } from 'antd';
 import './index.css';
-
 import Icon from 'components/Icon';
 import clsx from 'clsx';
-import { parseDate } from 'utils/time';
+import moment from 'moment';
 
 export interface IDatePickerInputProps {
   name: string;
@@ -22,10 +15,8 @@ export interface IDatePickerInputProps {
   maxDate?: Date;
   error?: string;
   defaultValue?: string;
-  portalContainer?: HTMLElement | null;
-  calendarClassName?: string;
   dataTestId?: string;
-  onDateChange?: (date: DateValue) => void;
+  onDateChange?: (date: string) => void;
 }
 
 const DatePickerInput: React.FC<IDatePickerInputProps> = ({
@@ -34,9 +25,7 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
   label = '',
   minDate,
   maxDate,
-  portalContainer = null,
   className,
-  calendarClassName,
   onDateChange,
   dataTestId,
   error,
@@ -62,27 +51,30 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
   return (
     <div data-testid={dataTestId} className="relative">
       {!!label && <div className={labelStyle}>{label}</div>}
-
       <DatePicker
-        calendarAriaLabel="Toggle Calendar"
-        clearAriaLabel={'Clear value'}
-        calendarClassName={calendarClassName}
-        calendarIcon={<Icon name="calendarTwo" size={16} />}
-        className={`flex border relative rounded-19xl w-full px-5 py-2.5 focus:!border-primary-500 hover:border-primary-500 ${className}`}
-        clearIcon={null}
+        aria-label="Toggle Calendar"
+        allowClear={false}
+        format="MM/DD/YYYY"
         data-testid={dataTestId}
+        placeholder="MM/DD/YYYY"
         value={field.value}
-        onChange={(date: any) => {
-          field.onChange(date);
-          onDateChange?.(date);
+        suffixIcon={<Icon name="calendarTwo" size={16} />}
+        className={`flex border relative rounded-19xl w-full px-5 py-2.5 focus:!border-primary-500 hover:border-primary-500 ${className}`}
+        onChange={(date, dateString) => {
+          const utcDate = moment
+            .tz(
+              dateString,
+              'MM/DD/YYYY',
+              Intl.DateTimeFormat().resolvedOptions().timeZone,
+            )
+            .toISOString();
+          // Call onChange functions
+          field.onChange(utcDate);
+          onDateChange?.(utcDate);
         }}
-        format="MM/dd/yyyy"
-        dayPlaceholder="dd"
-        monthPlaceholder="MM"
-        yearPlaceholder="YYYY"
-        minDate={minDate}
-        maxDate={maxDate}
-        portalContainer={portalContainer}
+        disabledDate={(d) =>
+          !d || d.isAfter(maxDate) || d.isSame(minDate) || d.isBefore(minDate)
+        }
         id="react-date-picker-calendar"
       />
       {!!error && (
