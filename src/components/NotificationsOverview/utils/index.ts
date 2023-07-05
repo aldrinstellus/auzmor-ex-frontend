@@ -109,8 +109,10 @@ export const getNotificationElementContent = (
 export const getNotificationMessage = (
   actionType: string,
   targetType: string,
+  count?: number,
 ) => {
-  let message = '';
+  let message = count && count > 1 ? `and ${count - 1} others ` : '';
+
   if (targetType === TargetType[TargetType.POST]) {
     if (actionType === ActionType[ActionType.COMMENT]) {
       message += 'commented on your post';
