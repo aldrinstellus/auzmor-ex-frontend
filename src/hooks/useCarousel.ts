@@ -27,7 +27,6 @@ const useCarousel = (
   };
 
   const handleKeyArrowBind = (event: any) => {
-    console.log({ event });
     if (event?.key === 'ArrowLeft') {
       prevSlide();
     } else if (event?.key === 'ArrowRight') {
