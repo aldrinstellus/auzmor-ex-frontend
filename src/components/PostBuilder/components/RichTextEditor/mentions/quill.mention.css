@@ -1,11 +1,36 @@
 .ql-mention-list-container {
-  width: 270px;
+  width: 530px;
   border: 1px solid #f0f0f0;
   border-radius: 4px;
-  background-color: #ffffff;
+  background-color: red;
   box-shadow: 0 2px 12px 0 rgba(30, 30, 30, 0.08);
   z-index: 9001;
   overflow: auto;
+}
+
+.user-container {
+  display: flex;
+  padding: 5px;
+}
+
+.user-avatar {
+  background-color: #f7f8fb;
+  font-weight: bold;
+  border-radius: 50px;
+  padding: 0px;
+  text-align: center;
+  width: 35px;
+  height: 35px;
+  margin-bottom: 10px;
+}
+
+.user-fullname {
+  margin-left: 10px;
+}
+
+.hashtag-container {
+  display: flex;
+  padding: 5px;
 }
 
 .ql-mention-loading {

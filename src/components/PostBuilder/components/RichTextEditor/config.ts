@@ -36,30 +36,24 @@ interface IHashtags {
 
 export const previewLinkRegex = /(http|https):\/\/[^\s]+/gi;
 
-// const mentionEntityFetch = async (character: string, searchTerm: string) => {
-//   let list;
-//   let hashtagsData;
-//   const { data: mentions } = await apiService.get('/users', {
-//     params: { q: searchTerm },
-//   });
-//   if (searchTerm) {
-//     const { data: hashtags } = await apiService.get('/hashtags', {
-//       params: {
-//         q: searchTerm,
-//       },
-//     });
-//     hashtagsData = hashtags;
-//   }
-//   if (character === '@') {
-//     list = mentions?.result?.data;
-//     return createMentionsList(list, character);
-//   } else if (character === '#') {
-//     list = hashtagsData?.result;
-//     return createHashtagsList(list, character);
-//   } else {
-//     return null;
-//   }
-// };
+const mentionEntityFetch = async (character: string, searchTerm: string) => {
+  if (character === '@') {
+    const { data: mentions } = await apiService.get('/users', {
+      q: searchTerm,
+    });
+    const list = mentions?.result?.data;
+    return createMentionsList(list, character);
+  } else if (character === '#') {
+    const { data: hashtags } = await apiService.get('/hashtags', {
+      q: searchTerm,
+    });
+    const demoHashtag = [{ id: 1, name: 'auzmor' }];
+    const list = hashtags?.result;
+    return createHashtagsList(demoHashtag, character);
+  } else {
+    return null;
+  }
+};
 
 export const mention = {
   allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
@@ -72,10 +66,9 @@ export const mention = {
     ) => void,
     mentionChar: string,
   ) => {
-    // mentionEntityFetch(mentionChar, searchTerm).then((listItem: any) => {
-    //   renderItem(listItem, searchTerm);
-    // });
-    return;
+    mentionEntityFetch(mentionChar, searchTerm).then((listItem: any) => {
+      renderItem(listItem, searchTerm);
+    });
   },
   dataAttributes: ['id'],
   showDenotationChar: false,
@@ -84,21 +77,21 @@ export const mention = {
   renderLoading: () => {},
   renderItem: (item: any, searchItem: any) => {
     if (item?.charDenotation === '@') {
-      return `<div>
-      <div style="display:flex; padding:5px">
-        <div style="background-color:#F7F8FB; font-weight:bold; border-radius:50px; padding:0px; text-align:center; width:35px; height:35px; margin-button:10px">${
+      return `
+      <div class="user-container">
+        <div class="user-avatar">${
           item?.firstName?.charAt(0) + item?.lastName?.charAt(0) ||
           item?.fullName?.charAt(0).toUpperCase()
         }</div>
-        <div style="margin-left:10px">${item.fullName}<div>
+        <div class="user-fullname">${item.fullName}<div>
       </div>
-    </div>`;
+    `;
     } else if (item.charDenotation === '#') {
-      return `<div>
-      <div style="display:flex; padding:5px">
+      return `
+      <div class="hashtag-container">
          <div>${item?.name}</div>
       </div>
-      <div>`;
+      `;
     } else {
       return null;
     }
