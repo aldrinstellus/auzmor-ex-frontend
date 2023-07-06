@@ -20,6 +20,9 @@ import { slideInAndOutTop } from 'utils/react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import Button, { Size, Variant } from 'components/Button';
 import { IComment } from 'components/Comments';
+import MediaPreview, { Mode } from 'components/MediaPreview';
+import { IMedia } from 'contexts/CreatePostContext';
+import { EntityType, useUpload } from 'queries/files';
 
 export enum PostCommentMode {
   Create = 'CREATE',
@@ -33,6 +36,10 @@ interface CommentFormProps {
   mode?: PostCommentMode;
   setEditComment?: (edit: boolean) => void;
   commentData?: IComment;
+  inputRef?: React.RefObject<HTMLInputElement> | null;
+  media?: IMedia[];
+  removeMedia?: () => void;
+  files?: File[];
 }
 
 export const CommentsRTE: React.FC<CommentFormProps> = ({
@@ -42,6 +49,10 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
   mode = PostCommentMode.Create,
   commentData,
   setEditComment,
+  inputRef = null,
+  media = [],
+  removeMedia = () => {},
+  files = [],
 }) => {
   const {
     comment,
@@ -51,6 +62,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
   const { feed, updateFeed } = useFeedStore();
   const queryClient = useQueryClient();
   const quillRef = useRef<ReactQuill>(null);
+  const {uploadMedia} = useUpload();
 
   const createCommentMutation = useMutation({
     mutationKey: ['create-comment'],
@@ -60,6 +72,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
     },
     onSuccess: async (data: any, variables, context) => {
       quillRef.current?.setEditorContents(quillRef.current?.getEditor(), '');
+      removeMedia();
       await queryClient.setQueryData(
         ['comments', { entityId, entityType, limit: 4 }],
         (oldData) =>
@@ -156,7 +169,12 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
     },
   });
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    let fileIds:string[] = [];
+    if(files.length){
+      const uploadedMedia = await uploadMedia(files, EntityType.Comment);
+      fileIds = uploadedMedia.map((media: IMedia) => media.id)
+    }
     if (mode === PostCommentMode.Create) {
       const commentData = {
         text:
@@ -177,6 +195,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
         content: commentData,
         hashtags: [],
         mentions: [],
+        files: fileIds
       };
       createCommentMutation.mutate(data);
     } else if (mode === PostCommentMode.Edit) {
@@ -206,7 +225,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
 
   return (
     <div className={`flex flex-row ${className} `}>
-      <div className="flex items-center py-3 gap-2 border border-neutral-200 rounded-19xl border-solid w-full">
+      <div className="flex flex-col items-center py-3 gap-2 border border-neutral-200 rounded-19xl border-solid w-full">
         <RichTextEditor
           toolbarId={`toolbar-${entityId}`}
           defaultValue={commentData?.content?.editor}
@@ -231,6 +250,13 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
                   />
                 )}
               </div>
+              {mode !== PostCommentMode.Edit && <IconButton icon={'imageOutline'}
+                className="flex mx-0 !p-0 !bg-inherit disabled:bg-inherit disabled:cursor-auto "
+                size={SizeVariant.Large}
+                variant={IconVariant.Primary}
+                dataTestId="postcomment-mediacta"
+                onClick={() => inputRef && inputRef?.current?.click()}
+                fill={twConfig.theme.colors.primary['500']} />}
               <button className="ql-emoji" />
               <IconButton
                 icon={'send'}
@@ -246,6 +272,8 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
             </div>
           )}
         />
+        {media.length > 0 && <div className='w-full flex justify-start pl-6'><MediaPreview className='w-64 h-32 overflow-hidden rounded-9xl' media={media} mode={Mode.Edit} showAddMediaButton={false} showEditButton={false} onCloseButtonClick={removeMedia}/></div>}
+        {commentData && commentData?.files.length > 0 && <div className='w-full flex justify-start pl-6 pointer-events-none opacity-50'><MediaPreview className='w-64 h-32 overflow-hidden rounded-9xl' media={commentData.files} showAddMediaButton={false} showEditButton={false}/></div>}
       </div>
     </div>
   );

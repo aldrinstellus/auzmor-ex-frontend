@@ -1,5 +1,5 @@
 /* Comment RTE - Post Level Comment Editor */
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Comment } from './components/Comment';
 import { useInfiniteComments } from 'queries/comments';
 import { DeltaStatic } from 'quill';
@@ -13,6 +13,15 @@ import LoadMore from './components/LoadMore';
 import CommentSkeleton from './components/CommentSkeleton';
 import { CommentsRTE } from './components/CommentsRTE';
 import Divider from 'components/Divider';
+import { IMG_FILE_SIZE_LIMIT, IMedia, IMediaValidationError, MediaValidationError } from 'contexts/CreatePostContext';
+import { getMediaObj } from 'utils/misc';
+
+export const validImageTypesForComments = [
+  'image/png',
+  'image/jpg',
+  'image/jpeg',
+  'image/gif',
+];
 
 interface CommentsProps {
   entityId: string;
@@ -38,11 +47,15 @@ export interface IComment {
   reactionsCount: IReactionsCount;
   repliesCount: number;
   comment: IComment;
+  files: IMedia[];
 }
 
 const Comments: React.FC<CommentsProps> = ({ entityId }) => {
   const { user } = useAuth();
-
+  const inputImgRef = useRef<HTMLInputElement>(null);
+  const [mediaValidationErrors, setMediaValidationErrors] = useState<IMediaValidationError[]>([]);
+  const [media, setMedia] = useState<IMedia[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const {
     data,
     isLoading,
@@ -66,6 +79,11 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
     });
   }) as { id: string }[];
 
+  const setUploads = (uploads: File[]) => {
+    setMedia([...getMediaObj(uploads)]);
+    setFiles([...uploads]);
+  };
+
   return (
     <div>
       <div className="flex flex-row items-center justify-between p-0">
@@ -76,7 +94,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
             image={user?.profileImage}
           />
         </div>
-        <CommentsRTE className="w-full" entityId={entityId} entityType="post" />
+        <CommentsRTE className="w-full" entityId={entityId} entityType="post" inputRef={inputImgRef} media={media} removeMedia={() => {setMedia([]); setFiles([]); setMediaValidationErrors([])}} files={files}/>
       </div>
       <Divider className="mt-4" />
       {isLoading ? (
@@ -104,6 +122,59 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
           </div>
         )
       )}
+      <input
+        type="file"
+        className="hidden"
+        ref={inputImgRef}
+        accept={validImageTypesForComments.join(',')}
+        onChange={(e) => {
+          console.log(e)
+          const mediaErrors = [...mediaValidationErrors];
+          if (e.target.files?.length) {
+            setUploads(
+              Array.prototype.slice
+                .call(e.target.files)
+                .filter((eachFile: File) => {
+                  if (
+                    !!![...validImageTypesForComments].includes(
+                      eachFile.type,
+                    )
+                  ) {
+                    mediaErrors.push({
+                      errorMsg: `File (${eachFile.name}) type not supported. Upload a supported file content`,
+                      errorType: MediaValidationError.FileTypeNotSupported,
+                      fileName: eachFile.name,
+                    });
+                    return false;
+                  }
+                  if (eachFile.type.match('image')) {
+                    if (eachFile.size > IMG_FILE_SIZE_LIMIT * 1024 * 1024) {
+                      mediaErrors.push({
+                        errorType: MediaValidationError.ImageSizeExceed,
+                        errorMsg: `The file “${eachFile.name}” you are trying to upload exceeds the 5MB attachment limit. Try uploading a smaller file`,
+                        fileName: eachFile.name,
+                      });
+                      return false;
+                    }
+                    return true;
+                  }
+                })
+                .map(
+                  (eachFile: File) =>
+                    new File(
+                      [eachFile],
+                      `id-${Math.random().toString(16).slice(2)}-${
+                        eachFile.name
+                      }`,
+                      { type: eachFile.type },
+                    ),
+                ),
+            );
+            setMediaValidationErrors([...mediaErrors]);
+          }
+        }}
+        data-testid="comment-uploadphoto"
+      />
     </div>
   );
 };
