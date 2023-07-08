@@ -19,10 +19,10 @@ import {
   IMedia,
 } from 'contexts/CreatePostContext';
 import { PostBuilderMode } from '..';
-import { EntityType, useUpload } from 'queries/files';
+import {EntityType} from 'queries/files';
+import { useUpload, UploadStatus } from 'hooks/useUpload';
 import { previewLinkRegex } from 'components/RichTextEditor/config';
 import EditMedia from './EditMedia';
-import { UploadStatus } from 'queries/files';
 import { IMenuItem } from 'components/PopupMenu';
 import Icon from 'components/Icon';
 import { hideEmojiPalette, twConfig } from 'utils/misc';
@@ -43,16 +43,18 @@ export interface IPostMenu {
 }
 
 interface ICreatePostModal {
-  showModal: boolean;
-  setShowModal: (flag: boolean) => void;
+  open: boolean;
+  openModal: () => void;
+  closeModal: () => void;
   data?: IPost;
   mode: PostBuilderMode;
   customActiveFlow?: CreatePostFlow;
 }
 
 const CreatePostModal: React.FC<ICreatePostModal> = ({
-  showModal,
-  setShowModal,
+  open,
+  openModal,
+  closeModal,
   data,
   mode,
   customActiveFlow = CreatePostFlow.CreatePost,
@@ -125,7 +127,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         }),
       );
       clearPostContext();
-      setShowModal(false);
+      closeModal();
       await queryClient.invalidateQueries(['announcements-widget']);
     },
   });
@@ -147,7 +149,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           ],
         } as IPost);
         clearPostContext();
-        setShowModal(false);
+        closeModal();
         return { previousData };
       }
     },
@@ -326,7 +328,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
   return (
     <>
       <Modal
-        open={showModal}
+        open={open}
         closeModal={() => {
           clearPostContext();
         }}
@@ -339,7 +341,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
                 return null;
               }
               hideEmojiPalette();
-              return setShowModal(false);
+              return closeModal();
             }}
             handleSubmitPost={handleSubmitPost}
             isLoading={loading}
@@ -350,7 +352,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           <CreateAnnouncement
             closeModal={() => {
               clearPostContext();
-              setShowModal(false);
+              closeModal();
             }}
             mode={
               customActiveFlow === CreatePostFlow.CreateAnnouncement
@@ -364,7 +366,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           <EditMedia
             closeModal={() => {
               clearPostContext();
-              setShowModal(false);
+              closeModal();
             }}
           />
         )}
