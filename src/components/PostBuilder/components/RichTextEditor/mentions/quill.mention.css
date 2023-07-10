@@ -8,6 +8,12 @@
   overflow: auto;
 }
 
+/* mention denotation char class*/
+
+/* .ql-mention-denotation-char {
+  display: none;
+} */
+
 .user-container {
   display: flex;
   padding: 5px;

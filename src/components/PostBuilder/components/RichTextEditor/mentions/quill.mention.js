@@ -22,9 +22,7 @@ class Mention {
     // more recent execution.  This token will be null unless a source call
     // is in progress.
     this.existingSourceExecutionToken = null;
-
     this.quill = quill;
-
     this.options = {
       source: null,
       renderItem(item) {

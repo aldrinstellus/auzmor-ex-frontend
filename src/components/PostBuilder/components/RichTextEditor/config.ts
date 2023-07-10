@@ -47,8 +47,14 @@ const mentionEntityFetch = async (character: string, searchTerm: string) => {
     const { data: hashtags } = await apiService.get('/hashtags', {
       q: searchTerm,
     });
+    const list = [
+      { id: 1, name: 'office' },
+      { id: 2, name: 'auzmor' },
+      { id: 3, name: 'hire' },
+      { id: 2, name: 'learn' },
+    ];
     const hashtagList = hashtags?.result;
-    return createHashtagsList(hashtagList, character);
+    return createHashtagsList(list, character);
   } else {
     return null;
   }
@@ -70,9 +76,9 @@ export const mention = {
     });
   },
   dataAttributes: ['id'],
-  showDenotationChar: false,
-  onOpen: () => {}, // Callback when mention dropdown is open.
-  onclose: () => {}, // Callback when mention dropdown is closed.
+  showDenotationChar: true,
+  onOpen: () => {},
+  onclose: () => {},
   renderLoading: () => {},
   renderItem: (item: any, searchItem: any) => {
     if (item?.charDenotation === '@') {
