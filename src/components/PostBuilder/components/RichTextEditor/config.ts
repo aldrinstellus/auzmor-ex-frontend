@@ -83,14 +83,28 @@ export const mention = {
   renderItem: (item: any, searchItem: any) => {
     if (item?.charDenotation === '@') {
       return `
-      <div class="user-container">
-        <div class="user-avatar">${
-          item?.firstName?.charAt(0) + item?.lastName?.charAt(0) ||
-          item?.fullName?.charAt(0).toUpperCase()
-        }</div>
-        <div class="user-fullname">${item.fullName}<div>
-      </div>
-    `;
+              <div class="user-container">
+                    <div class="user-avatar">
+                          ${
+                            item?.profileImage?.original
+                              ? `<img 
+                                  src=${item?.profileImage?.original} 
+                                  style="width:32px;height:32px;border-radius: 100px;
+                            "/>`
+                              : `<div class="user-avatar-name"> 
+                                    ${
+                                      item?.firstName?.charAt(0) +
+                                        item?.lastName?.charAt(0) ||
+                                      item?.fullName?.charAt(0).toUpperCase()
+                                    }
+                                </div>`
+                          }
+                    </div>
+                    <div class="user-details">
+                      <span>${item.fullName}</span>
+                    <div>
+              </div>
+            `;
     } else if (item.charDenotation === '#') {
       return `
             <div class="hashtag-container">
