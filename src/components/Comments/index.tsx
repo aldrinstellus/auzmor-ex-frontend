@@ -88,7 +88,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
             image={user?.profileImage}
           />
         </div>
-        <CommentsRTE className="w-full" entityId={entityId} entityType="post" inputRef={inputRef} media={media} removeMedia={() => {setMedia([]); setFiles([]); setMediaValidationErrors([])}} files={files} mediaValidationErrors={mediaValidationErrors} setIsCreateCommentLoading={setIsCreateCommentLoading}/>
+        <CommentsRTE className="w-full" entityId={entityId} entityType="post" inputRef={inputRef} media={media} removeMedia={() => {setMedia([]); setFiles([]); setMediaValidationErrors([])}} files={files} mediaValidationErrors={mediaValidationErrors} setIsCreateCommentLoading={setIsCreateCommentLoading} setMediaValidationErrors={setMediaValidationErrors}/>
       </div>
       <Divider className="mt-4" />
       {isLoading ? (
@@ -124,7 +124,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
         accept={validImageTypesForComments.join(',')}
         onChange={(e) => {
           console.log(e)
-          const mediaErrors = [...mediaValidationErrors];
+          const mediaErrors:IMediaValidationError[] = [];
           if (e.target.files?.length) {
             setUploads(
               Array.prototype.slice

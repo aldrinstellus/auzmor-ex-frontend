@@ -21,9 +21,10 @@ import SuccessToast from 'components/Toast/variants/SuccessToast';
 import Button, { Size, Variant } from 'components/Button';
 import { IComment } from 'components/Comments';
 import MediaPreview, { Mode } from 'components/MediaPreview';
-import { IMedia, IMediaValidationError } from 'contexts/CreatePostContext';
+import { IMedia, IMediaValidationError, MediaValidationError } from 'contexts/CreatePostContext';
 import { EntityType } from 'queries/files';
 import {useUpload} from 'hooks/useUpload';
+import Banner, {Variant as BannerVariant} from 'components/Banner';
 
 export enum PostCommentMode {
   Create = 'CREATE',
@@ -43,6 +44,7 @@ interface CommentFormProps {
   files?: File[];
   mediaValidationErrors?: IMediaValidationError[];
   setIsCreateCommentLoading?: (state: boolean) => void;
+  setMediaValidationErrors?: (errors: IMediaValidationError[]) => void;
 }
 
 interface IUpdateCommentPayload {
@@ -66,7 +68,8 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
   removeMedia = () => {},
   files = [],
   mediaValidationErrors = [],
-  setIsCreateCommentLoading = () => {}
+  setIsCreateCommentLoading = () => {},
+  setMediaValidationErrors = () => {}
 }) => {
   const {
     comment,
@@ -255,6 +258,19 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
     }
   };
 
+  const getDataTestIdForErrors = (errorType: MediaValidationError) => {
+    switch (errorType) {
+      case MediaValidationError.MediaLengthExceed:
+        return 'createpost-maxnumberuploadlimitreached-error';
+      case MediaValidationError.ImageSizeExceed:
+        return 'createpost-imageuploadlimitreached-error';
+      case MediaValidationError.VideoSizeExceed:
+        return 'createpost-videouploadlimitreached-error';
+      case MediaValidationError.FileTypeNotSupported:
+        return 'createpost-filetypenotsupported-error';
+    }
+  };
+
   return (
     <div className={`flex flex-row ${className} `}>
       <div className="flex flex-col items-center py-3 gap-2 border border-neutral-200 rounded-19xl border-solid w-full">
@@ -306,7 +322,23 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
         />
         {media.length > 0 && <div className='w-full flex justify-start pl-6'><MediaPreview className='w-64 h-32 overflow-hidden rounded-9xl' media={media} mode={Mode.Edit} showAddMediaButton={false} showEditButton={false} onCloseButtonClick={removeMedia}/></div>}
         {commentData && commentData?.files.length > 0 && <div className='w-full flex justify-start pl-6 pointer-events-none opacity-50'><MediaPreview className='w-64 h-32 overflow-hidden rounded-9xl' media={commentData.files} showAddMediaButton={false} showEditButton={false}/></div>}
-        {mediaValidationErrors.map((error: IMediaValidationError, index: number) => <div key={index} className="text-red-500 flex justify-start w-full pl-6"><div className='mr-2'><Icon name='infoCircle' stroke={twConfig.theme.colors.red['500']} /></div><div className='truncate'>{error.errorMsg}</div></div>)}
+        {mediaValidationErrors.map((error, index) => (
+          <div className="px-4 mb-1 w-full" key={index}>
+            <Banner
+              title={error.errorMsg}
+              variant={BannerVariant.Error}
+              action={<></>}
+              onClose={() =>
+                setMediaValidationErrors([
+                  ...mediaValidationErrors.filter(
+                    (mediaError) => mediaError.errorType !== error.errorType,
+                  ),
+                ])
+              }
+              dataTestId={getDataTestIdForErrors(error.errorType)}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

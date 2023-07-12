@@ -67,7 +67,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
                 image={user?.profileImage}
               />
             </div>
-            <CommentsRTE className="w-full py-1" entityId={entityId} entityType={EntityType.Comment.toLocaleLowerCase()} inputRef={inputRef} media={media} removeMedia={() => {setMedia([]); setFiles([]); setMediaValidationErrors([])}} files={files} mediaValidationErrors={mediaValidationErrors} setIsCreateCommentLoading={setIsCreateCommentLoading}/>
+            <CommentsRTE className="w-full py-1" entityId={entityId} entityType={EntityType.Comment.toLocaleLowerCase()} inputRef={inputRef} media={media} removeMedia={() => {setMedia([]); setFiles([]); setMediaValidationErrors([])}} files={files} mediaValidationErrors={mediaValidationErrors} setIsCreateCommentLoading={setIsCreateCommentLoading} setMediaValidationErrors={setMediaValidationErrors}/>
           </div>
           {replyIds && replyIds.length > 0 && (
             <div>
@@ -99,7 +99,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
         ref={inputRef}
         accept={validImageTypesForComments.join(',')}
         onChange={(e) => {
-          const mediaErrors = [...mediaValidationErrors];
+          const mediaErrors: IMediaValidationError[] = [];
           if (e.target.files?.length) {
             setUploads(
               Array.prototype.slice
