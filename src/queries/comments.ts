@@ -20,7 +20,7 @@ export interface IComments {
   limit?: number;
   page?: number;
   content?: IContent;
-  hashtags?: Array<object>;
+  hashtags?: string[];
   mentions?: Array<object>;
 }
 

@@ -47,8 +47,14 @@ const mentionEntityFetch = async (character: string, searchTerm: string) => {
     const { data: hashtags } = await apiService.get('/hashtags', {
       q: searchTerm,
     });
+    const list = [
+      { id: 1, name: 'office' },
+      { id: 2, name: 'auzmor' },
+      { id: 3, name: 'hire' },
+      { id: 2, name: 'learn' },
+    ];
     const hashtagList = hashtags?.result;
-    return createHashtagsList(hashtagList, character);
+    return createHashtagsList(list, character);
   } else {
     return null;
   }
@@ -70,27 +76,41 @@ export const mention = {
     });
   },
   dataAttributes: ['id'],
-  showDenotationChar: false,
+  showDenotationChar: true,
   onOpen: () => {}, // Callback when mention dropdown is open.
   onclose: () => {}, // Callback when mention dropdown is closed.
   renderLoading: () => {},
   renderItem: (item: any, searchItem: any) => {
     if (item?.charDenotation === '@') {
-      return `<div>
-      <div style="display:flex; padding:5px">
-        <div style="background-color:#F7F8FB; font-weight:bold; border-radius:50px; padding:0px; text-align:center; width:35px; height:35px; margin-button:10px">${
-          item?.firstName?.charAt(0) + item?.lastName?.charAt(0) ||
-          item?.fullName?.charAt(0).toUpperCase()
-        }</div>
-        <div style="margin-left:10px">${item.fullName}<div>
-      </div>
-    </div>`;
+      return `
+              <div class="user-container">
+                    <div class="user-avatar">
+                          ${
+                            item?.profileImage?.original
+                              ? `<img 
+                                  src=${item?.profileImage?.original} 
+                                  style="width:32px;height:32px;border-radius: 100px;
+                            "/>`
+                              : `<div class="user-avatar-name"> 
+                                    ${
+                                      item?.firstName?.charAt(0) +
+                                        item?.lastName?.charAt(0) ||
+                                      item?.fullName?.charAt(0).toUpperCase()
+                                    }
+                                </div>`
+                          }
+                    </div>
+                    <div class="user-details">
+                      <span>${item.fullName}</span>
+                    <div>
+              </div>
+            `;
     } else if (item.charDenotation === '#') {
-      return `<div>
-      <div style="display:flex; padding:5px">
-         <div>${item?.name}</div>
-      </div>
-      <div>`;
+      return `
+            <div class="hashtag-container">
+              <div>${item?.name}</div>
+            </div>
+      `;
     } else {
       return null;
     }
