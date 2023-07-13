@@ -134,7 +134,8 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       );
       clearPostContext();
       closeModal();
-      await queryClient.invalidateQueries(['announcements-widget']);
+      await queryClient.invalidateQueries(['feed-announcements-widget']);
+      await queryClient.invalidateQueries(['post-announcements-widget']);
     },
   });
 
@@ -211,7 +212,8 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           transition: slideInAndOutTop,
         },
       );
-      await queryClient.invalidateQueries(['announcements-widget']);
+      await queryClient.invalidateQueries(['feed-announcements-widget']);
+      await queryClient.invalidateQueries(['post-announcements-widget']);
     },
   });
 

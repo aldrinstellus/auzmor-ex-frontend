@@ -3,7 +3,7 @@ import IconButton, {
   Variant as IconVariant,
   Size as SizeVariant,
 } from 'components/IconButton';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { createReaction, deleteReaction } from 'queries/reaction';
 import clsx from 'clsx';
 import { useFeedStore } from 'stores/feedStore';
@@ -58,7 +58,6 @@ const Likes: React.FC<LikesProps> = ({
   entityId,
   entityType,
   reactionId,
-  queryKey,
   dataTestIdPrefix,
 }) => {
   const { feed, updateFeed } = useFeedStore();
@@ -112,9 +111,11 @@ const Likes: React.FC<LikesProps> = ({
               type: data.type,
             }),
               (draft.reactionsCount =
-                draft.reactionsCount && Object.keys(draft.reactionsCount) 
-                  ? Object.keys(draft.myReaction) // if reactions count exist
-                    ? {// if reactions count and my reaction exist
+                draft.reactionsCount && Object.keys(draft.reactionsCount).length > 0
+                  ? Object.keys(draft.myReaction).length > 0 // if reactions count exist
+                    ? {
+                      ...draft.reactionsCount,
+                        // if reactions count and my reaction exist
                         [draft.myReaction.reaction as string]:
                           draft.reactionsCount[
                             draft.myReaction.reaction as string
@@ -122,11 +123,16 @@ const Likes: React.FC<LikesProps> = ({
                         [variables.reaction as string]: draft.reactionsCount[
                           variables.reaction as string
                         ]
-                          ?  variables.reaction === draft.myReaction.reaction ? draft.reactionsCount[variables.reaction as string] :draft.reactionsCount[variables.reaction as string] +
-                            1
+                          ? variables.reaction === draft.myReaction.reaction
+                            ? draft.reactionsCount[variables.reaction as string]
+                            : draft.reactionsCount[
+                                variables.reaction as string
+                              ] + 1
                           : 1,
                       }
-                    : { // if reactions count exist but my reaction does not exist
+                    : {
+                      ...draft.reactionsCount,
+                        // if reactions count exist but my reaction does not exist
                         [variables.reaction as string]: draft.reactionsCount[
                           variables.reaction as string
                         ]
@@ -148,21 +154,26 @@ const Likes: React.FC<LikesProps> = ({
               type: data.type,
             }),
               (draft.reactionsCount =
-                draft.reactionsCount && Object.keys(draft.reactionsCount)
-                  ? Object.keys(draft.myReaction)
+                draft.reactionsCount && Object.keys(draft.reactionsCount).length > 0
+                  ? Object.keys(draft.myReaction).length > 0
                     ? {
-                      [draft.myReaction.reaction as string]:
-                        draft.reactionsCount[
-                          draft.myReaction.reaction as string
-                        ] - 1,
-                      [variables.reaction as string]: draft.reactionsCount[
-                        variables.reaction as string
-                      ]
-                        ?  variables.reaction === draft.myReaction.reaction ? draft.reactionsCount[variables.reaction as string] :draft.reactionsCount[variables.reaction as string] +
-                          1
-                        : 1,
-                    }
+                        ...draft.reactionsCount,
+                        [draft.myReaction.reaction as string]:
+                          draft.reactionsCount[
+                            draft.myReaction.reaction as string
+                          ] - 1,
+                        [variables.reaction as string]: draft.reactionsCount[
+                          variables.reaction as string
+                        ]
+                          ? variables.reaction === draft.myReaction.reaction
+                            ? draft.reactionsCount[variables.reaction as string]
+                            : draft.reactionsCount[
+                                variables.reaction as string
+                              ] + 1
+                          : 1,
+                      }
                     : {
+                        ...draft.reactionsCount,
                         [variables.reaction as string]: draft.reactionsCount[
                           variables.reaction as string
                         ]
@@ -245,7 +256,13 @@ const Likes: React.FC<LikesProps> = ({
     }
   };
 
-  const Reactions = ({ name, icon, type, setShowTooltip }: IReaction) => {
+  const Reactions = ({
+    name,
+    icon,
+    type,
+    setShowTooltip,
+    dataTestId,
+  }: IReaction) => {
     return (
       <div className=" space-x-4 mt-1 relative [&_span]:hover:visible">
         <span className="invisible absolute rounded-lg bg-black text-white py-1 px-2 -mt-10">
@@ -260,6 +277,7 @@ const Likes: React.FC<LikesProps> = ({
           }}
           variant={IconVariant.Primary}
           size={SizeVariant.Large}
+          dataTestId={dataTestId}
         />
       </div>
     );
@@ -278,6 +296,7 @@ const Likes: React.FC<LikesProps> = ({
         >
           <div
             className={`h-8 flex flex-row items-center bg-white rounded-lg shadow-md`}
+            data-testid={dataTestIdPrefix}
           >
             <Reactions
               name="Like"

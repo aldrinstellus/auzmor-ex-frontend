@@ -93,6 +93,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
                     <div className="flex flex-row mr-2">
                       {Object.keys(post.reactionsCount)
                         .slice(0, 3)
+                        .filter((key) => !!post.reactionsCount[key] && post.reactionsCount[key] > 0)
                         .map((key, i) => (
                           <div
                             className={` ${i > 0 ? '-ml-2 z-1' : ''}  `}
@@ -161,7 +162,6 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
                 }}
                 data-testid="feed-post-comment"
               >
-                {/* comments..... */}
                 <Icon name="comment" size={16} />
                 <div className="text-xs font-normal text-neutral-500 ml-1.5">
                   Comment
