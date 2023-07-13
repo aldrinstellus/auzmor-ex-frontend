@@ -223,11 +223,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
       quillHashtagConversion(commentContent?.editor)?.ops?.forEach(
         (op: Record<string, any>) => {
           if (op?.insert && op?.insert.mention) {
-            mentionList.push({
-              entityId: op.insert.mention.id,
-              name: op.insert.mention.value,
-              entityType: 'user',
-            });
+            mentionList.push(op.insert.mention.id);
           } else if (op.insert && op?.insert?.hashtag) {
             hashtagList.push(op?.insert?.hashtag?.value);
           }
@@ -259,11 +255,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
       quillHashtagConversion(commentContent?.editor)?.ops?.forEach(
         (op: Record<string, any>) => {
           if (op?.insert && op?.insert.mention) {
-            mentionList.push({
-              entityId: op.insert.mention.id,
-              name: op.insert.mention.value,
-              entityType: 'user',
-            });
+            mentionList.push(op.insert.mention.id);
           } else if (op.insert && op?.insert?.hashtag) {
             hashtagList.push(op?.insert?.hashtag?.value);
           }
