@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PostBuilder from 'components/PostBuilder';
 import UserCard from 'components/UserWidget';
 import AnnouncementCard from 'components/AnnouncementWidget';
@@ -21,6 +21,8 @@ import useScrollTop from 'hooks/useScrollTop';
 import SkeletonLoader from './components/SkeletonLoader';
 import { useFeedStore } from 'stores/feedStore';
 import useModal from 'hooks/useModal';
+import { useNavigate } from 'react-router-dom';
+import { CreatePostContext } from 'contexts/CreatePostContext';
 
 interface IFeedProps {}
 
@@ -47,11 +49,21 @@ export interface IMyReactions {
 
 const Feed: React.FC<IFeedProps> = () => {
   useScrollTop();
+  const { ref, inView } = useInView();
+  const navigate = useNavigate();
+  const { feedHashtag } = useContext(CreatePostContext);
   const [open, openModal, closeModal] = useModal(undefined, false);
   const [appliedFeedFilters, setAppliedFeedFilters] = useState<IPostFilters>({
     [PostFilterKeys.PostType]: [],
+    hashtags: [feedHashtag],
   });
-  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    navigate({
+      pathname: '/feed',
+      search: feedHashtag ? `?hashtag=${feedHashtag}` : '',
+    });
+  }, [feedHashtag]);
 
   const { feed } = useFeedStore();
 

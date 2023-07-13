@@ -8,6 +8,7 @@ import {
   ITransformedOp,
   TransformedQuillDelta,
 } from 'components/PostBuilder/components/RichTextEditor/mentions/types';
+import { useSearchParams } from 'react-router-dom';
 
 export const twConfig: any = resolveConfig(tailwindConfig);
 
@@ -206,4 +207,10 @@ export const quillHashtagConversion = (
     transformedQuillDelta.ops.push(transformedOp);
   });
   return transformedQuillDelta;
+};
+
+// get initial hashtag
+export const getInitialHashtag = () => {
+  const [searchParams] = useSearchParams();
+  return searchParams.get('hashtag') || '';
 };
