@@ -21,8 +21,7 @@ import useScrollTop from 'hooks/useScrollTop';
 import SkeletonLoader from './components/SkeletonLoader';
 import { useFeedStore } from 'stores/feedStore';
 import useModal from 'hooks/useModal';
-import { useNavigate } from 'react-router-dom';
-import { CreatePostContext } from 'contexts/CreatePostContext';
+import { useSearchParams } from 'react-router-dom';
 import HashtagIcon from 'images/hashtag.svg';
 interface IFeedProps {}
 
@@ -49,23 +48,20 @@ export interface IMyReactions {
 
 const Feed: React.FC<IFeedProps> = () => {
   useScrollTop();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const hashtag = searchParams.get('hashtag') || '';
   const { ref, inView } = useInView();
-  const navigate = useNavigate();
-  const { feedHashtag } = useContext(CreatePostContext);
   const [open, openModal, closeModal] = useModal(undefined, false);
   const [appliedFeedFilters, setAppliedFeedFilters] = useState<IPostFilters>({
     [PostFilterKeys.PostType]: [],
-    hashtags: [feedHashtag],
   });
+  const { feed } = useFeedStore();
 
   useEffect(() => {
-    navigate({
-      pathname: '/feed',
-      search: feedHashtag ? `?hashtag=${feedHashtag}` : '',
-    });
-  }, [feedHashtag]);
-
-  const { feed } = useFeedStore();
+    if (hashtag) {
+      setAppliedFeedFilters({ hashtags: [hashtag] });
+    }
+  }, [hashtag]);
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteFeed(appliedFeedFilters);
@@ -118,19 +114,30 @@ const Feed: React.FC<IFeedProps> = () => {
         </div>
         <div className="w-1/2">
           <div className="">
-            {feedHashtag ? (
+            {hashtag ? (
               <div className="bg-orange-50 shadow-md rounded-9xl h-24 px-6 py-4">
                 <div className="flex justify-between items-center">
                   <div className="gap-y-1">
                     <div className="flex gap-x-3 items-center">
-                      <Icon name="arrowLeft" fill="#171717" stroke="#171717" />
+                      <Icon
+                        name="arrowLeft"
+                        fill="#171717"
+                        stroke="#171717"
+                        onClick={() => {
+                          if (searchParams.has('hashtag')) {
+                            searchParams.delete('hashtag');
+                            setSearchParams(searchParams);
+                            setAppliedFeedFilters({ hashtags: [''] });
+                          }
+                        }}
+                      />
                       <div className="text-2xl font-bold text-neutral-900">
                         <span>#</span>
-                        {feedHashtag || 'office'}
+                        {hashtag}
                       </div>
                     </div>
                     <div className="text-base font-normal text-neutral-500">
-                      0 people are posting about this
+                      {hashtag && feedIds?.length} people are posting about this
                     </div>
                   </div>
                   <div>

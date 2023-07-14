@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { DeltaStatic } from 'quill';
-import { getBlobUrl, getInitialHashtag, getMediaObj } from 'utils/misc';
+import { getBlobUrl, getMediaObj } from 'utils/misc';
 
 export interface ICreatePostProviderProps {
   children?: ReactNode;
@@ -66,8 +66,6 @@ export interface ICreatePostContext {
   ) => void;
   mediaOpenIndex: number;
   setMediaOpenIndex: (index: number) => void;
-  feedHashtag: string;
-  setFeedHashtag: (hashtag: string) => void;
 }
 
 export enum MediaValidationError {
@@ -154,8 +152,6 @@ export const CreatePostContext = createContext<ICreatePostContext>({
   setMediaValidationErrors: () => {},
   mediaOpenIndex: 0,
   setMediaOpenIndex: () => {},
-  feedHashtag: '',
-  setFeedHashtag: () => {},
 });
 
 const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
@@ -186,7 +182,6 @@ const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
     IMediaValidationError[]
   >([]);
   const [mediaOpenIndex, setMediaOpenIndex] = useState<number>(-1);
-  const [feedHashtag, setFeedHashtag] = useState<string>(getInitialHashtag());
 
   const setUploads = (uploads: File[], isCoverImage?: boolean) => {
     if (!isCoverImage) {
@@ -384,8 +379,6 @@ const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
         setMediaValidationErrors,
         mediaOpenIndex,
         setMediaOpenIndex,
-        feedHashtag,
-        setFeedHashtag,
       }}
     >
       {children}

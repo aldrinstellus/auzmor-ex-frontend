@@ -28,7 +28,6 @@ const Mention: React.FC<MentionProps> = ({
   return (
     <Tooltip
       tooltipContent={
-        // isHovered &&
         <UserCard
           fullName={fullName}
           email={email}
@@ -38,6 +37,7 @@ const Mention: React.FC<MentionProps> = ({
       }
       tooltipId="user-mentions-card"
       variant={Variant.Light}
+      isOpen={isHovered}
     >
       <Link
         to={userId && userId !== user?.id ? '/users/' + userId : '/profile'}

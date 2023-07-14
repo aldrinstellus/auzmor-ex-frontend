@@ -16,6 +16,7 @@ export type TooltipProps = {
   className?: string;
   onClick?: MouseEventHandler<Element>;
   tooltipPosition?: PlacesType;
+  isOpen?: boolean;
 };
 
 const Tooltip = ({
@@ -26,6 +27,7 @@ const Tooltip = ({
   className = '',
   onClick = () => {},
   tooltipPosition = 'top',
+  isOpen = false,
 }: TooltipProps) => {
   const tooltipPlacement = useMemo(
     () =>
@@ -42,6 +44,7 @@ const Tooltip = ({
         react-tooltip-arrow
         anchorSelect=".my-anchor-element"
         clickable
+        isOpen={isOpen}
       >
         <div>{tooltipContent}</div>
       </ReactTooltip>

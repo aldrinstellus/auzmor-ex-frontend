@@ -208,9 +208,3 @@ export const quillHashtagConversion = (
   });
   return transformedQuillDelta;
 };
-
-// get initial hashtag
-export const getInitialHashtag = () => {
-  const [searchParams] = useSearchParams();
-  return searchParams.get('hashtag') || '';
-};

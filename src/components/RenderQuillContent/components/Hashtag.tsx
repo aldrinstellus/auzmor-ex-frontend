@@ -1,5 +1,5 @@
-import React, { ReactElement, useContext, useRef } from 'react';
-import { CreatePostContext } from 'contexts/CreatePostContext';
+import React, { ReactElement, useContext, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type HashtagProps = {
   value: string;
@@ -7,12 +7,18 @@ type HashtagProps = {
 
 const Hashtag: React.FC<HashtagProps> = ({ value }): ReactElement => {
   const hashtagRef = useRef<HTMLElement>(null);
-  const { setFeedHashtag } = useContext(CreatePostContext);
+  const navigate = useNavigate();
+
   return (
     <span
       onClick={() => {
         if (hashtagRef?.current) {
-          setFeedHashtag(hashtagRef?.current?.innerHTML);
+          navigate({
+            pathname: '/feed',
+            search: hashtagRef?.current?.innerHTML
+              ? `?hashtag=${hashtagRef?.current?.innerHTML}`
+              : '',
+          });
         }
       }}
       className="hashtag"
