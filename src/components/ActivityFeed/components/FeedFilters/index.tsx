@@ -2,7 +2,12 @@ import { Popover, Transition } from '@headlessui/react';
 import Button, { Variant } from 'components/Button';
 import Card from 'components/Card';
 import Icon from 'components/Icon';
-import { IPostFilters, PostFilterKeys, PostType } from 'queries/post';
+import {
+  ActivityType,
+  IPostFilters,
+  PostFilterKeys,
+  PostType,
+} from 'queries/post';
 import React, { ReactElement, useEffect, useState } from 'react';
 
 export enum FeedFilterContentType {
@@ -106,15 +111,13 @@ const feedFilterOptions: FeedFilterOption[] = [
     value: 'my-posts',
     filterKey: PostFilterKeys.MyPosts,
     type: FeedFilterContentType.Filter,
-    isDisabled: true,
     dataTestId: 'filterby-myposts',
   },
   {
     label: 'Mentions',
-    value: 'mentions',
+    value: ActivityType.Mentioned,
     filterKey: PostFilterKeys.MentionedInPost,
     type: FeedFilterContentType.Filter,
-    isDisabled: true,
     dataTestId: 'filterby-mentions',
   },
   {
@@ -156,9 +159,9 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
             option.value as PostType,
           );
         case PostFilterKeys.MyPosts:
-          feedFilters[PostFilterKeys.MyPosts];
+          return feedFilters[PostFilterKeys.MyPosts];
         case PostFilterKeys.MentionedInPost:
-          feedFilters[PostFilterKeys.MentionedInPost];
+          return feedFilters[PostFilterKeys.MentionedInPost];
         default:
           return false;
       }
