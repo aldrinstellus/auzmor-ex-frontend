@@ -3,7 +3,12 @@ import tailwindConfig from 'components/../../tailwind.config.js';
 import { IMedia } from 'contexts/CreatePostContext';
 import { validImageTypes } from 'queries/files';
 import { getItem, removeItem } from './persist';
-import { EMAIL_REGEX } from './constants';
+import { DeltaStatic } from 'quill';
+import {
+  ITransformedOp,
+  TransformedQuillDelta,
+} from 'components/PostBuilder/components/RichTextEditor/mentions/types';
+import { useSearchParams } from 'react-router-dom';
 
 export const twConfig: any = resolveConfig(tailwindConfig);
 
@@ -181,4 +186,25 @@ export const operatorXOR = (...args: boolean[]): boolean => {
     (accumulator, currentValue) => accumulator !== currentValue,
   );
   return value;
+};
+
+// Converting mention key to hashtag (if denotation is #)
+export const quillHashtagConversion = (
+  quillDelta: DeltaStatic | undefined,
+): Record<string, any> | undefined => {
+  const transformedQuillDelta: TransformedQuillDelta = { ops: [] };
+  quillDelta?.ops?.forEach((op: any) => {
+    const transformedOp: ITransformedOp = { ...op };
+    if (
+      typeof op.insert === 'object' &&
+      op.insert.mention &&
+      op.insert.mention.denotationChar === '#'
+    ) {
+      transformedOp.insert = { hashtag: { ...op.insert.mention } };
+    } else {
+      transformedOp.insert = op.insert;
+    }
+    transformedQuillDelta.ops.push(transformedOp);
+  });
+  return transformedQuillDelta;
 };

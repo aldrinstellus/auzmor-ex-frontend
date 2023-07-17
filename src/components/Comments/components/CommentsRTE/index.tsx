@@ -9,7 +9,7 @@ import { createComment, updateComment } from 'queries/comments';
 import ReactQuill from 'react-quill';
 import { DeltaStatic } from 'quill';
 import { toast } from 'react-toastify';
-import { twConfig } from 'utils/misc';
+import { quillHashtagConversion, twConfig } from 'utils/misc';
 import { produce } from 'immer';
 import { useCommentStore } from 'stores/commentStore';
 import { useFeedStore } from 'stores/feedStore';
@@ -28,6 +28,7 @@ import {
 } from 'contexts/CreatePostContext';
 import { EntityType } from 'queries/files';
 import { useUpload } from 'hooks/useUpload';
+import { IMention } from 'queries/post';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
 
 export enum PostCommentMode {
@@ -56,7 +57,7 @@ interface IUpdateCommentPayload {
   entityId: string;
   entityType: string;
   content: { text: string; html: string; editor: DeltaStatic };
-  hashtags: Array<any>;
+  hashtags: string[];
   mentions: Array<any>;
   files: string[];
 }
@@ -212,6 +213,13 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
   });
 
   const onSubmit = async () => {
+    let fileIds: string[] = [];
+    const mentionList: IMention[] = [];
+    const hashtagList: string[] = [];
+    if (files.length) {
+      const uploadedMedia = await uploadMedia(files, EntityType.Comment);
+      fileIds = uploadedMedia.map((media: IMedia) => media.id);
+    }
     if (mode === PostCommentMode.Create) {
       setIsCreateCommentLoading(true);
       let fileIds: string[] = [];
@@ -232,12 +240,21 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
           ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
           .getContents() as DeltaStatic,
       };
+      quillHashtagConversion(commentContent?.editor)?.ops?.forEach(
+        (op: Record<string, any>) => {
+          if (op?.insert && op?.insert.mention) {
+            mentionList.push(op.insert.mention.id);
+          } else if (op.insert && op?.insert?.hashtag) {
+            hashtagList.push(op?.insert?.hashtag?.value);
+          }
+        },
+      );
       const data = {
         entityId: entityId || '',
         entityType: entityType,
         content: commentContent,
-        hashtags: [],
-        mentions: [],
+        mentions: mentionList,
+        hashtags: hashtagList,
         files: fileIds,
       };
       createCommentMutation.mutate(data);
@@ -255,12 +272,21 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
           ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
           .getContents() as DeltaStatic,
       };
+      quillHashtagConversion(commentContent?.editor)?.ops?.forEach(
+        (op: Record<string, any>) => {
+          if (op?.insert && op?.insert.mention) {
+            mentionList.push(op.insert.mention.id);
+          } else if (op.insert && op?.insert?.hashtag) {
+            hashtagList.push(op?.insert?.hashtag?.value);
+          }
+        },
+      );
       const data: IUpdateCommentPayload = {
         entityId: entityId!,
         entityType: entityType,
         content: commentContent,
-        hashtags: [],
-        mentions: [],
+        mentions: mentionList,
+        hashtags: hashtagList,
         files: commentData?.files.map((media: IMedia) => media.id) || [],
       };
       updateCommentMutation.mutate(data);
@@ -287,12 +313,12 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
           toolbarId={`toolbar-${entityId}`}
           defaultValue={commentData?.content?.editor}
           placeholder="Leave a comment..."
-          className="max-h-18 w-[70%] max-w-[70%]"
+          className="max-h-18 min-w-[70%] relative"
           ref={quillRef}
           dataTestId="postcomment-textbox"
           renderToolbar={() => (
             <div
-              className="flex flex-row items-center z-10 -ml-32 absolute top-0 right-2 quill-toolbar"
+              className="flex flex-row items-center z-10 -ml-32 absolute top-0 right-2 quill-toolbar quill-toolbar-icons"
               id={`toolbar-${entityId}-toolbar`}
             >
               <div className="mr-6">
@@ -307,17 +333,15 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
                   />
                 )}
               </div>
-              {mode !== PostCommentMode.Edit && (
-                <IconButton
-                  icon={'imageOutline'}
-                  className="flex mx-0 !p-0 !bg-inherit disabled:bg-inherit disabled:cursor-auto "
-                  size={SizeVariant.Large}
-                  variant={IconVariant.Primary}
-                  dataTestId="postcomment-mediacta"
-                  onClick={() => inputRef && inputRef?.current?.click()}
-                  fill={twConfig.theme.colors.primary['500']}
-                />
-              )}
+              <IconButton
+                icon={'imageOutline'}
+                className="flex mx-0 !p-0 !bg-inherit disabled:bg-inherit disabled:cursor-auto "
+                size={SizeVariant.Large}
+                variant={IconVariant.Primary}
+                dataTestId="postcomment-mediacta"
+                onClick={() => inputRef && inputRef?.current?.click()}
+                fill={twConfig.theme.colors.primary['500']}
+              />
               <button className="ql-emoji" />
               <IconButton
                 icon={'send'}

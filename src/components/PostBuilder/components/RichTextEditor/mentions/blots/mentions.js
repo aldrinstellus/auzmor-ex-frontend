@@ -35,11 +35,13 @@ export class MentionBlot extends Embed {
     const node = super.create();
     const denotationChar = document.createElement('span');
     denotationChar.className = 'ql-mention-denotation-char';
+
     // Make change over the node like based on requirement
     // Example -> InActive people show differently with style
     if (data.status === 'DELETED') {
       node.className += ' inactive-mention';
     }
+
     // add on-click event listener to show the profile card
     // or else on-hover etc...
     node.addEventListener('mouseover', this.showUserProfileCard);
@@ -51,12 +53,10 @@ export class MentionBlot extends Embed {
 
   attach() {
     super.attach();
-
     if (!this.mounted) {
       this.mounted = true;
       this.clickHandler = this.getClickHandler();
       this.hoverHandler = this.getHoverHandler();
-
       this.domNode.addEventListener('click', this.clickHandler, false);
       this.domNode.addEventListener('mouseenter', this.hoverHandler, false);
     }
@@ -99,5 +99,5 @@ export class MentionBlot extends Embed {
 }
 
 MentionBlot.blotName = 'mention';
-MentionBlot.tagName = 'span'; // finally found the issue (main node of mention tag)
+MentionBlot.tagName = 'span';
 MentionBlot.className = 'mention';

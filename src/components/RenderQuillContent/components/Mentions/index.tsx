@@ -1,8 +1,10 @@
 import React, { ReactElement } from 'react';
-import MentionUserCard from './MentionUserCard';
 import useHover from 'hooks/useHover';
 import { Link } from 'react-router-dom';
 import useAuth from 'hooks/useAuth';
+import Tooltip, { Variant } from 'components/Tooltip';
+import './index.css';
+import UserCard from '../UserCard';
 
 type MentionProps = {
   value: string;
@@ -24,28 +26,31 @@ const Mention: React.FC<MentionProps> = ({
   const [isHovered, eventHandlers] = useHover();
   const { user } = useAuth();
   return (
-    <span className="relative">
-      {isHovered && (
-        <MentionUserCard
+    <Tooltip
+      tooltipContent={
+        <UserCard
           fullName={fullName}
           email={email}
           image={image}
           active={active}
-          className="absolute -top-[170px] z-10 shadow-lg transition-opacity duration-200 min-w-max border-transparent border-[12px]"
         />
-      )}
+      }
+      tooltipId="user-mentions-card"
+      variant={Variant.Light}
+      isOpen={isHovered}
+    >
       <Link
         to={userId && userId !== user?.id ? '/users/' + userId : '/profile'}
       >
         <span
-          {...eventHandlers}
           className="cursor-pointer mention"
           contentEditable="false"
+          {...eventHandlers}
         >
           {value}
         </span>
       </Link>
-    </span>
+    </Tooltip>
   );
 };
 

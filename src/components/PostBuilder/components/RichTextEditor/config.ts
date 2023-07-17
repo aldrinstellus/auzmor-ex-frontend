@@ -36,30 +36,23 @@ interface IHashtags {
 
 export const previewLinkRegex = /(http|https):\/\/[^\s]+/gi;
 
-// const mentionEntityFetch = async (character: string, searchTerm: string) => {
-//   let list;
-//   let hashtagsData;
-//   const { data: mentions } = await apiService.get('/users', {
-//     params: { q: searchTerm },
-//   });
-//   if (searchTerm) {
-//     const { data: hashtags } = await apiService.get('/hashtags', {
-//       params: {
-//         q: searchTerm,
-//       },
-//     });
-//     hashtagsData = hashtags;
-//   }
-//   if (character === '@') {
-//     list = mentions?.result?.data;
-//     return createMentionsList(list, character);
-//   } else if (character === '#') {
-//     list = hashtagsData?.result;
-//     return createHashtagsList(list, character);
-//   } else {
-//     return null;
-//   }
-// };
+const mentionEntityFetch = async (character: string, searchTerm: string) => {
+  if (character === '@' && searchTerm !== '') {
+    const { data: mentions } = await apiService.get('/users', {
+      q: searchTerm,
+    });
+    const mentionList = mentions?.result?.data;
+    return createMentionsList(mentionList, character);
+  } else if (character === '#' && searchTerm !== '') {
+    const { data: hashtags } = await apiService.get('/hashtags', {
+      q: searchTerm,
+    });
+    const hashtagList = hashtags?.result;
+    return createHashtagsList(hashtagList, character);
+  } else {
+    return null;
+  }
+};
 
 export const mention = {
   allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
@@ -72,33 +65,46 @@ export const mention = {
     ) => void,
     mentionChar: string,
   ) => {
-    // mentionEntityFetch(mentionChar, searchTerm).then((listItem: any) => {
-    //   renderItem(listItem, searchTerm);
-    // });
-    return;
+    mentionEntityFetch(mentionChar, searchTerm).then((listItem: any) => {
+      renderItem(listItem, searchTerm);
+    });
   },
   dataAttributes: ['id'],
-  showDenotationChar: false,
-  onOpen: () => {}, // Callback when mention dropdown is open.
-  onclose: () => {}, // Callback when mention dropdown is closed.
+  showDenotationChar: true,
+  onOpen: () => {},
+  onclose: () => {},
   renderLoading: () => {},
   renderItem: (item: any, searchItem: any) => {
     if (item?.charDenotation === '@') {
-      return `<div>
-      <div style="display:flex; padding:5px">
-        <div style="background-color:#F7F8FB; font-weight:bold; border-radius:50px; padding:0px; text-align:center; width:35px; height:35px; margin-button:10px">${
-          item?.firstName?.charAt(0) + item?.lastName?.charAt(0) ||
-          item?.fullName?.charAt(0).toUpperCase()
-        }</div>
-        <div style="margin-left:10px">${item.fullName}<div>
-      </div>
-    </div>`;
+      return `
+              <div class="user-container">
+                    <div class="user-avatar">
+                          ${
+                            item?.profileImage?.original
+                              ? `<img 
+                                  src=${item?.profileImage?.original} 
+                                  style="width:32px;height:32px;border-radius: 100px;
+                            "/>`
+                              : `<div class="user-avatar-name"> 
+                                    ${
+                                      item?.firstName?.charAt(0) +
+                                        item?.lastName?.charAt(0) ||
+                                      item?.fullName?.charAt(0).toUpperCase()
+                                    }
+                                </div>`
+                          }
+                    </div>
+                    <div class="user-details">
+                      <span>${item.fullName}</span>
+                    <div>
+              </div>
+            `;
     } else if (item.charDenotation === '#') {
-      return `<div>
-      <div style="display:flex; padding:5px">
-         <div>${item?.name}</div>
-      </div>
-      <div>`;
+      return `
+            <div class="hashtag-container">
+              <div>${item?.name}</div>
+            </div>
+      `;
     } else {
       return null;
     }
