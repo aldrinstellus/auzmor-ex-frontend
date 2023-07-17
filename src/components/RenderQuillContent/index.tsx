@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useMemo } from 'react';
 import { DeltaOperation } from 'quill';
-import Mention from './components/Mention';
+import Mention from './components/Mentions';
 import Hashtag from './components/Hashtag';
 import Emoji from './components/Emoji';
 import { Text } from './components/Text';
@@ -8,7 +8,7 @@ import MediaPreview, { Mode } from 'components/MediaPreview';
 import { IPost } from 'queries/post';
 import { getMentionProps } from './utils';
 import PreviewCard from 'components/PreviewCard';
-import { removeElementsByClass } from 'utils/misc';
+import { quillHashtagConversion, removeElementsByClass } from 'utils/misc';
 import { IComment } from 'components/Comments';
 import { IMedia } from 'contexts/CreatePostContext';
 import { Metadata } from 'components/PreviewLink/types';
@@ -73,8 +73,8 @@ const RenderQuillContent: React.FC<RenderQuillContent> = ({
       });
     }
   }, []);
-
-  const postContent = content?.ops?.map((op: DeltaOperation) => {
+  const updatedContent = quillHashtagConversion(content);
+  const postContent = updatedContent?.ops?.map((op: DeltaOperation) => {
     switch (true) {
       case op.insert.hasOwnProperty('mention'):
         return (

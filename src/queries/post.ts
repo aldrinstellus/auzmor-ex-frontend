@@ -44,14 +44,7 @@ export interface IPost {
     userId?: string;
     workLocation?: string;
   };
-  hashtags:
-    | [
-        {
-          name: string;
-          id: string;
-        },
-      ]
-    | [];
+  hashtags: string[] | [];
   files?: string[] | IMedia[];
   type: string;
   audience: {
@@ -113,14 +106,7 @@ export interface IPostPayload {
     userId?: string;
     workLocation?: string;
   };
-  hashtags:
-    | [
-        {
-          name: string;
-          id: string;
-        },
-      ]
-    | [];
+  hashtags: string[] | [];
   files?: string[] | IMedia[];
   type: string;
   audience: {

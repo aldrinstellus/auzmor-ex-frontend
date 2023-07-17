@@ -1,58 +1,50 @@
-import React, {
-  MouseEventHandler,
-  ReactElement,
-  ReactNode,
-  useMemo,
-} from 'react';
+import React, { MouseEventHandler, ReactNode, useMemo } from 'react';
 import clsx from 'clsx';
 import { PlacesType, Tooltip as ReactTooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 
 export enum Variant {
-  Dark = 'DARK',
-  Light = 'LIGHT',
+  Dark = 'dark',
+  Light = 'light',
 }
 
 export type TooltipProps = {
   tooltipContent: string | ReactNode;
   children: ReactNode;
+  tooltipId?: string;
   variant?: Variant;
   className?: string;
   onClick?: MouseEventHandler<Element>;
   tooltipPosition?: PlacesType;
+  isOpen?: boolean;
 };
 
 const Tooltip = ({
   tooltipContent,
   children,
+  tooltipId,
   variant = Variant.Dark,
   className = '',
   onClick = () => {},
   tooltipPosition = 'top',
+  isOpen = false,
 }: TooltipProps) => {
   const tooltipPlacement = useMemo(
     () =>
-      clsx(
-        {
-          'bg-white text-black shadow-lg': variant === Variant.Light,
-        },
-        {
-          'bg-black text-white shadow-lg': variant === Variant.Dark,
-        },
-        {
-          [className]: true,
-        },
-      ),
+      clsx({
+        [className]: true,
+      }),
     [className, variant],
   );
   return (
-    <div className={`text-center ${className}`} onClick={onClick}>
+    <span className={` ${className}`} onClick={onClick}>
       <ReactTooltip
-        className={tooltipPlacement}
-        id="my-tooltip"
+        className={`${tooltipPlacement} ${tooltipId}`}
+        id={`my-tooltip`}
         react-tooltip-arrow
         anchorSelect=".my-anchor-element"
         clickable
+        isOpen={isOpen}
       >
         <div>{tooltipContent}</div>
       </ReactTooltip>
@@ -63,11 +55,12 @@ const Tooltip = ({
         data-tooltip-content={`${
           typeof tooltipContent === 'string' ? tooltipContent : ''
         }`}
+        data-tooltip-variant={variant}
         data-tooltip-place={`${tooltipPosition}`}
       >
-        <div className={`${className}`}>{children}</div>
+        <span className={`${className}`}>{children}</span>
       </a>
-    </div>
+    </span>
   );
 };
 
