@@ -61,7 +61,7 @@ export type NotificationProps = {
 };
 
 const NotificationsList = React.forwardRef(
-  ({ mentions = false, className }: NotificationsList, ref: any) => {
+  ({ mentions, className }: NotificationsList, ref: any) => {
     const { data, isLoading, isError } = useGetNotifications(mentions);
 
     return (

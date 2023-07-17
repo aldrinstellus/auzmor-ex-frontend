@@ -29,7 +29,7 @@ const buttonGroup = [
     label: 'Mentions',
     type: NotificationType.MENTIONS,
     component: <NotificationsListing mentions />,
-    disabled: true,
+    disabled: false,
   },
 ];
 

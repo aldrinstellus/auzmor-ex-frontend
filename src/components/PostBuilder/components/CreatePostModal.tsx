@@ -8,7 +8,13 @@ import React, {
 import Modal from 'components/Modal';
 import CreatePost from 'components/PostBuilder/components/CreatePost';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { IPost, IPostPayload, createPost, updatePost } from 'queries/post';
+import {
+  IMention,
+  IPost,
+  IPostPayload,
+  createPost,
+  updatePost,
+} from 'queries/post';
 import CreateAnnouncement, {
   CreateAnnouncementMode,
 } from './CreateAnnouncement';
@@ -19,13 +25,13 @@ import {
   IMedia,
 } from 'contexts/CreatePostContext';
 import { PostBuilderMode } from '..';
-import {EntityType} from 'queries/files';
+import { EntityType } from 'queries/files';
 import { useUpload, UploadStatus } from 'hooks/useUpload';
 import { previewLinkRegex } from 'components/RichTextEditor/config';
 import EditMedia from './EditMedia';
 import { IMenuItem } from 'components/PopupMenu';
 import Icon from 'components/Icon';
-import { hideEmojiPalette, twConfig } from 'utils/misc';
+import { hideEmojiPalette, quillHashtagConversion, twConfig } from 'utils/misc';
 import { useFeedStore } from 'stores/feedStore';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
@@ -128,7 +134,8 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       );
       clearPostContext();
       closeModal();
-      await queryClient.invalidateQueries(['announcements-widget']);
+      await queryClient.invalidateQueries(['feed-announcements-widget']);
+      await queryClient.invalidateQueries(['post-announcements-widget']);
     },
   });
 
@@ -205,13 +212,17 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           transition: slideInAndOutTop,
         },
       );
-      await queryClient.invalidateQueries(['announcements-widget']);
+      await queryClient.invalidateQueries(['feed-announcements-widget']);
+      await queryClient.invalidateQueries(['post-announcements-widget']);
     },
   });
 
   const handleSubmitPost = async (content?: IEditorValue, files?: File[]) => {
     let fileIds: string[] = [];
     let uploadedMedia: IMedia[] = [];
+    const mentionList: IMention[] = [];
+    const hashtagList: string[] = [];
+
     if (files?.length) {
       uploadedMedia = await uploadMedia(files, EntityType.Post);
       await useUploadCoverImage(
@@ -244,9 +255,16 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         })
         .map((media: IMedia) => media.id);
     }
-    const userMentionList = content?.json?.ops
-      ?.filter((op) => op.insert.mention)
-      .map((userItem) => userItem?.insert?.mention?.id);
+
+    quillHashtagConversion(content?.json)?.ops?.forEach(
+      (op: Record<string, any>) => {
+        if (op?.insert && op?.insert.mention) {
+          mentionList.push(op.insert.mention.id);
+        } else if (op.insert && op?.insert?.hashtag) {
+          hashtagList.push(op?.insert?.hashtag?.value);
+        }
+      },
+    );
 
     const previewUrl = isPreviewRemoved
       ? []
@@ -261,8 +279,8 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         },
         type: 'UPDATE',
         files: fileIds,
-        mentions: userMentionList || [],
-        hashtags: [],
+        mentions: mentionList || [],
+        hashtags: hashtagList || [],
         audience: {
           users: [],
         },
@@ -305,8 +323,8 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         },
         type: 'UPDATE',
         files: sortedIds,
-        mentions: userMentionList || [],
-        hashtags: [],
+        mentions: mentionList || [],
+        hashtags: hashtagList || [],
         audience: {
           users: [],
         },

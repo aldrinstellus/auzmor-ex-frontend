@@ -9,7 +9,7 @@ import { createComment, updateComment } from 'queries/comments';
 import ReactQuill from 'react-quill';
 import { DeltaStatic } from 'quill';
 import { toast } from 'react-toastify';
-import { twConfig } from 'utils/misc';
+import { quillHashtagConversion, twConfig } from 'utils/misc';
 import { produce } from 'immer';
 import { useCommentStore } from 'stores/commentStore';
 import { useFeedStore } from 'stores/feedStore';
@@ -21,9 +21,15 @@ import SuccessToast from 'components/Toast/variants/SuccessToast';
 import Button, { Size, Variant } from 'components/Button';
 import { IComment } from 'components/Comments';
 import MediaPreview, { Mode } from 'components/MediaPreview';
-import { IMedia, IMediaValidationError } from 'contexts/CreatePostContext';
+import {
+  IMedia,
+  IMediaValidationError,
+  MediaValidationError,
+} from 'contexts/CreatePostContext';
 import { EntityType } from 'queries/files';
-import {useUpload} from 'hooks/useUpload';
+import { useUpload } from 'hooks/useUpload';
+import { IMention } from 'queries/post';
+import Banner, { Variant as BannerVariant } from 'components/Banner';
 
 export enum PostCommentMode {
   Create = 'CREATE',
@@ -42,13 +48,16 @@ interface CommentFormProps {
   removeMedia?: () => void;
   files?: File[];
   mediaValidationErrors?: IMediaValidationError[];
+  setIsCreateCommentLoading?: (state: boolean) => void;
+  setMediaValidationErrors?: (errors: IMediaValidationError[]) => void;
+  isCreateCommentLoading?: boolean;
 }
 
 interface IUpdateCommentPayload {
   entityId: string;
   entityType: string;
-  content: {text: string, html: string, editor: DeltaStatic};
-  hashtags: Array<any>;
+  content: { text: string; html: string; editor: DeltaStatic };
+  hashtags: string[];
   mentions: Array<any>;
   files: string[];
 }
@@ -65,6 +74,9 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
   removeMedia = () => {},
   files = [],
   mediaValidationErrors = [],
+  setIsCreateCommentLoading = () => {},
+  setMediaValidationErrors = () => {},
+  isCreateCommentLoading,
 }) => {
   const {
     comment,
@@ -74,7 +86,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
   const { feed, updateFeed } = useFeedStore();
   const queryClient = useQueryClient();
   const quillRef = useRef<ReactQuill>(null);
-  const {uploadMedia} = useUpload();
+  const { uploadMedia } = useUpload();
 
   const createCommentMutation = useMutation({
     mutationKey: ['create-comment'],
@@ -105,7 +117,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
         );
       } else if (entityType === 'comment' && entityId) {
         const updatedComment = produce(comment[entityId], (draft) => {
-          draft.repliesCount = draft.repliesCount + 1;
+          draft.repliesCount = draft.repliesCount ? draft.repliesCount + 1 : 1;
         });
         setComment({
           ...comment,
@@ -113,6 +125,9 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
           [entityId]: updatedComment,
         });
       }
+    },
+    onSettled: () => {
+      setIsCreateCommentLoading(false);
     },
   });
 
@@ -122,22 +137,25 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
       return updateComment(entityId || '', payload);
     },
     onMutate: (variables) => {
-      const previousComment = comment[variables.entityId!]
+      const previousComment = comment[variables.entityId!];
 
-      updateStoredComment(variables.entityId!, produce(comment[variables.entityId!], (draft) => {
-        draft.content = {
-          ...variables.content
-        }
-        draft.mentions = variables.mentions
-        draft.hashtags = variables.hashtags
-      }))
+      updateStoredComment(
+        variables.entityId!,
+        produce(comment[variables.entityId!], (draft) => {
+          draft.content = {
+            ...variables.content,
+          };
+          draft.mentions = variables.mentions;
+          draft.hashtags = variables.hashtags;
+        }),
+      );
       quillRef.current?.setEditorContents(quillRef.current?.getEditor(), '');
       setEditComment && setEditComment(false);
-      return {previousComment}
+      return { previousComment };
     },
     onError: (error: any, variables, context) => {
-      if(context?.previousComment){
-        updateStoredComment(variables.entityId, context?.previousComment)
+      if (context?.previousComment) {
+        updateStoredComment(variables.entityId, context?.previousComment);
       }
       toast(
         <FailureToast
@@ -195,12 +213,20 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
   });
 
   const onSubmit = async () => {
-    let fileIds:string[] = [];
-    if(files.length){
+    let fileIds: string[] = [];
+    const mentionList: IMention[] = [];
+    const hashtagList: string[] = [];
+    if (files.length) {
       const uploadedMedia = await uploadMedia(files, EntityType.Comment);
-      fileIds = uploadedMedia.map((media: IMedia) => media.id)
+      fileIds = uploadedMedia.map((media: IMedia) => media.id);
     }
     if (mode === PostCommentMode.Create) {
+      setIsCreateCommentLoading(true);
+      let fileIds: string[] = [];
+      if (files.length) {
+        const uploadedMedia = await uploadMedia(files, EntityType.Comment);
+        fileIds = uploadedMedia.map((media: IMedia) => media.id);
+      }
       const commentContent = {
         text:
           quillRef.current
@@ -214,13 +240,22 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
           ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
           .getContents() as DeltaStatic,
       };
+      quillHashtagConversion(commentContent?.editor)?.ops?.forEach(
+        (op: Record<string, any>) => {
+          if (op?.insert && op?.insert.mention) {
+            mentionList.push(op.insert.mention.id);
+          } else if (op.insert && op?.insert?.hashtag) {
+            hashtagList.push(op?.insert?.hashtag?.value);
+          }
+        },
+      );
       const data = {
         entityId: entityId || '',
         entityType: entityType,
         content: commentContent,
-        hashtags: [],
-        mentions: [],
-        files: fileIds
+        mentions: mentionList,
+        hashtags: hashtagList,
+        files: fileIds,
       };
       createCommentMutation.mutate(data);
     } else if (mode === PostCommentMode.Edit) {
@@ -237,15 +272,37 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
           ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
           .getContents() as DeltaStatic,
       };
+      quillHashtagConversion(commentContent?.editor)?.ops?.forEach(
+        (op: Record<string, any>) => {
+          if (op?.insert && op?.insert.mention) {
+            mentionList.push(op.insert.mention.id);
+          } else if (op.insert && op?.insert?.hashtag) {
+            hashtagList.push(op?.insert?.hashtag?.value);
+          }
+        },
+      );
       const data: IUpdateCommentPayload = {
         entityId: entityId!,
         entityType: entityType,
         content: commentContent,
-        hashtags: [],
-        mentions: [],
-        files: commentData?.files.map((media: IMedia) => media.id) || []
+        mentions: mentionList,
+        hashtags: hashtagList,
+        files: commentData?.files.map((media: IMedia) => media.id) || [],
       };
       updateCommentMutation.mutate(data);
+    }
+  };
+
+  const getDataTestIdForErrors = (errorType: MediaValidationError) => {
+    switch (errorType) {
+      case MediaValidationError.MediaLengthExceed:
+        return 'createpost-maxnumberuploadlimitreached-error';
+      case MediaValidationError.ImageSizeExceed:
+        return 'createpost-imageuploadlimitreached-error';
+      case MediaValidationError.VideoSizeExceed:
+        return 'createpost-videouploadlimitreached-error';
+      case MediaValidationError.FileTypeNotSupported:
+        return 'createpost-filetypenotsupported-error';
     }
   };
 
@@ -256,12 +313,12 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
           toolbarId={`toolbar-${entityId}`}
           defaultValue={commentData?.content?.editor}
           placeholder="Leave a comment..."
-          className="max-h-18 w-[70%] max-w-[70%]"
+          className="max-h-18 min-w-[70%] relative"
           ref={quillRef}
           dataTestId="postcomment-textbox"
           renderToolbar={() => (
             <div
-              className="flex flex-row items-center z-10 -ml-32 absolute top-0 right-2 quill-toolbar"
+              className="flex flex-row items-center z-10 -ml-32 absolute top-0 right-2 quill-toolbar quill-toolbar-icons"
               id={`toolbar-${entityId}-toolbar`}
             >
               <div className="mr-6">
@@ -276,13 +333,15 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
                   />
                 )}
               </div>
-              {mode !== PostCommentMode.Edit && <IconButton icon={'imageOutline'}
+              <IconButton
+                icon={'imageOutline'}
                 className="flex mx-0 !p-0 !bg-inherit disabled:bg-inherit disabled:cursor-auto "
                 size={SizeVariant.Large}
                 variant={IconVariant.Primary}
                 dataTestId="postcomment-mediacta"
                 onClick={() => inputRef && inputRef?.current?.click()}
-                fill={twConfig.theme.colors.primary['500']} />}
+                fill={twConfig.theme.colors.primary['500']}
+              />
               <button className="ql-emoji" />
               <IconButton
                 icon={'send'}
@@ -290,17 +349,57 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
                 size={SizeVariant.Large}
                 variant={IconVariant.Primary}
                 onClick={() => {
-                  onSubmit();
+                  if (!isCreateCommentLoading) {
+                    onSubmit();
+                  }
                 }}
                 dataTestId="postcomment-sendcta"
                 fill={twConfig.theme.colors.primary['500']}
+                disabled={mediaValidationErrors.length > 0}
               />
             </div>
           )}
         />
-        {media.length > 0 && <div className='w-full flex justify-start pl-6'><MediaPreview className='w-64 h-32 overflow-hidden rounded-9xl' media={media} mode={Mode.Edit} showAddMediaButton={false} showEditButton={false} onCloseButtonClick={removeMedia}/></div>}
-        {commentData && commentData?.files.length > 0 && <div className='w-full flex justify-start pl-6 pointer-events-none opacity-50'><MediaPreview className='w-64 h-32 overflow-hidden rounded-9xl' media={commentData.files} showAddMediaButton={false} showEditButton={false}/></div>}
-        {mediaValidationErrors.map((error: IMediaValidationError, index: number) => <div key={index} className="text-red-500 flex justify-start w-full pl-6"><div className='mr-2'><Icon name='infoCircle' stroke={twConfig.theme.colors.red['500']} /></div><div className='truncate'>{error.errorMsg}</div></div>)}
+        {media.length > 0 && (
+          <div className="w-full flex justify-start pl-6">
+            <MediaPreview
+              className="w-64 h-32 overflow-hidden rounded-9xl"
+              media={media}
+              mode={Mode.Edit}
+              showAddMediaButton={false}
+              showEditButton={false}
+              onCloseButtonClick={removeMedia}
+            />
+          </div>
+        )}
+        {commentData && commentData?.files.length > 0 && (
+          <div className="w-full flex justify-start pl-6 pointer-events-none opacity-50">
+            <MediaPreview
+              className="w-64 h-32 overflow-hidden rounded-9xl"
+              media={commentData.files}
+              showAddMediaButton={false}
+              showEditButton={false}
+            />
+          </div>
+        )}
+        {mediaValidationErrors.map((error, index) => (
+          <div className="px-4 mb-1 w-full" key={index}>
+            <Banner
+              title={error.errorMsg}
+              variant={BannerVariant.Error}
+              action={<></>}
+              onClose={() => {
+                setMediaValidationErrors([
+                  ...mediaValidationErrors.filter(
+                    (mediaError) => mediaError.errorType !== error.errorType,
+                  ),
+                ]);
+                removeMedia();
+              }}
+              dataTestId={getDataTestIdForErrors(error.errorType)}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
