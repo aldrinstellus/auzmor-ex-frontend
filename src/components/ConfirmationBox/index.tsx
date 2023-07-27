@@ -40,7 +40,7 @@ const ConfirmationBox: React.FC<ConfirmationBoxProps> = ({
       closeModal={() => (isLoading ? null : onClose())}
       className="max-w-md"
     >
-      <div data-testid={`${dataTestId}-confirmation-window"}`}>
+      <div data-testid={`${dataTestId}-confirmation-window`}>
         <div className="text-lg text-black p-4 font-extrabold flex-[50%]">
           {title}
         </div>
