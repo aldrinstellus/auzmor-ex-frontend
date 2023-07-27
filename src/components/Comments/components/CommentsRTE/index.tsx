@@ -334,7 +334,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
                 )}
               </div>
               <IconButton
-                icon={'imageOutline'}
+                icon="image"
                 className="flex mx-0 !p-0 !bg-inherit disabled:bg-inherit disabled:cursor-auto "
                 size={SizeVariant.Large}
                 variant={IconVariant.Primary}
