@@ -48,7 +48,7 @@ const mentionEntityFetch = async (character: string, searchTerm: string) => {
     });
     const mentionList = mentions?.result?.data;
     return createMentionsList(mentionList, character);
-  } else if (character === '#' && !isContainWhiteSpace && searchTerm) {
+  } else if (character === '#' && !isContainWhiteSpace) {
     const hashtagValue = searchTerm.split(' ').filter((ele) => ele !== '');
     if (hashtagValue.length === 1) {
       const hashtag = hashtagValue[0];
@@ -62,7 +62,6 @@ const mentionEntityFetch = async (character: string, searchTerm: string) => {
       const hasHashtags = hashtagList?.some(
         (hashValue: IHashtags) => hashValue?.name === hashtag,
       );
-      console.log('check', hasHashtags);
       if (hasHashtags) {
         return createHashtagsList(hashtagList, character);
       } else {
