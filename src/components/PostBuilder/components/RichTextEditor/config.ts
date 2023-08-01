@@ -1,5 +1,9 @@
 import apiService from 'utils/apiService';
-import { createMentionsList, createHashtagsList } from './mentions/utils';
+import {
+  createMentionsList,
+  createHashtagsList,
+  newHashtags,
+} from './mentions/utils';
 
 interface IOrg {
   id: string;
@@ -37,19 +41,34 @@ interface IHashtags {
 export const previewLinkRegex = /(http|https):\/\/[^\s]+/gi;
 
 const mentionEntityFetch = async (character: string, searchTerm: string) => {
-  if (character === '@' && searchTerm !== '') {
+  const isContainWhiteSpace = /^\s/.test(searchTerm);
+  if (character === '@' && !isContainWhiteSpace) {
     const { data: mentions } = await apiService.get('/users', {
       q: searchTerm,
     });
     const mentionList = mentions?.result?.data;
     return createMentionsList(mentionList, character);
-  } else if (character === '#' && searchTerm !== '') {
-    const { data: hashtags } = await apiService.get('/hashtags', {
-      q: searchTerm,
-    });
-    const hashtagList = hashtags?.result?.data;
-    return createHashtagsList(hashtagList, character);
-  } else {
+  } else if (character === '#' && !isContainWhiteSpace) {
+    const hashtagValue = searchTerm.split(' ').filter((ele) => ele !== '');
+    if (hashtagValue.length === 1) {
+      const hashtag = hashtagValue[0];
+      const { data: hashtags } = await apiService.get('/hashtags', {
+        q: hashtag,
+      });
+      const hashtagList = hashtags?.result?.data;
+      const newHashtagValue = {
+        name: hashtagValue[0],
+      };
+      const hasHashtags = hashtagList?.some(
+        (hashValue: IHashtags) => hashValue?.name === hashtag,
+      );
+      if (hasHashtags) {
+        return createHashtagsList(hashtagList, character);
+      } else {
+        return newHashtags(newHashtagValue, character);
+      }
+    }
+  } else if (isContainWhiteSpace) {
     return null;
   }
 };
@@ -102,8 +121,8 @@ export const mention = {
     } else if (item.charDenotation === '#') {
       return `
             <div class="hashtag-container">
-              <div>${item?.name}</div>
-            </div>
+              <div class="hashtag-name">#${item?.name}</div>      
+            </div>        
       `;
     } else {
       return null;
