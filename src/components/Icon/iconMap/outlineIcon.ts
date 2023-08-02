@@ -69,6 +69,7 @@ import SvgCyclicArrowOutline from '../components/CyclicArrow/CyclicArrowOutline'
 import SvgEditReceiptOutline from '../components/EditReceipt/EditReceiptOutline';
 import SvgDeleteCrossOutline from '../components/DeleteCross/DeleteCrossOutline';
 import SvgCommentOutline from '../components/Comment/CommentOutline';
+import SvgGlobalOutline from '../components/Global/GlobalOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -121,6 +122,7 @@ export const outlineIcon = {
   marketplaceOutline: SvgMarketplaceOutline,
   maximizeOutline: SvgMaximizeOutline,
   moreOutline: SvgMoreOutline,
+  globalOutline: SvgGlobalOutline,
   peopleOutline: SvgPeopleOutline,
   playOutline: SvgPlayOutline,
   redoOutline: SvgRedoOutline,

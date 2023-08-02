@@ -99,6 +99,7 @@ import CyclicArrow from '../components/CyclicArrow';
 import EditReceipt from '../components/EditReceipt';
 import DeleteCrossIcon from '../components/DeleteCross';
 import CommentIcon from '../components/Comment';
+import Global from '../components/Global';
 
 export const icon = {
   add: Add,
@@ -124,17 +125,21 @@ export const icon = {
   clock: ClockIcon,
   close: CloseIcon,
   closeCircle: CloseCircleIcon,
+  comment: CommentIcon,
   connectionFolder: ConnectionFolder,
   convertShape: ConvertShape,
   copy: CopyIcon,
   copyLink: CopyLink,
   crossCircle: CrossCircle,
+  cyclicArrow: CyclicArrow,
   delete: DeleteIcon,
+  deleteCross: DeleteCrossIcon,
   document: DocumentIcon,
   documentUpload: DocumentUpload,
   dotsVertical: dotsVerticalIcon,
   draft: DraftIcon,
   edit: EditIcon,
+  editReceipt: EditReceipt,
   email: EmailIcon,
   emojiHappy: EmojiHappy,
   explore: ExploreIcon,
@@ -150,10 +155,10 @@ export const icon = {
   fullScreen: FullScreenIcon,
   funny: Funny,
   gear: Gear,
+  global: Global,
   home: HomeIcon,
   iconLinear: IconLinear,
   image: ImageIcon,
-  comment: CommentIcon,
   import: ImportIcon,
   infoCircle: InfoCircleIcon,
   insightful: Insightful,
@@ -199,7 +204,4 @@ export const icon = {
   userManagement: UserManagement,
   userRemove: UserRemove,
   video: VideoIcon,
-  cyclicArrow: CyclicArrow,
-  editReceipt: EditReceipt,
-  deleteCross: DeleteCrossIcon,
 };

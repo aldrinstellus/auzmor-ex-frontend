@@ -125,8 +125,8 @@ export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
 
   return (
     <div>
-      <div className={`flex flex-col space-y-4 mt-4`}>
-        <div className="bg-neutral-100 p-3 rounded-9xl">
+      <div className={`flex flex-col`}>
+        <div className="bg-neutral-100 p-3 rounded-9xl mb-2">
           <div className="flex justify-between p-0">
             <div className="flex">
               <div className="mr-4">
@@ -219,14 +219,14 @@ export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
             </div>
           ) : (
             <div
-              className=" text-neutral-900  font-normal text-sm mt-4"
+              className=" text-neutral-900  font-normal text-sm mt-2"
               data-testid="comment-reply-content"
             >
               <RenderQuillContent data={comment} isComment />
             </div>
           )}
         </div>
-        <div className="flex flex-row justify-between mt-3 cursor-pointer">
+        <div className="flex flex-row justify-between cursor-pointer">
           <div
             className={`flex flex-row`}
             onClick={() => setShowReactionModal(true)}
@@ -253,12 +253,12 @@ export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
                   ))}
               </div>
             )}
-            <div className={`flex text-sm font-normal text-neutral-500`}>
+            <div className={`flex text-sm font-normal text-neutral-500 mb-2`}>
               {totalCount} reacted
             </div>
           </div>
         </div>
-        <div className="flex justify-between pt-3 pb-3 cursor-pointer">
+        <div className="flex justify-between cursor-pointer mb-2">
           <div className="flex items-center">
             <Likes
               reaction={comment?.myReaction?.reaction || ''}

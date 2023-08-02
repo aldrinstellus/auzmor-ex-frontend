@@ -261,6 +261,7 @@ const Likes: React.FC<LikesProps> = ({
     setShowTooltip,
     dataTestId,
   }: IReaction) => {
+    console.log(icon, '$$$');
     return (
       <div className=" space-x-4 mt-1 relative [&_span]:hover:visible">
         <span className="invisible absolute rounded-lg bg-black text-white py-1 px-2 -mt-10">
@@ -351,7 +352,7 @@ const Likes: React.FC<LikesProps> = ({
           icon={nameIcon ? nameIcon : 'likeIcon'}
           className="flex !bg-inherit  !p-0"
           variant={IconVariant.Primary}
-          size={SizeVariant.Medium}
+          size={SizeVariant.Small}
         />
         <div
           className={`text-xs font-normal ml-1 ${
