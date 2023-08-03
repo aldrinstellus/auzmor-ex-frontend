@@ -15,6 +15,8 @@ export interface IMenuItem {
   fill?: string;
   onClick?: () => any;
   permissions?: string[];
+  addDivider?: boolean;
+  dividerStyle?: React.CSSProperties
 }
 
 export interface IPopupMenuProps {
@@ -55,6 +57,7 @@ const PopupMenu: React.FC<IPopupMenuProps> = ({
                     <PopupMenuItem
                       menuItem={menuItem}
                       menuButtonRef={menuButtonRef}
+                      lastItem={index === menuItems.length - 1}
                     />
                   );
                 })()}

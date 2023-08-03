@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { IMenuItem } from '.';
 import Icon from 'components/Icon';
 import { twConfig } from 'utils/misc';
@@ -7,18 +7,23 @@ import useHover from 'hooks/useHover';
 type PopupMenuItemProps = {
   menuItem: IMenuItem;
   menuButtonRef: React.RefObject<HTMLButtonElement>;
+  lastItem: boolean;
 };
 
 const PopupMenuItem: React.FC<PopupMenuItemProps> = ({
   menuItem,
   menuButtonRef,
+  lastItem,
 }) => {
   const [hovered, eventHandlers] = useHover();
+  const itemRef = useRef<HTMLButtonElement>(null);
   return (
     <div
       className={`flex px-6 py-3 items-center hover:bg-primary-50 cursor-pointer space-x-3 ${
         menuItem.disabled && '!cursor-default'
       }`}
+      ref={itemRef}
+      style={menuItem.addDivider && !lastItem ? menuItem.dividerStyle : {}}
       onClick={() => {
         menuButtonRef.current?.click();
         menuItem?.onClick && menuItem.onClick();

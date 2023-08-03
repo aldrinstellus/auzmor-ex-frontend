@@ -282,3 +282,15 @@ export const useIsUserExistAuthenticated = (email = '') => {
     staleTime: 1000,
   });
 };
+
+export const useReactivateUser = () => {
+  const reactivateUser = async (id: string) => {
+    const { data } = await apiService.patch(`/users/${id}/reactivate`);
+    return data;
+  };
+
+  return useMutation({
+    mutationKey: ['reactivate-user'],
+    mutationFn: reactivateUser,
+  });
+};

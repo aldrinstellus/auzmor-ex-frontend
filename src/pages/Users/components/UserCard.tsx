@@ -9,7 +9,7 @@ import useAuth from 'hooks/useAuth';
 import Icon from 'components/Icon';
 import PopupMenu from 'components/PopupMenu';
 import DeleteUserModal from './DeleteUserModal';
-import { UserStatus, useResendInvitation } from 'queries/users';
+import { UserStatus, useReactivateUser, useResendInvitation } from 'queries/users';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { twConfig } from 'utils/misc';
@@ -64,13 +64,17 @@ const UserCard: React.FC<IUserCardProps> = ({
   const [isHovered, eventHandlers] = useHover();
   const [open, openModal, closeModal] = useModal();
   const resendInviteMutation = useResendInvitation();
+  const reactivateUserMutation = useReactivateUser();
 
   const _options = [];
+  const dividerStyle = {borderBottom: '1px solid #E5E5E5'};
 
   if ([UserStatus.Invited, UserStatus.Created].includes(status as any)) {
     _options.push({
       icon: 'redo',
       label: 'Resend Invite',
+      addDivider: true,
+      dividerStyle,
       dataTestId: 'people-card-ellipsis-resend-invite',
       onClick: () => {
         toast(<SuccessToast content="Invitation has been sent" />, {
@@ -95,10 +99,42 @@ const UserCard: React.FC<IUserCardProps> = ({
     });
   }
 
+  if (UserStatus.Inactive === status) {
+    _options.push({
+      icon: 'redo', // needed from design team
+      label: 'Reactivate user',
+      addDivider: true,
+      dividerStyle,
+      dataTestId: 'people-card-ellipsis-resend-invite',
+      onClick: () => {
+        toast(<SuccessToast content="User has been reactivated" />, {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              stroke={twConfig.theme.colors.primary['500']}
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+        });
+        reactivateUserMutation.mutate(id)
+      },
+    });
+  }
+
   if (id !== user?.id) {
     _options.push({
       icon: 'userRemove',
-      label: 'Remove',
+      addDivider: true,
+      dividerStyle,
+      label: 'Remove account',
       dataTestId: 'people-card-ellipsis-remove-user',
       onClick: openModal,
     });
