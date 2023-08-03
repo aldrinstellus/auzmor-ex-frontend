@@ -31,6 +31,7 @@ import moment from 'moment';
 import MediaPreview, { Mode } from 'components/MediaPreview';
 import Banner, { Variant } from 'components/Banner';
 import { hasDatePassed } from 'utils/time';
+import Poll from 'components/Poll';
 
 export interface IEditorContentChanged {
   text: string;
@@ -275,6 +276,7 @@ const RichTextEditor = React.forwardRef(
             }}
           />
         )}
+        <div className="px-2 py-2 m-4">{/* <Poll /> */}</div>
         {announcement?.label && !hasDatePassed(announcement.value) && (
           <div className="flex justify-between bg-primary-100 px-4 py-2 m-4">
             <div className="flex items-center">
