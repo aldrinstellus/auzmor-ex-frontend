@@ -162,7 +162,7 @@ const Input: React.FC<InputProps> = ({
             onKeyDown={onEnter}
             onBlur={field.onBlur}
           />
-          {isClearable && (
+          {isClearable && !!field.value && (
             <div className="absolute right-2">
               <Icon
                 name="close"
