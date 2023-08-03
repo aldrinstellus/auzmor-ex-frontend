@@ -7,9 +7,3 @@
 .node-button-foreign-object {
   width: 224px !important;
 }
-rect.node-rect[stroke-width='10'] {
-  stroke: #3f83f8;
-}
-path.link[stroke-width='5'] {
-  stroke: #3f83f8;
-}

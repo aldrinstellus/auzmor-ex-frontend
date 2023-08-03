@@ -6,12 +6,14 @@ interface IconProps {
   size?: number;
   stroke?: string;
   hoveredStroke?: string;
+  isActive?: boolean;
 }
 
 const SvgFocusOutline = ({
   size = 24,
   stroke = '#737373',
   hoveredStroke = PRIMARY_COLOR,
+  isActive,
   ...props
 }: SVGProps<SVGSVGElement> & IconProps) => (
   <>
@@ -23,7 +25,11 @@ const SvgFocusOutline = ({
       {...props}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="hidden group-hover:block group-hover:cursor-pointer"
+      className={
+        isActive
+          ? 'block group-hover:cursor-pointer'
+          : 'hidden group-hover:block group-hover:cursor-pointer'
+      }
     >
       <g clipPath="url(#clip0_2423_98418)">
         <path
@@ -51,7 +57,7 @@ const SvgFocusOutline = ({
       {...props}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="group-hover:hidden"
+      className={isActive ? 'hidden' : 'group-hover:hidden'}
     >
       <g clipPath="url(#clip0_2423_98418)">
         <path

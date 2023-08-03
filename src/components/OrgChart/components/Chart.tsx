@@ -14,6 +14,13 @@ export interface INode {
   department?: { id: string; name: string };
   directReportees?: number;
   matchesCriteria?: boolean;
+  _centered?: any;
+  _centeredWithDescendants?: any;
+  _directSubordinates?: number;
+  _expanded?: boolean;
+  _totalSubordinates?: number;
+  _upToTheRootHighlighted?: boolean;
+  _upToTheRootHighlightedNode?: boolean;
 }
 
 interface IChart {
@@ -131,7 +138,7 @@ const Chart: React.FC<IChart> = ({ orgChartRef }) => {
             );
           })
           .nodeContent((node: any, i: any, arr: any, state: any) => {
-            return renderToString(<UserNode node={node.data} />);
+            return renderToString(<UserNode node={node} />);
           })
           // .onExpandCollapseClick((d: any, data: any) => {
           //   if (

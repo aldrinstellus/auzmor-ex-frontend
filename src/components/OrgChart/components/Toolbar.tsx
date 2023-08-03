@@ -33,6 +33,7 @@ const Toolbar: React.FC<IToolbar> = ({
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const [userStatus, setUserStatus] = useState<string>('');
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [isSpotlightActive, setIsSpotlightActive] = useState(false);
   const fields = [
     {
       type: FieldType.Input,
@@ -155,12 +156,18 @@ const Toolbar: React.FC<IToolbar> = ({
                   stroke={twConfig.theme.colors.neutral['900']}
                   size={32}
                   onClick={() => {
-                    chartRef.current
-                      ?.setUpToTheRootHighlighted('n6')
-                      .render()
-                      .fit();
-                    chartRef.current?.setCentered('n6').render();
+                    if (isSpotlightActive) {
+                      chartRef.current?.clearHighlighting();
+                    } else {
+                      chartRef.current
+                        ?.setUpToTheRootHighlighted('n6')
+                        .render()
+                        .fit();
+                      chartRef.current?.setCentered('n6').render();
+                    }
+                    setIsSpotlightActive(!isSpotlightActive);
                   }}
+                  isActive={isSpotlightActive}
                 />
               </Tooltip>
             </div>
