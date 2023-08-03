@@ -12,6 +12,7 @@ import clsx from 'clsx';
 import Icon from 'components/Icon';
 import { twConfig } from 'utils/misc';
 import Tooltip from 'components/Tooltip';
+import { OrgChart } from 'd3-org-chart';
 
 interface IForm {
   searchField: string;
@@ -20,9 +21,14 @@ interface IForm {
 interface IToolbar {
   activeMode: OrgChartMode;
   setActiveMode: (activeMode: OrgChartMode) => void;
+  chartRef: React.MutableRefObject<OrgChart<any> | null>;
 }
 
-const Toolbar: React.FC<IToolbar> = ({ activeMode, setActiveMode }) => {
+const Toolbar: React.FC<IToolbar> = ({
+  activeMode,
+  setActiveMode,
+  chartRef,
+}) => {
   const { control } = useForm<IForm>();
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const [userStatus, setUserStatus] = useState<string>('');
@@ -61,7 +67,7 @@ const Toolbar: React.FC<IToolbar> = ({ activeMode, setActiveMode }) => {
   );
   return (
     <>
-      <div className="mt-7 px-4 py-3 w-full shadow-lg rounded-9xl bg-white flex justify-between items-center">
+      <div className="mt-7 px-4 py-3 mb-8 w-full shadow-lg rounded-9xl bg-white flex justify-between items-center">
         <div className="flex items-center">
           <Layout fields={fields} />
           <div className="flex">
@@ -119,7 +125,14 @@ const Toolbar: React.FC<IToolbar> = ({ activeMode, setActiveMode }) => {
                 <Icon
                   name={isCollapsed ? 'expandOutline' : 'collapseOutline'}
                   stroke={twConfig.theme.colors.neutral['900']}
-                  onClick={() => setIsCollapsed(!isCollapsed)}
+                  onClick={() => {
+                    if (isCollapsed) {
+                      chartRef.current?.expandAll();
+                    } else {
+                      chartRef.current?.collapseAll();
+                    }
+                    setIsCollapsed(!isCollapsed);
+                  }}
                 />
               </Tooltip>
             </div>
@@ -129,6 +142,9 @@ const Toolbar: React.FC<IToolbar> = ({ activeMode, setActiveMode }) => {
                   name="fullScreen"
                   stroke={twConfig.theme.colors.neutral['900']}
                   className="flex items-center"
+                  onClick={() => {
+                    chartRef.current?.fit();
+                  }}
                 />
               </Tooltip>
             </div>
@@ -138,6 +154,13 @@ const Toolbar: React.FC<IToolbar> = ({ activeMode, setActiveMode }) => {
                   name="focusOutline"
                   stroke={twConfig.theme.colors.neutral['900']}
                   size={32}
+                  onClick={() => {
+                    chartRef.current
+                      ?.setUpToTheRootHighlighted('n6')
+                      .render()
+                      .fit();
+                    chartRef.current?.setCentered('n6').render();
+                  }}
                 />
               </Tooltip>
             </div>
@@ -147,6 +170,9 @@ const Toolbar: React.FC<IToolbar> = ({ activeMode, setActiveMode }) => {
                 <Icon
                   name="zoomOutOutline"
                   stroke={twConfig.theme.colors.neutral['900']}
+                  onClick={() => {
+                    chartRef.current?.zoomOut();
+                  }}
                 />
               </Tooltip>
             </div>
@@ -155,6 +181,7 @@ const Toolbar: React.FC<IToolbar> = ({ activeMode, setActiveMode }) => {
                 <Icon
                   name="zoomInOutline"
                   stroke={twConfig.theme.colors.neutral['900']}
+                  onClick={() => chartRef.current?.zoomIn()}
                 />
               </Tooltip>
             </div>
