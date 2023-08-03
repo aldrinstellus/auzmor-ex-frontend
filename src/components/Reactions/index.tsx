@@ -261,7 +261,6 @@ const Likes: React.FC<LikesProps> = ({
     setShowTooltip,
     dataTestId,
   }: IReaction) => {
-    console.log(icon, '$$$');
     return (
       <div className=" space-x-4 mt-1 relative [&_span]:hover:visible">
         <span className="invisible absolute rounded-lg bg-black text-white py-1 px-2 -mt-10">
@@ -345,7 +344,7 @@ const Likes: React.FC<LikesProps> = ({
 
       <div
         className="flex flex-row items-center justify-center"
-        onClick={handleDeleteReaction}
+        onClick={handleDeleteReaction} //here.....
         data-testid={'liketo-commentcta'}
       >
         <IconButton
