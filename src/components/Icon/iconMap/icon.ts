@@ -100,6 +100,12 @@ import EditReceipt from '../components/EditReceipt';
 import DeleteCrossIcon from '../components/DeleteCross';
 import CommentIcon from '../components/Comment';
 import Global from '../components/Global';
+import LikeReaction from '../components/LikeReaction';
+import CelebrateReaction from '../components/CelebrateReaction';
+import LoveReaction from '../components/LoveReaction';
+import SupportReaction from '../components/SupportReaction';
+import InsightfulReaction from '../components/InsightfulReaction';
+import FunnyReaction from '../components/FunnyReaction';
 
 export const icon = {
   add: Add,
@@ -120,6 +126,7 @@ export const icon = {
   carouselLeft: CarouselLeftIcon,
   carouselRight: CarouselRightIcon,
   celebrate: Celebrate,
+  celebrateReaction: CelebrateReaction,
   chart: ChartIcon,
   clipboardClose: ClipboardCloseIcon,
   clock: ClockIcon,
@@ -154,6 +161,7 @@ export const icon = {
   folderConnection: FolderConnectionIcon,
   fullScreen: FullScreenIcon,
   funny: Funny,
+  funnyReaction: FunnyReaction,
   gear: Gear,
   global: Global,
   home: HomeIcon,
@@ -162,13 +170,16 @@ export const icon = {
   import: ImportIcon,
   infoCircle: InfoCircleIcon,
   insightful: Insightful,
+  insightfulReaction: InsightfulReaction,
   launcher: LauncherIcon,
   like: Like,
   likeIcon: LikeIcon,
+  likeReaction: LikeReaction,
   link: Link,
   location: LocationIcon,
   logout: LogoutIcon,
   love: Love,
+  loveReaction: LoveReaction,
   magicStar: MagicStarIcon,
   mail: MailIcon,
   male: Male,
@@ -197,6 +208,7 @@ export const icon = {
   slack: SlackIcon,
   speaker: SpeakerIcon,
   support: Support,
+  supportReaction: SupportReaction,
   threeDots: ThreeDots,
   tickCircle: TickCircleIcon,
   trash: Trash,

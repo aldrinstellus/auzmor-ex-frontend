@@ -86,7 +86,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
               <Divider className="mt-4" />
               <div className="flex flex-row justify-between my-3">
                 <div
-                  className={`flex flex-row`}
+                  className={`flex flex-row items-center space-x-1`}
                   data-testid="feed-post-reactioncount"
                   onClick={() => openReactionModal()}
                 >
@@ -101,23 +101,19 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
                         .slice(0, 3)
                         .map((key, i) => (
                           <div
-                            className={` ${i > 0 ? '-ml-[6px] z-1' : ''}`}
+                            className={`${
+                              i > 0 ? 'p-[1px] -ml-[8px] z-1' : 'p-[1px]'
+                            }`}
                             key={key}
                           >
-                            <Icon
-                              name={key}
-                              size={12}
-                              className={`p-0.5 rounded-17xl cursor-pointer border-white border border-solid ${iconsStyle(
-                                key,
-                              )}`}
-                            />
+                            <Icon name={`${key}Reaction`} size={20} />
                           </div>
                         ))}
                     </div>
                   )}
                   {totalCount > 0 && (
                     <div
-                      className={`flex text-sm font-normal text-neutral-500 cursor-pointer`}
+                      className={`flex text-xs font-normal text-neutral-500 cursor-pointer`}
                     >
                       {totalCount} reacted
                     </div>

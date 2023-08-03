@@ -50,6 +50,7 @@ const RenderQuillContent: React.FC<RenderQuillContent> = ({
         'read-more-button',
         'text-neutral-500',
         'font-bold',
+        'text-sm',
         `${data?.id}-expand-collapse-button`,
       );
       button.textContent = 'See more';

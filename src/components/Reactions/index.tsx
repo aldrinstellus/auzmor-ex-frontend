@@ -9,6 +9,7 @@ import clsx from 'clsx';
 import { useFeedStore } from 'stores/feedStore';
 import { produce } from 'immer';
 import { useCommentStore } from 'stores/commentStore';
+import Icon from 'components/Icon';
 
 interface LikesProps {
   reaction: string;
@@ -73,23 +74,23 @@ const Likes: React.FC<LikesProps> = ({
 
   const nameStyle = clsx(
     {
-      'text-[#173E90]': reaction === 'like',
+      'text-[#3F83F8]': reaction === 'like',
     },
 
     {
-      'text-[#F96B40]': reaction === 'love',
+      'text-[#F98080]': reaction === 'love',
     },
     {
-      'text-yellow-500': reaction === 'celebrate',
+      'text-[#FDBA74]': reaction === 'celebrate',
     },
     {
-      'text-red-500': reaction === 'support',
+      'text-[#FB923C]': reaction === 'support',
     },
     {
-      'text-yellow-500': reaction === 'funny',
+      'text-[#8DA2FB]': reaction === 'funny',
     },
     {
-      'text-yellow-500': reaction === 'insightful',
+      'text-yellow-400': reaction === 'insightful',
     },
   );
 
@@ -262,18 +263,18 @@ const Likes: React.FC<LikesProps> = ({
     dataTestId,
   }: IReaction) => {
     return (
-      <div className=" space-x-4 mt-1 relative [&_span]:hover:visible">
-        <span className="invisible absolute rounded-lg bg-black text-white py-1 px-2 -mt-10">
+      <div className="space-x-4 relative [&_span]:hover:visible">
+        <span className="invisible absolute right-2 rounded-7xl bg-black opacity-70 text-white text-xs p-2 -mt-8">
           {name}
         </span>
         <IconButton
           icon={icon}
-          className="!mx-1.5 !bg-inherit hover:scale-150 !p-0"
+          className="hover:scale-150"
           onClick={() => {
             handleReaction(type);
             setShowTooltip(false);
           }}
-          variant={IconVariant.Primary}
+          variant={IconVariant.Secondary}
           size={SizeVariant.Large}
           dataTestId={dataTestId}
         />
@@ -293,12 +294,12 @@ const Likes: React.FC<LikesProps> = ({
           className="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition text-white p-1 rounded absolute  bottom-full  whitespace-nowrap"
         >
           <div
-            className={`h-8 flex flex-row items-center bg-white rounded-lg shadow-md`}
+            className={`h-[42px] flex flex-row items-center bg-white rounded-7xl shadow-lg mb-3`}
             data-testid={dataTestIdPrefix}
           >
             <Reactions
               name="Like"
-              icon="like"
+              icon="likeFilled"
               type={ReactionType.Like}
               setShowTooltip={setShowTooltip}
               dataTestId={`${dataTestIdPrefix}-like`}
@@ -343,18 +344,17 @@ const Likes: React.FC<LikesProps> = ({
       ) : null}
 
       <div
-        className="flex flex-row items-center justify-center"
+        className="flex items-center space-x-1"
         onClick={handleDeleteReaction} //here.....
         data-testid={'liketo-commentcta'}
       >
-        <IconButton
-          icon={nameIcon ? nameIcon : 'likeIcon'}
-          className="flex !bg-inherit  !p-0"
-          variant={IconVariant.Primary}
-          size={SizeVariant.Small}
+        <Icon
+          name={nameIcon ? nameIcon : 'likeIcon'}
+          size={16}
+          className="p-0.5"
         />
         <div
-          className={`text-xs font-normal ml-1 ${
+          className={`text-xs font-normal ${
             name ? nameStyle : 'text-neutral-500 '
           } `}
         >
