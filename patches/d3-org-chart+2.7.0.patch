@@ -111,7 +111,7 @@ index fe34324..a278e83 100644
 - 
 \ No newline at end of file
 diff --git a/node_modules/d3-org-chart/src/d3-org-chart.js b/node_modules/d3-org-chart/src/d3-org-chart.js
-index 871f2d8..f705b80 100644
+index 871f2d8..7221f97 100644
 --- a/node_modules/d3-org-chart/src/d3-org-chart.js
 +++ b/node_modules/d3-org-chart/src/d3-org-chart.js
 @@ -1,104 +1,147 @@
@@ -353,7 +353,7 @@ index 871f2d8..f705b80 100644
              <code>chart<br/>
              &nbsp;.nodeContent({data}=>{ <br/>
               &nbsp;&nbsp;&nbsp;&nbsp;return '' // Custom HTML <br/>
-@@ -107,928 +150,1255 @@ export class OrgChart {
+@@ -107,928 +150,1235 @@ export class OrgChart {
               Or check different <a href="https://github.com/bumbeishvili/org-chart#jump-to-examples" target="_blank">layout examples</a>
               
               </div>`,
@@ -827,6 +827,8 @@ index 871f2d8..f705b80 100644
 +        console.log(d, data);
 +      },
 +      highlightedNodeId: '',
++      hoverCardContent: (d) => `<div>Tooltip</div>`
++
 +    };
 +
 +    this.getChartState = () => attrs;
@@ -2132,10 +2134,10 @@ index 871f2d8..f705b80 100644
 +      .on('mouseover', (e, { data }) => {
 +        const div = document.createElement('div');
 +          div.setAttribute('id', `${data.id}-tooltip`);
-+          div.setAttribute(
-+            'class',
-+            'absolute flex flex-col bg-white shadow rounded-9xl z-50 tooltip w-[600px] h-[400px]',
-+          );
++          div.setAttribute('class', 'absolute org-chart-tooltip');
++          let attrs = this.getChartState();
++          div.innerHTML = attrs.hoverCardContent.bind(this)(data);
++          document.getElementById('org-chart-container').appendChild(div);
 +          div.setAttribute(
 +            'style',
 +            `top: ${
@@ -2149,36 +2151,9 @@ index 871f2d8..f705b80 100644
 +              document
 +                .getElementById('org-chart-container')
 +                .getBoundingClientRect().x -
-+              300
++              div.getBoundingClientRect().width / 2
 +            }px`,
 +          );
-+
-+          const statusDiv = document.createElement('div');
-+          statusDiv.setAttribute('class', 'px-4 py-2 bg-red-50 w-full flex');
-+          statusDiv.textContent = 'tooltip';
-+          div.appendChild(statusDiv);
-+
-+          const profileContainerDiv = document.createElement('div');
-+          profileContainerDiv.setAttribute(
-+            'class',
-+            'mx-6 my-4 bg-green-50 flex py-32',
-+          );
-+          profileContainerDiv.textContent = 'profile details';
-+          div.appendChild(profileContainerDiv);
-+
-+          //   div.innerHTML(`<div class="flex">
-+          //     <div>
-+          //       <div class="relative flex justify-center items-center rounded-full bg-slate-500 w-12 h-12"> </div>
-+          //     </div>
-+          //     <div class="flex flex-col ml-4">
-+          //       <div class="text-sm font-bold">
-+          //         ${data.name || 'Isabel Marcado'}
-+          //       </div>
-+          //       <div class="text-sm my-1">Sales Director</div>
-+          //       <div class="text-sm text-neutral-500">San Francisco</div>
-+          //     </div>
-+          //   </div>`);
-+          document.getElementById('org-chart-container').appendChild(div);
 +      })
 +      .on('mousemove', (e, { data }) => {
 +        try {
@@ -2197,13 +2172,18 @@ index 871f2d8..f705b80 100644
 +                document
 +                  .getElementById('org-chart-container')
 +                  .getBoundingClientRect().x -
-+                300
++                document
++                  .getElementById(`${data.id}-tooltip`)
++                  .getBoundingClientRect().width /
++                  2
 +              }px`,
 +            );
 +        } catch (e) {}
 +      })
 +      .on('mouseout', function (d, { data }) {
-+        document.querySelectorAll('.tooltip').forEach((el) => el.remove());
++        document
++            .querySelectorAll('.org-chart-tooltip')
++            .forEach((el) => el.remove());
 +      });
 +
 +    // Add background rectangle for the nodes
@@ -2484,7 +2464,7 @@ index 871f2d8..f705b80 100644
                    M ${mx} ${my}
                    L ${mx} ${y}
                    L ${x} ${y}
-@@ -1042,544 +1412,626 @@ export class OrgChart {
+@@ -1042,544 +1392,626 @@ export class OrgChart {
                      ${ex - w * xrvs}  ${ey}
                    L ${ex} ${ey}
         `;
