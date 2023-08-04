@@ -23,6 +23,7 @@ import { useFeedStore } from 'stores/feedStore';
 import useModal from 'hooks/useModal';
 import { useSearchParams } from 'react-router-dom';
 import HashtagIcon from 'images/hashtag.svg';
+import Button, { Size, Variant } from 'components/Button';
 interface IFeedProps {}
 
 export interface IProfileImage {
@@ -163,38 +164,59 @@ const Feed: React.FC<IFeedProps> = () => {
                   <Divider className="bg-neutral-200" />
                   <SortByDropdown />
                 </div>
-                <div className="flex w-full overflow-y-auto">
-                  {appliedFeedFilters[PostFilterKeys.PostType]?.map(
-                    (filter: PostType) => (
-                      <div
-                        key={filter}
-                        className="border border-neutral-200 rounded-17xl px-3 py-2 flex bg-white capitalize text-sm font-medium items-center mr-1"
-                      >
-                        <div className="mr-1">{filter.toLocaleLowerCase()}</div>
-                        <Icon
-                          name="closeCircleOutline"
-                          stroke={twConfig.theme.colors.neutral['900']}
-                          className="cursor-pointer"
-                          onClick={() => removePostTypeFilter(filter)}
-                        />
-                      </div>
-                    ),
-                  )}
+
+                <div className="flex w-full items-center justify-between overflow-y-auto">
+                  <div className="flex items-center space-x-2">
+                    {appliedFeedFilters[PostFilterKeys.PostType]?.map(
+                      (filter: PostType) => (
+                        <>
+                          <div className="text-base font-medium text-neutral-500">
+                            Filter By
+                          </div>
+                          <div
+                            key={filter}
+                            className="border border-neutral-200 rounded-17xl px-3 py-2 flex bg-white capitalize text-sm font-medium items-center mr-1"
+                          >
+                            <div className="mr-1 text-sm text-primary-500 font-bold">
+                              {filter.toLocaleLowerCase()}
+                            </div>
+                            <Icon
+                              name="closeOutline"
+                              stroke={twConfig.theme.colors.neutral['900']}
+                              className="cursor-pointer"
+                              size={16}
+                              onClick={() => removePostTypeFilter(filter)}
+                            />
+                          </div>
+                        </>
+                      ),
+                    )}
+                  </div>
+
                   {getAppliedFiltersCount() > 0 && (
-                    <div
-                      className="flex items-center cursor-pointer"
-                      onClick={clearAppliedFilters}
-                    >
-                      <Icon
-                        name="deleteOutline"
-                        size={16}
-                        className="mr-1"
-                        stroke={twConfig.theme.colors.primary['600']}
-                        strokeWidth={'2'}
+                    // <div
+                    //   className="flex items-center cursor-pointer"
+                    //   onClick={clearAppliedFilters}
+                    // >
+                    //   <Icon
+                    //     name="deleteOutline"
+                    //     size={16}
+                    //     className="mr-1"
+                    //     stroke={twConfig.theme.colors.primary['600']}
+                    //     strokeWidth={'2'}
+                    //   />
+                    //   <div className="font-bold text-sm text-primary-600">
+                    //     Clear all
+                    //   </div>
+                    // </div>
+
+                    <div>
+                      <Button
+                        label={'Clear filters'}
+                        variant={Variant.Secondary}
+                        size={Size.Small}
+                        onClick={clearAppliedFilters}
                       />
-                      <div className="font-bold text-sm text-primary-600">
-                        Clear all
-                      </div>
                     </div>
                   )}
                 </div>
