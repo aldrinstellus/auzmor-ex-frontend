@@ -1,56 +1,34 @@
 import IconButton, { Size, Variant } from 'components/IconButton';
 import React, { useEffect, useState } from 'react';
 import './styles.css';
+import { IPoll } from 'contexts/CreatePostContext';
+import moment from 'moment';
 
-type PollOption = {
-  id: string;
-  text: string;
-  votes: number;
-};
-
-type PollProps = {
-  question: string;
-  closedAt: string;
-  total: number;
-  myVote: string;
-  options: PollOption[];
-};
-
-// question = 'Sample question lorem ipsum dolor simet?',
-//   closedAt = '2023-08-08',
-//   total = 10,
-//   myVote = 'abc',
-// options = [
-//   { id: 'abc', text: 'abcdef', votes: 2 },
-//   { id: 'def', text: 'defghi', votes: 3 },
-//   { id: 'ghi', text: 'ghijkl', votes: 4 },
-//   { id: 'jkl', text: 'jklmno', votes: 1 },
-// ],
-
-const Poll: React.FC = () => {
-  const options = [
-    { id: 'abc', text: 'abcdef', votes: 8 },
-    { id: 'def', text: 'defghi', votes: 3 },
-    { id: 'ghi', text: 'ghijkl', votes: 4 },
-    { id: 'jkl', text: 'jklmno', votes: 1 },
-  ];
-
+const Poll: React.FC<IPoll> = ({ question, options, total, closedAt }) => {
   const [userVoted, setUserVoted] = useState<boolean>(false);
+  const momentClosedAt = moment(new Date(closedAt));
+
+  // Set thresholds for proper weeks, months, and years calculation.
+  moment.relativeTimeThreshold('d', 7);
+  moment.relativeTimeThreshold('w', 4);
+  moment.relativeTimeThreshold('M', 12);
 
   useEffect(() => {
     if (userVoted) {
       setTimeout(() => {
         options.forEach((option) => {
-          const element = document.getElementById(option.id);
-          const widthPercent = (option.votes / 10) * 100;
-          element?.animate(
-            {
-              width: ['0%', `${widthPercent}%`],
-              easing: ['ease-out', 'ease-out'],
-            },
-            500,
-          );
-          element?.setAttribute('style', `width: ${widthPercent}%`);
+          if (option.id && total) {
+            const element = document.getElementById(option.id);
+            const widthPercent = ((option.votes || 0) / total) * 100;
+            element?.animate(
+              {
+                width: ['0%', `${widthPercent}%`],
+                easing: ['ease-out', 'ease-out'],
+              },
+              500,
+            );
+            element?.setAttribute('style', `width: ${widthPercent}%`);
+          }
         });
       }, 3000);
     }
@@ -60,9 +38,7 @@ const Poll: React.FC = () => {
     <div className="bg-neutral-100 py-4 px-8 rounded-9xl w-full">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <p className="text-neutral-900 font-bold">
-          Sample question lorem ipsum dolor simet?
-        </p>
+        <p className="text-neutral-900 font-bold">{question}</p>
         <div className="flex gap-x-2">
           <IconButton
             icon="edit"
@@ -84,6 +60,7 @@ const Poll: React.FC = () => {
           />
         </div>
       </div>
+
       {/* Options */}
       <div className="py-4">
         {options.map((option) => (
@@ -108,9 +85,12 @@ const Poll: React.FC = () => {
           </div>
         ))}
       </div>
+
       {/* Time left */}
       <div>
-        <p className="text-orange-500 font-bold">2 weeks left</p>
+        <p className="text-orange-500 font-bold">
+          {momentClosedAt.fromNow(true) + ' left'}
+        </p>
       </div>
     </div>
   );

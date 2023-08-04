@@ -1,6 +1,10 @@
 import Header from 'components/ModalHeader';
-import React, { useContext } from 'react';
-import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
+import React, { useContext, useEffect } from 'react';
+import {
+  CreatePostContext,
+  CreatePostFlow,
+  IPoll,
+} from 'contexts/CreatePostContext';
 import Body from './Body';
 import * as yup from 'yup';
 import { FieldType } from 'components/Form';
@@ -15,16 +19,6 @@ type CreatePollProps = {
   closeModal: () => void;
 };
 
-export type PollOption = {
-  value: string;
-};
-
-export type PollForm = {
-  question: string;
-  options: PollOption[];
-  duration: any;
-};
-
 const schema = yup.object({
   question: yup
     .string()
@@ -34,13 +28,12 @@ const schema = yup.object({
 
   options: yup.array().of(
     yup.object().shape({
-      value: yup
+      text: yup
         .string()
         .required('Option cannot be empty')
         .max(30, 'Option cannot exceed 30 characters'),
     }),
   ),
-  duration: yup.string().required('Required field'),
 });
 
 const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
@@ -49,28 +42,28 @@ const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
   // Form
   const {
     control,
-    handleSubmit,
     formState: { errors, isValid },
     watch,
     getValues,
-  } = useForm<PollForm>({
+    trigger,
+  } = useForm<IPoll>({
     mode: 'onChange',
     resolver: yupResolver(schema),
     defaultValues: {
       question: '',
       options: [
         {
-          value: '',
+          text: '',
         },
         {
-          value: '',
+          text: '',
         },
       ],
-      duration: {
+      closedAt: {
         label: '1 Week',
         value: afterXUnit(1, 'weeks').toISOString().substring(0, 19) + 'Z',
-        dataTestId: 'poll-duration-1week',
       },
+      datepickerValue: new Date(afterXUnit(1, 'day').toISOString()),
     },
   });
 
@@ -78,21 +71,17 @@ const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
   const { fields, append, remove } = useFieldArray({
     name: 'options',
     control,
-    rules: {
-      minLength: 2,
-      maxLength: 10,
-    },
   });
 
-  const onSubmit = (data: PollForm) => console.log(data);
+  const { setPoll } = useContext(CreatePostContext);
 
-  const selectedDuration: any = watch('duration');
+  const selectedDuration: any = watch('closedAt');
 
   const questionField = [
     {
       type: FieldType.Input,
       variant: Variant.Text,
-      placeholder: 'ex. What is your favourite kind of cookie',
+      placeholder: 'ex. What is your favourite kind of cookie?',
       name: 'question',
       label: 'Question*',
       error: errors.question?.message,
@@ -106,56 +95,70 @@ const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
     {
       type: FieldType.SingleSelect,
       label: 'Poll duration*',
-      name: 'duration',
+      name: 'closedAt',
       control,
       options: [
         {
           label: '1 Day',
           value: afterXUnit(1, 'days').toISOString().substring(0, 19) + 'Z',
-          dataTestId: 'poll-duration-1day',
+          dataTestId: 'poll-closedAt-1day',
         },
         {
           label: '3 Days',
           value: afterXUnit(3, 'days').toISOString().substring(0, 19) + 'Z',
-          dataTestId: 'poll-duration-3days',
+          dataTestId: 'poll-closedAt-3days',
         },
         {
           label: '1 Week',
           value: afterXUnit(1, 'weeks').toISOString().substring(0, 19) + 'Z',
-          dataTestId: 'poll-duration-1week',
+          dataTestId: 'poll-closedAt-1week',
         },
         {
           label: '2 Weeks',
           value: afterXUnit(2, 'weeks').toISOString().substring(0, 19) + 'Z',
-          dataTestId: 'poll-duration-2weeks',
+          dataTestId: 'poll-closedAt-2weeks',
         },
         {
           label: 'Custom Date',
           value: '',
-          dataTestId: 'poll-duration-customdate',
+          dataTestId: 'poll-closedAt-customdate',
         },
       ],
       placeholder: 'Select Poll Duration',
-      dataTestId: 'poll-duration-dropdown',
+      dataTestId: 'poll-closedAt-dropdown',
     },
   ];
 
   const datePickerField = [
     {
       type: FieldType.DatePicker,
-      name: 'duration-date',
+      name: 'datepickerValue',
       control,
       minDate: new Date(afterXUnit(1, 'day').toISOString()),
       dataTestId: 'custom-date-calendar',
     },
   ];
+
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        console.log('Form submitted!');
-        console.log(getValues());
-        handleSubmit(onSubmit);
+        trigger();
+        // If there are no errors
+        if (isValid) {
+          const values = getValues();
+          setPoll({
+            question: values.question,
+            options: values.options,
+            closedAt:
+              selectedDuration?.label === 'Custom Date'
+                ? values.datepickerValue?.toISOString().substring(0, 19) + 'Z'
+                : values.closedAt.value ||
+                  afterXUnit(1, 'weeks').toISOString().substring(0, 19) + 'Z',
+          });
+          // After setting poll, switch back to create post mode.
+          setActiveFlow(CreatePostFlow.CreatePost);
+        }
       }}
     >
       <Header

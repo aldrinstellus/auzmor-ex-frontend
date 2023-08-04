@@ -7,18 +7,17 @@ import {
   FieldErrors,
   UseFieldArrayAppend,
   UseFieldArrayRemove,
-  UseFormHandleSubmit,
 } from 'react-hook-form';
-import { PollForm } from '.';
 import Button, { Variant } from 'components/Button';
+import { IPoll } from 'contexts/CreatePostContext';
 
 type PollBodyProps = {
   questionField: Record<string, any>[];
-  fields: FieldArrayWithId<PollForm, 'options', 'id'>[];
-  errors: FieldErrors<PollForm>;
-  control: Control<PollForm, any>;
+  fields: FieldArrayWithId<IPoll, 'options', 'id'>[];
+  errors: FieldErrors<IPoll>;
+  control: Control<IPoll, any>;
   remove: UseFieldArrayRemove;
-  append: UseFieldArrayAppend<PollForm, 'options'>;
+  append: UseFieldArrayAppend<IPoll, 'options'>;
   durationFields: any;
   selectedDuration: any;
   datePickerField: any;
@@ -56,7 +55,7 @@ const Body: React.FC<PollBodyProps> = ({
         onClick={() => {
           if (fields.length < 10) {
             append({
-              value: '',
+              text: '',
             });
           } else {
             // Show error message

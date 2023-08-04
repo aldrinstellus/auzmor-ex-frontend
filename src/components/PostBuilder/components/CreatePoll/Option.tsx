@@ -1,5 +1,6 @@
 import Layout, { FieldType } from 'components/Form';
 import { Variant } from 'components/Input';
+import { IPoll } from 'contexts/CreatePostContext';
 import React from 'react';
 import {
   Control,
@@ -7,13 +8,12 @@ import {
   FieldErrors,
   UseFieldArrayRemove,
 } from 'react-hook-form';
-import { PollForm } from '.';
 
 export type OptionRowProps = {
-  field: FieldArrayWithId<PollForm, 'options', 'id'>;
-  errors: FieldErrors<PollForm>;
+  field: FieldArrayWithId<IPoll, 'options', 'id'>;
+  errors: FieldErrors<IPoll>;
   index: number;
-  control: Control<PollForm, any>;
+  control: Control<IPoll, any>;
   remove: UseFieldArrayRemove;
   className?: string;
 };
@@ -34,13 +34,13 @@ const OptionRow: React.FC<OptionRowProps> = ({
             type: FieldType.Input,
             InputVariant: Variant.Text,
             placeholder: 'Option',
-            name: `options.${index}.value`,
-            defaultValue: field.value,
+            name: `options.${index}.text`,
+            defaultValue: field.text,
             control,
-            dataTestId: 'poll-option-value',
+            dataTestId: 'poll-option-text',
             label: `Option ${index + 1}`,
             error: errors.options
-              ? errors.options?.[index]?.value?.message
+              ? errors.options?.[index]?.text?.message
               : undefined,
             customLabelRightElement:
               index > 1 ? (
