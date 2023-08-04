@@ -20,22 +20,20 @@ const Poll: React.FC<IPoll> = ({ question, options, total, closedAt }) => {
 
   useEffect(() => {
     if (userVoted) {
-      setTimeout(() => {
-        options.forEach((option) => {
-          if (option.id && total) {
-            const element = document.getElementById(option.id);
-            const widthPercent = ((option.votes || 0) / total) * 100;
-            element?.animate(
-              {
-                width: ['0%', `${widthPercent}%`],
-                easing: ['ease-out', 'ease-out'],
-              },
-              500,
-            );
-            element?.setAttribute('style', `width: ${widthPercent}%`);
-          }
-        });
-      }, 3000);
+      options.forEach((option) => {
+        if (option.id && total) {
+          const element = document.getElementById(option.id);
+          const widthPercent = ((option.votes || 0) / total) * 100;
+          element?.animate(
+            {
+              width: ['0%', `${widthPercent}%`],
+              easing: ['ease-out', 'ease-out'],
+            },
+            500,
+          );
+          element?.setAttribute('style', `width: ${widthPercent}%`);
+        }
+      });
     }
   }, [options, userVoted]);
 
