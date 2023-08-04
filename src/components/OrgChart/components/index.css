@@ -5,5 +5,12 @@
   display: none;
 }
 .node-button-foreign-object {
-  width: 224px !important;
+  width: 120px !important;
+  height: 16px !important;
+  transform: translate(108px, 26px) !important;
+  cursor: pointer;
+}
+.node,
+.node-rect {
+  cursor: default !important;
 }

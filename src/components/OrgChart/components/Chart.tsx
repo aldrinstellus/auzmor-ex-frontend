@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { renderToString } from 'react-dom/server';
 import './index.css';
 import UserNode from './UserNode';
+import ExpandButtonContent from './ExpandButtonContent';
 
 export interface INode {
   id: string;
@@ -131,11 +132,7 @@ const Chart: React.FC<IChart> = ({ orgChartRef }) => {
           .siblingsMargin((d: any) => 25)
           .svgHeight(window.innerHeight - 290)
           .buttonContent(({ node, state }: any) => {
-            return renderToString(
-              <div className="w-full text-right text-sm text-neutral-500 mt-2 absolute right-0 bottom-0">
-                {node.data._directSubordinates} direct reports
-              </div>,
-            );
+            return renderToString(<ExpandButtonContent node={node} />);
           })
           .nodeContent((node: any, i: any, arr: any, state: any) => {
             return renderToString(<UserNode node={node} />);
