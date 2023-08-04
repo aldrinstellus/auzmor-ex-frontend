@@ -37,6 +37,7 @@ export type InputProps = {
   onRightIconClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onEnter?: any;
   customLabelRightElement?: ReactElement;
+  isClearable?: boolean;
 };
 
 const Input: React.FC<InputProps> = ({
@@ -62,6 +63,7 @@ const Input: React.FC<InputProps> = ({
   onRightIconClick,
   onEnter,
   customLabelRightElement,
+  isClearable = false,
 }) => {
   const { field } = useController({
     name,
@@ -165,6 +167,16 @@ const Input: React.FC<InputProps> = ({
             onKeyDown={onEnter}
             onBlur={field.onBlur}
           />
+          {isClearable && !!field.value && (
+            <div className="absolute right-2">
+              <Icon
+                name="close"
+                size={16}
+                className="p-2 rounded-7xl bg-white"
+                onClick={() => field.onChange('')}
+              />
+            </div>
+          )}
         </div>
         {rightIcon && (
           <div className="absolute right-5" onClick={onRightIconClick}>
