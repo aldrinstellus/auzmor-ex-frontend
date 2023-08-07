@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from 'hooks/useAuth';
 import Icon from 'components/Icon';
 import PopupMenu from 'components/PopupMenu';
-import DeleteUserModal from './DeleteUserModal';
+import DeleteUserModal from '../DeleteUserModal';
 import { UserStatus, useResendInvitation } from 'queries/users';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
@@ -17,7 +17,7 @@ import { PRIMARY_COLOR, TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import useModal from 'hooks/useModal';
 
-export interface IUserCardProps {
+export interface IPeopleCardProps {
   id: string;
   role: string;
   fullName: string;
@@ -46,7 +46,7 @@ const statusColorMap: Record<string, string> = {
   [Status.SUPERADMIN]: PRIMARY_COLOR,
 };
 
-const UserCard: React.FC<IUserCardProps> = ({
+const PeopleCard: React.FC<IPeopleCardProps> = ({
   id,
   role,
   fullName,
@@ -236,4 +236,4 @@ const UserCard: React.FC<IUserCardProps> = ({
   );
 };
 
-export default UserCard;
+export default PeopleCard;
