@@ -4,6 +4,9 @@ import {
   createHashtagsList,
   newHashtags,
 } from './mentions/utils';
+import { renderToString } from 'react-dom/server';
+import ReactionSkeleton from 'components/Post/components/ReactionSkeleton';
+import React from 'react';
 
 interface IOrg {
   id: string;
@@ -92,7 +95,9 @@ export const mention = {
   showDenotationChar: true,
   onOpen: () => {},
   onclose: () => {},
-  renderLoading: () => {},
+  renderLoading: () => {
+    return renderToString(<ReactionSkeleton />);
+  },
   renderItem: (item: any, searchItem: any) => {
     if (item?.charDenotation === '@') {
       return `
