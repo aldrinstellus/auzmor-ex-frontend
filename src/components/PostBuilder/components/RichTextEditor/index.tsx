@@ -4,7 +4,6 @@ import React, {
   memo,
   useCallback,
   useContext,
-  useState,
 } from 'react';
 import ReactQuill, { Quill, UnprivilegedEditor } from 'react-quill';
 import { DeltaStatic, Sources } from 'quill';
@@ -31,6 +30,7 @@ import moment from 'moment';
 import MediaPreview, { Mode } from 'components/MediaPreview';
 import Banner, { Variant } from 'components/Banner';
 import { hasDatePassed } from 'utils/time';
+import Poll from 'components/Poll';
 
 export interface IEditorContentChanged {
   text: string;
@@ -82,6 +82,8 @@ const RichTextEditor = React.forwardRef(
       setMediaOpenIndex,
       previewUrl,
       setPreviewUrl,
+      poll,
+      setPoll,
     } = useContext(CreatePostContext);
 
     const formats = [
@@ -274,6 +276,16 @@ const RichTextEditor = React.forwardRef(
               setActiveFlow(CreatePostFlow.EditMedia);
             }}
           />
+        )}
+        {poll && (
+          <div className="px-2 py-2 m-4">
+            <Poll
+              question={poll.question}
+              options={poll.options}
+              total={poll.total}
+              closedAt={poll.closedAt}
+            />
+          </div>
         )}
         {announcement?.label && !hasDatePassed(announcement.value) && (
           <div className="flex justify-between bg-primary-100 px-4 py-2 m-4">

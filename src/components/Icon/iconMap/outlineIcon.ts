@@ -76,6 +76,7 @@ import SvgFocusOutline from '../components/Focus/FocusOutline';
 import SvgZoomInOutline from '../components/ZoomIn/ZoomInOutline';
 import SvgZoomOutOutline from '../components/ZoomOut/ZoomOutOutline';
 import SvgProfileOutline from '../components/Profile/ProfileOutline';
+import SvgGlobalOutline from '../components/Global/GlobalOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -119,6 +120,7 @@ export const outlineIcon = {
   funnyOutline: SvgFunnyOutline,
   gearOutline: SvgGearOutline,
   groupOutline: SvgGroupOutline,
+  globalOutline: SvgGlobalOutline,
   iconLinearOutline: SvgIconLinearOutline,
   imageOutline: SvgImageOutline,
   importOutline: SvgImportOutline,
