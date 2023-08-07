@@ -1,3 +1,7 @@
+import React, { ReactNode } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import { renderToString } from 'react-dom/server';
+import ReactionSkeleton from 'components/Post/components/ReactionSkeleton';
 import apiService from 'utils/apiService';
 import {
   createMentionsList,
@@ -40,7 +44,6 @@ interface IHashtags {
 }
 
 export const previewLinkRegex = /(http|https):\/\/[^\s]+/gi;
-
 const mentionEntityFetch = async (character: string, searchTerm: string) => {
   const isContainWhiteSpace = /^\s/.test(searchTerm);
   if (character === '@' && !isContainWhiteSpace) {
@@ -86,48 +89,62 @@ export const mention = {
     mentionEntityFetch(mentionChar, searchTerm).then((listItem: any) => {
       renderItem(listItem, searchTerm);
     });
+    // Loaders =
+    //   mentionChar === '@' ? (
+    //     <ReactionSkeleton />
+    //   ) : (
+    //     <div>
+    //       {[...Array(4)].map((value, index) => (
+    //         <div className="flex gap-x-2 items-start py-5" key={index}>
+    //           <Skeleton className="!w-56 h-3" count={1} borderRadius={100} />
+    //         </div>
+    //       ))}
+    //     </div>
+    //   );
   },
   dataAttributes: ['id'],
   showDenotationChar: true,
-  onOpen: () => {}, // Callback when mention dropdown is open.
-  onclose: () => {}, // Callback when mention dropdown is closed.
-  renderLoading: () => {},
+  onOpen: () => {},
+  onclose: () => {},
+  renderLoading: () => {
+    return renderToString(<ReactionSkeleton />);
+  },
   renderItem: (item: any, searchItem: any) => {
     if (item?.charDenotation === '@') {
       return `
-      <div class="user-container">
+              <div class="user-container">
 
-            <div class="user-avatar">
-                  ${
-                    item?.profileImage?.original
-                      ? `<img 
-                          src=${item?.profileImage?.original} 
-                          style="width:32px;height:32px;border-radius: 100px;
-                    "/>`
-                      : `<div class="user-avatar-name"> 
-                            ${
-                              item?.firstName?.charAt(0) +
-                                item?.lastName?.charAt(0) ||
-                              item?.fullName?.charAt(0).toUpperCase()
-                            }
-                        </div>`
-                  }
-            </div>
+                    <div class="user-avatar">
+                          ${
+                            item?.profileImage?.original
+                              ? `<img 
+                                  src=${item?.profileImage?.original} 
+                                  style="width:32px;height:32px;border-radius: 100px;
+                            "/>`
+                              : `<div class="user-avatar-name"> 
+                                    ${
+                                      item?.firstName?.charAt(0) +
+                                        item?.lastName?.charAt(0) ||
+                                      item?.fullName?.charAt(0).toUpperCase()
+                                    }
+                                </div>`
+                          }
+                    </div>
 
-            <div>
-              <div class="user-details">
-                <div>${item.fullName}</div>
-              <div>
-                <div class="user-email">${item.workEmail}</div>
-            </div>
+                    <div>
+                      <div class="user-details">
+                        <div>${item.fullName}</div>
+                      <div>
+                        <div class="user-email">${item.workEmail}</div>
+                    </div>
 
-</div>
+              </div>
             `;
     } else if (item.charDenotation === '#') {
       return `
             <div class="hashtag-container">
-              <div>${item?.name}</div>
-            </div>
+              <div class="hashtag-name">#${item?.name}</div>      
+            </div>        
       `;
     } else {
       return null;

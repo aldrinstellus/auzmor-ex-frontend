@@ -1,3 +1,6 @@
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import ReactionSkeleton from 'components/Post/components/ReactionSkeleton';
 import apiService from 'utils/apiService';
 import {
   createMentionsList,
@@ -89,45 +92,47 @@ export const mention = {
   },
   dataAttributes: ['id'],
   showDenotationChar: true,
-  onOpen: () => {},
-  onclose: () => {},
-  renderLoading: () => {},
+  onOpen: () => {}, // Callback when mention dropdown is open.
+  onclose: () => {}, // Callback when mention dropdown is closed.
+  renderLoading: () => {
+    return renderToString(<ReactionSkeleton />);
+  },
   renderItem: (item: any, searchItem: any) => {
     if (item?.charDenotation === '@') {
       return `
-              <div class="user-container">
+      <div class="user-container">
 
-                    <div class="user-avatar">
-                          ${
-                            item?.profileImage?.original
-                              ? `<img 
-                                  src=${item?.profileImage?.original} 
-                                  style="width:32px;height:32px;border-radius: 100px;
-                            "/>`
-                              : `<div class="user-avatar-name"> 
-                                    ${
-                                      item?.firstName?.charAt(0) +
-                                        item?.lastName?.charAt(0) ||
-                                      item?.fullName?.charAt(0).toUpperCase()
-                                    }
-                                </div>`
-                          }
-                    </div>
+            <div class="user-avatar">
+                  ${
+                    item?.profileImage?.original
+                      ? `<img 
+                          src=${item?.profileImage?.original} 
+                          style="width:32px;height:32px;border-radius: 100px;
+                    "/>`
+                      : `<div class="user-avatar-name"> 
+                            ${
+                              item?.firstName?.charAt(0) +
+                                item?.lastName?.charAt(0) ||
+                              item?.fullName?.charAt(0).toUpperCase()
+                            }
+                        </div>`
+                  }
+            </div>
 
-                    <div>
-                      <div class="user-details">
-                        <div>${item.fullName}</div>
-                      <div>
-                        <div class="user-email">${item.workEmail}</div>
-                    </div>
+            <div>
+              <div class="user-details">
+                <div>${item.fullName}</div>
+              <div>
+                <div class="user-email">${item.workEmail}</div>
+            </div>
 
-              </div>
+</div>
             `;
     } else if (item.charDenotation === '#') {
       return `
             <div class="hashtag-container">
-              <div class="hashtag-name">#${item?.name}</div>      
-            </div>        
+              <div>${item?.name}</div>
+            </div>
       `;
     } else {
       return null;
