@@ -21,6 +21,7 @@ export type IconButtonProps = {
   onClick?: MouseEventHandler<Element>;
   className?: string;
   borderAround?: boolean;
+  borderAroundClassName?: string;
   fill?: string;
   stroke?: string;
   dataTestId?: string;
@@ -33,6 +34,7 @@ const IconButton = ({
   icon = '',
   className = '',
   borderAround = false,
+  borderAroundClassName = '',
   onClick = () => {},
   fill,
   stroke,
@@ -63,9 +65,14 @@ const IconButton = ({
 
   const borderStyle = useMemo(
     () =>
-      clsx({
-        'border border-solid border-neutral-200 rounded-17xl': borderAround,
-      }),
+      clsx(
+        {
+          'border border-solid border-neutral-200 rounded-17xl': borderAround,
+        },
+        {
+          [borderAroundClassName]: true,
+        },
+      ),
     [],
   );
 
