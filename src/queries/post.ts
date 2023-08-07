@@ -400,15 +400,15 @@ export const useGetPost = (id: string, commentId?: string) => {
   });
 };
 
-export const getHashtags = async () => {
-  const { data } = await apiService.get('hashtags');
+export const getHashtags = async (q: string) => {
+  const { data } = await apiService.get('hashtags', q);
   return data;
 };
 
-export const useGetHashtags = () => {
+export const useGetHashtags = (q: string) => {
   return useQuery({
-    queryKey: ['get-hashtags'],
-    queryFn: () => getHashtags(),
-    enabled: false,
+    queryKey: ['get-hashtags', q],
+    queryFn: () => getHashtags(q),
+    enabled: true,
   });
 };

@@ -68,6 +68,7 @@ const Toolbar: React.FC<IToolbarProps> = ({
                   ?.getModule('mention')
                   ?.openMenu('#')
               }
+              data-testid="createpost-addhashtag-cta"
             >
               Add Hashtag
             </div>

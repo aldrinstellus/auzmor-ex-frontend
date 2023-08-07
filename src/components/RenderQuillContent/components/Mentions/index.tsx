@@ -45,6 +45,7 @@ const Mention: React.FC<MentionProps> = ({
         <span
           className="cursor-pointer mention"
           contentEditable="false"
+          data-testid={`feedpage-at-${value}`}
           {...eventHandlers}
         >
           {value}
