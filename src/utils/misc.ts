@@ -162,6 +162,13 @@ export const clearInputValue = (
   element.value = '';
 };
 
+export const canPerform = (checkFor?: string[], allPermissions?: string[]) => {
+  if (allPermissions?.length && checkFor?.length) {
+    return allPermissions.some((perm) => checkFor.includes(perm));
+  }
+  return false;
+};
+
 export const isSubset = (subset?: string[], set?: string[]) => {
   if (set && subset) {
     return subset.every((ele) => set.includes(ele));

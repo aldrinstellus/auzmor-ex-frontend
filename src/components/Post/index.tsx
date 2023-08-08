@@ -15,6 +15,7 @@ import RenderQuillContent from 'components/RenderQuillContent';
 import { getNouns } from 'utils/misc';
 import Divider from 'components/Divider';
 import useModal from 'hooks/useModal';
+import { PRIMARY_COLOR } from 'utils/constants';
 
 export const iconsStyle = (key: string) => {
   const iconStyle = clsx(
@@ -74,7 +75,8 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
             createdTime={humanizeTime(post.createdAt!)}
             createdBy={post?.createdBy}
           />
-          <div className="relative">
+          <div className="relative flex space-x-4 mr-6">
+            <Icon name="bookmarkOutline" size={20} className="cursor-pointer" />
             <FeedPostMenu data={post as unknown as IPost} />
           </div>
         </div>
@@ -154,7 +156,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
                 dataTestIdPrefix="post-reaction"
               />
               <button
-                className="flex items-center"
+                className="flex items-center space-x-1"
                 onClick={() => {
                   if (showComments) {
                     closeComments();
@@ -165,12 +167,17 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
                 data-testid="feed-post-comment"
               >
                 <Icon name="comment" size={16} />
-                <div className="text-xs font-normal text-neutral-500 ml-1.5">
+                <div className="text-xs font-normal text-neutral-500">
                   Comment
                 </div>
               </button>
             </div>
-            <div></div>
+            <div className="flex items-center space-x-1">
+              <Icon name="comment" size={16} />
+              <span className="text-xs font-normal text-neutral-500">
+                Repost
+              </span>
+            </div>
           </div>
           {/* Comments */}
           {showComments ? (
