@@ -114,6 +114,7 @@ import SupportReaction from '../components/SupportReaction';
 import InsightfulReaction from '../components/InsightfulReaction';
 import FunnyReaction from '../components/FunnyReaction';
 import PostBookmarkIcon from '../components/PostBookmark';
+import Repost from '../components/Repost';
 
 export const icon = {
   add: Add,
@@ -207,6 +208,7 @@ export const icon = {
   plus: Plus,
   redo: Redo,
   reorder: Reorder,
+  repost: Repost,
   reply: Reply,
   rotateLeft: RotateLeft,
   search: Search,

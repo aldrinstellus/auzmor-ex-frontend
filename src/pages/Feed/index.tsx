@@ -24,8 +24,7 @@ import { useFeedStore } from 'stores/feedStore';
 import useModal from 'hooks/useModal';
 import { Link, useSearchParams } from 'react-router-dom';
 import HashtagIcon from 'images/hashtag.svg';
-import Button, { Size, Variant } from 'components/Button';
-import Image from 'components/Image';
+import MyTeamWidget from 'components/MyTeamWidget';
 interface IFeedProps {}
 
 export interface IProfileImage {
@@ -119,8 +118,9 @@ const Feed: React.FC<IFeedProps> = () => {
   return (
     <>
       <div className="mb-12 gap-x-[52px] flex w-full">
-        <div className="top-10 z-10 w-1/4">
-          <UserCard className="sticky top-24" />
+        <div className="z-10 w-1/4 sticky top-24 space-y-6">
+          <UserCard />
+          <MyTeamWidget />
         </div>
         <div className="w-1/2">
           <div className="">
