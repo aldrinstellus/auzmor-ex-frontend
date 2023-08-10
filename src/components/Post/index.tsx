@@ -5,7 +5,12 @@ import { VIEW_POST } from 'components/Actor/constant';
 import CommentCard from 'components/Comments/index';
 import Likes, { ReactionType } from 'components/Reactions';
 import FeedPostMenu from './components/FeedPostMenu';
-import { IPost, createBookmark, deleteBookmark } from 'queries/post';
+import {
+  IPost,
+  IPostFilters,
+  createBookmark,
+  deleteBookmark,
+} from 'queries/post';
 import Icon from 'components/Icon';
 import clsx from 'clsx';
 import { humanizeTime } from 'utils/time';
@@ -16,7 +21,7 @@ import { getNouns, twConfig } from 'utils/misc';
 import Divider from 'components/Divider';
 import useModal from 'hooks/useModal';
 import { PRIMARY_COLOR, TOAST_AUTOCLOSE_TIME } from 'utils/constants';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFeedStore } from 'stores/feedStore';
 import { IpcNetConnectOpts } from 'net';
 import Tooltip from 'components/Tooltip';
@@ -56,6 +61,7 @@ type PostProps = {
 
 const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
   const [showComments, openComments, closeComments] = useModal(false);
+  const queryClient = useQueryClient();
   const [showReactionModal, openReactionModal, closeReactionModal] =
     useModal(false);
   const reaction = post?.myReaction?.reaction;
@@ -69,7 +75,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
   const createBookmarkMutation = useMutation({
     mutationKey: ['create-bookmark-mutation'],
     mutationFn: createBookmark,
-    onSuccess: (data, variables) => {
+    onSuccess: async (data, variables) => {
       toast(
         <SuccessToast
           content="Post has been bookmarked successfully!"
@@ -94,6 +100,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
           theme: 'dark',
         },
       );
+      await queryClient.invalidateQueries(['my-bookmarks']);
       updateFeed(variables, { ...feed[variables], bookmarked: true });
     },
   });
@@ -101,7 +108,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
   const deleteBookmarkMutation = useMutation({
     mutationKey: ['delete-bookmark-mutation'],
     mutationFn: deleteBookmark,
-    onSuccess: (data, variables) => {
+    onSuccess: async (data, variables) => {
       toast(
         <SuccessToast
           content="Post removed from your bookmarks"
@@ -126,6 +133,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
           theme: 'dark',
         },
       );
+      await queryClient.invalidateQueries(['my-bookmarks']);
       updateFeed(variables, { ...feed[variables], bookmarked: false });
     },
   });
