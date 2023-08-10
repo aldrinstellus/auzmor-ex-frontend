@@ -159,7 +159,7 @@ const Team: React.FC<ITeamProps> = ({
                 <>
                   {teamsData?.map((team: any) => (
                     <TeamsCard
-                      key={team.name}
+                      key={team.id}
                       {...team}
                       setShowMyTeam={setShowMyTeam}
                     />

@@ -77,7 +77,6 @@ const AddTeamModal: React.FC<IAddTeamModalProps> = ({
   }, [open]);
 
   const onSubmit = (data: ITeamForm) => {
-    console.log(data);
     const payload = {
       name: data?.name,
       category: data?.category?.value,
@@ -107,8 +106,7 @@ const AddTeamModal: React.FC<IAddTeamModalProps> = ({
           <Button
             label="Create"
             onClick={handleSubmit(onSubmit)}
-            disabled={false}
-            loading={false}
+            loading={createTeamMutation?.isLoading}
             dataTestId=""
           />
         </div>

@@ -44,7 +44,7 @@ const TeamFilterModal: React.FC<ITeamFilterModalProps> = ({
       icon: '',
       key: 'category-filters',
       component: (
-        <div>Categories in checkbox witht the filters label and search bar</div>
+        <div>Categories in checkbox with the filters label and search bar</div>
       ),
       disabled: false,
       hidden: false,
@@ -83,7 +83,7 @@ const TeamFilterModal: React.FC<ITeamFilterModalProps> = ({
                     onClick={() => setActiveFilter(item)}
                     data-testid={item?.dataTestId}
                   >
-                    <div className="text-neutral-500 text-sm font-medium p-4 flex items-center gap-x-3">
+                    <div className="text-primary-500 text-sm font-medium p-4 flex items-center gap-x-3">
                       {item.label}
                     </div>
                     {index !== filterNavigation.length - 1 && <Divider />}
@@ -91,7 +91,7 @@ const TeamFilterModal: React.FC<ITeamFilterModalProps> = ({
                 ))}
               </div>
             </div>
-            <div className="w-2/3">
+            <div className="w-2/3 py-4 px-2">
               {activeFilter.search && (
                 <div>
                   <Layout
@@ -102,7 +102,7 @@ const TeamFilterModal: React.FC<ITeamFilterModalProps> = ({
                         leftIcon: 'search',
                         control,
                         name: 'search',
-                        placeholder: 'Search members',
+                        placeholder: 'Search catagories',
                       },
                     ]}
                   />

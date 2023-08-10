@@ -233,6 +233,14 @@ export const createTeams = async (payload: ICreateTeams) => {
   });
 };
 
+// delete team by id -> teams/:id
+export const deleteTeam = async (id: string) => {
+  const data = await apiService.delete(`/teams/${id}`);
+  return new Promise((res) => {
+    res(data);
+  });
+};
+
 /* REACT QUERY */
 
 // use react query to get single user

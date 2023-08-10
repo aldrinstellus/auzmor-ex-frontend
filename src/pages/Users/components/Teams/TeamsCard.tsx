@@ -79,15 +79,15 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
             className="-right-36 w-44 top-8"
           />
         )}
-        <div
+        {/* Conditionally Render based on API Response - based on the communintated using createdAt date*/}
+        {/* <div
           style={{
             backgroundColor: '#D1FAE5',
           }}
           className="absolute top-0 left-0 text-primary-500 rounded-tl-[12px] rounded-br-[12px] px-3 py-1 text-xs font-medium"
         >
-          {/* Conditionally Render based on API Response - based on the communintated using createdAt date*/}
           Recently added
-        </div>
+        </div> */}
 
         <div
           className="flex flex-col items-center"
@@ -133,7 +133,7 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
         open={open}
         openModal={openModal}
         closeModal={closeModal}
-        userId={'77'}
+        userId={id}
       />
     </div>
   );
