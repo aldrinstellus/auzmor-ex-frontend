@@ -15,7 +15,7 @@ import useModal from 'hooks/useModal';
 export interface ITeamsCardProps {
   id: string;
   name: string;
-  category: string;
+  category: Record<string, any>;
   description: string;
   setShowMyTeam: (show: boolean) => void;
 }
@@ -115,11 +115,11 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
               </div>
 
               <div className="bg-indigo-100 text-indigo-500 text-xxs font-semibold rounded-xl py-0.4 px-2 truncate capitalize">
-                {category.toLowerCase()}
+                {category?.name?.toLowerCase()}
               </div>
             </div>
 
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center justify-center space-x-1">
               <Icon name="profileUserOutline" size={18} />
               <div className="text-xs font-normal text-neutral-500">
                 {0} members
