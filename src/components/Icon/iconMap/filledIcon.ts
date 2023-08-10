@@ -70,6 +70,7 @@ import SvgZoomOutFilled from '../components/ZoomOut/ZoomOutFilled';
 import SvgProfileFilled from '../components/Profile/ProfileFilled';
 import SvgGlobalFilled from '../components/Global/GlobalFilled';
 import SvgRepostFilled from '../components/Repost/RepostFilled';
+import SvgGearFilled from '../components/Gear/GearFilled';
 
 export const filledIcon = {
   addCircleFilled: SvgAddCircleFilled,
@@ -144,4 +145,5 @@ export const filledIcon = {
   zoomInFilled: SvgZoomInFilled,
   zoomOutFilled: SvgZoomOutFilled,
   profileFilled: SvgProfileFilled,
+  gearFilled: SvgGearFilled,
 };
