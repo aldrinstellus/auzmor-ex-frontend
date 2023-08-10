@@ -23,9 +23,14 @@ const SchedulePost: React.FC<ISchedulePost> = ({ closeModal }) => {
   const { setActiveFlow, clearPostContext, setSchedule, schedule } =
     useContext(CreatePostContext);
   const onSubmit = (data: IForm) => {
+    let hours = parseInt(data.time.split(' ')[0].split(':')[0]);
+    const min = parseInt(data.time.split(' ')[0].split(':')[1]);
+    if (data.time.indexOf('pm') > -1) {
+      hours += 12;
+    }
     setSchedule({
       timezone: data.timeZone.value,
-      date: data.date.toISOString(),
+      date: new Date(new Date(data.date).setHours(hours, min)).toISOString(),
       time: data.time,
     });
     setActiveFlow(CreatePostFlow.CreatePost);
