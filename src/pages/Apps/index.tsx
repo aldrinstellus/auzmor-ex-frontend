@@ -13,6 +13,8 @@ import useModal from 'hooks/useModal';
 import AddApp from './components/AddApp';
 import AppGrid from './components/AppGrid';
 import { uniqueId } from 'lodash';
+import { useInfiniteApps } from 'queries/apps';
+import { useAppStore } from 'stores/appStore';
 interface IAppsProps {}
 
 interface IAppSearchForm {
@@ -39,62 +41,30 @@ const Apps: React.FC<IAppsProps> = () => {
     mode: 'onChange',
   });
 
-  // State to store app group
+  const { apps } = useAppStore();
+  // State to store apps group
   const [selectedAppGroup, setSelectedAppGroup] = useState<AppGroup>(
     AppGroup.MY_APPS,
   );
 
-  // Add app modal
+  // Add apps modal
   const [open, openModal, closeModal] = useModal(false, false);
 
   const selectedButtonClassName = '!bg-primary-50 text-primary-500';
   const regularButtonClassName = '!text-neutral-500';
 
-  const apps = [
-    {
-      id: uniqueId(),
-      url: 'https://instagram.com',
-      label: 'Instagram',
-      description:
-        'Ruin your happiness in one easy click Ruin your happiness in one easy click Ruin your happiness in one easy click Ruin your happiness in one easy click Ruin your happiness in one easy click',
-      category: 'Social Media',
-      icon: {
-        id: uniqueId(),
-        original: 'https://i.imgur.com/Na1oyZM.png',
-        thumbnail: 'https://i.imgur.com/Na1oyZM.png',
-        small: 'https://i.imgur.com/Na1oyZM.png',
-        medium: 'https://i.imgur.com/Na1oyZM.png',
-        large: 'https://i.imgur.com/Na1oyZM.png',
-        blurHash: 'LGG7;*n$3Gaet,aebdfk0=az_1j[',
-      },
-      credentials: {
-        acsUrl: 'ACS URL',
-        entityId: uniqueId(),
-        relayState: 'RELAY STATE',
-      },
-    },
-    {
-      id: uniqueId(),
-      url: 'https://facebook.com',
-      label: 'Facebook',
-      description: 'Ruin your peace of mind in one easy click',
-      category: 'Social Media',
-      icon: {
-        id: uniqueId(),
-        original: 'https://i.imgur.com/Na1oyZM.png',
-        thumbnail: 'https://i.imgur.com/Na1oyZM.png',
-        small: 'https://i.imgur.com/Na1oyZM.png',
-        medium: 'https://i.imgur.com/Na1oyZM.png',
-        large: 'https://i.imgur.com/Na1oyZM.png',
-        blurHash: 'LGG7;*n$3Gaet,aebdfk0=az_1j[',
-      },
-      credentials: {
-        acsUrl: 'ACS URL',
-        entityId: uniqueId(),
-        relayState: 'RELAY STATE',
-      },
-    },
-  ];
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfiniteApps();
+
+  const appIds = data?.pages.flatMap((page) => {
+    return page.data?.result?.data.map((apps: any) => {
+      try {
+        return apps;
+      } catch (e) {
+        console.log('Error', { apps });
+      }
+    });
+  }) as { id: string }[];
 
   return (
     <div>
@@ -203,10 +173,18 @@ const Apps: React.FC<IAppsProps> = () => {
             />
           </div>
         </div>
-        <p className="text-neutral-500">Showing {apps.length} results</p>
-        <div className="pt-6">
-          <AppGrid apps={apps} />
-        </div>
+        {appIds && (
+          <>
+            <p className="text-neutral-500">Showing {appIds.length} results</p>
+            <div className="pt-6">
+              <AppGrid
+                apps={appIds
+                  ?.filter(({ id }) => !!apps[id])
+                  ?.map(({ id }) => apps[id])}
+              />
+            </div>
+          </>
+        )}
       </Card>
       <AddApp open={open} closeModal={closeModal} />
     </div>

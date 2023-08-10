@@ -13,7 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { URL_REGEX } from 'utils/constants';
 import { useUpload } from 'hooks/useUpload';
 import { EntityType } from 'queries/files';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createApp } from 'queries/apps';
 
 type AddAppProps = {
@@ -61,10 +61,15 @@ const AddApp: React.FC<AddAppProps> = ({ open, closeModal }) => {
     mode: 'onChange',
   });
 
+  const queryClient = useQueryClient();
+
   const addAppMutation = useMutation({
     mutationKey: ['add-app-mutation'],
     mutationFn: createApp,
-    onSuccess: async () => {},
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['apps']);
+      closeModal();
+    },
     onError: async () => {},
   });
 
@@ -98,8 +103,9 @@ const AddApp: React.FC<AddAppProps> = ({ open, closeModal }) => {
     if (!errors.url && !errors.label) {
       const formData = getValues();
       let uploadedFile;
+      console.log(formData);
       if (formData.icon) {
-        uploadedFile = await uploadMedia([formData.icon], EntityType.Post);
+        uploadedFile = await uploadMedia([formData.icon], EntityType.AppIcon);
       }
 
       // Construct request body
@@ -133,7 +139,11 @@ const AddApp: React.FC<AddAppProps> = ({ open, closeModal }) => {
         <form onSubmit={onSubmit}>
           <Tabs tabs={tabs} disableAnimation={true} />
           <div className="bg-blue-50 flex items-center justify-end gap-x-3 px-6 py-4 mt-auto rounded-9xl">
-            <Button label="Cancel" variant={ButtonVariant.Secondary} />
+            <Button
+              label="Cancel"
+              variant={ButtonVariant.Secondary}
+              onClick={closeModal}
+            />
             <Button label="Save" type={Type.Submit} />
           </div>
         </form>

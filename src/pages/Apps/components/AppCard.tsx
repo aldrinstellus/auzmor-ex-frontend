@@ -72,7 +72,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
           <div className="pb-8">
             <div className="flex items-center justify-between">
               <img
-                src={app.icon.thumbnail}
+                src={app?.icon?.thumbnail}
                 className="p-1 bg-neutral-100 rounded-xl"
                 height={48}
                 width={48}

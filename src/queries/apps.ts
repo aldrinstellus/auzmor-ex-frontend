@@ -3,6 +3,8 @@ import {
   useInfiniteQuery,
   useQuery,
 } from '@tanstack/react-query';
+import _ from 'lodash';
+import { useAppStore } from 'stores/appStore';
 import apiService from 'utils/apiService';
 
 export type AppIcon = {
@@ -64,7 +66,7 @@ export interface IAddApp {
   audience: any;
 }
 
-// Get app categories
+// Get apps categories
 export const getCategories = ({
   pageParam = null,
   queryKey,
@@ -96,6 +98,63 @@ export const useInfiniteCategories = (q?: Record<string, any>) => {
         ? currentPage?.data?.result?.paging?.prev
         : null,
   });
+};
+
+export const fetchApps = async (
+  context: QueryFunctionContext<
+    (string | Record<string, any> | undefined)[],
+    any
+  >,
+  apps: {
+    [key: string]: App;
+  },
+  setApp: (apps: { [key: string]: App }) => void,
+) => {
+  let response = null;
+  if (!!!context.pageParam) {
+    response = await apiService.get('/apps', context.queryKey[1]);
+    setApp({
+      ...apps,
+      ..._.chain(response.data.result.data).keyBy('id').value(),
+    });
+    response.data.result.data = response.data.result.data.map(
+      (eachApp: App) => ({ id: eachApp.id }),
+    );
+    return response;
+  } else {
+    response = await apiService.get(context.pageParam, context.queryKey[1]);
+    setApp({
+      ...apps,
+      ..._.chain(response.data.result.data).keyBy('id').value(),
+    });
+    response.data.result.data = response.data.result.data.map(
+      (eachApp: App) => ({ id: eachApp.id }),
+    );
+    return response;
+  }
+};
+
+export const useInfiniteApps = () => {
+  const { apps, setApp } = useAppStore();
+  return {
+    ...useInfiniteQuery({
+      queryKey: ['apps'],
+      queryFn: (context) => fetchApps(context, apps, setApp),
+      getNextPageParam: (lastPage: any) => {
+        const pageDataLen = lastPage?.data?.result?.data?.length;
+        const pageLimit = lastPage?.data?.result?.paging?.limit;
+        if (pageDataLen < pageLimit) {
+          return null;
+        }
+        return lastPage?.data?.result?.paging?.next;
+      },
+      getPreviousPageParam: (currentPage: any) => {
+        return currentPage?.data?.result?.paging?.prev;
+      },
+      staleTime: 5 * 60 * 1000,
+    }),
+    apps,
+  };
 };
 
 export const createApp = async (payload: IAddApp) => {
