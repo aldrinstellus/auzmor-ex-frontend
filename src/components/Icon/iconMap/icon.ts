@@ -117,6 +117,8 @@ import ProfileUser from '../components/ProfileUser';
 import ShareForward from '../components/ShareForward';
 import Cancel from '../components/Cancel';
 import LinearLeftArrow from '../components/LinearLeftArrow';
+import PostBookmarkIcon from '../components/PostBookmark';
+import Repost from '../components/Repost';
 
 export const icon = {
   add: Add,
@@ -213,11 +215,13 @@ export const icon = {
   people: PeopleIcon,
   play: PlayIcon,
   plus: Plus,
+  postBookmark: PostBookmarkIcon,
   profile: ProfileIcon,
   profileUser: ProfileUser,
   redo: Redo,
   reorder: Reorder,
   reply: Reply,
+  repost: Repost,
   rotateLeft: RotateLeft,
   search: Search,
   seekForward: SeekForwardIcon,

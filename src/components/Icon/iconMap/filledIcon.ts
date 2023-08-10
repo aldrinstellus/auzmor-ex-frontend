@@ -71,6 +71,7 @@ import SvgProfileFilled from '../components/Profile/ProfileFilled';
 import SvgGlobalFilled from '../components/Global/GlobalFilled';
 import SvgProfileUserFilled from '../components/ProfileUser/ProfileUserFilled';
 import SvgLinearLeftArrowFilled from '../components/LinearLeftArrow/LinearLeftArrowFilled';
+import SvgRepostFilled from '../components/Repost/RepostFilled';
 
 export const filledIcon = {
   addCircleFilled: SvgAddCircleFilled,
@@ -131,6 +132,7 @@ export const filledIcon = {
   playFilled: SvgPlayFilled,
   profileFilled: SvgProfileFilled,
   profileUserFilled: SvgProfileUserFilled,
+  repostFilled: SvgRepostFilled,
   replyFilled: SvgReplyFilled,
   searchFilled: SvgSearchFilled,
   seekForwardFilled: SvgSeekForwardFilled,

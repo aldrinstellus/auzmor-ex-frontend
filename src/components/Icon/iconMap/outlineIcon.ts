@@ -80,6 +80,7 @@ import SvgGlobalOutline from '../components/Global/GlobalOutline';
 import SvgProfileUserOutline from '../components/ProfileUser/ProfileUserOutline';
 import SvgShareForwardOutline from '../components/ShareForward/ShareForwardOutline';
 import SvgLinearLeftArrowOutline from '../components/LinearLeftArrow/LinearLeftArrowOutline';
+import SvgRepostOutline from '../components/Repost/RepostOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -147,6 +148,7 @@ export const outlineIcon = {
   profileUserOutline: SvgProfileUserOutline,
   redoOutline: SvgRedoOutline,
   replyOutline: SvgReplyOutline,
+  repostOutline: SvgRepostOutline,
   searchOutline: SvgSearchOutline,
   seekForwardOutline: SvgSeekForwardOutline,
   sendOutline: SvgSendOutline,
