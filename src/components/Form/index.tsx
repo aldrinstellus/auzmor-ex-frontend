@@ -7,6 +7,7 @@ import DatePickerInput from 'components/DatePicker';
 import TextArea from 'components/TextArea';
 import RadioGroup from 'components/RadioGroup';
 import TelephoneInput from 'components/TelephoneInput';
+import TimePicker from 'components/TimePicker';
 import CreatableSearch from 'components/CreatableSearch';
 
 export enum FieldType {
@@ -19,6 +20,7 @@ export enum FieldType {
   DatePicker = 'DATEPICKER',
   TextArea = 'TEXTAREA',
   TelephoneInput = 'TELEPHONE_INPUT',
+  TimePicker = 'TIMEPICKER',
   CreatableSearch = 'CREATABLE_SEARCH',
 }
 
@@ -31,6 +33,7 @@ const fieldMap: Record<string, any> = {
   [FieldType.DatePicker]: DatePickerInput,
   [FieldType.TextArea]: TextArea,
   [FieldType.TelephoneInput]: TelephoneInput,
+  [FieldType.TimePicker]: TimePicker,
   [FieldType.CreatableSearch]: CreatableSearch,
 };
 
