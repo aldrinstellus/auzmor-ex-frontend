@@ -102,7 +102,8 @@ const EditSchedulePostModal: React.FC<EditSchedulePostModalProp> = ({
             borderRadius: '6px',
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: twConfig.theme.colors.neutral[900],
+            // backgroundColor: twConfig.theme.colors.neutral[900],
+            color: 'white',
           },
           autoClose: TOAST_AUTOCLOSE_TIME,
           transition: slideInAndOutTop,
@@ -188,15 +189,22 @@ const EditSchedulePostModal: React.FC<EditSchedulePostModalProp> = ({
             <Button
               label={'Save'}
               dataTestId="schedule-post-next-cta"
-              onClick={() =>
+              onClick={() => {
+                let hours = parseInt(time.split(' ')[0].split(':')[0]);
+                const min = parseInt(time.split(' ')[0].split(':')[1]);
+                if (time.indexOf('pm') > -1) {
+                  hours += 12;
+                }
                 updatePostMutation.mutate({
                   ...post,
                   schedule: {
-                    dateTime: date.toISOString(),
+                    dateTime: new Date(
+                      new Date(date).setHours(hours, min),
+                    ).toISOString(),
                     timeZone: timeZone.value,
                   },
-                })
-              }
+                });
+              }}
             />
           </div>
         </div>
