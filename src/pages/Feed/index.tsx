@@ -160,7 +160,7 @@ const Feed: React.FC<IFeedProps> = () => {
                   </div>
                 </div>
               </div>
-            ) : bookmarks ? (
+            ) : appliedFeedFilters.bookmarks ? (
               <div
                 className="bg-blue-50 shadow-md rounded-9xl h-32 px-6 py-4"
                 data-testid="mybookmarks-tab"
@@ -176,8 +176,8 @@ const Feed: React.FC<IFeedProps> = () => {
                           if (searchParams.has('bookmarks')) {
                             searchParams.delete('bookmarks');
                             setSearchParams(searchParams);
-                            setAppliedFeedFilters({ bookmarks: false });
                           }
+                          setAppliedFeedFilters({ bookmarks: false });
                         }}
                       />
                       <div className="text-2xl font-bold text-neutral-900">
@@ -219,19 +219,20 @@ const Feed: React.FC<IFeedProps> = () => {
                 />
                 <div className="flex flex-row items-center mt-8">
                   <div className="flex items-center">
-                    <div className="mr-4">
-                      <FeedFilter
-                        appliedFeedFilters={appliedFeedFilters}
-                        onApplyFilters={(filters: IPostFilters) => {
-                          setAppliedFeedFilters(filters);
-                        }}
-                        dataTestId="filters-dropdown"
-                      />
-                    </div>
+                    <FeedFilter
+                      appliedFeedFilters={appliedFeedFilters}
+                      onApplyFilters={(filters: IPostFilters) => {
+                        setAppliedFeedFilters(filters);
+                      }}
+                      dataTestId="filters-dropdown"
+                    />
                     <Icon name="clockFilled" size={24} className="mr-4" />
-                    <Link to="/feed?bookmarks=true">
-                      <Icon name="postBookmark" size={24} className="mr-4" />
-                    </Link>
+                    <Icon
+                      name="postBookmark"
+                      size={24}
+                      className="mr-4"
+                      onClick={() => setAppliedFeedFilters({ bookmarks: true })}
+                    />
                   </div>
                   <Divider className="bg-neutral-200" />
                   <SortByDropdown />
@@ -287,7 +288,9 @@ const Feed: React.FC<IFeedProps> = () => {
             )}
             {isLoading ? (
               <SkeletonLoader />
-            ) : feedIds.length === 0 && bookmarks ? (
+            ) : feedIds?.length === 0 &&
+              appliedFeedFilters.bookmarks &&
+              !isLoading ? (
               <div className="bg-white mt-4 p-6 flex flex-col rounded-9xl">
                 <div className="h-220 bg-blue-50 flex justify-center rounded-9xl">
                   <img src={NoPosts} data-testid="mybookmark-tab-nopost"></img>
