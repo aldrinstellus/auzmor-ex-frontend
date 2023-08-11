@@ -8,7 +8,12 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from 'hooks/useAuth';
 import Icon from 'components/Icon';
 import PopupMenu from 'components/PopupMenu';
-import { UserStatus, updateStatus, useResendInvitation } from 'queries/users';
+import {
+  UserRole,
+  UserStatus,
+  updateStatus,
+  useResendInvitation,
+} from 'queries/users';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { twConfig } from 'utils/misc';
@@ -133,7 +138,10 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
     });
   }
 
-  if ([UserStatus.Inactive, UserStatus.Active].includes(status as any)) {
+  if (
+    [UserStatus.Inactive, UserStatus.Active].includes(status as any) &&
+    role !== UserRole.Member
+  ) {
     _options.push({
       icon:
         (status as any) === UserStatus.Inactive
