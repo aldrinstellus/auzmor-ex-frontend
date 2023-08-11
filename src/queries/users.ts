@@ -286,6 +286,13 @@ export const useResendInvitation = () => {
   });
 };
 
+export const updateStatus = async (payload: { id: string; status: string }) => {
+  const { data } = await apiService.patch(`/users/${payload.id}`, {
+    status: payload.status,
+  });
+  return data;
+};
+
 export const useIsUserExistOpen = (email = '') => {
   return useQuery({
     queryKey: ['user-exist-open', email],

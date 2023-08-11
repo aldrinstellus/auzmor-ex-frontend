@@ -10,6 +10,8 @@ import {
 } from 'components/PostBuilder/components/RichTextEditor/mentions/types';
 import { useSearchParams } from 'react-router-dom';
 import { capitalize } from 'lodash';
+import DeactivatedUser from 'images/DeactivatedUser.png';
+import { UserStatus } from 'queries/users';
 
 export const twConfig: any = resolveConfig(tailwindConfig);
 
@@ -23,6 +25,27 @@ export const getInitials = (name: string) => {
     .match(/(^\S|\S$)?/g)!
     .join('')
     .toLocaleUpperCase();
+};
+
+export const getProfileImage = (user: any) => {
+  if (user?.status === UserStatus.Active) {
+    return user?.profileImage?.original;
+  }
+  return DeactivatedUser;
+};
+
+export const getCoverImage = (user: any) => {
+  if (user?.status === UserStatus.Active) {
+    return user?.coverImage?.original;
+  }
+  return undefined;
+};
+
+export const getFullName = (user: any) => {
+  if (user?.status === UserStatus.Active) {
+    return user?.fullName;
+  }
+  return `${user?.fullName} (deactivated)`;
 };
 
 export const isValidUrl = (url: string) => {

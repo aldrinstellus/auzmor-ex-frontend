@@ -3,6 +3,7 @@ import useAuth from 'hooks/useAuth';
 import { IGetReaction } from 'queries/reaction';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getFullName, getProfileImage } from 'utils/misc';
 
 export interface IReactionRowProps {
   reaction?: IGetReaction;
@@ -29,8 +30,8 @@ const ReactionRow: React.FC<IReactionRowProps> = ({
         <div className="mr-4">
           <Avatar
             size={32}
-            image={reaction?.createdBy.profileImage.original}
-            name={reaction?.createdBy.fullName}
+            image={getProfileImage(reaction?.createdBy)}
+            name={getFullName(reaction?.createdBy)}
             loading={isLoading}
           />
         </div>

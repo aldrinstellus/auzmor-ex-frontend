@@ -6,6 +6,7 @@ import { ICreatedBy } from 'queries/post';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import Icon from 'components/Icon';
+import { getFullName, getProfileImage } from 'utils/misc';
 
 type ActorProps = {
   visibility: string;
@@ -69,10 +70,10 @@ const Actor: React.FC<ActorProps> = ({
             }`}
           >
             <Avatar
-              name={createdBy?.fullName || 'U'}
+              name={getFullName(createdBy) || 'U'}
               size={32}
               image={
-                createdBy ? createdBy.profileImage.original : user?.profileImage
+                createdBy ? getProfileImage(createdBy) : user?.profileImage
               }
             />
           </Link>

@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from 'hooks/useAuth';
 import Icon from 'components/Icon';
 import PopupMenu from 'components/PopupMenu';
-import { UserStatus, useResendInvitation } from 'queries/users';
+import { UserStatus, updateStatus, useResendInvitation } from 'queries/users';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { twConfig } from 'utils/misc';
@@ -16,6 +16,7 @@ import { PRIMARY_COLOR, TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import useModal from 'hooks/useModal';
 import DeletePeople from '../DeleteModals/People';
+import { useMutation } from '@tanstack/react-query';
 
 export interface IPeopleCardProps {
   id: string;
@@ -64,7 +65,39 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
   const [isHovered, eventHandlers] = useHover();
   const [open, openModal, closeModal] = useModal();
   const resendInviteMutation = useResendInvitation();
-  const reactivateUserMutation = useReactivateUser();
+  const updateUserStatusMutation = useMutation({
+    mutationFn: updateStatus,
+    mutationKey: ['update-user-status'],
+    onSuccess: () => {
+      toast(
+        <SuccessToast
+          content={`User has been ${
+            (status as any) === UserStatus.Inactive
+              ? 'reactivated'
+              : 'deactivated'
+          }`}
+        />,
+        {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              stroke={twConfig.theme.colors.primary['500']}
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+          theme: 'dark',
+        },
+      );
+    },
+  });
 
   const _options = [];
   const dividerStyle = { borderBottom: '1px solid #E5E5E5' };
@@ -100,32 +133,24 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
     });
   }
 
-  if (UserStatus.Inactive === status) {
+  if ([UserStatus.Inactive, UserStatus.Active].includes(status as any)) {
     _options.push({
-      icon: 'redo', // needed from design team
-      label: 'Reactivate user',
-      addDivider: true,
-      dividerStyle,
+      icon:
+        (status as any) === UserStatus.Inactive
+          ? 'reactivateUser'
+          : 'deactivateUser',
+      label: `${
+        (status as any) === UserStatus.Inactive ? 'Reactivate' : 'Deactivate'
+      } user`,
       dataTestId: 'people-card-ellipsis-resend-invite',
       onClick: () => {
-        toast(<SuccessToast content="User has been reactivated" />, {
-          closeButton: (
-            <Icon
-              name="closeCircleOutline"
-              stroke={twConfig.theme.colors.primary['500']}
-              size={20}
-            />
-          ),
-          style: {
-            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
-            borderRadius: '6px',
-            display: 'flex',
-            alignItems: 'center',
-          },
-          autoClose: TOAST_AUTOCLOSE_TIME,
-          transition: slideInAndOutTop,
+        updateUserStatusMutation.mutate({
+          id,
+          status:
+            (status as any) === UserStatus.Active
+              ? UserStatus.Inactive
+              : UserStatus.Active,
         });
-        reactivateUserMutation.mutate(id);
       },
     });
   }
@@ -133,8 +158,6 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
   if (id !== user?.id) {
     _options.push({
       icon: 'userRemove',
-      addDivider: true,
-      dividerStyle,
       label: 'Remove account',
       dataTestId: 'people-card-ellipsis-remove-user',
       onClick: openModal,
@@ -168,27 +191,39 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
             className="right-0 top-8"
           />
         )}
-        <div
-          style={{
-            backgroundColor: [
+        {(status as any) === UserStatus.Inactive ? (
+          <div className="absolute top-0 text-[12px] text-[#737373] font-medium py-1 bg-[#F5F5F5] w-full justify-center align-center rounded-t-9xl flex">
+            <Icon
+              name="forbidden"
+              stroke="#737373"
+              size={18}
+              className="mr-1"
+            ></Icon>
+            Deactivated Account
+          </div>
+        ) : (
+          <div
+            style={{
+              backgroundColor: [
+                UserStatus.Invited,
+                UserStatus.Created,
+                UserStatus.Attempted,
+              ].includes(status as any)
+                ? '#EA580C'
+                : statusColorMap[role],
+            }}
+            className="absolute top-0 left-0 text-white rounded-tl-[12px] rounded-br-[12px] px-3 py-1 text-xs font-medium"
+            data-testid={`people-card-role-${role}`}
+          >
+            {[
               UserStatus.Invited,
               UserStatus.Created,
               UserStatus.Attempted,
             ].includes(status as any)
-              ? '#EA580C'
-              : statusColorMap[role],
-          }}
-          className="absolute top-0 left-0 text-white rounded-tl-[12px] rounded-br-[12px] px-3 py-1 text-xs font-medium"
-          data-testid={`people-card-role-${role}`}
-        >
-          {[
-            UserStatus.Invited,
-            UserStatus.Created,
-            UserStatus.Attempted,
-          ].includes(status as any)
-            ? 'Pending'
-            : role}
-        </div>
+              ? 'Pending'
+              : role}
+          </div>
+        )}
         <div
           className="my-6 flex flex-col items-center"
           onClick={() => {
@@ -205,6 +240,10 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
             active={active}
             dataTestId="people-card-profile-pic"
             showActiveIndicator
+            disable={(status as any) === UserStatus.Inactive}
+            bgColor={
+              (status as any) === UserStatus.Inactive ? '#ffffff' : undefined
+            }
           />
           <div
             className="mt-1 truncate text-neutral-900 text-base font-bold"
