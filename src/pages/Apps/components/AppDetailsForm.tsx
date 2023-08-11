@@ -5,6 +5,7 @@ import { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { IAddAppForm } from './AddApp';
 import UploadIconButton from './UploadIconButton';
 import Button, { Variant } from 'components/Button';
+import { CategoryType } from 'queries/apps';
 
 type AppDetailsFormProps = {
   control: Control<IAddAppForm, any>;
@@ -53,7 +54,7 @@ const AppDetailsForm: React.FC<AppDetailsFormProps> = ({
       defaultValue: defaultValues?.description,
       dataTestId: 'about-me-edit-text',
       control,
-      className: 'resize-none',
+      className: 'resize-none rounded-9xl',
       rows: 3,
       maxLength: 300,
       showCounter: true,
@@ -66,6 +67,7 @@ const AppDetailsForm: React.FC<AppDetailsFormProps> = ({
       label: 'Category',
       control: control,
       defaultValue: defaultValues?.category,
+      categoryType: CategoryType.APP,
       error: errors.category?.message,
       dataTestId: 'sso-config-ad-hostname',
     },

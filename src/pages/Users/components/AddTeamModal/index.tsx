@@ -69,7 +69,11 @@ const AddTeamModal: React.FC<IAddTeamModalProps> = ({
   } = useForm<ITeamForm>({
     resolver: yupResolver(schema),
     mode: 'onChange',
-    defaultValues: {},
+    defaultValues: {
+      name: 'Team Name',
+      category: { name: 'Nothing' },
+      description: 'new team description',
+    },
   });
 
   useEffect(() => {
@@ -93,7 +97,11 @@ const AddTeamModal: React.FC<IAddTeamModalProps> = ({
           onClose={() => closeModal()}
           closeBtnDataTestId="invite-people-close"
         />
-        <AddTeams control={control} errors={errors} />
+        <AddTeams
+          control={control}
+          errors={errors}
+          defaultValues={'Something'}
+        />
         <div className="flex justify-end items-center h-16 p-6 bg-blue-50 rounded-b-9xl">
           <Button
             label="Cancel"

@@ -54,7 +54,7 @@ const AboutMe: React.FC<IAboutMeProps> = ({ aboutMeData, canEdit }) => {
       defaultValue: getValues()?.personal?.about,
       dataTestId: 'about-me-edit-text',
       control,
-      className: 'w-full',
+      className: 'w-full rounded-9xl',
       rows: 3,
       maxLength: 2000,
       showCounter: true,

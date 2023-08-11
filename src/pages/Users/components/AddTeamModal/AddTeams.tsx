@@ -3,13 +3,19 @@ import { Control, FieldErrors } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
 import { Variant as InputVariant } from 'components/Input';
 import { ITeamForm } from '.';
+import { CategoryType } from 'queries/apps';
 
 export interface IAddTeamsProps {
   control: Control<ITeamForm, any>;
   errors: FieldErrors<ITeamForm>;
+  defaultValues: any;
 }
 
-const AddTeams: React.FC<IAddTeamsProps> = ({ control, errors }) => {
+const AddTeams: React.FC<IAddTeamsProps> = ({
+  control,
+  errors,
+  defaultValues,
+}) => {
   const teamName = [
     {
       type: FieldType.Input,
@@ -17,45 +23,44 @@ const AddTeams: React.FC<IAddTeamsProps> = ({ control, errors }) => {
       className: '',
       placeholder: 'ex. Product and design team',
       name: `name`,
-      label: 'Team Name*',
+      defaultValue: defaultValues,
+      label: 'Team Name',
+      required: true,
       control,
       error: errors?.name?.message,
       dataTestId: '',
+      showCounter: true,
+      maxLength: 100,
     },
   ];
   const teamCategory = [
     {
-      type: FieldType.SingleSelect,
+      type: FieldType.CreatableSearch,
+      variant: InputVariant.Text,
+      placeholder: 'Select a category',
       name: 'category',
-      placeholder: 'Select Category',
-      label: 'Team Category*',
-      dataTestId: '',
-      options: [
-        {
-          value: 'DEPARTMENT',
-          label: 'Department',
-          dataTestId: '',
-        },
-        {
-          value: 'LOCATION',
-          label: 'Location',
-          dataTestId: '',
-        },
-      ],
-      error: errors.category?.message,
+      label: 'Team Category',
+      required: true,
       control,
+      defaultValue: defaultValues,
+      categoryType: CategoryType.TEAM,
+      error: errors.category?.message,
+      dataTestId: '',
     },
   ];
   const teamDescription = [
     {
-      type: FieldType.Input,
-      InputVariant: InputVariant.Text,
+      type: FieldType.TextArea,
+      name: 'description',
+      label: 'Team description',
       placeholder: 'What is the purpose of this team',
-      name: `description`,
-      label: 'Team Description',
-      control,
-      inputClassName: 'pb-16',
+      defaultValue: defaultValues,
       dataTestId: '',
+      control,
+      className: 'resize-none rounded-19xl',
+      rows: 4,
+      maxLength: 200,
+      showCounter: true,
     },
   ];
   return (
