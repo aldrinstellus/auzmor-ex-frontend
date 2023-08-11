@@ -83,7 +83,7 @@ const AccountCard = () => {
             <div className="w-full pt-4">
               <Link to="/settings">
                 <div
-                  className={`flex ${menuItemStyle} text-neutral-900 text-sm hover:text-primary-500 hover:font-bold`}
+                  className={`flex ${menuItemStyle} text-neutral-900 text-sm hover:text-primary-500 hover:font-bold group`}
                   data-testId="user-menu-user-settings"
                   onClick={close}
                 >
@@ -99,7 +99,7 @@ const AccountCard = () => {
               {isAdmin && (
                 <Link to="/admin">
                   <div
-                    className={`flex ${menuItemStyle} text-neutral-900 text-sm hover:text-primary-500 hover:font-bold`}
+                    className={`flex ${menuItemStyle} text-neutral-900 text-sm hover:text-primary-500 hover:font-bold group`}
                     data-testId="user-menu-admin-settings"
                     onClick={close}
                   >
@@ -115,7 +115,7 @@ const AccountCard = () => {
               )}
               <Link to="/bookmarks">
                 <div
-                  className={`flex ${menuItemStyle} text-neutral-900 text-sm hover:text-primary-500 hover:font-bold`}
+                  className={`flex ${menuItemStyle} text-neutral-900 text-sm hover:text-primary-500 hover:font-bold group`}
                   data-testid="user-menu-mybookmarks"
                   onClick={close}
                 >
@@ -129,7 +129,7 @@ const AccountCard = () => {
                 </div>
               </Link>
               <div
-                className={`flex ${menuItemStyle} text-neutral-900 text-sm hover:text-primary-500 hover:font-bold`}
+                className={`flex ${menuItemStyle} text-neutral-900 text-sm hover:text-primary-500 hover:font-bold group`}
                 onClick={() => {
                   logoutMutation.mutate();
                   close();
