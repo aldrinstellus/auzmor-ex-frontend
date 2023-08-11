@@ -22,7 +22,7 @@ import useScrollTop from 'hooks/useScrollTop';
 import SkeletonLoader from './components/SkeletonLoader';
 import { useFeedStore } from 'stores/feedStore';
 import useModal from 'hooks/useModal';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useLocation } from 'react-router-dom';
 
 import MyTeamWidget from 'components/MyTeamWidget';
 import HashtagFeedHeader from './components/HashtagFeedHeader';
@@ -54,9 +54,10 @@ export interface IMyReactions {
 const Feed: React.FC<IFeedProps> = () => {
   useScrollTop();
   const [searchParams] = useSearchParams();
+  const { pathname } = useLocation();
   const hashtag = searchParams.get('hashtag') || '';
-  const bookmarks = searchParams.get('bookmarks') || false;
-  const scheduled = searchParams.get('scheduled') || false;
+  const bookmarks = pathname === '/bookmarks';
+  const scheduled = pathname === '/scheduledPosts';
   const { ref, inView } = useInView();
   const [open, openModal, closeModal] = useModal(undefined, false);
   const [appliedFeedFilters, setAppliedFeedFilters] = useState<IPostFilters>({
@@ -70,20 +71,8 @@ const Feed: React.FC<IFeedProps> = () => {
     }
   }, [hashtag]);
 
-  useEffect(() => {
-    if (bookmarks) {
-      setAppliedFeedFilters({ bookmarks: true });
-    }
-  }, [bookmarks]);
-
-  useEffect(() => {
-    if (scheduled) {
-      setAppliedFeedFilters({ scheduled: true });
-    }
-  }, [scheduled]);
-
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfiniteFeed(appliedFeedFilters);
+    useInfiniteFeed(pathname, appliedFeedFilters);
 
   useEffect(() => {
     if (inView) {
@@ -199,10 +188,10 @@ const Feed: React.FC<IFeedProps> = () => {
                       dataTestId="filters-dropdown"
                     />
 
-                    <Link to="/feed?scheduled=true">
+                    <Link to="/scheduledPosts">
                       <Icon name="clockFilled" size={24} className="mr-4" />
                     </Link>
-                    <Link to="/feed?bookmarks=true">
+                    <Link to="/bookmarks">
                       <Icon name="postBookmark" size={24} className="mr-4" />
                     </Link>
                   </div>
@@ -268,7 +257,7 @@ const Feed: React.FC<IFeedProps> = () => {
                   .filter(({ id }) => !!feed[id])
                   .map((feedId, index) => (
                     <div data-testid={`feed-post-${index}`} key={feedId.id}>
-                      <Post post={feed[feedId.id!]} />
+                      <Post post={feed[feedId.id!]} bookmarks={bookmarks} />
                     </div>
                   ))}
               </div>

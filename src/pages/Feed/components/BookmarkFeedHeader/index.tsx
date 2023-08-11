@@ -1,6 +1,6 @@
 import Icon from 'components/Icon';
 import React from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 interface IBookmarkFeedHeaderProps {
   setAppliedFeedFilters: (appliedFeedFilters: Record<string, any>) => void;
@@ -18,18 +18,9 @@ const BookmarkFeedHeader: React.FC<IBookmarkFeedHeaderProps> = ({
       <div className="flex justify-between items-center">
         <div className="gap-y-1">
           <div className="flex gap-x-3 items-center">
-            <Icon
-              name="arrowLeft"
-              fill="#171717"
-              stroke="#171717"
-              onClick={() => {
-                if (searchParams.has('bookmarks')) {
-                  searchParams.delete('bookmarks');
-                  setSearchParams(searchParams);
-                  setAppliedFeedFilters({ bookmarks: false });
-                }
-              }}
-            />
+            <Link to="/feed">
+              <Icon name="arrowLeft" fill="#171717" stroke="#171717" />
+            </Link>
             <div className="text-2xl font-bold text-neutral-900">
               <span data-testid={`feedpage-filter-bookmark`}>My Bookmarks</span>
             </div>

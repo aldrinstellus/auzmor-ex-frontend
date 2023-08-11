@@ -31,6 +31,7 @@ import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import moment from 'moment';
+import _ from 'lodash';
 
 export const iconsStyle = (key: string) => {
   const iconStyle = clsx(
@@ -60,9 +61,10 @@ export const iconsStyle = (key: string) => {
 type PostProps = {
   post: IPost;
   customNode?: ReactNode;
+  bookmarks?: boolean;
 };
 
-const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
+const Post: React.FC<PostProps> = ({ post, bookmarks, customNode = null }) => {
   const [showComments, openComments, closeComments] = useModal(false);
   const queryClient = useQueryClient();
   const [showReactionModal, openReactionModal, closeReactionModal] =
@@ -72,12 +74,22 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
     (total, count) => total + count,
     0,
   );
-  const { feed, updateFeed } = useFeedStore();
+  const { feed, updateFeed, setFeed } = useFeedStore();
   const previousShowComment = useRef<boolean>(false);
 
   const createBookmarkMutation = useMutation({
     mutationKey: ['create-bookmark-mutation'],
     mutationFn: createBookmark,
+    onMutate: (variables) => {
+      if (!bookmarks) {
+        updateFeed(variables, { ...feed[variables], bookmarked: true });
+      }
+    },
+    onError: (error, variables, context) => {
+      if (!bookmarks) {
+        updateFeed(variables, { ...feed[variables], bookmarked: false });
+      }
+    },
     onSuccess: async (data, variables) => {
       toast(
         <SuccessToast
@@ -103,14 +115,31 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
           theme: 'dark',
         },
       );
-      await queryClient.invalidateQueries(['my-bookmarks']);
-      updateFeed(variables, { ...feed[variables], bookmarked: true });
+      await queryClient.invalidateQueries(['bookmarks']);
     },
   });
 
   const deleteBookmarkMutation = useMutation({
     mutationKey: ['delete-bookmark-mutation'],
     mutationFn: deleteBookmark,
+    onMutate: (variables) => {
+      if (!bookmarks) {
+        updateFeed(variables, { ...feed[variables], bookmarked: false });
+      } else {
+        const previousFeed = feed;
+        setFeed({ ..._.omit(feed, [variables]) });
+        return { previousFeed };
+      }
+    },
+    onError: (error, variables, context) => {
+      if (!bookmarks) {
+        updateFeed(variables, { ...feed[variables], bookmarked: true });
+      } else {
+        if (context?.previousFeed) {
+          setFeed(context?.previousFeed);
+        }
+      }
+    },
     onSuccess: async (data, variables) => {
       toast(
         <SuccessToast
@@ -136,8 +165,6 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
           theme: 'dark',
         },
       );
-      await queryClient.invalidateQueries(['my-bookmarks']);
-      updateFeed(variables, { ...feed[variables], bookmarked: false });
     },
   });
 
