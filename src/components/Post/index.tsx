@@ -346,7 +346,10 @@ const Post: React.FC<PostProps> = ({ post, bookmarks, customNode = null }) => {
                 </div>
               </button>
             </div>
-            <div className="flex items-center space-x-1 cursor-pointer text-neutral-500 hover:text-primary-500">
+            <div
+              className="flex items-center space-x-1 cursor-pointer text-neutral-500 hover:text-primary-500"
+              data-testid="feed-post-repost"
+            >
               <Icon name="repost" size={16} />
               <span className="text-xs font-normal">Repost</span>
             </div>
