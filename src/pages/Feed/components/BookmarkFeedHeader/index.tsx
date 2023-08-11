@@ -36,12 +36,14 @@ const BookmarkFeedHeader: React.FC<IBookmarkFeedHeaderProps> = ({
             <div
               className="w-28 inline-flex py-2 px-4 w-106 justify-center align-center rounded-full border-solid border-white bg-white font-bold"
               style={{ backgroundColor: '#e5e5e5', color: '#A3A3A3' }}
+              data-testid="mybookmarks-tab-channels"
             >
               Channels
             </div>
             <div
               className="w-28 inline-flex py-2 px-4 w-106 justify-center align-center rounded-full border-solid border-white bg-white font-bold"
               style={{ backgroundColor: '#e5e5e5', color: '#A3A3A3' }}
+              data-testid="mybookmarks-tab-documents"
             >
               Documents
             </div>

@@ -192,7 +192,12 @@ const Feed: React.FC<IFeedProps> = () => {
                       <Icon name="clockFilled" size={24} className="mr-4" />
                     </Link>
                     <Link to="/bookmarks">
-                      <Icon name="postBookmark" size={24} className="mr-4" />
+                      <Icon
+                        name="postBookmark"
+                        size={24}
+                        className="mr-4"
+                        dataTestId="feed-page-mybookmarks"
+                      />
                     </Link>
                   </div>
                   <Divider className="bg-neutral-200" />
@@ -249,13 +254,13 @@ const Feed: React.FC<IFeedProps> = () => {
             )}
             {isLoading ? (
               <SkeletonLoader />
-            ) : feedIds.length === 0 ? (
+            ) : feedIds?.length === 0 ? (
               getEmptyFeedComponent()
             ) : (
               <div className="mt-4">
                 {feedIds
-                  .filter(({ id }) => !!feed[id])
-                  .map((feedId, index) => (
+                  ?.filter(({ id }) => !!feed[id])
+                  ?.map((feedId, index) => (
                     <div data-testid={`feed-post-${index}`} key={feedId.id}>
                       <Post post={feed[feedId.id!]} bookmarks={bookmarks} />
                     </div>
