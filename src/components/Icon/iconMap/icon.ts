@@ -119,6 +119,7 @@ import Cancel from '../components/Cancel';
 import LinearLeftArrow from '../components/LinearLeftArrow';
 import PostBookmarkIcon from '../components/PostBookmark';
 import Repost from '../components/Repost';
+import Calendar from '../components/Calendar';
 import DeactivateUser from '../components/DeactivateUser';
 import ReactivateUser from '../components/ReactivateUser';
 import Forbidden from '../components/Forbidden';
@@ -142,6 +143,7 @@ export const icon = {
   call: Call,
   cancel: Cancel,
   carouselClose: CarouselCloseIcon,
+  calendar: Calendar,
   carouselLeft: CarouselLeftIcon,
   carouselRight: CarouselRightIcon,
   celebrate: Celebrate,

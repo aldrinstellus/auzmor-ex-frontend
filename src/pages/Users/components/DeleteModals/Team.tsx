@@ -92,7 +92,7 @@ const DeleteTeam: React.FC<IDeleteTeamProps> = ({
       <IconButton
         onClick={closeModal}
         icon={'close'}
-        dataTestId=""
+        dataTestId="close-team-modal"
         className="!flex-[0] !text-right !p-1 !mx-4 !my-3 !bg-inherit !text-neutral-900"
         variant={IconVariant.Primary}
       />
@@ -105,7 +105,7 @@ const DeleteTeam: React.FC<IDeleteTeamProps> = ({
         variant={ButtonVariant.Secondary}
         size={Size.Small}
         label={'Cancel'}
-        dataTestId="delete-user-cancel"
+        dataTestId="delete-team-cancel"
         onClick={closeModal}
       />
       <Button
@@ -114,7 +114,7 @@ const DeleteTeam: React.FC<IDeleteTeamProps> = ({
         loading={deleteTeamMutation.isLoading}
         size={Size.Small}
         type={ButtonType.Submit}
-        dataTestId="delete-user-delete"
+        dataTestId="delete-team-delete"
         onClick={() => deleteTeamMutation.mutate(userId)}
       />
     </div>

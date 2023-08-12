@@ -6,7 +6,7 @@ import { Control, Controller, useController } from 'react-hook-form';
 import { MenuPlacement, components } from 'react-select';
 import clsx from 'clsx';
 import { isFiltersEmpty, twConfig } from 'utils/misc';
-import { CategoryType, useInfiniteCategories } from 'queries/apps';
+import { useInfiniteCategories } from 'queries/apps';
 import { useDebounce } from 'hooks/useDebounce';
 
 export interface ICreatableSearch {
@@ -18,6 +18,8 @@ export interface ICreatableSearch {
   dataTestId?: string;
   control?: Control<Record<string, any>>;
   label?: string;
+  required?: boolean;
+  categoryType: string;
   placeholder?: string;
   height?: string;
   menuPlacement: MenuPlacement;
@@ -33,6 +35,8 @@ const CreatableSearch = React.forwardRef(
       error,
       control,
       label = '',
+      required = false,
+      categoryType,
       placeholder = '',
       height = '44px',
       defaultValue,
@@ -46,7 +50,7 @@ const CreatableSearch = React.forwardRef(
     const { data } = useInfiniteCategories(
       isFiltersEmpty({
         q: debouncedSearchValue.toLowerCase().trim(),
-        type: CategoryType.APP,
+        type: categoryType,
         limit: 10,
       }),
     );
@@ -119,7 +123,9 @@ const CreatableSearch = React.forwardRef(
           { 'cursor-not-allowed': disabled },
         )}
       >
-        <div className={labelStyle}>{label}</div>
+        <div className={labelStyle}>
+          {label} <span className="text-red-500">{required && '*'}</span>
+        </div>
         <div
           data-testid={dataTestId}
           onClick={() => {

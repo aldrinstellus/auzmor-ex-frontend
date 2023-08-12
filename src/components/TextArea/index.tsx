@@ -44,7 +44,7 @@ const TextArea: React.FC<TextAreaProps> = ({
 
   const textAreaStyle = clsx(
     {
-      'bg-red-400 text-sm font-medium text-neutral-900 bg-white border border-solid rounded-9xl px-5 py-3':
+      'bg-red-400 text-sm font-medium text-neutral-900 bg-white border border-solid px-5 py-3 focus:outline-none':
         true,
     },
     {
