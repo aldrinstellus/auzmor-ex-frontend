@@ -79,7 +79,7 @@ const ReactivatePeople: React.FC<IReactivatePeopleProps> = ({
         variant={ButtonVariant.Secondary}
         size={Size.Small}
         label={'Cancel'}
-        dataTestId="reactivate-user-cancel"
+        dataTestId="cancel-cta"
         onClick={closeModal}
       />
       <Button
@@ -88,7 +88,7 @@ const ReactivatePeople: React.FC<IReactivatePeopleProps> = ({
         loading={updateUserStatusMutation.isLoading}
         size={Size.Small}
         type={ButtonType.Submit}
-        dataTestId="reactivate-user-delete"
+        dataTestId="Reactivate"
         onClick={() => {
           updateUserStatusMutation.mutate({
             id: userId,
@@ -100,7 +100,11 @@ const ReactivatePeople: React.FC<IReactivatePeopleProps> = ({
     </div>
   );
   return (
-    <Modal open={open} className="max-w-md">
+    <Modal
+      open={open}
+      className="max-w-md"
+      dataTestId="reactivate-confirm-modal"
+    >
       <Header />
       <div className="text-sm font-medium text-[#171717] mx-4 mt-3 mb-4">
         Are you sure you want to reactivate this account?

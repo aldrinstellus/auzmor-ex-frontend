@@ -153,6 +153,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
               ? 'reactivated'
               : 'deactivated'
           }`}
+          dataTestId="deactivate -toaster-msg"
         />,
         {
           closeButton: (
@@ -279,7 +280,10 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                   />
                   <UserProfileDropdown
                     triggerNode={
-                      <div className="rounded-[24px] font-bold border py-[8px] px-[16px] border-[#e5e5e5]">
+                      <div
+                        className="rounded-[24px] font-bold border py-[8px] px-[16px] border-[#e5e5e5]"
+                        data-testid="profile-more-cta"
+                      >
                         More
                       </div>
                     }

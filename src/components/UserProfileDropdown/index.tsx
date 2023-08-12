@@ -55,7 +55,7 @@ const UserProfileDropdown: React.FC<IUserDropdownProps> = ({
     _options.push({
       icon: 'edit',
       label: `Edit`,
-      dataTestId: 'people-card-ellipsis-resend-invite',
+      dataTestId: 'user-edit',
       onClick: onEditClick,
     });
   }
@@ -64,7 +64,7 @@ const UserProfileDropdown: React.FC<IUserDropdownProps> = ({
     _options.push({
       icon: 'promoteUser',
       label: `Promote to admin`,
-      dataTestId: 'people-card-ellipsis-resend-invite',
+      dataTestId: 'user-promoteToAdmin',
       onClick: onPromoteClick,
     });
   }
@@ -82,7 +82,10 @@ const UserProfileDropdown: React.FC<IUserDropdownProps> = ({
       label: `${
         (status as any) === UserStatus.Inactive ? 'Reactivate' : 'Deactivate'
       } user`,
-      dataTestId: 'people-card-ellipsis-resend-invite',
+      dataTestId:
+        (status as any) === UserStatus.Inactive
+          ? 'user-deactivate'
+          : 'user-reactivate',
       onClick:
         (status as any) === UserStatus.Inactive
           ? onReactivateClick

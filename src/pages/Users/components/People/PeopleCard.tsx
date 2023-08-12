@@ -197,7 +197,10 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
           />
         )}
         {(status as any) === UserStatus.Inactive ? (
-          <div className="absolute top-0 text-[12px] text-[#737373] font-medium py-1 bg-[#F5F5F5] w-full justify-center align-center rounded-t-9xl flex">
+          <div
+            className="absolute top-0 text-[12px] text-[#737373] font-medium py-1 bg-[#F5F5F5] w-full justify-center align-center rounded-t-9xl flex"
+            data-testid="usercard-deactivate-banner"
+          >
             <Icon
               name="forbidden"
               stroke="#737373"
