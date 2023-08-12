@@ -84,6 +84,8 @@ import SvgRepostOutline from '../components/Repost/RepostOutline';
 import SvgCalendarOutline from '../components/Calendar/CalendarOutline';
 import SvgSortByAcsOutline from '../components/SortByAcs/SortByAcsOutline';
 import SvgSortByDescOutline from '../components/SortByDesc/SortByDescOutline';
+import SvgClockOutline from '../components/Clock/ClockOutline';
+import SvgMicOutline from '../components/Mic/MicOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -172,4 +174,6 @@ export const outlineIcon = {
   videoOutline: SvgVideoOutline,
   zoomInOutline: SvgZoomInOutline,
   zoomOutOutline: SvgZoomOutOutline,
+  clockOutline: SvgClockOutline,
+  micOutline: SvgMicOutline,
 };

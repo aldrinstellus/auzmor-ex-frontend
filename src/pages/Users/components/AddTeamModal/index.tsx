@@ -53,6 +53,7 @@ const AddTeamModal: React.FC<IAddTeamModalProps> = ({
         },
         autoClose: TOAST_AUTOCLOSE_TIME,
         transition: slideInAndOutTop,
+        theme: 'dark',
       });
       closeModal();
     },

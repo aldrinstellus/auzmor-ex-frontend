@@ -120,6 +120,7 @@ import LinearLeftArrow from '../components/LinearLeftArrow';
 import PostBookmarkIcon from '../components/PostBookmark';
 import Repost from '../components/Repost';
 import Calendar from '../components/Calendar';
+import MicIcon from '../components/Mic';
 
 export const icon = {
   add: Add,
@@ -244,4 +245,5 @@ export const icon = {
   video: VideoIcon,
   zoomIn: ZoomInIcon,
   zoomOut: ZoomOutIcon,
+  mic: MicIcon,
 };
