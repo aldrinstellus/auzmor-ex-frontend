@@ -20,6 +20,7 @@ export interface IUserDropdownProps {
   triggerNode: ReactNode;
   showOnHover: boolean;
   className: string;
+  loggedInUserId?: string;
 }
 
 const UserProfileDropdown: React.FC<IUserDropdownProps> = ({
@@ -37,6 +38,7 @@ const UserProfileDropdown: React.FC<IUserDropdownProps> = ({
   triggerNode,
   showOnHover,
   className,
+  loggedInUserId,
 }) => {
   const { user } = useAuth();
 
@@ -51,7 +53,7 @@ const UserProfileDropdown: React.FC<IUserDropdownProps> = ({
     });
   }
 
-  if (isAdmin && role === UserRole.Member) {
+  if ((isAdmin && role === UserRole.Member) || id === loggedInUserId) {
     _options.push({
       icon: 'edit',
       label: `Edit`,

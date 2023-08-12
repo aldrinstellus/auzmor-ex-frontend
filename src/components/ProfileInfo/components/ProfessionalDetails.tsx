@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Card from 'components/Card';
 import Divider from 'components/Divider';
 import useHover from 'hooks/useHover';
@@ -27,15 +27,34 @@ import { slideInAndOutTop } from 'utils/react-toastify';
 export interface IProfessionalDetailsProps {
   professionalDetails: any;
   canEdit?: boolean;
+  editMode?: boolean;
+  setSearchParams?: any;
+  searchParams?: any;
 }
 
 const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
   professionalDetails,
   canEdit,
+  editMode,
+  setSearchParams,
+  searchParams,
 }) => {
   const [isHovered, eventHandlers] = useHover();
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const defaultTimezone = getDefaultTimezoneOption();
+
+  useEffect(() => {
+    if (editMode && canEdit) {
+      setIsEditable(editMode);
+    }
+  }, [editMode]);
+
+  useEffect(() => {
+    if (!isEditable && searchParams.has('edit')) {
+      searchParams.delete('edit');
+      setSearchParams(searchParams);
+    }
+  }, [isEditable]);
 
   const schema = yup.object({
     timeZone: yup.object(),

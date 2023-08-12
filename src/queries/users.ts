@@ -18,6 +18,12 @@ export enum FilterType {
   Reporter = 'REPORTER',
 }
 
+export enum UserEditType {
+  COMPLETE = 'complete',
+  PARTIAL = 'partial',
+  NONE = 'none',
+}
+
 export interface IPeopleFilters {
   [PeopleFilterKeys.PeopleFilterType]?: FilterType[];
 }

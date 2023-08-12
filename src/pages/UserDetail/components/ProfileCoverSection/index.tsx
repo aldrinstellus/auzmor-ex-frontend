@@ -48,11 +48,15 @@ import ReactivatePeople from 'pages/Users/components/ReactivateModal/Reactivate'
 export interface IProfileCoverProps {
   userDetails: Record<string, any>;
   canEdit: boolean;
+  setSearchParams?: any;
+  searchParams?: URLSearchParams;
 }
 
 const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
   userDetails,
   canEdit,
+  setSearchParams,
+  searchParams,
 }) => {
   const [file, setFile] = useState<IUpdateProfileImage | Record<string, any>>(
     {},
@@ -305,6 +309,10 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                         status: UserStatus.Inactive,
                       })
                     }
+                    onEditClick={() => {
+                      searchParams?.append('edit', 'true');
+                      setSearchParams(searchParams);
+                    }}
                     onResendInviteClick={() => () => {
                       toast(
                         <SuccessToast content="Invitation has been sent" />,

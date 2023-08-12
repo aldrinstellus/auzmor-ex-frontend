@@ -9,6 +9,7 @@ import useAuth from 'hooks/useAuth';
 import Icon from 'components/Icon';
 import PopupMenu from 'components/PopupMenu';
 import {
+  UserEditType,
   UserRole,
   UserStatus,
   updateRoleToAdmin,
@@ -148,11 +149,13 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
         {status !== UserStatus.Inactive && (
           <UserProfileDropdown
             id={id}
+            loggedInUserId={user?.id}
             role={role}
             status={status}
             isAdmin={isAdmin}
             isHovered={isHovered}
             onDeleteClick={openModal}
+            onEditClick={() => navigate(`/users/${id}?edit=true`)}
             onPromoteClick={() => updateUserRoleMutation.mutate({ id })}
             onDeactivateClick={() =>
               updateUserStatusMutation.mutate({

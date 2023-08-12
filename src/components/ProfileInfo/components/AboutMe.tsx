@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import Card from 'components/Card';
 import Divider from 'components/Divider';
@@ -25,9 +25,18 @@ export interface IUpdateAboutMe {
 export interface IAboutMeProps {
   aboutMeData: Record<string, any>;
   canEdit?: boolean;
+  editMode?: boolean;
+  setSearchParams?: any;
+  searchParams?: any;
 }
 
-const AboutMe: React.FC<IAboutMeProps> = ({ aboutMeData, canEdit }) => {
+const AboutMe: React.FC<IAboutMeProps> = ({
+  aboutMeData,
+  canEdit,
+  editMode,
+  setSearchParams,
+  searchParams,
+}) => {
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isHovered, eventHandlers] = useHover();
 
@@ -40,6 +49,19 @@ const AboutMe: React.FC<IAboutMeProps> = ({ aboutMeData, canEdit }) => {
         },
       },
     });
+
+  useEffect(() => {
+    if (editMode && canEdit) {
+      setIsEditable(editMode);
+    }
+  }, [editMode]);
+
+  useEffect(() => {
+    if (!isEditable && searchParams.has('edit')) {
+      searchParams.delete('edit');
+      setSearchParams(searchParams);
+    }
+  }, [isEditable]);
 
   const onHoverStyles = useMemo(
     () => clsx({ 'mb-8': true }, { 'shadow-xl': isHovered && canEdit }),
