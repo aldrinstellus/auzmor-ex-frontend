@@ -7,7 +7,7 @@ import Header from './Header';
 import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
 import queryClient from 'utils/queryClient';
-import { updateCurrentUser } from 'queries/users';
+import { EditUserSection, updateCurrentUser } from 'queries/users';
 import { useMutation } from '@tanstack/react-query';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { toast } from 'react-toastify';
@@ -25,7 +25,7 @@ export interface IUpdateAboutMe {
 export interface IAboutMeProps {
   aboutMeData: Record<string, any>;
   canEdit?: boolean;
-  editMode?: boolean;
+  editSection?: string;
   setSearchParams?: any;
   searchParams?: any;
 }
@@ -33,7 +33,7 @@ export interface IAboutMeProps {
 const AboutMe: React.FC<IAboutMeProps> = ({
   aboutMeData,
   canEdit,
-  editMode,
+  editSection,
   setSearchParams,
   searchParams,
 }) => {
@@ -51,10 +51,10 @@ const AboutMe: React.FC<IAboutMeProps> = ({
     });
 
   useEffect(() => {
-    if (editMode && canEdit) {
-      setIsEditable(editMode);
+    if (editSection === EditUserSection.ABOUT && canEdit) {
+      setIsEditable(true);
     }
-  }, [editMode]);
+  }, [editSection]);
 
   useEffect(() => {
     if (!isEditable && searchParams.has('edit')) {

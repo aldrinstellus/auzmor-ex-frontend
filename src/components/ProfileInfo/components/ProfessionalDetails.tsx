@@ -14,7 +14,7 @@ import { useForm } from 'react-hook-form';
 import SelectTimeZone from 'components/UserOnboard/components/SelectTimeZone';
 import { OptionType } from 'components/UserOnboard/components/SelectTimezoneScreen';
 import { useMutation } from '@tanstack/react-query';
-import { updateCurrentUser } from 'queries/users';
+import { EditUserSection, updateCurrentUser } from 'queries/users';
 import { getDefaultTimezoneOption } from 'components/UserOnboard/utils';
 import queryClient from 'utils/queryClient';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
@@ -27,7 +27,7 @@ import { slideInAndOutTop } from 'utils/react-toastify';
 export interface IProfessionalDetailsProps {
   professionalDetails: any;
   canEdit?: boolean;
-  editMode?: boolean;
+  editSection?: string;
   setSearchParams?: any;
   searchParams?: any;
 }
@@ -35,7 +35,7 @@ export interface IProfessionalDetailsProps {
 const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
   professionalDetails,
   canEdit,
-  editMode,
+  editSection,
   setSearchParams,
   searchParams,
 }) => {
@@ -44,10 +44,10 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
   const defaultTimezone = getDefaultTimezoneOption();
 
   useEffect(() => {
-    if (editMode && canEdit) {
-      setIsEditable(editMode);
+    if (editSection === EditUserSection.PROFESSIONAL && canEdit) {
+      setIsEditable(true);
     }
-  }, [editMode]);
+  }, [editSection]);
 
   useEffect(() => {
     if (!isEditable && searchParams.has('edit')) {

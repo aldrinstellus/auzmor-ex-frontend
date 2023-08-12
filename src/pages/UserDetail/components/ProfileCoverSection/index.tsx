@@ -21,6 +21,7 @@ import {
   clearInputValue,
   getBlobUrl,
   getCoverImage,
+  getEditSection,
   getFullName,
   getProfileImage,
   twConfig,
@@ -44,6 +45,7 @@ import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import DeletePeople from 'pages/Users/components/DeleteModals/People';
 import ReactivatePeople from 'pages/Users/components/ReactivateModal/Reactivate';
+import useAuth from 'hooks/useAuth';
 
 export interface IProfileCoverProps {
   userDetails: Record<string, any>;
@@ -61,6 +63,8 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
   const [file, setFile] = useState<IUpdateProfileImage | Record<string, any>>(
     {},
   );
+  const { user } = useAuth();
+  const { isAdmin } = useRole();
   const queryClient = useQueryClient();
   const [openEditProfile, openEditProfileModal, closeEditProfileModal] =
     useModal(undefined, false);
@@ -69,7 +73,6 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
     false,
   );
   const [isHovered, eventHandlers] = useHover();
-  const { isAdmin } = useRole();
   const [isCoverImageRemoved, setIsCoverImageRemoved] = useState(false);
 
   const userProfileImageRef = useRef<HTMLInputElement>(null);
@@ -310,7 +313,15 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                       })
                     }
                     onEditClick={() => {
-                      searchParams?.append('edit', 'true');
+                      searchParams?.append(
+                        'edit',
+                        getEditSection(
+                          userDetails?.id,
+                          user?.id,
+                          isAdmin,
+                          userDetails?.role,
+                        ),
+                      );
                       setSearchParams(searchParams);
                     }}
                     onResendInviteClick={() => () => {

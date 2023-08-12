@@ -24,6 +24,11 @@ export enum UserEditType {
   NONE = 'none',
 }
 
+export enum EditUserSection {
+  ABOUT = 'about',
+  PROFESSIONAL = 'professional',
+}
+
 export interface IPeopleFilters {
   [PeopleFilterKeys.PeopleFilterType]?: FilterType[];
 }

@@ -13,7 +13,7 @@ import DeactivatedCoverImage from 'images/deactivatedCoverPhoto.png';
 import DefaultCoverImage from 'images/png/CoverImage.png';
 import { capitalize } from 'lodash';
 import DeactivatedUser from 'images/DeactivatedUser.png';
-import { UserStatus } from 'queries/users';
+import { EditUserSection, UserRole, UserStatus } from 'queries/users';
 
 export const twConfig: any = resolveConfig(tailwindConfig);
 
@@ -55,6 +55,19 @@ export const getFullName = (user: any) => {
     return `${user?.fullName} (deactivated)`;
   }
   return user?.fullName;
+};
+
+export const getEditSection = (
+  userId: any,
+  loggedInUserId: any,
+  isAdmin: any,
+  role: any,
+) => {
+  return userId === loggedInUserId
+    ? EditUserSection.ABOUT
+    : isAdmin && role === UserRole.Member
+    ? EditUserSection.PROFESSIONAL
+    : '';
 };
 
 export const isValidUrl = (url: string) => {

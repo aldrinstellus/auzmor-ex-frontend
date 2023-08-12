@@ -44,7 +44,7 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
     userDetail = useSingleUser(params?.userId || '');
   }
 
-  const editMode = searchParams.get('edit') === 'true' || false;
+  const editSection = searchParams.get('edit') || '';
 
   const data = userDetail?.data?.data?.result?.data;
 
@@ -82,7 +82,7 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
           profileDetails={data}
           isLoading={userDetail?.isLoading}
           editType={editType}
-          editMode={editMode}
+          editSection={editSection}
           setSearchParams={setSearchParams}
           searchParams={searchParams}
         />

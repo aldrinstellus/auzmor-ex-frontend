@@ -11,7 +11,7 @@ import { UserEditType } from 'queries/users';
 
 export interface IProfileInfoProps {
   profileDetails: any;
-  editMode?: boolean;
+  editSection?: string;
   isLoading?: boolean;
   editType?: UserEditType;
   setSearchParams?: any;
@@ -21,7 +21,7 @@ export interface IProfileInfoProps {
 const ProfileInfo: React.FC<IProfileInfoProps> = ({
   profileDetails,
   isLoading,
-  editMode,
+  editSection,
   editType,
   setSearchParams,
   searchParams,
@@ -35,7 +35,7 @@ const ProfileInfo: React.FC<IProfileInfoProps> = ({
         <AboutMe
           aboutMeData={profileDetails}
           canEdit={editType === UserEditType.COMPLETE}
-          editMode={editMode}
+          editSection={editSection}
           setSearchParams={setSearchParams}
           searchParams={searchParams}
         />
@@ -46,7 +46,7 @@ const ProfileInfo: React.FC<IProfileInfoProps> = ({
         <ProfessionalDetails
           professionalDetails={profileDetails}
           canEdit={editType !== UserEditType.NONE}
-          editMode={editMode}
+          editSection={editSection}
           setSearchParams={setSearchParams}
           searchParams={searchParams}
         />

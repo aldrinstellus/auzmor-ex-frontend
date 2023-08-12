@@ -9,6 +9,7 @@ import useAuth from 'hooks/useAuth';
 import Icon from 'components/Icon';
 import PopupMenu from 'components/PopupMenu';
 import {
+  EditUserSection,
   UserEditType,
   UserRole,
   UserStatus,
@@ -18,7 +19,7 @@ import {
 } from 'queries/users';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
-import { twConfig } from 'utils/misc';
+import { getEditSection, twConfig } from 'utils/misc';
 import { PRIMARY_COLOR, TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import useModal from 'hooks/useModal';
@@ -155,7 +156,16 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
             isAdmin={isAdmin}
             isHovered={isHovered}
             onDeleteClick={openModal}
-            onEditClick={() => navigate(`/users/${id}?edit=true`)}
+            onEditClick={() =>
+              navigate(
+                `/users/${id}?edit=${getEditSection(
+                  id,
+                  user?.id,
+                  isAdmin,
+                  role,
+                )}`,
+              )
+            }
             onPromoteClick={() => updateUserRoleMutation.mutate({ id })}
             onDeactivateClick={() =>
               updateUserStatusMutation.mutate({
