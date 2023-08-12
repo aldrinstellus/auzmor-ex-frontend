@@ -123,6 +123,7 @@ import DeactivateUser from '../components/DeactivateUser';
 import ReactivateUser from '../components/ReactivateUser';
 import Forbidden from '../components/Forbidden';
 import PromoteUserIcon from '../components/Promote';
+import MicIcon from '../components/Mic';
 
 export const icon = {
   add: Add,
@@ -250,4 +251,5 @@ export const icon = {
   reactivateUser: ReactivateUser,
   forbidden: Forbidden,
   promoteUser: PromoteUserIcon,
+  mic: MicIcon,
 };
