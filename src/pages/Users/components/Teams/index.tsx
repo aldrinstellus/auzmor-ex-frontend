@@ -19,6 +19,7 @@ import PageLoader from 'components/PageLoader';
 import TeamNotFound from 'images/TeamNotFound.svg';
 import PopupMenu from 'components/PopupMenu';
 import TeamsSkeleton from '../Skeletons/TeamsSkeleton';
+import Skeleton from 'react-loading-skeleton';
 interface IForm {
   search?: string;
 }
@@ -194,12 +195,18 @@ const Team: React.FC<ITeamProps> = ({
         </div>
       </div>
 
-      {!isLoading && teamsData?.length !== 0 && (
+      {!isLoading ? (
         <div className="text-neutral-500 mt-6 mb-6">
           Showing{' '}
           {!isLoading && data?.pages[0]?.data?.result?.paging?.totalCount}{' '}
           results
         </div>
+      ) : (
+        <Skeleton
+          className="!w-32 mt-6 mb-6"
+          containerClassName="flex-1"
+          borderRadius={100}
+        />
       )}
 
       {/* <div className="flex justify-between  mb-6">
@@ -234,100 +241,96 @@ const Team: React.FC<ITeamProps> = ({
         </div>
       </div> */}
 
-      <div>
-        <div className="flex flex-wrap gap-6">
-          {(() => {
-            if (isLoading) {
-              const loaders = [...Array(30)].map((element) => (
-                <div key={element}>
-                  <TeamsSkeleton />
-                </div>
-              ));
-              return loaders;
-            }
-
-            if (teamsData && teamsData?.length > 0) {
-              return (
-                <>
-                  {teamsData?.map((team: any) => (
-                    <TeamsCard key={team.id} {...team} />
-                  ))}
-                  <div className="h-12 w-12">
-                    {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
-                  </div>
-                  {isFetchingNextPage && <PageLoader />}
-                </>
-              );
-            }
-
+      <div className="flex flex-wrap gap-6">
+        {(() => {
+          if (isLoading) {
+            const loaders = [...Array(30)].map((element) => (
+              <div key={element}>
+                <TeamsSkeleton />
+              </div>
+            ));
+            return loaders;
+          }
+          if (teamsData && teamsData?.length > 0) {
             return (
               <>
-                {(debouncedSearchValue === undefined ||
-                  debouncedSearchValue === '') &&
-                teamsData?.length === 0 ? (
-                  <div className="flex flex-col space-y-3 items-center w-full">
-                    <div className="flex flex-col space-y-6 items-center">
-                      <img
-                        src={TeamNotFound}
-                        alt="Team Not Found"
-                        height={140}
-                        width={165}
-                      />
-                      <div
-                        className="text-lg font-bold"
-                        data-testid="no-teams-found"
-                      >
-                        No teams found
-                      </div>
-                    </div>
-                    <div className="flex space-x-1 text-xs font-normal">
-                      <div className="text-neutral-500">
-                        There are no teams found in your organization right now.
-                        Be the first to
-                      </div>
-                      <div
-                        className="text-blue-500 cursor-pointer"
-                        onClick={() => openAddTeamModal()}
-                        data-testid="create-one-team"
-                      >
-                        create one
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="py-16 w-full">
-                    <div className="flex w-full justify-center">
-                      <img src={require('images/noResult.png')} />
-                    </div>
-                    <div className="text-center">
-                      <div
-                        className="mt-8 text-lg font-bold"
-                        data-testid="teams-noresult-found"
-                      >
-                        No result found for &apos;{searchValue}&apos;
-                      </div>
-                      <div className="text-sm text-gray-500 mt-2">
-                        Sorry we can&apos;t find the team you are looking for.
-                        <br /> Please try using different filters.
-                      </div>
-                    </div>
-
-                    <div className="flex justify-center mt-6">
-                      <Button
-                        label={'Clear search'}
-                        variant={Variant.Secondary}
-                        onClick={() => {
-                          resetField('search', { defaultValue: '' });
-                        }}
-                        dataTestId="teams-clear-applied-filter"
-                      />
-                    </div>
-                  </div>
-                )}
+                {teamsData?.map((team: any) => (
+                  <TeamsCard key={team.id} {...team} />
+                ))}
+                <div className="h-12 w-12">
+                  {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
+                </div>
+                {isFetchingNextPage && <PageLoader />}
               </>
             );
-          })()}
-        </div>
+          }
+          return (
+            <>
+              {(debouncedSearchValue === undefined ||
+                debouncedSearchValue === '') &&
+              teamsData?.length === 0 ? (
+                <div className="flex flex-col space-y-3 items-center w-full">
+                  <div className="flex flex-col space-y-6 items-center">
+                    <img
+                      src={TeamNotFound}
+                      alt="Team Not Found"
+                      height={140}
+                      width={165}
+                    />
+                    <div
+                      className="text-lg font-bold"
+                      data-testid="no-teams-found"
+                    >
+                      No teams found
+                    </div>
+                  </div>
+                  <div className="flex space-x-1 text-xs font-normal">
+                    <div className="text-neutral-500">
+                      There are no teams found in your organization right now.
+                      Be the first to
+                    </div>
+                    <div
+                      className="text-blue-500 cursor-pointer"
+                      onClick={() => openAddTeamModal()}
+                      data-testid="create-one-team"
+                    >
+                      create one
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="py-16 w-full">
+                  <div className="flex w-full justify-center">
+                    <img src={require('images/noResult.png')} />
+                  </div>
+                  <div className="text-center">
+                    <div
+                      className="mt-8 text-lg font-bold"
+                      data-testid="teams-noresult-found"
+                    >
+                      No result found for &apos;{searchValue}&apos;
+                    </div>
+                    <div className="text-sm text-gray-500 mt-2">
+                      Sorry we can&apos;t find the team you are looking for.
+                      <br /> Please try using different filters.
+                    </div>
+                  </div>
+
+                  <div className="flex justify-center mt-6">
+                    <Button
+                      label={'Clear search'}
+                      variant={Variant.Secondary}
+                      onClick={() => {
+                        resetField('search', { defaultValue: '' });
+                      }}
+                      dataTestId="teams-clear-applied-filter"
+                    />
+                  </div>
+                </div>
+              )}
+            </>
+          );
+        })()}
       </div>
 
       <AddTeamModal

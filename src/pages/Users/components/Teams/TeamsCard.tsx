@@ -36,7 +36,7 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
     <div className="cursor-pointer" data-testid="" {...eventHandlers}>
       <Card
         shadowOnHover
-        className="relative w-[188px] border-solid border border-neutral-200 flex flex-col items-center justify-center p-6 bg-white"
+        className="relative w-[189.5px] border-solid border border-neutral-200 flex flex-col items-center justify-center p-6 bg-white"
         dataTestId="team-card"
       >
         {isAdmin && isHovered > 0 && (

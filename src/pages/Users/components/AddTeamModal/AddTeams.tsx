@@ -55,6 +55,7 @@ const AddTeams: React.FC<IAddTeamsProps> = ({ control, errors }) => {
       control,
       className: 'resize-none rounded-19xl',
       rows: 4,
+      error: errors.description?.message,
       maxLength: 200,
       showCounter: true,
     },

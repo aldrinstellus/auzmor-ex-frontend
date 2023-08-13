@@ -40,15 +40,15 @@ const AddTeamModal: React.FC<IAddTeamModalProps> = ({
   const schema = yup.object({
     name: yup.string().required('Please enter team name'),
     category: yup.object().required('Please select team category'),
-    description: yup.string().required('please enter role'),
+    description: yup.string().required('Please enter team description'),
   });
 
   const {
     control,
     handleSubmit,
-    reset,
-    getValues,
     formState: { errors, isValid },
+    reset,
+    setError,
   } = useForm<ITeamForm>({
     resolver: yupResolver(schema),
     mode: 'onChange',
@@ -57,7 +57,14 @@ const AddTeamModal: React.FC<IAddTeamModalProps> = ({
   const createTeamMutation = useMutation({
     mutationKey: ['create-teams'],
     mutationFn: createTeams,
-    onError: () => {},
+    onError: (error: any) => {
+      if (error?.response?.data?.errors?.length) {
+        setError('name', {
+          type: 'custom',
+          message: error?.response?.data?.errors[0]?.message,
+        });
+      }
+    },
     onSuccess: (data: any) => {
       queryClient.invalidateQueries(['teams']);
       toast(<SuccessToast content={'Team Created Successfully'} />, {
@@ -168,6 +175,7 @@ const AddTeamModal: React.FC<IAddTeamModalProps> = ({
           <Button
             label="Create"
             onClick={handleSubmit(onSubmit)}
+            disabled={!isValid}
             loading={createTeamMutation?.isLoading}
             dataTestId="create-team-cta"
           />
