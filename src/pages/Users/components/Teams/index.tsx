@@ -17,7 +17,6 @@ import { useInfiniteTeams } from 'queries/teams';
 import { isFiltersEmpty } from 'utils/misc';
 import PageLoader from 'components/PageLoader';
 import TeamNotFound from 'images/TeamNotFound.svg';
-import PopupMenu from 'components/PopupMenu';
 import TeamsSkeleton from '../Skeletons/TeamsSkeleton';
 import Skeleton from 'react-loading-skeleton';
 import { ITeamDetailState } from 'pages/Users';
