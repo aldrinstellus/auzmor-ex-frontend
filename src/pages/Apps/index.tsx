@@ -15,6 +15,7 @@ import AppGrid from './components/AppGrid';
 import { uniqueId } from 'lodash';
 import { useInfiniteApps } from 'queries/apps';
 import { useAppStore } from 'stores/appStore';
+import AppCardSkeleton from './components/Skeletons/AppCardSkeleton';
 interface IAppsProps {}
 
 interface IAppSearchForm {
@@ -173,18 +174,36 @@ const Apps: React.FC<IAppsProps> = () => {
             />
           </div>
         </div>
-        {appIds && (
-          <>
-            <p className="text-neutral-500">Showing {appIds.length} results</p>
-            <div className="pt-6">
-              <AppGrid
-                apps={appIds
-                  ?.filter(({ id }) => !!apps[id])
-                  ?.map(({ id }) => apps[id])}
-              />
-            </div>
-          </>
-        )}
+        <div className="text-neutral-500 mt-6 mb-6">
+          Showing {!isLoading && appIds.length} results
+        </div>
+        {(() => {
+          if (isLoading) {
+            return (
+              <div className="flex flex-wrap gap-6">
+                {[...Array(30)].map((element) => (
+                  <div key={element}>
+                    <AppCardSkeleton />
+                  </div>
+                ))}
+              </div>
+            );
+          }
+
+          if (appIds && appIds?.length > 0) {
+            return (
+              <div className="pt-6">
+                <AppGrid
+                  apps={appIds
+                    ?.filter(({ id }) => !!apps[id])
+                    ?.map(({ id }) => apps[id])}
+                />
+              </div>
+            );
+          }
+
+          return <></>;
+        })()}
       </Card>
       <AddApp open={open} closeModal={closeModal} />
     </div>
