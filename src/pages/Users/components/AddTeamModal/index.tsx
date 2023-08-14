@@ -5,7 +5,7 @@ import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
 import AddTeams from './AddTeams';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createTeams, updateTeam } from 'queries/users';
+import { createTeams, updateTeam } from 'queries/teams';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';

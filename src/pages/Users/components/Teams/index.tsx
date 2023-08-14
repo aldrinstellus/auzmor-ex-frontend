@@ -13,7 +13,7 @@ import { useForm } from 'react-hook-form';
 import { useDebounce } from 'hooks/useDebounce';
 import TeamFilterModal from '../FilterModals/TeamFilterModal';
 import AddTeamModal from '../AddTeamModal';
-import { useInfiniteTeams } from 'queries/users';
+import { useInfiniteTeams } from 'queries/teams';
 import { isFiltersEmpty } from 'utils/misc';
 import PageLoader from 'components/PageLoader';
 import TeamNotFound from 'images/TeamNotFound.svg';
