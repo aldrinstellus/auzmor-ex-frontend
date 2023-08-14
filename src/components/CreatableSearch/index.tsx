@@ -167,11 +167,6 @@ const CreatableSearch = React.forwardRef(
                 menuPortalTarget={document.body}
                 components={{
                   Option: ({ innerProps, data, isDisabled, isSelected }) => {
-                    console.log(
-                      'what is label here....',
-                      data?.label,
-                      data?.value,
-                    );
                     return (
                       <div
                         {...innerProps}

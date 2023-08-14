@@ -61,10 +61,11 @@ const AddTeamModal: React.FC<IAddTeamModalProps> = ({
     defaultValues: {
       name: team?.name || '',
       category:
-        {
+        (team && {
           label: team?.category?.name,
           value: team?.category?.name?.toUpperCase(),
-        } || '',
+        }) ||
+        '',
       description: team?.description || '',
     },
   });
