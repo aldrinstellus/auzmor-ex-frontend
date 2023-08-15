@@ -27,7 +27,7 @@ import PeopleCard from './PeopleCard';
 import InviteUserModal from '../InviteUserModal';
 import PeopleFilterModal from '../FilterModals/PeopleFilterModal';
 import { useInfiniteTeamMembers } from 'queries/teams';
-import { EntityType } from 'components/EntitySearchModal';
+import { EntitySearchModalType } from 'components/EntitySearchModal';
 import Sort from 'components/Sort';
 
 export interface IPeopleProps {
@@ -75,7 +75,7 @@ const People: React.FC<IPeopleProps> = ({
   const debouncedSearchValue = useDebounce(searchValue || '', 500);
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    teamTab === EntityType?.Team && teamId
+    teamTab === EntitySearchModalType?.Team && teamId
       ? useInfiniteTeamMembers(
           teamId,
           isFiltersEmpty({
@@ -188,7 +188,11 @@ const People: React.FC<IPeopleProps> = ({
                   Sort by
                 </div>
               }
-              entity={teamTab === EntityType.Team ? EntityType.Team : 'USER'}
+              entity={
+                teamTab === EntitySearchModalType.Team
+                  ? EntitySearchModalType.Team
+                  : 'USER'
+              }
             />
             <div>
               <Layout
@@ -280,7 +284,7 @@ const People: React.FC<IPeopleProps> = ({
                 </>
               );
             }
-            return teamTab === EntityType.Team ? (
+            return teamTab === EntitySearchModalType.Team ? (
               <div className="flex flex-col w-full items-center space-y-4">
                 <img
                   src={MemberNotFound}

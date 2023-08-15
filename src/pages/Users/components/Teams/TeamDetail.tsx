@@ -4,7 +4,9 @@ import React from 'react';
 import Card from 'components/Card';
 import { ITeamDetailState } from 'pages/Users';
 import People from '../People';
-import EntitySearchModal, { EntityType } from 'components/EntitySearchModal';
+import EntitySearchModal, {
+  EntitySearchModalType,
+} from 'components/EntitySearchModal';
 import Tooltip from 'components/Tooltip';
 import PopupMenu from 'components/PopupMenu';
 import { TeamFlow } from '.';
@@ -151,7 +153,7 @@ const TeamDetail: React.FC<ITeamMemberProps> = ({
         </div>
       </Card>
       <EntitySearchModal
-        entityType={EntityType.Team}
+        entityType={EntitySearchModalType.Team}
         onSubmit={() => {}}
         title="Add Members"
         submitButtonText="add Members"
