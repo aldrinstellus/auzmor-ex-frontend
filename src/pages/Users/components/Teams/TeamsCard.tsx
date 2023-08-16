@@ -9,9 +9,15 @@ import PopupMenu from 'components/PopupMenu';
 import useRole from 'hooks/useRole';
 import DeleteTeam from '../DeleteModals/Team';
 import useModal from 'hooks/useModal';
-import { ITeamDetails, TeamFlow } from '.';
+import { TeamFlow } from '.';
 import moment from 'moment';
 import { ITeamDetailState } from 'pages/Users';
+
+export interface IRecentMembers {
+  id: string;
+  name: string;
+  profileImage: any;
+}
 
 export interface ITeamsCardProps {
   id: string;
@@ -20,7 +26,7 @@ export interface ITeamsCardProps {
   description: string;
   createdAtDate: string;
   totalMembers: number;
-
+  recentMembers: IRecentMembers;
   setTeamFlow: (mode: string) => void;
   openModal: () => void;
   setShowTeamDetail: (detail: ITeamDetailState) => void;
@@ -33,6 +39,7 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
   category,
   createdAtDate,
   totalMembers,
+  recentMembers,
   setTeamFlow,
   openModal,
   setShowTeamDetail,
@@ -137,8 +144,8 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
         >
           <AvatarList
             size={80}
-            users={[]}
-            displayCount={2}
+            users={recentMembers || []}
+            moreCount={totalMembers}
             className="mb-4 mt-1"
             dataTestId="teams-people-icon"
           />
