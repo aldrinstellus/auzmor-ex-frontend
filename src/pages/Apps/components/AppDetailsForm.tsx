@@ -77,7 +77,6 @@ const AppDetailsForm: React.FC<AppDetailsFormProps> = ({
       control: control,
       defaultValue: defaultValues()?.category,
       categoryType: CategoryType.APP,
-      error: errors.category?.message,
       dataTestId: 'sso-config-ad-hostname',
     },
   ];
