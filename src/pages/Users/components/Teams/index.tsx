@@ -12,7 +12,7 @@ import { useInView } from 'react-intersection-observer';
 import { useForm } from 'react-hook-form';
 import { useDebounce } from 'hooks/useDebounce';
 import TeamFilterModal from '../FilterModals/TeamFilterModal';
-import AddTeamModal from '../TeamModal';
+import TeamModal from '../TeamModal';
 import { useInfiniteTeams } from 'queries/teams';
 import { isFiltersEmpty } from 'utils/misc';
 import PageLoader from 'components/PageLoader';
@@ -52,11 +52,6 @@ export interface ITeamProps {
   setShowTeamDetail: (detail: ITeamDetailState) => void;
   setTeamFlow: any;
   teamFlow: string;
-  showDeleteModal: boolean;
-  openDeleteModal: () => void;
-  closeDeleteModal: () => void;
-  teamId: string;
-  setTeamId: (teamId: string) => void;
 }
 
 const Team: React.FC<ITeamProps> = ({
@@ -67,11 +62,6 @@ const Team: React.FC<ITeamProps> = ({
   setShowTeamDetail,
   setTeamFlow,
   teamFlow,
-  showDeleteModal,
-  openDeleteModal,
-  closeDeleteModal,
-  setTeamId,
-  teamId,
 }) => {
   const [sortByFilter, setSortByFilter] = useState<string>('');
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
@@ -113,8 +103,6 @@ const Team: React.FC<ITeamProps> = ({
       }
     });
   });
-
-  const editSelectedTeam = teamsData?.find((team) => team.id === teamId);
 
   return (
     <div className="relative pb-8">
@@ -244,11 +232,7 @@ const Team: React.FC<ITeamProps> = ({
                     key={team.id}
                     setTeamFlow={setTeamFlow}
                     openModal={openTeamModal}
-                    setTeamId={setTeamId}
                     setShowTeamDetail={setShowTeamDetail}
-                    showDeleteModal={showDeleteModal}
-                    openDeleteModal={openDeleteModal}
-                    closeDeleteModal={closeDeleteModal}
                     {...team}
                   />
                 ))}
@@ -329,13 +313,17 @@ const Team: React.FC<ITeamProps> = ({
       </div>
 
       {showTeamModal && (
-        <AddTeamModal
+        <TeamModal
           open={showTeamModal}
           openModal={openTeamModal}
           closeModal={closeTeamModal}
           teamFlowMode={teamFlow}
           setTeamFlow={setTeamFlow}
-          team={teamFlow === TeamFlow.EditTeam ? editSelectedTeam : undefined} // Default value doesn't clear
+          team={
+            teamFlow === TeamFlow.EditTeam
+              ? showTeamDetail.teamDetail
+              : undefined
+          }
         />
       )}
 

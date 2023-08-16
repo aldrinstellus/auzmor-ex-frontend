@@ -20,13 +20,10 @@ export interface ITeamsCardProps {
   description: string;
   createdAtDate: string;
   totalMembers: number;
+
   setTeamFlow: (mode: string) => void;
   openModal: () => void;
-  setTeamId: (teamId: string) => void;
   setShowTeamDetail: (detail: ITeamDetailState) => void;
-  showDeleteModal: boolean;
-  openDeleteModal: () => void;
-  closeDeleteModal: () => void;
 }
 
 const TeamsCard: React.FC<ITeamsCardProps> = ({
@@ -38,13 +35,11 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
   totalMembers,
   setTeamFlow,
   openModal,
-  setTeamId,
   setShowTeamDetail,
-  showDeleteModal,
-  openDeleteModal,
-  closeDeleteModal,
 }) => {
   const [isHovered, eventHandlers] = useHover();
+  const [showDeleteModal, openDeleteModal, closeDeleteModal] = useModal(false);
+
   const { isAdmin } = useRole();
   const currentDate = moment();
   return (
@@ -74,7 +69,18 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
                 onClick: () => {
                   openModal();
                   setTeamFlow(TeamFlow.EditTeam);
-                  setTeamId(id);
+                  setShowTeamDetail({
+                    activeTab: 'TEAM',
+                    isTeamSelected: false,
+                    teamDetail: {
+                      id: id,
+                      name: name,
+                      description: description,
+                      category: category,
+                      createdAt: createdAtDate,
+                      totalMembers: totalMembers,
+                    },
+                  });
                 },
                 dataTestId: 'team-edit',
                 permissions: [''],
@@ -116,16 +122,16 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
           className="flex flex-col items-center"
           onClick={() => {
             setShowTeamDetail({
+              activeTab: 'TEAM',
               isTeamSelected: true,
               teamDetail: {
                 id: id,
                 name: name,
                 description: description,
-                category: category?.name,
+                category: category,
                 createdAt: createdAtDate,
                 totalMembers: totalMembers,
               },
-              activeTab: 'TEAM',
             });
           }}
         >

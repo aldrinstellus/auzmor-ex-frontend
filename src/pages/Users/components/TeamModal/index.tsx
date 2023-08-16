@@ -29,7 +29,7 @@ export interface IAddTeamModalProps {
   closeModal: () => void;
   teamFlowMode: string;
   setTeamFlow: any;
-  team: ITeamDetails;
+  team: Record<string, any> | any;
 }
 
 const TeamModal: React.FC<IAddTeamModalProps> = ({

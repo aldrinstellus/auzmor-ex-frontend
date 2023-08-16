@@ -9,7 +9,7 @@ import EntitySearchModal, {
 } from 'components/EntitySearchModal';
 import Tooltip from 'components/Tooltip';
 import PopupMenu from 'components/PopupMenu';
-import { TeamFlow } from '.';
+import { TeamFlow } from '../Teams';
 
 export interface ITeamMemberProps {
   id?: string;
@@ -21,8 +21,6 @@ export interface ITeamMemberProps {
   openModal: () => void;
   setShowTeamDetail: (detail: ITeamDetailState) => void;
   setTeamFlow: any;
-  setTeamId: (teamId: string) => void;
-  openDeleteModal: () => void;
 }
 
 const TeamDetail: React.FC<ITeamMemberProps> = ({
@@ -32,11 +30,9 @@ const TeamDetail: React.FC<ITeamMemberProps> = ({
   category,
   teamMembers,
   teamTab,
-  openModal,
+  // openModal,
   setShowTeamDetail,
-  setTeamFlow,
-  setTeamId,
-  openDeleteModal,
+  // setTeamFlow,
 }) => {
   return (
     <>
@@ -105,7 +101,7 @@ const TeamDetail: React.FC<ITeamMemberProps> = ({
               <div className="text-xl font-semibold">{teamMembers || 0}</div>
             </div>
             <div>
-              <PopupMenu
+              {/* <PopupMenu
                 triggerNode={
                   <div className="cursor-pointer">
                     <Icon name="setting" stroke="#171717" />
@@ -138,7 +134,7 @@ const TeamDetail: React.FC<ITeamMemberProps> = ({
                   },
                 ]}
                 className=" right-20 w-44"
-              />
+              /> */}
             </div>
           </div>
         </div>
