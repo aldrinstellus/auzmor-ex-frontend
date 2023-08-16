@@ -2,8 +2,12 @@ import Divider from 'components/Divider';
 import Layout, { FieldType } from 'components/Form';
 import Spinner from 'components/Spinner';
 import { useDebounce } from 'hooks/useDebounce';
-import { getDepartments, useGetDepartments } from 'queries/department';
-import { getLocations, useGetLocations } from 'queries/location';
+import {
+  IDepartment,
+  getDepartments,
+  useGetDepartments,
+} from 'queries/department';
+import { ILocation, getLocations, useGetLocations } from 'queries/location';
 import { IGetUser, useInfiniteUsers } from 'queries/users';
 import React, { ReactNode, useEffect } from 'react';
 import {
@@ -34,11 +38,11 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
   const formData = watch();
   const debouncedSearchValue = useDebounce(formData.memberSearch || '', 500);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfiniteUsers(
-      isFiltersEmpty({
-        q: debouncedSearchValue,
-      }),
-    );
+    useInfiniteUsers({
+      q: debouncedSearchValue,
+      department: [formData.department?.value || ''],
+      location: [formData.location?.value || ''],
+    });
   const usersData = data?.pages
     .flatMap((page) => {
       return page?.data?.result?.data.map((user: any) => {
@@ -66,6 +70,13 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
       deselectAll();
     }
   }, [formData.selectAll]);
+
+  const { ref, inView } = useInView();
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [inView]);
 
   const selectAll = () => {
     Object.keys(formData).forEach((key) => {
@@ -99,12 +110,19 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
     });
   };
 
-  const { ref, inView } = useInView();
-  useEffect(() => {
-    if (inView) {
-      fetchNextPage();
-    }
-  }, [inView]);
+  const getLocationOptions = (locations: ILocation[]) => {
+    return locations.map((location: ILocation) => ({
+      label: location.country,
+      value: location.uuid,
+    }));
+  };
+
+  const getDepartmentOptions = (departments: IDepartment[]) => {
+    return departments.map((department: IDepartment) => ({
+      label: department.name,
+      value: department.uuid,
+    }));
+  };
   return (
     <div className="flex flex-col">
       <div className="flex flex-col py-4 px-6">
@@ -130,9 +148,12 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
                   type: FieldType.AsyncSingleSelect,
                   control,
                   name: 'department',
-                  option: departments,
+                  option: getDepartmentOptions(departments || []),
                   loadOptions: (inputValue: string) =>
-                    getDepartments({ q: inputValue }),
+                    getDepartments({ q: inputValue }).then(
+                      (departments: IDepartment[]) =>
+                        getDepartmentOptions(departments),
+                    ),
                   placeholder: 'Department',
                   isLoading: departmentLoading,
                 },
@@ -145,10 +166,12 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
                   type: FieldType.AsyncSingleSelect,
                   control,
                   name: 'location',
-                  option: locations,
                   placeholder: 'Location',
+                  option: getLocationOptions(locations || []),
                   loadOptions: (inputValue: string) =>
-                    getLocations({ q: inputValue }),
+                    getLocations({ q: inputValue }).then(
+                      (locations: ILocation[]) => getLocationOptions(locations),
+                    ),
                   isLoading: locationLoading,
                 },
               ]}

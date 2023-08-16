@@ -2,8 +2,13 @@ import React, { useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { Control, useController, Controller } from 'react-hook-form';
 import AsyncSelect from 'react-select/async';
-import { MenuPlacement, components } from 'react-select';
+import {
+  MenuPlacement,
+  components,
+  IndicatorSeparatorProps,
+} from 'react-select';
 import { twConfig } from 'utils/misc';
+import './index.css';
 
 export interface IAsyncSingleSelectProps {
   name: string;
@@ -139,7 +144,7 @@ const AsyncSingleSelect = React.forwardRef(
                   ...animationStyles(open),
                 }}
                 menuIsOpen
-                // options={options}
+                options={options}
                 loadOptions={loadOptions}
                 defaultValue={defaultValue}
                 menuPlacement={menuPlacement ? menuPlacement : undefined}
@@ -166,6 +171,11 @@ const AsyncSingleSelect = React.forwardRef(
                       innerRef={menuListRef}
                     ></components.MenuList>
                   ),
+                  IndicatorSeparator: ({
+                    innerProps,
+                  }: IndicatorSeparatorProps<any, true>) => {
+                    return <span style={{ display: 'none' }} {...innerProps} />;
+                  },
                 }}
                 {...field}
                 onBlur={() => setOpen(false)}
