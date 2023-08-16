@@ -91,11 +91,69 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
     },
   });
 
-  const makeFeaturedApp = () => {
+  const removeFeaturedAppMutation = useMutation({
+    mutationKey: ['edit-app-mutation'],
+    mutationFn: (payload: any) => editApp(app?.id || '', payload as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['apps']);
+      toast(
+        <SuccessToast
+          content={`App has been removed featured apps`}
+          dataTestId="app-updated-success-toaster"
+        />,
+        {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              stroke={twConfig.theme.colors.primary['500']}
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+          theme: 'dark',
+        },
+      );
+    },
+    onError: (error: any) => {
+      toast(
+        <FailureToast
+          content={`Error while removing app from featured apps`}
+          dataTestId="app-create-error-toaster"
+        />,
+        {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              stroke={twConfig.theme.colors.red['500']}
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.red['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+          theme: 'dark',
+        },
+      );
+    },
+  });
+
+  const toggleAppFeature = (featured: boolean) => {
     const payload = {
       url: app.url,
       label: app.label,
-      featured: false,
+      featured,
       ...(app.description && { description: app.description }),
       ...(app.category?.id && { category: app.category.label }),
       ...(app.icon?.id && { icon: app.icon.id }),
@@ -112,7 +170,11 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
       credentials.relayState = app.credentials.relayState;
     }
     payload.credentials = credentials;
-    featuredAppMutation.mutate({ ...payload, featured: true });
+    if (featured) {
+      featuredAppMutation.mutate(payload);
+    } else {
+      removeFeaturedAppMutation.mutate(payload);
+    }
   };
 
   const appCardMenu = [
@@ -129,8 +191,16 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
       text: 'Feature',
       icon: 'filterLinear',
       dataTestId: 'app-card-feature',
-      onClick: makeFeaturedApp,
-      hidden: false,
+      onClick: () => toggleAppFeature(true),
+      hidden: app.featured,
+    },
+    {
+      id: 2,
+      text: 'Remove from Feature',
+      icon: 'filterLinear',
+      dataTestId: 'app-card-remove-feature',
+      onClick: () => toggleAppFeature(false),
+      hidden: !app.featured,
     },
     {
       id: 3,
@@ -183,26 +253,28 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
                 />
                 {menuHovered && (
                   <Card className="absolute border-1 rounded-11xl">
-                    {appCardMenu.map((menuItem) => (
-                      <div
-                        key={menuItem.id}
-                        onClick={menuItem.onClick}
-                        data-testid={menuItem.dataTestId}
-                      >
-                        <div className="flex gap-x-2 cursor-pointer py-2 px-6 items-center hover:bg-blue-50">
-                          <Icon
-                            name={menuItem.icon}
-                            size={16}
-                            stroke="#000"
-                            disabled
-                          />
-                          <p className="text-neutral-900 text-sm whitespace-nowrap">
-                            {menuItem.text}
-                          </p>
+                    {appCardMenu
+                      .filter((menuItem) => !menuItem.hidden)
+                      .map((menuItem) => (
+                        <div
+                          key={menuItem.id}
+                          onClick={menuItem.onClick}
+                          data-testid={menuItem.dataTestId}
+                        >
+                          <div className="flex gap-x-2 cursor-pointer py-2 px-6 items-center hover:bg-blue-50">
+                            <Icon
+                              name={menuItem.icon}
+                              size={16}
+                              stroke="#000"
+                              disabled
+                            />
+                            <p className="text-neutral-900 text-sm whitespace-nowrap">
+                              {menuItem.text}
+                            </p>
+                          </div>
+                          <Divider />
                         </div>
-                        <Divider />
-                      </div>
-                    ))}
+                      ))}
                   </Card>
                 )}
               </div>
