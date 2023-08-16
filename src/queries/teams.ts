@@ -104,16 +104,17 @@ export const useInfiniteTeams = (q?: Record<string, any>) => {
   });
 };
 
-// data is not stored in cache
 export const useInfiniteTeamMembers = (
   teamId: string,
   q?: Record<string, any>,
 ) => {
   return useInfiniteQuery({
     queryKey: ['team-members', q, teamId],
-    queryFn: (context) => {
-      getTeamMembers(context, teamId);
-    },
+
+    // queryFn: (context) => {
+    //   getTeamMembers(context, teamId); # data is not stored in cache
+    // },
+
     getNextPageParam: (lastPage: any) => {
       const pageDataLen = lastPage?.data?.result?.data?.length;
       const pageLimit = lastPage?.data?.result?.paging?.limit;
