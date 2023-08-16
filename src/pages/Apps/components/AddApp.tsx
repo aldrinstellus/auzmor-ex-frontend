@@ -87,11 +87,13 @@ const AddApp: React.FC<AddAppProps> = ({
       url: data?.url || '',
       label: data?.label || '',
       description: data?.description || '',
-      category: {
-        label: data?.category?.name,
-        value: data?.category?.name,
-        id: data?.category?.categoryId,
-      },
+      category: data
+        ? {
+            label: data?.category?.name,
+            value: data?.category?.name,
+            id: data?.category?.categoryId,
+          }
+        : '',
       audience: data?.audience || [],
       icon: data?.icon,
       acsUrl: data?.credentials?.acsUrl || '',
