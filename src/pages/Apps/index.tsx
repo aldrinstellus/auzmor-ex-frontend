@@ -1,6 +1,6 @@
 import Button, { Variant as ButtonVariant, Variant } from 'components/Button';
 import Card from 'components/Card';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppsBanner from 'images/appsBanner.png';
 import IconButton, {
   Variant as IconVariant,
@@ -21,6 +21,8 @@ import { useDebounce } from 'hooks/useDebounce';
 import { isFiltersEmpty } from 'utils/misc';
 import AppFilterModal from './components/AppFilterModal';
 import TeamNotFound from 'images/TeamNotFound.svg';
+import { useInView } from 'react-intersection-observer';
+import PageLoader from 'components/PageLoader';
 
 interface IAppsProps {}
 interface IAppSearchForm {
@@ -58,6 +60,11 @@ const Apps: React.FC<IAppsProps> = () => {
   const [open, openModal, closeModal] = useModal(false, false);
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const [sortByFilter, setSortByFilter] = useState<string>('');
+  const [appFilters, setAppFilters] = useState<any>({
+    categories: [],
+    teams: [],
+  });
+  const { ref, inView } = useInView();
 
   const selectedButtonClassName = '!bg-primary-50 text-primary-500 text-sm';
   const regularButtonClassName = '!text-neutral-500 text-sm';
@@ -82,6 +89,12 @@ const Apps: React.FC<IAppsProps> = () => {
       }
     });
   }) as { id: string }[];
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [inView]);
 
   return (
     <div>
@@ -255,6 +268,10 @@ const Apps: React.FC<IAppsProps> = () => {
                     ?.filter(({ id }) => !!apps[id])
                     ?.map(({ id }) => apps[id])}
                 />
+                <div className="h-12 w-12">
+                  {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
+                </div>
+                {isFetchingNextPage && <PageLoader />}
               </div>
             );
           }
@@ -328,11 +345,13 @@ const Apps: React.FC<IAppsProps> = () => {
         })()}
       </Card>
       <AddApp open={open} closeModal={closeModal} />
-      <AppFilterModal
-        open={showFilterModal}
-        openModal={openFilterModal}
-        closeModal={closeFilterModal}
-      />
+      {showFilterModal && (
+        <AppFilterModal
+          open={showFilterModal}
+          closeModal={closeFilterModal}
+          setFilters={setAppFilters}
+        />
+      )}
     </div>
   );
 };

@@ -99,7 +99,6 @@ const AddApp: React.FC<AddAppProps> = ({
       relayState: data?.credentials?.relayState || '',
     },
   });
-  const { apps, updateApp } = useAppStore();
 
   const queryClient = useQueryClient();
 
@@ -108,9 +107,46 @@ const AddApp: React.FC<AddAppProps> = ({
     mutationFn: createApp,
     onSuccess: async () => {
       await queryClient.invalidateQueries(['apps']);
+      toast(<SuccessToast content={'App added successfully'} />, {
+        style: {
+          border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+          borderRadius: '6px',
+          display: 'flex',
+          alignItems: 'center',
+        },
+        autoClose: TOAST_AUTOCLOSE_TIME,
+        transition: slideInAndOutTop,
+        theme: 'dark',
+      });
       closeModal();
+      queryClient.invalidateQueries(['categories']);
     },
-    onError: async () => {},
+    onError: async () => {
+      toast(
+        <FailureToast
+          content={`Error Creating App`}
+          dataTestId="app-create-error-toaster"
+        />,
+        {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              stroke={twConfig.theme.colors.red['500']}
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.red['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+          theme: 'dark',
+        },
+      );
+    },
   });
 
   const updateAppMutation = useMutation({
@@ -148,7 +184,7 @@ const AddApp: React.FC<AddAppProps> = ({
     onError: (error: any) => {
       toast(
         <FailureToast
-          content={`Error Creating App`}
+          content={`Error updating the app`}
           dataTestId="app-create-error-toaster"
         />,
         {
