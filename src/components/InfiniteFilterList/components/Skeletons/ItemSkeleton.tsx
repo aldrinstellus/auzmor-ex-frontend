@@ -1,9 +1,9 @@
 import React from 'react';
 import Skeleton from 'react-loading-skeleton';
 
-export interface IFilterListSkeletonProps {}
+export interface IItemSkeletonProps {}
 
-const FilterListSkeleton: React.FC<IFilterListSkeletonProps> = () => {
+const ItemSkeleton: React.FC<IItemSkeletonProps> = () => {
   return (
     <div className="w-full">
       <div className="flex">
@@ -17,4 +17,4 @@ const FilterListSkeleton: React.FC<IFilterListSkeletonProps> = () => {
   );
 };
 
-export default FilterListSkeleton;
+export default ItemSkeleton;
