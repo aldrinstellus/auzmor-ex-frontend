@@ -15,8 +15,8 @@ interface IInfiniteFilterListProps {
   setSelectedItems: (param: any) => void;
   selectedItems: Array<any>;
   renderItem: (param: any) => ReactNode;
-  itemStyles?: string;
-  listStyles?: string;
+  itemClassName?: string;
+  listClassName?: string;
   apiCall: ApiCallFunction; // Add API call function prop
   apiCallParams: any; // Parameters for the API call
   searchProps?: any; // Props for the input field
@@ -27,8 +27,8 @@ const InfiniteFilterList: React.FC<IInfiniteFilterListProps> = ({
   setSelectedItems,
   selectedItems,
   renderItem,
-  itemStyles,
-  listStyles,
+  itemClassName,
+  listClassName,
   apiCall,
   apiCallParams,
   searchProps,
@@ -73,7 +73,7 @@ const InfiniteFilterList: React.FC<IInfiniteFilterListProps> = ({
       fetchNextPage();
     }
   }, [inView]);
-  console.log(listStyles);
+  console.log(listClassName);
 
   return (
     <>
@@ -91,7 +91,7 @@ const InfiniteFilterList: React.FC<IInfiniteFilterListProps> = ({
         ]}
       />
       <div
-        className={`mt-3 max-h-[300px] min-h-[300px] overflow-y-auto ${listStyles}`}
+        className={`mt-3 max-h-[300px] min-h-[300px] overflow-y-auto ${listClassName}`}
       >
         {(() => {
           if (isLoading) {
@@ -100,7 +100,7 @@ const InfiniteFilterList: React.FC<IInfiniteFilterListProps> = ({
                 {[...Array(10)].map((element) => (
                   <div
                     key={element}
-                    className={`px-6 py-3 border-b-1 border-b-bg-neutral-200 flex items-center ${itemStyles}`}
+                    className={`px-6 py-3 border-b-1 border-b-bg-neutral-200 flex items-center ${itemClassName}`}
                   >
                     <ItemSkeleton />
                   </div>
@@ -114,7 +114,7 @@ const InfiniteFilterList: React.FC<IInfiniteFilterListProps> = ({
                 {flattenData.map((item: any) => (
                   <li
                     key={item.id}
-                    className={`px-6 py-3 border-b-1 border-b-bg-neutral-200 flex items-center ${itemStyles}`}
+                    className={`px-6 py-3 border-b-1 border-b-bg-neutral-200 flex items-center ${itemClassName}`}
                     onClick={() => onSelectItem(item)}
                   >
                     {renderItem(item)}
