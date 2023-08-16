@@ -48,11 +48,17 @@ export interface IAddAppForm {
 const AddAppFormSchema = yup.object({
   url: yup
     .string()
-    .required('Required field')
+    .required('This field cannot be empty')
     .matches(URL_REGEX, 'Enter a valid URL'),
 
-  label: yup.string().required('Required field'),
-  description: yup.string(),
+  label: yup.string().required('This field cannot be empty'),
+  description: yup
+    .string()
+    .test(
+      'len',
+      'Description cannot exceed 300 characters',
+      (val) => (val || '').toString().length <= 300,
+    ),
   audience: yup.array(),
   icon: yup.object().nullable(),
   acsUrl: yup.string(),
