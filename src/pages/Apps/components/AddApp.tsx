@@ -52,15 +52,8 @@ const AddAppFormSchema = yup.object({
     .matches(URL_REGEX, 'Enter a valid URL'),
 
   label: yup.string().required('Required field'),
-  description: yup
-    .string()
-    .test(
-      'len',
-      'Description cannot exceed 300 characters',
-      (val) => (val || '').toString().length <= 300,
-    ),
-  category: yup.object(),
-  audience: yup.string(),
+  description: yup.string(),
+  audience: yup.array(),
   icon: yup.object().nullable(),
   acsUrl: yup.string(),
   entityId: yup.string(),
@@ -101,6 +94,7 @@ const AddApp: React.FC<AddAppProps> = ({
       relayState: data?.credentials?.relayState || '',
     },
   });
+  const [activeTab, setActiveTab] = useState(0);
 
   const queryClient = useQueryClient();
 
@@ -282,9 +276,18 @@ const AddApp: React.FC<AddAppProps> = ({
     }
   };
 
+  const handleNextTab = (e: React.MouseEvent<Element, MouseEvent>) => {
+    e.preventDefault();
+    trigger();
+    if (isValid) {
+      setActiveTab(activeTab + 1);
+    }
+  };
+
   useEffect(() => {
     if (!open) {
       reset();
+      setActiveTab(0);
     }
   }, [open]);
 
@@ -304,22 +307,31 @@ const AddApp: React.FC<AddAppProps> = ({
           onSubmit={onSubmit}
           className="flex flex-col justify-between h-full"
         >
-          <Tabs tabs={tabs} disableAnimation={true} />
+          <Tabs
+            tabs={tabs}
+            disableAnimation={true}
+            activeTabIndex={activeTab}
+            onTabChange={(tab: any) => setActiveTab(tab)}
+          />
           <div className="bg-blue-50 flex items-center justify-end gap-x-3 px-6 py-4 mt-auto rounded-9xl">
             <Button
               label="Cancel"
               variant={ButtonVariant.Secondary}
               onClick={closeModal}
             />
-            <Button
-              label="Save"
-              type={Type.Submit}
-              loading={
-                addAppMutation?.isLoading ||
-                updateAppMutation.isLoading ||
-                uploadStatus === UploadStatus.Uploading
-              }
-            />
+            {activeTab === tabs.length - 1 ? (
+              <Button
+                label="Save"
+                type={Type.Submit}
+                loading={
+                  addAppMutation?.isLoading ||
+                  updateAppMutation.isLoading ||
+                  uploadStatus === UploadStatus.Uploading
+                }
+              />
+            ) : (
+              <Button label="Next" onClick={(e) => handleNextTab(e)} />
+            )}
           </div>
         </form>
       </div>
