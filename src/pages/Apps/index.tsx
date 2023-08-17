@@ -23,6 +23,7 @@ import { isFiltersEmpty, twConfig } from 'utils/misc';
 import AppFilterModal from './components/AppFilterModal';
 import AppList from './components/AppList';
 import Icon from 'components/Icon';
+import AppBannerSkeleton from './components/Skeletons/AppBannerSkeleton';
 
 interface IAppsProps {}
 interface IAppSearchForm {
@@ -65,6 +66,7 @@ const Apps: React.FC<IAppsProps> = () => {
   const [featuredAppsCount, setFeaturedAppsCount] = useState<any>();
   const [isLoading, setIsLoading] = useState(false);
   const [isFeauturedAppLoading, setIsFeaturedAppLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
 
   const selectedButtonClassName = '!bg-primary-50 text-primary-500 text-sm';
   const regularButtonClassName = '!text-neutral-500 text-sm';
@@ -121,7 +123,13 @@ const Apps: React.FC<IAppsProps> = () => {
           />
         </div>
         {/* Banner */}
-        <img src={AppsBanner} className="w-full py-6" />
+        <img
+          src={AppsBanner}
+          alt="Apps Banner"
+          className={`w-full py-6 ${imageLoading ? 'hidden' : ''}`}
+          onLoad={() => setImageLoading(false)}
+        />
+        {imageLoading && <AppBannerSkeleton />}
         {/* App groups and sort/filter/search */}
         <div className="flex justify-between pb-6">
           <div className="flex items-center gap-x-4">
