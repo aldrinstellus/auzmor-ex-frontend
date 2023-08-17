@@ -282,12 +282,14 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
           </div>
           <div className="pb-8">
             <div className="flex items-center justify-between">
-              <img
-                src={app?.icon?.original}
-                className="p-1 bg-neutral-100 rounded-xl"
-                height={28}
-                width={28}
-              />
+              {app?.icon?.original && (
+                <img
+                  src={app?.icon?.original}
+                  className="p-1 bg-neutral-100 rounded-xl"
+                  height={28}
+                  width={28}
+                />
+              )}
             </div>
             <div className="py-2">
               <p

@@ -29,12 +29,14 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-4">
           <div className="flex gap-x-3 items-center">
-            <img
-              src={app?.icon?.original}
-              className="p-1 bg-neutral-100 rounded-xl"
-              height={20}
-              width={20}
-            />
+            {app?.icon?.original && (
+              <img
+                src={app?.icon?.original}
+                className="p-1 bg-neutral-100 rounded-xl"
+                height={20}
+                width={20}
+              />
+            )}
             <p className="text-neutral-900 text-lg font-extrabold">
               {app.label}
             </p>
@@ -85,14 +87,16 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
             <div className="pb-8">
               {/* The icon, name and description */}
               <div className="flex px-6 pt-4 gap-x-6">
-                <div className="min-w-[100px] min-h-[100px]">
-                  <img
-                    src={app?.icon?.original}
-                    className="p-1 rounded-xl"
-                    height={100}
-                    width={100}
-                  />
-                </div>
+                {app?.icon?.original && (
+                  <div className="min-w-[100px] min-h-[100px]">
+                    <img
+                      src={app?.icon?.original}
+                      className="p-1 rounded-xl"
+                      height={100}
+                      width={100}
+                    />
+                  </div>
+                )}
                 <div>
                   <p
                     className="text-3xl text-neutral-900 font-semibold"
