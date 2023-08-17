@@ -242,7 +242,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
               <Badge
                 text={app.category.name}
                 textClassName="text-blue-500"
-                bgClassName="bg-blue-100"
+                bgClassName="bg-blue-100 border-1 border-blue-300"
                 dataTestId="app-category"
               />
             )}
