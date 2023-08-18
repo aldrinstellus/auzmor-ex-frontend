@@ -12,6 +12,7 @@ import {
   IMention,
   IPost,
   IPostPayload,
+  IShoutoutRecipient,
   createPost,
   updatePost,
 } from 'queries/post';
@@ -126,6 +127,12 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           date: data.schedule.dateTime,
           time: `${moment(new Date(data.schedule.dateTime)).format('h:mm a')}`,
         });
+      }
+      if (data?.shoutoutRecipients?.length) {
+        const recipientIds = data.shoutoutRecipients.map(
+          (recipient) => recipient.userId,
+        );
+        setShoutoutUserIds(recipientIds);
       }
       setAudience(data?.audience || []);
     }
@@ -320,7 +327,6 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         }
       },
     );
-    console.log(mentionList);
 
     const previewUrl = isPreviewRemoved
       ? []
@@ -387,6 +393,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         mentions: mentionList || [],
         hashtags: hashtagList || [],
         audience,
+        shoutoutRecipients: shoutoutUserIds || [],
         isAnnouncement: !!announcement,
         announcement: {
           end: announcement?.value || '',
