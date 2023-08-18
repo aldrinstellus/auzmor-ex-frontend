@@ -8,7 +8,22 @@ import {
 } from 'contexts/CreatePostContext';
 import moment from 'moment';
 
-const Poll: React.FC<IPoll> = ({ question, options, total, closedAt }) => {
+export enum PollMode {
+  VIEW = 'VIEW',
+  EDIT = 'EDIT',
+}
+
+type PollProps = {
+  mode: PollMode;
+};
+
+const Poll: React.FC<IPoll & PollProps> = ({
+  question,
+  options,
+  total,
+  closedAt,
+  mode = PollMode.VIEW,
+}) => {
   const [userVoted, setUserVoted] = useState<boolean>(false);
   const momentClosedAt = moment(new Date(closedAt));
   const { setPoll, setActiveFlow } = useContext(CreatePostContext);
@@ -42,28 +57,32 @@ const Poll: React.FC<IPoll> = ({ question, options, total, closedAt }) => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <p className="text-neutral-900 font-bold">{question}</p>
-        <div className="flex gap-x-2">
-          <IconButton
-            icon="edit"
-            onClick={() => setActiveFlow(CreatePostFlow.CreatePoll)}
-            variant={Variant.Secondary}
-            size={Size.Medium}
-            borderAround
-            stroke="#000"
-            className="bg-white rounded-7xl"
-            borderAroundClassName="rounded-7xl"
-          />
-          <IconButton
-            icon="close"
-            onClick={() => setPoll(null)}
-            variant={Variant.Secondary}
-            size={Size.Medium}
-            borderAround
-            stroke="#000"
-            className="bg-white rounded-7xl"
-            borderAroundClassName="rounded-7xl"
-          />
-        </div>
+        {mode === PollMode.EDIT && (
+          <div className="flex gap-x-2">
+            <IconButton
+              icon="edit"
+              onClick={() => setActiveFlow(CreatePostFlow.CreatePoll)}
+              variant={Variant.Secondary}
+              size={Size.Medium}
+              borderAround
+              stroke="#000"
+              className="bg-white rounded-7xl"
+              borderAroundClassName="rounded-7xl"
+              dataTestId="createpost-edit-poll"
+            />
+            <IconButton
+              icon="close"
+              onClick={() => setPoll(null)}
+              variant={Variant.Secondary}
+              size={Size.Medium}
+              borderAround
+              stroke="#000"
+              className="bg-white rounded-7xl"
+              borderAroundClassName="rounded-7xl"
+              dataTestId="createpost-remove-poll"
+            />
+          </div>
+        )}
       </div>
 
       {/* Options */}
@@ -93,7 +112,10 @@ const Poll: React.FC<IPoll> = ({ question, options, total, closedAt }) => {
 
       {/* Time left */}
       <div>
-        <p className="text-orange-500 font-bold">
+        <p
+          className="text-orange-500 font-bold"
+          data-testid="createpost-poll-expiry"
+        >
           {momentClosedAt.fromNow(true) + ' left'}
         </p>
       </div>

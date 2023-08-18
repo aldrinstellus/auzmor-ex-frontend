@@ -31,7 +31,7 @@ import moment from 'moment';
 import MediaPreview, { Mode } from 'components/MediaPreview';
 import Banner, { Variant } from 'components/Banner';
 import { hasDatePassed } from 'utils/time';
-import Poll from 'components/Poll';
+import Poll, { PollMode } from 'components/Poll';
 
 export interface IEditorContentChanged {
   text: string;
@@ -285,6 +285,7 @@ const RichTextEditor = React.forwardRef(
               options={poll.options}
               total={poll.total}
               closedAt={poll.closedAt}
+              mode={PollMode.EDIT}
             />
           </div>
         )}

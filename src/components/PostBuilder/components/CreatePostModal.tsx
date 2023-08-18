@@ -62,7 +62,6 @@ interface ICreatePostModal {
 
 const CreatePostModal: React.FC<ICreatePostModal> = ({
   open,
-  openModal,
   closeModal,
   data,
   mode,
@@ -84,6 +83,8 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     setShowFullscreenVideo,
     schedule,
     setSchedule,
+    poll,
+    setPoll,
   } = useContext(CreatePostContext);
 
   const mediaRef = useRef<IMedia[]>([]);
@@ -119,6 +120,13 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           timezone: data.schedule.timeZone,
           date: data.schedule.dateTime,
           time: `${moment(new Date(data.schedule.dateTime)).format('h:mm a')}`,
+        });
+      }
+      if (data?.pollContext ) {
+        setPoll({
+          question: data.pollContext.question,
+          options: data.pollContext.options,
+          closedAt: data.pollContext.closedAt,
         });
       }
     }
@@ -334,6 +342,13 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         announcement: {
           end: announcement?.value || '',
         },
+        pollContext: poll
+          ? {
+              question: poll?.question,
+              options: poll?.options,
+              closedAt: poll?.closedAt,
+            }
+          : undefined,
         link: previewUrl && previewUrl[0],
         schedule: schedule
           ? {
@@ -384,6 +399,13 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
         },
         id: data?.id,
         link: previewUrl && previewUrl[0],
+        pollContext: poll
+          ? {
+              question: poll?.question,
+              options: poll?.options,
+              closedAt: poll?.closedAt,
+            }
+          : undefined,
         schedule: schedule
           ? {
               timeZone: schedule?.timezone || '',
@@ -450,12 +472,14 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           />
         )}
         {activeFlow === CreatePostFlow.CreatePoll && (
-          <CreatePoll
-            closeModal={() => {
-              closeModal();
-              clearPostContext();
-            }}
-          />
+          <div data-testid="createpost-createpoll-modal">
+            <CreatePoll
+              closeModal={() => {
+                closeModal();
+                clearPostContext();
+              }}
+            />
+          </div>
         )}
         {activeFlow === CreatePostFlow.SchedulePost && (
           <SchedulePost

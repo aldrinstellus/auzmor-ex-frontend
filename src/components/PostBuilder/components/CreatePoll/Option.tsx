@@ -37,7 +37,8 @@ const OptionRow: React.FC<OptionRowProps> = ({
             name: `options.${index}.text`,
             defaultValue: field.text,
             control,
-            dataTestId: 'poll-option-text',
+            dataTestId: `createpoll-option${index + 1}`,
+            errorDataTestId: `createpoll-option${index + 1}-error`,
             label: `Option ${index + 1}`,
             error: errors.options
               ? errors.options?.[index]?.text?.message
@@ -47,6 +48,7 @@ const OptionRow: React.FC<OptionRowProps> = ({
                 <button
                   className="font-medium text-neutral-500 text-sm"
                   onClick={() => remove(index)}
+                  data-testid={`createpoll-option${index + 1}-remove`}
                 >
                   Remove
                 </button>
