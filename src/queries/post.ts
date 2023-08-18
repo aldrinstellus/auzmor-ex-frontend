@@ -24,6 +24,18 @@ export interface IMention {
   email?: string;
 }
 
+export enum AudienceEntityType {
+  User = 'USER',
+  Team = 'TEAM',
+  Channel = 'CHANNEL',
+}
+
+export interface IAudience {
+  entityType: AudienceEntityType;
+  entityId: string;
+  name?: string;
+}
+
 export interface IPost {
   content: {
     text: string;
@@ -48,7 +60,7 @@ export interface IPost {
   files?: string[] | IMedia[];
   pollContext?: IPoll;
   type: string;
-  audience: Record<string, any>[];
+  audience: IAudience[];
   isAnnouncement: boolean;
   announcement: {
     end: string;
@@ -114,7 +126,7 @@ export interface IPostPayload {
   hashtags: string[] | [];
   files?: string[] | IMedia[];
   type: string;
-  audience: Record<string, any>[];
+  audience: IAudience[];
   isAnnouncement: boolean;
   announcement: {
     end: string;

@@ -17,15 +17,16 @@ import {
   UseFormWatch,
 } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
-import { isFiltersEmpty } from 'utils/misc';
-import { IMemberForm } from '..';
+import { IAudienceForm } from '..';
+import UserRow from './UserRow';
 
 interface IMembersBodyProps {
-  control: Control<IMemberForm, any>;
-  watch: UseFormWatch<IMemberForm>;
-  setValue: UseFormSetValue<IMemberForm>;
-  resetField: UseFormResetField<IMemberForm>;
-  entityRenderer: (data: IGetUser) => ReactNode;
+  control: Control<IAudienceForm, any>;
+  watch: UseFormWatch<IAudienceForm>;
+  setValue: UseFormSetValue<IAudienceForm>;
+  resetField: UseFormResetField<IAudienceForm>;
+  entityRenderer?: (data: IGetUser) => ReactNode;
+  selectedMemberIds?: string[];
 }
 
 const MembersBody: React.FC<IMembersBodyProps> = ({
@@ -34,6 +35,7 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
   setValue,
   resetField,
   entityRenderer,
+  selectedMemberIds = [],
 }) => {
   const formData = watch();
   const debouncedSearchValue = useDebounce(formData.memberSearch || '', 500);
@@ -55,7 +57,7 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
     })
     .filter((user: IGetUser) => {
       if (formData.showSelectedMembers) {
-        return !!(formData as any)[user.id];
+        return !!formData.users[user.id];
       }
       return true;
     });
@@ -78,35 +80,23 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
     }
   }, [inView]);
 
+  useEffect(() => {
+    if (selectedMemberIds.length) {
+      selectedMemberIds.forEach((id: string) => {
+        setValue(`users.${id}`, true);
+      });
+    }
+  }, []);
+
   const selectAll = () => {
-    Object.keys(formData).forEach((key) => {
-      if (
-        !!![
-          'memberSearch',
-          'department',
-          'location',
-          'selectAll',
-          'showSelectedMembers',
-        ].includes(key)
-      ) {
-        setValue(key as any, true);
-      }
+    Object.keys(formData.users).forEach((key) => {
+      setValue(`users.${key}`, true);
     });
   };
 
   const deselectAll = () => {
-    Object.keys(formData).forEach((key) => {
-      if (
-        !!![
-          'memberSearch',
-          'department',
-          'location',
-          'selectAll',
-          'showSelectedMembers',
-        ].includes(key)
-      ) {
-        setValue(key as any, false);
-      }
+    Object.keys(formData.users).forEach((key) => {
+      setValue(`users.${key}`, false);
     });
   };
 
@@ -140,7 +130,7 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
           className="pb-4"
         />
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
+          <div className="flex items-center text-neutral-500 font-medium">
             Quick filters:
             <Layout
               fields={[
@@ -179,7 +169,7 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
             />
           </div>
           <div
-            className="cursor-pointer"
+            className="cursor-pointer text-neutral-500 font-medium hover:underline"
             onClick={() => {
               resetField('department');
               resetField('location');
@@ -218,7 +208,7 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
             />
           </div>
           <div
-            className="cursor-pointer"
+            className="cursor-pointer text-neutral-500 font-semibold hover:underline"
             onClick={() => {
               setValue('selectAll', false);
               setValue('showSelectedMembers', false);
@@ -229,7 +219,9 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
         </div>
         <div className="flex flex-col max-h-72 overflow-scroll">
           {isLoading ? (
-            <Spinner />
+            <div className="flex items-center w-full justify-center p-12">
+              <Spinner />
+            </div>
           ) : (
             usersData?.map((user, index) => (
               <>
@@ -238,13 +230,15 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
                     fields={[
                       {
                         type: FieldType.Checkbox,
-                        name: user.id,
+                        name: `users.${user.id}`,
                         control,
                         className: 'flex item-center mr-4',
                       },
                     ]}
                   />
-                  {entityRenderer(user) || user.fullName}
+                  {(entityRenderer && entityRenderer(user)) || (
+                    <UserRow user={user} />
+                  )}
                 </div>
                 {index !== usersData.length - 1 && <Divider />}
               </>
