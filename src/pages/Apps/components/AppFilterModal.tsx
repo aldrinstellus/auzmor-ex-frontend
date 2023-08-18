@@ -100,7 +100,6 @@ const AppFilterModal: React.FC<ITeamFilterModalProps> = ({
                   size={24}
                   users={item.recentMembers.map((member: any) => ({
                     ...member,
-                    name: 'Nitesh Seram',
                     image: member.profileImage?.medium,
                   }))}
                   moreCount={item.totalMembers}

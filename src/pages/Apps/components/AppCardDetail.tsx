@@ -1,5 +1,5 @@
 import Badge from 'components/Badge';
-import Button, { Variant } from 'components/Button';
+import Button, { Size, Variant } from 'components/Button';
 import Card from 'components/Card';
 import Divider from 'components/Divider';
 import Icon from 'components/Icon';
@@ -23,6 +23,10 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
   openEditAppModal,
   openDeleteAppModal,
 }) => {
+  const audienceChipStyle =
+    'py-2 px-3 flex items-center gap-1 border-1 rounded-[24px] border-neutral-200';
+  const audienceLabelStyle = 'text-sm font-semibold';
+
   return (
     <Modal open={open}>
       <Card>
@@ -113,8 +117,29 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
                 </div>
               </div>
               {/* The audience */}
-              <div className="flex px-6 pt-4">
+              <div className="flex px-6 pt-4 flex items-center gap-2">
                 <p className="text-neutral-900 font-medium">Audience:</p>
+                {app.audience && app.audience.length > 0 ? (
+                  <div className="flex gap-2">
+                    <div className={audienceChipStyle}>
+                      <Icon name="noteFavourite" size={16} disabled />
+                      <span className={audienceLabelStyle}>
+                        {app.audience[0].name || 'Team Name'}
+                      </span>
+                    </div>
+                    {app.audience.length > 1 && (
+                      <div className={audienceChipStyle}>
+                        <span className={audienceLabelStyle}>
+                          {`+ ${app.audience.length - 1} more`}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className={audienceChipStyle}>
+                    <span className={audienceLabelStyle}>Everyone</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
