@@ -101,7 +101,7 @@ const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
     },
     {
       key: 'channels',
-      icon: '',
+      icon: 'noteFavouriteOutline',
       title: 'Channels',
       subTitle: 'Select a channel you are part of',
       onClick: () => {},

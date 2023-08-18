@@ -211,7 +211,9 @@ const ChannelsBody: React.FC<IChannelsBodyProps> = ({
         </div>
         <div className="flex flex-col max-h-72 overflow-scroll">
           {isLoading ? (
-            <Spinner />
+            <div className="flex items-center w-full justify-center p-12">
+              <Spinner />
+            </div>
           ) : (
             usersData?.map((user, index) => (
               <>

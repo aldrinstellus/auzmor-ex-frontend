@@ -11,8 +11,7 @@ import RichTextEditor from '../RichTextEditor';
 import Toolbar from '../RichTextEditor/toolbar';
 import Icon from 'components/Icon';
 import moment from 'moment';
-import { twConfig } from 'utils/misc';
-import Button from 'components/Button';
+import { useOrganization } from 'queries/organization';
 
 export interface IBodyProps {
   data?: IPost;
@@ -31,8 +30,10 @@ const Body = React.forwardRef(
       setSchedule,
       setEditorValue,
       setActiveFlow,
+      audience,
     } = useContext(CreatePostContext);
     const { user } = useAuth();
+    const { data: orgData } = useOrganization();
     const updateContext = () => {
       setEditorValue({
         text: (ref as React.RefObject<ReactQuill>)
@@ -68,17 +69,19 @@ const Body = React.forwardRef(
               }
             />
             <div
-              className="flex items-center"
+              className="flex items-center mr-6 cursor-pointer"
               data-testid={`feed-createpost-visibility`}
               onClick={() => {
                 updateContext();
                 setActiveFlow(CreatePostFlow.Audience);
               }}
             >
-              <div>
-                <Icon name="globalOutline" size={16} />
+              <div className="flex items-center rounded-17xl px-3 py-1.5 border">
+                <Icon name="profileUserOutline" size={16} />
+                <div className="ml-1 text-xxs font-medium text-neutral-900">
+                  Audience
+                </div>
               </div>
-              <div>Everyone</div>
             </div>
           </div>
           {schedule && (

@@ -21,7 +21,6 @@ const Footer: React.FC<IFooterProps> = ({
         <Button
           variant={ButtonVariant.Secondary}
           label="Back"
-          className="mr-3"
           onClick={handleBackButtonClick}
           dataTestId="scheduledpost-back"
         />
@@ -31,6 +30,7 @@ const Footer: React.FC<IFooterProps> = ({
             type={Type.Submit}
             dataTestId="scheduledpost-next"
             disabled={!isValid}
+            className="ml-3"
           />
         )}
         {audienceFlow !== AudienceFlow.EntitySelect && (
@@ -39,6 +39,7 @@ const Footer: React.FC<IFooterProps> = ({
             type={Type.Submit}
             dataTestId="scheduledpost-next"
             disabled={!isValid}
+            className="ml-3"
           />
         )}
       </div>
