@@ -8,14 +8,19 @@ import { useForm } from 'react-hook-form';
 import { IGetUser } from 'queries/users';
 
 export enum EntitySearchModalType {
-  Member = 'MEMBER',
+  User = 'USER',
   Team = 'TEAM',
   Channel = 'CHANNEL',
 }
 
 interface IEntitySearchModalProps {
+  open: boolean;
+  openModal: () => void;
+  closeModal: () => void;
+  onBackPress?: () => void;
   title?: string;
   submitButtonText?: string;
+  cancelButtonText?: string;
   entityType?: EntitySearchModalType;
   selectedMemberIds?: string[];
   entityRenderer?: (data: IGetUser) => ReactNode;
@@ -39,15 +44,17 @@ export interface IAudienceForm {
 }
 
 const EntitySearchModal: React.FC<IEntitySearchModalProps> = ({
+  open,
+  closeModal,
   title = 'Add team members',
-  entityType = EntitySearchModalType.Member,
+  entityType = EntitySearchModalType.User,
   onSubmit = () => {},
   onCancel = () => {},
   submitButtonText = 'Next',
+  cancelButtonText = 'Back',
   entityRenderer = (data: any) => <></>,
   selectedMemberIds,
 }) => {
-  const [open, openModal, closeModal] = useModal(true);
   const { control, watch, handleSubmit, setValue, resetField } = useForm<any>({
     defaultValues: {
       showSelectedMembers: false,
@@ -55,7 +62,7 @@ const EntitySearchModal: React.FC<IEntitySearchModalProps> = ({
     },
   });
   return (
-    <Modal open={open} closeModal={closeModal}>
+    <Modal open={open} closeModal={closeModal} className="max-w-[638px]">
       <form>
         <Header
           title={title || ''}
@@ -63,7 +70,7 @@ const EntitySearchModal: React.FC<IEntitySearchModalProps> = ({
           onClose={closeModal}
         />
         <EntitySearchModalBody
-          entityType={EntitySearchModalType.Member}
+          entityType={EntitySearchModalType.User}
           control={control}
           selectedMemberIds={selectedMemberIds}
           watch={watch}
@@ -76,6 +83,7 @@ const EntitySearchModal: React.FC<IEntitySearchModalProps> = ({
           entityType={entityType}
           onSubmit={onSubmit}
           onCancel={onCancel}
+          cancelButtonText={cancelButtonText}
           submitButtonText={submitButtonText}
         />
       </form>

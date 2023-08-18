@@ -34,7 +34,7 @@ const EntitySearchModalBody: React.FC<IEntitySearchModalBodyProps> = ({
   selectedTeamIds = [],
 }) => {
   switch (entityType) {
-    case EntitySearchModalType.Member:
+    case EntitySearchModalType.User:
       return (
         <MembersBody
           control={control}
