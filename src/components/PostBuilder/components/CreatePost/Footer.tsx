@@ -59,7 +59,9 @@ const Footer: React.FC<IFooterProps> = ({
   const isMediaDisabled =
     operatorXOR(isPreviewRemoved, !!previewUrl) ||
     !!(postType && postType !== POST_TYPE.Media);
-  const isShoutoutDisabled = postType && postType !== POST_TYPE.Shoutout;
+  const isShoutoutDisabled =
+    operatorXOR(isPreviewRemoved, !!previewUrl) ||
+    (postType && postType !== POST_TYPE.Shoutout);
   const isPollDisabled = postType && postType !== POST_TYPE.Poll;
 
   const postMenuItems = useMemo(
