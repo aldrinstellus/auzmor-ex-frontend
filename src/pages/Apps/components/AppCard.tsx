@@ -17,12 +17,14 @@ import { toast } from 'react-toastify';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import useRole from 'hooks/useRole';
 
 type AppCardProps = {
   app: App;
 };
 
 const AppCard: React.FC<AppCardProps> = ({ app }) => {
+  const { isAdmin } = useRole();
   const [appCardHovered, appCardEventHandlers] = useHover();
   const [menuHovered, menuEventHandlers] = useHover();
 
@@ -194,7 +196,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
       icon: 'filterLinear',
       dataTestId: 'app-card-feature',
       onClick: () => toggleAppFeature(true),
-      hidden: app.featured,
+      hidden: app.featured && isAdmin,
     },
     {
       id: 2,
@@ -202,7 +204,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
       icon: 'tag',
       dataTestId: 'app-card-remove-feature',
       onClick: () => toggleAppFeature(false),
-      hidden: !app.featured,
+      hidden: !app.featured && isAdmin,
     },
     {
       id: 3,
@@ -210,7 +212,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
       icon: 'edit',
       dataTestId: 'app-card-edit',
       onClick: openEditAppModal,
-      hidden: false,
+      hidden: isAdmin,
     },
     {
       id: 4,
@@ -218,7 +220,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
       icon: 'delete',
       dataTestId: 'app-card-delete',
       onClick: openDeleteAppModal,
-      hidden: false,
+      hidden: isAdmin,
     },
   ];
 
