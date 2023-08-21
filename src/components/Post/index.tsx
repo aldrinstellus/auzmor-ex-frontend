@@ -228,12 +228,12 @@ const Post: React.FC<PostProps> = ({ post, bookmarks, customNode = null }) => {
             <div className="flex">
               <div className="mr-2">
                 <Icon
-                  name="calendarOutlineTwo"
+                  name="calendarOutline"
                   size={16}
                   stroke={twConfig.theme.colors.neutral[900]}
                 />
               </div>
-              <div className="text-xs text-neutral-600">
+              <div className="text-xs font-medium text-neutral-600">
                 Post scheduled for{' '}
                 {moment(post?.schedule.dateTime).format('ddd, MMM DD')} at{' '}
                 {moment(post?.schedule.dateTime).format('h:mm a')}, based on
@@ -250,7 +250,8 @@ const Post: React.FC<PostProps> = ({ post, bookmarks, customNode = null }) => {
                 />
               </div>
               <div
-                className="text-neutral-900 underline cursor-pointer hover:text-primary-500"
+                className="text-xs font-bold whitespace-nowrap text-neutral-900 
+                underline cursor-pointer hover:text-primary-500 decoration-neutral-400"
                 onClick={openPublishModal}
                 data-testid="scheduledpost-tab-publishnow"
               >
