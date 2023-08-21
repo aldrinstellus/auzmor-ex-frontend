@@ -13,7 +13,7 @@ const BookmarkFeedHeader: React.FC<IBookmarkFeedHeaderProps> = ({
   const [searchParams, setSearchParams] = useSearchParams();
 
   const btnStyle =
-    'w-[106px] inline-flex py-2 px-4 justify-center align-center rounded-full text-sm font-bold';
+    'min-w-[106px] inline-flex py-2 px-4 justify-center align-center rounded-full text-sm font-bold';
 
   return (
     <div
