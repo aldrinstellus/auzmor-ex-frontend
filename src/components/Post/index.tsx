@@ -360,7 +360,9 @@ const Post: React.FC<PostProps> = ({ post, bookmarks, customNode = null }) => {
           )}
           {/* Comments */}
           {showComments ? (
-            <CommentCard entityId={post?.id || ''} />
+            <div className="mt-6">
+              <CommentCard entityId={post?.id || ''} />
+            </div>
           ) : (
             !previousShowComment.current && customNode
           )}
