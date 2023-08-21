@@ -104,7 +104,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({ postId }) => {
                           <div className="text-xs text-gray-500">
                             {humanizeTime(postData?.createdAt)}
                           </div>
-                          <div className="bg-neutral-500 rounded-full w-2 h-2" />
+                          <div className="bg-neutral-500 rounded-full w-1 h-1" />
                           <Icon
                             name="globalOutline"
                             size={16}
