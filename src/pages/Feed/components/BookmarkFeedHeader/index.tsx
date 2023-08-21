@@ -1,6 +1,7 @@
 import Icon from 'components/Icon';
 import React from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { twConfig } from 'utils/misc';
 
 interface IBookmarkFeedHeaderProps {
   setAppliedFeedFilters: (appliedFeedFilters: Record<string, any>) => void;
@@ -23,7 +24,11 @@ const BookmarkFeedHeader: React.FC<IBookmarkFeedHeaderProps> = ({
         <div className="gap-y-1">
           <div className="flex gap-x-3 items-center">
             <Link to="/feed">
-              <Icon name="arrowLeft" fill="#171717" stroke="#171717" />
+              <Icon
+                name="arrowLeft"
+                fill={twConfig.theme.colors.primary[500]}
+                stroke={twConfig.theme.colors.neutral[900]}
+              />
             </Link>
             <div className="text-2xl font-bold text-neutral-900">
               <span data-testid={`feedpage-filter-bookmark`}>My Bookmarks</span>
