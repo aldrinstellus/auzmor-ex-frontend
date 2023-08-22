@@ -105,8 +105,6 @@ const People: React.FC<IPeopleProps> = ({
 
   const roleSelectRef = useRef<any>();
 
-  console.log('data coming from User or Members....', data);
-
   const customReset = () => {
     if (roleSelectRef && roleSelectRef.current)
       roleSelectRef.current.setValue('');
@@ -163,6 +161,7 @@ const People: React.FC<IPeopleProps> = ({
                 <Button
                   label="My Teams"
                   size={Size.Small}
+                  disabled
                   variant={Variant.Secondary}
                   className="cursor-not-allowed h-9 grow-0"
                   dataTestId="people-view-my-teams"
