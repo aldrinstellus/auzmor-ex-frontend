@@ -95,7 +95,7 @@ const Body = React.forwardRef(
                 <div>
                   Post scheduled for{' '}
                   {moment(new Date(schedule.date)).format('ddd, MMM DD')} at{' '}
-                  {schedule.time} , based on your profile timezone.
+                  {schedule.time}
                 </div>
               </div>
               <div className="flex">

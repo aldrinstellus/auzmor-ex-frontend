@@ -25,18 +25,11 @@ const Tooltip = ({
   onClick = () => {},
   tooltipPosition = 'top',
 }: TooltipProps) => {
-  const tooltipPlacement = useMemo(
-    () =>
-      clsx({
-        [className]: true,
-      }),
-    [className, variant],
-  );
   const id = Math.random().toString(16).slice(2);
   return (
-    <span className={` ${className}`} onClick={onClick}>
+    <span onClick={onClick}>
       <ReactTooltip
-        className={`${tooltipPlacement}`}
+        className={className}
         id={`tooltip-${id}`}
         react-tooltip-arrow
         anchorSelect={`#anchor-${id}`}
@@ -55,7 +48,7 @@ const Tooltip = ({
         data-tooltip-variant={variant}
         data-tooltip-place={`${tooltipPosition}`}
       >
-        <span className={`${className}`}>{children}</span>
+        <span>{children}</span>
       </a>
     </span>
   );

@@ -122,8 +122,7 @@ const SchedulePost: React.FC<ISchedulePost> = ({ closeModal }) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="p-6 flex flex-col">
           <div className="px-3 py-2 bg-primary-50 mb-4">
-            {moment(formData.date).format('ddd, MMM DD')} at {formData.time}{' '}
-            based on your profile timezone.
+            {moment(formData.date).format('ddd, MMM DD')} at {formData.time}
           </div>
           <Layout fields={fields} />
         </div>

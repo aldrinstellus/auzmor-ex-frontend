@@ -232,8 +232,7 @@ const Post: React.FC<PostProps> = ({ post, bookmarks, customNode = null }) => {
               <div className="text-xs text-neutral-600">
                 Post scheduled for{' '}
                 {moment(post?.schedule.dateTime).format('ddd, MMM DD')} at{' '}
-                {moment(post?.schedule.dateTime).format('h:mm a')}, based on
-                your profile timezone.
+                {moment(post?.schedule.dateTime).format('h:mm a')}
               </div>
             </div>
             <div className="flex items-center">
