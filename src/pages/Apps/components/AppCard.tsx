@@ -195,7 +195,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
       icon: 'filterLinear',
       dataTestId: 'app-card-feature',
       onClick: () => toggleAppFeature(true),
-      hidden: app.featured && isAdmin,
+      hidden: app.featured || !isAdmin,
     },
     {
       id: 2,
@@ -203,7 +203,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
       icon: 'tag',
       dataTestId: 'app-card-remove-feature',
       onClick: () => toggleAppFeature(false),
-      hidden: !app.featured && isAdmin,
+      hidden: !app.featured || !isAdmin,
     },
     {
       id: 3,
@@ -211,7 +211,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
       icon: 'edit',
       dataTestId: 'app-card-edit',
       onClick: openEditAppModal,
-      hidden: isAdmin,
+      hidden: !isAdmin,
     },
     {
       id: 4,
@@ -219,7 +219,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
       icon: 'delete',
       dataTestId: 'app-card-delete',
       onClick: openDeleteAppModal,
-      hidden: isAdmin,
+      hidden: !isAdmin,
     },
   ];
 
@@ -254,7 +254,6 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
                     <div className="cursor-pointer">
                       <Icon
                         name="threeDots"
-                        stroke="#000"
                         hover={false}
                         dataTestId="app-card-ellipsis"
                       />
