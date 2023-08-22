@@ -1,12 +1,27 @@
 import { FieldType } from 'components/Form';
 import React, { useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
+import {
+  CreatePostContext,
+  CreatePostFlow,
+  IAnnouncement,
+} from 'contexts/CreatePostContext';
 import { afterXUnit } from 'utils/time';
 import Header from 'components/ModalHeader';
 import Footer from './Footer';
 import Body from './Body';
 import { IPost } from 'queries/post';
+
+interface IAnnouncementForm {
+  date?: Date;
+  expiryOption:
+    | {
+        label: string;
+        value: string;
+        dataTestId: string;
+      }
+    | IAnnouncement;
+}
 
 export enum CreateAnnouncementMode {
   POST_BUILDER,
@@ -27,9 +42,13 @@ const CreateAnnouncement: React.FC<ICreateAnnouncementProps> = ({
   const { setActiveFlow, announcement, clearPostContext } =
     useContext(CreatePostContext);
 
-  const { control, handleSubmit, watch, setValue, getValues } = useForm({
-    mode: 'onChange',
-  });
+  const { control, handleSubmit, watch, setValue, getValues } =
+    useForm<IAnnouncementForm>({
+      mode: 'onChange',
+      defaultValues: {
+        date: new Date(afterXUnit(1, 'day').toISOString()),
+      },
+    });
 
   const selecetedExpiry = watch('expiryOption');
 
@@ -101,7 +120,7 @@ const CreateAnnouncement: React.FC<ICreateAnnouncementProps> = ({
       type: FieldType.DatePicker,
       name: 'date',
       control,
-      minDate: new Date(afterXUnit(1, 'day').toISOString()),
+      minDate: new Date(),
       dataTestId: 'custom-date-calendar',
     },
   ];
