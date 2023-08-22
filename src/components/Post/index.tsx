@@ -207,7 +207,6 @@ const Post: React.FC<PostProps> = ({ post, bookmarks, customNode = null }) => {
                 post.bookmarked ? 'Remove from bookmark' : 'Bookmark post'
               }
               tooltipPosition="top"
-              tooltipId="bookmark-tooltip"
             >
               <Icon
                 name="postBookmark"
