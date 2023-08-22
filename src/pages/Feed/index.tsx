@@ -203,7 +203,6 @@ const Feed: React.FC<IFeedProps> = () => {
                       <Tooltip
                         tooltipContent="My Scheduled Posts"
                         tooltipPosition="top"
-                        tooltipId="my-scheduled-posts-tooltip"
                       >
                         <Link to="/scheduledPosts">
                           <Icon name="clock" size={24} />
@@ -214,7 +213,6 @@ const Feed: React.FC<IFeedProps> = () => {
                       <Tooltip
                         tooltipContent="My Bookmarks"
                         tooltipPosition="top"
-                        tooltipId="my-bookmarks-tooltip"
                       >
                         <Link
                           to="/bookmarks"
