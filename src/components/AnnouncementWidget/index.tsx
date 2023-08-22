@@ -2,7 +2,7 @@ import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Card from 'components/Card';
 import { announcementRead, useAnnouncementsWidget } from 'queries/post';
-import Button, { Variant } from 'components/Button';
+import Button, { Size, Variant } from 'components/Button';
 import Avatar from 'components/Avatar';
 import Icon from 'components/Icon';
 import { humanizeTime } from 'utils/time';
@@ -124,6 +124,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({ postId }) => {
                       <Button
                         label="Mark as read"
                         variant={Variant.Secondary}
+                        size={Size.Small}
                         className="border-2 border-neutral-200 mt-4 w-full"
                         loading={acknowledgeAnnouncement.isLoading}
                         onClick={() => {
@@ -134,7 +135,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({ postId }) => {
                   )}
                 </div>
               ) : (
-                <div className="flex justify-center items-center p-6">
+                <div className="flex text-sm justify-center items-center p-6">
                   No pending announcements
                 </div>
                 // replace with empty widget
