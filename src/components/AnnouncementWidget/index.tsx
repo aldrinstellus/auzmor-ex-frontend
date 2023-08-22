@@ -66,8 +66,8 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({ postId }) => {
       </div>
       <div className="mt-2">
         <Card className="pb-6 flex flex-col rounded-9xl">
-          <div className="rounded-t-9xl bg-blue-700 text-white py-3 w-full flex justify-start space-x-1 px-3">
-            <Icon name="flashIcon" size={16} className="p-[1px]" />
+          <div className="rounded-t-9xl bg-blue-700 text-white py-3 w-full flex justify-start space-x-3 px-3">
+            <Icon name="flashIcon" size={16} />
             <div className="text-xs font-bold">Announcement</div>
           </div>
           {isLoading || dataPostId === postId ? (
