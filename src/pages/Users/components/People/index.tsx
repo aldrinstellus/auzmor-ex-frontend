@@ -115,7 +115,7 @@ const People: React.FC<IPeopleProps> = ({
       type: FieldType.SingleSelect,
       control,
       height: '36px',
-      className: 'p-0 w-44',
+      className: 'p-0 w-[160px] font-bold text-sm',
       name: 'role',
       placeholder: 'Role',
       size: InputSize.Small,
