@@ -100,7 +100,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({ postId }) => {
                             shared a post
                           </span>
                         </div>
-                        <div className="flex space-x-2">
+                        <div className="flex space-x-2 items-center">
                           <div className="text-xs text-gray-500">
                             {humanizeTime(postData?.createdAt)}
                           </div>
