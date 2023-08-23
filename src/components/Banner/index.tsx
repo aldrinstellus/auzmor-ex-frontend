@@ -138,18 +138,18 @@ const Banner: React.FC<BannerProps> = ({
   };
 
   return (
-    <div className={containerStyles} data-testId={dataTestId}>
+    <div className={containerStyles} data-testid={dataTestId}>
       <div className="flex">
         <div className="mr-1">
           <Icon
             name={iconName}
             className="relative bottom-[2px]"
             size={18}
-            stroke={getIconColor()}
+            color={getIconColor()}
           />
         </div>
 
-        <div className={titleStyles} data-testId={dataTestId}>
+        <div className={titleStyles} data-testid={dataTestId}>
           {title}
         </div>
       </div>
@@ -163,7 +163,7 @@ const Banner: React.FC<BannerProps> = ({
               className={iconButtonStyles}
               onClick={onClose}
               variant={IconVariant.Primary}
-              stroke={twConfig.theme.colors.red['500']}
+              color={twConfig.theme.colors.red['500']}
             />
           )}
         </div>
