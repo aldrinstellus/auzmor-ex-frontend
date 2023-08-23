@@ -117,6 +117,13 @@ const AddApp: React.FC<AddAppProps> = ({
     onSuccess: async () => {
       await queryClient.invalidateQueries(['apps']);
       toast(<SuccessToast content={'App added successfully'} />, {
+        closeButton: (
+          <Icon
+            name="closeCircleOutline"
+            color={twConfig.theme.colors.primary['500']}
+            size={20}
+          />
+        ),
         style: {
           border: `1px solid ${twConfig.theme.colors.primary['300']}`,
           borderRadius: '6px',
@@ -323,7 +330,6 @@ const AddApp: React.FC<AddAppProps> = ({
             <p className="text-neutral-900 font-extrabold text-lg">Add app</p>
             <Icon
               name="close"
-              disabled
               onClick={closeModal}
               dataTestId="add-app-close"
             />

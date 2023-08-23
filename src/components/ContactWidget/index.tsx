@@ -163,7 +163,7 @@ const ContactWidget: React.FC<IContactCardProps> = ({
                     <div className="flex justify-between items-center">
                       <div className="flex space-x-2 truncate items-center">
                         <IconWrapper>
-                          <Icon name="email" size={16} />
+                          <Icon name="email" hover={false} size={16} />
                         </IconWrapper>
                         <div
                           className="text-sm font-normal text-neutral-900"
@@ -180,7 +180,7 @@ const ContactWidget: React.FC<IContactCardProps> = ({
                     <div className="flex space-x-4 justify-between items-center">
                       <div className="flex space-x-2 truncate items-center">
                         <IconWrapper>
-                          <Icon name="call" size={16} />
+                          <Icon name="call" hover={false} size={16} />
                         </IconWrapper>
                         <div
                           className="text-sm font-normal text-neutral-900"

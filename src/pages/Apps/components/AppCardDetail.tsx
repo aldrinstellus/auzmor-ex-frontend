@@ -51,7 +51,6 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
             color="#000"
             size={20}
             dataTestId="app-details-close"
-            disabled
           />
         </div>
         <Divider />
@@ -84,10 +83,7 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
                   onClick={() => window.open(app.url, '_target')}
                 >
                   <span>Visit app</span>
-                  <Icon
-                    name="arrowRightUp"
-                    color={twConfig.theme.colors.primary[500]}
-                  />
+                  <Icon name="arrowRightUp" className="text-primary-500" />
                 </div>
               </div>
               <div className="pb-8">
@@ -126,7 +122,7 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
                   {app.audience && app.audience.length > 0 ? (
                     <div className="flex gap-2">
                       <div className={audienceChipStyle}>
-                        <Icon name="noteFavourite" size={16} disabled />
+                        <Icon name="noteFavourite" size={16} hover={false} />
                         <span className={audienceLabelStyle}>
                           {app.audience[0].name || 'Team Name'}
                         </span>

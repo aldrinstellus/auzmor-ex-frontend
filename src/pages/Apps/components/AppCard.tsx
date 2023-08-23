@@ -254,7 +254,6 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
                     <div className="cursor-pointer">
                       <Icon
                         name="threeDots"
-                        hover={false}
                         dataTestId="app-card-ellipsis"
                       />
                     </div>
