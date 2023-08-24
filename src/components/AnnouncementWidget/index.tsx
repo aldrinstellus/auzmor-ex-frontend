@@ -75,7 +75,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({ postId }) => {
             />
             <div className="text-xs font-bold">Announcement</div>
           </div>
-          {isLoading || dataPostId === postId ? (
+          {isLoading ? (
             <SkeletonLoader />
           ) : (
             <div className="w-full px-6">

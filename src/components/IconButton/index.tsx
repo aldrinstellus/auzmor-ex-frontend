@@ -42,14 +42,14 @@ const IconButton = ({
     () =>
       clsx(
         {
-          'bg-primary-500 text-white rounded-17xl hover:bg-primary-600 active:bg-primary-700 disabled:bg-neutral-200':
+          'bg-primary-500 text-white rounded-full hover:bg-primary-600 active:bg-primary-700 disabled:bg-neutral-200':
             variant === Variant.Primary,
         },
         {
-          'rounded-17xl disabled:bg-neutral-200': variant === Variant.Secondary,
+          'rounded-full disabled:bg-neutral-200': variant === Variant.Secondary,
         },
         {
-          'p-2.5': size === Size.Small || size === Size.Medium,
+          'p-2': size === Size.Small || size === Size.Medium,
         },
         {
           'p-3': size === Size.Large,
@@ -68,7 +68,7 @@ const IconButton = ({
     () =>
       clsx(
         {
-          'border border-solid border-neutral-200 rounded-17xl hover:border-primary-500':
+          'border border-solid border-neutral-200 rounded-full hover:border-primary-500':
             borderAround,
         },
         {

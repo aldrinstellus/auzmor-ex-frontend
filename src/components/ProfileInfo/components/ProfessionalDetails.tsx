@@ -23,6 +23,7 @@ import { twConfig } from 'utils/misc';
 import { getTimezoneNameFromIANA } from 'utils/time';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
+import InfoRow from './InfoRow';
 
 export interface IProfessionalDetailsProps {
   professionalDetails: any;
@@ -115,68 +116,62 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
   const userTimezone = getTimezoneNameFromIANA(professionalDetails?.timeZone);
 
   return (
-    <div {...eventHandlers}>
+    <div className="mt-6" {...eventHandlers}>
+      <Header title="Professional Details" dataTestId="professional-details" />
       <Card className={onHoverStyles}>
-        <Header
-          title="Professional Details"
-          dataTestId="professional-details"
-          isHovered={isHovered}
-          isEditable={isEditable}
-          setIsEditable={setIsEditable}
-          canEdit={canEdit}
-          onSubmit={onSubmit}
-          handleSubmit={handleSubmit}
-          isLoading={updateUserTimezoneMutation.isLoading}
-        />
-        <Divider />
-        <form>
-          <div className="py-6 space-y-6 px-6">
-            <div className="space-y-2">
-              <div className="text-neutral-500 text-sm font-bold">
-                Date of Joining
+        <div className="px-4">
+          <InfoRow
+            icon={{
+              name: 'clock',
+              color: 'text-teal-500',
+              bgColor: 'bg-teal-50',
+            }}
+            label="Employee ID"
+            value="AUZ123"
+            dataTestId="professional-details-employee-id"
+          />
+          <InfoRow
+            icon={{
+              name: 'clock',
+              color: 'text-orange-500',
+              bgColor: 'bg-orange-50',
+            }}
+            label="Date of Joining"
+            dataTestId="professional-details-joining-date"
+            value={
+              <div>
+                Joined on{' '}
+                <span>
+                  {moment(professionalDetails?.createdAt).format(
+                    'Do MMMM YYYY',
+                  ) || 'N//A'}
+                </span>
               </div>
-              <div className="flex space-x-3">
-                <IconWrapper type={Type.Square}>
-                  <Icon name="clock" hover={false} size={16} />
-                </IconWrapper>
-                <div className="text-neutral-900 text-base font-medium">
-                  Joined on{' '}
-                  <span data-testid="professional-details-joining-date">
-                    {moment(professionalDetails?.createdAt).format(
-                      'Do MMMM YYYY',
-                    ) || 'N//A'}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-neutral-500 text-sm font-bold">Timezone</div>
-              {isEditable ? (
-                <SelectTimeZone
-                  control={control}
-                  defaultTimezone={{
-                    value: professionalDetails?.timeZone,
-                    label: userTimezone,
-                  }}
-                  placeholder="Select your timezone"
-                  dataTestId="professional-details-timezone"
-                />
-              ) : (
-                <div className="flex space-x-3">
-                  <IconWrapper type={Type.Square}>
-                    <Icon name="clock" hover={false} size={16} />
-                  </IconWrapper>
-                  <div
-                    className="text-neutral-900 text-base font-medium"
-                    data-testid="user-timezone"
-                  >
-                    {userTimezone || 'N/A'}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </form>
+            }
+          />
+          <InfoRow
+            icon={{
+              name: 'clock',
+              color: '!text-blue-500',
+              bgColor: '!bg-blue-50',
+            }}
+            label="Timezone"
+            value={userTimezone || 'Field not specified'}
+            dataTestId="professional-details-timezone"
+            border={false}
+            editNode={
+              <SelectTimeZone
+                control={control}
+                defaultTimezone={{
+                  value: professionalDetails?.timeZone,
+                  label: userTimezone,
+                }}
+                placeholder="Select your timezone"
+                dataTestId="professional-details-timezone"
+              />
+            }
+          />
+        </div>
       </Card>
     </div>
   );

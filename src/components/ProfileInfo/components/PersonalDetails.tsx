@@ -20,6 +20,7 @@ import { toast } from 'react-toastify';
 import DragDropList from 'components/DragDropList';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
+import InfoRow from './InfoRow';
 
 interface IPersonalDetails {
   birthDate: Date | string;
@@ -240,128 +241,90 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
 
   return (
     <div {...eventHandlers}>
+      <Header title="Personal Details" dataTestId="personal-details" />
       <Card className={onHoverStyles}>
-        <Header
-          title="Personal Details"
-          dataTestId="personal-details"
-          isHovered={isHovered}
-          isEditable={isEditable}
-          setIsEditable={setIsEditable}
-          canEdit={canEdit}
-          handleSubmit={handleSubmit}
-          onSubmit={onSubmit}
-          setInitialSkills={setInitialSkills}
-          isLoading={updateUserPersonalDetailsMutation.isLoading}
-        />
-        <Divider />
-        <div className="p-6">
-          <div className="pb-4 space-y-3">
-            {!isEditable ? (
-              <>
-                <div className="flex space-x-3">
-                  <IconWrapper type={Type.Square}>
-                    <Icon name="cake" hover={false} size={16} />
-                  </IconWrapper>
-                  <div className="text-neutral-900 text-base font-medium">
-                    Born on{' '}
-                    <span data-testid="user-dob">
-                      {(personalDetails?.personal?.birthDate &&
-                        moment(personalDetails?.personal?.birthDate).format(
-                          'DD MMMM YYYY',
-                        )) ||
-                        'N/A'}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex space-x-3">
-                  <IconWrapper type={Type.Square}>
-                    {personalDetails?.personal?.gender === 'FEMALE' ? (
-                      <Icon name="femaleIcon" hover={false} size={16} />
-                    ) : (
-                      <Icon name="male" hover={false} size={16} />
-                    )}
-                  </IconWrapper>
-                  <div
-                    className="text-neutral-900 text-base font-medium"
-                    data-testid="personal-details-gender"
-                  >
-                    {personalDetails?.personal?.gender
-                      ?.charAt(0)
-                      ?.toUpperCase() +
-                      personalDetails?.personal?.gender
-                        ?.slice(1)
-                        ?.toLowerCase() || 'N/A'}
-                  </div>
-                </div>
-                <div className="space-y-2 mb-4">
-                  <div className="text-neutral-500 text-sm font-bold">
-                    Permanent Address
-                  </div>
-                  <div className="flex space-x-3">
-                    <IconWrapper type={Type.Square}>
-                      <Icon name="location" hover={false} size={16} />
-                    </IconWrapper>
-                    <div
-                      className="text-neutral-900 text-base font-medium"
-                      data-testid="personal-details-permanent-address"
-                    >
-                      {personalDetails?.personal?.permanentAddress || 'N/A'}
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-2 mb-4">
-                  <div className="text-neutral-500 text-sm font-bold">
-                    Marital Status
-                  </div>
-                  <div className="flex space-x-3">
-                    <IconWrapper type={Type.Square}>
-                      <Icon name="marriedIcon" hover={false} size={16} />
-                    </IconWrapper>
-                    <div
-                      className="text-neutral-900 text-base font-medium"
-                      data-testid={`user-marital-status`}
-                    >
-                      {personalDetails?.personal?.maritalStatus?.charAt(0) +
-                        personalDetails?.personal?.maritalStatus
-                          ?.slice(1)
-                          ?.toLowerCase() || 'N/A'}
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div className="text-neutral-500 text-sm font-bold">
-                    Skills
-                  </div>
-                  <div
-                    className="text-neutral-900 text-base font-medium pl-5"
-                    data-testid="added-skills"
-                  >
-                    {(personalDetails?.personal?.skills?.length > 0 &&
-                      personalDetails?.personal?.skills.map(
-                        (skill: string, index: number) => (
-                          <ul key={index} className="list-disc mb-1 mt-2">
-                            <li data-testid={`personal-details-skill-${skill}`}>
-                              {skill}
-                            </li>
-                          </ul>
-                        ),
-                      )) ||
-                      'N/A'}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <Layout fields={fields} />
-                <DragDropList
-                  draggableItems={skills}
-                  setDraggableItems={setSkills}
-                  dataTestIdEdit={'edit-button'}
-                  dataTestIdDelete={'delete-button'}
-                />
-              </>
-            )}
-          </div>
+        <div className="px-4">
+          <InfoRow
+            icon={{
+              name: 'cake',
+              color: 'text-purple-500',
+              bgColor: 'bg-purple-50',
+            }}
+            label="Date of Birth"
+            dataTestId="user-dob"
+            value={
+              (personalDetails?.personal?.birthDate &&
+                moment(personalDetails?.personal?.birthDate).format(
+                  'DD MMMM YYYY',
+                )) ||
+              'Field not specified'
+            }
+          />
+          <InfoRow
+            icon={{
+              name:
+                personalDetails?.personal?.gender === 'FEMALE'
+                  ? 'femaleIcon'
+                  : 'male',
+              color: 'text-pink-500',
+              bgColor: 'bg-pink-50',
+            }}
+            label="Gender"
+            dataTestId="personal-details-gender"
+            value={
+              personalDetails?.personal?.gender?.charAt(0)?.toUpperCase() +
+                personalDetails?.personal?.gender?.slice(1)?.toLowerCase() ||
+              'Field not specified'
+            }
+          />
+          <InfoRow
+            icon={{
+              name: 'marriedIcon',
+              color: 'text-red-500',
+              bgColor: 'text-red-50',
+            }}
+            label="Marital Status"
+            dataTestId="user-marital-status"
+            value={
+              personalDetails?.personal?.maritalStatus?.charAt(0) +
+                personalDetails?.personal?.maritalStatus
+                  ?.slice(1)
+                  ?.toLowerCase() || 'Field not specified'
+            }
+          />
+          <InfoRow
+            icon={{
+              name: 'edit',
+              color: 'text-primary-500',
+              bgColor: 'text-primary-50',
+            }}
+            label="Skills"
+            dataTestId="added-skills"
+            value={
+              (personalDetails?.personal?.skills?.length > 0 &&
+                personalDetails?.personal?.skills.map(
+                  (skill: string, index: number) => (
+                    <ul key={index} className="list-disc mb-1 mt-2">
+                      <li data-testid={`personal-details-skill-${skill}`}>
+                        {skill}
+                      </li>
+                    </ul>
+                  ),
+                )) ||
+              'Field not specified'
+            }
+          />
+          {isEditable && (
+            <>
+              <Layout fields={fields} />
+              <DragDropList
+                draggableItems={skills}
+                setDraggableItems={setSkills}
+                dataTestIdEdit={'edit-button'}
+                dataTestIdDelete={'delete-button'}
+              />
+            </>
+          )}
         </div>
       </Card>
     </div>

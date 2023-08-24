@@ -11,6 +11,7 @@ export interface IIconWrapperProps {
   type?: string;
   className?: string;
   dataTestId?: string;
+  border?: boolean;
 }
 
 const IconWrapper: React.FC<IIconWrapperProps> = ({
@@ -18,13 +19,17 @@ const IconWrapper: React.FC<IIconWrapperProps> = ({
   className = '',
   children,
   dataTestId,
+  border = true,
 }) => {
   const styles = useMemo(
     () =>
       clsx(
         {
-          'flex justify-center items-center bg-neutral-50 border-1 border-neutral-200 p-[3px] rounded-2xl':
+          'flex justify-center items-center bg-neutral-50 p-1 rounded-2xl':
             true,
+        },
+        {
+          'border-1  border-neutral-200': border,
         },
         {
           [className]: true,

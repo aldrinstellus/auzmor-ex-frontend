@@ -132,6 +132,7 @@ import ArrowRightUp from '../components/ArrowRightUp';
 import GalleryExport from '../components/GalleryExport';
 import FolderOpen from '../components/FolderOpen';
 import NoteFavouriteIcon from '../components/NoteFavourite';
+import LinkedinIcon from '../components/Linkedin';
 
 export const icon = {
   add: Add,
@@ -202,6 +203,7 @@ export const icon = {
   global: Global,
   group: GroupIcon,
   home: HomeIcon,
+  linkedin: LinkedinIcon,
   iconLinear: IconLinear,
   image: ImageIcon,
   import: ImportIcon,

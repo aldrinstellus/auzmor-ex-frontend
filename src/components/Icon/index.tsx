@@ -34,10 +34,10 @@ const Icon: React.FC<IconProps> = ({
     return null;
   }
 
-  const colorClass = `text-[${color}]`;
-  const hoverColorClass = `hover:text-[${hoverColor}] group-hover:text-[${hoverColor}]`;
+  const colorClass = `${color}`;
+  const hoverColorClass = `hover:${hoverColor} group-hover:${hoverColor}`;
   const isActiveClass = `text-primary-500 cursor-pointer`;
-  const isActiveHoverColorClass = `text-[${hoverColor}]`;
+  const isActiveHoverColorClass = `${hoverColor}`;
   const disabledClass = `text-neutral-200 cursor-not-allowed pointer-events-none`;
 
   const styles = clsx({
