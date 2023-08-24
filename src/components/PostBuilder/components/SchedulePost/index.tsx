@@ -38,7 +38,9 @@ const SchedulePost: React.FC<ISchedulePost> = ({ closeModal }) => {
     setActiveFlow(CreatePostFlow.CreatePost);
   };
   const { currentTimezone } = useCurrentTimezone();
-  const userTimezone = getTimezoneNameFromIANA(currentTimezone);
+  const userTimezone = getTimezoneNameFromIANA(
+    schedule?.timezone || currentTimezone,
+  );
   const getDate = (date: Date, time: string) => {
     let hours = parseInt(time.split(' ')[0].split(':')[0]);
     const min = parseInt(time.split(' ')[0].split(':')[1]);
@@ -59,7 +61,7 @@ const SchedulePost: React.FC<ISchedulePost> = ({ closeModal }) => {
   } = useForm<IForm>({
     defaultValues: {
       timezone: {
-        value: currentTimezone,
+        value: schedule?.timezone || currentTimezone,
         label: userTimezone,
       },
       date:

@@ -98,7 +98,7 @@ const Body = React.forwardRef(
                   Post scheduled for{' '}
                   {getTimeInScheduleFormat(
                     new Date(schedule.date),
-                    moment(schedule.time).format('h:mm a'),
+                    schedule.time,
                     schedule.timezone,
                     currentTimezone,
                   )}
