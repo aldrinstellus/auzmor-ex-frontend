@@ -122,7 +122,7 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
         <div className="px-4">
           <InfoRow
             icon={{
-              name: 'clock',
+              name: 'employee-tag',
               color: 'text-teal-500',
               bgColor: 'bg-teal-50',
             }}
@@ -132,7 +132,7 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
           />
           <InfoRow
             icon={{
-              name: 'clock',
+              name: 'calendar',
               color: 'text-orange-500',
               bgColor: 'bg-orange-50',
             }}

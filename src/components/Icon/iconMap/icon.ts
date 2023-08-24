@@ -132,6 +132,7 @@ import ArrowRightUp from '../components/ArrowRightUp';
 import GalleryExport from '../components/GalleryExport';
 import FolderOpen from '../components/FolderOpen';
 import NoteFavouriteIcon from '../components/NoteFavourite';
+import EmployeeTagIcon from '../components/EmployeeTag';
 
 export const icon = {
   add: Add,
@@ -181,6 +182,7 @@ export const icon = {
   edit: EditIcon,
   editReceipt: EditReceipt,
   email: EmailIcon,
+  'employee-tag': EmployeeTagIcon,
   emojiHappy: EmojiHappy,
   expand: ExpandIcon,
   explore: ExploreIcon,
