@@ -285,7 +285,7 @@ const Feed: React.FC<IFeedProps> = () => {
   return (
     <>
       <div className="mb-12 gap-x-[52px] flex w-full">
-        <div className="z-10 w-1/4 sticky top-24 space-y-6">
+        <div className="z-10 min-w-[293px] max-w-[293px] sticky top-24 space-y-6">
           <UserCard />
           <MyTeamWidget />
         </div>
@@ -315,7 +315,7 @@ const Feed: React.FC<IFeedProps> = () => {
           </div>
           {isFetchingNextPage && <PageLoader />}
         </div>
-        <div className="w-1/4">
+        <div className="min-w-[293px] max-w-[293px]">
           <AnnouncementCard />
         </div>
       </div>
