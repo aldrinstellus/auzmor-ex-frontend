@@ -45,7 +45,11 @@ const InfoRow: React.FC<AppProps> = ({
     >
       <div className="flex items-center">
         <div className="flex items-center w-[200px]">
-          <IconWrapper type={Type.Square} className={icon.bgColor}>
+          <IconWrapper
+            type={Type.Square}
+            className={icon.bgColor}
+            border={false}
+          >
             <Icon name={icon.name} color={icon.color} size={16} />
           </IconWrapper>
           <div className="text-neutral-500 font-bold text-sm ml-2.5">
