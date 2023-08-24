@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import Button, { Variant as ButtonVariant } from 'components/Button';
+import Button, { Variant as ButtonVariant, Size } from 'components/Button';
 import Layout, { FieldType } from 'components/Form';
 import Icon from 'components/Icon';
 import Modal from 'components/Modal';
@@ -9,8 +9,7 @@ import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 import moment from 'moment';
 import { IPost, IPostPayload, updatePost } from 'queries/post';
-import { useCurrentUser } from 'queries/users';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useFeedStore } from 'stores/feedStore';
@@ -45,6 +44,7 @@ const EditSchedulePostModal: React.FC<EditSchedulePostModalProp> = ({
   schedule,
   post,
 }) => {
+  const [timezoneFieldVisible, setTimezoneFieldVisible] = useState(false);
   const { feed, updateFeed } = useFeedStore();
   const updatePostMutation = useMutation({
     mutationKey: ['updatePostMutation'],
@@ -146,7 +146,7 @@ const EditSchedulePostModal: React.FC<EditSchedulePostModalProp> = ({
   });
 
   const { date, time, timezone } = watch();
-  const fields = [
+  let fields = [
     {
       type: FieldType.SingleSelect,
       label: 'Timezone',
@@ -191,6 +191,10 @@ const EditSchedulePostModal: React.FC<EditSchedulePostModalProp> = ({
     },
   ];
 
+  if (!timezoneFieldVisible) {
+    fields = fields.filter((field) => field.name != 'timezone');
+  }
+
   return (
     <Modal open={true} closeModal={closeModal} className="max-w-2xl">
       <Header title="Schedule a post" onClose={closeModal} />
@@ -205,6 +209,21 @@ const EditSchedulePostModal: React.FC<EditSchedulePostModalProp> = ({
             )}{' '}
             based on your profile timezone.
           </div>
+          {!timezoneFieldVisible ? (
+            <div className="flex flex-row space-x-2 text-sm items-end leading-5 pb-4">
+              <div>{userTimezone}</div>
+              <Button
+                label="Edit"
+                variant={ButtonVariant.Tertiary}
+                size={Size.Small}
+                rightIcon="edit"
+                onClick={() => setTimezoneFieldVisible(true)}
+                className="px-0 !py-0 mx-1"
+                labelClassName="text-primary-500 text-xs leading-normal"
+                rightIconClassName="mx-0.5 text-primary-500"
+              />
+            </div>
+          ) : null}
           <Layout fields={fields} />
         </div>
         <div className="flex justify-end items-center h-16 p-6 bg-blue-50 rounded-b-19xl">
