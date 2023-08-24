@@ -34,6 +34,8 @@ import Banner, { Variant } from 'components/Banner';
 import { hasDatePassed } from 'utils/time';
 import Poll from 'components/Poll';
 import { PostBuilderMode } from 'components/PostBuilder';
+import useModal from 'hooks/useModal';
+import ConfirmationBox from 'components/ConfirmationBox';
 
 export interface IEditorContentChanged {
   text: string;
@@ -256,6 +258,7 @@ const RichTextEditor = React.forwardRef(
       removeAllMedia();
       setShoutoutUserIds([]);
       setPostType(null);
+      closeConfirm();
     };
 
     const onMediaEdit = () => {
@@ -266,6 +269,8 @@ const RichTextEditor = React.forwardRef(
         setActiveFlow(CreatePostFlow.EditMedia);
       }
     };
+
+    const [confirm, showConfirm, closeConfirm] = useModal();
 
     return (
       <div data-testid={`${dataTestId}-content`}>
@@ -286,7 +291,7 @@ const RichTextEditor = React.forwardRef(
             className="m-6"
             mode={Mode.Edit}
             onAddButtonClick={() => inputImgRef?.current?.click()}
-            onCloseButtonClick={onRemoveMedia}
+            onCloseButtonClick={media.length > 1 ? showConfirm : onRemoveMedia}
             showEditButton={mode === PostBuilderMode.Create}
             showCloseButton={mode === PostBuilderMode.Create}
             showAddMediaButton={
@@ -370,6 +375,26 @@ const RichTextEditor = React.forwardRef(
           renderPreviewLink &&
           renderPreviewLink(previewUrl, setPreviewUrl, setIsPreviewRemoved)}
         {renderToolbar && renderToolbar(isCharLimit)}
+        <ConfirmationBox
+          open={confirm}
+          onClose={closeConfirm}
+          title="Delete media?"
+          description={
+            <span>
+              Are you sure you want to delete the media? This cannot be undone
+            </span>
+          }
+          success={{
+            label: 'Delete',
+            className: 'bg-red-500 text-white ',
+            onSubmit: onRemoveMedia,
+          }}
+          discard={{
+            label: 'Cancel',
+            className: 'text-neutral-900 bg-white ',
+            onCancel: closeConfirm,
+          }}
+        />
       </div>
     );
   },
