@@ -34,7 +34,7 @@ const Icon: React.FC<IconProps> = ({
     return null;
   }
 
-  const colorClass = `text-[${color}]`;
+  const colorClass = `${color}`;
   const hoverColorClass = `hover:text-[${hoverColor}] group-hover:text-[${hoverColor}]`;
   const isActiveClass = `text-primary-500 cursor-pointer`;
   const isActiveHoverColorClass = `text-[${hoverColor}]`;

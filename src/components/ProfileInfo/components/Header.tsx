@@ -16,12 +16,12 @@ import { IUpdateAboutMe } from './AboutMe';
 export type HeaderProps = {
   title: string;
   dataTestId?: string;
-  isHovered: boolean;
-  isEditable: boolean;
-  setIsEditable: (hide: boolean) => void;
+  isHovered?: boolean;
+  isEditable?: boolean;
+  setIsEditable?: (hide: boolean) => void;
   canEdit?: boolean;
   onSubmit?: any;
-  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  handleSubmit?: UseFormHandleSubmit<FieldValues>;
   setInitialSkills?: () => void;
   isLoading?: boolean;
   reset?: UseFormReset<IUpdateAboutMe>;
@@ -30,18 +30,18 @@ export type HeaderProps = {
 const Header: React.FC<HeaderProps> = ({
   title,
   dataTestId,
-  isHovered,
-  isEditable,
-  setIsEditable,
-  canEdit,
+  isHovered = false,
+  isEditable = false,
+  setIsEditable = () => null,
+  canEdit = false,
   onSubmit,
-  handleSubmit,
+  handleSubmit = () => null,
   setInitialSkills,
   isLoading,
   reset,
 }) => {
   return (
-    <div className="flex justify-between items-center mb-4">
+    <div className="flex justify-between items-center mb-3">
       <div
         className="text-neutral-900 font-bold text-lg"
         data-testid={dataTestId}
@@ -77,7 +77,7 @@ const Header: React.FC<HeaderProps> = ({
             <Button
               label={'Save'}
               size={ButtonSize.Small}
-              onClick={handleSubmit(onSubmit)}
+              // onClick={handleSubmit(onSubmit)}
               dataTestId={`${dataTestId}-save`}
               loading={isLoading}
             />

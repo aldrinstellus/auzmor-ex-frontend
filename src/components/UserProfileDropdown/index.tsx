@@ -38,7 +38,6 @@ const UserProfileDropdown: React.FC<IUserDropdownProps> = ({
   triggerNode,
   showOnHover,
   className,
-  loggedInUserId,
 }) => {
   const { user } = useAuth();
 
@@ -56,7 +55,7 @@ const UserProfileDropdown: React.FC<IUserDropdownProps> = ({
     });
   }
 
-  if (id === loggedInUserId) {
+  if (id === user?.id) {
     _options.push({
       icon: 'edit',
       label: `Edit`,

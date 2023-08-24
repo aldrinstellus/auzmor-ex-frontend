@@ -109,7 +109,7 @@ const ContactWidget: React.FC<IContactCardProps> = ({
   };
 
   return (
-    <div className="w-1/4">
+    <div>
       <div {...eventHandlers}>
         <Card className={onHoverStyles}>
           <form onSubmit={handleSubmit(onSubmit)}>

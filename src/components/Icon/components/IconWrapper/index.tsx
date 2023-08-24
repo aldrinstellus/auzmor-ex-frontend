@@ -21,11 +21,12 @@ const IconWrapper: React.FC<IIconWrapperProps> = ({
   size = 24,
   dataTestId,
 }) => {
+  console.log('>>>>', className);
   const styles = useMemo(
     () =>
       clsx(
         {
-          'flex justify-center items-center bg-neutral-50 border-1 border-neutral-200 p-2 rounded-2xl':
+          'flex justify-center items-center bg-neutral-50 border-1 border-neutral-200 rounded-2xl':
             true,
         },
         // {

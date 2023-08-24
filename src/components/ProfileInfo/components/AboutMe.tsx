@@ -64,7 +64,7 @@ const AboutMe: React.FC<IAboutMeProps> = ({
   }, [isEditable]);
 
   const onHoverStyles = useMemo(
-    () => clsx({ 'mb-8': true }, { 'shadow-xl': isHovered && canEdit }),
+    () => clsx({ '': true }, { 'shadow-xl': isHovered && canEdit }),
     [isHovered],
   );
 
