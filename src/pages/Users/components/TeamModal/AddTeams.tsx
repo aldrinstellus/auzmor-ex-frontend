@@ -68,12 +68,7 @@ const AddTeams: React.FC<IAddTeamsProps> = ({
       label: 'Team Category',
       required: true,
       control,
-      defaultValue: defaultValues()?.category?.categoryId
-        ? {
-            id: defaultValues()?.category?.categoryId,
-            label: defaultValues()?.category?.label,
-          }
-        : {},
+      defaultValue: defaultValues()?.category,
       fetchQuery: useInfiniteCategories,
       queryParams: { type: CategoryType.TEAM },
       getFormattedData: formatCategories,

@@ -113,12 +113,7 @@ const AppDetailsForm: React.FC<AppDetailsFormProps> = ({
       name: 'category',
       label: 'Category',
       control: control,
-      defaultValue: defaultValues()?.category?.categoryId
-        ? {
-            id: defaultValues()?.category?.categoryId,
-            label: defaultValues()?.category?.label,
-          }
-        : {},
+      defaultValue: defaultValues()?.category,
       dataTestId: 'add-app-category',
       addItemDataTestId: 'add-app-add-category',
       fetchQuery: useInfiniteCategories,

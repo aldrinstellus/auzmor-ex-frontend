@@ -19,7 +19,7 @@ import { ITeamDetails, TeamFlow } from '../Teams';
 
 export interface ITeamForm {
   name: string;
-  category: Record<string, any>;
+  category: Record<string, any> | null;
   description: string;
 }
 
@@ -62,12 +62,12 @@ const TeamModal: React.FC<IAddTeamModalProps> = ({
     mode: 'onChange',
     defaultValues: {
       name: team?.name || '',
-      category:
-        (team && {
-          label: team?.category?.name,
-          value: team?.category?.name,
-        }) ||
-        '',
+      category: team?.category?.categoryId
+        ? {
+            label: team?.category?.name,
+            value: team?.category?.name,
+          }
+        : null,
       description: team?.description || '',
     },
   });
