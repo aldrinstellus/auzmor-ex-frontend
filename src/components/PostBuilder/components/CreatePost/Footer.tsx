@@ -30,7 +30,6 @@ const Footer: React.FC<IFooterProps> = ({
   handleSubmitPost,
   mode,
 }) => {
-  const { isMember } = useRole();
   const {
     setActiveFlow,
     setEditorValue,
@@ -44,6 +43,8 @@ const Footer: React.FC<IFooterProps> = ({
     schedule,
     postType,
   } = useContext(CreatePostContext);
+  const { isMember } = useRole();
+  const canSchedule = !(!!!schedule && mode === PostBuilderMode.Edit);
 
   const updateContext = () => {
     setEditorValue({
@@ -257,20 +258,22 @@ const Footer: React.FC<IFooterProps> = ({
         <Divider variant={DividerVariant.Vertical} className="!h-8" />
       </div>
       <div className="flex items-center">
-        <div className="mr-4">
-          <Tooltip tooltipContent="Schedule" className="cursor-pointer">
-            <Icon
-              name="clockOutline"
-              size={16}
-              color="text-neutral-900"
-              onClick={() => {
-                updateContext();
-                setActiveFlow(CreatePostFlow.SchedulePost);
-              }}
-              dataTestId="createpost-clock-icon"
-            />
-          </Tooltip>
-        </div>
+        {canSchedule && (
+          <div className="mr-4">
+            <Tooltip tooltipContent="Schedule" className="cursor-pointer">
+              <Icon
+                name="clockOutline"
+                size={16}
+                color="text-neutral-900"
+                onClick={() => {
+                  updateContext();
+                  setActiveFlow(CreatePostFlow.SchedulePost);
+                }}
+                dataTestId="createpost-clock-icon"
+              />
+            </Tooltip>
+          </div>
+        )}
         <Button
           label={schedule ? 'Schedule' : 'Post'}
           disabled={isLoading || isCharLimit || !!mediaValidationErrors?.length}

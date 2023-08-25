@@ -144,7 +144,11 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
   const createPostMutation = useMutation({
     mutationKey: ['createPostMutation'],
     mutationFn: createPost,
-    onError: (error) => console.log(error),
+    onError: (error) => {
+      clearPostContext();
+      closeModal();
+      console.log(error);
+    },
     onSuccess: async ({
       result,
     }: {
@@ -154,13 +158,31 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     }) => {
       if (!!!result.data.schedule) {
         setFeed({ ...feed, [result.data.id!]: { ...result.data } });
-        queryClient.setQueryData(['feed', { type: [] }], (oldData: any) =>
-          produce(oldData, (draft: any) => {
-            draft.pages[0].data.result.data = [
-              { id: result.data.id },
-              ...draft.pages[0].data.result.data,
-            ];
-          }),
+        queryClient.setQueriesData(
+          {
+            queryKey: ['feed'],
+            exact: false,
+          },
+          (oldData: any) =>
+            produce(oldData, (draft: any) => {
+              draft.pages[0].data.result.data = [
+                { id: result.data.id },
+                ...draft.pages[0].data.result.data,
+              ];
+            }),
+        );
+        queryClient.setQueriesData(
+          {
+            queryKey: ['my-profile-feed'],
+            exact: false,
+          },
+          (oldData: any) =>
+            produce(oldData, (draft: any) => {
+              draft.pages[0].data.result.data = [
+                { id: result.data.id },
+                ...draft.pages[0].data.result.data,
+              ];
+            }),
         );
       }
       clearPostContext();
