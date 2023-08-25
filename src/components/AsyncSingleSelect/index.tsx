@@ -117,6 +117,7 @@ const AsyncSingleSelect = React.forwardRef(
     });
 
     const [open, setOpen] = useState<boolean>(false);
+    console.log(placeholder);
 
     return (
       <div

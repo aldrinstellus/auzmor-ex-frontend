@@ -39,9 +39,9 @@ interface IOptions {
 export interface IUpdateProfileForm {
   fullName: string;
   designation: IOptions;
-  department: IOptions;
+  department: IOptions | null;
   preferredName: string;
-  workLocation: IOptions;
+  workLocation: IOptions | null;
 }
 
 interface IEditProfileModal {
@@ -89,14 +89,18 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       fullName: userDetails?.fullName,
       preferredName: userDetails?.preferredName,
       designation: userDetails?.designation,
-      workLocation: {
-        value: userDetails?.workLocation?.name,
-        label: userDetails?.workLocation?.name,
-      },
-      department: {
-        value: userDetails?.department?.name,
-        label: userDetails?.department?.name,
-      },
+      workLocation: userDetails?.workLocation?.name
+        ? {
+            value: userDetails?.workLocation?.name,
+            label: userDetails?.workLocation?.name,
+          }
+        : null,
+      department: userDetails?.department?.name
+        ? {
+            value: userDetails?.department?.name,
+            label: userDetails?.department?.name,
+          }
+        : null,
     },
   });
 
@@ -182,7 +186,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       type: FieldType.CreatableSearch,
       name: 'department',
       defaultValue: getValues().department,
-      placeholder: 'ex. Engineering',
+      placeholder: 'ex. engineering',
       label: 'Department',
       dataTestId: `${dataTestId}-department`,
       fetchQuery: useInfiniteDepartments,
@@ -199,6 +203,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       name: 'workLocation',
       defaultValue: getValues().workLocation,
       dataTestId: `${dataTestId}-location`,
+      placeholder: 'Select a location',
       label: 'Location',
       loadOptions: (inputValue: string, callback: (options: any[]) => void) => {
         debouncedLoadLocations(inputValue, callback);
@@ -311,7 +316,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       designation: user?.designation,
       preferredName: user?.preferredName,
       department: user?.department?.label,
-      workLocation: user?.workLocation?.label || '',
+      workLocation: user?.workLocation?.label,
       ...(isCoverImageRemoved && {
         coverImage: {
           fileId: '',

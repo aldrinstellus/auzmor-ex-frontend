@@ -148,7 +148,7 @@ const CreatableSearch = React.forwardRef(
             render={() => (
               <CreatableSelect
                 isDisabled={disabled}
-                placeholder="Hello"
+                placeholder={placeholder}
                 styles={{
                   menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                   ...selectStyle,
