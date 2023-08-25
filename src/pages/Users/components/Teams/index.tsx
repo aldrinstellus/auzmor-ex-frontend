@@ -168,7 +168,7 @@ const Team: React.FC<ITeamProps> = ({
   //         closeButton: (
   //           <Icon
   //             name="closeCircleOutline"
-  //             color={twConfig.theme.colors.red['500']}
+  //             color="text-red-500"
   //             size={20}
   //           />
   //         ),
@@ -300,7 +300,7 @@ const Team: React.FC<ITeamProps> = ({
                 <Icon
                   name="close"
                   size={16}
-                  color={twConfig.theme.colors.neutral['900']}
+                  color="text-neutral-900"
                   className="cursor-pointer"
                   onClick={() => handleRemoveFilters('categories', category.id)}
                   dataTestId={`people-filterby-close`}

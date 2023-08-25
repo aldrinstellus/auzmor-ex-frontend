@@ -253,7 +253,7 @@ const Feed: React.FC<IFeedProps> = () => {
                         </div>
                         <Icon
                           name="closeOutline"
-                          color={twConfig.theme.colors.neutral['900']}
+                          color="text-neutral-900"
                           className="cursor-pointer"
                           size={16}
                           onClick={() => removePostTypeFilter(filter)}

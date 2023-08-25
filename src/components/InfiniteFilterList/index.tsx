@@ -107,7 +107,7 @@ const InfiniteFilterList: React.FC<IInfiniteFilterListProps> = ({
                   name="closeCircleOutline"
                   size={20}
                   className="cursor-pointer"
-                  color={twConfig.theme.colors['black-white'].black}
+                  color="text-black"
                   onClick={() => onSelectItem(item)}
                   dataTestId={`chip-close-'${item.name}'`}
                 />
