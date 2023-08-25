@@ -19,16 +19,18 @@ type AppProps = {
   dataTestId?: string;
   bgColor?: string;
   border?: boolean;
+  fallBackValue?: string;
 };
 
 const InfoRow: React.FC<AppProps> = ({
   icon,
   label,
   value,
-  canEdit,
+  canEdit = true,
   editNode,
   dataTestId,
   border = true,
+  fallBackValue = 'Field not specified',
 }) => {
   const [isHovered, eventHandlers] = useHover();
   const [editMode, setEditMode] = useState();
@@ -56,9 +58,11 @@ const InfoRow: React.FC<AppProps> = ({
             {label}
           </div>
         </div>
-        <div className="text-neutral-900 font-medium">{value}</div>
+        <div className="text-neutral-900 font-medium">
+          {value || fallBackValue}
+        </div>
       </div>
-      {isHovered && (
+      {canEdit && isHovered && (
         <div className="absolute right-0 top-7">
           <Icon name="edit" size={16} />
         </div>

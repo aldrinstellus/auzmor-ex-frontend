@@ -133,6 +133,7 @@ import GalleryExport from '../components/GalleryExport';
 import FolderOpen from '../components/FolderOpen';
 import NoteFavouriteIcon from '../components/NoteFavourite';
 import EmployeeTagIcon from '../components/EmployeeTag';
+import CheckIcon from '../components/Check';
 
 export const icon = {
   add: Add,
@@ -159,6 +160,7 @@ export const icon = {
   celebrate: Celebrate,
   celebrateReaction: CelebrateReaction,
   chart: ChartIcon,
+  check: CheckIcon,
   clipboardClose: ClipboardCloseIcon,
   clock: ClockIcon,
   close: CloseIcon,

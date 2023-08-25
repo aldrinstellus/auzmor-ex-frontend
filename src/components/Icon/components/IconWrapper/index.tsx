@@ -12,6 +12,7 @@ export interface IIconWrapperProps {
   className?: string;
   dataTestId?: string;
   border?: boolean;
+  onClick?: () => any;
 }
 
 const IconWrapper: React.FC<IIconWrapperProps> = ({
@@ -20,6 +21,7 @@ const IconWrapper: React.FC<IIconWrapperProps> = ({
   children,
   dataTestId,
   border = true,
+  onClick = () => null,
 }) => {
   const styles = useMemo(
     () =>
@@ -31,6 +33,7 @@ const IconWrapper: React.FC<IIconWrapperProps> = ({
         {
           'border-1  border-neutral-200': border,
         },
+        { '!rounded-full': type === Type.Circle },
         {
           [className]: true,
         },
@@ -39,7 +42,7 @@ const IconWrapper: React.FC<IIconWrapperProps> = ({
   );
 
   return (
-    <div className={styles} data-testid={dataTestId}>
+    <div className={styles} data-testid={dataTestId} onClick={onClick}>
       {children}
     </div>
   );

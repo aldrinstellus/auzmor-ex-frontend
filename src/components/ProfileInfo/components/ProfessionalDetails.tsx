@@ -138,16 +138,9 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
             }}
             label="Date of Joining"
             dataTestId="professional-details-joining-date"
-            value={
-              <div>
-                Joined on{' '}
-                <span>
-                  {moment(professionalDetails?.createdAt).format(
-                    'Do MMMM YYYY',
-                  ) || 'N//A'}
-                </span>
-              </div>
-            }
+            value={moment(professionalDetails?.createdAt).format(
+              'Do MMMM YYYY',
+            )}
           />
           <InfoRow
             icon={{
@@ -156,7 +149,7 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
               bgColor: '!bg-blue-50',
             }}
             label="Timezone"
-            value={userTimezone || 'Field not specified'}
+            value={userTimezone}
             dataTestId="professional-details-timezone"
             border={false}
             editNode={
