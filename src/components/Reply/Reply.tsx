@@ -144,7 +144,7 @@ export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
                 <div className="text-neutral-900 font-bold text-sm">
                   {getFullName(comment?.createdBy)}
                 </div>
-                <div className="font-normal text-neutral-500 text-sm ">
+                <div className="font-normal text-neutral-500 text-xs">
                   {comment?.createdBy?.designation}
                 </div>
               </div>
