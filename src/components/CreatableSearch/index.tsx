@@ -42,7 +42,7 @@ const CreatableSearch = React.forwardRef(
       label = '',
       required = false,
       placeholder = '',
-      height = '46px',
+      height = '44px',
       defaultValue,
       menuPlacement = 'bottom',
       fetchQuery,

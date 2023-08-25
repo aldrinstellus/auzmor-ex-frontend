@@ -146,6 +146,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       label: 'Name*',
       dataTestId: `${dataTestId}-name`,
       control,
+      inputClassName: 'py-[9px]',
     },
   ];
 
@@ -158,6 +159,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       label: 'Preferred Name',
       dataTestId: `${dataTestId}-perferred-name`,
       control,
+      inputClassName: 'py-[9px]',
     },
   ];
 
@@ -171,6 +173,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       dataTestId: `${dataTestId}-title`,
       label: 'Position title',
       control,
+      inputClassName: 'py-[9px]',
     },
   ];
 

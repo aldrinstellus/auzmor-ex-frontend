@@ -86,7 +86,7 @@ const AsyncSingleSelect = React.forwardRef(
           backgroundColor: '#fff',
           border: '1px solid #E5E5E5',
           borderRadius: '32px',
-          height,
+          height: `${height} !important`,
           padding: '0px 6px', // change style here because it breaking 2px
           '&:hover': { borderColor: twConfig.theme.colors.primary['600'] },
           borderColor: twConfig.theme.colors.primary['500'],
