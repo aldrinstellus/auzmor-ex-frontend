@@ -21,6 +21,7 @@ import DragDropList from 'components/DragDropList';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import InfoRow from './InfoRow';
+import Button, { Size, Variant } from 'components/Button';
 
 interface IPersonalDetails {
   birthDate: Date | string;
@@ -253,11 +254,10 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
             label="Date of Birth"
             dataTestId="user-dob"
             value={
-              (personalDetails?.personal?.birthDate &&
-                moment(personalDetails?.personal?.birthDate).format(
-                  'DD MMMM YYYY',
-                )) ||
-              'Field not specified'
+              personalDetails?.personal?.birthDate &&
+              moment(personalDetails?.personal?.birthDate).format(
+                'DD MMMM YYYY',
+              )
             }
           />
           <InfoRow
@@ -273,8 +273,7 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
             dataTestId="personal-details-gender"
             value={
               personalDetails?.personal?.gender?.charAt(0)?.toUpperCase() +
-                personalDetails?.personal?.gender?.slice(1)?.toLowerCase() ||
-              'Field not specified'
+              personalDetails?.personal?.gender?.slice(1)?.toLowerCase()
             }
           />
           <InfoRow
@@ -300,31 +299,34 @@ const PersonalDetails: React.FC<IPersonalDetailsProps> = ({
             }}
             label="Skills"
             dataTestId="added-skills"
+            canEdit={false}
             value={
-              (personalDetails?.personal?.skills?.length > 0 &&
-                personalDetails?.personal?.skills.map(
-                  (skill: string, index: number) => (
-                    <ul key={index} className="list-disc mb-1 mt-2">
-                      <li data-testid={`personal-details-skill-${skill}`}>
+              personalDetails?.personal?.skills?.length > 0 && (
+                <div className="flex items-center flex-wrap">
+                  {personalDetails?.personal?.skills.map(
+                    (skill: string, index: number) => (
+                      <div
+                        key={skill}
+                        data-testid={`personal-details-skill-${skill}`}
+                        className="bg-primary-50 text-primary-500 flex justify-center items-center px-2 py-2 text-xs rounded-16xl mr-2"
+                      >
                         {skill}
-                      </li>
-                    </ul>
-                  ),
-                )) ||
-              'Field not specified'
+                      </div>
+                    ),
+                  )}
+                  <div>
+                    <Button
+                      label="Add Skills"
+                      variant={Variant.Secondary}
+                      size={Size.ExtraSmall}
+                      leftIcon="add"
+                      leftIconSize={16}
+                    />
+                  </div>
+                </div>
+              )
             }
           />
-          {isEditable && (
-            <>
-              <Layout fields={fields} />
-              <DragDropList
-                draggableItems={skills}
-                setDraggableItems={setSkills}
-                dataTestIdEdit={'edit-button'}
-                dataTestIdDelete={'delete-button'}
-              />
-            </>
-          )}
         </div>
       </Card>
     </div>
