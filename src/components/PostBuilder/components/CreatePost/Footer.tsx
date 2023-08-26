@@ -78,7 +78,7 @@ const Footer: React.FC<IFooterProps> = ({
         icon: (
           <Icon
             name="imageFilled"
-            color={isMediaDisabled ? 'text-neutral-200' : 'text-black'}
+            color={isMediaDisabled ? 'text-neutral-200' : 'text-neutral-900'}
             size={14}
             dataTestId="feed-createpost-media"
           />
@@ -120,7 +120,7 @@ const Footer: React.FC<IFooterProps> = ({
           <Icon
             name="magicStarFilled"
             size={14}
-            color={isShoutoutDisabled ? 'text-neutral-200' : 'text-black'}
+            color={isShoutoutDisabled ? 'text-neutral-200' : 'text-neutral-900'}
             dataTestId="feed-createpost-shoutout"
           />
         ),
@@ -139,6 +139,7 @@ const Footer: React.FC<IFooterProps> = ({
           <Icon
             name="calendarFilledTwo"
             size={14}
+            disabled
             dataTestId="feed-createpost-events"
             color="text-neutral-200"
           />
@@ -155,7 +156,7 @@ const Footer: React.FC<IFooterProps> = ({
             name="chartFilled"
             size={14}
             dataTestId="feed-createpost-polls"
-            color={isPollDisabled ? 'text-neutral-200' : 'text-black'}
+            color={isPollDisabled ? 'text-neutral-200' : 'text-neutral-900'}
           />
         ),
         menuItems: [],
@@ -172,7 +173,7 @@ const Footer: React.FC<IFooterProps> = ({
         icon: (
           <Icon
             name="moreOutline"
-            color="text-black"
+            color="text-neutral-900"
             dataTestId="feed-createpost-ellipsis-icon"
           />
         ),
