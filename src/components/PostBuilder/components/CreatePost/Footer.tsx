@@ -78,7 +78,7 @@ const Footer: React.FC<IFooterProps> = ({
         icon: (
           <Icon
             name="imageFilled"
-            color={isMediaDisabled ? 'text-neutral-200' : 'text-black'}
+            color={isMediaDisabled ? 'text-neutral-200' : 'text-neutral-900'}
             size={14}
             dataTestId="feed-createpost-media"
           />
@@ -93,7 +93,6 @@ const Footer: React.FC<IFooterProps> = ({
               inputImgRef?.current && inputImgRef?.current?.click();
             },
             disabled: isMediaDisabled,
-            iconClassName: 'p-2 rounded-7xl border mr-2.5 bg-white',
             dataTestId: 'feed-createpost-uploadphoto-menuitem',
           },
           {
@@ -104,13 +103,11 @@ const Footer: React.FC<IFooterProps> = ({
               inputVideoRef?.current && inputVideoRef?.current?.click();
             },
             disabled: isMediaDisabled,
-            iconClassName: 'p-2 rounded-7xl border mr-2.5 bg-white',
             dataTestId: 'feed-createpost-uploadvideo-menuitem',
           },
           {
             label: 'Share a document',
             icon: 'document',
-            iconClassName: 'p-2 rounded-7xl border mr-2.5 bg-white',
             disabled: true,
           },
         ],
@@ -123,7 +120,7 @@ const Footer: React.FC<IFooterProps> = ({
           <Icon
             name="magicStarFilled"
             size={14}
-            color={isShoutoutDisabled ? 'text-neutral-200' : 'text-black'}
+            color={isShoutoutDisabled ? 'text-neutral-200' : 'text-neutral-900'}
             dataTestId="feed-createpost-shoutout"
           />
         ),
@@ -142,6 +139,7 @@ const Footer: React.FC<IFooterProps> = ({
           <Icon
             name="calendarFilledTwo"
             size={14}
+            disabled
             dataTestId="feed-createpost-events"
             color="text-neutral-200"
           />
@@ -158,7 +156,7 @@ const Footer: React.FC<IFooterProps> = ({
             name="chartFilled"
             size={14}
             dataTestId="feed-createpost-polls"
-            color={isPollDisabled ? 'text-neutral-200' : 'text-black'}
+            color={isPollDisabled ? 'text-neutral-200' : 'text-neutral-900'}
           />
         ),
         menuItems: [],
@@ -175,7 +173,7 @@ const Footer: React.FC<IFooterProps> = ({
         icon: (
           <Icon
             name="moreOutline"
-            color="text-black"
+            color="text-neutral-900"
             dataTestId="feed-createpost-ellipsis-icon"
           />
         ),
@@ -189,13 +187,11 @@ const Footer: React.FC<IFooterProps> = ({
               setActiveFlow(CreatePostFlow.CreateAnnouncement);
             },
             disabled: isMember,
-            iconClassName: 'p-2 rounded-7xl border mr-2.5 bg-white',
             dataTestId: 'feed-createpost-shareasannouncement',
           },
           {
             label: 'Save as drafts',
             icon: 'draft',
-            iconClassName: 'p-2 rounded-7xl border mr-2.5 bg-white',
             disabled: true,
             dataTestId: 'feed-createpost-saveasdraft',
           },

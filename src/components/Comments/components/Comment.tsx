@@ -178,7 +178,7 @@ export const Comment: React.FC<CommentProps> = ({
                   {getFullName(comment?.createdBy)}
                 </div>
               </Link>
-              <div className="font-normal text-neutral-500 text-sm ">
+              <div className="font-normal text-neutral-500 text-xs">
                 {comment?.createdBy?.designation}
               </div>
             </div>

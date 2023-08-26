@@ -8,6 +8,7 @@ import { ICoverImageMap, IMedia } from 'contexts/CreatePostContext';
 import useModal from 'hooks/useModal';
 import './index.css';
 import Modal from 'components/Modal';
+import IconWrapper from 'components/Icon/components/IconWrapper';
 
 export enum Mode {
   View = 'VIEW',
@@ -449,21 +450,27 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           </div>
           <div className="flex items-center">
             {showEditButton && (
-              <div
-                onClick={onEditButtonClick}
-                data-testid={`${dataTestId}-editicon`}
-                className="p-2 mr-2 bg-white rounded-7xl border-1 border-neutral-200 group"
-              >
-                <Icon name="edit" size={16} color="text-neutral-900" />
+              <div onClick={onEditButtonClick}>
+                <IconWrapper className="p-2 border border-neutral-200 rounded-7xl bg-white cursor-pointer group mr-2">
+                  <Icon
+                    name="edit"
+                    size={16}
+                    dataTestId={`${dataTestId}-editicon`}
+                    color="text-neutral-900"
+                  />
+                </IconWrapper>
               </div>
             )}
             {showCloseButton && (
-              <div
-                onClick={onCloseButtonClick}
-                data-testid={`${dataTestId}-remove-image`}
-                className="p-2 bg-white rounded-7xl border-1 border-neutral-200 group"
-              >
-                <Icon name="close" size={16} color="text-neutral-900" />
+              <div onClick={onCloseButtonClick}>
+                <IconWrapper className="p-2 border border-neutral-200 rounded-7xl bg-white cursor-pointer group">
+                  <Icon
+                    name="close"
+                    size={16}
+                    color="text-neutral-900"
+                    dataTestId={`${dataTestId}-remove-image`}
+                  />
+                </IconWrapper>
               </div>
             )}
           </div>
