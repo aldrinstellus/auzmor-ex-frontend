@@ -80,8 +80,6 @@ const RenderQuillContent: React.FC<RenderQuillContent> = ({
 
   const updatedContent = quillHashtagConversion(content);
 
-  console.log('UPD>>>', updatedContent);
-
   const postContent = updatedContent?.ops?.map((op: DeltaOperation) => {
     switch (true) {
       case op.insert.hasOwnProperty('mention'):

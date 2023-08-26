@@ -34,7 +34,7 @@ const Body = React.forwardRef(
       setSchedule,
       setEditorValue,
       setActiveFlow,
-      audience,
+      media,
     } = useContext(CreatePostContext);
     const { user } = useAuth();
     const { currentTimezone } = useCurrentTimezone();
@@ -129,7 +129,9 @@ const Body = React.forwardRef(
           )}
           <RichTextEditor
             placeholder="What’s on your mind?"
-            className="max-h-64 overflow-y-auto min-h-[128px]"
+            className={`max-h-64 overflow-y-auto ${
+              !media.length && 'min-h-[128px]'
+            }`}
             defaultValue={
               data?.content?.editor || (editorValue.json as DeltaStatic)
             }
