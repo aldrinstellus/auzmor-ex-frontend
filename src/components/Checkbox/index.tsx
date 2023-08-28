@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { ReactElement } from 'react';
-import { UseFormGetValues, useController } from 'react-hook-form';
+import { useController } from 'react-hook-form';
 
 export type CheckboxProps = {
   name: string;
