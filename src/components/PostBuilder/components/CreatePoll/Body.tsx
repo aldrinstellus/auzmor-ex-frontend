@@ -52,6 +52,7 @@ const Body: React.FC<PollBodyProps> = ({
         variant={Variant.Secondary}
         disabled={fields.length >= 10}
         label="+ Add another option"
+        dataTestId="createpoll-add-option"
         onClick={() => {
           if (fields.length < 10) {
             append({

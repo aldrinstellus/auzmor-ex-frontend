@@ -6,7 +6,6 @@ import UserOnboard from 'components/UserOnboard';
 import { Role } from 'utils/enum';
 import PageLoader from 'components/PageLoader';
 import { userChannel } from 'utils/misc';
-import { useNavigate } from 'react-router-dom';
 
 type AuthContextProps = {
   children: ReactNode;

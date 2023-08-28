@@ -8,7 +8,6 @@ import {
   ITransformedOp,
   TransformedQuillDelta,
 } from 'components/PostBuilder/components/RichTextEditor/mentions/types';
-import { useSearchParams } from 'react-router-dom';
 import DeactivatedCoverImage from 'images/deactivatedCoverPhoto.png';
 import DefaultCoverImage from 'images/png/CoverImage.png';
 import { capitalize } from 'lodash';

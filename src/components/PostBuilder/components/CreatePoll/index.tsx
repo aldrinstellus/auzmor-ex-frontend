@@ -92,8 +92,8 @@ const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
       name: 'question',
       label: 'Question*',
       error: errors.question?.message,
-      dataTestId: 'poll-question',
-      errorDataTestId: 'poll-invalid-question-msg',
+      dataTestId: 'createpoll-que',
+      errorDataTestId: 'createpoll-que-error',
       control,
     },
   ];
@@ -108,31 +108,31 @@ const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
         {
           label: '1 Day',
           value: afterXUnit(1, 'days').toISOString().substring(0, 19) + 'Z',
-          dataTestId: 'poll-closedAt-1day',
+          dataTestId: 'createpoll-duration-{1day}',
         },
         {
           label: '3 Days',
           value: afterXUnit(3, 'days').toISOString().substring(0, 19) + 'Z',
-          dataTestId: 'poll-closedAt-3days',
+          dataTestId: 'createpoll-duration-{3day}',
         },
         {
           label: '1 Week',
           value: afterXUnit(1, 'weeks').toISOString().substring(0, 19) + 'Z',
-          dataTestId: 'poll-closedAt-1week',
+          dataTestId: 'createpoll-duration-{1week}',
         },
         {
           label: '2 Weeks',
           value: afterXUnit(2, 'weeks').toISOString().substring(0, 19) + 'Z',
-          dataTestId: 'poll-closedAt-2weeks',
+          dataTestId: 'createpoll-duration-{2week}',
         },
         {
           label: 'Custom Date',
           value: '',
-          dataTestId: 'poll-closedAt-customdate',
+          dataTestId: 'createpoll-duration-{customdate}',
         },
       ],
       placeholder: 'Select Poll Duration',
-      dataTestId: 'poll-closedAt-dropdown',
+      dataTestId: 'createpoll-duration-dropdown',
     },
   ];
 
@@ -142,7 +142,7 @@ const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
       name: 'datepickerValue',
       control,
       minDate: new Date(afterXUnit(1, 'day').toISOString()),
-      dataTestId: 'custom-date-calendar',
+      dataTestId: 'createpoll-duration-datepicker',
     },
   ];
 
@@ -189,11 +189,13 @@ const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
           onClick={() => setActiveFlow(CreatePostFlow.CreatePost)}
           label="Back"
           variant={ButtonVariant.Secondary}
+          dataTestId="createpoll-back"
         />
         <Button
           label="Next"
           variant={ButtonVariant.Secondary}
           type={Type.Submit}
+          dataTestId="createpoll-next"
         />
       </div>
     </form>

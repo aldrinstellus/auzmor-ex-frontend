@@ -8,7 +8,7 @@ import PostBuilder, { PostBuilderMode } from 'components/PostBuilder';
 import useModal from 'hooks/useModal';
 import useAuth from 'hooks/useAuth';
 import useRole from 'hooks/useRole';
-import { canPerform, isSubset, twConfig } from 'utils/misc';
+import { canPerform, twConfig } from 'utils/misc';
 import { useFeedStore } from 'stores/feedStore';
 import _ from 'lodash';
 import { CreatePostFlow } from 'contexts/CreatePostContext';
