@@ -79,8 +79,9 @@ const Footer: React.FC<IFooterProps> = ({
         icon: (
           <Icon
             name="imageFilled"
-            color={isMediaDisabled ? 'text-neutral-200' : 'text-neutral-900'}
-            size={14}
+            color={'text-neutral-900'}
+            size={16}
+            disabled={isMediaDisabled}
             dataTestId="feed-createpost-media"
           />
         ),
@@ -120,8 +121,9 @@ const Footer: React.FC<IFooterProps> = ({
         icon: (
           <Icon
             name="magicStarFilled"
-            size={14}
-            color={isShoutoutDisabled ? 'text-neutral-200' : 'text-neutral-900'}
+            size={16}
+            color={'text-neutral-900'}
+            disabled={isShoutoutDisabled}
             dataTestId="feed-createpost-shoutout"
           />
         ),
@@ -139,10 +141,10 @@ const Footer: React.FC<IFooterProps> = ({
         icon: (
           <Icon
             name="calendarFilledTwo"
-            size={14}
+            size={16}
+            color={'text-neutral-900'}
             disabled
             dataTestId="feed-createpost-events"
-            color="text-neutral-200"
           />
         ),
         menuItems: [],
@@ -158,9 +160,10 @@ const Footer: React.FC<IFooterProps> = ({
         icon: (
           <Icon
             name="chartFilled"
-            size={14}
+            size={16}
             dataTestId="feed-createpost-polls"
-            color={isPollDisabled ? 'text-neutral-200' : 'text-neutral-900'}
+            disabled={isPollDisabled}
+            color={'text-neutral-900'}
           />
         ),
         disabled: isPollDisabled,
@@ -175,7 +178,7 @@ const Footer: React.FC<IFooterProps> = ({
         icon: (
           <Icon
             name="moreOutline"
-            color="text-neutral-900"
+            color="text-[#292D32]"
             dataTestId="feed-createpost-ellipsis-icon"
           />
         ),
@@ -210,7 +213,7 @@ const Footer: React.FC<IFooterProps> = ({
   );
 
   return (
-    <div className="flex justify-between items-center h-16 p-6 bg-blue-50 rounded-b-9xl">
+    <div className="flex justify-between items-center px-6 py-4 bg-blue-50 rounded-b-9xl">
       <div className="flex relative">
         {postMenuItems.map(
           (postMenuItem) =>
@@ -261,7 +264,10 @@ const Footer: React.FC<IFooterProps> = ({
               </div>
             ),
         )}
-        <Divider variant={DividerVariant.Vertical} className="!h-8" />
+        <Divider
+          variant={DividerVariant.Vertical}
+          className="!h-8 bg-neutral-200"
+        />
       </div>
       <div className="flex items-center">
         {canSchedule && (
@@ -283,6 +289,7 @@ const Footer: React.FC<IFooterProps> = ({
         <Button
           label={schedule ? 'Schedule' : 'Post'}
           disabled={isLoading || isCharLimit || !!mediaValidationErrors?.length}
+          labelClassName="text-sm leadind-snug"
           onClick={() => {
             updateContext();
             handleSubmitPost(
