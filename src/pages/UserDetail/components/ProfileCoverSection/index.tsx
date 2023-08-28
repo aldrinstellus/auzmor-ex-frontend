@@ -175,7 +175,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           closeButton: (
             <Icon
               name="closeCircleOutline"
-              color={twConfig.theme.colors.primary['500']}
+              color="text-primary-500"
               size={20}
             />
           ),
@@ -200,11 +200,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
       queryClient.invalidateQueries(['user', userDetails?.id]);
       toast(<SuccessToast content={`User role has been updated to admin`} />, {
         closeButton: (
-          <Icon
-            name="closeCircleOutline"
-            color={twConfig.theme.colors.primary['500']}
-            size={20}
-          />
+          <Icon name="closeCircleOutline" color="text-primary-500" size={20} />
         ),
         style: {
           border: `1px solid ${twConfig.theme.colors.primary['300']}`,
@@ -315,7 +311,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                     closeButton: (
                       <Icon
                         name="closeCircleOutline"
-                        color={twConfig.theme.colors.primary['500']}
+                        color="text-primary-500"
                         size={20}
                       />
                     ),
@@ -355,7 +351,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                 className="text-sm font-normal text-neutral-400"
                 data-testid="user-department"
               >
-                {userDetails?.department || '-'}
+                {userDetails?.department?.name || '-'}
               </div>
             </div>
             <Divider variant={DividerVariant.Vertical} className="h-8" />
@@ -367,7 +363,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                 className="text-sm font-normal text-neutral-400"
                 data-testid="user-location"
               >
-                {userDetails?.workLocation || '-'}
+                {userDetails?.workLocation?.name || '-'}
               </div>
             </div>
           </div>

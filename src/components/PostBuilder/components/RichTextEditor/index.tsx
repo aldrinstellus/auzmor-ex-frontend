@@ -34,6 +34,8 @@ import Banner, { Variant } from 'components/Banner';
 import { hasDatePassed } from 'utils/time';
 import Poll from 'components/Poll';
 import { PostBuilderMode } from 'components/PostBuilder';
+import useModal from 'hooks/useModal';
+import ConfirmationBox from 'components/ConfirmationBox';
 
 export interface IEditorContentChanged {
   text: string;
@@ -72,6 +74,7 @@ const RichTextEditor = React.forwardRef(
   ) => {
     const {
       announcement,
+      setAnnouncement,
       setActiveFlow,
       setEditorValue,
       media,
@@ -256,6 +259,7 @@ const RichTextEditor = React.forwardRef(
       removeAllMedia();
       setShoutoutUserIds([]);
       setPostType(null);
+      closeConfirm();
     };
 
     const onMediaEdit = () => {
@@ -266,6 +270,8 @@ const RichTextEditor = React.forwardRef(
         setActiveFlow(CreatePostFlow.EditMedia);
       }
     };
+
+    const [confirm, showConfirm, closeConfirm] = useModal();
 
     return (
       <div data-testid={`${dataTestId}-content`}>
@@ -280,13 +286,48 @@ const RichTextEditor = React.forwardRef(
           onChange={onChangeEditorContent}
           defaultValue={defaultValue}
         />
+        {announcement?.label && !hasDatePassed(announcement.value) && (
+          <div className="flex justify-between bg-blue-50 px-4 py-2 m-4">
+            <div className="flex items-center">
+              <Icon name="micOutline" hover={false} size={16} color="text-neutral-900" />
+              <div
+                className="ml-2.5"
+                data-testid="announcement-scheduled-toaster"
+              >
+                Announcement will expire on{' '}
+                {moment(new Date(announcement.value)).format(
+                  'ddd, MMM DD [at] h:mm a',
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  updateContext();
+                  setActiveFlow(CreatePostFlow.CreateAnnouncement);
+                }}
+                data-testid="announcement-toaster-editicon"
+              >
+                <Icon name="editOutline" size={12} color="text-neutral-900" />
+              </div>
+              <div
+                className="cursor-pointer"
+                onClick={() => setAnnouncement(null)}
+                data-testid="announcement-toaster-closeicon"
+              >
+                <Icon name="close" size={12} color="text-neutral-900" />
+              </div>
+            </div>
+          </div>
+        )}
         {media.length > 0 && (
           <MediaPreview
             media={media}
             className="m-6"
             mode={Mode.Edit}
             onAddButtonClick={() => inputImgRef?.current?.click()}
-            onCloseButtonClick={onRemoveMedia}
+            onCloseButtonClick={media.length > 1 ? showConfirm : onRemoveMedia}
             showEditButton={mode === PostBuilderMode.Create}
             showCloseButton={mode === PostBuilderMode.Create}
             showAddMediaButton={
@@ -312,43 +353,6 @@ const RichTextEditor = React.forwardRef(
             />
           </div>
         )}
-        {announcement?.label && !hasDatePassed(announcement.value) && (
-          <div className="flex justify-between bg-blue-50 px-4 py-2 m-4">
-            <div className="flex items-center">
-              <Icon
-                name="micOutline"
-                size={16}
-                color={twConfig.theme.colors.neutral['900']}
-              />
-              <div
-                className="ml-2.5"
-                data-testid="announcement-scheduled-toaster"
-              >
-                Announcement will expire on{' '}
-                {moment(new Date(announcement.value)).format(
-                  'ddd, MMM DD [at] h:mm a',
-                )}
-              </div>
-            </div>
-            <div
-              className="flex items-center cursor-pointer"
-              onClick={() => {
-                updateContext();
-                setActiveFlow(CreatePostFlow.CreateAnnouncement);
-              }}
-              data-testid="announcement-toaster-editicon"
-            >
-              <Icon
-                name="editOutline"
-                size={12}
-                color={twConfig.theme.colors.neutral['900']}
-              />
-              <div className="ml-1 text-xs font-bold text-neutral-900">
-                Edit
-              </div>
-            </div>
-          </div>
-        )}
         {getMediaValidationErrors().map((error, index) => (
           <div className="mx-8 mb-1" key={index}>
             <Banner
@@ -370,6 +374,26 @@ const RichTextEditor = React.forwardRef(
           renderPreviewLink &&
           renderPreviewLink(previewUrl, setPreviewUrl, setIsPreviewRemoved)}
         {renderToolbar && renderToolbar(isCharLimit)}
+        <ConfirmationBox
+          open={confirm}
+          onClose={closeConfirm}
+          title="Delete media?"
+          description={
+            <span>
+              Are you sure you want to delete the media? This cannot be undone
+            </span>
+          }
+          success={{
+            label: 'Delete',
+            className: 'bg-red-500 text-white ',
+            onSubmit: onRemoveMedia,
+          }}
+          discard={{
+            label: 'Cancel',
+            className: 'text-neutral-900 bg-white ',
+            onCancel: closeConfirm,
+          }}
+        />
       </div>
     );
   },

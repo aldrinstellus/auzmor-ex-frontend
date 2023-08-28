@@ -12,6 +12,7 @@ import {
   deleteBookmark,
 } from 'queries/post';
 import Icon from 'components/Icon';
+import Button, { Size, Variant } from 'components/Button';
 import clsx from 'clsx';
 import { getTimeInScheduleFormat, humanizeTime } from 'utils/time';
 import AcknowledgementBanner from './components/AcknowledgementBanner';
@@ -99,11 +100,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
         />,
         {
           closeButton: (
-            <Icon
-              name="closeCircleOutline"
-              color={twConfig.theme.colors['black-white'].white}
-              size={20}
-            />
+            <Icon name="closeCircleOutline" color="text-white" size={20} />
           ),
           style: {
             border: `1px solid ${twConfig.theme.colors.primary['300']}`,
@@ -137,11 +134,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
         />,
         {
           closeButton: (
-            <Icon
-              name="closeCircleOutline"
-              color={twConfig.theme.colors['black-white'].white}
-              size={20}
-            />
+            <Icon name="closeCircleOutline" color="text-white" size={20} />
           ),
           style: {
             border: `1px solid ${twConfig.theme.colors.primary['300']}`,
@@ -215,7 +208,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
                 <Icon
                   name="calendarOutline"
                   size={16}
-                  color={twConfig.theme.colors.neutral[900]}
+                  color="text-neutral-900"
                 />
               </div>
               <div className="text-xs font-medium text-neutral-600">
@@ -233,7 +226,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
                 <Icon
                   name="editOutline"
                   size={16}
-                  color={twConfig.theme.colors.neutral[900]}
+                  color="text-neutral-900"
                   onClick={openEditSchedulePostModal}
                 />
               </div>
@@ -258,7 +251,7 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
               <Divider className="mt-4" />
               <div className="flex flex-row justify-between my-3">
                 <div
-                  className={`flex flex-row items-center space-x-1`}
+                  className={`flex flex-row items-center space-x-1 group`}
                   data-testid="feed-post-reactioncount"
                   onClick={() => openReactionModal()}
                 >
@@ -285,14 +278,14 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
                   )}
                   {totalCount > 0 && (
                     <div
-                      className={`flex text-xs font-normal text-neutral-500 cursor-pointer`}
+                      className={`flex text-xs font-normal text-neutral-500 cursor-pointer group-hover:text-primary-500`}
                     >
                       {totalCount} reacted
                     </div>
                   )}
                 </div>
                 {post?.commentsCount > 0 && (
-                  <div className="flex flex-row text-xs font-normal text-neutral-500 space-x-7 items-center cursor-pointer">
+                  <div className="flex flex-row text-xs font-normal text-neutral-500 space-x-7 items-center cursor-pointer hover:text-primary-500">
                     <div
                       onClick={() => {
                         if (showComments) {
@@ -326,8 +319,13 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
                   queryKey="feed"
                   dataTestIdPrefix="post-reaction"
                 />
-                <button
-                  className="flex items-center space-x-1"
+                <Button
+                  label="Comment"
+                  variant={Variant.Tertiary}
+                  size={Size.Small}
+                  labelClassName="text-xs font-normal text-neutral-500 hover:text-primary-500"
+                  leftIcon="comment"
+                  className="space-x-1 !p-0"
                   onClick={() => {
                     if (showComments) {
                       closeComments();
@@ -336,20 +334,15 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
                     }
                   }}
                   data-testid="feed-post-comment"
-                >
-                  <Icon name="comment" size={16} />
-                  <div className="text-xs font-normal text-neutral-500">
-                    Comment
-                  </div>
-                </button>
+                />
               </div>
-              <div
+              {/* <div
                 className="flex items-center space-x-1 cursor-pointer text-neutral-500 hover:text-primary-500"
                 data-testid="feed-post-repost"
               >
                 <Icon name="repost" size={16} />
                 <span className="text-xs font-normal">Repost</span>
-              </div>
+              </div> */}
             </div>
           )}
           {/* Comments */}

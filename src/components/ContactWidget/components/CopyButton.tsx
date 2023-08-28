@@ -9,14 +9,16 @@ import { slideInAndOutBottom } from 'utils/react-toastify';
 type CopyButtonProps = {
   content: string;
   dataTestId?: string;
+  className?: string;
 };
 
 const CopyButton: React.FC<CopyButtonProps> = ({
   content,
   dataTestId,
+  className,
 }): ReactElement => {
   return (
-    <div>
+    <div className={className}>
       <Icon
         name="copy"
         size={16}
@@ -27,7 +29,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
             closeButton: (
               <Icon
                 name="closeCircleOutline"
-                color={twConfig.theme.colors.primary['500']}
+                color="text-primary-500"
                 size={20}
               />
             ),

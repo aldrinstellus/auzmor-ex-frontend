@@ -91,13 +91,12 @@ const AddApp: React.FC<AddAppProps> = ({
       url: data?.url || '',
       label: data?.label || '',
       description: data?.description || '',
-      category: data
+      category: data?.category?.categoryId
         ? {
             label: data?.category?.name,
-            value: data?.category?.name,
-            id: data?.category?.categoryId,
+            value: data?.category?.categoryId,
           }
-        : '',
+        : null,
       audience: data?.audience || [],
       icon: data?.icon,
       acsUrl: data?.credentials?.acsUrl || '',
@@ -118,11 +117,7 @@ const AddApp: React.FC<AddAppProps> = ({
       await queryClient.invalidateQueries(['apps']);
       toast(<SuccessToast content={'App added successfully'} />, {
         closeButton: (
-          <Icon
-            name="closeCircleOutline"
-            color={twConfig.theme.colors.primary['500']}
-            size={20}
-          />
+          <Icon name="closeCircleOutline" color="text-primary-500" size={20} />
         ),
         style: {
           border: `1px solid ${twConfig.theme.colors.primary['300']}`,
@@ -145,11 +140,7 @@ const AddApp: React.FC<AddAppProps> = ({
         />,
         {
           closeButton: (
-            <Icon
-              name="closeCircleOutline"
-              color={twConfig.theme.colors.red['500']}
-              size={20}
-            />
+            <Icon name="closeCircleOutline" color="text-red-500" size={20} />
           ),
           style: {
             border: `1px solid ${twConfig.theme.colors.red['300']}`,
@@ -179,7 +170,7 @@ const AddApp: React.FC<AddAppProps> = ({
           closeButton: (
             <Icon
               name="closeCircleOutline"
-              color={twConfig.theme.colors.primary['500']}
+              color="text-primary-500"
               size={20}
             />
           ),
@@ -205,11 +196,7 @@ const AddApp: React.FC<AddAppProps> = ({
         />,
         {
           closeButton: (
-            <Icon
-              name="closeCircleOutline"
-              color={twConfig.theme.colors.red['500']}
-              size={20}
-            />
+            <Icon name="closeCircleOutline" color="text-red-500" size={20} />
           ),
           style: {
             border: `1px solid ${twConfig.theme.colors.red['300']}`,

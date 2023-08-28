@@ -33,7 +33,7 @@ const NotificationsOverview: React.FC = () => {
     {
       tabLabel: (isActive: boolean) => (
         <p
-          className={`font-bold text-sm pb-2 ${
+          className={`font-bold text-sm pb-2 w-[53px] text-center ${
             isActive ? 'text-neutral-900' : 'text-neutral-500'
           }`}
         >
@@ -86,7 +86,6 @@ const NotificationsOverview: React.FC = () => {
           <Icon
             name="notification"
             size={26}
-            disabled={true}
             dataTestId="office-notification-page"
           />
         </div>
@@ -105,7 +104,7 @@ const NotificationsOverview: React.FC = () => {
               className="flex items-center gap-x-1 cursor-pointer"
               onClick={() => markReadMutation.mutate()}
             >
-              <Icon name="checkbox" color="#059669" size={18} />
+              <Icon name="checkbox" color="text-primary-600" size={18} />
               <p className="text-primary-600 font-bold text-sm cursor-pointer">
                 Mark all as read
               </p>
@@ -117,7 +116,7 @@ const NotificationsOverview: React.FC = () => {
         <Tabs
           tabs={notifTabs}
           tabContentClassName=""
-          className="w-full flex justify-start gap-x-1 px-4 border-b-1 border border-neutral-200"
+          className="flex justify-start gap-x-1 px-4 border-b-1 border-neutral-200 w-full mb-2"
           itemSpacing={4}
         />
         <Divider />

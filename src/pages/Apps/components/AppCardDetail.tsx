@@ -48,7 +48,7 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
           <Icon
             name="close"
             onClick={closeModal}
-            color="#000"
+            color="text-black"
             size={20}
             dataTestId="app-details-close"
           />
@@ -115,7 +115,7 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
                   </div>
                 </div>
                 {/* The audience */}
-                <div className="flex px-6 pt-4 flex items-center gap-2">
+                <div className="flex px-6 pt-4 items-center gap-2">
                   <p className="text-neutral-900 text-sm font-medium">
                     Audience:
                   </p>
@@ -146,7 +146,7 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
           </div>
         </div>
         {/* Footer */}
-        {isAdmin ? (
+        {isAdmin && (
           <div className="bg-blue-50 flex items-center justify-end px-6 py-4 gap-x-3 rounded-9xl">
             <Button
               label="Delete app"
@@ -160,8 +160,6 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
               dataTestId="app-details-edit-app"
             />
           </div>
-        ) : (
-          <div className="pb-2"></div>
         )}
       </Card>
     </Modal>

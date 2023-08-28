@@ -30,7 +30,6 @@ const Footer: React.FC<IFooterProps> = ({
   handleSubmitPost,
   mode,
 }) => {
-  const { isMember } = useRole();
   const {
     setActiveFlow,
     setEditorValue,
@@ -44,6 +43,8 @@ const Footer: React.FC<IFooterProps> = ({
     schedule,
     postType,
   } = useContext(CreatePostContext);
+  const { isMember } = useRole();
+  const canSchedule = !(!!!schedule && mode === PostBuilderMode.Edit);
 
   const updateContext = () => {
     setEditorValue({
@@ -78,11 +79,7 @@ const Footer: React.FC<IFooterProps> = ({
         icon: (
           <Icon
             name="imageFilled"
-            color={
-              isMediaDisabled
-                ? twConfig.theme.colors.neutral[200]
-                : twConfig.theme.colors['black-white'].black
-            }
+            color={isMediaDisabled ? 'text-neutral-200' : 'text-neutral-900'}
             size={14}
             dataTestId="feed-createpost-media"
           />
@@ -97,7 +94,6 @@ const Footer: React.FC<IFooterProps> = ({
               inputImgRef?.current && inputImgRef?.current?.click();
             },
             disabled: isMediaDisabled,
-            iconClassName: 'p-2 rounded-7xl border mr-2.5 bg-white',
             dataTestId: 'feed-createpost-uploadphoto-menuitem',
           },
           {
@@ -108,13 +104,11 @@ const Footer: React.FC<IFooterProps> = ({
               inputVideoRef?.current && inputVideoRef?.current?.click();
             },
             disabled: isMediaDisabled,
-            iconClassName: 'p-2 rounded-7xl border mr-2.5 bg-white',
             dataTestId: 'feed-createpost-uploadvideo-menuitem',
           },
           {
             label: 'Share a document',
             icon: 'document',
-            iconClassName: 'p-2 rounded-7xl border mr-2.5 bg-white',
             disabled: true,
           },
         ],
@@ -127,11 +121,7 @@ const Footer: React.FC<IFooterProps> = ({
           <Icon
             name="magicStarFilled"
             size={14}
-            color={
-              isShoutoutDisabled
-                ? twConfig.theme.colors.neutral[200]
-                : twConfig.theme.colors['black-white'].black
-            }
+            color={isShoutoutDisabled ? 'text-neutral-200' : 'text-neutral-900'}
             dataTestId="feed-createpost-shoutout"
           />
         ),
@@ -150,8 +140,9 @@ const Footer: React.FC<IFooterProps> = ({
           <Icon
             name="calendarFilledTwo"
             size={14}
+            disabled
             dataTestId="feed-createpost-events"
-            color={twConfig.theme.colors.neutral[200]}
+            color="text-neutral-200"
           />
         ),
         menuItems: [],
@@ -166,11 +157,7 @@ const Footer: React.FC<IFooterProps> = ({
             name="chartFilled"
             size={14}
             dataTestId="feed-createpost-polls"
-            color={
-              isPollDisabled
-                ? twConfig.theme.colors.neutral[200]
-                : twConfig.theme.colors['black-white'].black
-            }
+            color={isPollDisabled ? 'text-neutral-200' : 'text-neutral-900'}
           />
         ),
         menuItems: [],
@@ -187,7 +174,7 @@ const Footer: React.FC<IFooterProps> = ({
         icon: (
           <Icon
             name="moreOutline"
-            color="#000000"
+            color="text-neutral-900"
             dataTestId="feed-createpost-ellipsis-icon"
           />
         ),
@@ -201,13 +188,11 @@ const Footer: React.FC<IFooterProps> = ({
               setActiveFlow(CreatePostFlow.CreateAnnouncement);
             },
             disabled: isMember,
-            iconClassName: 'p-2 rounded-7xl border mr-2.5 bg-white',
             dataTestId: 'feed-createpost-shareasannouncement',
           },
           {
             label: 'Save as drafts',
             icon: 'draft',
-            iconClassName: 'p-2 rounded-7xl border mr-2.5 bg-white',
             disabled: true,
             dataTestId: 'feed-createpost-saveasdraft',
           },
@@ -274,20 +259,22 @@ const Footer: React.FC<IFooterProps> = ({
         <Divider variant={DividerVariant.Vertical} className="!h-8" />
       </div>
       <div className="flex items-center">
-        <div className="mr-4">
-          <Tooltip tooltipContent="Schedule" className="cursor-pointer">
-            <Icon
-              name="clockOutline"
-              size={16}
-              color={twConfig.theme.colors.neutral[900]}
-              onClick={() => {
-                updateContext();
-                setActiveFlow(CreatePostFlow.SchedulePost);
-              }}
-              dataTestId="createpost-clock-icon"
-            />
-          </Tooltip>
-        </div>
+        {canSchedule && (
+          <div className="mr-4">
+            <Tooltip tooltipContent="Schedule" className="cursor-pointer">
+              <Icon
+                name="clockOutline"
+                size={16}
+                color="text-neutral-900"
+                onClick={() => {
+                  updateContext();
+                  setActiveFlow(CreatePostFlow.SchedulePost);
+                }}
+                dataTestId="createpost-clock-icon"
+              />
+            </Tooltip>
+          </div>
+        )}
         <Button
           label={schedule ? 'Schedule' : 'Post'}
           disabled={isLoading || isCharLimit || !!mediaValidationErrors?.length}
