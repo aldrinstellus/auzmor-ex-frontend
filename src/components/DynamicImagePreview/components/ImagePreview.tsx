@@ -24,30 +24,15 @@ const ImagePreview: React.FC<IImagePreviewProps> = ({
 
   const formatUserList = (_showNameCount: any) => {
     const count = users.length;
-    if (_showNameCount < count) {
-      const showNames = users
-        .slice(0, _showNameCount)
-        .map((user) => user.name)
-        .join(', ');
-      if (_showNameCount + 1 === count) {
-        return `${showNames} and ${users[count - 1].name}`;
-      } else {
-        return `${showNames} and ${count - _showNameCount} others`;
-      }
+    const showNames = users
+      .slice(0, _showNameCount - 1)
+      .map((user) => user.fullName)
+      .join(', ');
+    if (_showNameCount === count) {
+      return `${showNames} and ${users[count - 1].fullName}`;
     } else {
-      if (count === 1) {
-        return users[0].name;
-      } else if (count === 2) {
-        return `${users[0].name} and ${users[1].name}`;
-      } else if (count === 3) {
-        return `${users[0].name}, ${users[1].name} and ${users[2].name}`;
-      } else if (count > 3) {
-        return `${users[0].name}, ${users[1].name}, ${users[2].name} and ${
-          count - 3
-        } others`;
-      }
+      return `${showNames} and ${count - _showNameCount} others`;
     }
-    return '';
   };
 
   // Logic to handle number of username to show which fit in 1 line
@@ -58,7 +43,7 @@ const ImagePreview: React.FC<IImagePreviewProps> = ({
       let count = 0;
 
       for (let i = 0; i < users.length; i++) {
-        const nameWidth = users[i].name.length * 17; // Adjust this multiplier as needed
+        const nameWidth = users[i].fullName.length * 14; // Adjust this multiplier as needed
         totalWidth += nameWidth;
 
         if (totalWidth > containerWidth) {
