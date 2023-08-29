@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import EntitySearchModalBody from './components/EntitySearchModalBody';
 import { useForm } from 'react-hook-form';
 import { IGetUser } from 'queries/users';
+import { ITeam } from 'queries/teams';
 
 export enum EntitySearchModalType {
   User = 'USER',
@@ -41,9 +42,9 @@ export interface IAudienceForm {
   privacy: { value: string; label: string };
   categorySearch: string;
   categories: Record<string, boolean | undefined>;
-  teams: any;
+  teams: Record<string, ITeam | false>;
   channels: any;
-  users: any;
+  users: Record<string, IGetUser | false>;
 }
 
 const EntitySearchModal: React.FC<IEntitySearchModalProps> = ({

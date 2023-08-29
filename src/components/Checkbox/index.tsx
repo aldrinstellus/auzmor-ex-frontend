@@ -47,7 +47,6 @@ const Checkbox: React.FC<CheckboxProps> = ({
         name={field.name}
         ref={field.ref}
         disabled={loading || disabled}
-        defaultChecked={defaultValue}
         onChange={(e) =>
           field.onChange(transform?.output ? transform?.output(e) : e)
         }

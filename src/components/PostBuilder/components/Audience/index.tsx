@@ -98,6 +98,7 @@ const Audience: React.FC<IAudienceProps> = ({ closeModal }) => {
         localAudience.push({
           entityId: id,
           entityType: AudienceEntityType.Channel,
+          entity: formData.channels[id],
         });
       }
     });
@@ -106,6 +107,7 @@ const Audience: React.FC<IAudienceProps> = ({ closeModal }) => {
         localAudience.push({
           entityId: id,
           entityType: AudienceEntityType.Team,
+          entity: formData.teams[id],
         });
       }
     });
@@ -114,6 +116,7 @@ const Audience: React.FC<IAudienceProps> = ({ closeModal }) => {
         localAudience.push({
           entityId: id,
           entityType: AudienceEntityType.User,
+          entity: formData.users[id],
         });
       }
     });

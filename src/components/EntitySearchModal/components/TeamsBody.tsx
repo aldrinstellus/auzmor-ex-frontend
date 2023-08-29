@@ -14,7 +14,7 @@ import { IAudienceForm } from '..';
 import { ITeam, useInfiniteTeams } from 'queries/teams';
 import TeamRow from './TeamRow';
 import InfiniteSearch from 'components/InfiniteSearch';
-import { useInfiniteCategories } from 'queries/category';
+import { ICategory, useInfiniteCategories } from 'queries/category';
 
 interface ITeamsBodyProps {
   control: Control<IAudienceForm, any>;
@@ -35,25 +35,14 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
 }) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const formData = watch();
+
+  // fetch teams data
   const debouncedSearchValue = useDebounce(formData.teamSearch || '', 500);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteTeams({
       q: debouncedSearchValue,
       category: selectedCategories,
     });
-  const debouncedCategorySearchValue = useDebounce(
-    formData.categorySearch || '',
-    500,
-  );
-  const {
-    data: categories,
-    isLoading: categoryLoading,
-    isFetchingNextPage: isFetchingNextCategoryPage,
-    fetchNextPage: fetchNextCategoryPage,
-    hasNextPage: hasNextCategoryPage,
-  } = useInfiniteCategories({
-    q: debouncedCategorySearchValue,
-  });
   const teamsData = data?.pages
     .flatMap((page) => {
       return page?.data?.result?.data.map((team: ITeam) => {
@@ -71,8 +60,22 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
       return true;
     });
 
+  // fetch category data
+  const debouncedCategorySearchValue = useDebounce(
+    formData.categorySearch || '',
+    500,
+  );
+  const {
+    data: categories,
+    isLoading: categoryLoading,
+    isFetchingNextPage: isFetchingNextCategoryPage,
+    fetchNextPage: fetchNextCategoryPage,
+    hasNextPage: hasNextCategoryPage,
+  } = useInfiniteCategories({
+    q: debouncedCategorySearchValue,
+  });
   const categoryData = categories?.pages.flatMap((page) => {
-    return (page as any)?.result?.data.map((category: any) => {
+    return page?.data?.result?.data.map((category: ICategory) => {
       try {
         return category;
       } catch (e) {
@@ -99,14 +102,17 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
   useEffect(() => {
     if (selectedTeamIds.length) {
       selectedTeamIds.forEach((id: string) => {
-        setValue(`teams.${id}`, true);
+        setValue(
+          `teams.${id}`,
+          teamsData?.find((team: ITeam) => team.id === id),
+        );
       });
     }
-  }, []);
+  }, [teamsData]);
 
   const selectAll = () => {
-    Object.keys(formData.teams).forEach((key) => {
-      setValue(`teams.${key}`, true);
+    teamsData?.forEach((team: ITeam) => {
+      setValue(`teams.${team.id}`, team);
     });
   };
 
@@ -115,6 +121,9 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
       setValue(`teams.${key}`, false);
     });
   };
+
+  const isControlsDisabled =
+    !!!teamsData?.length && debouncedSearchValue !== '';
 
   return (
     <div className="flex flex-col">
@@ -135,7 +144,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
         <div className="flex items-center justify-between">
           <div
             className={`flex items-center text-neutral-500 font-medium ${
-              !!!teamsData?.length && 'opacity-50 pointer-events-none'
+              isControlsDisabled && 'opacity-50 pointer-events-none'
             }`}
           >
             Quick filters:
@@ -177,7 +186,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
           </div>
           <div
             className={`cursor-pointer text-neutral-500 font-medium hover:underline ${
-              !!!teamsData?.length && 'opacity-50 pointer-events-none'
+              isControlsDisabled && 'opacity-50 pointer-events-none'
             }`}
             onClick={() => {
               setSelectedCategories([]);
@@ -194,7 +203,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
       <div className="pl-6 flex flex-col">
         <div
           className={`flex justify-between py-4 pr-6 ${
-            !!!teamsData?.length && 'opacity-50 pointer-events-none'
+            isControlsDisabled && 'opacity-50 pointer-events-none'
           }`}
         >
           <div className="flex items-center">
@@ -239,8 +248,8 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
             </div>
           ) : teamsData?.length ? (
             teamsData?.map((team, index) => (
-              <>
-                <div className="py-2 flex items-center" key={team.id}>
+              <div key={team.id}>
+                <div className="py-2 flex items-center">
                   <Layout
                     fields={[
                       {
@@ -263,7 +272,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
                   )}
                 </div>
                 {index !== teamsData.length - 1 && <Divider />}
-              </>
+              </div>
             ))
           ) : (
             <div className="flex flex-col items-center w-full justify-center">
@@ -272,7 +281,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
               </div>
               <div className="text-neutral-900 text-lg font-bold mb-4">
                 No result found
-                {formData.teamSearch != '' && `for ‘${formData.teamSearch}’`}
+                {!!formData.teamSearch && ` for ‘${formData.teamSearch}’`}
               </div>
               <div className="text-neutral-500 text-xs">
                 Sorry we can’t find the member you are looking for.
