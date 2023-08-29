@@ -32,7 +32,7 @@ import moment from 'moment';
 import MediaPreview, { Mode } from 'components/MediaPreview';
 import Banner, { Variant } from 'components/Banner';
 import { hasDatePassed } from 'utils/time';
-import Poll from 'components/Poll';
+import Poll, { PollMode } from 'components/Poll';
 import { PostBuilderMode } from 'components/PostBuilder';
 import useModal from 'hooks/useModal';
 import ConfirmationBox from 'components/ConfirmationBox';
@@ -289,7 +289,12 @@ const RichTextEditor = React.forwardRef(
         {announcement?.label && !hasDatePassed(announcement.value) && (
           <div className="flex justify-between bg-blue-50 px-4 py-2 m-4">
             <div className="flex items-center">
-              <Icon name="micOutline" hover={false} size={16} color="text-neutral-900" />
+              <Icon
+                name="micOutline"
+                hover={false}
+                size={16}
+                color="text-neutral-900"
+              />
               <div
                 className="ml-2.5"
                 data-testid="announcement-scheduled-toaster"
@@ -350,6 +355,7 @@ const RichTextEditor = React.forwardRef(
               options={poll.options}
               total={poll.total}
               closedAt={poll.closedAt}
+              mode={PollMode.EDIT}
             />
           </div>
         )}

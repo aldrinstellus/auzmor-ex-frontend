@@ -152,6 +152,9 @@ const Footer: React.FC<IFooterProps> = ({
       {
         id: 4,
         label: 'Polls',
+        menuItems: [],
+        hidden: false,
+        dataTestId: 'createpost-poll',
         icon: (
           <Icon
             name="chartFilled"
@@ -160,8 +163,6 @@ const Footer: React.FC<IFooterProps> = ({
             color={isPollDisabled ? 'text-neutral-200' : 'text-neutral-900'}
           />
         ),
-        menuItems: [],
-        hidden: false,
         disabled: isPollDisabled,
         onClick: () => {
           updateContext();
@@ -232,6 +233,7 @@ const Footer: React.FC<IFooterProps> = ({
                             ? 'cursor-not-allowed'
                             : 'cursor-default'
                         }`}
+                        data-testid={postMenuItem?.dataTestId}
                       >
                         {postMenuItem.icon}
                       </div>
@@ -241,7 +243,10 @@ const Footer: React.FC<IFooterProps> = ({
                         className="cursor-pointer"
                       >
                         {postMenuItem.label !== 'More' ? (
-                          <div className="flex justify-center items-center w-8 h-8 bg-white border border-neutral-200 rounded-7xl">
+                          <div
+                            className="flex justify-center items-center w-8 h-8 bg-white border border-neutral-200 rounded-7xl"
+                            data-testid={postMenuItem?.dataTestId}
+                          >
                             {postMenuItem.icon}
                           </div>
                         ) : (

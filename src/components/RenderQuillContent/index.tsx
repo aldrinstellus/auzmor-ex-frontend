@@ -13,6 +13,7 @@ import { IComment } from 'components/Comments';
 import { IMedia } from 'contexts/CreatePostContext';
 import { Metadata } from 'components/PreviewLink/types';
 import clsx from 'clsx';
+import Poll, { PollMode } from 'components/Poll';
 import AvatarChips from 'components/AvatarChips';
 
 type RenderQuillContent = {
@@ -30,6 +31,29 @@ const RenderQuillContent: React.FC<RenderQuillContent> = ({
   const mentions = data?.mentions ? data.mentions : [];
   const link = (data as IPost)?.link;
   const media = (data as IPost)?.files;
+  // const poll = (data as IPost)?.pollContext;
+  const poll = {
+    question: 'Update poll test',
+    options: [
+      {
+        text: 'whassup',
+        id: 'whassup-id',
+      },
+      {
+        text: 'whassup2',
+        id: 'whassup2-id',
+      },
+      {
+        text: 'whassup3',
+        id: 'whassup3-id',
+      },
+      {
+        text: 'whassup4',
+        id: 'whassup4-id',
+      },
+    ],
+    closedAt: '2023-10-23T05:45:35Z',
+  };
 
   const isEmpty = useMemo(
     () => data.content.text === '\n' || data.content.text === '',
@@ -154,6 +178,16 @@ const RenderQuillContent: React.FC<RenderQuillContent> = ({
             showAddMediaButton={false}
             showEditButton={false}
             isAnnouncementWidgetPreview={isAnnouncementWidgetPreview}
+          />
+        </div>
+      )}
+      {poll && (
+        <div className="mt-4">
+          <Poll
+            question={poll.question}
+            closedAt={poll.closedAt}
+            options={poll.options}
+            mode={PollMode.VIEW}
           />
         </div>
       )}

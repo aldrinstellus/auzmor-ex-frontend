@@ -2,7 +2,7 @@ import AppShell from 'components/AppShell';
 import PageLoader from 'components/PageLoader';
 import useAuth from 'hooks/useAuth';
 import React from 'react';
-import { Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { setItem } from 'utils/persist';
 
 interface IRequireAuthProps {}

@@ -85,11 +85,6 @@ const LoginViaCred: React.FC<ILoginViaCredProps> = ({ setViaSSO }) => {
     loginMutation.mutate({ ...formData, domain });
   };
 
-  // if (user) {
-  //   redirectWithToken({});
-  //   return null;
-  // }
-
   const fields = [
     {
       type: FieldType.Input,
