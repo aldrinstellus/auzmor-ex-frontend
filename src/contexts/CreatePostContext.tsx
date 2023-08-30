@@ -12,7 +12,6 @@ export enum CreatePostFlow {
   CreateAnnouncement = 'CREATE_ANNOUNCEMENT',
   EditMedia = 'EDIT_MEDIA',
   CreatePoll = 'CREATE_POLL',
-  EditPoll = 'EDIT_POLL',
   SchedulePost = 'SCHEDULE_POST',
   Audience = 'AUDIENCE',
   CreateShoutout = 'CREATE_SHOUTOUT',

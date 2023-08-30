@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-query';
 import { DeltaStatic } from 'quill';
 import { isValidUrl } from 'utils/misc';
-import { IMedia } from 'contexts/CreatePostContext';
+import { IMedia, IPoll } from 'contexts/CreatePostContext';
 import { IComment } from 'components/Comments';
 import { Metadata } from 'components/PreviewLink/types';
 import { useFeedStore } from 'stores/feedStore';
@@ -71,6 +71,7 @@ export interface IPost {
   };
   hashtags: string[] | [];
   files?: string[] | IMedia[];
+  pollContext?: IPoll;
   type: string;
   audience: IAudience[];
   isAnnouncement: boolean;
@@ -145,6 +146,7 @@ export interface IPostPayload {
   announcement: {
     end: string;
   };
+  pollContext?: IPoll;
   link?: Metadata | string;
   schedule: {
     dateTime: string;

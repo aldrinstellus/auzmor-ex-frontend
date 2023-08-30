@@ -8,7 +8,6 @@ import {
   ITransformedOp,
   TransformedQuillDelta,
 } from 'components/PostBuilder/components/RichTextEditor/mentions/types';
-import { useSearchParams } from 'react-router-dom';
 import DeactivatedCoverImage from 'images/deactivatedCoverPhoto.png';
 import DefaultCoverImage from 'images/png/CoverImage.png';
 import { capitalize } from 'lodash';
@@ -279,3 +278,10 @@ export const extractFirstWord = (str: string) => {
 
 export const padZero = (num: number, places: number) =>
   String(num).padStart(places, '0');
+
+export const convertUpperCaseToPascalCase = (value: string) => {
+  if (!value) {
+    return '';
+  }
+  return value[0] + value.substring(1, value.length).toLowerCase();
+};
