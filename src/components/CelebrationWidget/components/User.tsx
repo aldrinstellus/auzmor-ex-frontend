@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import Avatar from 'components/Avatar';
 import { CELEBRATION_TYPE } from '..';
 import clsx from 'clsx';
@@ -8,14 +8,27 @@ import {
   formatDate,
   isCelebrationToday,
 } from '../utils';
-import { getNouns } from 'utils/misc';
+import { getFullName, getNouns } from 'utils/misc';
 
 interface UserProps {
   type: CELEBRATION_TYPE;
   hideSendWishBtn?: boolean;
+  data: Record<string, any>;
 }
 
-const User: React.FC<UserProps> = ({ type, hideSendWishBtn = false }) => {
+const User: React.FC<UserProps> = ({ type, hideSendWishBtn = false, data }) => {
+  const anniversaryYears = calculateWorkAnniversaryYears(data.joinDate);
+  const celebrationDate =
+    type === CELEBRATION_TYPE.Birthday
+      ? formatDate(data.dateOfBirth)
+      : `${anniversaryYears} ${getNouns('yr', anniversaryYears)} (${formatDate(
+          data.joinDate,
+        )})`;
+  const showSendWishBtn =
+    isCelebrationToday(
+      type === CELEBRATION_TYPE.Birthday ? data.dateOfBirth : data.joinDate,
+    ) && !hideSendWishBtn;
+
   const dateStyles = useMemo(
     () =>
       clsx(
@@ -29,28 +42,25 @@ const User: React.FC<UserProps> = ({ type, hideSendWishBtn = false }) => {
       ),
     [type],
   );
-  const anniversaryYears = calculateWorkAnniversaryYears(
-    '2021-08-29T10:45:50.336Z',
-  );
-  const celebrationDate =
-    type === CELEBRATION_TYPE.Birthday
-      ? formatDate('2023-08-29T10:45:50.336Z')
-      : `${anniversaryYears} ${getNouns('yr', anniversaryYears)} (${formatDate(
-          '2023-08-29T10:45:50.336Z',
-        )})`;
-  const showSendWishBtn =
-    isCelebrationToday('2023-08-29T10:45:50.336Z') && !hideSendWishBtn;
 
   return (
     <div className="flex flex-col gap-2 w-full">
       <div className="flex items-center gap-2 w-full justify-between">
         <div className="flex items-center gap-2">
-          <Avatar name={'Sam Fields'} size={32} />
+          <Avatar
+            name={getFullName(data.featuredUser)}
+            size={32}
+            className="min-w-[32px]"
+          />
           <div className="flex flex-col">
-            <p className="text-sm font-bold line-clamp-1">Sam Fields</p>
-            <p className="text-xs line-clamp-1 text-neutral-500">
-              Talent Acquisition specialist
+            <p className="text-sm font-bold line-clamp-1">
+              {getFullName(data.featuredUser)}
             </p>
+            {data.featuredUser.designation && (
+              <p className="text-xs line-clamp-1 text-neutral-500">
+                {data.featuredUser.designation}
+              </p>
+            )}
           </div>
         </div>
         <div

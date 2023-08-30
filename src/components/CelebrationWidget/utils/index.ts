@@ -9,7 +9,7 @@ export const formatDate = (inputDate: string): string => {
     return 'Today';
   } else {
     // Format the date as "23rd July"
-    return parsedDate.format('Do MMMM');
+    return parsedDate.format('D MMM');
   }
 };
 

@@ -1,11 +1,14 @@
+import React, { useContext } from 'react';
+import moment from 'moment-timezone';
 import Card from 'components/Card';
 import Icon from 'components/Icon';
 import useModal from 'hooks/useModal';
-import React from 'react';
 import User from './components/User';
 import Button, { Size, Variant } from 'components/Button';
 import UpcomingCelebrationModal from './components/UpcomingCelebrationModal';
 import EmptyState from './components/EmptyState';
+import { useCelebrations } from 'queries/post';
+import SkeletonLoader from './components/SkeletonLoader';
 
 export enum CELEBRATION_TYPE {
   Birthday = 'BIRTHDAY',
@@ -19,6 +22,37 @@ interface CelebrationWidgetProps {
 const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
   const [open, openCollpase, closeCollapse] = useModal(true, false);
   const [openUpcoming, openUpcomingModal, closeUpcomingModal] = useModal();
+  const currentDate = moment();
+
+  const { data, isLoading } = useCelebrations();
+
+  const formattedData = data?.pages.flatMap((page: any) => {
+    return page?.data?.result?.data.map((celebration: any) => {
+      try {
+        return celebration;
+      } catch (e) {
+        console.log('Error', { celebration });
+      }
+    });
+  });
+
+  const thisMonthCelebration = formattedData
+    ? formattedData.filter((item) => {
+        const itemDate = moment(
+          type === CELEBRATION_TYPE.Birthday ? item.dateOfBirth : item.joinDate,
+        );
+        return itemDate.month() === currentDate.month();
+      })
+    : [];
+
+  const upcomingMonthCelebration = formattedData
+    ? formattedData.filter((item) => {
+        const itemDate = moment(
+          type === CELEBRATION_TYPE.Birthday ? item.dateOfBirth : item.joinDate,
+        );
+        return itemDate.month() >= currentDate.month() + 1;
+      })
+    : [];
 
   const widgetTitle =
     type === CELEBRATION_TYPE.Birthday
@@ -45,16 +79,67 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
       </div>
       {open && (
         <div className="px-4 flex flex-col gap-4">
-          <User type={type} />
-          <User type={type} />
-          <Button
-            variant={Variant.Secondary}
-            size={Size.Small}
-            className="py-[7px]"
-            label={buttonLabel}
-            onClick={openUpcomingModal}
-          />
-          {/* <EmptyState type={type} /> */}
+          {(() => {
+            if (isLoading) {
+              return (
+                <>
+                  {[...Array(3)].map((element) => (
+                    <SkeletonLoader key={element} />
+                  ))}
+                </>
+              );
+            }
+            if (
+              thisMonthCelebration?.length > 0 ||
+              upcomingMonthCelebration.length > 0
+            ) {
+              return (
+                <>
+                  {/* This month celebration */}
+                  {thisMonthCelebration.length > 0 &&
+                    upcomingMonthCelebration.length > 0 && (
+                      <div className="text-sm font-semibold px-2">
+                        This Month
+                      </div>
+                    )}
+                  {thisMonthCelebration.map((celebration) => (
+                    <User
+                      type={type}
+                      key={celebration.featuredUser.userId}
+                      data={celebration}
+                    />
+                  ))}
+
+                  {/* Upcoming Month celebration */}
+                  {upcomingMonthCelebration.length > 0 && (
+                    <>
+                      {thisMonthCelebration.length > 0 &&
+                        upcomingMonthCelebration.length > 0 && (
+                          <div className="text-sm font-semibold px-2">
+                            Upcoming Month
+                          </div>
+                        )}
+                      {upcomingMonthCelebration.map((celebration) => (
+                        <User
+                          type={type}
+                          data={celebration}
+                          key={celebration.featuredUser.userId}
+                        />
+                      ))}
+                    </>
+                  )}
+                  <Button
+                    variant={Variant.Secondary}
+                    size={Size.Small}
+                    className="py-[7px]"
+                    label={buttonLabel}
+                    onClick={openUpcomingModal}
+                  />
+                </>
+              );
+            }
+            return <EmptyState type={type} />;
+          })()}
         </div>
       )}
       <UpcomingCelebrationModal

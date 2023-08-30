@@ -12,6 +12,7 @@ import { Metadata } from 'components/PreviewLink/types';
 import { useFeedStore } from 'stores/feedStore';
 import _ from 'lodash';
 import { string } from 'yargs';
+import { celebrations } from 'mocks/feed';
 
 export interface IReactionsCount {
   [key: string]: number;
@@ -317,6 +318,52 @@ export const useAnnouncementsWidget = (
     queryFn: () => fetchAnnouncement('ANNOUNCEMENT', limit),
     staleTime: 15 * 60 * 1000,
   });
+
+const fetchCelebrations = async ({
+  pageParam = null,
+  queryKey,
+}: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
+  if (pageParam === null) {
+    // return await apiService.get('/categories', queryKey[1]);
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve({
+          message: 'Successful',
+          code: 200,
+          data: {
+            result: {
+              data: celebrations,
+              paging: {
+                prev: 'https://office-dev.api.auzmor.com/api/v1/categories',
+                next: 'https://office-dev.api.auzmor.com/api/v1/categories',
+                limit: 30,
+              },
+            },
+          },
+        });
+      }, 1000);
+    });
+  } else return await apiService.get(pageParam);
+};
+
+export const useCelebrations = (q?: Record<string, any>) => {
+  return useInfiniteQuery({
+    queryKey: ['celebrations', q],
+    queryFn: fetchCelebrations,
+    getNextPageParam: (lastPage: any) => {
+      const pageDataLen = lastPage?.data?.result?.data?.length;
+      const pageLimit = lastPage?.data?.result?.paging?.limit;
+      if (pageDataLen < pageLimit) {
+        return null;
+      }
+      return lastPage?.data?.result?.paging?.next;
+    },
+    getPreviousPageParam: (currentPage: any) => {
+      return currentPage?.data?.result?.paging?.prev;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+};
 
 export const announcementRead = async (postId: string) => {
   const data = await apiService.post(`/posts/${postId}/acknowledge`);
