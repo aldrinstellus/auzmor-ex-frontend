@@ -1,13 +1,25 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import CreatableSelect from 'react-select/creatable';
+import React, { ReactNode, useMemo, useState } from 'react';
 import { Control, Controller, useController } from 'react-hook-form';
-import { MenuPlacement, components } from 'react-select';
 import clsx from 'clsx';
+import { Select } from 'antd';
 import { isFiltersEmpty, twConfig } from 'utils/misc';
 import { useDebounce } from 'hooks/useDebounce';
 import Icon from 'components/Icon';
+import './index.css';
+import { SelectCommonPlacement } from 'antd/es/_util/motion';
 
 type ApiCallFunction = (queryParams: any) => any;
+
+const AddOption = (props: { value?: string }) => (
+  <div className="flex items-center justify-start">
+    <Icon name="add" size={16} color="text-neutral-900" />
+    <span className="ml-[10px] mr-[6px]">Add</span>
+    <span className="text-blue-500 line-clamp-1">{`'${
+      props.value || ''
+    }'`}</span>
+  </div>
+);
+
 export interface ICreatableSearch {
   name: string;
   defaultValue?: any;
@@ -19,14 +31,13 @@ export interface ICreatableSearch {
   label?: string;
   required?: boolean;
   placeholder?: string;
-  height?: string;
-  menuPlacement: MenuPlacement;
+  menuPlacement: SelectCommonPlacement;
   addItemDataTestId?: string;
   fetchQuery: ApiCallFunction;
   queryParams?: Record<string, any>;
   getFormattedData: (param: any) => any[];
   disableCreate?: boolean;
-  noOptionsMessage?: () => any;
+  noOptionsMessage?: ReactNode | string;
 }
 
 const CreatableSearch = React.forwardRef(
@@ -36,20 +47,18 @@ const CreatableSearch = React.forwardRef(
       className = '',
       disabled = false,
       dataTestId = '',
-      addItemDataTestId = '',
       error,
       control,
       label = '',
       required = false,
       placeholder = '',
-      height = '44px',
       defaultValue,
-      menuPlacement = 'bottom',
+      menuPlacement = 'bottomLeft',
       fetchQuery,
       queryParams,
       getFormattedData,
       disableCreate,
-      noOptionsMessage = () => 'No options',
+      noOptionsMessage = 'No options',
     }: ICreatableSearch,
     ref?: any,
   ) => {
@@ -63,7 +72,7 @@ const CreatableSearch = React.forwardRef(
       }),
     );
 
-    const transformedOption = getFormattedData(data);
+    const transformedOptions = getFormattedData(data);
 
     const { field } = useController({
       name,
@@ -71,11 +80,6 @@ const CreatableSearch = React.forwardRef(
     });
 
     const [open, setOpen] = useState<boolean>(false);
-    const uniqueClassName =
-      'select_' +
-      Math.random().toFixed(5).slice(2) +
-      ' !max-h-44 divide-y divide-neutral-200 !py-0';
-    const menuListRef = useRef<HTMLDivElement>(null);
 
     const labelStyle = useMemo(
       () =>
@@ -101,30 +105,20 @@ const CreatableSearch = React.forwardRef(
       [error],
     );
 
-    const selectStyle = {
-      control: (styles: any) => {
-        return {
-          ...styles,
-          backgroundColor: '#fff',
-          border: '1px solid #E5E5E5',
-          borderRadius: '32px',
-          height: `${height} !important`,
-          padding: '0px 6px', // change style here because it breaking 2px
-          '&:hover': { borderColor: twConfig.theme.colors.primary['600'] },
-          borderColor: twConfig.theme.colors.primary['500'],
-          boxShadow: styles.boxShadow
-            ? `0 0 0 1px ${twConfig.theme.colors.primary['500']}`
-            : undefined,
-        };
-      },
-      menu: (styles: any) => {
-        return {
-          ...styles,
-          borderRadius: '12px',
-          overflow: 'hidden',
-        };
-      },
-    };
+    const addOptionObject =
+      !disableCreate && searchValue
+        ? {
+            label: <AddOption value={searchValue} />,
+            value: searchValue,
+          }
+        : null;
+    const options = addOptionObject
+      ? [
+          ...(transformedOptions || [{ label: 'D1', value: 'D1' }]),
+          addOptionObject,
+        ]
+      : transformedOptions;
+
     return (
       <div
         className={clsx(
@@ -147,54 +141,20 @@ const CreatableSearch = React.forwardRef(
             name={name}
             control={control}
             render={() => (
-              <CreatableSelect
-                isDisabled={disabled}
+              <Select
+                open={open}
+                showSearch
+                disabled={disabled}
                 placeholder={placeholder}
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  ...selectStyle,
-                }}
+                options={options}
                 defaultValue={defaultValue}
-                defaultInputValue={defaultValue?.label}
-                onInputChange={(value) => setSearchValue(value)}
-                options={transformedOption}
-                menuPlacement={menuPlacement ? menuPlacement : 'top'}
-                menuPortalTarget={document.body}
-                noOptionsMessage={noOptionsMessage}
-                {...(disableCreate && {
-                  isValidNewOption: () => false,
-                })}
-                components={{
-                  Option: ({ innerProps, data, isDisabled, isSelected }) => {
-                    return (
-                      <div
-                        {...innerProps}
-                        className={`px-6 py-3 hover:bg-primary-50 hover:text-primary-500 font-medium text-sm flex items-center ${
-                          isDisabled ? 'cursor-default' : 'cursor-pointer'
-                        } ${isSelected && 'bg-primary-50'}`}
-                        data-testid={
-                          data.__isNew__ ? addItemDataTestId : data.dataTestId
-                        }
-                      >
-                        {data.label}
-                      </div>
-                    );
-                  },
-                  MenuList: (props) => (
-                    <components.MenuList
-                      {...props}
-                      className={uniqueClassName}
-                      innerRef={menuListRef}
-                    ></components.MenuList>
-                  ),
-                }}
-                formatCreateLabel={(inputValue) => (
-                  <>
-                    <Icon name="add" size={16} color="text-neutral-900" />
-                    <span className="ml-[10px] mr-[6px]">Add</span>
-                    <span className="text-blue-500 line-clamp-1">{`'${inputValue}'`}</span>
-                  </>
-                )}
+                placement={menuPlacement ? menuPlacement : undefined}
+                getPopupContainer={(triggerNode) => triggerNode.parentElement}
+                searchValue={searchValue}
+                onSearch={setSearchValue}
+                notFoundContent={
+                  disableCreate || !searchValue ? noOptionsMessage : null
+                }
                 {...field}
                 ref={ref}
                 onBlur={() => setOpen(false)}

@@ -1,8 +1,16 @@
 import React, { useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { Control, useController, Controller } from 'react-hook-form';
-import Select, { MenuPlacement, components } from 'react-select';
-import { twConfig } from 'utils/misc';
+import { Select } from 'antd';
+import './index.css';
+
+import { SelectCommonPlacement } from 'antd/es/_util/motion';
+
+interface IOptions {
+  value: string;
+  label: string;
+  disabled: boolean;
+}
 
 export interface ISingleSelectProps {
   name: string;
@@ -15,8 +23,8 @@ export interface ISingleSelectProps {
   label?: string;
   placeholder?: string;
   height?: string;
-  options: any;
-  menuPlacement: MenuPlacement;
+  options: IOptions[];
+  menuPlacement: SelectCommonPlacement;
 }
 
 const SingleSelect = React.forwardRef(
@@ -30,10 +38,9 @@ const SingleSelect = React.forwardRef(
       control,
       label = '',
       placeholder = '',
-      height = '44px',
       options,
       defaultValue,
-      menuPlacement = 'bottom',
+      menuPlacement = 'bottomLeft',
     }: ISingleSelectProps,
     ref?: any,
   ) => {
@@ -65,43 +72,6 @@ const SingleSelect = React.forwardRef(
       [error],
     );
 
-    const selectStyle = {
-      control: (styles: any) => {
-        return {
-          ...styles,
-          backgroundColor: '#fff',
-          border: '1px solid #E5E5E5',
-          borderRadius: '32px',
-          height,
-          padding: '0px 6px', // change style here because it breaking 2px
-          '&:hover': { borderColor: twConfig.theme.colors.primary['600'] },
-          borderColor: twConfig.theme.colors.primary['500'],
-          boxShadow: styles.boxShadow
-            ? `0 0 0 1px ${twConfig.theme.colors.primary['500']}`
-            : undefined,
-        };
-      },
-    };
-
-    const uniqueClassName = 'select_' + Math.random().toFixed(5).slice(2);
-    const menuListRef = useRef<HTMLDivElement>(null);
-
-    const getHeightOfMenu = () => {
-      if (menuListRef.current)
-        return getComputedStyle(menuListRef.current).height;
-    };
-
-    const animationStyles = (open: boolean) => ({
-      menu: (provided: any) => ({
-        ...provided,
-        height: open ? getHeightOfMenu() : '0px',
-        opacity: open ? 1 : 0,
-        transition: 'all 300ms ease-in-out',
-        overflow: 'hidden',
-        borderRadius: '12px',
-      }),
-    });
-
     const [open, setOpen] = useState<boolean>(false);
 
     return (
@@ -120,48 +90,27 @@ const SingleSelect = React.forwardRef(
             }
           }}
         >
-          {/* remove top margin provide it to parent div if required */}
           <Controller
             name={name}
             control={control}
             defaultValue={defaultValue}
             render={() => (
               <Select
-                isDisabled={disabled}
+                open={open}
+                showSearch
+                disabled={disabled}
                 placeholder={placeholder}
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  ...selectStyle,
-                  ...animationStyles(open),
-                }}
-                menuIsOpen
                 options={options}
                 defaultValue={defaultValue}
-                menuPlacement={menuPlacement ? menuPlacement : undefined}
-                menuPortalTarget={document.body}
-                menuPosition="absolute"
-                components={{
-                  Option: ({ innerProps, data, isDisabled, isSelected }) => {
-                    return (
-                      <div
-                        {...innerProps}
-                        className={`px-6 py-3 hover:bg-primary-50 font-medium text-sm ${
-                          isDisabled ? 'cursor-default' : 'cursor-pointer'
-                        } ${isSelected && 'bg-primary-50'}`}
-                        data-testid={data.dataTestId}
-                      >
-                        {data.label}
-                      </div>
-                    );
-                  },
-                  MenuList: (props) => (
-                    <components.MenuList
-                      {...props}
-                      className={`${uniqueClassName} divide-y divide-neutral-200 !py-0`}
-                      innerRef={menuListRef}
-                    ></components.MenuList>
-                  ),
-                }}
+                placement={menuPlacement ? menuPlacement : undefined}
+                getPopupContainer={(triggerNode) => triggerNode.parentElement}
+                filterOption={(input, option) =>
+                  (option?.label ?? '')
+                    .concat(' ')
+                    .concat(option?.value ?? '')
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
                 {...field}
                 onBlur={() => setOpen(false)}
                 ref={ref}

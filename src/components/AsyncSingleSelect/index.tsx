@@ -1,15 +1,15 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { ReactNode, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { Control, useController, Controller } from 'react-hook-form';
-import AsyncSelect from 'react-select/async';
-import {
-  MenuPlacement,
-  components,
-  IndicatorSeparatorProps,
-} from 'react-select';
-import { twConfig } from 'utils/misc';
+import { Select } from 'antd';
 import './index.css';
+import { SelectCommonPlacement } from 'antd/es/_util/motion';
 
+interface IOptions {
+  value: string;
+  label: string;
+  disabled: boolean;
+}
 export interface IAsyncSingleSelectProps {
   name: string;
   defaultValue?: any;
@@ -20,12 +20,14 @@ export interface IAsyncSingleSelectProps {
   control?: Control<Record<string, any>>;
   label?: string;
   placeholder?: string;
-  height?: string;
-  options: any;
-  menuPlacement: MenuPlacement;
+  options: IOptions[];
+  menuPlacement: SelectCommonPlacement;
   isLoading?: boolean;
-  loadOptions: (inputValue: string) => Promise<any>;
-  noOptionsMessage?: () => any;
+  loadOptions: (
+    inputValue: string,
+    callBack: (options: IOptions[]) => void,
+  ) => Promise<any>;
+  noOptionsMessage?: ReactNode | string;
   isClearable?: boolean;
 }
 
@@ -40,13 +42,12 @@ const AsyncSingleSelect = React.forwardRef(
       control,
       label = '',
       placeholder = '',
-      height = '44px',
       options,
       defaultValue,
-      menuPlacement = 'bottom',
+      menuPlacement = 'bottomLeft',
       isLoading = false,
       loadOptions,
-      noOptionsMessage = () => 'No options',
+      noOptionsMessage = 'No options',
       isClearable = false,
     }: IAsyncSingleSelectProps,
     ref?: any,
@@ -79,44 +80,8 @@ const AsyncSingleSelect = React.forwardRef(
       [error],
     );
 
-    const selectStyle = {
-      control: (styles: any) => {
-        return {
-          ...styles,
-          backgroundColor: '#fff',
-          border: '1px solid #E5E5E5',
-          borderRadius: '32px',
-          height: `${height} !important`,
-          padding: '0px 6px', // change style here because it breaking 2px
-          '&:hover': { borderColor: twConfig.theme.colors.primary['600'] },
-          borderColor: twConfig.theme.colors.primary['500'],
-          boxShadow: styles.boxShadow
-            ? `0 0 0 1px ${twConfig.theme.colors.primary['500']}`
-            : undefined,
-        };
-      },
-    };
-
-    const uniqueClassName = 'select_' + Math.random().toFixed(5).slice(2);
-    const menuListRef = useRef<HTMLDivElement>(null);
-
-    const getHeightOfMenu = () => {
-      if (menuListRef.current)
-        return getComputedStyle(menuListRef.current).height;
-    };
-
-    const animationStyles = (open: boolean) => ({
-      menu: (provided: any) => ({
-        ...provided,
-        height: open ? getHeightOfMenu() : '0px',
-        opacity: open ? 1 : 0,
-        transition: 'all 300ms ease-in-out',
-        overflow: 'hidden',
-        borderRadius: '12px',
-      }),
-    });
-
     const [open, setOpen] = useState<boolean>(false);
+    const [asyncOptions, setAsyncOptions] = useState<IOptions[]>(options);
 
     return (
       <div
@@ -134,63 +99,34 @@ const AsyncSingleSelect = React.forwardRef(
             }
           }}
         >
-          {/* remove top margin provide it to parent div if required */}
           <Controller
             name={name}
             control={control}
             defaultValue={defaultValue}
             render={() => (
-              <AsyncSelect
-                isDisabled={disabled}
+              <Select
+                open={open}
+                showSearch
+                disabled={disabled}
                 placeholder={placeholder}
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  ...selectStyle,
-                  ...animationStyles(open),
-                }}
-                menuIsOpen
-                options={options}
-                loadOptions={loadOptions}
+                options={asyncOptions}
                 defaultValue={defaultValue}
-                menuPlacement={menuPlacement ? menuPlacement : undefined}
-                menuPortalTarget={document.body}
-                menuPosition="absolute"
-                noOptionsMessage={noOptionsMessage}
-                isClearable={isClearable}
-                components={{
-                  Option: ({ innerProps, data, isDisabled, isSelected }) => {
-                    return (
-                      <div
-                        {...innerProps}
-                        className={`px-6 py-3 hover:bg-primary-50 font-medium text-sm ${
-                          isDisabled ? 'cursor-default' : 'cursor-pointer'
-                        } ${isSelected && 'bg-primary-50'}`}
-                        data-testid={data.dataTestId}
-                      >
-                        {data.label}
-                      </div>
-                    );
-                  },
-                  MenuList: (props) => (
-                    <components.MenuList
-                      {...props}
-                      className={`${uniqueClassName} divide-y divide-neutral-200 !py-0`}
-                      innerRef={menuListRef}
-                    ></components.MenuList>
-                  ),
-                  IndicatorSeparator: ({
-                    innerProps,
-                  }: IndicatorSeparatorProps<any, true>) => {
-                    return <span style={{ display: 'none' }} {...innerProps} />;
-                  },
-                }}
+                placement={menuPlacement ? menuPlacement : undefined}
+                getPopupContainer={(triggerNode) => triggerNode.parentElement}
+                filterOption={(input, option) =>
+                  (option?.label ?? '')
+                    .concat(' ')
+                    .concat(option?.value ?? '')
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                onSearch={(q) => loadOptions(q, setAsyncOptions)}
+                notFoundContent={noOptionsMessage}
+                allowClear={isClearable}
+                loading={isLoading}
                 {...field}
                 onBlur={() => setOpen(false)}
-                openMenuOnClick
                 ref={ref}
-                cacheOptions
-                defaultOptions
-                isLoading={isLoading}
               />
             )}
           />

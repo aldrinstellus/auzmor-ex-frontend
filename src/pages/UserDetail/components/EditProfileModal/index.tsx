@@ -205,12 +205,14 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       dataTestId: `${dataTestId}-location`,
       placeholder: 'Select a location',
       label: 'Location',
-      loadOptions: (inputValue: string, callback: (options: any[]) => void) => {
+      loadOptions: (
+        inputValue: string,
+        callback: (options: IOptions[]) => void,
+      ) => {
         debouncedLoadLocations(inputValue, callback);
       },
       noOptionsMessage: () => 'No locations',
       control,
-      menuPlacement: 'top',
     },
   ];
 
