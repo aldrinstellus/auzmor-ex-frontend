@@ -42,7 +42,7 @@ export interface IAudienceForm {
   privacy: { value: string; label: string };
   categorySearch: string;
   categories: Record<string, boolean | undefined>;
-  teams: any;
+  teams: Record<string, ITeam | false>;
   channels: any;
   users: Record<string, IGetUser | false>;
 }
