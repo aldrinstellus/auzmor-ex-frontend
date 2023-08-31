@@ -1,6 +1,6 @@
 import Header from 'components/ModalHeader';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import Footer from './Footer';
 import AudienceSelector from 'components/AudienceSelector';
 import { useForm } from 'react-hook-form';
@@ -10,6 +10,7 @@ import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 
 interface IAudienceProps {
   closeModal: () => void;
+  dataTestId?: string;
 }
 
 export enum AudienceFlow {
@@ -19,7 +20,7 @@ export enum AudienceFlow {
   ChannelSelect = 'CHANNEL_SELECT',
 }
 
-const Audience: React.FC<IAudienceProps> = ({ closeModal }) => {
+const Audience: React.FC<IAudienceProps> = ({ closeModal, dataTestId }) => {
   const { setActiveFlow, clearPostContext, audience, setAudience } =
     useContext(CreatePostContext);
   const [isEveryoneSelected, setIsEveryoneSelected] = useState<boolean>(
@@ -157,6 +158,19 @@ const Audience: React.FC<IAudienceProps> = ({ closeModal }) => {
         setActiveFlow(CreatePostFlow.CreatePost);
     }
   };
+
+  const getTitleDataTestIds = useCallback(() => {
+    switch (audienceFlow) {
+      case AudienceFlow.ChannelSelect:
+        return 'select-channel-modal';
+      case AudienceFlow.TeamSelect:
+        return 'select-team-modal';
+      case AudienceFlow.UserSelect:
+        return 'select-user-modal';
+      default:
+        return `${dataTestId}-modal`;
+    }
+  }, [audienceFlow]);
   return form ? (
     <>
       <form onSubmit={form?.handleSubmit(onSubmit)}>
@@ -167,7 +181,8 @@ const Audience: React.FC<IAudienceProps> = ({ closeModal }) => {
             clearPostContext();
             closeModal();
           }}
-          closeBtnDataTestId="audience-modal-close"
+          titleDataTestId={getTitleDataTestIds()}
+          closeBtnDataTestId={`${dataTestId}-close`}
         />
         <AudienceSelector
           audienceFlow={audienceFlow}
@@ -179,6 +194,7 @@ const Audience: React.FC<IAudienceProps> = ({ closeModal }) => {
           isValid
           handleBackButtonClick={handleBackButtonClick}
           audienceFlow={audienceFlow}
+          dataTestId={dataTestId}
         />
       </form>
     </>

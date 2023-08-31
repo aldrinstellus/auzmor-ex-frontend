@@ -12,6 +12,7 @@ import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 interface IChannelsBodyProps {
   entityRenderer?: (data: IGetUser) => ReactNode;
   selectedChannelIds?: string[];
+  dataTestId?: string;
 }
 
 const ChannelsBody: React.FC<IChannelsBodyProps> = ({

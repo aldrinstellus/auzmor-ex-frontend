@@ -14,11 +14,13 @@ import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 interface IMembersBodyProps {
   entityRenderer?: (data: IGetUser) => ReactNode;
   selectedMemberIds?: string[];
+  dataTestId?: string;
 }
 
 const MembersBody: React.FC<IMembersBodyProps> = ({
   entityRenderer,
   selectedMemberIds = [],
+  dataTestId,
 }) => {
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
@@ -152,6 +154,7 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
               label: 'Select member',
               placeholder: 'Add via name or email address',
               isClearable: true,
+              dataTestId: `select-${dataTestId}-search`,
             },
           ]}
           className="pb-4"
@@ -196,6 +199,7 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
                   }
                 }}
                 selectionCount={selectedDepartments.length}
+                dataTestId={`departmentfilter`}
               />
             </div>
             <div className="relative">
@@ -231,6 +235,7 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
                   }
                 }}
                 selectionCount={selectedLocations.length}
+                dataTestId={`locationfilter`}
               />
             </div>
           </div>
@@ -248,6 +253,7 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
                 setValue(`locations.${key}`, false),
               );
             }}
+            data-testid={`select-${dataTestId}-clearfilter`}
           >
             Clear filters
           </div>
@@ -282,6 +288,7 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
                       return e.target.checked;
                     },
                   },
+                  dataTestId: `select-${dataTestId}-selectall`,
                 },
               ]}
             />
@@ -293,6 +300,7 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
                   control,
                   label: 'Show selected members',
                   className: 'flex item-center',
+                  dataTestId: `select-${dataTestId}-showselected`,
                 },
               ]}
               className="ml-4"
@@ -304,6 +312,7 @@ const MembersBody: React.FC<IMembersBodyProps> = ({
               setValue('selectAll', false);
               setValue('showSelectedMembers', false);
             }}
+            data-testid={`select-${dataTestId}-clearall`}
           >
             clear all
           </div>

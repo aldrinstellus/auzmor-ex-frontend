@@ -31,6 +31,7 @@ const EntitySearchModalBody: React.FC<IEntitySearchModalBodyProps> = ({
         <MembersBody
           entityRenderer={entityRenderer}
           selectedMemberIds={selectedMemberIds}
+          dataTestId="user"
         />
       );
     case EntitySearchModalType.Team:
@@ -38,6 +39,7 @@ const EntitySearchModalBody: React.FC<IEntitySearchModalBodyProps> = ({
         <TeamsBody
           entityRenderer={entityRenderer}
           selectedTeamIds={selectedTeamIds}
+          dataTestId="team"
         />
       );
     case EntitySearchModalType.Channel:
@@ -45,6 +47,7 @@ const EntitySearchModalBody: React.FC<IEntitySearchModalBodyProps> = ({
         <ChannelsBody
           entityRenderer={entityRenderer}
           selectedChannelIds={selectedChannelIds}
+          dataTestId="channel"
         />
       );
     default:
