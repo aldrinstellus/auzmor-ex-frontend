@@ -9,6 +9,8 @@ import {
 import Body from './Body';
 import Button from 'components/Button';
 import { Variant as ButtonVariant } from 'components/Button';
+import { AudienceEntityType, IAudience } from 'queries/post';
+import { IAudienceForm } from 'components/EntitySearchModal';
 
 interface ICreateShoutoutProps {
   closeModal: () => void;
@@ -120,10 +122,6 @@ const CreateShoutout: React.FC<ICreateShoutoutProps> = ({ closeModal }) => {
         triggerSubmit={triggerSubmit}
         getFile={getFile}
         setIsFileAdded={setIsFileAdded}
-        control={control}
-        watch={watch}
-        setValue={setValue}
-        resetField={resetField}
         users={users}
         selectedUserIds={shoutoutUserIds}
       />

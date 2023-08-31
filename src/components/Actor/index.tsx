@@ -1,6 +1,6 @@
 import React from 'react';
 import Avatar from 'components/Avatar';
-import { CREATE_POST, VIEW_POST } from './constant';
+import { VIEW_POST } from './constant';
 import useAuth from 'hooks/useAuth';
 import { IAudience, ICreatedBy } from 'queries/post';
 import { Link } from 'react-router-dom';
@@ -29,19 +29,6 @@ const Actor: React.FC<ActorProps> = ({
   const actorStyles = clsx({
     'flex justify-between items-center mx-6 mt-6 mb-4': true,
   });
-
-  const iconStyle = clsx({
-    'text-neutral-400': disabled,
-  });
-
-  const visibilityStyle = clsx(
-    {
-      'text-xxs text-neutral-900 font-medium ml-1.5': true,
-    },
-    {
-      'text-neutral-400': disabled,
-    },
-  );
 
   return (
     <div className={actorStyles}>
