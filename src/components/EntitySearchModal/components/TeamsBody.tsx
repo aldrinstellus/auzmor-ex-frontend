@@ -13,11 +13,13 @@ import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 interface ITeamsBodyProps {
   entityRenderer?: (data: ITeam) => ReactNode;
   selectedTeamIds?: string[];
+  dataTestId?: string;
 }
 
 const TeamsBody: React.FC<ITeamsBodyProps> = ({
   entityRenderer,
   selectedTeamIds = [],
+  dataTestId,
 }) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const { form } = useEntitySearchFormStore();
@@ -118,6 +120,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
               label: 'Search for a team',
               placeholder: 'Search via team name',
               isClearable: true,
+              dataTestId: `select-${dataTestId}-search`,
             },
           ]}
           className="pb-4"
@@ -162,6 +165,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
                   }
                 }}
                 selectionCount={selectedCategories.length}
+                dataTestId={`categoryfilter`}
               />
             </div>
           </div>
@@ -175,6 +179,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
                 setValue(`categories.${key}`, false),
               );
             }}
+            data-testid={`select-${dataTestId}-clearfilter`}
           >
             Clear filters
           </div>
@@ -209,6 +214,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
                       return e.target.checked;
                     },
                   },
+                  dataTestId: `select-${dataTestId}-selectall`,
                 },
               ]}
             />
@@ -220,6 +226,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
                   control,
                   label: 'Show selected members',
                   className: 'flex item-center',
+                  dataTestId: `select-${dataTestId}-showselected`,
                 },
               ]}
               className="ml-4"
@@ -231,6 +238,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
               setValue('selectAll', false);
               setValue('showSelectedMembers', false);
             }}
+            data-testid={`select-${dataTestId}-clearall`}
           >
             clear all
           </div>

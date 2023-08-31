@@ -29,6 +29,7 @@ interface IInfiniteSearchProps {
   selectionCount?: number;
   itemRenderer?: (item: IOption) => ReactNode;
   disabled?: boolean;
+  dataTestId?: string;
 }
 
 const InfiniteSearch: React.FC<IInfiniteSearchProps> = ({
@@ -46,6 +47,7 @@ const InfiniteSearch: React.FC<IInfiniteSearchProps> = ({
   selectionCount = 0,
   itemRenderer,
   disabled = false,
+  dataTestId,
 }) => {
   const { ref, inView } = useInView();
   useEffect(() => {
@@ -76,6 +78,7 @@ const InfiniteSearch: React.FC<IInfiniteSearchProps> = ({
       placeholder: 'Search',
       isClearable: true,
       leftIcon: 'search',
+      dataTestId: `${dataTestId}-search`,
     },
   ];
 
@@ -94,10 +97,13 @@ const InfiniteSearch: React.FC<IInfiniteSearchProps> = ({
   return (
     <PopupMenu
       triggerNode={
-        <div className={triggeredNodeStyle}>
+        <div className={triggeredNodeStyle} data-testid={dataTestId}>
           <div className="mr-1">{title}</div>
           {selectionCount > 0 && (
-            <div className="flex items-center justify-center rounded-full bg-red-500 text-white w-6 h-6 mx-1">
+            <div
+              className="flex items-center justify-center rounded-full bg-red-500 text-white w-6 h-6 mx-1"
+              data-testid={`${dataTestId}-count`}
+            >
               {selectionCount}
             </div>
           )}
@@ -129,6 +135,7 @@ const InfiniteSearch: React.FC<IInfiniteSearchProps> = ({
                         className="px-6 py-2 flex items-center"
                         key={option.id}
                         onClick={(e) => e.stopPropagation()}
+                        data-testid={`${dataTestId}-${option.label}`}
                       >
                         <Layout fields={checkboxField(option)} />
                         <div>{option.label}</div>
@@ -145,8 +152,14 @@ const InfiniteSearch: React.FC<IInfiniteSearchProps> = ({
                   className="mr-2"
                   size={Size.Small}
                   onClick={onReset}
+                  dataTestId={`${dataTestId}-reset`}
                 />
-                <Button label={'Apply'} size={Size.Small} onClick={onApply} />
+                <Button
+                  label={'Apply'}
+                  size={Size.Small}
+                  onClick={onApply}
+                  dataTestId={`${dataTestId}-apply`}
+                />
               </div>
             </div>
           ),

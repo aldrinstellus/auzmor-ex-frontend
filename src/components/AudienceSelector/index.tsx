@@ -44,6 +44,7 @@ const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
         data?.adminSettings?.postingControls.limitGlobalPosting && !isAdmin,
       isSelected: isEveryoneSelected,
       selectedCount: 0,
+      dataTestId: 'audience-selection-everyone',
     },
     // {
     //   key: 'channels',
@@ -58,6 +59,7 @@ const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
     //   selectedCount: Object.keys(channels).filter(
     //     (id: string) => !!channels[id],
     //   ).length,
+    //   dataTestId: 'audience-selection-channel'
     // },
     {
       key: 'teams',
@@ -71,6 +73,7 @@ const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
       ),
       selectedCount: Object.keys(teams).filter((id: string) => !!teams[id])
         .length,
+      dataTestId: 'audience-selection-teams',
     },
   ];
 
@@ -92,6 +95,7 @@ const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
               key={entity.key}
               className="flex p-4 border border-neutral-200 rounded-22xl mb-4 hover:shadow-xl group cursor-pointer justify-between items-center"
               onClick={entity.onClick}
+              data-testid={entity.dataTestId}
             >
               <div className="flex items-center">
                 <div
@@ -116,7 +120,10 @@ const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
                 </div>
               </div>
               {entity.selectedCount ? (
-                <div className="flex border rounded-17xl px-3 py-1 items-center bg-primary-50 h-6">
+                <div
+                  className="flex border rounded-17xl px-3 py-1 items-center bg-primary-50 h-6"
+                  data-testid="audience-selection-selectedmsg"
+                >
                   <div>
                     <Icon
                       name="tickCircle"
