@@ -45,7 +45,6 @@ const Body: React.FC<ShoutoutBodyProps> = ({
           entityType={EntitySearchModalType.User}
           selectedMemberIds={selectedUserIds}
           entityRenderer={(data: IGetUser) => {
-            console.log(data);
             return (
               <div className="flex space-x-4 w-full pr-2">
                 <Avatar
