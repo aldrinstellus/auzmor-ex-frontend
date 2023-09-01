@@ -127,7 +127,6 @@ const SingleSelect = React.forwardRef(
                   showSearch
                   disabled={disabled}
                   placeholder={placeholder}
-                  options={options}
                   defaultValue={defaultValue}
                   placement={menuPlacement ? menuPlacement : undefined}
                   popupMatchSelectWidth={false}
@@ -137,13 +136,6 @@ const SingleSelect = React.forwardRef(
                     }
                     return triggerNode.parentElement;
                   }}
-                  filterOption={(input, option) =>
-                    (option?.label ?? '')
-                      .concat(' ')
-                      .concat(option?.value ?? '')
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
                   {...field}
                   notFoundContent={noContentFound()}
                   onBlur={() => setOpen(false)}
@@ -161,7 +153,7 @@ const SingleSelect = React.forwardRef(
                       value={option.value}
                       label={option.label}
                     >
-                      {option.label}
+                      <div data-testid={option.dataTestId}>{option.label}</div>
                     </Option>
                   ))}
                 </Select>

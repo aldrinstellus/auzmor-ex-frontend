@@ -16,6 +16,7 @@
 
 .ant-select-selection-search-input {
   padding: 0 10px !important;
+  padding-right: 20px !important;
 }
 
 .ant-select-selector:hover {

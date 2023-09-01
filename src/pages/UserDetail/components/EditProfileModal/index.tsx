@@ -114,7 +114,11 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       q: inputValue || userDetails?.workLocation?.name || 'a',
     });
     callback(
-      data.map((place: any) => ({ label: place.name, value: place.name })),
+      data.map((place: any) => ({
+        label: place.name,
+        value: place.name,
+        dataTestId: `${dataTestId}-location-${place.name}`,
+      })),
     );
     setLocationLoading(false);
   };

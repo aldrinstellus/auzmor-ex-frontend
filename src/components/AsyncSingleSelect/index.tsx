@@ -4,12 +4,14 @@ import { Control, useController, Controller } from 'react-hook-form';
 import { Select, ConfigProvider } from 'antd';
 import './index.css';
 import { SelectCommonPlacement } from 'antd/es/_util/motion';
+import Icon from 'components/Icon';
 
 const { Option } = Select;
 interface IOptions {
   value: string;
   label: string;
   disabled: boolean;
+  dataTestId?: string;
 }
 export interface IAsyncSingleSelectProps {
   name: string;
@@ -134,7 +136,6 @@ const AsyncSingleSelect = React.forwardRef(
                   showSearch
                   disabled={disabled}
                   placeholder={placeholder}
-                  options={asyncOptions}
                   defaultValue={defaultValue}
                   placement={menuPlacement ? menuPlacement : undefined}
                   getPopupContainer={(triggerNode) => {
@@ -143,13 +144,6 @@ const AsyncSingleSelect = React.forwardRef(
                     }
                     return triggerNode.parentElement;
                   }}
-                  filterOption={(input, option) =>
-                    (option?.label ?? '')
-                      .concat(' ')
-                      .concat(option?.value ?? '')
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
                   onSearch={(q) => loadOptions(q, setAsyncOptions)}
                   notFoundContent={noContentFound()}
                   onInputKeyDown={() => setOpen(true)}
@@ -170,7 +164,7 @@ const AsyncSingleSelect = React.forwardRef(
                       value={option.value}
                       label={option.label}
                     >
-                      {option.label}
+                      <div data-testid={option.dataTestId}>{option.label}</div>
                     </Option>
                   ))}
                 </Select>
