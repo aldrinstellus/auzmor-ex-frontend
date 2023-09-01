@@ -196,6 +196,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       getFormattedData: formatDepartments,
       queryParams: {},
       disableCreate: !isAdmin,
+      getPopupContainer: document.body,
       noOptionsMessage: () => 'No Departments found',
       control,
     },

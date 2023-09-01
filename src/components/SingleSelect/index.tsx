@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { Control, useController, Controller } from 'react-hook-form';
 import { Select, ConfigProvider } from 'antd';
@@ -160,7 +160,6 @@ const SingleSelect = React.forwardRef(
                       key={option.value}
                       value={option.value}
                       label={option.label}
-                      data-testid="Helo"
                     >
                       {option.label}
                     </Option>

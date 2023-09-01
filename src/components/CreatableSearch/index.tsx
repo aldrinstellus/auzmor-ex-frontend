@@ -1,8 +1,8 @@
-import React, { ReactNode, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Control, Controller, useController } from 'react-hook-form';
 import clsx from 'clsx';
-import { Select } from 'antd';
-import { isFiltersEmpty, twConfig } from 'utils/misc';
+import { Select, ConfigProvider } from 'antd';
+import { isFiltersEmpty } from 'utils/misc';
 import { useDebounce } from 'hooks/useDebounce';
 import Icon from 'components/Icon';
 import './index.css';
@@ -11,16 +11,6 @@ import { SelectCommonPlacement } from 'antd/es/_util/motion';
 const { Option } = Select;
 
 type ApiCallFunction = (queryParams: any) => any;
-
-const AddOption = (props: { value?: string }) => (
-  <div className="flex items-center justify-start">
-    <Icon name="add" size={16} color="text-neutral-900" />
-    <span className="ml-[10px] mr-[6px]">Add</span>
-    <span className="text-blue-500 line-clamp-1">{`'${
-      props.value || ''
-    }'`}</span>
-  </div>
-);
 
 export interface ICreatableSearch {
   name: string;
@@ -40,6 +30,9 @@ export interface ICreatableSearch {
   getFormattedData: (param: any) => any[];
   disableCreate?: boolean;
   noOptionsMessage?: string;
+  height?: number;
+  fontSize?: number;
+  getPopupContainer?: any;
 }
 
 const CreatableSearch = React.forwardRef(
@@ -49,6 +42,7 @@ const CreatableSearch = React.forwardRef(
       className = '',
       disabled = false,
       dataTestId = '',
+      addItemDataTestId = '',
       error,
       control,
       label = '',
@@ -61,12 +55,15 @@ const CreatableSearch = React.forwardRef(
       getFormattedData,
       disableCreate,
       noOptionsMessage = 'No options',
+      height = 44,
+      fontSize = 14,
+      getPopupContainer = null,
     }: ICreatableSearch,
     ref?: any,
   ) => {
     const [searchValue, setSearchValue] = useState<string>('');
     const debouncedSearchValue = useDebounce(searchValue || '', 500);
-    const { data } = fetchQuery(
+    const { data, isLoading } = fetchQuery(
       isFiltersEmpty({
         q: debouncedSearchValue.toLowerCase().trim(),
         limit: 3,
@@ -108,7 +105,10 @@ const CreatableSearch = React.forwardRef(
       (transformedOptions || []).find((option) => searchValue === option.label);
 
     const addOptionObject =
-      !disableCreate && searchValue && !isOptionContains(searchValue)
+      !disableCreate &&
+      searchValue &&
+      !isOptionContains(searchValue) &&
+      !isLoading
         ? {
             label: searchValue,
             value: searchValue,
@@ -121,84 +121,104 @@ const CreatableSearch = React.forwardRef(
 
     const noContentFound = () => (
       <div className="px-6 py-2 text-neutral-500 text-center">
-        {noOptionsMessage}
+        {isLoading ? 'Loading...' : noOptionsMessage}
       </div>
     );
 
     return (
-      <div
-        className={clsx(
-          { [`relative ${className}`]: true },
-          { 'pointer-events-none': disabled },
-        )}
+      <ConfigProvider
+        theme={{
+          token: {
+            controlHeight: height,
+            fontSize: fontSize,
+            fontFamily: 'Manrope',
+          },
+        }}
       >
-        <div className={labelStyle}>
-          {label} <span className="text-red-500">{required && '*'}</span>
-        </div>
         <div
-          data-testid={dataTestId}
-          onClick={() => {
-            if (!disabled) {
-              setOpen(!open);
-            }
-          }}
+          className={clsx(
+            { [`relative ${className}`]: true },
+            { 'pointer-events-none': disabled },
+          )}
         >
-          <Controller
-            name={name}
-            control={control}
-            render={() => (
-              <Select
-                open={open}
-                showSearch
-                disabled={disabled}
-                placeholder={placeholder}
-                defaultValue={defaultValue}
-                placement={menuPlacement ? menuPlacement : undefined}
-                getPopupContainer={(triggerNode) => triggerNode.parentElement}
-                searchValue={searchValue}
-                onSearch={setSearchValue}
-                filterOption={false}
-                notFoundContent={
-                  disableCreate || !searchValue ? noContentFound() : null
-                }
-                {...field}
-                ref={ref}
-                onBlur={() => setOpen(false)}
-                optionLabelProp="label"
-                onChange={(_, option) => {
-                  field.onChange(option);
-                }}
-                className="creatable-search"
-              >
-                {(options || []).map((option) => (
-                  <Option
-                    key={option.value}
-                    value={option.value}
-                    label={option.label}
-                  >
-                    {option.isNew ? (
-                      <div className="flex items-center justify-start">
-                        <Icon name="add" size={16} color="text-neutral-900" />
-                        <span className="ml-[10px] mr-[6px]">Add</span>
-                        <span className="text-blue-500 line-clamp-1">
-                          {`'${option.label}'`}
-                        </span>
-                      </div>
-                    ) : (
-                      option.label
-                    )}
-                  </Option>
-                ))}
-              </Select>
-            )}
-          />
+          <div className={labelStyle}>
+            {label} <span className="text-red-500">{required && '*'}</span>
+          </div>
+          <div
+            data-testid={dataTestId}
+            onClick={() => {
+              if (!disabled) {
+                setOpen(!open);
+              }
+            }}
+          >
+            <Controller
+              name={name}
+              control={control}
+              render={() => (
+                <Select
+                  open
+                  showSearch
+                  disabled={disabled}
+                  placeholder={placeholder}
+                  defaultValue={defaultValue}
+                  placement={menuPlacement ? menuPlacement : undefined}
+                  getPopupContainer={(triggerNode) => {
+                    if (getPopupContainer) {
+                      return getPopupContainer;
+                    }
+                    return triggerNode.parentElement;
+                  }}
+                  searchValue={searchValue}
+                  onSearch={setSearchValue}
+                  filterOption={false}
+                  notFoundContent={noContentFound()}
+                  onInputKeyDown={() => setOpen(true)}
+                  {...field}
+                  ref={ref}
+                  // onBlur={() => setOpen(false)}
+                  optionLabelProp="label"
+                  onChange={(_, option) => {
+                    field.onChange(option);
+                  }}
+                  suffixIcon={<Icon name="arrowDown" size={18} />}
+                  className="creatable-search"
+                >
+                  {(options || []).map((option) => (
+                    <Option
+                      key={option.value}
+                      value={option.value}
+                      label={option.label}
+                    >
+                      {option.isNew ? (
+                        <div
+                          className="flex items-center justify-start"
+                          data-testid={addItemDataTestId}
+                        >
+                          <Icon name="add" size={16} color="text-neutral-900" />
+                          <span className="ml-[10px] mr-[6px]">Add</span>
+                          <span className="text-blue-500 line-clamp-1">
+                            {`'${option.label}'`}
+                          </span>
+                        </div>
+                      ) : (
+                        <div data-testid={option.dataTestId}>
+                          {option.label}
+                        </div>
+                      )}
+                    </Option>
+                  ))}
+                </Select>
+              )}
+            />
+          </div>
+          <div
+            className={`absolute -bottom-4 text-xs truncate leading-tight ${helpTextStyles}`}
+          >
+            {error || ' '}
+          </div>
         </div>
-        <div
-          className={`absolute -bottom-4 text-xs truncate leading-tight ${helpTextStyles}`}
-        >
-          {error || ' '}
-        </div>
-      </div>
+      </ConfigProvider>
     );
   },
 );
