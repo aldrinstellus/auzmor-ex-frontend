@@ -5,6 +5,7 @@ import './index.css';
 import UserNode from './UserNode';
 import ExpandButtonContent from './ExpandButtonContent';
 import UserCard from 'components/UserCard';
+import { useOrgChart } from 'queries/users';
 
 export interface INode {
   id: string;

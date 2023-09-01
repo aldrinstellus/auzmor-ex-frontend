@@ -5,17 +5,30 @@ import IconButton, {
 } from 'components/IconButton';
 import useModal from 'hooks/useModal';
 import FilterModal from 'pages/Users/components/FilterModals/PeopleFilterModal';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { OrgChartMode } from '..';
 import clsx from 'clsx';
 import Icon from 'components/Icon';
-import { twConfig } from 'utils/misc';
+import {
+  getAvatarColor,
+  getFullName,
+  getProfileImage,
+  twConfig,
+} from 'utils/misc';
 import Tooltip from 'components/Tooltip';
 import { OrgChart } from 'd3-org-chart';
+import Popover from 'components/Popover';
+import { IGetUser, useInfiniteUsers } from 'queries/users';
+import { useDebounce } from 'hooks/useDebounce';
+import Avatar from 'components/Avatar';
+import Spinner from 'components/Spinner';
+import { useInView } from 'react-intersection-observer';
+import UserRow from 'components/UserRow';
 
 interface IForm {
-  searchField: string;
+  memberSearch: string;
+  specificPersonSearch: string;
 }
 
 interface IToolbar {
@@ -29,20 +42,94 @@ const Toolbar: React.FC<IToolbar> = ({
   setActiveMode,
   chartRef,
 }) => {
-  const { control } = useForm<IForm>();
+  const { control, watch } = useForm<IForm>();
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const [userStatus, setUserStatus] = useState<string>('');
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [isSpotlightActive, setIsSpotlightActive] = useState(false);
-  const fields = [
+
+  const [memberSearch, specificPersonSearch] = watch([
+    'memberSearch',
+    'specificPersonSearch',
+  ]);
+
+  // fetch users on start with specific user
+  const debouncedPersonSearchValue = useDebounce(
+    specificPersonSearch || '',
+    300,
+  );
+  const {
+    data: fetchedPersons,
+    isFetchingNextPage: isFetchingNextPersons,
+    fetchNextPage: fetchNextPersons,
+    hasNextPage: hasNextPersons,
+    isFetching: isPersonFetching,
+  } = useInfiniteUsers(
+    {
+      q: debouncedPersonSearchValue,
+    },
+    { enabled: debouncedPersonSearchValue !== '' },
+  );
+  const personData = fetchedPersons?.pages.flatMap((page) => {
+    return page?.data?.result?.data.map((person: IGetUser) => {
+      try {
+        return person;
+      } catch (e) {
+        console.log('Error', { person });
+      }
+    });
+  });
+
+  // fetch members on search
+  const debouncedMemberSearchValue = useDebounce(memberSearch || '', 300);
+  const {
+    data: fetchedMembers,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+  } = useInfiniteUsers(
+    {
+      q: debouncedMemberSearchValue,
+    },
+    { enabled: debouncedMemberSearchValue !== '' },
+  );
+  const memberData = fetchedMembers?.pages.flatMap((page) => {
+    return page?.data?.result?.data.map((member: IGetUser) => {
+      try {
+        return member;
+      } catch (e) {
+        console.log('Error', { member });
+      }
+    });
+  });
+
+  const { ref: personInviewRef, inView } = useInView();
+  useEffect(() => {
+    if (inView) {
+      fetchNextPersons();
+    }
+  }, [inView]);
+  const memberSearchfields = [
     {
       type: FieldType.Input,
       control,
-      name: 'searchField',
+      name: 'memberSearch',
       className: 'mr-2',
       placeholder: 'Search members',
       dataTestId: 'global-search',
       leftIcon: 'search',
+    },
+  ];
+  const specificPersonSearchFields = [
+    {
+      type: FieldType.Input,
+      name: 'specificPersonSearch',
+      control,
+      leftIcon: 'search',
+      placeholder: 'Search member',
+      label: 'Start with specific person',
+      className: 'px-6',
     },
   ];
 
@@ -70,7 +157,7 @@ const Toolbar: React.FC<IToolbar> = ({
     <>
       <div className="mt-7 px-4 py-3 mb-8 w-full shadow-lg rounded-9xl bg-white flex justify-between items-center">
         <div className="flex items-center">
-          <Layout fields={fields} />
+          <Layout fields={memberSearchfields} />
           <div className="flex">
             <IconButton
               onClick={openFilterModal}
@@ -106,14 +193,49 @@ const Toolbar: React.FC<IToolbar> = ({
             color="text-neutral-900"
           />
           <div className="border-neutral-200 border rounded-9xl px-6 py-2 flex items-center ml-4">
-            <Tooltip
-              tooltipContent="Start with a specific person"
-              tooltipPosition="bottom"
+            <Popover
+              triggerNode={
+                <Tooltip
+                  tooltipContent="Start with a specific person"
+                  tooltipPosition="bottom"
+                >
+                  <div className="group flex items-center">
+                    <Icon
+                      name="groupOutline"
+                      color="text-neutral-900"
+                      size={16}
+                    />
+                  </div>
+                </Tooltip>
+              }
+              className="py-4 rounded-9xl shadow-2xl min-w-[540px] absolute -translate-x-1/2 mt-11 top-arrow ml-2"
             >
-              <div className="group">
-                <Icon name="groupOutline" color="text-neutral-900" />
-              </div>
-            </Tooltip>
+              <>
+                <Layout fields={specificPersonSearchFields} />
+                <div className="h-full overflow-scroll max-h-80">
+                  {isPersonFetching ? (
+                    <div className="w-full h-64 flex items-center justify-center">
+                      <Spinner />
+                    </div>
+                  ) : personData && personData?.length > 0 ? (
+                    personData?.map((member: IGetUser) => (
+                      <UserRow user={member} key={member.id} />
+                    ))
+                  ) : personData?.length === 0 &&
+                    debouncedPersonSearchValue !== '' ? (
+                    <div className="w-full flex items-center justify-center pt-6 text-neutral-500">
+                      No member found
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                  {hasNextPersons && !isFetchingNextPersons && (
+                    <div ref={personInviewRef} />
+                  )}
+                </div>
+              </>
+            </Popover>
+
             <div className="mx-4 bg-neutral-200 h-6 w-px" />
             <div className="mr-4 group">
               <Tooltip
@@ -131,6 +253,7 @@ const Toolbar: React.FC<IToolbar> = ({
                     }
                     setIsCollapsed(!isCollapsed);
                   }}
+                  size={16}
                 />
               </Tooltip>
             </div>
@@ -143,15 +266,15 @@ const Toolbar: React.FC<IToolbar> = ({
                   onClick={() => {
                     chartRef.current?.fit();
                   }}
+                  size={16}
                 />
               </Tooltip>
             </div>
             <div className="group">
               <Tooltip tooltipContent="Spotlight me" tooltipPosition="bottom">
                 <Icon
-                  name="focusOutline"
+                  name="focus"
                   color="text-neutral-900"
-                  size={32}
                   onClick={() => {
                     if (isSpotlightActive) {
                       chartRef.current?.clearHighlighting();
@@ -165,6 +288,7 @@ const Toolbar: React.FC<IToolbar> = ({
                     setIsSpotlightActive(!isSpotlightActive);
                   }}
                   isActive={isSpotlightActive}
+                  size={24}
                 />
               </Tooltip>
             </div>
@@ -177,6 +301,7 @@ const Toolbar: React.FC<IToolbar> = ({
                   onClick={() => {
                     chartRef.current?.zoomOut();
                   }}
+                  size={16}
                 />
               </Tooltip>
             </div>
@@ -186,6 +311,7 @@ const Toolbar: React.FC<IToolbar> = ({
                   name="zoomInOutline"
                   color="text-neutral-900"
                   onClick={() => chartRef.current?.zoomIn()}
+                  size={16}
                 />
               </Tooltip>
             </div>

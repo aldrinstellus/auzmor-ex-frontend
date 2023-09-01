@@ -1,5 +1,5 @@
 import Button, { Variant } from 'components/Button';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Toolbar from './components/Toolbar';
 import Chart from './components/Chart';
 import { OrgChart } from 'd3-org-chart';

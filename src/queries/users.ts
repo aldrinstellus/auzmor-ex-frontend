@@ -107,6 +107,17 @@ export interface IGetUser {
   designation?: string;
 }
 
+interface IGetOrgChartPayload {
+  q?: string;
+  root?: string;
+  target?: string;
+  departments?: string[];
+  locations?: string[];
+  status?: string; // Active, Invited, Inactive
+  expand?: number; // +/- integer. Expand -> root +/- number levels
+  expandAll?: boolean;
+}
+
 export const getAllUser = async ({
   pageParam = null,
   queryKey,
@@ -116,7 +127,10 @@ export const getAllUser = async ({
   } else return await apiService.get(pageParam);
 };
 
-export const useInfiniteUsers = (q?: Record<string, any>) => {
+export const useInfiniteUsers = (
+  q?: Record<string, any>,
+  rest?: Record<string, any>,
+) => {
   return useInfiniteQuery({
     queryKey: ['users', q],
     queryFn: getAllUser,
@@ -132,6 +146,7 @@ export const useInfiniteUsers = (q?: Record<string, any>) => {
       return currentPage?.data?.result?.paging?.prev;
     },
     staleTime: 5 * 60 * 1000,
+    ...rest,
   });
 };
 
@@ -214,6 +229,10 @@ export const acceptInviteSetPassword = async (q: Record<string, any>) => {
   return await apiService.put('/users/invite/reset-password', q);
 };
 
+const getOrgChart = async ({ queryKey }: QueryFunctionContext<any>) => {
+  return await apiService.get('/users/chart', queryKey[1]);
+};
+
 /* REACT QUERY */
 
 // use react query to get single user
@@ -286,5 +305,17 @@ export const useIsUserExistAuthenticated = (email = '') => {
     queryKey: ['user-exist-auth', email],
     queryFn: () => isUserExistAuthenticated({ email }),
     staleTime: 1000,
+  });
+};
+
+export const useOrgChart = (
+  payload?: IGetOrgChartPayload,
+  rest?: Record<string, any>,
+) => {
+  return useQuery({
+    queryKey: ['organization-chart', payload],
+    queryFn: getOrgChart,
+    staleTime: 5 * 60 * 1000,
+    ...rest,
   });
 };
