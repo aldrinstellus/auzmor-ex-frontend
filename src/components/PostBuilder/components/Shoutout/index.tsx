@@ -9,7 +9,6 @@ import {
 import Body from './Body';
 import Button from 'components/Button';
 import { Variant as ButtonVariant } from 'components/Button';
-import { AudienceEntityType, IAudience } from 'queries/post';
 import { IAudienceForm } from 'components/EntitySearchModal';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 
@@ -23,14 +22,6 @@ export enum SHOUTOUT_STEPS {
 }
 
 const CreateShoutout: React.FC<ICreateShoutoutProps> = ({ closeModal }) => {
-  const { form, setForm } = useEntitySearchFormStore();
-  const audienceForm = useForm<IAudienceForm>({
-    defaultValues: {
-      showSelectedMembers: false,
-      selectAll: false,
-      users: {},
-    },
-  });
   const {
     setActiveFlow,
     setUploads,
@@ -38,10 +29,28 @@ const CreateShoutout: React.FC<ICreateShoutoutProps> = ({ closeModal }) => {
     shoutoutUserIds,
     setPostType,
     removeAllMedia,
+    media,
   } = useContext(CreatePostContext);
+  const { form, setForm } = useEntitySearchFormStore();
+  const users = form ? form!.watch('users') : {};
+  const audienceForm = useForm<IAudienceForm>({
+    defaultValues: {
+      showSelectedMembers: false,
+      selectAll: false,
+      users: {
+        ...shoutoutUserIds.reduce(
+          (obj, value) =>
+            Object.assign(obj, {
+              [value]: true,
+            }),
+          {},
+        ),
+      },
+    },
+  });
   const [step, setStep] = useState<SHOUTOUT_STEPS>(SHOUTOUT_STEPS.UserSelect);
   const [triggerSubmit, setTriggerSubmit] = useState(false);
-  const [users, setUsers] = useState<any>([]);
+  const [selectedUsers, setSelectedUsers] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFileAdded, setIsFileAdded] = useState(false);
 
@@ -61,16 +70,15 @@ const CreateShoutout: React.FC<ICreateShoutoutProps> = ({ closeModal }) => {
 
   const handleNext = () => {
     if (step === SHOUTOUT_STEPS.UserSelect) {
-      const formData = form!.getValues();
       const _users: any[] = [];
       const ids: any[] = [];
-      Object.keys(formData.users).forEach((key) => {
-        if (formData.users[key]) {
-          _users.push(formData.users[key]);
+      Object.keys(users).forEach((key) => {
+        if (users[key]) {
+          _users.push(users[key]);
           ids.push(key);
         }
       });
-      setUsers(_users);
+      setSelectedUsers(_users);
       setShoutoutUserIds(ids);
       setStep(SHOUTOUT_STEPS.ImageSelect);
     } else {
@@ -89,11 +97,8 @@ const CreateShoutout: React.FC<ICreateShoutoutProps> = ({ closeModal }) => {
 
   const isBtnDisabled = () => {
     if (step === SHOUTOUT_STEPS.UserSelect) {
-      const formData = form!.getValues();
       return (
-        !formData.users ||
-        Object.keys(formData.users).filter((key) => formData.users[key])
-          .length === 0
+        !users || Object.keys(users).filter((key) => users[key]).length === 0
       );
     }
     if (step === SHOUTOUT_STEPS.ImageSelect) {
@@ -131,8 +136,8 @@ const CreateShoutout: React.FC<ICreateShoutoutProps> = ({ closeModal }) => {
         triggerSubmit={triggerSubmit}
         getFile={getFile}
         setIsFileAdded={setIsFileAdded}
-        users={users}
-        selectedUserIds={shoutoutUserIds}
+        users={selectedUsers}
+        selectedUserIds={Object.keys(users).filter((key: string) => users[key])}
       />
       <div className="bg-blue-50 flex items-center justify-end p-3 gap-x-3 rounded-9xl w-full">
         <Button
