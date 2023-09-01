@@ -1,15 +1,18 @@
 import React, { useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { Control, useController, Controller } from 'react-hook-form';
-import { Select } from 'antd';
+import { Select, ConfigProvider } from 'antd';
 import './index.css';
 
 import { SelectCommonPlacement } from 'antd/es/_util/motion';
+import Icon from 'components/Icon';
 
+const { Option } = Select;
 interface IOptions {
   value: string;
   label: string;
   disabled: boolean;
+  dataTestId?: string;
 }
 
 export interface ISingleSelectProps {
@@ -22,9 +25,13 @@ export interface ISingleSelectProps {
   control?: Control<Record<string, any>>;
   label?: string;
   placeholder?: string;
-  height?: string;
+  height?: number;
+  fontSize?: number;
   options: IOptions[];
   menuPlacement: SelectCommonPlacement;
+  getPopupContainer?: any;
+  noOptionsMessage?: string;
+  suffixIcon?: React.ReactNode | null;
 }
 
 const SingleSelect = React.forwardRef(
@@ -40,7 +47,12 @@ const SingleSelect = React.forwardRef(
       placeholder = '',
       options,
       defaultValue,
+      height = 44,
+      fontSize = 14,
       menuPlacement = 'bottomLeft',
+      getPopupContainer = null,
+      noOptionsMessage = 'No options',
+      suffixIcon = null,
     }: ISingleSelectProps,
     ref?: any,
   ) => {
@@ -72,63 +84,99 @@ const SingleSelect = React.forwardRef(
       [error],
     );
 
+    const noContentFound = () => (
+      <div className="px-6 py-2 text-neutral-500 text-center">
+        {noOptionsMessage}
+      </div>
+    );
+
     const [open, setOpen] = useState<boolean>(false);
 
     return (
-      <div
-        className={clsx(
-          { [`relative ${className}`]: true },
-          { 'cursor-not-allowed': disabled },
-        )}
+      <ConfigProvider
+        theme={{
+          token: {
+            controlHeight: height,
+            fontSize: fontSize,
+            fontFamily: 'Manrope',
+          },
+        }}
       >
-        <div className={labelStyle}>{label}</div>
         <div
-          data-testid={dataTestId}
-          onClick={() => {
-            if (!disabled) {
-              setOpen(!open);
-            }
-          }}
+          className={clsx(
+            { [`relative ${className}`]: true },
+            { 'cursor-not-allowed': disabled },
+          )}
         >
-          <Controller
-            name={name}
-            control={control}
-            defaultValue={defaultValue}
-            render={() => (
-              <Select
-                open={open}
-                showSearch
-                disabled={disabled}
-                placeholder={placeholder}
-                options={options}
-                defaultValue={defaultValue}
-                placement={menuPlacement ? menuPlacement : undefined}
-                getPopupContainer={(triggerNode) => triggerNode.parentElement}
-                filterOption={(input, option) =>
-                  (option?.label ?? '')
-                    .concat(' ')
-                    .concat(option?.value ?? '')
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                {...field}
-                onBlur={() => setOpen(false)}
-                onChange={(_, option) => {
-                  field.onChange(option);
-                }}
-                className="single-select"
-                ref={ref}
-              />
-            )}
-          />
-        </div>
+          <div className={labelStyle}>{label}</div>
+          <div
+            data-testid={dataTestId}
+            onClick={() => {
+              if (!disabled) {
+                setOpen(!open);
+              }
+            }}
+          >
+            <Controller
+              name={name}
+              control={control}
+              defaultValue={defaultValue}
+              render={() => (
+                <Select
+                  open={open}
+                  showSearch
+                  disabled={disabled}
+                  placeholder={placeholder}
+                  options={options}
+                  defaultValue={defaultValue}
+                  placement={menuPlacement ? menuPlacement : undefined}
+                  popupMatchSelectWidth={false}
+                  getPopupContainer={(triggerNode) => {
+                    if (getPopupContainer) {
+                      return getPopupContainer;
+                    }
+                    return triggerNode.parentElement;
+                  }}
+                  filterOption={(input, option) =>
+                    (option?.label ?? '')
+                      .concat(' ')
+                      .concat(option?.value ?? '')
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  {...field}
+                  notFoundContent={noContentFound()}
+                  onBlur={() => setOpen(false)}
+                  onChange={(_, option) => {
+                    field.onChange(option);
+                  }}
+                  onSearch={() => setOpen(true)}
+                  className="single-select"
+                  suffixIcon={suffixIcon || <Icon name="arrowDown" size={18} />}
+                  ref={ref}
+                >
+                  {(options || []).map((option) => (
+                    <Option
+                      key={option.value}
+                      value={option.value}
+                      label={option.label}
+                      data-testid="Helo"
+                    >
+                      {option.label}
+                    </Option>
+                  ))}
+                </Select>
+              )}
+            />
+          </div>
 
-        <div
-          className={`absolute -bottom-4 text-xs truncate leading-tight ${helpTextStyles}`}
-        >
-          {error || ' '}
+          <div
+            className={`absolute -bottom-4 text-xs truncate leading-tight ${helpTextStyles}`}
+          >
+            {error || ' '}
+          </div>
         </div>
-      </div>
+      </ConfigProvider>
     );
   },
 );

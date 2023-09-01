@@ -6,10 +6,16 @@
   border-color: theme('colors.neutral.200') !important;
   border-width: 1px !important;
   border-radius: 32px !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
+  padding: 0 20px !important;
   align-items: center !important;
-  height: 36px !important;
+}
+
+.ant-select-selection-placeholder {
+  color: theme('colors.neutral.500') !important;
+}
+
+.single-select .ant-select-selection-search-input {
+  padding: 0 10px !important;
 }
 
 .ant-select-selector:hover {
@@ -18,10 +24,12 @@
 
 .single-select .ant-select-selection-item {
   font-weight: theme('fontWeight.bold') !important;
-  font-size: theme('fontSize.sm') !important;
   line-height: theme('lineHeight.normal') !important;
   color: theme('colors.neutral.900') !important;
-  font-family: 'Manrope';
+}
+.ant-select-item-option-content {
+  display: flex !important;
+  align-items: center !important;
 }
 
 .ant-select-dropdown {
