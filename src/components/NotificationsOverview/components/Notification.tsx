@@ -5,7 +5,7 @@ import {
   getNotificationMessage,
   getNotificationElementContent,
 } from '../utils';
-import { NotificationProps } from './NotificationsList';
+import { ActionType, NotificationProps } from './NotificationsList';
 import { useMutation } from '@tanstack/react-query';
 import { markNotificationAsReadById } from 'queries/notifications';
 import queryClient from 'utils/queryClient';
@@ -32,6 +32,7 @@ const Notification: React.FC<NotificationCardProps> = ({
   const { cardContent, redirect } = getNotificationElementContent(
     action,
     target,
+    actor,
   );
 
   const markNotificationAsReadMutation = useMutation({
@@ -53,6 +54,25 @@ const Notification: React.FC<NotificationCardProps> = ({
       );
     },
   });
+
+  const getNotificationHeaderMessage = () => {
+    if (action.type === ActionType.SHOUTOUT) {
+      return (
+        <>
+          <span className="font-bold">{notificationMessage}&nbsp;</span>
+          <span className="font-bold text-primary-500">{actor.fullName}</span>
+          <span className="font-bold">! 🎉🥳</span>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <span className="font-bold">{actor.fullName}&nbsp;</span>
+          {notificationMessage}
+        </>
+      );
+    }
+  };
 
   const handleOnClick = () => {
     // Redirect user to the post
@@ -88,8 +108,7 @@ const Notification: React.FC<NotificationCardProps> = ({
             <div className="flex flex-col gap-y-2 w-full">
               <div className="flex flex-col">
                 <p className="text-neutral-900 text-sm">
-                  <span className="font-bold">{actor.fullName}&nbsp;</span>
-                  {notificationMessage}
+                  {getNotificationHeaderMessage()}
                 </p>
                 <p className="text-xs text-neutral-500 font-normal">
                   {humanizeTime(action.actedAt)}
@@ -99,6 +118,7 @@ const Notification: React.FC<NotificationCardProps> = ({
                 TopCardContent={cardContent?.TopCardContent}
                 BottomCardContent={cardContent?.BottomCardContent}
                 image={cardContent?.image}
+                type={cardContent?.type}
               />
             </div>
             {/* Unread indicator (orange dot) */}
