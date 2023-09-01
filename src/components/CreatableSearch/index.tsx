@@ -157,7 +157,7 @@ const CreatableSearch = React.forwardRef(
               control={control}
               render={() => (
                 <Select
-                  open
+                  open={open}
                   showSearch
                   disabled={disabled}
                   placeholder={placeholder}
@@ -176,7 +176,7 @@ const CreatableSearch = React.forwardRef(
                   onInputKeyDown={() => setOpen(true)}
                   {...field}
                   ref={ref}
-                  // onBlur={() => setOpen(false)}
+                  onBlur={() => setOpen(false)}
                   optionLabelProp="label"
                   onChange={(_, option) => {
                     field.onChange(option);

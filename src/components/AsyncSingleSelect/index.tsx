@@ -1,10 +1,11 @@
-import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { Control, useController, Controller } from 'react-hook-form';
-import { Select } from 'antd';
+import { Select, ConfigProvider } from 'antd';
 import './index.css';
 import { SelectCommonPlacement } from 'antd/es/_util/motion';
 
+const { Option } = Select;
 interface IOptions {
   value: string;
   label: string;
@@ -29,6 +30,9 @@ export interface IAsyncSingleSelectProps {
   ) => Promise<any>;
   noOptionsMessage?: string;
   isClearable?: boolean;
+  height?: number;
+  fontSize?: number;
+  getPopupContainer?: any;
 }
 
 const AsyncSingleSelect = React.forwardRef(
@@ -49,6 +53,9 @@ const AsyncSingleSelect = React.forwardRef(
       loadOptions,
       noOptionsMessage = 'No options',
       isClearable = false,
+      height = 44,
+      fontSize = 14,
+      getPopupContainer = null,
     }: IAsyncSingleSelectProps,
     ref?: any,
   ) => {
@@ -93,64 +100,91 @@ const AsyncSingleSelect = React.forwardRef(
     );
 
     return (
-      <div
-        className={clsx(
-          { [`relative ${className}`]: true },
-          { 'pointer-events-none': disabled },
-        )}
+      <ConfigProvider
+        theme={{
+          token: {
+            controlHeight: height,
+            fontSize: fontSize,
+            fontFamily: 'Manrope',
+          },
+        }}
       >
-        <div className={labelStyle}>{label}</div>
         <div
-          data-testid={dataTestId}
-          onClick={() => {
-            if (!disabled) {
-              setOpen(!open);
-            }
-          }}
+          className={clsx(
+            { [`relative ${className}`]: true },
+            { 'pointer-events-none': disabled },
+          )}
         >
-          <Controller
-            name={name}
-            control={control}
-            defaultValue={defaultValue}
-            render={() => (
-              <Select
-                open={open}
-                showSearch
-                disabled={disabled}
-                placeholder={placeholder}
-                options={asyncOptions}
-                defaultValue={defaultValue}
-                placement={menuPlacement ? menuPlacement : undefined}
-                getPopupContainer={(triggerNode) => triggerNode.parentElement}
-                filterOption={(input, option) =>
-                  (option?.label ?? '')
-                    .concat(' ')
-                    .concat(option?.value ?? '')
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                onSearch={(q) => loadOptions(q, setAsyncOptions)}
-                notFoundContent={noContentFound()}
-                allowClear={isClearable}
-                loading={isLoading}
-                {...field}
-                onBlur={() => setOpen(false)}
-                ref={ref}
-                onChange={(_, option) => {
-                  field.onChange(option);
-                }}
-                className="async-single-select"
-              />
-            )}
-          />
-        </div>
+          <div className={labelStyle}>{label}</div>
+          <div
+            data-testid={dataTestId}
+            onClick={() => {
+              if (!disabled) {
+                setOpen(!open);
+              }
+            }}
+          >
+            <Controller
+              name={name}
+              control={control}
+              defaultValue={defaultValue}
+              render={() => (
+                <Select
+                  open={open}
+                  showSearch
+                  disabled={disabled}
+                  placeholder={placeholder}
+                  options={asyncOptions}
+                  defaultValue={defaultValue}
+                  placement={menuPlacement ? menuPlacement : undefined}
+                  getPopupContainer={(triggerNode) => {
+                    if (getPopupContainer) {
+                      return getPopupContainer;
+                    }
+                    return triggerNode.parentElement;
+                  }}
+                  filterOption={(input, option) =>
+                    (option?.label ?? '')
+                      .concat(' ')
+                      .concat(option?.value ?? '')
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  onSearch={(q) => loadOptions(q, setAsyncOptions)}
+                  notFoundContent={noContentFound()}
+                  onInputKeyDown={() => setOpen(true)}
+                  allowClear={isClearable}
+                  loading={isLoading}
+                  {...field}
+                  onBlur={() => setOpen(false)}
+                  ref={ref}
+                  onChange={(_, option) => {
+                    field.onChange(option);
+                  }}
+                  optionLabelProp="label"
+                  className="async-single-select"
+                >
+                  {(asyncOptions || []).map((option) => (
+                    <Option
+                      key={option.value}
+                      value={option.value}
+                      label={option.label}
+                    >
+                      {option.label}
+                    </Option>
+                  ))}
+                </Select>
+              )}
+            />
+          </div>
 
-        <div
-          className={`absolute -bottom-4 text-xs truncate leading-tight ${helpTextStyles}`}
-        >
-          {error || ' '}
+          <div
+            className={`absolute -bottom-4 text-xs truncate leading-tight ${helpTextStyles}`}
+          >
+            {error || ' '}
+          </div>
         </div>
-      </div>
+      </ConfigProvider>
     );
   },
 );
