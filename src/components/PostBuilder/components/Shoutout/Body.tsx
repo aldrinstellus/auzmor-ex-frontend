@@ -16,6 +16,7 @@ import Avatar from 'components/Avatar';
 import { IGetUser } from 'queries/users';
 import DynamicImagePreview from 'components/DynamicImagePreview';
 import { SHOUTOUT_STEPS } from '.';
+import { getProfileImage } from 'utils/misc';
 
 interface ShoutoutBodyProps {
   step: SHOUTOUT_STEPS;
@@ -50,7 +51,7 @@ const Body: React.FC<ShoutoutBodyProps> = ({
                 <Avatar
                   name={data?.fullName || 'U'}
                   size={32}
-                  image={data?.profileImage?.original}
+                  image={getProfileImage(data)}
                 />
                 <div className="flex space-x-6 w-full">
                   <div className="flex flex-col w-full">
