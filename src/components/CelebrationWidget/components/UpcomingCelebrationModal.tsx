@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import momentTz from 'moment-timezone';
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
 import { CELEBRATION_TYPE } from '..';
@@ -6,6 +7,8 @@ import Button, { Size, Variant } from 'components/Button';
 import User from './User';
 import { useCelebrations } from 'queries/post';
 import SkeletonLoader from './SkeletonLoader';
+import { AuthContext } from 'contexts/AuthContext';
+import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 
 interface UpcomingCelebrationModalProps {
   open: boolean;
@@ -18,7 +21,13 @@ const UpcomingCelebrationModal: React.FC<UpcomingCelebrationModalProps> = ({
   closeModal,
   type,
 }) => {
+  const { user } = useContext(AuthContext);
+  const { currentTimezone } = useCurrentTimezone();
+  const userTimezone = user?.timezone || currentTimezone || 'Asia/Kolkata';
   const { data, isLoading } = useCelebrations();
+  const currentDate = momentTz().tz(userTimezone);
+  const isBirthday = type === CELEBRATION_TYPE.Birthday;
+
   const formattedData = data?.pages.flatMap((page: any) => {
     return page?.data?.result?.data.map((celebration: any) => {
       try {
@@ -29,6 +38,24 @@ const UpcomingCelebrationModal: React.FC<UpcomingCelebrationModalProps> = ({
     });
   });
 
+  const thisMonthCelebration = formattedData
+    ? formattedData.filter((item) => {
+        const itemDate = momentTz(
+          isBirthday ? item.dateOfBirth : item.joinDate,
+        ).tz(userTimezone);
+        return itemDate.month() === currentDate.month();
+      })
+    : [];
+
+  const upcomingMonthCelebration = formattedData
+    ? formattedData.filter((item) => {
+        const itemDate = momentTz(
+          isBirthday ? item.dateOfBirth : item.joinDate,
+        ).tz(userTimezone);
+        return itemDate.month() >= currentDate.month() + 1;
+      })
+    : [];
+
   const modalTitle =
     type === CELEBRATION_TYPE.Birthday
       ? 'Upcoming birthdays 🎂'
@@ -36,7 +63,7 @@ const UpcomingCelebrationModal: React.FC<UpcomingCelebrationModalProps> = ({
   return (
     <Modal open={open} closeModal={closeModal} className="max-w-[648px]">
       <Header title={modalTitle} onClose={closeModal} />
-      <div className="max-h-[390px] overflow-y-auto px-6 w-full divide-y divide-neutral-200">
+      <div className="max-h-[390px] overflow-y-auto px-6 w-full">
         {(() => {
           if (isLoading) {
             return (
@@ -52,11 +79,41 @@ const UpcomingCelebrationModal: React.FC<UpcomingCelebrationModalProps> = ({
           if (formattedData && formattedData.length > 0) {
             return (
               <>
-                {formattedData.map((celebration) => (
-                  <div className="py-4" key={celebration.featuredUser.userId}>
+                {/* This month celebration */}
+                {thisMonthCelebration.length > 0 &&
+                  upcomingMonthCelebration.length > 0 && (
+                    <div className="text-sm font-semibold px-2 mt-4">
+                      This Month
+                    </div>
+                  )}
+                {thisMonthCelebration.map((celebration) => (
+                  <div
+                    className="py-4 border-b border-neutral-200"
+                    key={celebration.featuredUser.userId}
+                  >
                     <User type={type} data={celebration} hideSendWishBtn />
                   </div>
                 ))}
+
+                {/* Upcoming Month celebration */}
+                {upcomingMonthCelebration.length > 0 && (
+                  <>
+                    {thisMonthCelebration.length > 0 &&
+                      upcomingMonthCelebration.length > 0 && (
+                        <div className="text-sm font-semibold px-2 mt-4">
+                          Upcoming Month
+                        </div>
+                      )}
+                    {upcomingMonthCelebration.map((celebration) => (
+                      <div
+                        className="py-4"
+                        key={celebration.featuredUser.userId}
+                      >
+                        <User type={type} data={celebration} hideSendWishBtn />
+                      </div>
+                    ))}
+                  </>
+                )}
               </>
             );
           }

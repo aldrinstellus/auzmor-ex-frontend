@@ -5,7 +5,7 @@ import IconButton, {
 } from 'components/IconButton';
 import RichTextEditor from 'components/RichTextEditor';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createComment, updateComment } from 'queries/comments';
+import { createComment, sendWish, updateComment } from 'queries/comments';
 import ReactQuill from 'react-quill';
 import { DeltaStatic } from 'quill';
 import { toast } from 'react-toastify';
@@ -34,6 +34,7 @@ import Banner, { Variant as BannerVariant } from 'components/Banner';
 export enum PostCommentMode {
   Create = 'CREATE',
   Edit = 'EDIT',
+  SendWish = 'SEND_WISH',
 }
 
 interface CommentFormProps {
@@ -90,7 +91,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
 
   const createCommentMutation = useMutation({
     mutationKey: ['create-comment'],
-    mutationFn: createComment,
+    mutationFn: mode === PostCommentMode.SendWish ? sendWish : createComment,
     onError: (error: any) => {
       console.log(error);
     },
@@ -218,7 +219,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
       const uploadedMedia = await uploadMedia(files, EntityType.Comment);
       fileIds = uploadedMedia.map((media: IMedia) => media.id);
     }
-    if (mode === PostCommentMode.Create) {
+    if (mode === PostCommentMode.Create || mode === PostCommentMode.SendWish) {
       setIsCreateCommentLoading(true);
       let fileIds: string[] = [];
       if (files.length) {
@@ -306,11 +307,15 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
 
   return (
     <div className={`flex flex-row ${className} `}>
-      <div className="flex flex-col items-center py-3 gap-2 border border-neutral-200 rounded-19xl border-solid w-full">
+      <div className="flex flex-col items-center py-[7px] gap-2 border border-neutral-200 rounded-19xl border-solid w-full">
         <RichTextEditor
           toolbarId={`toolbar-${entityId}`}
           defaultValue={commentData?.content?.editor}
-          placeholder="Leave a comment..."
+          placeholder={
+            mode === PostCommentMode.SendWish
+              ? 'Wish them now...'
+              : 'Leave a comment...'
+          }
           className="max-h-18 min-w-[70%] relative"
           ref={quillRef}
           dataTestId="postcomment-textbox"
@@ -346,6 +351,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
                 size={SizeVariant.Large}
                 variant={IconVariant.Primary}
                 onClick={() => {
+                  console.log(isCreateCommentLoading);
                   if (!isCreateCommentLoading) {
                     onSubmit();
                   }

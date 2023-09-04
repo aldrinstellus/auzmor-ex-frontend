@@ -115,6 +115,7 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
                       type={type}
                       key={celebration.featuredUser.userId}
                       data={celebration}
+                      onSendWish={openUpcomingModal}
                     />
                   ))}
 
@@ -132,6 +133,7 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
                           type={type}
                           data={celebration}
                           key={celebration.featuredUser.userId}
+                          onSendWish={openUpcomingModal}
                         />
                       ))}
                     </>
