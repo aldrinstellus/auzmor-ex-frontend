@@ -40,6 +40,7 @@ const Body: React.FC<ShoutoutBodyProps> = ({
         <EntitySearchModalBody
           entityType={EntitySearchModalType.User}
           selectedMemberIds={selectedUserIds}
+          entitySearchLabel="Give kudos to:"
           entityRenderer={(data: IGetUser) => {
             return (
               <div className="flex space-x-4 w-full pr-2">
