@@ -25,8 +25,7 @@ import DeactivatePeople from '../DeactivateModal/Deactivate';
 import ReactivatePeople from '../ReactivateModal/Reactivate';
 import clsx from 'clsx';
 import _ from 'lodash';
-import { removeTeamMember } from 'queries/teams';
-import FailureToast from 'components/Toast/variants/FailureToast';
+import RemoveTeamMember from '../DeleteModals/TeamMember';
 
 export interface IPeopleCardProps {
   id: string;
@@ -79,6 +78,11 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
   const { isAdmin } = useRole();
   const [isHovered, eventHandlers] = useHover();
   const [openDelete, openDeleteModal, closeDeleteModal] = useModal();
+  const [
+    openRemoveTeamMember,
+    openRemoveTeamMemberModal,
+    closeRemoveTeamMemberModal,
+  ] = useModal();
   const [openReactivate, openReactivateModal, closeReactivateModal] =
     useModal();
   const [openDeactivate, openDeactivateModal, closeDeactivateModal] =
@@ -141,49 +145,6 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
       });
     },
   });
-  const onRemoveTeamMember = useMutation({
-    mutationFn: removeTeamMember,
-    mutationKey: ['remove-team-member'],
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['team', teamId] });
-      toast(<SuccessToast content={`Successfully removed one member`} />, {
-        closeButton: (
-          <Icon name="closeCircleOutline" color="text-primary-500" size={20} />
-        ),
-        style: {
-          border: `1px solid ${twConfig.theme.colors.primary['300']}`,
-          borderRadius: '6px',
-          display: 'flex',
-          alignItems: 'center',
-        },
-        autoClose: TOAST_AUTOCLOSE_TIME,
-        transition: slideInAndOutTop,
-        theme: 'dark',
-      });
-    },
-    onError: () => {
-      toast(
-        <FailureToast
-          content="Error removing the member"
-          dataTestId="comment-toaster"
-        />,
-        {
-          closeButton: (
-            <Icon name="closeCircleOutline" color="text-red-500" size={20} />
-          ),
-          style: {
-            border: `1px solid ${twConfig.theme.colors.red['300']}`,
-            borderRadius: '6px',
-            display: 'flex',
-            alignItems: 'center',
-          },
-          autoClose: TOAST_AUTOCLOSE_TIME,
-          transition: slideInAndOutTop,
-          theme: 'dark',
-        },
-      );
-    },
-  });
 
   const leftChipStyle = clsx({
     'absolute top-0 left-0 text-white rounded-tl-[12px] rounded-br-[12px] px-3 py-1 text-xxs font-medium':
@@ -243,12 +204,7 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
             });
             resendInviteMutation.mutate(id);
           }}
-          onRemoveTeamMember={() =>
-            onRemoveTeamMember.mutate({
-              teamId: teamId || '',
-              params: { userIds: [id] },
-            })
-          }
+          onRemoveTeamMember={openRemoveTeamMemberModal}
           triggerNode={
             <div className="cursor-pointer">
               <Icon
@@ -392,6 +348,12 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
         openModal={openDeleteModal}
         closeModal={closeDeleteModal}
         userId={id}
+      />
+      <RemoveTeamMember
+        open={openRemoveTeamMember}
+        closeModal={closeRemoveTeamMemberModal}
+        userId={id}
+        teamId={teamId || ''}
       />
       <DeactivatePeople
         open={openDeactivate}
