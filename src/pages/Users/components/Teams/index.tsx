@@ -267,9 +267,8 @@ const Team: React.FC<ITeamProps> = ({
       )}
 
       {/* CATEGORY FILTER */}
-
       {filters.categories.length > 0 && (
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-start mb-6">
           <div className="flex items-center space-x-2 flex-wrap gap-y-2">
             <div className="text-base text-neutral-500 whitespace-nowrap">
               Filter By
@@ -296,7 +295,7 @@ const Team: React.FC<ITeamProps> = ({
             ))}
           </div>
           <div
-            className="text-neutral-500 border px-3 py-1  mt-2 whitespace-nowrap rounded-7xl hover:text-primary-600 hover:border-primary-600 cursor-pointer"
+            className="text-neutral-500 border px-3 py-[3px] whitespace-nowrap rounded-7xl hover:text-primary-600 hover:border-primary-600 cursor-pointer"
             onClick={clearFilters}
           >
             Clear Filters

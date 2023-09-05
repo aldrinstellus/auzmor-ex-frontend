@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
 import Button, { Variant as ButtonVariant, Type } from 'components/Button';
@@ -40,33 +40,36 @@ const TeamFilterModal: React.FC<ITeamFilterModalProps> = ({
     setSelectedCategories(filters.categories);
   }, [filters]);
 
-  const CategoryFilter = () => (
-    <InfiniteFilterList
-      apiCall={useInfiniteCategories}
-      apiCallParams={{
-        type: CategoryType.TEAM,
-        limit: 10,
-      }}
-      searchProps={{
-        placeholder: 'Search',
-        dataTestId: 'teams-category-search',
-        isClearable: true,
-      }}
-      setSelectedItems={setSelectedCategories}
-      selectedItems={selectedCategories}
-      showSelectedFilterPill
-      renderItem={(item) => (
-        <>
-          <input
-            type="checkbox"
-            data-testid={`select-'${item.name}'`}
-            className="h-4 w-4 rounded-xl flex-shrink-0 cursor-pointer accent-primary-600 outline-neutral-500"
-            checked={find(selectedCategories, item)}
-          ></input>
-          <span className="ml-3 text-xs font-medium">{item?.name}</span>
-        </>
-      )}
-    />
+  const CategoryFilter = useMemo(
+    () => (
+      <InfiniteFilterList
+        apiCall={useInfiniteCategories}
+        apiCallParams={{
+          type: CategoryType.TEAM,
+          limit: 10,
+        }}
+        searchProps={{
+          placeholder: 'Search',
+          dataTestId: 'teams-category-search',
+          isClearable: true,
+        }}
+        setSelectedItems={setSelectedCategories}
+        selectedItems={selectedCategories}
+        showSelectedFilterPill
+        renderItem={(item) => (
+          <>
+            <input
+              type="checkbox"
+              data-testid={`select-'${item.name}'`}
+              className="h-4 w-4 rounded-xl flex-shrink-0 cursor-pointer accent-primary-600 outline-neutral-500"
+              checked={find(selectedCategories, item)}
+            />
+            <span className="ml-3 text-xs font-medium">{item?.name}</span>
+          </>
+        )}
+      />
+    ),
+    [selectedCategories],
   );
 
   const filterNavigation = [
@@ -109,7 +112,7 @@ const TeamFilterModal: React.FC<ITeamFilterModalProps> = ({
             </div>
           </div>
           <div className="w-2/3 py-4 px-2">
-            {activeFilter.key === 'category-filters' && <CategoryFilter />}
+            {activeFilter.key === 'category-filters' && CategoryFilter}
           </div>
         </div>
         <div className="flex justify-end items-center h-16 p-6 bg-blue-50 rounded-b-9xl">

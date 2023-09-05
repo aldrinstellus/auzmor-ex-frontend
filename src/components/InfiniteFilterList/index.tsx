@@ -97,24 +97,24 @@ const InfiniteFilterList: React.FC<IInfiniteFilterListProps> = ({
       >
         {showSelectedFilterPill && (
           <div className="flex items-center gap-2 flex-wrap">
-            {selectedItems.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center gap-1 rounded-[24px] border-2 border-b-bg-neutral-200 py-2 px-3 text-sm"
-              >
-                <span className="whitespace-nowrap">{item.name}</span>
-                <Icon
-                  name="closeCircleOutline"
-                  size={20}
-                  className="cursor-pointer"
-                  color="text-black"
-                  onClick={() => onSelectItem(item)}
-                  dataTestId={`chip-close-'${item.name}'`}
-                />
-              </div>
-            ))}
-          </div>
-        )}
+          {selectedItems.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center gap-1 rounded-[24px] border border-neutral-200 bg-neutral-100 py-[7px] px-3 text-sm text-primary-500"
+            >
+              <span className="whitespace-nowrap">{item.name}</span>
+              <Icon
+                name="closeCircleOutline"
+                size={16}
+                className="cursor-pointer"
+                color="text-neutral-900"
+                onClick={() => onSelectItem(item)}
+                dataTestId={`chip-close-'${item.name}'`}
+              />
+            </div>
+          ))}
+        </div>
+)}
         {(() => {
           if (isLoading) {
             return (
