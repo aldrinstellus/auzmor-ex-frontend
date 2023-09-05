@@ -92,8 +92,14 @@ export const addTeamMember = async (
   });
 };
 
-export const removeTeamMember = async (teamId: string) => {
-  const data = await apiService.delete(`/teams/members/${teamId}`);
+export const removeTeamMember = async ({
+  teamId,
+  params,
+}: {
+  teamId: string;
+  params: any;
+}) => {
+  const data = await apiService.delete(`/teams/members/${teamId}`, params);
   return new Promise((res) => {
     res(data);
   });

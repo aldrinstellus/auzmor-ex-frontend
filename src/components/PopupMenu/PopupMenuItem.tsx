@@ -37,16 +37,16 @@ const PopupMenuItem: React.FC<PopupMenuItemProps> = ({
       data-testid={menuItem.dataTestId}
     >
       {menuItem.icon && (
-        <IconWrapper className="flex justify-center items-center w-8 h-8 bg-white border border-neutral-200 rounded-7xl">
+        <div className={menuItem.iconWrapperClassName}>
           <Icon
             name={menuItem.icon}
             size={16}
-            className={menuItem.iconClassName}
             color={(menuItem.disabled && 'text-neutral-200') || menuItem.stroke}
+            className={menuItem.iconClassName}
             hover={hovered}
             disabled={menuItem.disabled}
           />
-        </IconWrapper>
+        </div>
       )}
       <div
         className={clsx(

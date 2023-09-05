@@ -25,6 +25,8 @@ import DeactivatePeople from '../DeactivateModal/Deactivate';
 import ReactivatePeople from '../ReactivateModal/Reactivate';
 import clsx from 'clsx';
 import _ from 'lodash';
+import { removeTeamMember } from 'queries/teams';
+import FailureToast from 'components/Toast/variants/FailureToast';
 
 export interface IPeopleCardProps {
   id: string;
@@ -37,6 +39,8 @@ export interface IPeopleCardProps {
   active?: boolean;
   workEmail?: string;
   status?: any;
+  teamId?: string;
+  isTeamPeople?: boolean;
 }
 
 export enum Status {
@@ -66,6 +70,8 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
   active,
   status,
   workEmail,
+  teamId,
+  isTeamPeople,
 }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -135,6 +141,49 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
       });
     },
   });
+  const onRemoveTeamMember = useMutation({
+    mutationFn: removeTeamMember,
+    mutationKey: ['remove-team-member'],
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['team', teamId] });
+      toast(<SuccessToast content={`Successfully removed one member`} />, {
+        closeButton: (
+          <Icon name="closeCircleOutline" color="text-primary-500" size={20} />
+        ),
+        style: {
+          border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+          borderRadius: '6px',
+          display: 'flex',
+          alignItems: 'center',
+        },
+        autoClose: TOAST_AUTOCLOSE_TIME,
+        transition: slideInAndOutTop,
+        theme: 'dark',
+      });
+    },
+    onError: () => {
+      toast(
+        <FailureToast
+          content="Error removing the member"
+          dataTestId="comment-toaster"
+        />,
+        {
+          closeButton: (
+            <Icon name="closeCircleOutline" color="text-red-500" size={20} />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.red['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+          theme: 'dark',
+        },
+      );
+    },
+  });
 
   const leftChipStyle = clsx({
     'absolute top-0 left-0 text-white rounded-tl-[12px] rounded-br-[12px] px-3 py-1 text-xxs font-medium':
@@ -159,6 +208,7 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
           isAdmin={isAdmin}
           isHovered={isHovered}
           onDeleteClick={openDeleteModal}
+          isTeamPeople={isTeamPeople}
           onEditClick={() =>
             navigate(
               `/users/${id}?edit=${getEditSection(
@@ -172,7 +222,7 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
           onReactivateClick={openReactivateModal}
           onPromoteClick={() => updateUserRoleMutation.mutate({ id })}
           onDeactivateClick={openDeactivateModal}
-          onResendInviteClick={() => () => {
+          onResendInviteClick={() => {
             toast(<SuccessToast content="Invitation has been sent" />, {
               closeButton: (
                 <Icon
@@ -193,6 +243,12 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
             });
             resendInviteMutation.mutate(id);
           }}
+          onRemoveTeamMember={() =>
+            onRemoveTeamMember.mutate({
+              teamId: teamId || '',
+              params: { userIds: [id] },
+            })
+          }
           triggerNode={
             <div className="cursor-pointer">
               <Icon

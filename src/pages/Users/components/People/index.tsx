@@ -270,6 +270,8 @@ const People: React.FC<IPeopleProps> = ({
                   {usersData.map((user: any) => (
                     <PeopleCard
                       key={user.id}
+                      teamId={teamId}
+                      isTeamPeople={isTeamPeople}
                       {...(isTeamPeople
                         ? {
                             ...user.member,
@@ -327,7 +329,7 @@ const People: React.FC<IPeopleProps> = ({
                     className="mt-8 text-lg font-bold"
                     data-testid="no-result-found"
                   >
-                    No result found for &apos;{searchValue}&apos;
+                    {`No result found${searchValue && ` for '${searchValue}'`}`}
                   </div>
                   <div className="text-sm text-gray-500 mt-2">
                     Sorry we can&apos;t find the profile you are looking for.
