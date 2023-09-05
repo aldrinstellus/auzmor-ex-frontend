@@ -191,7 +191,7 @@ const TeamModal: React.FC<IAddTeamModalProps> = ({
     if (data?.category?.type === 'TEAM') {
       categoryValue = data?.category?.value;
     } else {
-      categoryValue = data?.category?.value?.toUpperCase();
+      categoryValue = data?.category?.value;
     }
     const payload = {
       name: data?.name,
