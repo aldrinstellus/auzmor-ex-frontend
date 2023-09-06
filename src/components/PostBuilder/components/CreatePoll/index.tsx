@@ -73,11 +73,15 @@ const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
           }
         : {
             label: '1 Week',
-            value: afterXUnit(1, 'weeks').toISOString().substring(0, 19) + 'Z',
+            value:
+              afterXUnit(1, 'weeks')
+                .endOf('day')
+                .toISOString()
+                .substring(0, 19) + 'Z',
           },
       datepickerValue: poll?.closedAt
         ? new Date(poll?.closedAt)
-        : new Date(afterXUnit(1, 'day').toISOString()),
+        : new Date(afterXUnit(1, 'day').endOf('day').toISOString()),
     },
   });
 
@@ -152,6 +156,7 @@ const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
   const datePickerField = [
     {
       type: FieldType.DatePicker,
+      label: 'Select custom date',
       name: 'datepickerValue',
       control,
       minDate: new Date(afterXUnit(0, 'day').endOf('day').toISOString()),

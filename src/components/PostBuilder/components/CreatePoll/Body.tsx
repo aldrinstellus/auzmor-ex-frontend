@@ -35,7 +35,7 @@ const Body: React.FC<PollBodyProps> = ({
   datePickerField,
 }) => {
   return (
-    <div className="p-6 max-h-[60vh] overflow-y-auto ">
+    <div className="p-6 max-h-[60vh] overflow-y-auto text-neutral-900 text-sm font-medium">
       <Layout fields={questionField} className="mb-6" />
       {fields.map((field, index) => (
         <OptionRow

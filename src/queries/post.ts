@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-query';
 import { DeltaStatic } from 'quill';
 import { isValidUrl } from 'utils/misc';
-import { IMedia, IPoll } from 'contexts/CreatePostContext';
+import { IMedia, IPoll, POST_TYPE } from 'contexts/CreatePostContext';
 import { IComment } from 'components/Comments';
 import { Metadata } from 'components/PreviewLink/types';
 import { useFeedStore } from 'stores/feedStore';
@@ -72,7 +72,7 @@ export interface IPost {
   hashtags: string[] | [];
   files?: string[] | IMedia[];
   pollContext?: IPoll;
-  type: string;
+  type: POST_TYPE;
   audience: IAudience[];
   isAnnouncement: boolean;
   announcement: {

@@ -31,29 +31,8 @@ const RenderQuillContent: React.FC<RenderQuillContent> = ({
   const mentions = data?.mentions ? data.mentions : [];
   const link = (data as IPost)?.link;
   const media = (data as IPost)?.files;
-  // const poll = (data as IPost)?.pollContext;
-  const poll = {
-    question: 'Update poll test',
-    options: [
-      {
-        text: 'whassup',
-        id: 'whassup-id',
-      },
-      {
-        text: 'whassup2',
-        id: 'whassup2-id',
-      },
-      {
-        text: 'whassup3',
-        id: 'whassup3-id',
-      },
-      {
-        text: 'whassup4',
-        id: 'whassup4-id',
-      },
-    ],
-    closedAt: '2023-10-23T05:45:35Z',
-  };
+  const poll = (data as IPost)?.pollContext;
+  const postType = (data as IPost)?.type;
 
   const isEmpty = useMemo(
     () => data.content.text === '\n' || data.content.text === '',
@@ -181,7 +160,7 @@ const RenderQuillContent: React.FC<RenderQuillContent> = ({
           />
         </div>
       )}
-      {/* {poll && (
+      {poll && postType === 'POLL' && (
         <div className="mt-4">
           <Poll
             question={poll.question}
@@ -190,7 +169,7 @@ const RenderQuillContent: React.FC<RenderQuillContent> = ({
             mode={PollMode.VIEW}
           />
         </div>
-      )} */}
+      )}
       {data?.shoutoutRecipients && data?.shoutoutRecipients.length > 0 && (
         <div className="mt-4 flex flex-col gap-2">
           <p
