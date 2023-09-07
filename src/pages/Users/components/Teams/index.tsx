@@ -27,6 +27,7 @@ import { IGetUser } from 'queries/users';
 import Avatar from 'components/Avatar';
 import Icon from 'components/Icon';
 import useAuth from 'hooks/useAuth';
+import { useSearchParams } from 'react-router-dom';
 interface IForm {
   search?: string;
 }
@@ -37,8 +38,8 @@ export enum TeamFlow {
 }
 
 export enum TeamTab {
-  MyTeams = 'MY_TEAMS',
-  AllTeams = 'ALL_TEAMS',
+  MyTeams = 'myteams',
+  AllTeams = 'allteams',
 }
 
 export interface ITeamDetailState {
@@ -72,6 +73,8 @@ const Team: React.FC<ITeamProps> = ({
   openTeamModal,
   closeTeamModal,
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const { user } = useAuth();
   const [teamFlow, setTeamFlow] = useState<TeamFlow>(TeamFlow.CreateTeam); // to context
   const [showTeamDetail, setShowTeamDetail] = useState<ITeamDetailState>({
@@ -82,7 +85,9 @@ const Team: React.FC<ITeamProps> = ({
   const [filters, setFilters] = useState<any>({
     categories: [],
   });
-  const [tab, setTab] = useState<TeamTab>(TeamTab.AllTeams);
+  const [tab, setTab] = useState<TeamTab | string>(
+    searchParams.get('tab') || TeamTab.AllTeams,
+  );
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
@@ -146,56 +151,6 @@ const Team: React.FC<ITeamProps> = ({
     });
   };
 
-  // const teamId = showTeamDetail?.teamDetail?.id;
-
-  // const addTeamMemberMutation = useMutation({
-  //   mutationKey: ['add-team-member', teamId],
-  //   mutationFn: (payload: any) => {
-  //     return addTeamMember(teamId || '', payload);
-  //   },
-  //   onError: (error: any) => {
-  //     toast(
-  //       <FailureToast
-  //         content={`Error Adding Team Members`}
-  //         dataTestId="team-create-error-toaster"
-  //       />,
-  //       {
-  //         closeButton: (
-  //           <Icon
-  //             name="closeCircleOutline"
-  //             color="text-red-500"
-  //             size={20}
-  //           />
-  //         ),
-  //         style: {
-  //           border: `1px solid ${twConfig.theme.colors.red['300']}`,
-  //           borderRadius: '6px',
-  //           display: 'flex',
-  //           alignItems: 'center',
-  //         },
-  //         autoClose: TOAST_AUTOCLOSE_TIME,
-  //         transition: slideInAndOutTop,
-  //         theme: 'dark',
-  //       },
-  //     );
-  //   },
-  //   onSuccess: (data: any) => {
-  //     toast(<SuccessToast content={'Members has been added to team'} />, {
-  //       style: {
-  //         border: `1px solid ${twConfig.theme.colors.primary['300']}`,
-  //         borderRadius: '6px',
-  //         display: 'flex',
-  //         alignItems: 'center',
-  //       },
-  //       autoClose: TOAST_AUTOCLOSE_TIME,
-  //       transition: slideInAndOutTop,
-  //       theme: 'dark',
-  //     });
-  //     queryClient.invalidateQueries(['categories']);
-  //     queryClient.invalidateQueries(['team-members']);
-  //   },
-  // });
-
   return (
     <div className="relative pb-8">
       <div className="flex justify-between items-center">
@@ -207,7 +162,13 @@ const Team: React.FC<ITeamProps> = ({
             className="h-9 grow-0"
             dataTestId="my-teams"
             active={tab === TeamTab.MyTeams}
-            onClick={() => setTab(TeamTab.MyTeams)}
+            onClick={() => {
+              setSearchParams((params) => {
+                params.set('tab', TeamTab.MyTeams);
+                return params;
+              });
+              setTab(TeamTab.MyTeams);
+            }}
           />
           <Button
             label="All Teams"
@@ -216,7 +177,13 @@ const Team: React.FC<ITeamProps> = ({
             className="h-9 grow-0"
             dataTestId="all-teams"
             active={tab === TeamTab.AllTeams}
-            onClick={() => setTab(TeamTab.AllTeams)}
+            onClick={() => {
+              setSearchParams((params) => {
+                params.set('tab', TeamTab.AllTeams);
+                return params;
+              });
+              setTab(TeamTab.AllTeams);
+            }}
           />
         </div>
         <div className="flex space-x-2 justify-center items-center">

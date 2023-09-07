@@ -76,6 +76,7 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
       icon: 'cancel',
       label: 'Remove',
       labelClassName: 'text-red-500',
+      iconClassName: '!text-red-500',
       onClick: () => openDeleteModal(),
       dataTestId: 'team-remove',
       enabled: isAdmin || isSuperAdmin,

@@ -59,6 +59,7 @@ const People: React.FC<IPeopleProps> = ({
     control,
     watch,
     getValues,
+    setValue,
     formState: { errors },
   } = useForm<IForm>({
     mode: 'onChange',
@@ -105,7 +106,8 @@ const People: React.FC<IPeopleProps> = ({
 
   const customReset = () => {
     if (roleSelectRef && roleSelectRef.current)
-      roleSelectRef.current.setValue('');
+      console.log(roleSelectRef.current);
+    setValue('role', undefined);
   };
 
   const roleFields = [
@@ -117,6 +119,7 @@ const People: React.FC<IPeopleProps> = ({
       placeholder: 'Role',
       size: InputSize.Small,
       dataTestId: 'filterby-role',
+      selectClassName: 'single-select-bold',
       ref: roleSelectRef,
       options: [
         {

@@ -107,13 +107,14 @@ const AppFilterModal: React.FC<ITeamFilterModalProps> = ({
                       ...member,
                       image: member.profileImage?.medium,
                     }))}
+                    avatarClassName="!b-[1px]"
                     moreCount={item.totalMembers}
                     className="-space-x-[12px]"
                     dataTestId="teams-people-icon"
                   />
                 )}
                 <span className="font-bold text-sm truncate">
-                  {truncate(item?.name, { length: 18, separator: '' })}
+                  {truncate(item?.name, { length: 16, separator: '' })}
                 </span>
               </div>
               <div className="flex items-center gap-2 text-neutral-500">
