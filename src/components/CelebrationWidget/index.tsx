@@ -11,6 +11,7 @@ import { useCelebrations } from 'queries/post';
 import SkeletonLoader from './components/SkeletonLoader';
 import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 import { AuthContext } from 'contexts/AuthContext';
+import { isFiltersEmpty } from 'utils/misc';
 
 export enum CELEBRATION_TYPE {
   Birthday = 'BIRTHDAY',
@@ -31,7 +32,11 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
 
   const isBirthday = type === CELEBRATION_TYPE.Birthday;
 
-  const { data, isLoading } = useCelebrations();
+  const { data, isLoading } = useCelebrations(
+    isFiltersEmpty({
+      limit: 3,
+    }),
+  );
 
   const formattedData = data?.pages.flatMap((page: any) => {
     return page?.data?.result?.data.map((celebration: any) => {
