@@ -54,8 +54,8 @@ export const feeds = [
 export const celebrations = [
   {
     type: 'BIRTHDAY/WORK_ANNIVERSARY/NEW_JOINEE',
-    dateOfBirth: '2023-08-31T18:45:09.703Z',
-    joinDate: '2022-07-31T18:45:09.703Z',
+    dateOfBirth: '1997-09-06T18:45:09.703Z',
+    joinDate: '2020-09-10T18:45:09.703Z',
     //Add more field from posts payload,
     featuredUser: {
       userId: '619893adaaf348c2184d81',
@@ -74,11 +74,15 @@ export const celebrations = [
         blurHash: 'ABCD1234',
       },
     },
+    post: {
+      id: '64f98e49eb37fde8109b7c99',
+      myCommentsOnPost: [],
+    },
   },
   {
     type: 'BIRTHDAY/WORK_ANNIVERSARY/NEW_JOINEE',
-    dateOfBirth: '2023-09-03T18:45:09.703Z',
-    joinDate: '2021-07-31T18:45:09.703Z',
+    dateOfBirth: '1990-12-07T18:45:09.703Z',
+    joinDate: '2021-10-20T18:45:09.703Z',
     //Add more field from posts payload,
     featuredUser: {
       userId: '619893b58e40f348c2184d81',
@@ -100,7 +104,7 @@ export const celebrations = [
   },
   {
     type: 'BIRTHDAY/WORK_ANNIVERSARY/NEW_JOINEE',
-    dateOfBirth: '2023-10-31T18:45:09.703Z',
+    dateOfBirth: '2023-10-10T18:45:09.703Z',
     joinDate: '2010-10-31T18:45:09.703Z',
     //Add more field from posts payload,
     featuredUser: {

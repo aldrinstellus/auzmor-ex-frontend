@@ -5,7 +5,10 @@ export const formatDate = (inputDate: string, userTimezone: string): string => {
   const parsedDate = momentTz(inputDate).tz(userTimezone);
 
   // Check if the parsed date is today
-  if (currentDate.isSame(parsedDate, 'day')) {
+  if (
+    currentDate.month() === parsedDate.month() &&
+    currentDate.date() === parsedDate.date()
+  ) {
     return 'Today';
   } else {
     // Format the date as "23rd July"
@@ -21,7 +24,11 @@ export const isCelebrationToday = (
   const parsedDate = momentTz(inputDate).tz(userTimezone);
 
   // Check if the parsed date is today
-  if (currentDate.isSame(parsedDate, 'day')) {
+  // Check if the parsed date's month and day match the current date's month and day
+  if (
+    currentDate.month() === parsedDate.month() &&
+    currentDate.date() === parsedDate.date()
+  ) {
     return true;
   }
 

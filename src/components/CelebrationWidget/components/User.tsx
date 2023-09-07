@@ -23,6 +23,7 @@ import {
   IMediaValidationError,
   MediaValidationError,
 } from 'contexts/CreatePostContext';
+import { useNavigate } from 'react-router-dom';
 
 interface UserProps {
   type: CELEBRATION_TYPE;
@@ -37,6 +38,8 @@ const User: React.FC<UserProps> = ({
   data,
   onSendWish,
 }) => {
+  const { featuredUser, post } = data;
+  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const { currentTimezone } = useCurrentTimezone();
   const {
@@ -68,12 +71,16 @@ const User: React.FC<UserProps> = ({
     isCelebrationToday(
       isBirthday ? data.dateOfBirth : data.joinDate,
       userTimezone,
-    ) && !isModalView;
+    ) &&
+    post?.id &&
+    !isModalView;
 
-  const alreadyWished = false;
+  const alreadyWished = post?.id && post.myCommentsOnPost.length > 0;
 
+  // if post exist then only allow user to wish
   const showSendWishRTELayout =
     isModalView &&
+    post?.id &&
     (isCelebrationToday(
       isBirthday ? data.dateOfBirth : data.joinDate,
       userTimezone,
@@ -97,6 +104,7 @@ const User: React.FC<UserProps> = ({
   const wishesSent = useMemo(
     () => (
       <div
+        data-testid={`${isBirthday ? 'birthday' : 'anniversaries'}-wishes-sent`}
         className={`py-[2px] px-[6px] rounded-[4px] text-xs font-bold flex items-center ${dateStyles} w-fit whitespace-nowrap`}
       >
         Wishes sent {isBirthday ? '🎂' : '🎉'}
@@ -110,7 +118,7 @@ const User: React.FC<UserProps> = ({
       <Avatar
         name={getFullName(data.featuredUser)}
         size={48}
-        className="min-w-[48px]"
+        className="min-w-[48px] mt-2"
       />
       <div
         className={clsx('flex flex-col gap-3 w-full', '!gap-2', alreadyWished)}
@@ -136,9 +144,10 @@ const User: React.FC<UserProps> = ({
           </div>
           <div
             className="flex items-center gap-1 text-primary-500 text-xs font-bold cursor-pointer"
-            data-testid={`${
+            data-testid={`view-${
               isBirthday ? 'birthday' : 'anniversaries'
-            }-visit-post`}
+            }-post`}
+            onClick={() => navigate(`/posts/${post.id}`)}
           >
             Visit post
             <Icon name="arrowRightUp" size={12} color="text-primary-500" />
@@ -261,8 +270,8 @@ const User: React.FC<UserProps> = ({
           size={Size.Small}
           className="!bg-primary-50 !text-primary-500 px-4 py-2 rounded-[8px]"
           label="Visit post"
-          dataTestId={`${isBirthday ? 'birthday' : 'anniversaries'}-visit-post`}
-          // onClick={onSendWish}
+          data-testid={`view-${isBirthday ? 'birthday' : 'anniversaries'}-post`}
+          onClick={() => navigate(`/posts/${post.id}`)}
         />
       ) : (
         showSendWishBtn && (

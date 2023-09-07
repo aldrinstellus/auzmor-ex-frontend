@@ -5,7 +5,7 @@ import IconButton, {
 } from 'components/IconButton';
 import RichTextEditor from 'components/RichTextEditor';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createComment, sendWish, updateComment } from 'queries/comments';
+import { createComment, updateComment } from 'queries/comments';
 import ReactQuill from 'react-quill';
 import { DeltaStatic } from 'quill';
 import { toast } from 'react-toastify';
@@ -91,7 +91,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
 
   const createCommentMutation = useMutation({
     mutationKey: ['create-comment'],
-    mutationFn: mode === PostCommentMode.SendWish ? sendWish : createComment,
+    mutationFn: createComment,
     onError: (error: any) => {
       console.log(error);
     },
@@ -341,22 +341,29 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
                 className="flex mx-0 !p-0 !bg-inherit disabled:bg-inherit disabled:cursor-auto "
                 size={SizeVariant.Large}
                 variant={IconVariant.Primary}
-                dataTestId="postcomment-mediacta"
+                dataTestId={
+                  mode === PostCommentMode.SendWish
+                    ? 'send-image'
+                    : 'postcomment-mediacta'
+                }
                 onClick={() => inputRef && inputRef?.current?.click()}
               />
-              <button className="ql-emoji" />
+              <button className="ql-emoji" data-testid="send-gif" />
               <IconButton
                 icon={'send'}
                 className="flex mx-0 !p-0 !bg-inherit disabled:bg-inherit disabled:cursor-auto "
                 size={SizeVariant.Large}
                 variant={IconVariant.Primary}
                 onClick={() => {
-                  console.log(isCreateCommentLoading);
                   if (!isCreateCommentLoading) {
                     onSubmit();
                   }
                 }}
-                dataTestId="postcomment-sendcta"
+                dataTestId={
+                  mode === PostCommentMode.SendWish
+                    ? 'send-wishes-cta'
+                    : 'postcomment-sendcta'
+                }
                 disabled={mediaValidationErrors.length > 0}
               />
             </div>

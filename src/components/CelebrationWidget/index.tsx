@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import momentTz from 'moment-timezone';
 import Card from 'components/Card';
 import Icon from 'components/Icon';
@@ -29,6 +29,8 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
   const [open, openCollpase, closeCollapse] = useModal(true, false);
   const [openUpcoming, openUpcomingModal, closeUpcomingModal] = useModal();
   const currentDate = momentTz().tz(userTimezone);
+  const monthRef = useRef<any>(null);
+  const thisMonthRef = useRef<any>(null);
 
   const isBirthday = type === CELEBRATION_TYPE.Birthday;
 
@@ -53,7 +55,16 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
         const itemDate = momentTz(
           isBirthday ? item.dateOfBirth : item.joinDate,
         ).tz(userTimezone);
-        return itemDate.month() === currentDate.month();
+        if (
+          itemDate.month() === currentDate.month() &&
+          itemDate.format('MM-DD') >= currentDate.format('MM-DD')
+        ) {
+          if (thisMonthRef.current === null) {
+            thisMonthRef.current = itemDate.month();
+          }
+          return true;
+        }
+        return false;
       })
     : [];
 
@@ -62,7 +73,35 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
         const itemDate = momentTz(
           isBirthday ? item.dateOfBirth : item.joinDate,
         ).tz(userTimezone);
-        return itemDate.month() >= currentDate.month() + 1;
+
+        // if there was data for this month found, then just check for next month data
+        if (thisMonthRef.current !== null) {
+          return (
+            itemDate.month() === currentDate.month() + 1 &&
+            itemDate.format('MM-DD') >= currentDate.format('MM-DD')
+          );
+        } else {
+          // whenever a new celebration is found for a month, keep track of it
+          if (
+            monthRef.current === null &&
+            itemDate.format('MM-DD') >= currentDate.format('MM-DD')
+          ) {
+            monthRef.current = itemDate.month();
+            return true;
+          }
+
+          // then filter out the data for next 2 months
+          if (
+            monthRef.current !== null &&
+            itemDate.format('MM-DD') >= currentDate.format('MM-DD') &&
+            (itemDate.month() === monthRef.current ||
+              itemDate.month() === monthRef.current + 1)
+          ) {
+            return true;
+          }
+        }
+
+        return false;
       })
     : [];
 
@@ -124,13 +163,13 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
                     />
                   ))}
 
-                  {/* Upcoming Month celebration */}
+                  {/* Next Month celebration */}
                   {upcomingMonthCelebration.length > 0 && (
                     <>
                       {thisMonthCelebration.length > 0 &&
                         upcomingMonthCelebration.length > 0 && (
                           <div className="text-sm font-semibold px-2">
-                            Upcoming Month
+                            Next Month
                           </div>
                         )}
                       {upcomingMonthCelebration.map((celebration) => (
