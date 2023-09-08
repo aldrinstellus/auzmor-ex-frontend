@@ -9,6 +9,7 @@ import AvatarRowSkeleton from './AvatarRowSkeleton';
 import AvatarRow from './AvatarRow';
 import PageLoader from 'components/PageLoader';
 import Button, { Variant } from 'components/Button';
+import { useInfiniteAcknowledgements } from 'queries/post';
 
 type AppProps = {
   post: Record<string, any>;
@@ -19,7 +20,7 @@ const Acknowledged: React.FC<AppProps> = ({ post, closeModal }) => {
   const { ref, inView } = useInView();
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfiniteUsers({});
+    useInfiniteAcknowledgements(post.id, { acknowledged: true });
 
   const usersData = data?.pages.flatMap((page) =>
     page?.data?.result?.data.map((user: any) => user),
@@ -31,10 +32,12 @@ const Acknowledged: React.FC<AppProps> = ({ post, closeModal }) => {
     }
   }, [inView]);
 
-  const completePercent = Math.ceil(
-    post?.acknowledgementStats?.acknowledged /
-      post?.acknowledgementStats?.audience,
-  );
+  const completePercent =
+    Math.ceil(
+      post?.acknowledgementStats?.acknowledged /
+        post?.acknowledgementStats?.audience,
+    ) * 100;
+
   return (
     <div>
       <div className="w-full max-h-[480px] overflow-y-scroll px-6">
@@ -88,6 +91,7 @@ const Acknowledged: React.FC<AppProps> = ({ post, closeModal }) => {
             label="Close"
             onClick={closeModal}
             variant={Variant.Secondary}
+            dataTestId="acknowledgement-report-close"
           />
         </div>
       </div>
