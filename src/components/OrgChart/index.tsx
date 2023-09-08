@@ -4,7 +4,7 @@ import Toolbar from './components/Toolbar';
 import Chart from './components/Chart';
 import { OrgChart } from 'd3-org-chart';
 import { useForm } from 'react-hook-form';
-import { useOrgChart } from 'queries/users';
+import { IGetUser, useOrgChart } from 'queries/users';
 
 export enum OrgChartMode {
   Team = 'TEAM',
@@ -27,7 +27,13 @@ const OrganizationChart: React.FC<IOrgChart> = ({ setShowOrgChart }) => {
   const chartRef = useRef<OrgChart<any> | null>(null);
   const { control, watch, resetField } = useForm<IForm>();
   const [userStatus, setUserStatus] = useState<string>('');
-  const { data, isLoading } = useOrgChart();
+  const [startWithSpecificUser, setStartWithSpecificUser] =
+    useState<IGetUser | null>(null);
+  const [isExpandAll, setIsExpandAll] = useState<boolean>(false);
+  const { data, isLoading } = useOrgChart({
+    root: startWithSpecificUser?.id,
+    expandAll: isExpandAll,
+  });
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -53,6 +59,10 @@ const OrganizationChart: React.FC<IOrgChart> = ({ setShowOrgChart }) => {
         userStatus={userStatus}
         setUserStatus={setUserStatus}
         resetField={resetField}
+        startWithSpecificUser={startWithSpecificUser}
+        setStartWithSpecificUser={setStartWithSpecificUser}
+        isExpandAll={isExpandAll}
+        setIsExpandAll={setIsExpandAll}
       />
       <Chart
         orgChartRef={chartRef}

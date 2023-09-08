@@ -48,16 +48,11 @@ const RadioGroup: React.FC<RadioButtonProps> = ({
               <div key={index} className=" space-x-4 pb-2 pt-2 pl-6">
                 <input
                   id={id}
-                  name={name}
                   type="radio"
                   className={radioStyles}
                   disabled={disabled}
                   data-testid={`${name}-${item?.name}`}
-                  ref={field.ref}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  value={item?.options?.value}
-                  checked={item?.isChecked}
+                  {...field}
                 />
                 <label htmlFor={item?.options?.label}>
                   {item?.options?.label}

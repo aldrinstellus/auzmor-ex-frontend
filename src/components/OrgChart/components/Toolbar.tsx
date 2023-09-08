@@ -20,6 +20,8 @@ import { useInView } from 'react-intersection-observer';
 import UserRow from 'components/UserRow';
 import { IOption } from 'components/AsyncSingleSelect';
 import useAuth from 'hooks/useAuth';
+import Divider from 'components/Divider';
+import Avatar from 'components/Avatar';
 
 interface IToolbar {
   activeMode: OrgChartMode;
@@ -30,6 +32,10 @@ interface IToolbar {
   userStatus: string;
   setUserStatus: (userStatus: string) => void;
   resetField: UseFormResetField<IForm>;
+  startWithSpecificUser: IGetUser | null;
+  setStartWithSpecificUser: (startWithSpecificUser: IGetUser | null) => void;
+  isExpandAll: boolean;
+  setIsExpandAll: (isExpandAll: boolean) => void;
 }
 
 const Toolbar: React.FC<IToolbar> = ({
@@ -41,14 +47,19 @@ const Toolbar: React.FC<IToolbar> = ({
   userStatus,
   setUserStatus,
   resetField,
+  startWithSpecificUser,
+  setStartWithSpecificUser,
+  isExpandAll,
+  setIsExpandAll,
 }) => {
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [isSpotlightActive, setIsSpotlightActive] = useState(false);
   const [memberSearchString, setMemberSearchString] = useState<string>('');
   const [specificPersonSearch] = watch(['specificPersonSearch']);
 
   const { user } = useAuth();
+
+  const isFilterApplied = !!startWithSpecificUser;
 
   // fetch users on start with specific user
   const debouncedPersonSearchValue = useDebounce(
@@ -173,168 +184,225 @@ const Toolbar: React.FC<IToolbar> = ({
   );
   return (
     <>
-      <div className="mt-7 px-4 py-3 mb-8 w-full shadow-lg rounded-9xl bg-white flex justify-between items-center">
-        <div className="flex items-center">
-          <Layout fields={memberSearchfields} />
-          <div className="flex items-center justify-center w-9 h-9">
+      <div className="flex flex-col mt-7 px-4 py-3 mb-8 w-full shadow-lg rounded-9xl bg-white">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <Layout fields={memberSearchfields} />
+            <div className="flex items-center justify-center w-9 h-9">
+              <IconButton
+                onClick={openFilterModal}
+                icon="filterLinear"
+                variant={IconVariant.Secondary}
+                size={IconSize.Medium}
+                borderAround
+                className="bg-white"
+                dataTestId="people-filter"
+              />
+            </div>
+          </div>
+          <div className="p-1 rounded-9xl border-neutral-200 border bg-neutral-50 flex items-center">
+            <div
+              className={teamClassName}
+              onClick={() => setActiveMode(OrgChartMode.Team)}
+            >
+              My Team
+            </div>
+            <div
+              className={overallClassName}
+              onClick={() => setActiveMode(OrgChartMode.Overall)}
+            >
+              Overall
+            </div>
+          </div>
+          <div className="flex items-center">
             <IconButton
-              onClick={openFilterModal}
-              icon="filterLinear"
+              icon="importOutline"
               variant={IconVariant.Secondary}
-              size={IconSize.Medium}
+              className="group"
               borderAround
-              className="bg-white"
-              dataTestId="people-filter"
+              color="text-neutral-900"
             />
-          </div>
-        </div>
-        <div className="p-1 rounded-9xl border-neutral-200 border bg-neutral-50 flex items-center">
-          <div
-            className={teamClassName}
-            onClick={() => setActiveMode(OrgChartMode.Team)}
-          >
-            My Team
-          </div>
-          <div
-            className={overallClassName}
-            onClick={() => setActiveMode(OrgChartMode.Overall)}
-          >
-            Overall
-          </div>
-        </div>
-        <div className="flex items-center">
-          <IconButton
-            icon="importOutline"
-            variant={IconVariant.Secondary}
-            className="group"
-            borderAround
-            color="text-neutral-900"
-          />
-          <div className="border-neutral-200 border rounded-9xl px-6 py-2 flex items-center ml-4">
-            <Popover
-              triggerNode={
+            <div className="border-neutral-200 border rounded-9xl px-6 py-2 flex items-center ml-4">
+              <Popover
+                triggerNode={
+                  <Tooltip
+                    tooltipContent="Start with a specific person"
+                    tooltipPosition="bottom"
+                  >
+                    <div className="group flex items-center">
+                      <Icon
+                        name="groupOutline"
+                        color="text-neutral-900"
+                        size={16}
+                      />
+                    </div>
+                  </Tooltip>
+                }
+                className="py-4 rounded-9xl shadow-2xl min-w-[540px] absolute -translate-x-1/2 mt-11 top-arrow ml-2"
+                contentRenderer={(close) => (
+                  <>
+                    <Layout fields={specificPersonSearchFields} />
+                    <div className="h-full overflow-scroll max-h-80">
+                      {isPersonFetching ? (
+                        <div className="w-full h-64 flex items-center justify-center">
+                          <Spinner />
+                        </div>
+                      ) : personData && personData?.length > 0 ? (
+                        personData?.map((member: IGetUser) => (
+                          <UserRow
+                            user={member}
+                            key={member.id}
+                            onClick={() => {
+                              chartRef.current?.clearHighlighting();
+                              setIsSpotlightActive(false);
+                              resetField('userSearch');
+                              setStartWithSpecificUser(member);
+                              close();
+                            }}
+                          />
+                        ))
+                      ) : personData?.length === 0 &&
+                        debouncedPersonSearchValue !== '' ? (
+                        <div className="w-full flex items-center justify-center pt-6 text-neutral-500">
+                          No member found
+                        </div>
+                      ) : (
+                        <></>
+                      )}
+                      {hasNextPersons && !isFetchingNextPersons && (
+                        <div ref={personInviewRef} />
+                      )}
+                    </div>
+                  </>
+                )}
+              />
+
+              <div className="mx-4 bg-neutral-200 h-6 w-px" />
+              <div className="mr-4 group">
                 <Tooltip
-                  tooltipContent="Start with a specific person"
+                  tooltipContent={isExpandAll ? 'Expand all' : 'Collapse all'}
                   tooltipPosition="bottom"
                 >
-                  <div className="group flex items-center">
-                    <Icon
-                      name="groupOutline"
-                      color="text-neutral-900"
-                      size={16}
-                    />
-                  </div>
+                  <Icon
+                    name={isExpandAll ? 'expandOutline' : 'collapseOutline'}
+                    color="text-neutral-900"
+                    onClick={() => {
+                      if (isExpandAll) {
+                        chartRef.current?.expandAll();
+                      } else {
+                        chartRef.current?.collapseAll();
+                      }
+                      setIsExpandAll(!isExpandAll);
+                    }}
+                    size={16}
+                  />
                 </Tooltip>
-              }
-              className="py-4 rounded-9xl shadow-2xl min-w-[540px] absolute -translate-x-1/2 mt-11 top-arrow ml-2"
-            >
-              <>
-                <Layout fields={specificPersonSearchFields} />
-                <div className="h-full overflow-scroll max-h-80">
-                  {isPersonFetching ? (
-                    <div className="w-full h-64 flex items-center justify-center">
-                      <Spinner />
-                    </div>
-                  ) : personData && personData?.length > 0 ? (
-                    personData?.map((member: IGetUser) => (
-                      <UserRow user={member} key={member.id} />
-                    ))
-                  ) : personData?.length === 0 &&
-                    debouncedPersonSearchValue !== '' ? (
-                    <div className="w-full flex items-center justify-center pt-6 text-neutral-500">
-                      No member found
-                    </div>
-                  ) : (
-                    <></>
-                  )}
-                  {hasNextPersons && !isFetchingNextPersons && (
-                    <div ref={personInviewRef} />
-                  )}
-                </div>
-              </>
-            </Popover>
-
-            <div className="mx-4 bg-neutral-200 h-6 w-px" />
-            <div className="mr-4 group">
-              <Tooltip
-                tooltipContent={isCollapsed ? 'Expand all' : 'Collapse all'}
-                tooltipPosition="bottom"
-              >
-                <Icon
-                  name={isCollapsed ? 'expandOutline' : 'collapseOutline'}
-                  color="text-neutral-900"
-                  onClick={() => {
-                    if (isCollapsed) {
-                      chartRef.current?.expandAll();
-                    } else {
-                      chartRef.current?.collapseAll();
-                    }
-                    setIsCollapsed(!isCollapsed);
-                  }}
-                  size={16}
-                />
-              </Tooltip>
-            </div>
-            <div className="mr-2 group flex items-center pt-1">
-              <Tooltip tooltipContent="Fit to screen" tooltipPosition="bottom">
-                <Icon
-                  name="fullScreen"
-                  color="text-neutral-900"
-                  className="flex items-center"
-                  onClick={() => {
-                    chartRef.current?.fit();
-                  }}
-                  size={16}
-                />
-              </Tooltip>
-            </div>
-            <div className="group">
-              <Tooltip tooltipContent="Spotlight me" tooltipPosition="bottom">
-                <Icon
-                  name="focus"
-                  color="text-neutral-900"
-                  onClick={() => {
-                    chartRef.current?.clearHighlighting();
-                    resetField('userSearch');
-                    if (!isSpotlightActive) {
-                      chartRef.current
-                        ?.setUpToTheRootHighlighted(user?.id || '')
-                        .render()
-                        .fit();
-                      chartRef.current?.setCentered(user?.id || '').render();
-                    }
-                    setIsSpotlightActive(!isSpotlightActive);
-                  }}
-                  isActive={isSpotlightActive}
-                  size={24}
-                />
-              </Tooltip>
-            </div>
-            <div className="mr-4 ml-2 bg-neutral-200 h-6 w-px" />
-            <div className="group mr-8">
-              <Tooltip tooltipContent="Zoom out" tooltipPosition="bottom">
-                <Icon
-                  name="zoomOutOutline"
-                  color="text-neutral-900"
-                  onClick={() => {
-                    chartRef.current?.zoomOut();
-                  }}
-                  size={16}
-                />
-              </Tooltip>
-            </div>
-            <div className="group">
-              <Tooltip tooltipContent="Zoom in" tooltipPosition="bottom">
-                <Icon
-                  name="zoomInOutline"
-                  color="text-neutral-900"
-                  onClick={() => chartRef.current?.zoomIn()}
-                  size={16}
-                />
-              </Tooltip>
+              </div>
+              <div className="mr-2 group flex items-center pt-1">
+                <Tooltip
+                  tooltipContent="Fit to screen"
+                  tooltipPosition="bottom"
+                >
+                  <Icon
+                    name="fullScreen"
+                    color="text-neutral-900"
+                    className="flex items-center"
+                    onClick={() => {
+                      chartRef.current?.fit();
+                    }}
+                    size={16}
+                  />
+                </Tooltip>
+              </div>
+              <div className="group">
+                <Tooltip tooltipContent="Spotlight me" tooltipPosition="bottom">
+                  <Icon
+                    name="focus"
+                    color="text-neutral-900"
+                    onClick={() => {
+                      chartRef.current?.clearHighlighting();
+                      if (!isSpotlightActive) {
+                        setStartWithSpecificUser(null);
+                        resetField('userSearch');
+                        chartRef.current
+                          ?.setUpToTheRootHighlighted(user?.id || '')
+                          .render()
+                          .fit();
+                        chartRef.current?.setCentered(user?.id || '').render();
+                      }
+                      setIsSpotlightActive(!isSpotlightActive);
+                    }}
+                    isActive={isSpotlightActive}
+                    size={24}
+                  />
+                </Tooltip>
+              </div>
+              <div className="mr-4 ml-2 bg-neutral-200 h-6 w-px" />
+              <div className="group mr-8">
+                <Tooltip tooltipContent="Zoom out" tooltipPosition="bottom">
+                  <Icon
+                    name="zoomOutOutline"
+                    color="text-neutral-900"
+                    onClick={() => {
+                      chartRef.current?.zoomOut();
+                    }}
+                    size={16}
+                  />
+                </Tooltip>
+              </div>
+              <div className="group">
+                <Tooltip tooltipContent="Zoom in" tooltipPosition="bottom">
+                  <Icon
+                    name="zoomInOutline"
+                    color="text-neutral-900"
+                    onClick={() => chartRef.current?.zoomIn()}
+                    size={16}
+                  />
+                </Tooltip>
+              </div>
             </div>
           </div>
         </div>
+        {isFilterApplied && <Divider className="my-2" />}
+        {isFilterApplied && (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              {startWithSpecificUser && (
+                <div className="flex items-center">
+                  <div className="flex items-center text-neutral-900 text-sm font-bold mr-1">
+                    Start with specific person:
+                  </div>
+                  <div className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-primary-200 rounded-7xl justify-between">
+                    <div className="flex items-center">
+                      <Avatar
+                        name={startWithSpecificUser.fullName}
+                        image={startWithSpecificUser.profileImage?.original}
+                        blurhash={startWithSpecificUser.profileImage?.blurHash}
+                        size={16}
+                      />
+                      <div className="mx-1">
+                        {startWithSpecificUser.fullName}
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <Icon
+                        name="close"
+                        size={16}
+                        onClick={() => setStartWithSpecificUser(null)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div
+              className="px-3 py-1 text-neutral-500 text-base font-medium border border-neutral-200 rounded-7xl cursor-pointer hover:border-primary-200 hover:text-primary-500"
+              onClick={() => setStartWithSpecificUser(null)}
+            >
+              Clear filters
+            </div>
+          </div>
+        )}
       </div>
       <FilterModal
         setUserStatus={setUserStatus}

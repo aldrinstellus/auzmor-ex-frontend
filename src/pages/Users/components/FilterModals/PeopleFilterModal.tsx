@@ -73,26 +73,26 @@ const PeopleFilterModal: React.FC<IPeopleFilterModalProps> = ({
   ];
 
   const filterNavigation = [
-    // {
-    //   label: 'Location',
-    //   icon: '',
-    //   key: 'location-filters',
-    //   component: <div>General Settings Page</div>,
-    //   disabled: true,
-    //   hidden: false,
-    //   search: true,
-    //   dataTestId: 'people-filterby-location',
-    // },
-    // {
-    //   label: 'Departments',
-    //   icon: '',
-    //   key: 'departments-filters',
-    //   component: <div>User Management Settings Page</div>,
-    //   disabled: true,
-    //   hidden: false,
-    //   search: true,
-    //   dataTestId: 'people-filterby-department',
-    // },
+    {
+      label: 'Location',
+      icon: '',
+      key: 'location-filters',
+      component: <div>General Settings Page</div>,
+      disabled: true,
+      hidden: false,
+      search: true,
+      dataTestId: 'people-filterby-location',
+    },
+    {
+      label: 'Departments',
+      icon: '',
+      key: 'departments-filters',
+      component: <div>User Management Settings Page</div>,
+      disabled: true,
+      hidden: false,
+      search: true,
+      dataTestId: 'people-filterby-department',
+    },
     {
       label: 'Status',
       icon: '',
