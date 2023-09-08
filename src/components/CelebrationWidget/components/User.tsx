@@ -221,7 +221,7 @@ const User: React.FC<UserProps> = ({
       <div className="flex items-center gap-2 w-full justify-between">
         <div className="flex items-center gap-2">
           <Avatar
-            name={getFullName(featuredUser)}
+            name={getFullName(featuredUser) || featuredUser.email}
             size={32}
             className="min-w-[32px]"
           />
@@ -232,7 +232,7 @@ const User: React.FC<UserProps> = ({
                 isBirthday ? 'birthday' : 'anniversaries'
               }-profile-name`}
             >
-              {getFullName(featuredUser)}
+              {getFullName(featuredUser) || featuredUser.email}
             </p>
             {featuredUser.designation && (
               <p className="text-xs line-clamp-1 text-neutral-500">
