@@ -188,8 +188,8 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
       );
     } else if (media.length === 4) {
       return (
-        <div className={`flex flex-col w-full space-y-4 ${mediaHeight}`}>
-          <div className="flex !h-1/2">
+        <div className={`flex flex-col w-full ${mediaHeight}`}>
+          <div className="flex !h-[48%]">
             <MediaRender
               data={media[0]}
               localClassName="!w-1/2 !mr-2"
@@ -221,7 +221,8 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
               }
             />
           </div>
-          <div className="flex !h-1/2">
+          <div className="!h-[4%]" />
+          <div className="flex !h-[48%]">
             <MediaRender
               data={media[2]}
               localClassName="!w-1/2 mr-2"
@@ -257,8 +258,8 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
       );
     } else if (media.length === 5) {
       return (
-        <div className={`flex flex-col w-full space-y-4 ${mediaHeight}`}>
-          <div className="flex mb-0 !h-1/2">
+        <div className={`flex flex-col w-full ${mediaHeight}`}>
+          <div className="flex mb-0 !h-[48%]">
             <MediaRender
               data={media[0]}
               localClassName="mr-2 mb-4 !w-1/2"
@@ -290,7 +291,8 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
               }
             />
           </div>
-          <div className="flex !h-1/2 mt-0">
+          <div className="!h-[4%]" />
+          <div className="flex !h-[48%]">
             <MediaRender
               data={media[2]}
               localClassName="!w-1/3 mr-2"
@@ -342,7 +344,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
     } else if (media.length > 5) {
       return (
         <div className={`flex flex-col w-full ${mediaHeight}`}>
-          <div className="flex mb-2 !h-1/2 ">
+          <div className="flex mb-2 !h-[48%]">
             <MediaRender
               data={media[0]}
               localClassName="mr-2 !w-1/2"
@@ -374,7 +376,8 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
               }
             />
           </div>
-          <div className="flex !h-1/2">
+          <div className="!h-[4%]" />
+          <div className="flex !h-[48%]">
             <MediaRender
               data={media[2]}
               localClassName="!w-1/3 mr-2"
