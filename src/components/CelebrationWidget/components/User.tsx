@@ -1,4 +1,5 @@
 import React, { useContext, useMemo, useState } from 'react';
+import truncate from 'lodash/truncate';
 import Avatar from 'components/Avatar';
 import { CELEBRATION_TYPE } from '..';
 import clsx from 'clsx';
@@ -105,7 +106,7 @@ const User: React.FC<UserProps> = ({
       <Avatar
         name={getFullName(featuredUser) || featuredUser.email}
         size={48}
-        className="min-w-[48px] mt-2"
+        className="min-w-[48px]"
       />
       <div
         className={clsx('flex flex-col gap-3 w-full', '!gap-2', alreadyWished)}
@@ -227,16 +228,22 @@ const User: React.FC<UserProps> = ({
           />
           <div className="flex flex-col">
             <p
-              className="text-sm font-bold line-clamp-1"
+              className="text-sm font-bold truncate"
               data-testid={`${
                 isBirthday ? 'birthday' : 'anniversaries'
               }-profile-name`}
             >
-              {getFullName(featuredUser) || featuredUser.email}
+              {truncate(getFullName(featuredUser) || featuredUser.email, {
+                length: isModalView ? 40 : 14,
+                separator: '',
+              })}
             </p>
             {featuredUser.designation && (
-              <p className="text-xs line-clamp-1 text-neutral-500">
-                {featuredUser.designation}
+              <p className="text-xs truncate text-neutral-500">
+                {truncate(featuredUser.designation, {
+                  length: isModalView ? 40 : 14,
+                  separator: '',
+                })}
               </p>
             )}
           </div>

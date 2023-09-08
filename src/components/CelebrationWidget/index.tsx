@@ -34,7 +34,7 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
 
   const isBirthday = type === CELEBRATION_TYPE.Birthday;
 
-  const { data, isLoading, hasNextPage } = useCelebrations(
+  const { data, isLoading } = useCelebrations(
     isFiltersEmpty({
       limit: 3,
       type: isBirthday ? 'BIRTHDAY' : 'WORK_ANNIVERSARY',
@@ -102,6 +102,10 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
         return false;
       })
     : [];
+
+  const isAllCelebrationsDisplyed =
+    (formattedData || []).length ===
+    [...thisMonthCelebration, ...upcomingMonthCelebration].length;
 
   const widgetTitle = isBirthday ? 'Birthdays 🎂' : 'Work anniversaries 🎉';
   const buttonLabel = isBirthday
@@ -180,7 +184,7 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
                       ))}
                     </>
                   )}
-                  {hasNextPage && (
+                  {isAllCelebrationsDisplyed && (
                     <Button
                       variant={Variant.Secondary}
                       size={Size.Small}
