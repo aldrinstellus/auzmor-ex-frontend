@@ -45,9 +45,9 @@ const UserCard: React.FC<IUserCardProps> = ({ className }) => {
               {userDetails?.designation || 'NA'}
             </div>
 
-            <div className="text-xxs font-normal truncate w-full text-center flex justify-center items-center">
+            <div className="text-xxs leading-[15px] font-normal truncate w-full text-center flex gap-1 justify-center items-center">
               <Icon name="location" size={16} />
-              {userDetails?.workLocation}
+              {userDetails?.workLocation?.name}
             </div>
           </Link>
         </div>
