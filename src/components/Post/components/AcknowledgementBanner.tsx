@@ -32,7 +32,9 @@ const AcknowledgementBanner: React.FC<IAcknowledgementBannerProps> = ({
       updateFeed(
         postId,
         produce(feed[postId], (draft) => {
-          (draft.announcement = { end: '' }), (draft.isAnnouncement = false);
+          (draft.announcement = { end: '' }),
+            (draft.isAnnouncement = false),
+            (draft.acknowledged = true);
         }),
       );
       return { previousPost };

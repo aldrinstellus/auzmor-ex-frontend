@@ -112,13 +112,15 @@ const Feed: React.FC<IFeedProps> = () => {
 
   const announcementFeedIds = feedIds
     ? feedIds.filter(
-        (post: { id: string }) => !!feed[post.id]?.announcement?.end,
+        (post: { id: string }) =>
+          !!feed[post.id]?.announcement?.end && !feed[post.id]?.acknowledged,
       )
     : [];
 
   const regularFeedIds = feedIds
     ? feedIds.filter(
-        (post: { id: string }) => !!!feed[post.id]?.announcement?.end,
+        (post: { id: string }) =>
+          !!!feed[post.id]?.announcement?.end || feed[post.id]?.acknowledged,
       )
     : [];
 
