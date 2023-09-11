@@ -105,9 +105,7 @@ const People: React.FC<IPeopleProps> = ({
   const roleSelectRef = useRef<any>();
 
   const customReset = () => {
-    if (roleSelectRef && roleSelectRef.current)
-      console.log(roleSelectRef.current);
-    setValue('role', undefined);
+    if (roleSelectRef && roleSelectRef.current) setValue('role', undefined);
   };
 
   const roleFields = [
