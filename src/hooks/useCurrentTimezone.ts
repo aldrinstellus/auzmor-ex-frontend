@@ -1,13 +1,11 @@
 import { useCurrentUser } from 'queries/users';
+import { getBrwoserTimezone } from 'utils/time';
 
 export const useCurrentTimezone = () => {
   const { data, isLoading } = useCurrentUser();
-  const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const browserTimezone = getBrwoserTimezone();
   return {
     isLoading,
-    currentTimezone:
-      data?.data?.result?.data?.timeZone || browserTimezone === 'Asia/Calcutta'
-        ? 'Asia/Kolkata'
-        : browserTimezone,
+    currentTimezone: data?.data?.result?.data?.timeZone || browserTimezone,
   };
 };
