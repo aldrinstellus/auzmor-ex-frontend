@@ -199,6 +199,8 @@ const People: React.FC<IPeopleProps> = ({
         label: role.label,
       });
       updateParam('role', serializedRole);
+    } else {
+      deleteParam('role');
     }
   }, [role]);
 
