@@ -98,9 +98,6 @@ const Poll: React.FC<IPoll & PollProps> = ({
     onError: (error, variables, context) => {
       updateFeed(context!.previousPost.id!, context!.previousPost!);
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(['feed-post']);
-    },
   });
 
   const deleteVoteMutation = useMutation({
@@ -122,9 +119,6 @@ const Poll: React.FC<IPoll & PollProps> = ({
     onError: (error, variables, context) => {
       updateFeed(context!.previousPost.id!, context!.previousPost!);
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(['feed-post']);
-    },
   });
 
   const total = options
@@ -134,6 +128,7 @@ const Poll: React.FC<IPoll & PollProps> = ({
   const timeLeft = getTimeFromNow(closedAt);
   const showTotal = mode === PollMode.VIEW;
   const voted = !!myVote?.length;
+  const isLoading = voteMutation.isLoading || deleteVoteMutation.isLoading;
   const showViewResults = mode === PollMode.VIEW && isAdmin && !voted;
 
   useEffect(() => {
@@ -186,17 +181,16 @@ const Poll: React.FC<IPoll & PollProps> = ({
       {/* Options */}
       <div className="pb-6 flex flex-col gap-2">
         {options.map((option, index) => {
-          const cursorDefault =
-            mode === PollMode.EDIT || showResults || !postId || !option._id;
-          const isLoading =
-            voteMutation.isLoading || deleteVoteMutation.isLoading;
           const votedThisOption =
-            voted &&
-            myVote?.some(
-              (vote) => vote.optionId && vote.optionId === option._id,
-            );
+            voted && myVote?.some((vote) => vote.optionId === option._id);
           const votedAnotherOption = voted && !votedThisOption;
-          const cursorNotAllowed = !timeLeft || isLoading || votedAnotherOption;
+          const cursorDefault =
+            mode === PollMode.EDIT ||
+            showResults ||
+            isLoading ||
+            !postId ||
+            !option._id;
+          const cursorNotAllowed = !timeLeft || votedAnotherOption;
           const cursorPointer = !cursorDefault && !cursorNotAllowed;
           const cursorClass = clsx({
             'cursor-default': cursorDefault,
@@ -208,7 +202,7 @@ const Poll: React.FC<IPoll & PollProps> = ({
               className={`grid ${cursorClass}`}
               key={option._id}
               onClick={() => {
-                if (cursorPointer && postId && option._id) {
+                if (cursorPointer && !isLoading && postId && option._id) {
                   if (votedThisOption) {
                     deleteVoteMutation.mutate({ postId, optionId: option._id });
                   }

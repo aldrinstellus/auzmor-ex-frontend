@@ -27,7 +27,8 @@ type CreatePollProps = {
 const schema = yup.object({
   question: yup
     .string()
-    .required('Required field')
+    .trim()
+    .required('This field cannot be empty')
     .min(3, 'Question must have minimum 3 characters')
     .max(140, 'Question cannot exceed 140 characters'),
 
@@ -35,6 +36,7 @@ const schema = yup.object({
     yup.object().shape({
       text: yup
         .string()
+        .trim()
         .required('Option cannot be empty')
         .max(30, 'Option cannot exceed 30 characters'),
     }),
@@ -48,11 +50,9 @@ const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
   // Form
   const {
     control,
-    formState: { errors, isValid },
+    formState: { errors },
     watch,
     handleSubmit,
-    getValues,
-    trigger,
   } = useForm<IPoll>({
     mode: 'onChange',
     resolver: yupResolver(schema),
@@ -174,8 +174,11 @@ const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
       closedAt = selectedDate.toISOString().substring(0, 19) + 'Z';
     }
     setPoll({
-      question: data.question,
-      options: data.options,
+      question: data.question.trim(),
+      options: data.options.map((option) => ({
+        ...option,
+        text: option.text.trim(),
+      })),
       closedAt,
     });
     // After setting poll, switch back to create post mode.

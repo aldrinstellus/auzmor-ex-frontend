@@ -89,7 +89,7 @@ const Input: React.FC<InputProps> = ({
           'focus:border-primary-500 focus:ring-primary-500': !error,
         },
         {
-          'border-red-500 focus:border-red-500 focus:ring-red-500 text-red-500':
+          'border-red-500 focus:border-red-500 focus:ring-red-500 text-red-500 placeholder-red-500 bg-red-50':
             error,
         },
         {
