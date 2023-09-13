@@ -9,7 +9,7 @@ interface ISortByOption {
 
 export interface ISortProps {
   setFilter: (filter: string) => void;
-  filterKey: string;
+  filterKey: Record<string, any>;
   filterValue: ISortByOption;
   title: ReactElement;
   entity: string;
@@ -42,7 +42,7 @@ const Sort: React.FC<ISortProps> = ({
           icon: 'calendar',
           label: 'Date added',
           onClick: () => {
-            setFilter(`${filterKey}:${filterValue.desc}`);
+            setFilter(`${filterKey.createdAt}:${filterValue.desc}`);
           },
           dataTestId: `${entity}-sortby-dateadded`,
           permissions: permission,
@@ -51,7 +51,7 @@ const Sort: React.FC<ISortProps> = ({
           icon: 'sortByAcs',
           label: 'A to Z',
           onClick: () => {
-            setFilter(`${filterKey}:${filterValue.asc}`);
+            setFilter(`${filterKey.aToZ}:${filterValue.asc}`);
           },
           dataTestId: `${entity}-sortBy-asc`,
           permissions: [''],
@@ -60,7 +60,7 @@ const Sort: React.FC<ISortProps> = ({
           icon: 'sortByDesc',
           label: 'Z to A',
           onClick: () => {
-            setFilter(`${filterKey}:${filterValue.desc}`);
+            setFilter(`${filterKey.aToZ}:${filterValue.desc}`);
           },
           dataTestId: `${entity}-sortBy-desc`,
           permissions: permission,

@@ -285,7 +285,7 @@ const Team: React.FC<ITeamProps> = ({
           />
           <Sort
             setFilter={setSortByFilter}
-            filterKey="createdAt"
+            filterKey={{ createdAt: 'createdAt', aToZ: 'name' }}
             filterValue={{ asc: 'ASC', desc: 'DESC' }}
             title={
               <div className="bg-blue-50 flex px-6 py-2 font-xs font-medium text-neutral-500">
