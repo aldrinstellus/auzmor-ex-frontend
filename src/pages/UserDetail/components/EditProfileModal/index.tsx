@@ -154,7 +154,8 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       defaultValue: getValues().fullName,
       error: errors.fullName?.message,
       name: 'fullName',
-      label: 'Name*',
+      label: 'Name',
+      required: true,
       dataTestId: `${dataTestId}-name`,
       disabled: userDetails.freezeEdit?.fullName,
       control,
@@ -227,6 +228,8 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       control,
       height: 40,
       isLoading: locationLoading,
+      getPopupContainer: document.body,
+      menuPlacement: 'topLeft',
     },
   ];
 
@@ -351,7 +354,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
   };
 
   return (
-    <Modal open={openEditProfile} className="max-w-[648px] max-h-[605px]">
+    <Modal open={openEditProfile} className="max-w-[638px] max-h-[605px]">
       <form>
         <Header title="Edit Profile" onClose={disableClosed} />
         <div className="relative">
@@ -409,8 +412,8 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
             </div>
           </div>
         </div>
-        <div className="max-h-[300px] mr-1 pt-8 mb-10 overflow-y-auto">
-          <div className="ml-4 mr-3 px-2 pb-4 space-y-6">
+        <div className="max-h-[300px] mr-1 my-[23px] overflow-y-auto">
+          <div className="ml-4 mr-3 px-2 pb-4 space-y-4">
             <div className="w-full flex space-x-6">
               <Layout fields={nameField} className="w-2/4" />
               <Layout fields={preferredNameField} className="w-2/4" />
