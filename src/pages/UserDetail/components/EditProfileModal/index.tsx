@@ -158,7 +158,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       dataTestId: `${dataTestId}-name`,
       disabled: userDetails.freezeEdit?.fullName,
       control,
-      inputClassName: 'py-[11px] !text-sm',
+      inputClassName: 'h-[40px] !text-sm',
     },
   ];
 
@@ -171,7 +171,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       label: 'Preferred Name',
       dataTestId: `${dataTestId}-perferred-name`,
       control,
-      inputClassName: 'py-[11px] !text-sm',
+      inputClassName: 'h-[40px] !text-sm',
     },
   ];
 
@@ -186,7 +186,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       label: 'Position title',
       disabled: userDetails.freezeEdit?.designation,
       control,
-      inputClassName: 'py-[11px] !text-sm',
+      inputClassName: 'h-[40px] !text-sm',
     },
   ];
 
@@ -205,6 +205,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       disableCreate: !isAdmin,
       getPopupContainer: document.body,
       noOptionsMessage: () => 'No Departments found',
+      height: 40,
       control,
     },
   ];
@@ -224,6 +225,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       },
       noOptionsMessage: 'No locations',
       control,
+      height: 40,
       isLoading: locationLoading,
     },
   ];
