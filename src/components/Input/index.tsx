@@ -19,6 +19,7 @@ export type InputProps = {
   id?: string;
   variant?: Variant;
   size?: Size;
+  fieldIcon?: React.ReactNode;
   rightIcon?: string;
   rightElement?: ReactElement;
   leftIcon?: string;
@@ -52,6 +53,7 @@ const Input: React.FC<InputProps> = ({
   size = Size.Medium,
   rightIcon = null,
   leftIcon = null,
+  fieldIcon = null,
   rightElement,
   defaultValue = '',
   placeholder = '',
@@ -181,6 +183,7 @@ const Input: React.FC<InputProps> = ({
               />
             </div>
           )}
+          {fieldIcon}
           <input
             id={id}
             name={field.name}
