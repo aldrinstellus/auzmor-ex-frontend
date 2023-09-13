@@ -37,6 +37,7 @@ import FailureToast from 'components/Toast/variants/FailureToast';
 import { useMutation } from '@tanstack/react-query';
 import useURLParams from 'hooks/useURLParams';
 import { Role } from 'utils/enum';
+import useRole from 'hooks/useRole';
 interface IForm {
   search?: string;
 }
@@ -86,6 +87,7 @@ const Team: React.FC<ITeamProps> = ({
   } = useURLParams();
 
   const { user } = useAuth();
+  const { isAdmin } = useRole();
   const [teamFlow, setTeamFlow] = useState<TeamFlow>(TeamFlow.CreateTeam); // to context
   const [showTeamDetail, setShowTeamDetail] = useState<Record<
     string,
@@ -96,7 +98,7 @@ const Team: React.FC<ITeamProps> = ({
     categories: [],
   });
   const [tab, setTab] = useState<TeamTab | string>(
-    searchParams.get('tab') || TeamTab.AllTeams,
+    searchParams.get('tab') || isAdmin ? TeamTab.AllTeams : TeamTab.MyTeams,
   );
   const [startFetching, setStartFetching] = useState(false);
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
@@ -260,7 +262,7 @@ const Team: React.FC<ITeamProps> = ({
             label="My Teams"
             size={Size.Small}
             variant={Variant.Secondary}
-            className="h-9 grow-0"
+            className={`h-9 grow-0 ${!isAdmin && 'pointer-events-none'}`}
             dataTestId="my-teams"
             active={tab === TeamTab.MyTeams && !searchValue}
             onClick={() => {
@@ -268,18 +270,20 @@ const Team: React.FC<ITeamProps> = ({
               setTab(TeamTab.MyTeams);
             }}
           />
-          <Button
-            label="All Teams"
-            size={Size.Small}
-            variant={Variant.Secondary}
-            className="h-9 grow-0"
-            dataTestId="all-teams"
-            active={tab === TeamTab.AllTeams && !searchValue}
-            onClick={() => {
-              updateParam('tab', TeamTab.AllTeams);
-              setTab(TeamTab.AllTeams);
-            }}
-          />
+          {isAdmin && (
+            <Button
+              label="All Teams"
+              size={Size.Small}
+              variant={Variant.Secondary}
+              className="h-9 grow-0"
+              dataTestId="all-teams"
+              active={tab === TeamTab.AllTeams && !searchValue}
+              onClick={() => {
+                updateParam('tab', TeamTab.AllTeams);
+                setTab(TeamTab.AllTeams);
+              }}
+            />
+          )}
         </div>
         <div className="flex space-x-2 justify-center items-center">
           <IconButton
@@ -427,7 +431,7 @@ const Team: React.FC<ITeamProps> = ({
                     </div>
                   </div>
                   <div className="flex space-x-1 text-xs font-normal">
-                    {user?.role !== Role.Member ? (
+                    {isAdmin ? (
                       <>
                         <div className="text-neutral-500">
                           There are no teams found in your organization right
@@ -458,9 +462,8 @@ const Team: React.FC<ITeamProps> = ({
                       className="mt-8 text-lg font-bold"
                       data-testid="teams-noresult-found"
                     >
-                      {`No result found${
-                        searchValue && ` for '${searchValue}'`
-                      }`}
+                      {`No result found`}
+                      {searchValue && ` for '${searchValue}'`}
                     </div>
                     <div className="text-sm text-gray-500 mt-2">
                       Sorry we can&apos;t find the team you are looking for.
