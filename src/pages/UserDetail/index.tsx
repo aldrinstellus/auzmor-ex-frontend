@@ -112,7 +112,11 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
       ),
       title: 'Recognitions',
       dataTestId: 'user-recognitions-tab',
-      tabContent: <NoDataCard user={data?.fullName} />,
+      tabContent: (
+        <div className="pt-2">
+          <NoDataCard user={data?.fullName} dataType="recognition" />
+        </div>
+      ),
     },
   ];
 
