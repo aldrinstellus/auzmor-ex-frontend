@@ -3,7 +3,6 @@ import Card from 'components/Card';
 import clsx from 'clsx';
 import 'moment-timezone';
 import Header from '../Header';
-import useRole from 'hooks/useRole';
 import TimezoneRow from './TimezoneRow';
 import DateOfJoiningRow from './DateOfJoiningRow';
 import EmployeeIdRow from './EmployeeIdRow';
@@ -24,7 +23,6 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
   searchParams,
 }) => {
   const [isEditable, setIsEditable] = useState<boolean>(false);
-  const { isAdmin } = useRole();
 
   useEffect(() => {
     if (!isEditable && searchParams.has('edit')) {
