@@ -148,6 +148,46 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
     'absolute top-0 left-0 text-white rounded-tl-[12px] rounded-br-[12px] px-3 py-1 text-xxs font-medium':
       true,
   });
+  const rightChipStyle = clsx({
+    'absolute top-0 right-0 rounded-bl-[12px] rounded-tr-[12px] px-3 py-1 text-xxs font-medium':
+      true,
+  });
+
+  const RenderRightChip = () => {
+    if (
+      [UserStatus.Invited, UserStatus.Created, UserStatus.Attempted].includes(
+        status as UserStatus,
+      )
+    ) {
+      return (
+        <div
+          className={`${rightChipStyle} bg-amber-100 text-orange-600`}
+          data-testid={`people-card-role-${role}`}
+        >
+          Pending
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const RenderLeftChip = () => {
+    if ([Status.ADMIN, Status.SUPERADMIN].includes(role as unknown as Status)) {
+      return (
+        <div
+          style={{
+            backgroundColor: statusColorMap[role],
+          }}
+          className={leftChipStyle}
+          data-testid={`people-card-role-${role}`}
+        >
+          {titleCase(role)}
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div
@@ -157,7 +197,7 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
     >
       <Card
         shadowOnHover
-        className="relative w-[190px] min-h-[244px] border-solid border border-neutral-200 flex flex-col items-center justify-center py-6 px-3 bg-white"
+        className="relative w-[190px] h-[244px] border-solid border rounded-9xl border-neutral-200 bg-white"
       >
         <UserProfileDropdown
           id={id}
@@ -206,7 +246,7 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
             <div className="cursor-pointer">
               <Icon
                 name="moreOutline"
-                className={`absolute top-${
+                className={`absolute z-10 top-${
                   status === UserStatus.Inactive ? 6 : 2
                 } right-2`}
                 dataTestId="people-card-ellipsis"
@@ -216,66 +256,35 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
           showOnHover={true}
           className="right-0 top-8 border border-[#e5e5e5]"
         />
-        {(() => {
-          if (status === UserStatus.Inactive) {
-            return (
-              <div
-                className="absolute top-0 text-xxs text-[#737373] font-medium py-1 bg-[#F5F5F5] w-full justify-center align-center rounded-t-9xl flex"
-                data-testid="usercard-deactivate-banner"
-              >
-                <Icon
-                  name="forbidden"
-                  color="text-neutral-500"
-                  size={16}
-                  className="mr-1"
-                ></Icon>
-                Deactivated Account
-              </div>
-            );
-          }
-          if (
-            [
-              UserStatus.Invited,
-              UserStatus.Created,
-              UserStatus.Attempted,
-            ].includes(status as UserStatus)
-          ) {
-            return (
-              <div
-                style={{
-                  backgroundColor: '#EA580C',
-                }}
-                className={leftChipStyle}
-                data-testid={`people-card-role-${role}`}
-              >
-                Pending
-              </div>
-            );
-          }
 
-          if (
-            [Status.ADMIN, Status.SUPERADMIN].includes(
-              role as unknown as Status,
-            )
-          ) {
-            return (
-              <div
-                style={{
-                  backgroundColor: statusColorMap[role],
-                }}
-                className={leftChipStyle}
-                data-testid={`people-card-role-${role}`}
-              >
-                {titleCase(role)}
-              </div>
-            );
-          }
-
-          return null;
-        })()}
+        {status === UserStatus.Inactive ? (
+          <div
+            className="absolute top-0 text-xxs text-[#737373] font-medium py-1 bg-[#F5F5F5] w-full justify-center align-center rounded-t-9xl flex"
+            data-testid="usercard-deactivate-banner"
+          >
+            <Icon
+              name="forbidden"
+              color="text-neutral-500"
+              size={16}
+              className="mr-1"
+            ></Icon>
+            Deactivated Account
+          </div>
+        ) : (
+          <div
+            className={clsx({
+              'transition-all': true,
+              'opacity-0 z-0': isHovered,
+              'opacity-100': !isHovered,
+            })}
+          >
+            <RenderLeftChip />
+            <RenderRightChip />
+          </div>
+        )}
 
         <div
-          className="flex flex-col items-center"
+          className="flex flex-col gap-4 items-center z-10 py-6 justify-between h-full"
           onClick={() => {
             if (id === user?.id) {
               return navigate('/profile');
@@ -295,53 +304,59 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
               (status as any) === UserStatus.Inactive ? '#ffffff' : undefined
             }
           />
-          <div
-            className="mt-1 text-neutral-900 text-base font-bold truncate"
-            data-testid={`people-card-name-${fullName || workEmail}`}
-          >
-            {_.truncate(fullName || workEmail, {
-              length: 18,
-              separator: ' ',
-            })}
-          </div>
-          <div
-            className="mt-1 text-neutral-900 text-xs font-normal line-clamp-1"
-            data-testid={`people-card-title-${designation || role}`}
-          >
-            {designation || role}
-          </div>
-          {department?.name && (
-            <div
-              className="flex justify-center items-center px-3 py-[2px] mt-2 rounded-[4px] gap-1 bg-orange-100"
-              data-testid={`people-card-department-${department?.name}`}
-            >
-              <Icon
-                name="briefcase"
-                size={16}
-                hover={false}
-                color="text-neutral-900"
-              />
-              <div className="text-neutral-900 text-xxs font-semibold line-clamp-1">
-                {department?.name}
-              </div>
-            </div>
-          )}
-          {workLocation?.name && (
-            <div className="flex gap-1 mt-2">
-              <Icon
-                name="location"
-                size={16}
-                color="text-neutral-900"
-                hover={false}
-              />
+          <div className="flex flex-col items-center gap-2 justify-center flex-1">
+            <div className="flex flex-col items-center gap-1">
               <div
-                className="text-neutral-500 text-xs font-normal line-clamp-1"
-                data-testid={`people-card-location-${workLocation?.name}`}
+                className="text-neutral-900 text-base font-bold truncate"
+                data-testid={`people-card-name-${fullName || workEmail}`}
               >
-                {workLocation?.name}
+                {_.truncate(fullName || workEmail, {
+                  length: 18,
+                  separator: ' ',
+                })}
               </div>
+              {designation && (
+                <div
+                  className="text-neutral-900 text-xs font-normal line-clamp-1"
+                  data-testid={`people-card-title-${designation}`}
+                >
+                  {designation}
+                </div>
+              )}
             </div>
-          )}
+            {department?.name && (
+              <div
+                className="flex justify-center items-center px-3 py-[2px] rounded-[4px] gap-1 bg-orange-100"
+                data-testid={`people-card-department-${department?.name}`}
+              >
+                <Icon
+                  name="briefcase"
+                  size={16}
+                  hover={false}
+                  color="text-neutral-900"
+                />
+                <div className="text-neutral-900 text-xxs font-semibold line-clamp-1">
+                  {department?.name}
+                </div>
+              </div>
+            )}
+            {workLocation?.name && (
+              <div className="flex gap-1">
+                <Icon
+                  name="location"
+                  size={16}
+                  color="text-neutral-900"
+                  hover={false}
+                />
+                <div
+                  className="text-neutral-500 text-xs font-normal line-clamp-1"
+                  data-testid={`people-card-location-${workLocation?.name}`}
+                >
+                  {workLocation?.name}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </Card>
       <DeletePeople

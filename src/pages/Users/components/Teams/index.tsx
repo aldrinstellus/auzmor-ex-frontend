@@ -308,8 +308,7 @@ const Team: React.FC<ITeamProps> = ({
                   placeholder: 'Search teams',
                   error: errors.search?.message,
                   dataTestId: 'teams-search',
-                  inputClassName: 'py-[7px] !text-sm',
-                  className: '!h-9 -mt-1',
+                  inputClassName: 'py-[7px] !text-sm !h-9',
                   isClearable: true,
                 },
               ]}

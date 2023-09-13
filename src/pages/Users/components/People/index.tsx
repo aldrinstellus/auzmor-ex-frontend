@@ -151,7 +151,7 @@ const People: React.FC<IPeopleProps> = ({
 
   return (
     <div className="relative pb-8">
-      <div>
+      <div className="flex flex-col gap-6">
         <div className="flex justify-between items-center">
           <div className="flex space-x-4">
             {!isTeamPeople && (
@@ -212,8 +212,7 @@ const People: React.FC<IPeopleProps> = ({
                     placeholder: 'Search members',
                     error: errors.search?.message,
                     dataTestId: 'people-search-members',
-                    inputClassName: 'py-[7px] !text-sm',
-                    className: '!h-9 -mt-1',
+                    inputClassName: 'py-[7px] !text-sm !h-9',
                     isClearable: true,
                   },
                 ]}
@@ -222,12 +221,12 @@ const People: React.FC<IPeopleProps> = ({
           </div>
         </div>
 
-        <div className="text-neutral-500 mt-6 mb-6">
+        <div className="text-neutral-500">
           Showing {!isLoading && usersData?.length} results
         </div>
 
         {userStatus && (
-          <div className="flex justify-between  mb-6">
+          <div className="flex justify-between">
             <div className="flex items-center space-x-2">
               <div className="text-base text-neutral-500">Filter By</div>
               <div
@@ -253,9 +252,7 @@ const People: React.FC<IPeopleProps> = ({
             </div>
           </div>
         )}
-      </div>
 
-      <div>
         <div className="flex flex-wrap gap-6">
           {(() => {
             if (isLoading) {
@@ -329,7 +326,8 @@ const People: React.FC<IPeopleProps> = ({
                     className="mt-8 text-lg font-bold"
                     data-testid="no-result-found"
                   >
-                    {`No result found${searchValue && ` for '${searchValue}'`}`}
+                    {`No result found`}
+                    {!!searchValue && ` for '${searchValue}'`}
                   </div>
                   <div className="text-sm text-gray-500 mt-2">
                     Sorry we can&apos;t find the profile you are looking for.
