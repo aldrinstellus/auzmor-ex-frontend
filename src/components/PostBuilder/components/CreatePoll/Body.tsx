@@ -35,8 +35,8 @@ const Body: React.FC<PollBodyProps> = ({
   datePickerField,
 }) => {
   return (
-    <div className="p-6 max-h-[60vh] overflow-y-auto text-neutral-900 text-sm font-medium">
-      <Layout fields={questionField} className="mb-6" />
+    <div className="p-6 max-h-[510px] overflow-y-auto text-neutral-900 text-sm font-medium flex flex-col gap-6">
+      <Layout fields={questionField} />
       {fields.map((field, index) => (
         <OptionRow
           key={field.id}
@@ -45,7 +45,6 @@ const Body: React.FC<PollBodyProps> = ({
           index={index}
           control={control}
           remove={remove}
-          className="mb-6"
         />
       ))}
       <Button
@@ -66,9 +65,9 @@ const Body: React.FC<PollBodyProps> = ({
           }
         }}
       />
-      <Layout fields={durationFields} className="mt-6" />
+      <Layout fields={durationFields} />
       {selectedDuration && selectedDuration.label === 'Custom Date' && (
-        <Layout fields={datePickerField} className="mt-6" />
+        <Layout fields={datePickerField} />
       )}
     </div>
   );
