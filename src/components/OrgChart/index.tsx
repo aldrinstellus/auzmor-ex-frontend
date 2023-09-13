@@ -5,6 +5,7 @@ import Chart from './components/Chart';
 import { OrgChart } from 'd3-org-chart';
 import { useForm } from 'react-hook-form';
 import { IGetUser, useOrgChart } from 'queries/users';
+import { IAppliedFilters } from 'components/FilterModal';
 
 export enum OrgChartMode {
   Team = 'TEAM',
@@ -26,13 +27,20 @@ const OrganizationChart: React.FC<IOrgChart> = ({ setShowOrgChart }) => {
   );
   const chartRef = useRef<OrgChart<any> | null>(null);
   const { control, watch, resetField } = useForm<IForm>();
-  const [userStatus, setUserStatus] = useState<string>('');
   const [startWithSpecificUser, setStartWithSpecificUser] =
     useState<IGetUser | null>(null);
   const [isExpandAll, setIsExpandAll] = useState<boolean>(false);
+  const [appliedFilters, setAppliedFilters] = useState<IAppliedFilters>({
+    location: [],
+    department: [],
+    status: null,
+  });
   const { data, isLoading } = useOrgChart({
     root: startWithSpecificUser?.id,
     expandAll: isExpandAll,
+    locations: appliedFilters.location.map((location) => location.id),
+    departments: appliedFilters.department.map((department) => department.id),
+    status: appliedFilters.status?.value,
   });
 
   return (
@@ -56,13 +64,13 @@ const OrganizationChart: React.FC<IOrgChart> = ({ setShowOrgChart }) => {
         chartRef={chartRef}
         control={control}
         watch={watch}
-        userStatus={userStatus}
-        setUserStatus={setUserStatus}
         resetField={resetField}
         startWithSpecificUser={startWithSpecificUser}
         setStartWithSpecificUser={setStartWithSpecificUser}
         isExpandAll={isExpandAll}
         setIsExpandAll={setIsExpandAll}
+        appliedFilters={appliedFilters}
+        setAppliedFilters={setAppliedFilters}
       />
       <Chart
         orgChartRef={chartRef}

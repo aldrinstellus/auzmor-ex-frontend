@@ -4,7 +4,6 @@ import IconButton, {
   Size as IconSize,
 } from 'components/IconButton';
 import useModal from 'hooks/useModal';
-import FilterModal from 'pages/Users/components/FilterModals/PeopleFilterModal';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Control, UseFormResetField, UseFormWatch } from 'react-hook-form';
 import { IForm, OrgChartMode } from '..';
@@ -22,6 +21,10 @@ import { IOption } from 'components/AsyncSingleSelect';
 import useAuth from 'hooks/useAuth';
 import Divider from 'components/Divider';
 import Avatar from 'components/Avatar';
+import FilterModal, {
+  IAppliedFilters,
+  UserStatus,
+} from 'components/FilterModal';
 
 interface IToolbar {
   activeMode: OrgChartMode;
@@ -29,13 +32,13 @@ interface IToolbar {
   chartRef: React.MutableRefObject<OrgChart<any> | null>;
   control: Control<IForm, any>;
   watch: UseFormWatch<IForm>;
-  userStatus: string;
-  setUserStatus: (userStatus: string) => void;
   resetField: UseFormResetField<IForm>;
   startWithSpecificUser: IGetUser | null;
   setStartWithSpecificUser: (startWithSpecificUser: IGetUser | null) => void;
   isExpandAll: boolean;
   setIsExpandAll: (isExpandAll: boolean) => void;
+  appliedFilters: IAppliedFilters;
+  setAppliedFilters: (appliedFilters: IAppliedFilters) => void;
 }
 
 const Toolbar: React.FC<IToolbar> = ({
@@ -44,13 +47,13 @@ const Toolbar: React.FC<IToolbar> = ({
   chartRef,
   control,
   watch,
-  userStatus,
-  setUserStatus,
   resetField,
   startWithSpecificUser,
   setStartWithSpecificUser,
   isExpandAll,
   setIsExpandAll,
+  appliedFilters,
+  setAppliedFilters,
 }) => {
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const [isSpotlightActive, setIsSpotlightActive] = useState(false);
@@ -59,7 +62,10 @@ const Toolbar: React.FC<IToolbar> = ({
 
   const { user } = useAuth();
 
-  const isFilterApplied = !!startWithSpecificUser;
+  const isFilterApplied =
+    !!startWithSpecificUser ||
+    !!appliedFilters.department.length ||
+    !!appliedFilters.location.length;
 
   // fetch users on start with specific user
   const debouncedPersonSearchValue = useDebounce(
@@ -182,6 +188,13 @@ const Toolbar: React.FC<IToolbar> = ({
       }),
     [activeMode],
   );
+  const resetFilters = () => {
+    setAppliedFilters({
+      location: [],
+      department: [],
+      status: { value: UserStatus.All, label: 'all' },
+    });
+  };
   return (
     <>
       <div className="flex flex-col mt-7 px-4 py-3 mb-8 w-full shadow-lg rounded-9xl bg-white">
@@ -215,13 +228,13 @@ const Toolbar: React.FC<IToolbar> = ({
             </div>
           </div>
           <div className="flex items-center">
-            <IconButton
+            {/* <IconButton
               icon="importOutline"
               variant={IconVariant.Secondary}
               className="group"
               borderAround
               color="text-neutral-900"
-            />
+            /> */}
             <div className="border-neutral-200 border rounded-9xl px-6 py-2 flex items-center ml-4">
               <Popover
                 triggerNode={
@@ -368,7 +381,7 @@ const Toolbar: React.FC<IToolbar> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               {startWithSpecificUser && (
-                <div className="flex items-center">
+                <div className="flex items-center mr-2">
                   <div className="flex items-center text-neutral-900 text-sm font-bold mr-1">
                     Start with specific person:
                   </div>
@@ -394,23 +407,92 @@ const Toolbar: React.FC<IToolbar> = ({
                   </div>
                 </div>
               )}
+              {!!appliedFilters.location.length && (
+                <div className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-primary-200 rounded-7xl justify-between mr-2">
+                  <div className="font-medium text-sm text-neutral-900 mr-1">
+                    Location{' '}
+                    {appliedFilters.location.map((location, index) => (
+                      <>
+                        <span
+                          key={location.id}
+                          className="text-primary-500 font-bold text-sm"
+                        >
+                          {location.name}
+                        </span>
+                        {index !== appliedFilters.location.length - 1 && (
+                          <span> and </span>
+                        )}
+                      </>
+                    ))}
+                  </div>
+                  <div className="flex items-center">
+                    <Icon
+                      name="close"
+                      size={16}
+                      onClick={() =>
+                        setAppliedFilters({ ...appliedFilters, location: [] })
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+              {!!appliedFilters.department.length && (
+                <div className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-primary-200 rounded-7xl justify-between mr-2">
+                  <div className="font-medium text-sm text-neutral-900 mr-1">
+                    Department{' '}
+                    {appliedFilters.department.map((department, index) => (
+                      <>
+                        <span
+                          key={department.id}
+                          className="text-primary-500 font-bold text-sm"
+                        >
+                          {department.name}
+                        </span>
+                        {index !== appliedFilters.department.length - 1 && (
+                          <span> and </span>
+                        )}
+                      </>
+                    ))}
+                  </div>
+                  <div className="flex items-center">
+                    <Icon
+                      name="close"
+                      size={16}
+                      onClick={() =>
+                        setAppliedFilters({ ...appliedFilters, department: [] })
+                      }
+                    />
+                  </div>
+                </div>
+              )}
             </div>
             <div
               className="px-3 py-1 text-neutral-500 text-base font-medium border border-neutral-200 rounded-7xl cursor-pointer hover:border-primary-200 hover:text-primary-500"
-              onClick={() => setStartWithSpecificUser(null)}
+              onClick={() => {
+                setStartWithSpecificUser(null);
+                resetFilters();
+              }}
             >
               Clear filters
             </div>
           </div>
         )}
       </div>
-      <FilterModal
-        setUserStatus={setUserStatus}
-        userStatus={userStatus}
-        open={showFilterModal}
-        openModal={openFilterModal}
-        closeModal={closeFilterModal}
-      />
+      {showFilterModal && (
+        <FilterModal
+          open={showFilterModal}
+          closeModal={closeFilterModal}
+          appliedFilters={appliedFilters}
+          onApply={(appliedFilters: IAppliedFilters) => {
+            setAppliedFilters(appliedFilters);
+            closeFilterModal();
+          }}
+          onClear={() => {
+            resetFilters();
+            closeFilterModal();
+          }}
+        />
+      )}
     </>
   );
 };
