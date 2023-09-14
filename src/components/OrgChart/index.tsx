@@ -6,6 +6,7 @@ import { OrgChart } from 'd3-org-chart';
 import { useForm } from 'react-hook-form';
 import { IGetUser, useOrgChart } from 'queries/users';
 import { IAppliedFilters } from 'components/FilterModal';
+import { isFiltersEmpty } from 'utils/misc';
 
 export enum OrgChartMode {
   Team = 'TEAM',
@@ -35,13 +36,18 @@ const OrganizationChart: React.FC<IOrgChart> = ({ setShowOrgChart }) => {
     department: [],
     status: null,
   });
-  const { data, isLoading } = useOrgChart({
-    root: startWithSpecificUser?.id,
-    expandAll: isExpandAll,
-    locations: appliedFilters.location.map((location) => location.id),
-    departments: appliedFilters.department.map((department) => department.id),
-    status: appliedFilters.status?.value,
-  });
+  const [parentId, setParentId] = useState<string | null>(null);
+  const { data, isLoading } = useOrgChart(
+    isFiltersEmpty({
+      root: parentId || startWithSpecificUser?.id,
+      expandAll: isExpandAll,
+      locations: appliedFilters?.location?.map((location) => location.id) || [],
+      departments:
+        appliedFilters?.department?.map((department) => department.id) || [],
+      status: appliedFilters.status?.value,
+      expand: activeMode === OrgChartMode.Team ? 2 : 0,
+    }),
+  );
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -49,7 +55,7 @@ const OrganizationChart: React.FC<IOrgChart> = ({ setShowOrgChart }) => {
         <div className="text-2xl font-bold">Organization Chart</div>
         <Button
           className="flex space-x-[6px] group"
-          label="View Organization Chart"
+          label="View People Hub"
           variant={Variant.Secondary}
           leftIcon="peopleOutline"
           leftIconSize={20}
@@ -71,11 +77,26 @@ const OrganizationChart: React.FC<IOrgChart> = ({ setShowOrgChart }) => {
         setIsExpandAll={setIsExpandAll}
         appliedFilters={appliedFilters}
         setAppliedFilters={setAppliedFilters}
+        setParentId={setParentId}
       />
       <Chart
         orgChartRef={chartRef}
         data={(data as any)?.result?.data.users || []}
         isLoading={isLoading}
+        onClearFilter={() => {
+          setAppliedFilters({
+            location: [],
+            department: [],
+            status: null,
+          });
+          setStartWithSpecificUser(null);
+          resetField('userSearch');
+        }}
+        isFilterApplied={
+          !!appliedFilters?.department?.length ||
+          !!appliedFilters?.location?.length ||
+          !!startWithSpecificUser
+        }
       />
     </div>
   );

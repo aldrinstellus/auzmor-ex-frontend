@@ -258,7 +258,8 @@ export const acceptInviteSetPassword = async (q: Record<string, any>) => {
   return await apiService.put('/users/invite/reset-password', q);
 };
 
-const getOrgChart = async ({ queryKey }: QueryFunctionContext<any>) => {
+export const getOrgChart = async ({ queryKey }: QueryFunctionContext<any>) => {
+  // return await apiService.get('/users/chart', queryKey[1]);
   return await new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve({
@@ -280,7 +281,7 @@ const getOrgChart = async ({ queryKey }: QueryFunctionContext<any>) => {
                 location: { id: '', name: 'United States' },
                 department: { id: '', name: 'Marketing' },
                 directReportees: 1,
-                matchesCriteria: false,
+                matchesCriteria: true,
               },
               {
                 id: '6465d142c62ae5de85d33b83',
@@ -292,7 +293,7 @@ const getOrgChart = async ({ queryKey }: QueryFunctionContext<any>) => {
                 location: { id: '', name: 'United States' },
                 department: { id: '', name: 'Sales' },
                 directReportees: 1,
-                matchesCriteria: false,
+                matchesCriteria: true,
               },
               {
                 id: '64a6680d78819d040d08a535',
@@ -303,7 +304,7 @@ const getOrgChart = async ({ queryKey }: QueryFunctionContext<any>) => {
                 location: { id: '', name: 'United States' },
                 department: { id: '', name: '' },
                 directReportees: 1,
-                matchesCriteria: false,
+                matchesCriteria: true,
               },
               {
                 id: '64d8827142c17768ac9d047e',
@@ -314,7 +315,7 @@ const getOrgChart = async ({ queryKey }: QueryFunctionContext<any>) => {
                 location: { id: '', name: 'United States' },
                 department: { id: '', name: '' },
                 directReportees: 1,
-                matchesCriteria: false,
+                matchesCriteria: true,
               },
               {
                 id: '644913f229483de956f6ffbc',
@@ -326,7 +327,7 @@ const getOrgChart = async ({ queryKey }: QueryFunctionContext<any>) => {
                 location: { id: '', name: 'United States' },
                 department: { id: '', name: 'Development' },
                 directReportees: 0,
-                matchesCriteria: false,
+                matchesCriteria: true,
               },
               {
                 id: '649239816e270d84db1e8edb',
@@ -337,7 +338,7 @@ const getOrgChart = async ({ queryKey }: QueryFunctionContext<any>) => {
                 location: { id: '', name: 'United States' },
                 department: { id: '', name: 'QA' },
                 directReportees: 1,
-                matchesCriteria: false,
+                matchesCriteria: true,
               },
               {
                 id: '64ad517fdaf6c632e79d462b',
@@ -351,6 +352,7 @@ const getOrgChart = async ({ queryKey }: QueryFunctionContext<any>) => {
                 matchesCriteria: false,
               },
             ],
+            // users: [],
           },
         },
         code: 200,

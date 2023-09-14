@@ -30,6 +30,7 @@ const UserNode: React.FC<IUserNode> = ({ node }) => {
           backgroundColor: !!node?.data?._upToTheRootHighlightedNode
             ? '#F0F8FF'
             : 'white',
+          opacity: node?.data.matchesCriteria ? '1' : '0.5',
         }}
       >
         <div className="flex">
@@ -41,7 +42,12 @@ const UserNode: React.FC<IUserNode> = ({ node }) => {
             <div className="text-sm my-1">Sales Director</div>
             <div className="flex items-center">
               <div className="mr-1">
-                <Icon name="location" size={24} color="text-neutral-900" />
+                <Icon
+                  name="location"
+                  size={16}
+                  color="text-neutral-900"
+                  hover={false}
+                />
               </div>
               <div className="text-sm text-neutral-500">San Francisco</div>
             </div>

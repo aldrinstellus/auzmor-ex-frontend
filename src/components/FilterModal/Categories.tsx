@@ -1,26 +1,21 @@
-import { ICheckboxListOption } from 'components/CheckboxList';
-import Layout, { FieldType } from 'components/Form';
-import Icon from 'components/Icon';
-import Spinner from 'components/Spinner';
-import { useDebounce } from 'hooks/useDebounce';
-import { IDepartment, useInfiniteDepartments } from 'queries/department';
 import React, { useEffect } from 'react';
-import {
-  Control,
-  FieldValues,
-  UseFormSetValue,
-  UseFormWatch,
-} from 'react-hook-form';
-import { useInView } from 'react-intersection-observer';
 import { IFilterForm } from '.';
+import { Control, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
+import Layout, { FieldType } from 'components/Form';
+import { useDebounce } from 'hooks/useDebounce';
+import { ICategory, useInfiniteCategories } from 'queries/category';
+import { ICheckboxListOption } from 'components/CheckboxList';
+import Spinner from 'components/Spinner';
+import Icon from 'components/Icon';
 
-interface IDepartmentsProps {
+interface ICategoriesProps {
   control: Control<IFilterForm, any>;
   watch: UseFormWatch<IFilterForm>;
   setValue: UseFormSetValue<IFilterForm>;
 }
 
-const Departments: React.FC<IDepartmentsProps> = ({
+const Categories: React.FC<ICategoriesProps> = ({
   control,
   watch,
   setValue,
@@ -35,45 +30,42 @@ const Departments: React.FC<IDepartmentsProps> = ({
     {
       type: FieldType.Input,
       control,
-      name: 'departmentSearch',
+      name: 'categorySearch',
       placeholder: 'Search',
       isClearable: true,
       leftIcon: 'search',
-      dataTestId: `department-search`,
+      dataTestId: `category-search`,
     },
   ];
 
-  const [departmentSearch, departmentCheckbox] = watch([
-    'departmentSearch',
-    'departmentCheckbox',
+  const [categorySearch, categoryCheckbox] = watch([
+    'categorySearch',
+    'categoryCheckbox',
   ]);
 
-  // fetch department from search input
-  const debouncedDepartmentSearchValue = useDebounce(
-    departmentSearch || '',
-    300,
-  );
+  // fetch category from search input
+  const debouncedDepartmentSearchValue = useDebounce(categorySearch || '', 300);
   const {
     data: fetchedDepartments,
     isLoading,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-  } = useInfiniteDepartments({
+  } = useInfiniteCategories({
     q: debouncedDepartmentSearchValue,
   });
-  const departmentData = fetchedDepartments?.pages.flatMap((page) => {
-    return page.data.result.data.map((department: IDepartment) => department);
+  const categoryData = fetchedDepartments?.pages.flatMap((page) => {
+    return page.data.result.data.map((category: ICategory) => category);
   });
 
-  const departmentFields = [
+  const categoryFields = [
     {
       type: FieldType.CheckboxList,
-      name: 'departmentCheckbox',
+      name: 'categoryCheckbox',
       control,
-      options: departmentData?.map((department: IDepartment) => ({
-        data: department,
-        datatestId: `department-${department.name}`,
+      options: categoryData?.map((category: ICategory) => ({
+        data: category,
+        datatestId: `category-${category.name}`,
       })),
       labelRenderer: (option: ICheckboxListOption) => (
         <div className="ml-2.5 cursor-pointer">{option.data.name}</div>
@@ -85,9 +77,9 @@ const Departments: React.FC<IDepartmentsProps> = ({
   return (
     <div className="px-2 py-4">
       <Layout fields={searchField} />
-      {!!departmentCheckbox?.length && (
+      {!!categoryCheckbox?.length && (
         <div className="flex mt-2 mb-3 overflow-x-auto">
-          {departmentCheckbox.map((location: ICheckboxListOption) => (
+          {categoryCheckbox.map((location: ICheckboxListOption) => (
             <div
               key={location.data.id}
               className="flex items-center px-3 py-2 bg-neutral-100 rounded-17xl border border-neutral-200 mr-2"
@@ -102,8 +94,8 @@ const Departments: React.FC<IDepartmentsProps> = ({
                   color="text-neutral-900"
                   onClick={() =>
                     setValue(
-                      'departmentCheckbox',
-                      departmentCheckbox.filter(
+                      'categoryCheckbox',
+                      categoryCheckbox.filter(
                         (selectedLocation: ICheckboxListOption) =>
                           selectedLocation.data.id !== location.data.id,
                       ),
@@ -121,7 +113,7 @@ const Departments: React.FC<IDepartmentsProps> = ({
         </div>
       ) : (
         <div className="overflow-y-scroll max-h-96">
-          <Layout fields={departmentFields} />
+          <Layout fields={categoryFields} />
           {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
         </div>
       )}
@@ -129,4 +121,4 @@ const Departments: React.FC<IDepartmentsProps> = ({
   );
 };
 
-export default Departments;
+export default Categories;

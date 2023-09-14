@@ -24,9 +24,11 @@ import Avatar from 'components/Avatar';
 import FilterModal, {
   IAppliedFilters,
   UserStatus,
+  FilterModalVariant,
 } from 'components/FilterModal';
+import { INode } from './Chart';
 
-interface IToolbar {
+interface IToolbarProps {
   activeMode: OrgChartMode;
   setActiveMode: (activeMode: OrgChartMode) => void;
   chartRef: React.MutableRefObject<OrgChart<any> | null>;
@@ -39,9 +41,10 @@ interface IToolbar {
   setIsExpandAll: (isExpandAll: boolean) => void;
   appliedFilters: IAppliedFilters;
   setAppliedFilters: (appliedFilters: IAppliedFilters) => void;
+  setParentId: (parentId: string | null) => void;
 }
 
-const Toolbar: React.FC<IToolbar> = ({
+const Toolbar: React.FC<IToolbarProps> = ({
   activeMode,
   setActiveMode,
   chartRef,
@@ -54,6 +57,7 @@ const Toolbar: React.FC<IToolbar> = ({
   setIsExpandAll,
   appliedFilters,
   setAppliedFilters,
+  setParentId,
 }) => {
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const [isSpotlightActive, setIsSpotlightActive] = useState(false);
@@ -63,9 +67,7 @@ const Toolbar: React.FC<IToolbar> = ({
   const { user } = useAuth();
 
   const isFilterApplied =
-    !!startWithSpecificUser ||
-    !!appliedFilters.department.length ||
-    !!appliedFilters.location.length;
+    !!appliedFilters?.department?.length || !!appliedFilters?.location?.length;
 
   // fetch users on start with specific user
   const debouncedPersonSearchValue = useDebounce(
@@ -188,12 +190,18 @@ const Toolbar: React.FC<IToolbar> = ({
       }),
     [activeMode],
   );
-  const resetFilters = () => {
+  const resetAppliedFilters = () => {
     setAppliedFilters({
       location: [],
       department: [],
       status: { value: UserStatus.All, label: 'all' },
     });
+  };
+  const clearAllFilters = () => {
+    resetAppliedFilters();
+    setStartWithSpecificUser(null);
+    resetField('userSearch');
+    chartRef.current?.clearHighlighting();
   };
   return (
     <>
@@ -216,13 +224,23 @@ const Toolbar: React.FC<IToolbar> = ({
           <div className="p-1 rounded-9xl border-neutral-200 border bg-neutral-50 flex items-center">
             <div
               className={teamClassName}
-              onClick={() => setActiveMode(OrgChartMode.Team)}
+              onClick={() => {
+                setActiveMode(OrgChartMode.Team);
+                setParentId(
+                  chartRef!
+                    .current!.data()
+                    ?.find((node: INode) => node.id === user?.id).parentId,
+                );
+              }}
             >
               My Team
             </div>
             <div
               className={overallClassName}
-              onClick={() => setActiveMode(OrgChartMode.Overall)}
+              onClick={() => {
+                setActiveMode(OrgChartMode.Overall);
+                setParentId(null);
+              }}
             >
               Overall
             </div>
@@ -266,9 +284,8 @@ const Toolbar: React.FC<IToolbar> = ({
                             user={member}
                             key={member.id}
                             onClick={() => {
-                              chartRef.current?.clearHighlighting();
+                              clearAllFilters();
                               setIsSpotlightActive(false);
-                              resetField('userSearch');
                               setStartWithSpecificUser(member);
                               close();
                             }}
@@ -335,8 +352,7 @@ const Toolbar: React.FC<IToolbar> = ({
                     onClick={() => {
                       chartRef.current?.clearHighlighting();
                       if (!isSpotlightActive) {
-                        setStartWithSpecificUser(null);
-                        resetField('userSearch');
+                        clearAllFilters();
                         chartRef.current
                           ?.setUpToTheRootHighlighted(user?.id || '')
                           .render()
@@ -376,8 +392,8 @@ const Toolbar: React.FC<IToolbar> = ({
             </div>
           </div>
         </div>
-        {isFilterApplied && <Divider className="my-2" />}
-        {isFilterApplied && (
+        {!!startWithSpecificUser && <Divider className="my-2" />}
+        {!!startWithSpecificUser && (
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               {startWithSpecificUser && (
@@ -407,7 +423,25 @@ const Toolbar: React.FC<IToolbar> = ({
                   </div>
                 </div>
               )}
-              {!!appliedFilters.location.length && (
+            </div>
+            <div
+              className="px-3 py-1 text-neutral-500 text-base font-medium border border-neutral-200 rounded-7xl cursor-pointer hover:border-primary-200 hover:text-primary-500"
+              onClick={() => {
+                setStartWithSpecificUser(null);
+              }}
+            >
+              Clear filters
+            </div>
+          </div>
+        )}
+        {!!isFilterApplied && <Divider className="my-2" />}
+        {!!isFilterApplied && (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="text-neutral-900 font-bold text-sm mr-2">
+                Filter by:
+              </div>
+              {!!appliedFilters?.location?.length && (
                 <div className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-primary-200 rounded-7xl justify-between mr-2">
                   <div className="font-medium text-sm text-neutral-900 mr-1">
                     Location{' '}
@@ -419,9 +453,14 @@ const Toolbar: React.FC<IToolbar> = ({
                         >
                           {location.name}
                         </span>
-                        {index !== appliedFilters.location.length - 1 && (
-                          <span> and </span>
-                        )}
+                        {appliedFilters?.location &&
+                          index !== appliedFilters?.location?.length - 1 && (
+                            <span>
+                              {appliedFilters?.location?.length === 2
+                                ? ' and '
+                                : ', '}
+                            </span>
+                          )}
                       </>
                     ))}
                   </div>
@@ -436,7 +475,7 @@ const Toolbar: React.FC<IToolbar> = ({
                   </div>
                 </div>
               )}
-              {!!appliedFilters.department.length && (
+              {!!appliedFilters?.department?.length && (
                 <div className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-primary-200 rounded-7xl justify-between mr-2">
                   <div className="font-medium text-sm text-neutral-900 mr-1">
                     Department{' '}
@@ -448,9 +487,14 @@ const Toolbar: React.FC<IToolbar> = ({
                         >
                           {department.name}
                         </span>
-                        {index !== appliedFilters.department.length - 1 && (
-                          <span> and </span>
-                        )}
+                        {appliedFilters?.department &&
+                          index !== appliedFilters?.department?.length - 1 && (
+                            <span>
+                              {appliedFilters?.department?.length === 2
+                                ? ' and '
+                                : ', '}
+                            </span>
+                          )}
                       </>
                     ))}
                   </div>
@@ -469,8 +513,7 @@ const Toolbar: React.FC<IToolbar> = ({
             <div
               className="px-3 py-1 text-neutral-500 text-base font-medium border border-neutral-200 rounded-7xl cursor-pointer hover:border-primary-200 hover:text-primary-500"
               onClick={() => {
-                setStartWithSpecificUser(null);
-                resetFilters();
+                resetAppliedFilters();
               }}
             >
               Clear filters
@@ -483,12 +526,13 @@ const Toolbar: React.FC<IToolbar> = ({
           open={showFilterModal}
           closeModal={closeFilterModal}
           appliedFilters={appliedFilters}
+          variant={FilterModalVariant.Orgchart}
           onApply={(appliedFilters: IAppliedFilters) => {
             setAppliedFilters(appliedFilters);
             closeFilterModal();
           }}
           onClear={() => {
-            resetFilters();
+            resetAppliedFilters();
             closeFilterModal();
           }}
         />

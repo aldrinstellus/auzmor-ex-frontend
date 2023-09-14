@@ -1,6 +1,5 @@
 import Button, { Variant as ButtonVariant } from 'components/Button';
 import Divider from 'components/Divider';
-import Layout, { FieldType } from 'components/Form';
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
 import { IDepartment } from 'queries/department';
@@ -12,13 +11,17 @@ import Departments from './Departments';
 import { IRadioListOption } from 'components/RadioGroup';
 import Status from './Status';
 import { ICheckboxListOption } from 'components/CheckboxList';
+import Categories from './Categories';
+import { ICategory } from 'queries/category';
 
 export interface IFilterForm {
   status: IRadioListOption;
   locationCheckbox: ICheckboxListOption[];
   departmentCheckbox: ICheckboxListOption[];
+  categoryCheckbox: ICheckboxListOption[];
   locationSearch: string;
   departmentSearch: string;
+  categorySearch: string;
 }
 
 export interface IStatus {
@@ -32,15 +35,23 @@ export enum UserStatus {
   All = 'ALL',
 }
 
+export enum FilterModalVariant {
+  Orgchart = 'ORGCHART',
+  People = 'PEOPLE',
+  Team = 'TEAM',
+}
+
 export interface IAppliedFilters {
-  location: ILocation[];
-  department: IDepartment[];
-  status: IStatus | null;
+  location?: ILocation[];
+  department?: IDepartment[];
+  status?: IStatus | null;
+  category?: ICategory[];
 }
 
 export enum FilterNavigationOption {
   Locations = 'LOCATIONS',
   Departments = 'DEPARTMENTS',
+  Categories = 'CATEGORIES',
   Status = 'STATUS',
 }
 
@@ -50,20 +61,23 @@ interface IFilterModalProps {
   appliedFilters: IAppliedFilters;
   onApply: (appliedFilters: IAppliedFilters) => void;
   onClear: () => void;
+  variant?: FilterModalVariant;
 }
 
 interface IFilters {
-  label: () => React.ReactNode;
   key: string;
+  isHidden: boolean;
+  label: () => React.ReactNode;
   component: () => React.ReactNode;
 }
 
 const FilterModal: React.FC<IFilterModalProps> = ({
   open,
   closeModal,
-  appliedFilters,
+  appliedFilters = { location: [], department: [], category: [], status: null },
   onApply,
   onClear,
+  variant = FilterModalVariant.People,
 }) => {
   const { control, handleSubmit, watch, setValue, reset } =
     useForm<IFilterForm>({
@@ -92,15 +106,20 @@ const FilterModal: React.FC<IFilterModalProps> = ({
         departmentCheckbox: (appliedFilters.department || []).map(
           (department) => ({
             data: department,
-            dataTestId: `location-${department.name}`,
+            dataTestId: `department-${department.name}`,
           }),
         ),
+        categoryCheckbox: (appliedFilters.category || []).map((category) => ({
+          data: category,
+          dataTestId: `category-${category.name}`,
+        })),
       },
     });
 
-  const [locationCheckbox, departmentCheckbox] = watch([
+  const [locationCheckbox, departmentCheckbox, categoryCheckbox] = watch([
     'locationCheckbox',
     'departmentCheckbox',
+    'categoryCheckbox',
   ]);
 
   const onSubmit = (formData: IFilterForm) => {
@@ -111,6 +130,9 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       department: formData.departmentCheckbox.map(
         (department) => department.data,
       ) as IDepartment[],
+      category: formData.categoryCheckbox.map(
+        (category) => category.data,
+      ) as ICategory[],
       status: formData.status.data as IStatus,
     } as unknown as IAppliedFilters);
   };
@@ -131,6 +153,9 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       component: () => (
         <Locations control={control} watch={watch} setValue={setValue} />
       ),
+      isHidden: [FilterModalVariant.Team, FilterModalVariant.People].includes(
+        variant,
+      ),
       dataTestId: 'filterby-location',
     },
     {
@@ -148,15 +173,40 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       component: () => (
         <Departments control={control} watch={watch} setValue={setValue} />
       ),
+      isHidden: [FilterModalVariant.Team, FilterModalVariant.People].includes(
+        variant,
+      ),
       dataTestId: 'filterby-department',
+    },
+    {
+      label: () => (
+        <div className="flex items-center">
+          <div>Category</div>
+          {!!categoryCheckbox.length && (
+            <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
+              {categoryCheckbox.length}
+            </div>
+          )}
+        </div>
+      ),
+      key: 'categories-filters',
+      component: () => (
+        <Categories control={control} watch={watch} setValue={setValue} />
+      ),
+      isHidden: [
+        FilterModalVariant.Orgchart,
+        FilterModalVariant.People,
+      ].includes(variant),
+      dataTestId: 'filterby-categories',
     },
     {
       label: () => 'Status',
       key: 'status-filters',
       component: () => <Status control={control} />,
+      isHidden: [FilterModalVariant.Team].includes(variant),
       dataTestId: 'filterby-status',
     },
-  ];
+  ].filter((filter) => !filter.isHidden);
   const [activeFilter, setActiveFilter] = useState<IFilters>(
     filterNavigation[0],
   );

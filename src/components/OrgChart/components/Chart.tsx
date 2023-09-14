@@ -5,9 +5,11 @@ import './index.css';
 import UserNode from './UserNode';
 import ExpandButtonContent from './ExpandButtonContent';
 import UserCard from 'components/UserCard';
-import { useOrgChart } from 'queries/users';
+import { getOrgChart } from 'queries/users';
 import Spinner from 'components/Spinner';
 import clsx from 'clsx';
+import { QueryFunctionContext } from '@tanstack/react-query';
+import Button, { Variant } from 'components/Button';
 
 export interface INode {
   id: string;
@@ -32,9 +34,17 @@ interface IChart {
   orgChartRef: React.MutableRefObject<OrgChart<any> | null>;
   isLoading: boolean;
   data: INode[];
+  isFilterApplied: boolean;
+  onClearFilter: () => void;
 }
 
-const Chart: React.FC<IChart> = ({ orgChartRef, data, isLoading }) => {
+const Chart: React.FC<IChart> = ({
+  orgChartRef,
+  data,
+  isLoading,
+  isFilterApplied,
+  onClearFilter,
+}) => {
   const chartRef = useRef(null);
   let chart: OrgChart<any> | null = null;
   useEffect(() => {
@@ -61,20 +71,22 @@ const Chart: React.FC<IChart> = ({ orgChartRef, data, isLoading }) => {
           .hoverCardContent((d) => {
             return renderToString(<UserCard user={d.userData} />);
           })
-          // .onExpandCollapseClick((d: any, data: any) => {
-          //   if (
-          //     d.children?.length &&
-          //     !(d.children[0].children || d.children[0]._children)
-          //   ) {
-          //     getOrgChart(chart, {
-          //       ids: [...d.children.map((child: any) => child.id)],
-          //       limit: 5,
-          //       offset: 0,
-          //     });
-          //   } else {
-          //     chart.update(d);
-          //   }
-          // })
+          .onExpandCollapseClick((d: any, data: any) => {
+            if (d.data.directReportees > 0 && !!d.children) {
+              getOrgChart({
+                queryKey: [
+                  'organization-chart',
+                  { root: d.data.id, expand: 1 },
+                ],
+              } as QueryFunctionContext<any>).then((response: any) => {
+                response.result.data.users.forEach((node: INode) =>
+                  chart?.addNode(node),
+                );
+              });
+            } else {
+              chart?.update(d);
+            }
+          })
           // .onNodeClick((node: any) => {
           //   if (node.type === NodeType.Count) {
           //     getOrgChart(chart, {
@@ -115,11 +127,37 @@ const Chart: React.FC<IChart> = ({ orgChartRef, data, isLoading }) => {
     [isLoading],
   );
 
+  console.log(!!!data?.length);
+
   return (
     <>
       <div className={loaderStyle}>
         <Spinner />
       </div>
+      {!!!data?.length && !!!isLoading && (
+        <div className="flex flex-col w-full h-full items-center justify-center bg-white rounded-9xl p-8">
+          <div className="mt-8 mb-4">
+            <img src={require('images/noResult.png')} />
+          </div>
+          <div className="text-neutral-900 text-lg font-bold mb-4">
+            No result found
+          </div>
+          <div className="text-neutral-500 text-xs">
+            Sorry we can’t find the member you are looking for.
+          </div>
+          <div className="text-neutral-500 text-xs">
+            Please check the spelling or try again.
+          </div>
+          {isFilterApplied && (
+            <Button
+              label="Clear filter"
+              onClick={onClearFilter}
+              className="mt-6"
+              variant={Variant.Secondary}
+            />
+          )}
+        </div>
+      )}
       <div id="org-chart-container" className={orgChartContainerStyle}>
         <div ref={chartRef} className="h-[calc(100vh-290px)]" />
       </div>
