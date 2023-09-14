@@ -82,6 +82,7 @@ const Navbar = () => {
         <Link to="/feed" data-testid="auzmor-office">
           <Logo />
         </Link>
+        <div className="flex-1" />
         {/* <div className="flex-1">
           <Layout
             fields={[
