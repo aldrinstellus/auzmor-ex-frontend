@@ -318,6 +318,7 @@ const Team: React.FC<ITeamProps> = ({
                 Sort by
               </div>
             }
+            dataTestId="teams-sort"
             entity="TEAM"
           />
           <div>
@@ -569,7 +570,7 @@ const Team: React.FC<ITeamProps> = ({
             closeAddMemberModal();
           }}
           onCancel={closeAddMemberModal}
-          title="Add Members"
+          title="Add team members"
           submitButtonText="Add Members"
         />
       )}

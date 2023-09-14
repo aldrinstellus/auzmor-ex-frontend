@@ -53,7 +53,7 @@ const Users: React.FC<IUsersProps> = () => {
       tabLabel: (isActive: boolean) => (
         <div className={tabStyles(isActive)}>People</div>
       ),
-      dataTestId: 'people-view-tab',
+      dataTestId: 'people-tab',
       tabContent: (
         <>
           <People
@@ -94,7 +94,7 @@ const Users: React.FC<IUsersProps> = () => {
       tabLabel: (isActive: boolean) => (
         <div className={tabStyles(isActive)}>Teams</div>
       ),
-      dataTestId: 'teams-view-tab',
+      dataTestId: 'teams-tab',
       tabContent: (
         <Team
           showTeamModal={showTeamModal}
@@ -111,7 +111,7 @@ const Users: React.FC<IUsersProps> = () => {
             leftIconClassName="!text-white"
             leftIconSize={20}
             onClick={openTeamModal}
-            dataTestId="add-teams-btn"
+            dataTestId="add-teams"
           />
         </div>
       ),

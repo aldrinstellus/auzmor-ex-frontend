@@ -15,6 +15,7 @@ export interface ISortProps {
   entity: string;
   permission?: string[];
   selectedValue?: string;
+  dataTestId?: string;
 }
 
 const Sort: React.FC<ISortProps> = ({
@@ -25,6 +26,7 @@ const Sort: React.FC<ISortProps> = ({
   entity,
   permission,
   selectedValue,
+  dataTestId,
 }) => {
   return (
     <PopupMenu
@@ -35,7 +37,7 @@ const Sort: React.FC<ISortProps> = ({
           size={Size.Medium}
           borderAround
           className="bg-white !p-[10px]"
-          dataTestId="teams-sort"
+          dataTestId={dataTestId}
         />
       }
       title={title}

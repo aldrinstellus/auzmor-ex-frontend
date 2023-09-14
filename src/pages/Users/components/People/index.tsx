@@ -373,7 +373,10 @@ const People: React.FC<IPeopleProps> = ({
                 />
                 <div className="w-full flex flex-col items-center">
                   <div className="flex items-center flex-col space-y-1">
-                    <div className="text-lg font-bold text-neutral-900">
+                    <div
+                      className="text-lg font-bold text-neutral-900"
+                      data-testid="teams-no-members-yet"
+                    >
                       No members yet
                     </div>
                     <div className="text-base font-medium text-neutral-500">
@@ -384,10 +387,13 @@ const People: React.FC<IPeopleProps> = ({
                 <Button
                   label={'Add members'}
                   variant={Variant.Secondary}
-                  className="space-x-1"
+                  className="space-x-1 rounded-[24px]"
                   size={Size.Large}
-                  dataTestId="no-result-add-team-cta"
+                  dataTestId="team-add-members-cta"
                   leftIcon={'addCircle'}
+                  leftIconClassName="text-neutral-900"
+                  leftIconSize={20}
+                  onClick={openModal}
                 />
               </div>
             ) : (
