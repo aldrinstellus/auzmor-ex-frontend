@@ -102,19 +102,22 @@ const Users: React.FC<IUsersProps> = () => {
           closeTeamModal={closeTeamModal}
         />
       ),
-      tabAction: user?.role !== Role.Member && (
-        <div className="flex space-x-2">
-          <Button
-            className="flex space-x-1 px-6 py-[10px] rounded-[24px]"
-            label="Add Teams"
-            leftIcon="add"
-            leftIconClassName="!text-white"
-            leftIconSize={20}
-            onClick={openTeamModal}
-            dataTestId="add-teams"
-          />
-        </div>
-      ),
+      tabAction:
+        user?.role !== Role.Member ? (
+          <div className="flex space-x-2">
+            <Button
+              className="flex space-x-1 px-6 py-[10px] rounded-[24px]"
+              label="Add Teams"
+              leftIcon="add"
+              leftIconClassName="!text-white"
+              leftIconSize={20}
+              onClick={openTeamModal}
+              dataTestId="add-teams"
+            />
+          </div>
+        ) : (
+          <div />
+        ),
     },
   ];
 

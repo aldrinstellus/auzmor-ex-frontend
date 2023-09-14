@@ -178,8 +178,12 @@ const People: React.FC<IPeopleProps> = ({
 
   const handleSetSortFilter = (sortValue: any) => {
     setFilterSortBy(sortValue);
-    const serializedSort = serializeFilter(sortValue);
-    updateParam('sort', serializedSort);
+    if (sortValue) {
+      const serializedSort = serializeFilter(sortValue);
+      updateParam('sort', serializedSort);
+    } else {
+      deleteParam('sort');
+    }
   };
 
   // parse the persisted filters from the URL on page load
@@ -259,11 +263,6 @@ const People: React.FC<IPeopleProps> = ({
               filterKey={{ createdAt: 'createdAt', aToZ: 'name' }}
               selectedValue={filterSortBy}
               filterValue={{ asc: 'ASC', desc: 'DESC' }}
-              title={
-                <div className="bg-blue-50 flex px-6 py-2 font-xs font-medium text-neutral-500">
-                  Sort by
-                </div>
-              }
               entity={isTeamPeople ? EntitySearchModalType.Team : 'USER'}
             />
             <div>
