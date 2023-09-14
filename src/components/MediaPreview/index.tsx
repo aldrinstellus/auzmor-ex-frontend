@@ -450,27 +450,21 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           </div>
           <div className="flex items-center">
             {showEditButton && (
-              <div onClick={onEditButtonClick}>
-                <IconWrapper className="p-2 border border-neutral-200 rounded-7xl bg-white cursor-pointer group mr-2">
-                  <Icon
-                    name="edit"
-                    size={16}
-                    dataTestId={`${dataTestId}-editicon`}
-                    color="text-neutral-900"
-                  />
-                </IconWrapper>
+              <div
+                onClick={onEditButtonClick}
+                data-testid={`${dataTestId}-editicon`}
+                className="p-2 rounded-7xl mr-2 bg-white cursor-pointer"
+              >
+                <Icon name="edit" size={16} color="text-neutral-900" />
               </div>
             )}
             {showCloseButton && (
-              <div onClick={onCloseButtonClick}>
-                <IconWrapper className="p-2 border border-neutral-200 rounded-7xl bg-white cursor-pointer group">
-                  <Icon
-                    name="close"
-                    size={16}
-                    color="text-neutral-900"
-                    dataTestId={`${dataTestId}-remove-image`}
-                  />
-                </IconWrapper>
+              <div
+                onClick={onCloseButtonClick}
+                className="p-2 rounded-7xl bg-white cursor-pointer"
+                data-testid={`${dataTestId}-remove-image`}
+              >
+                <Icon name="close" size={16} color="text-neutral-900" />
               </div>
             )}
           </div>

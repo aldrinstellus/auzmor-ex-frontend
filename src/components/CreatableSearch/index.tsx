@@ -102,7 +102,9 @@ const CreatableSearch = React.forwardRef(
     );
 
     const isOptionContains = (searchValue: string) =>
-      (transformedOptions || []).find((option) => searchValue === option.label);
+      (transformedOptions || []).find(
+        (option) => searchValue.toLowerCase() === option.label.toLowerCase(),
+      );
 
     const addOptionObject =
       !disableCreate &&

@@ -21,6 +21,7 @@ export interface ISingleSelectProps {
   disabled?: boolean;
   error?: string;
   className?: string;
+  selectClassName?: string;
   dataTestId?: string;
   control?: Control<Record<string, any>>;
   label?: string;
@@ -39,6 +40,7 @@ const SingleSelect = React.forwardRef(
     {
       name,
       className = '',
+      selectClassName = '',
       disabled = false,
       dataTestId = '',
       error,
@@ -143,7 +145,7 @@ const SingleSelect = React.forwardRef(
                     field.onChange(option);
                   }}
                   onSearch={() => setOpen(true)}
-                  className="single-select"
+                  className={`single-select ${selectClassName}`}
                   suffixIcon={suffixIcon || <Icon name="arrowDown" size={18} />}
                   ref={ref}
                 >

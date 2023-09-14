@@ -155,19 +155,21 @@ const Input: React.FC<InputProps> = ({
 
   return (
     <div className={`relative ${className}`}>
-      <div className="flex items-center justify-between">
-        <div className={labelStyle}>
-          {label}
-          <span className="text-red-500">{required && '*'}</span>
-        </div>
-        {showCounter && (
-          <div className="text-sm text-neutral-500">
-            {inputRef?.current?.value.length || defaultValue.length || 0}/
-            {maxLength}
+      {(label || showCounter || customLabelRightElement) && (
+        <div className="flex items-center justify-between">
+          <div className={labelStyle}>
+            {label}
+            <span className="text-red-500">{required && '*'}</span>
           </div>
-        )}
-        {customLabelRightElement && customLabelRightElement}
-      </div>
+          {showCounter && (
+            <div className="text-sm text-neutral-500">
+              {inputRef?.current?.value.length || defaultValue.length || 0}/
+              {maxLength}
+            </div>
+          )}
+          {customLabelRightElement && customLabelRightElement}
+        </div>
+      )}
       <label
         className={`flex justify-between flex-1 relative items-center my-1 w-full`}
         htmlFor={id}

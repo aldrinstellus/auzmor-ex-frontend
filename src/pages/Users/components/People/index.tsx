@@ -29,12 +29,13 @@ import PeopleFilterModal from '../FilterModals/PeopleFilterModal';
 import { useInfiniteTeamMembers } from 'queries/teams';
 import { EntitySearchModalType } from 'components/EntitySearchModal';
 import Sort from 'components/Sort';
+import useURLParams from 'hooks/useURLParams';
 
 export interface IPeopleProps {
   showModal: boolean;
   openModal: () => void;
   closeModal: () => void;
-  teamTab?: string;
+  isTeamPeople?: boolean;
   teamId?: string;
 }
 
@@ -47,13 +48,23 @@ const People: React.FC<IPeopleProps> = ({
   showModal,
   openModal,
   closeModal,
-  teamTab,
+  isTeamPeople,
   teamId,
 }) => {
+  const {
+    searchParams,
+    updateParam,
+    deleteParam,
+    serializeFilter,
+    parseParams,
+  } = useURLParams();
+  const [startFetching, setStartFetching] = useState(false);
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const [userStatus, setUserStatus] = useState<string>('');
   const [filterSortBy, setFilterSortBy] = useState<string>('');
   const { ref, inView } = useInView();
+
+  const parsedRole = parseParams('role');
 
   const {
     control,
@@ -63,6 +74,10 @@ const People: React.FC<IPeopleProps> = ({
     formState: { errors },
   } = useForm<IForm>({
     mode: 'onChange',
+    defaultValues: {
+      role: parsedRole,
+      search: searchParams.get('peopleSearch'),
+    },
   });
 
   useEffect(() => {
@@ -77,32 +92,32 @@ const People: React.FC<IPeopleProps> = ({
 
   // get the conditional data
   const getPeoplesData = () => {
-    return useInfiniteUsers(
-      isFiltersEmpty({
-        status: userStatus,
+    return useInfiniteUsers({
+      startFetching,
+      q: isFiltersEmpty({
+        status: userStatus === 'ALL' ? undefined : userStatus,
         role: role?.value,
         sort: filterSortBy,
         q: debouncedSearchValue,
       }),
-    );
+    });
   };
 
   const getTeamMembersData = () => {
-    return useInfiniteTeamMembers(
-      teamId || '',
-      isFiltersEmpty({
-        status: userStatus,
+    return useInfiniteTeamMembers({
+      startFetching,
+      teamId: teamId || '',
+      q: isFiltersEmpty({
+        status: userStatus === 'ALL' ? undefined : userStatus,
         role: role?.value,
         sort: filterSortBy,
         q: debouncedSearchValue,
       }),
-    );
+    });
   };
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    teamTab === EntitySearchModalType.Team && teamId
-      ? getTeamMembersData()
-      : getPeoplesData();
+    isTeamPeople && teamId ? getTeamMembersData() : getPeoplesData();
 
   const roleSelectRef = useRef<any>();
 
@@ -119,6 +134,7 @@ const People: React.FC<IPeopleProps> = ({
       placeholder: 'Role',
       size: InputSize.Small,
       dataTestId: 'filterby-role',
+      selectClassName: 'single-select-bold',
       ref: roleSelectRef,
       options: [
         {
@@ -150,12 +166,62 @@ const People: React.FC<IPeopleProps> = ({
     });
   });
 
+  const handleSetUserStatus = (status: string) => {
+    setUserStatus(status);
+    if (status) {
+      const serializedStatus = serializeFilter(status);
+      updateParam('status', serializedStatus);
+    } else {
+      deleteParam('status');
+    }
+  };
+
+  const handleSetSortFilter = (sortValue: any) => {
+    setFilterSortBy(sortValue);
+    const serializedSort = serializeFilter(sortValue);
+    updateParam('sort', serializedSort);
+  };
+
+  // parse the persisted filters from the URL on page load
+  useEffect(() => {
+    const parsedStatus = parseParams('status');
+    const parsedSort = parseParams('sort');
+    if (parsedStatus) {
+      setUserStatus(parsedStatus);
+    }
+    if (parsedSort) {
+      setFilterSortBy(parsedSort);
+    }
+    setStartFetching(true);
+  }, []);
+
+  // Change URL params for search filters
+  useEffect(() => {
+    if (debouncedSearchValue) {
+      updateParam('peopleSearch', debouncedSearchValue);
+    } else {
+      deleteParam('peopleSearch');
+    }
+  }, [debouncedSearchValue]);
+
+  useEffect(() => {
+    if (role) {
+      const serializedRole = serializeFilter({
+        value: role.value,
+        label: role.label,
+      });
+      updateParam('role', serializedRole);
+    } else {
+      deleteParam('role');
+    }
+  }, [role]);
+
   return (
     <div className="relative pb-8">
-      <div>
+      <div className="flex flex-col gap-6">
         <div className="flex justify-between items-center">
           <div className="flex space-x-4">
-            {teamTab !== 'TEAM' && (
+            {!isTeamPeople && (
               <>
                 <Button
                   label="My Teams"
@@ -185,23 +251,20 @@ const People: React.FC<IPeopleProps> = ({
               variant={IconVariant.Secondary}
               size={IconSize.Medium}
               borderAround
-              className="bg-white"
+              className="bg-white !p-[10px]"
               dataTestId="people-filter"
             />
             <Sort
-              setFilter={setFilterSortBy}
-              filterKey="createdAt"
+              setFilter={handleSetSortFilter}
+              filterKey={{ createdAt: 'createdAt', aToZ: 'name' }}
+              selectedValue={filterSortBy}
               filterValue={{ asc: 'ASC', desc: 'DESC' }}
               title={
                 <div className="bg-blue-50 flex px-6 py-2 font-xs font-medium text-neutral-500">
                   Sort by
                 </div>
               }
-              entity={
-                teamTab === EntitySearchModalType.Team
-                  ? EntitySearchModalType.Team
-                  : 'USER'
-              }
+              entity={isTeamPeople ? EntitySearchModalType.Team : 'USER'}
             />
             <div>
               <Layout
@@ -217,6 +280,7 @@ const People: React.FC<IPeopleProps> = ({
                     placeholder: 'Search members',
                     error: errors.search?.message,
                     dataTestId: 'people-search-members',
+                    inputClassName: 'py-[7px] !text-sm !h-9',
                     isClearable: true,
                   },
                 ]}
@@ -225,13 +289,12 @@ const People: React.FC<IPeopleProps> = ({
           </div>
         </div>
 
-        <div className="text-neutral-500 mt-6 mb-6">
-          Showing {!isLoading && data?.pages[0]?.data?.result?.totalCount}{' '}
-          results
+        <div className="text-neutral-500">
+          Showing {!isLoading && usersData?.length} results
         </div>
 
         {userStatus && (
-          <div className="flex justify-between  mb-6">
+          <div className="flex justify-between">
             <div className="flex items-center space-x-2">
               <div className="text-base text-neutral-500">Filter By</div>
               <div
@@ -244,22 +307,26 @@ const People: React.FC<IPeopleProps> = ({
                   size={16}
                   color="text-neutral-900"
                   className="cursor-pointer"
-                  onClick={() => setUserStatus('')}
+                  onClick={() => {
+                    deleteParam('status');
+                    setUserStatus('');
+                  }}
                   dataTestId={`people-filterby-close-${userStatus}`}
                 />
               </div>
             </div>
             <div
               className="text-neutral-500 border px-3 py-1 rounded-7xl hover:text-primary-600 hover:border-primary-600 cursor-pointer"
-              onClick={() => setUserStatus('')}
+              onClick={() => {
+                deleteParam('status');
+                setUserStatus('');
+              }}
             >
               Clear Filters
             </div>
           </div>
         )}
-      </div>
 
-      <div>
         <div className="flex flex-wrap gap-6">
           {(() => {
             if (isLoading) {
@@ -273,15 +340,22 @@ const People: React.FC<IPeopleProps> = ({
             if (usersData && usersData?.length > 0) {
               return (
                 <>
-                  {usersData
-                    ?.filter((userCard: IGetUser) => {
-                      if (role) {
-                        return role?.value === userCard.role;
-                      } else return true;
-                    })
-                    .map((user: IGetUser) => (
-                      <PeopleCard key={user.id} userData={user} />
-                    ))}
+                  {usersData.map((user: any) => (
+                    <PeopleCard
+                      key={user.id}
+                      teamId={teamId}
+                      isTeamPeople={isTeamPeople}
+                      {...{
+                        userData: isTeamPeople
+                          ? {
+                              ...user.member,
+                              id: user.member.userId,
+                              workEmail: user.member.email,
+                            }
+                          : user,
+                      }}
+                    />
+                  ))}
                   <div className="h-12 w-12">
                     {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
                   </div>
@@ -289,7 +363,7 @@ const People: React.FC<IPeopleProps> = ({
                 </>
               );
             }
-            return teamTab === EntitySearchModalType.Team ? (
+            return isTeamPeople ? (
               <div className="flex flex-col w-full items-center space-y-4">
                 <img
                   src={MemberNotFound}
@@ -326,7 +400,8 @@ const People: React.FC<IPeopleProps> = ({
                     className="mt-8 text-lg font-bold"
                     data-testid="no-result-found"
                   >
-                    No result found for &apos;{searchValue}&apos;
+                    {`No result found`}
+                    {!!searchValue && ` for '${searchValue}'`}
                   </div>
                   <div className="text-sm text-gray-500 mt-2">
                     Sorry we can&apos;t find the profile you are looking for.
@@ -346,7 +421,7 @@ const People: React.FC<IPeopleProps> = ({
       />
 
       <PeopleFilterModal
-        setUserStatus={setUserStatus}
+        setUserStatus={handleSetUserStatus}
         userStatus={userStatus}
         open={showFilterModal}
         openModal={openFilterModal}

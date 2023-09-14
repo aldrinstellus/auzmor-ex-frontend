@@ -25,6 +25,8 @@ export type AvatarProps = {
   loading?: boolean;
   dataTestId?: string;
   disable?: boolean;
+  isCounter?: boolean;
+  fontSize?: number;
 };
 
 const Avatar: React.FC<AvatarProps> = ({
@@ -36,11 +38,12 @@ const Avatar: React.FC<AvatarProps> = ({
   image = '',
   size = 48,
   showActiveIndicator = false,
-  bgColor = '#343434',
+  bgColor = '#262626',
   indicatorIcon = null,
   loading = false,
   dataTestId = '',
   disable = false,
+  isCounter = false,
 }) => {
   const containerStyles = useMemo(
     () =>
@@ -105,7 +108,7 @@ const Avatar: React.FC<AvatarProps> = ({
   const textStyles = clsx(
     { 'text-white': isBgDark },
     { 'text-neutral-800': !isBgDark },
-    { 'font-bold': true },
+    { 'font-medium': true },
     { 'flex items-center': true },
   );
 
@@ -119,12 +122,17 @@ const Avatar: React.FC<AvatarProps> = ({
       {!!image && !loading ? (
         <img
           className={imgStyles}
-          style={{ ...divStyle, pointerEvents: disable ? 'none' : 'auto' }}
+          style={{ pointerEvents: disable ? 'none' : 'auto' }}
           src={image}
           alt={name}
         />
       ) : (
-        <span className={textStyles} style={{ fontSize: `${size * 0.45}px` }}>
+        <span
+          className={textStyles}
+          style={{
+            fontSize: isCounter ? `${size * 0.3}px` : `${size * 0.375}px`,
+          }}
+        >
           {loading && <Spinner color={PRIMARY_COLOR} />}
           {!loading && name && getInitials(name)}
         </span>

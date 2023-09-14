@@ -108,7 +108,6 @@ export interface IGetUser {
   workLocation?: Record<string, string>;
   designation?: string;
   department?: IDepartment;
-  location?: ILocation;
 }
 
 export const getAllUser = async ({
@@ -120,7 +119,13 @@ export const getAllUser = async ({
   } else return await apiService.get(pageParam);
 };
 
-export const useInfiniteUsers = (q?: Record<string, any>) => {
+export const useInfiniteUsers = ({
+  startFetching = true,
+  q,
+}: {
+  startFetching?: boolean;
+  q?: Record<string, any>;
+}) => {
   return useInfiniteQuery({
     queryKey: ['users', q],
     queryFn: getAllUser,
@@ -136,6 +141,7 @@ export const useInfiniteUsers = (q?: Record<string, any>) => {
       return currentPage?.data?.result?.paging?.prev;
     },
     staleTime: 5 * 60 * 1000,
+    enabled: startFetching,
   });
 };
 
