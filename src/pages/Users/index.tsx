@@ -66,7 +66,7 @@ const Users: React.FC<IUsersProps> = () => {
       tabAction: (
         <div className="flex space-x-2">
           <Button
-            className="flex space-x-[6px] group px-6 py-[10px]"
+            className="flex space-x-[6px] group px-6 py-[10px] rounded-[24px]"
             label="View Organization Chart"
             variant={Variant.Secondary}
             leftIcon="groupOutline"
@@ -77,7 +77,7 @@ const Users: React.FC<IUsersProps> = () => {
           />
           {user?.role !== Role.Member && (
             <Button
-              className="flex space-x-1 px-6 py-[10px]"
+              className="flex space-x-1 px-6 py-[10px] rounded-[24px]"
               label="Add Members"
               leftIcon="add"
               leftIconClassName="!text-white"
@@ -105,7 +105,7 @@ const Users: React.FC<IUsersProps> = () => {
       tabAction: user?.role !== Role.Member && (
         <div className="flex space-x-2">
           <Button
-            className="flex space-x-1 px-6 py-[10px]"
+            className="flex space-x-1 px-6 py-[10px] rounded-[24px]"
             label="Add Teams"
             leftIcon="add"
             leftIconClassName="!text-white"

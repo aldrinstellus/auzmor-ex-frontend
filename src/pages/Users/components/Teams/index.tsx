@@ -115,6 +115,9 @@ const Team: React.FC<ITeamProps> = ({
     formState: { errors },
   } = useForm<IForm>({
     mode: 'onChange',
+    defaultValues: {
+      search: searchParams.get('teamSearch'),
+    },
   });
 
   const searchValue = watch('search');
@@ -239,6 +242,7 @@ const Team: React.FC<ITeamProps> = ({
     });
   };
 
+  // parse the persisted filters from the URL on page load
   useEffect(() => {
     const parsedCategories = parseParams('categories');
     const parsedSort = parseParams('sort');
@@ -253,6 +257,15 @@ const Team: React.FC<ITeamProps> = ({
     }
     setStartFetching(true);
   }, []);
+
+  // Change URL params for search filters
+  useEffect(() => {
+    if (debouncedSearchValue) {
+      updateParam('teamSearch', debouncedSearchValue);
+    } else {
+      deleteParam('teamSearch');
+    }
+  }, [debouncedSearchValue]);
 
   return (
     <div className="relative pb-8">

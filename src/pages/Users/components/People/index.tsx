@@ -64,6 +64,8 @@ const People: React.FC<IPeopleProps> = ({
   const [filterSortBy, setFilterSortBy] = useState<string>('');
   const { ref, inView } = useInView();
 
+  const parsedRole = parseParams('role');
+
   const {
     control,
     watch,
@@ -72,6 +74,10 @@ const People: React.FC<IPeopleProps> = ({
     formState: { errors },
   } = useForm<IForm>({
     mode: 'onChange',
+    defaultValues: {
+      role: parsedRole,
+      search: searchParams.get('peopleSearch'),
+    },
   });
 
   useEffect(() => {
@@ -176,21 +182,27 @@ const People: React.FC<IPeopleProps> = ({
     updateParam('sort', serializedSort);
   };
 
+  // parse the persisted filters from the URL on page load
   useEffect(() => {
     const parsedStatus = parseParams('status');
     const parsedSort = parseParams('sort');
-    const parsedRole = parseParams('role');
     if (parsedStatus) {
       setUserStatus(parsedStatus);
     }
     if (parsedSort) {
       setFilterSortBy(parsedSort);
     }
-    if (parsedRole) {
-      setValue('role', parsedRole);
-    }
     setStartFetching(true);
   }, []);
+
+  // Change URL params for search filters
+  useEffect(() => {
+    if (debouncedSearchValue) {
+      updateParam('peopleSearch', debouncedSearchValue);
+    } else {
+      deleteParam('peopleSearch');
+    }
+  }, [debouncedSearchValue]);
 
   useEffect(() => {
     if (role) {

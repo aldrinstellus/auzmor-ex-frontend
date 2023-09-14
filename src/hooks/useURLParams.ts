@@ -20,8 +20,10 @@ const useURLParams = (): UseURLParamsHook => {
 
   const deleteParam = (key: string) => {
     if (searchParams.get(key)) {
-      searchParams.delete(key);
-      setSearchParams(searchParams);
+      setSearchParams((params) => {
+        params.delete(key);
+        return params;
+      });
     }
   };
 

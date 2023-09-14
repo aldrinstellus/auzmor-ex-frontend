@@ -136,7 +136,7 @@ const TeamDetail: React.FC<ITeamMemberProps> = () => {
                 tooltipPosition="left"
               >
                 <Button
-                  className="flex space-x-1"
+                  className="flex space-x-1 px-6 py-[10px] rounded-[24px]"
                   label="Add Members"
                   leftIcon="add"
                   leftIconClassName="!text-white"
