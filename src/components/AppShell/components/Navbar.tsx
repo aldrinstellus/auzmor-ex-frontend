@@ -57,8 +57,8 @@ const Navbar = () => {
       dataTestId: 'office-people-page',
       iconSize: 24,
       isActive:
-        location.pathname.includes('users') ||
-        location.pathname.includes('teams'),
+        location.pathname.includes('/users') ||
+        location.pathname.includes('/teams'),
     },
     {
       label: 'Apps',
