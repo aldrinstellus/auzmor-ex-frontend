@@ -123,13 +123,14 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
               placeholder: 'Search via team name',
               isClearable: true,
               dataTestId: `select-${dataTestId}-search`,
+              inputClassName: 'text-sm py-[9px]',
             },
           ]}
           className="pb-4"
         />
         <div className="flex items-center justify-between">
           <div
-            className={`flex items-center text-neutral-500 font-medium ${
+            className={`flex items-center text-neutral-500 font-medium text-sm ${
               isControlsDisabled && 'opacity-50 pointer-events-none'
             }`}
           >
@@ -172,7 +173,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
             </div>
           </div>
           <div
-            className={`cursor-pointer text-neutral-500 font-medium hover:underline ${
+            className={`cursor-pointer text-neutral-500 text-sm font-medium hover:underline ${
               isControlsDisabled && 'opacity-50 pointer-events-none'
             }`}
             onClick={() => {
