@@ -18,6 +18,7 @@ import { slideInAndOutTop } from 'utils/react-toastify';
 import { toast } from 'react-toastify';
 import FailureToast from 'components/Toast/variants/FailureToast';
 import ClosePollModal from './ClosePollModal';
+import PollVotesModal from './PollVotesModal';
 import ChangeToRegularPostModal from './ChangeToRegularPostModal';
 import AnnouncementAnalytics from './AnnouncementAnalytics';
 
@@ -33,6 +34,7 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
   const [removeAnnouncement, showRemoveAnnouncement, closeRemoveAnnouncement] =
     useModal();
   const [closePoll, showClosePoll, closeClosePoll] = useModal();
+  const [pollVotes, showPollVotes, closePollVotes] = useModal();
   const [open, openModal, closeModal] = useModal(undefined, false);
   const [customActiveFlow, setCustomActiveFlow] = useState<CreatePostFlow>(
     CreatePostFlow.CreatePost,
@@ -176,6 +178,17 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
       enabled: isAdmin || data.createdBy?.userId === user?.id,
     },
     {
+      icon: 'chartOutline',
+      label: 'See who voted',
+      onClick: () => showPollVotes(),
+      stroke: 'text-neutral-900',
+      dataTestId: 'post-ellipsis-see-poll-votes',
+      permissions: [],
+      enabled:
+        data.type === POST_TYPE.Poll &&
+        (isAdmin || data.createdBy?.userId === user?.id),
+    },
+    {
       icon: 'announcementChart',
       label: 'View acknowledgement report',
       onClick: () => showAnalytics(),
@@ -254,6 +267,13 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
             open={closePoll}
             closeModal={closeClosePoll}
             data={data}
+          />
+        )}
+        {pollVotes && (
+          <PollVotesModal
+            post={data}
+            open={pollVotes}
+            closeModal={closePollVotes}
           />
         )}
         {data?.id && analytics && (
