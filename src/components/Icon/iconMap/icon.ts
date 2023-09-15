@@ -135,6 +135,7 @@ import NoteFavouriteIcon from '../components/NoteFavourite';
 import EmployeeTagIcon from '../components/EmployeeTag';
 import CheckIcon from '../components/Check';
 import DownloadIcon from '../components/Download';
+import WarningCircleIcon from '../components/WarningCircle';
 
 export const icon = {
   add: Add,
@@ -272,6 +273,7 @@ export const icon = {
   userRemove: UserRemove,
   users: UsersIcon,
   video: VideoIcon,
+  warningCircle: WarningCircleIcon,
   zoomIn: ZoomInIcon,
   zoomOut: ZoomOutIcon,
 };
