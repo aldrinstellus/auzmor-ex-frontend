@@ -15,7 +15,7 @@ import Layout, { FieldType } from 'components/Form';
 import Button, { Size, Variant } from 'components/Button';
 import { Variant as InputVariant } from 'components/Input';
 import UsersSkeleton from '../Skeletons/UsersSkeleton';
-import { IGetUser, UserRole, useInfiniteUsers } from 'queries/users';
+import { UserRole, useInfiniteUsers } from 'queries/users';
 import { isFiltersEmpty, titleCase } from 'utils/misc';
 
 import PeopleCard from './PeopleCard';
@@ -59,8 +59,6 @@ const People: React.FC<IPeopleProps> = ({
   const [startFetching, setStartFetching] = useState(false);
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const [appliedFilters, setAppliedFilters] = useState<IAppliedFilters>({
-    location: [],
-    departments: [],
     status: null,
   });
   const [filterSortBy, setFilterSortBy] = useState<string>('');
@@ -174,12 +172,21 @@ const People: React.FC<IPeopleProps> = ({
     });
   });
 
-  const resetFilters = () => {
+  const clearFilters = () => {
+    deleteParam('status');
     setAppliedFilters({
-      location: [],
-      departments: [],
-      status: { value: UserStatus.All, label: 'all' },
+      status: null,
     });
+    closeFilterModal();
+  };
+
+  const onApplyFilter = (appliedFilters: IAppliedFilters) => {
+    setAppliedFilters(appliedFilters);
+    if (appliedFilters.status?.value !== UserStatus.All) {
+      const serializedStatus = serializeFilter(appliedFilters.status?.label);
+      updateParam('status', serializedStatus);
+    }
+    closeFilterModal();
   };
 
   const handleSetSortFilter = (sortValue: any) => {
@@ -302,43 +309,45 @@ const People: React.FC<IPeopleProps> = ({
           Showing {!isLoading && usersData?.length} results
         </div>
 
-        {appliedFilters.status && (
-          <div className="flex justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="text-base text-neutral-500">Filter By</div>
-              <div
-                className="text-neutral-500 border px-3 py-1 rounded-7xl hover:text-primary-600 hover:border-primary-600 cursor-pointer"
-                onClick={() =>
-                  setAppliedFilters({ ...appliedFilters, status: null })
-                }
-              >
-                <div className="mr-1">
-                  {titleCase(appliedFilters.status.label)}
-                </div>
-                <Icon
-                  name="close"
-                  size={16}
-                  color="text-neutral-900"
-                  className="cursor-pointer"
+        {appliedFilters.status &&
+          appliedFilters.status.value !== UserStatus.All && (
+            <div className="flex justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="text-base text-neutral-500">Filter By</div>
+                <div
+                  className="text-neutral-500 border px-3 py-1 rounded-7xl hover:text-primary-600 hover:border-primary-600 cursor-pointer flex items-center group"
                   onClick={() => {
                     deleteParam('status');
                     setAppliedFilters({ ...appliedFilters, status: null });
                   }}
-                  dataTestId={`people-filterby-close-${appliedFilters.status.label}`}
-                />
+                >
+                  <div className="mr-1">
+                    {titleCase(appliedFilters.status.label)}
+                  </div>
+                  <Icon
+                    name="close"
+                    size={16}
+                    color="text-neutral-900"
+                    className="cursor-pointer"
+                    onClick={() => {
+                      deleteParam('status');
+                      setAppliedFilters({ ...appliedFilters, status: null });
+                    }}
+                    dataTestId={`people-filterby-close-${appliedFilters.status.label}`}
+                  />
+                </div>
+              </div>
+              <div
+                className="text-neutral-500 border px-3 py-1 rounded-7xl hover:text-primary-600 hover:border-primary-600 cursor-pointer"
+                onClick={() => {
+                  deleteParam('status');
+                  setAppliedFilters({ ...appliedFilters, status: null });
+                }}
+              >
+                Clear Filters
               </div>
             </div>
-            <div
-              className="text-neutral-500 border px-3 py-1 rounded-7xl hover:text-primary-600 hover:border-primary-600 cursor-pointer"
-              onClick={() => {
-                deleteParam('status');
-                setAppliedFilters({ ...appliedFilters, status: null });
-              }}
-            >
-              Clear Filters
-            </div>
-          </div>
-        )}
+          )}
 
         <div className="flex flex-wrap gap-6">
           {(() => {
@@ -438,14 +447,8 @@ const People: React.FC<IPeopleProps> = ({
           open={showFilterModal}
           closeModal={closeFilterModal}
           appliedFilters={appliedFilters}
-          onApply={(appliedFilters: IAppliedFilters) => {
-            setAppliedFilters(appliedFilters);
-            closeFilterModal();
-          }}
-          onClear={() => {
-            resetFilters();
-            closeFilterModal();
-          }}
+          onApply={onApplyFilter}
+          onClear={clearFilters}
         />
       )}
     </div>
