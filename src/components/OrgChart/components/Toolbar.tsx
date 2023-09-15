@@ -400,7 +400,10 @@ const Toolbar: React.FC<IToolbarProps> = ({
                   <div className="flex items-center text-neutral-900 text-sm font-bold mr-1">
                     Start with specific person:
                   </div>
-                  <div className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-primary-200 rounded-7xl justify-between">
+                  <div
+                    className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-neutral-200 rounded-7xl justify-between hover:border-primary-600 group cursor-pointer"
+                    onClick={() => setStartWithSpecificUser(null)}
+                  >
                     <div className="flex items-center">
                       <Avatar
                         name={startWithSpecificUser.fullName}
@@ -441,7 +444,12 @@ const Toolbar: React.FC<IToolbarProps> = ({
                 Filter by:
               </div>
               {!!appliedFilters?.location?.length && (
-                <div className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-primary-200 rounded-7xl justify-between mr-2">
+                <div
+                  className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-neutral-200 rounded-7xl justify-between mr-2 hover:border-primary-600 group cursor-pointer"
+                  onClick={() =>
+                    setAppliedFilters({ ...appliedFilters, location: [] })
+                  }
+                >
                   <div className="font-medium text-sm text-neutral-900 mr-1">
                     Location{' '}
                     {appliedFilters.location.map((location, index) => (
@@ -475,7 +483,15 @@ const Toolbar: React.FC<IToolbarProps> = ({
                 </div>
               )}
               {!!appliedFilters?.departments?.length && (
-                <div className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-primary-200 rounded-7xl justify-between mr-2">
+                <div
+                  className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-neutral-200 rounded-7xl justify-between mr-2 hover:border-primary-600 group cursor-pointer"
+                  onClick={() =>
+                    setAppliedFilters({
+                      ...appliedFilters,
+                      departments: [],
+                    })
+                  }
+                >
                   <div className="font-medium text-sm text-neutral-900 mr-1">
                     Department{' '}
                     {appliedFilters.departments.map((department, index) => (

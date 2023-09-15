@@ -377,8 +377,9 @@ const Team: React.FC<ITeamProps> = ({
             {appliedFilters?.categories?.map((category: ICategory) => (
               <div
                 key={category.id}
-                className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1"
+                className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1 hover:text-primary-600 hover:border-primary-600 cursor-pointer group"
                 data-testid={`people-filterby`}
+                onClick={() => handleRemoveFilters('categories', category.id)}
               >
                 <div className="mr-1 text-neutral-500 whitespace-nowrap">
                   Category{' '}
