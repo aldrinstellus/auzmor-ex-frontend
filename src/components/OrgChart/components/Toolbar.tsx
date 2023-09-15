@@ -80,12 +80,10 @@ const Toolbar: React.FC<IToolbarProps> = ({
     fetchNextPage: fetchNextPersons,
     hasNextPage: hasNextPersons,
     isFetching: isPersonFetching,
-  } = useInfiniteUsers(
-    {
-      q: debouncedPersonSearchValue,
-    },
-    { enabled: debouncedPersonSearchValue !== '' },
-  );
+  } = useInfiniteUsers({
+    q: { q: debouncedPersonSearchValue },
+    startFetching: debouncedPersonSearchValue !== '',
+  });
   const personData = fetchedPersons?.pages.flatMap((page) =>
     page?.data?.result?.data.map((person: IGetUser) => person),
   );
