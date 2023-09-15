@@ -592,6 +592,7 @@ const Team: React.FC<ITeamProps> = ({
           variant={FilterModalVariant.Team}
           onApply={onApplyFilter}
           onClear={() => {
+            deleteParam('categories');
             setAppliedFilters({ ...appliedFilters, categories: [] });
             closeFilterModal();
           }}
