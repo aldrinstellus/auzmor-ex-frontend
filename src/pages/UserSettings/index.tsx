@@ -69,7 +69,7 @@ const UserSettings = () => {
       data-testid="admin-settings"
     >
       <Card
-        className="w-[25%] max-h-[290px]"
+        className="w-[25%] max-h-[284px]"
         dataTestId="admin-settings-controls"
       >
         <p className="text-neutral-900 text-base font-bold p-4">
