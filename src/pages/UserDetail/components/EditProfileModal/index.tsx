@@ -206,7 +206,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       dataTestId: `${dataTestId}-department`,
       fetchQuery: useInfiniteDepartments,
       getFormattedData: (data: any) =>
-        formatCreatableOptions(data, 'deept-option'),
+        formatCreatableOptions(data, 'dept-option'),
       queryParams: {},
       disabled: userDetails.freezeEdit?.department,
       disableCreate: !isAdmin,
