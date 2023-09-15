@@ -8,6 +8,8 @@ import useAuth from 'hooks/useAuth';
 import TeamCard from './components/TeamCard';
 import Button, { Size, Variant } from 'components/Button';
 import { useNavigate } from 'react-router-dom';
+import SkeletonLoader from './components/SkeletonLoader';
+import TeamNotFound from 'images/TeamNotFound.svg';
 
 const MyTeamWidget = () => {
   const { user } = useAuth();
@@ -43,7 +45,11 @@ const MyTeamWidget = () => {
         onClick={toggleModal}
       >
         <div className="font-bold">My Teams</div>
-        <Icon name={open ? 'arrowUp' : 'arrowDown'} size={20} />
+        <Icon
+          name={open ? 'arrowUp' : 'arrowDown'}
+          size={20}
+          color="text-neutral-900"
+        />
       </div>
       <div
         className={`transition-max-h duration-300 ease-in-out overflow-hidden ${
@@ -56,7 +62,9 @@ const MyTeamWidget = () => {
               return (
                 <>
                   {[...Array(3)].map((element) => (
-                    <div key={element}>Loading</div>
+                    <div key={element} className="py-2">
+                      <SkeletonLoader />
+                    </div>
                   ))}
                 </>
               );
@@ -85,7 +93,14 @@ const MyTeamWidget = () => {
                 </>
               );
             }
-            return <div></div>;
+            return (
+              <div className="flex justify-center flex-col items-center gap-4">
+                <img src={TeamNotFound} alt="Team Not Found" width={100} />
+                <p className="text-sm font-semibold text-neutral-500 text-center px-2">
+                  No teams found
+                </p>
+              </div>
+            );
           })()}
         </div>
       </div>
