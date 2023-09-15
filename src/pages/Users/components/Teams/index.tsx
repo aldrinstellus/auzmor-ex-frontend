@@ -100,9 +100,6 @@ const Team: React.FC<ITeamProps> = ({
     any
   > | null>({});
   const [sortByFilter, setSortByFilter] = useState<string>('');
-  const [filters, setFilters] = useState<any>({
-    categories: [],
-  });
   const [tab, setTab] = useState<TeamTab | string>(
     searchParams.get('tab') || isAdmin ? TeamTab.AllTeams : TeamTab.MyTeams,
   );
@@ -111,7 +108,7 @@ const Team: React.FC<ITeamProps> = ({
     useModal(false);
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const [appliedFilters, setAppliedFilters] = useState<IAppliedFilters>({
-    category: [],
+    categories: [],
   });
 
   const { ref, inView } = useInView();
@@ -140,8 +137,8 @@ const Team: React.FC<ITeamProps> = ({
         sort: sortByFilter,
         userId: tab === TeamTab.MyTeams ? user?.id : undefined,
         categoryId:
-          appliedFilters.category!.length > 0
-            ? appliedFilters?.category
+          appliedFilters.categories && appliedFilters.categories.length > 0
+            ? appliedFilters?.categories
                 ?.map((category: ICategory) => category?.id)
                 .join(',')
             : undefined,
@@ -220,24 +217,24 @@ const Team: React.FC<ITeamProps> = ({
     });
   });
 
-  const handleRemoveFilters = (key: any, id: any) => {
-    const updatedFilter = filters[key].filter((item: any) => item.id !== id);
+  const handleRemoveFilters = (key: string, id: any) => {
+    const updatedFilter = (appliedFilters as any)[
+      key as keyof IAppliedFilters
+    ]!.filter((item: any) => item.id !== id);
     const serializedFilters = serializeFilter(updatedFilter);
     if (updatedFilter.length === 0) {
       deleteParam(key);
     } else {
       updateParam(key, serializedFilters);
     }
-    setFilters((prevFilters: any) => ({
-      ...prevFilters,
-      [key]: updatedFilter,
-    }));
+    setAppliedFilters({ ...appliedFilters, [key]: updatedFilter });
   };
 
-  const onApplyFilter = (filter: any) => {
-    setFilters(filter);
-    const serializedCategories = serializeFilter(filter.categories);
+  const onApplyFilter = (appliedFilters: IAppliedFilters) => {
+    setAppliedFilters(appliedFilters);
+    const serializedCategories = serializeFilter(appliedFilters.categories);
     updateParam('categories', serializedCategories);
+    closeFilterModal();
   };
 
   const handleSetSortFilter = (sortValue: any) => {
@@ -248,7 +245,8 @@ const Team: React.FC<ITeamProps> = ({
 
   const clearFilters = () => {
     deleteParam('categories');
-    setFilters({
+    setAppliedFilters({
+      ...appliedFilters,
       categories: [],
     });
   };
@@ -258,10 +256,10 @@ const Team: React.FC<ITeamProps> = ({
     const parsedCategories = parseParams('categories');
     const parsedSort = parseParams('sort');
     if (parsedCategories) {
-      setFilters((prevFilters: any) => ({
-        ...prevFilters,
+      setAppliedFilters({
+        ...appliedFilters,
         categories: parsedCategories,
-      }));
+      });
     }
     if (parsedSort) {
       setSortByFilter(parsedSort);
@@ -370,13 +368,13 @@ const Team: React.FC<ITeamProps> = ({
 
       {/* CATEGORY FILTER */}
 
-      {appliedFilters?.category && appliedFilters?.category?.length > 0 && (
+      {appliedFilters?.categories && appliedFilters?.categories?.length > 0 && (
         <div className="flex justify-between items-start">
           <div className="flex items-center space-x-2 flex-wrap gap-y-2">
             <div className="text-base text-neutral-500 whitespace-nowrap">
               Filter By
             </div>
-            {appliedFilters?.category?.map((category: ICategory) => (
+            {appliedFilters?.categories?.map((category: ICategory) => (
               <div
                 key={category.id}
                 className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1"
@@ -391,15 +389,7 @@ const Team: React.FC<ITeamProps> = ({
                   size={16}
                   color="text-neutral-900"
                   className="cursor-pointer"
-                  onClick={() =>
-                    setAppliedFilters({
-                      ...appliedFilters,
-                      category: appliedFilters.category?.filter(
-                        (selectedCategory) =>
-                          selectedCategory.id !== category.id,
-                      ),
-                    })
-                  }
+                  onClick={() => handleRemoveFilters('categories', category.id)}
                   dataTestId={`people-filterby-close`}
                 />
               </div>
@@ -600,12 +590,9 @@ const Team: React.FC<ITeamProps> = ({
           closeModal={closeFilterModal}
           appliedFilters={appliedFilters}
           variant={FilterModalVariant.Team}
-          onApply={(appliedFilters: IAppliedFilters) => {
-            setAppliedFilters(appliedFilters);
-            closeFilterModal();
-          }}
+          onApply={onApplyFilter}
           onClear={() => {
-            setAppliedFilters({ ...appliedFilters, category: [] });
+            setAppliedFilters({ ...appliedFilters, categories: [] });
             closeFilterModal();
           }}
         />

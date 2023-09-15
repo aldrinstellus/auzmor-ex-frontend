@@ -33,7 +33,7 @@ const OrganizationChart: React.FC<IOrgChart> = ({ setShowOrgChart }) => {
   const [isExpandAll, setIsExpandAll] = useState<boolean>(false);
   const [appliedFilters, setAppliedFilters] = useState<IAppliedFilters>({
     location: [],
-    department: [],
+    departments: [],
     status: null,
   });
   const [parentId, setParentId] = useState<string | null>(null);
@@ -43,7 +43,7 @@ const OrganizationChart: React.FC<IOrgChart> = ({ setShowOrgChart }) => {
       expandAll: isExpandAll,
       locations: appliedFilters?.location?.map((location) => location.id) || [],
       departments:
-        appliedFilters?.department?.map((department) => department.id) || [],
+        appliedFilters?.departments?.map((department) => department.id) || [],
       status: appliedFilters.status?.value,
       expand: activeMode === OrgChartMode.Team ? 2 : 0,
     }),
@@ -86,14 +86,14 @@ const OrganizationChart: React.FC<IOrgChart> = ({ setShowOrgChart }) => {
         onClearFilter={() => {
           setAppliedFilters({
             location: [],
-            department: [],
+            departments: [],
             status: null,
           });
           setStartWithSpecificUser(null);
           resetField('userSearch');
         }}
         isFilterApplied={
-          !!appliedFilters?.department?.length ||
+          !!appliedFilters?.departments?.length ||
           !!appliedFilters?.location?.length ||
           !!startWithSpecificUser
         }

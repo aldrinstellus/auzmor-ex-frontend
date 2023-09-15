@@ -60,7 +60,7 @@ const People: React.FC<IPeopleProps> = ({
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const [appliedFilters, setAppliedFilters] = useState<IAppliedFilters>({
     location: [],
-    department: [],
+    departments: [],
     status: null,
   });
   const [filterSortBy, setFilterSortBy] = useState<string>('');
@@ -177,7 +177,7 @@ const People: React.FC<IPeopleProps> = ({
   const resetFilters = () => {
     setAppliedFilters({
       location: [],
-      department: [],
+      departments: [],
       status: { value: UserStatus.All, label: 'all' },
     });
   };

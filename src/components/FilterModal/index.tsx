@@ -43,9 +43,9 @@ export enum FilterModalVariant {
 
 export interface IAppliedFilters {
   location?: ILocation[];
-  department?: IDepartment[];
+  departments?: IDepartment[];
   status?: IStatus | null;
-  category?: ICategory[];
+  categories?: ICategory[];
 }
 
 export enum FilterNavigationOption {
@@ -74,7 +74,12 @@ interface IFilters {
 const FilterModal: React.FC<IFilterModalProps> = ({
   open,
   closeModal,
-  appliedFilters = { location: [], department: [], category: [], status: null },
+  appliedFilters = {
+    location: [],
+    departments: [],
+    categories: [],
+    status: null,
+  },
   onApply,
   onClear,
   variant = FilterModalVariant.People,
@@ -103,13 +108,13 @@ const FilterModal: React.FC<IFilterModalProps> = ({
           data: location,
           dataTestId: `location-${location.name}`,
         })),
-        departmentCheckbox: (appliedFilters.department || []).map(
+        departmentCheckbox: (appliedFilters.departments || []).map(
           (department) => ({
             data: department,
             dataTestId: `department-${department.name}`,
           }),
         ),
-        categoryCheckbox: (appliedFilters.category || []).map((category) => ({
+        categoryCheckbox: (appliedFilters.categories || []).map((category) => ({
           data: category,
           dataTestId: `category-${category.name}`,
         })),
@@ -127,10 +132,10 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       location: formData.locationCheckbox.map(
         (location) => location.data,
       ) as ILocation[],
-      department: formData.departmentCheckbox.map(
+      departments: formData.departmentCheckbox.map(
         (department) => department.data,
       ) as IDepartment[],
-      category: formData.categoryCheckbox.map(
+      categories: formData.categoryCheckbox.map(
         (category) => category.data,
       ) as ICategory[],
       status: formData.status.data as IStatus,

@@ -67,7 +67,7 @@ const Toolbar: React.FC<IToolbarProps> = ({
   const { user } = useAuth();
 
   const isFilterApplied =
-    !!appliedFilters?.department?.length || !!appliedFilters?.location?.length;
+    !!appliedFilters?.departments?.length || !!appliedFilters?.location?.length;
 
   // fetch users on start with specific user
   const debouncedPersonSearchValue = useDebounce(
@@ -191,7 +191,7 @@ const Toolbar: React.FC<IToolbarProps> = ({
   const resetAppliedFilters = () => {
     setAppliedFilters({
       location: [],
-      department: [],
+      departments: [],
       status: { value: UserStatus.All, label: 'all' },
     });
   };
@@ -473,11 +473,11 @@ const Toolbar: React.FC<IToolbarProps> = ({
                   </div>
                 </div>
               )}
-              {!!appliedFilters?.department?.length && (
+              {!!appliedFilters?.departments?.length && (
                 <div className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-primary-200 rounded-7xl justify-between mr-2">
                   <div className="font-medium text-sm text-neutral-900 mr-1">
                     Department{' '}
-                    {appliedFilters.department.map((department, index) => (
+                    {appliedFilters.departments.map((department, index) => (
                       <>
                         <span
                           key={department.id}
@@ -485,10 +485,10 @@ const Toolbar: React.FC<IToolbarProps> = ({
                         >
                           {department.name}
                         </span>
-                        {appliedFilters?.department &&
-                          index !== appliedFilters?.department?.length - 1 && (
+                        {appliedFilters?.departments &&
+                          index !== appliedFilters?.departments?.length - 1 && (
                             <span>
-                              {appliedFilters?.department?.length === 2
+                              {appliedFilters?.departments?.length === 2
                                 ? ' and '
                                 : ', '}
                             </span>
@@ -501,7 +501,10 @@ const Toolbar: React.FC<IToolbarProps> = ({
                       name="close"
                       size={16}
                       onClick={() =>
-                        setAppliedFilters({ ...appliedFilters, department: [] })
+                        setAppliedFilters({
+                          ...appliedFilters,
+                          departments: [],
+                        })
                       }
                     />
                   </div>
