@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import Banner, { Variant } from 'components/Banner';
 import Icon from 'components/Icon';
 import { IMedia } from 'contexts/CreatePostContext';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -102,211 +103,227 @@ const Carousel: React.FC<ICarouselProps> = ({
   }, [videoRef.current, media[currentIndex]]);
 
   return (
-    <div className={style}>
-      {media[currentIndex].type === 'IMAGE' ? (
-        <img src={media[currentIndex].original} />
-      ) : coverImageUrl ? (
-        <video
-          key={media[currentIndex].original}
-          src={media[currentIndex].original}
-          ref={videoRef}
-          onTimeUpdate={() => {
-            if (canPlay) {
-              setProgress({
-                currentTime: videoRef.current!.currentTime,
-                duration: videoRef.current!.duration,
-                progress:
-                  (videoRef.current!.currentTime / videoRef.current!.duration) *
-                  100,
-              });
-              progressbarRef.current!.value = (
-                (videoRef.current!.currentTime / videoRef.current!.duration) *
-                100
-              ).toString();
-            }
-          }}
-          onEnded={() => setIsPlaying(false)}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          poster={coverImageUrl}
-          muted={isMuted}
-          onClick={() =>
-            isPlaying && videoRef.current
-              ? videoRef.current!.pause()
-              : videoRef.current!.play()
-          }
-          autoPlay={autoplayIndex === currentIndex}
-        />
-      ) : (
-        <video
-          key={media[currentIndex].original}
-          src={media[currentIndex].original}
-          ref={videoRef}
-          onTimeUpdate={() => {
-            if (canPlay) {
-              setProgress({
-                currentTime: videoRef.current!.currentTime,
-                duration: videoRef.current!.duration,
-                progress:
-                  (videoRef.current!.currentTime / videoRef.current!.duration) *
-                  100,
-              });
-              progressbarRef.current!.value = (
-                (videoRef.current!.currentTime / videoRef.current!.duration) *
-                100
-              ).toString();
-            }
-          }}
-          onEnded={() => setIsPlaying(false)}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          muted={isMuted}
-          onClick={() =>
-            isPlaying && videoRef
-              ? videoRef.current!.pause()
-              : videoRef.current!.play()
-          }
-          autoPlay={autoplayIndex === currentIndex}
-        />
-      )}
-      {media[currentIndex].type !== 'IMAGE' && canPlay && (
-        <div className="bg-neutral-700 px-6 py-2.5 flex justify-between items-center">
-          {isPlaying ? (
-            <div
-              className="p-2 bg-white rounded-full cursor-pointer"
-              onClick={() => videoRef?.current?.pause()}
-            >
-              <Icon name="pause" size={14} color="text-primary-500" />
-            </div>
-          ) : (
-            <div
-              className="p-2 bg-white rounded-full cursor-pointer"
-              onClick={() => videoRef?.current?.play()}
-            >
-              <Icon name="playFilled" size={14} color="text-primary-500" />
-            </div>
-          )}
-          <div className="flex items-center">
-            <div className="text-sm text-white mr-2 w-10 text-center">
-              {getFormatedTime(progress?.currentTime)}
-            </div>
-            <input
-              type="range"
-              min={MIN}
-              max={MAX}
-              defaultValue={0}
-              onChange={(e) => {
-                if (videoRef.current!.duration === Infinity) {
-                  return;
-                }
-                const mappedCurrentTime = mapRanges(
-                  MIN,
-                  MAX,
-                  0,
-                  Math.floor(videoRef.current!.duration),
-                  parseInt(e.target.value),
-                );
+    <div>
+      <div className={style}>
+        {media[currentIndex].type === 'IMAGE' ? (
+          <img src={media[currentIndex].original} />
+        ) : coverImageUrl ? (
+          <video
+            key={media[currentIndex].original}
+            src={media[currentIndex].original}
+            ref={videoRef}
+            onTimeUpdate={() => {
+              if (canPlay) {
                 setProgress({
-                  currentTime: mappedCurrentTime,
+                  currentTime: videoRef.current!.currentTime,
                   duration: videoRef.current!.duration,
-                  progress: parseInt(e.target.value),
+                  progress:
+                    (videoRef.current!.currentTime /
+                      videoRef.current!.duration) *
+                    100,
                 });
-                videoRef.current!.currentTime = mappedCurrentTime;
-              }}
-              ref={progressbarRef}
-              key={media[currentIndex].original}
-              className="accent-white"
-            />
-            <div className="text-sm text-white ml-2 w-10 text-center">
-              {getFormatedTime(progress?.duration)}
-            </div>
-          </div>
-          <div
-            className="cursor-pointer"
-            onClick={() =>
-              (videoRef!.current!.currentTime += SEEK_FORWARD_TIME)
-            }
-          >
-            <Icon name="seekForward" />
-          </div>
-          {isMuted ? (
-            <div onClick={() => setIsMuted(false)} className="cursor-pointer">
-              <Icon name="mute" color="text-white" />
-            </div>
-          ) : (
-            <div onClick={() => setIsMuted(true)} className="cursor-pointer">
-              <Icon name="speaker" color="text-white" />
-            </div>
-          )}
-          <div
-            onClick={() => {
-              setShowFullscreenVideo &&
-                setShowFullscreenVideo(media[currentIndex]);
-              videoRef.current!.pause();
+                progressbarRef.current!.value = (
+                  (videoRef.current!.currentTime / videoRef.current!.duration) *
+                  100
+                ).toString();
+              }
             }}
-            className="cursor-pointer"
-          >
-            <Icon name="fullScreen" color="text-white" />
-          </div>
-        </div>
-      )}
-
-      <div className="top-0 absolute p-4 justify-between flex w-full">
-        {!isPlaying ? (
-          <div className="px-4 py-2 text-sm font-bold bg-white rounded-17xl">
-            {currentIndex + 1} of {media.length}
-          </div>
-        ) : (
-          <div />
-        )}
-        <div
-          onClick={(e) => onClose(e, media[currentIndex], currentIndex)}
-          data-testid={`${dataTestId}-${
-            media[currentIndex].type === 'IMAGE'
-              ? 'discardphoto'
-              : 'discardvideo'
-          }`}
-          className="p-2 bg-white rounded-7xl cursor-pointer"
-        >
-          <Icon name="close" size={16} />
-        </div>
-      </div>
-      {!isPlaying && (
-        <div
-          className="justify-between flex p-4 items-center top-[calc(50%-32px)] absolute w-full"
-          onClick={() => {
-            if (videoRef.current) {
-              isPlaying ? videoRef.current!.pause() : videoRef.current!.play();
+            onEnded={() => setIsPlaying(false)}
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+            poster={coverImageUrl}
+            muted={isMuted}
+            onClick={() =>
+              isPlaying && videoRef.current
+                ? videoRef.current!.pause()
+                : videoRef.current!.play()
             }
-          }}
-        >
-          <div
-            onClick={prevSlide}
-            className="cursor-pointer rounded-7xl p-2 bg-white"
-          >
-            <Icon name="arrowLeft" size={16} />
-          </div>
-          {media[currentIndex].type === 'VIDEO' &&
-            (canPlay ? (
+            autoPlay={autoplayIndex === currentIndex}
+          />
+        ) : (
+          <video
+            key={media[currentIndex].original}
+            src={media[currentIndex].original}
+            ref={videoRef}
+            onTimeUpdate={() => {
+              if (canPlay) {
+                setProgress({
+                  currentTime: videoRef.current!.currentTime,
+                  duration: videoRef.current!.duration,
+                  progress:
+                    (videoRef.current!.currentTime /
+                      videoRef.current!.duration) *
+                    100,
+                });
+                progressbarRef.current!.value = (
+                  (videoRef.current!.currentTime / videoRef.current!.duration) *
+                  100
+                ).toString();
+              }
+            }}
+            onEnded={() => setIsPlaying(false)}
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+            muted={isMuted}
+            onClick={() =>
+              isPlaying && videoRef
+                ? videoRef.current!.pause()
+                : videoRef.current!.play()
+            }
+            autoPlay={autoplayIndex === currentIndex}
+            className="w-full h-auto bg-blue-100"
+          />
+        )}
+        {media[currentIndex].type !== 'IMAGE' && canPlay && (
+          <div className="bg-neutral-700 px-6 py-2.5 flex justify-between items-center">
+            {isPlaying ? (
               <div
-                onClick={() => videoRef.current!.play()}
-                className="cursor-pointer"
+                className="p-2 bg-white rounded-full cursor-pointer"
+                onClick={() => videoRef?.current?.pause()}
               >
-                <Icon name="playFilled" color="text-white" size={46} />
+                <Icon name="pause" size={14} color="text-primary-500" />
               </div>
             ) : (
-              <div className="text-sm font-semibold">
-                Unable to play the video. Seems like an unsupported video
-                format.
+              <div
+                className="p-2 bg-white rounded-full cursor-pointer"
+                onClick={() => videoRef?.current?.play()}
+              >
+                <Icon name="playFilled" size={14} color="text-primary-500" />
               </div>
-            ))}
-
-          <div
-            onClick={nextSlide}
-            className="cursor-pointer rounded-7xl p-2 bg-white"
-          >
-            <Icon name="arrowRight" size={16} />
+            )}
+            <div className="flex items-center">
+              <div className="text-sm text-white mr-2 w-10 text-center">
+                {getFormatedTime(progress?.currentTime)}
+              </div>
+              <input
+                type="range"
+                min={MIN}
+                max={MAX}
+                defaultValue={0}
+                onChange={(e) => {
+                  if (videoRef.current!.duration === Infinity) {
+                    return;
+                  }
+                  const mappedCurrentTime = mapRanges(
+                    MIN,
+                    MAX,
+                    0,
+                    Math.floor(videoRef.current!.duration),
+                    parseInt(e.target.value),
+                  );
+                  setProgress({
+                    currentTime: mappedCurrentTime,
+                    duration: videoRef.current!.duration,
+                    progress: parseInt(e.target.value),
+                  });
+                  videoRef.current!.currentTime = mappedCurrentTime;
+                }}
+                ref={progressbarRef}
+                key={media[currentIndex].original}
+                className="accent-white"
+              />
+              <div className="text-sm text-white ml-2 w-10 text-center">
+                {getFormatedTime(progress?.duration)}
+              </div>
+            </div>
+            <div
+              className="cursor-pointer"
+              onClick={() =>
+                (videoRef!.current!.currentTime += SEEK_FORWARD_TIME)
+              }
+            >
+              <Icon name="seekForward" />
+            </div>
+            {isMuted ? (
+              <div onClick={() => setIsMuted(false)} className="cursor-pointer">
+                <Icon name="mute" color="text-white" />
+              </div>
+            ) : (
+              <div onClick={() => setIsMuted(true)} className="cursor-pointer">
+                <Icon name="speaker" color="text-white" />
+              </div>
+            )}
+            <div
+              onClick={() => {
+                setShowFullscreenVideo &&
+                  setShowFullscreenVideo(media[currentIndex]);
+                videoRef.current!.pause();
+              }}
+              className="cursor-pointer"
+            >
+              <Icon name="fullScreen" color="text-white" />
+            </div>
           </div>
+        )}
+
+        <div className="top-0 absolute p-4 justify-between flex w-full">
+          {!isPlaying ? (
+            <div className="px-4 py-2 text-sm font-bold bg-white rounded-17xl">
+              {currentIndex + 1} of {media.length}
+            </div>
+          ) : (
+            <div />
+          )}
+          <div
+            onClick={(e) => onClose(e, media[currentIndex], currentIndex)}
+            data-testid={`${dataTestId}-${
+              media[currentIndex].type === 'IMAGE'
+                ? 'discardphoto'
+                : 'discardvideo'
+            }`}
+            className="p-2 bg-white rounded-7xl cursor-pointer"
+          >
+            <Icon name="close" size={16} />
+          </div>
+        </div>
+        {!isPlaying && (
+          <div
+            className="justify-between flex p-4 items-center top-[calc(50%-32px)] absolute w-full"
+            onClick={() => {
+              if (videoRef.current) {
+                isPlaying
+                  ? videoRef.current!.pause()
+                  : videoRef.current!.play();
+              }
+            }}
+          >
+            <div
+              onClick={prevSlide}
+              className="cursor-pointer rounded-7xl p-2 bg-white"
+            >
+              <Icon name="arrowLeft" size={16} />
+            </div>
+            {media[currentIndex].type === 'VIDEO' &&
+              (canPlay ? (
+                <div
+                  onClick={() => videoRef.current!.play()}
+                  className="cursor-pointer"
+                >
+                  <Icon name="playFilled" color="text-white" size={46} />
+                </div>
+              ) : (
+                !coverImageUrl && (
+                  <div className="py-2 px-5 bg-white rounded-[8px]">
+                    <Icon name="videoSlash" size={56} hover={false} />
+                  </div>
+                )
+              ))}
+
+            <div
+              onClick={nextSlide}
+              className="cursor-pointer rounded-7xl p-2 bg-white"
+            >
+              <Icon name="arrowRight" size={16} />
+            </div>
+          </div>
+        )}
+      </div>
+      {media[currentIndex].type !== 'IMAGE' && !canPlay && (
+        <div className={`my-1 ${className}`}>
+          <Banner
+            title="Incompatible video format, but you can still upload it for users to download"
+            variant={Variant.Grey}
+          />
         </div>
       )}
     </div>

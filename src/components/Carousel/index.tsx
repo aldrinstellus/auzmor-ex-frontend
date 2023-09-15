@@ -18,7 +18,7 @@ import { toast } from 'react-toastify';
 import FailureToast from 'components/Toast/variants/FailureToast';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
-import BlurImg from 'components/Image/components/BlurImg';
+import Banner, { Variant } from 'components/Banner';
 
 export type CarouselProps = {
   media: IMedia[];
@@ -137,18 +137,25 @@ const Carousel: React.FC<CarouselProps> = ({
           {media[currentIndex].type === 'IMAGE' ? (
             <Image image={media[currentIndex]} />
           ) : (
-            <div className="w-full h-full flex items-center ">
+            <div className="w-full h-full flex items-center flex-col gap-2">
               <video
                 className="w-full h-full"
                 src={media[currentIndex].original}
                 controls={true}
                 ref={videoRef}
-                poster={media[currentIndex].coverImage?.original}
                 onEnded={() => setIsPlaying(false)}
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
                 autoPlay={index > -1}
               />
+              {!canPlay && (
+                <div className="w-full">
+                  <Banner
+                    title="Incompatible video format, but you can still upload it for users to download"
+                    variant={Variant.Grey}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -188,10 +195,7 @@ const Carousel: React.FC<CarouselProps> = ({
                 }}
               />
             ) : (
-              <div className="text-sm font-semibold text-white">
-                Unable to play the video. Seems like an unsupported video
-                format.
-              </div>
+              <Icon name="videoSlash" size={50} hover={false} />
             )}
           </div>
         )}
