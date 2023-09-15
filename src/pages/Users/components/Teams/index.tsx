@@ -239,8 +239,12 @@ const Team: React.FC<ITeamProps> = ({
 
   const handleSetSortFilter = (sortValue: any) => {
     setSortByFilter(sortValue);
-    const serializedSort = serializeFilter(sortValue);
-    updateParam('sort', serializedSort);
+    if (sortValue) {
+      const serializedSort = serializeFilter(sortValue);
+      updateParam('sort', serializedSort);
+    } else {
+      deleteParam('sort');
+    }
   };
 
   const clearFilters = () => {
@@ -322,11 +326,7 @@ const Team: React.FC<ITeamProps> = ({
             filterKey={{ createdAt: 'createdAt', aToZ: 'name' }}
             selectedValue={sortByFilter}
             filterValue={{ asc: 'ASC', desc: 'DESC' }}
-            title={
-              <div className="bg-blue-50 flex px-6 py-2 font-xs font-medium text-neutral-500">
-                Sort by
-              </div>
-            }
+            dataTestId="teams-sort"
             entity="TEAM"
           />
           <div>
@@ -579,7 +579,7 @@ const Team: React.FC<ITeamProps> = ({
             closeAddMemberModal();
           }}
           onCancel={closeAddMemberModal}
-          title="Add Members"
+          title="Add team members"
           submitButtonText="Add Members"
         />
       )}
