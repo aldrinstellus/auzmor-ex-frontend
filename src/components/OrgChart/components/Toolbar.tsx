@@ -107,6 +107,7 @@ const Toolbar: React.FC<IToolbarProps> = ({
       fetchNextPersons();
     }
   }, [inView]);
+
   const memberSearchfields = [
     {
       type: FieldType.AsyncSingleSelect,
