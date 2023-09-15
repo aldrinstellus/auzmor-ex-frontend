@@ -11,9 +11,8 @@ import useModal from 'hooks/useModal';
 import { useInView } from 'react-intersection-observer';
 import { useForm } from 'react-hook-form';
 import { useDebounce } from 'hooks/useDebounce';
-import TeamFilterModal from '../FilterModals/TeamFilterModal';
 import TeamModal from '../TeamModal';
-import { addTeamMember, useInfiniteTeams } from 'queries/teams';
+import { useInfiniteTeams } from 'queries/teams';
 import { getProfileImage, isFiltersEmpty, twConfig } from 'utils/misc';
 import PageLoader from 'components/PageLoader';
 import TeamNotFound from 'images/TeamNotFound.svg';
@@ -26,6 +25,13 @@ import EntitySearchModal, {
 import { IGetUser } from 'queries/users';
 import Avatar from 'components/Avatar';
 import Icon from 'components/Icon';
+import FilterModal, {
+  FilterModalVariant,
+  IAppliedFilters,
+} from 'components/FilterModal';
+import { ICategory } from 'queries/category';
+import { addTeamMember, useSingleTeam } from 'queries/teams';
+
 import useAuth from 'hooks/useAuth';
 import { useSearchParams } from 'react-router-dom';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
@@ -94,9 +100,6 @@ const Team: React.FC<ITeamProps> = ({
     any
   > | null>({});
   const [sortByFilter, setSortByFilter] = useState<string>('');
-  const [filters, setFilters] = useState<any>({
-    categories: [],
-  });
   const [tab, setTab] = useState<TeamTab | string>(
     searchParams.get('tab') || isAdmin ? TeamTab.AllTeams : TeamTab.MyTeams,
   );
@@ -104,6 +107,9 @@ const Team: React.FC<ITeamProps> = ({
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
+  const [appliedFilters, setAppliedFilters] = useState<IAppliedFilters>({
+    categories: [],
+  });
 
   const { ref, inView } = useInView();
 
@@ -131,8 +137,10 @@ const Team: React.FC<ITeamProps> = ({
         sort: sortByFilter,
         userId: tab === TeamTab.MyTeams ? user?.id : undefined,
         categoryId:
-          filters.categories.length > 0
-            ? filters.categories.map((category: any) => category?.id).join(',')
+          appliedFilters.categories && appliedFilters.categories.length > 0
+            ? appliedFilters?.categories
+                ?.map((category: ICategory) => category?.id)
+                .join(',')
             : undefined,
       }),
     });
@@ -209,24 +217,24 @@ const Team: React.FC<ITeamProps> = ({
     });
   });
 
-  const handleRemoveFilters = (key: any, id: any) => {
-    const updatedFilter = filters[key].filter((item: any) => item.id !== id);
+  const handleRemoveFilters = (key: string, id: any) => {
+    const updatedFilter = (appliedFilters as any)[
+      key as keyof IAppliedFilters
+    ]!.filter((item: any) => item.id !== id);
     const serializedFilters = serializeFilter(updatedFilter);
     if (updatedFilter.length === 0) {
       deleteParam(key);
     } else {
       updateParam(key, serializedFilters);
     }
-    setFilters((prevFilters: any) => ({
-      ...prevFilters,
-      [key]: updatedFilter,
-    }));
+    setAppliedFilters({ ...appliedFilters, [key]: updatedFilter });
   };
 
-  const onApplyFilter = (filter: any) => {
-    setFilters(filter);
-    const serializedCategories = serializeFilter(filter.categories);
+  const onApplyFilter = (appliedFilters: IAppliedFilters) => {
+    setAppliedFilters(appliedFilters);
+    const serializedCategories = serializeFilter(appliedFilters.categories);
     updateParam('categories', serializedCategories);
+    closeFilterModal();
   };
 
   const handleSetSortFilter = (sortValue: any) => {
@@ -241,7 +249,8 @@ const Team: React.FC<ITeamProps> = ({
 
   const clearFilters = () => {
     deleteParam('categories');
-    setFilters({
+    setAppliedFilters({
+      ...appliedFilters,
       categories: [],
     });
   };
@@ -251,10 +260,10 @@ const Team: React.FC<ITeamProps> = ({
     const parsedCategories = parseParams('categories');
     const parsedSort = parseParams('sort');
     if (parsedCategories) {
-      setFilters((prevFilters: any) => ({
-        ...prevFilters,
+      setAppliedFilters({
+        ...appliedFilters,
         categories: parsedCategories,
-      }));
+      });
     }
     if (parsedSort) {
       setSortByFilter(parsedSort);
@@ -358,17 +367,19 @@ const Team: React.FC<ITeamProps> = ({
       )}
 
       {/* CATEGORY FILTER */}
-      {filters.categories.length > 0 && (
+
+      {appliedFilters?.categories && appliedFilters?.categories?.length > 0 && (
         <div className="flex justify-between items-start mb-6">
           <div className="flex items-center space-x-2 flex-wrap gap-y-2">
             <div className="text-base text-neutral-500 whitespace-nowrap">
               Filter By
             </div>
-            {filters.categories.map((category: any) => (
+            {appliedFilters?.categories?.map((category: ICategory) => (
               <div
                 key={category.id}
-                className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1"
+                className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1 hover:text-primary-600 hover:border-primary-600 cursor-pointer group"
                 data-testid={`people-filterby`}
+                onClick={() => handleRemoveFilters('categories', category.id)}
               >
                 <div className="mr-1 text-neutral-500 whitespace-nowrap">
                   Category{' '}
@@ -574,12 +585,20 @@ const Team: React.FC<ITeamProps> = ({
         />
       )}
 
-      <TeamFilterModal
-        open={showFilterModal}
-        closeModal={closeFilterModal}
-        filters={filters}
-        onApply={onApplyFilter}
-      />
+      {showFilterModal && (
+        <FilterModal
+          open={showFilterModal}
+          closeModal={closeFilterModal}
+          appliedFilters={appliedFilters}
+          variant={FilterModalVariant.Team}
+          onApply={onApplyFilter}
+          onClear={() => {
+            deleteParam('categories');
+            setAppliedFilters({ ...appliedFilters, categories: [] });
+            closeFilterModal();
+          }}
+        />
+      )}
     </div>
   );
 };
