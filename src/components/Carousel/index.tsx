@@ -151,7 +151,7 @@ const Carousel: React.FC<CarouselProps> = ({
               {!canPlay && (
                 <div className="w-full">
                   <Banner
-                    title="Incompatible video format, but you can still upload it for users to download"
+                    title="Incompatible video format, but you can download it"
                     variant={Variant.Grey}
                   />
                 </div>
