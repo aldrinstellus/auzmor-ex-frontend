@@ -174,6 +174,18 @@ export const useDomainExists = (domain: string) => {
   });
 };
 
+const getNotificationSettings = async () => {
+  const { data } = await apiService.get('/notifications/settings');
+  return data;
+};
+
+export const useNotificationSettings = () =>
+  useQuery({
+    queryKey: ['notification-settings'],
+    queryFn: getNotificationSettings,
+    staleTime: 15 * 60 * 1000,
+  });
+
 // verify invite
 export const verifyInviteLink = async (q: Record<string, any>) => {
   const { data } = await apiService.get('/users/invite/verify', q);
