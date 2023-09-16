@@ -370,4 +370,4 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
   );
 };
 
-export default Post;
+export default React.memo(Post);

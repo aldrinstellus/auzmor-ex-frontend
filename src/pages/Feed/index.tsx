@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { Link, useSearchParams, useLocation } from 'react-router-dom';
 
@@ -146,6 +146,10 @@ const Feed: React.FC<IFeedProps> = () => {
       });
     }
   };
+
+  const handleApplyFilter = useCallback((filters: IPostFilters) => {
+    setAppliedFeedFilters(filters);
+  }, []);
 
   const getEmptyFeedComponent = () => {
     if (bookmarks) {

@@ -158,4 +158,4 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({
   );
 };
 
-export default AnnouncementCard;
+export default React.memo(AnnouncementCard);
