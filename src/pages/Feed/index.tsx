@@ -247,9 +247,7 @@ const Feed: React.FC<IFeedProps> = () => {
                 )}
                 <FeedFilter
                   appliedFeedFilters={appliedFeedFilters}
-                  onApplyFilters={(filters: IPostFilters) => {
-                    setAppliedFeedFilters(filters);
-                  }}
+                  onApplyFilters={handleApplyFilter}
                   dataTestId="filters-dropdown"
                 />
                 {/* <SortByDropdown /> */}
@@ -338,7 +336,11 @@ const Feed: React.FC<IFeedProps> = () => {
         <div className="h-12 w-12">
           {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
         </div>
-        {isFetchingNextPage && <PageLoader />}
+        {isFetchingNextPage && (
+          <div className="h-12">
+            <PageLoader />
+          </div>
+        )}
       </div>
       <div className="min-w-[293px] max-w-[293px]">
         <div className="flex flex-col gap-6 sticky top-28 overflow-y-auto max-h-[calc(100vh-120px)] widget-hide-scroll">
