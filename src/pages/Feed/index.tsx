@@ -333,13 +333,12 @@ const Feed: React.FC<IFeedProps> = () => {
           </div>
         )}
 
-        <div className="h-12 w-12">
-          {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
-        </div>
-        {isFetchingNextPage && (
-          <div className="h-12">
+        {isFetchingNextPage ? (
+          <div className="h-2">
             <PageLoader />
           </div>
+        ) : (
+          <div className="h-12 w-12">{hasNextPage && <div ref={ref} />}</div>
         )}
       </div>
       <div className="min-w-[293px] max-w-[293px]">
