@@ -11,4 +11,4 @@ const MyTeamWidget = () => {
   );
 };
 
-export default MyTeamWidget;
+export default React.memo(MyTeamWidget);

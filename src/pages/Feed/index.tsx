@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { Link, useSearchParams, useLocation } from 'react-router-dom';
 
@@ -147,6 +147,10 @@ const Feed: React.FC<IFeedProps> = () => {
     }
   };
 
+  const handleApplyFilter = useCallback((filters: IPostFilters) => {
+    setAppliedFeedFilters(filters);
+  }, []);
+
   const getEmptyFeedComponent = () => {
     if (bookmarks) {
       return (
@@ -243,9 +247,7 @@ const Feed: React.FC<IFeedProps> = () => {
                 )}
                 <FeedFilter
                   appliedFeedFilters={appliedFeedFilters}
-                  onApplyFilters={(filters: IPostFilters) => {
-                    setAppliedFeedFilters(filters);
-                  }}
+                  onApplyFilters={handleApplyFilter}
                   dataTestId="filters-dropdown"
                 />
                 {/* <SortByDropdown /> */}
@@ -331,10 +333,13 @@ const Feed: React.FC<IFeedProps> = () => {
           </div>
         )}
 
-        <div className="h-12 w-12">
-          {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
-        </div>
-        {isFetchingNextPage && <PageLoader />}
+        {isFetchingNextPage ? (
+          <div className="h-2">
+            <PageLoader />
+          </div>
+        ) : (
+          <div className="h-12 w-12">{hasNextPage && <div ref={ref} />}</div>
+        )}
       </div>
       <div className="min-w-[293px] max-w-[293px]">
         <div className="flex flex-col gap-6 sticky top-28 overflow-y-auto max-h-[calc(100vh-120px)] widget-hide-scroll">
@@ -343,7 +348,13 @@ const Feed: React.FC<IFeedProps> = () => {
           <AnnouncementCard openModal={openModal} />
         </div>
       </div>
-      <PostBuilder open={open} openModal={openModal} closeModal={closeModal} />
+      {open && (
+        <PostBuilder
+          open={open}
+          openModal={openModal}
+          closeModal={closeModal}
+        />
+      )}
     </div>
   );
 };

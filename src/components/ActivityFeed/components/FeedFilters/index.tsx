@@ -360,4 +360,4 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
   );
 };
 
-export default FeedFilter;
+export default React.memo(FeedFilter);
