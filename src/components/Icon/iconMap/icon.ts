@@ -136,6 +136,8 @@ import EmployeeTagIcon from '../components/EmployeeTag';
 import CheckIcon from '../components/Check';
 import DownloadIcon from '../components/Download';
 import WarningCircleIcon from '../components/WarningCircle';
+import Integration from '../components/Integration';
+import Security from '../components/Security';
 
 export const icon = {
   add: Add,
@@ -217,6 +219,7 @@ export const icon = {
   infoCircle: InfoCircleIcon,
   insightful: Insightful,
   insightfulReaction: InsightfulReaction,
+  integration: Integration,
   launcher: LauncherIcon,
   like: Like,
   likeIcon: LikeIcon,
@@ -256,6 +259,7 @@ export const icon = {
   repost: Repost,
   rotateLeft: RotateLeft,
   search: Search,
+  security: Security,
   seekForward: SeekForwardIcon,
   send: Send,
   setting: SettingIcon,
