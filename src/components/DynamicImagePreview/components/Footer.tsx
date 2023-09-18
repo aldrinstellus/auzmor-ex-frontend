@@ -1,8 +1,8 @@
 import Button, { Size, Variant } from 'components/Button';
 import Divider from 'components/Divider';
 import Icon from 'components/Icon';
-import { IUpdateProfileImage } from 'pages/UserDetail';
-import { UploadStatus } from 'hooks/useUpload';
+// import { IUpdateProfileImage } from 'pages/UserDetail';
+// import { UploadStatus } from 'hooks/useUpload';
 import React, { useRef } from 'react';
 import { CropperRef } from 'react-advanced-cropper';
 

@@ -188,7 +188,7 @@ const AddApp: React.FC<AddAppProps> = ({
       closeModal();
       queryClient.invalidateQueries(['categories']);
     },
-    onError: (error: any) => {
+    onError: (_error: any) => {
       toast(
         <FailureToast
           content={`Error updating the app`}
@@ -214,7 +214,7 @@ const AddApp: React.FC<AddAppProps> = ({
 
   const { uploadMedia, uploadStatus } = useUpload();
 
-  const tabStyles = (active: boolean) =>
+  const tabStyles = (_active: boolean) =>
     clsx({
       'text-neutral-900 font-bold cursor-pointer': true,
     });

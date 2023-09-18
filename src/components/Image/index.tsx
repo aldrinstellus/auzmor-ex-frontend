@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { IMedia } from 'contexts/CreatePostContext';
 import BlurImg from './components/BlurImg';
 

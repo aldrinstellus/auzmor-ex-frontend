@@ -27,8 +27,8 @@ const DateOfBirthRow: React.FC<AppProps> = ({ data }) => {
       ? (data: any) => updateUserById(userId, data)
       : updateCurrentUser,
     mutationKey: ['update-user-joinDate-mutation'],
-    onError: (error: any) => {},
-    onSuccess: async (response: any) => {
+    onError: (_error: any) => {},
+    onSuccess: async (_response: any) => {
       successToastConfig();
       ref?.current?.setEditMode(false);
       if (userId) {

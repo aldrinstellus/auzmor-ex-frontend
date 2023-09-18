@@ -6,13 +6,13 @@ import { deleteComment } from 'queries/comments';
 import { useMutation } from '@tanstack/react-query';
 import Popover from 'components/Popover';
 import clsx from 'clsx';
-import queryClient from 'utils/queryClient';
+// import queryClient from 'utils/queryClient';
 import { humanizeTime } from 'utils/time';
-import { iconsStyle } from 'components/Post';
+// import { iconsStyle } from 'components/Post';
 import useAuth from 'hooks/useAuth';
 import Icon from 'components/Icon';
 import ReactionModal from 'components/Post/components/ReactionModal';
-import { IReactionsCount } from 'queries/post';
+// import { IReactionsCount } from 'queries/post';
 import RenderQuillContent from 'components/RenderQuillContent';
 import { useCommentStore } from 'stores/commentStore';
 import _ from 'lodash';
@@ -41,7 +41,7 @@ interface ReplyProps {
   className?: string;
 }
 
-export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
+export const Reply: React.FC<ReplyProps> = ({ comment }) => {
   const { user } = useAuth();
   const [confirm, showConfirm, closeConfirm] = useModal();
   const [showReactionModal, setShowReactionModal] = useState(false);
@@ -66,7 +66,7 @@ export const Reply: React.FC<ReplyProps> = ({ comment, className }) => {
       closeConfirm();
       return { previousData };
     },
-    onError: (error: any) => {
+    onError: (_error: any) => {
       toast(
         <FailureToast
           content="Error deleting reply"

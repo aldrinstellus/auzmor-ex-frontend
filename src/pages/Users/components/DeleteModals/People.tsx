@@ -27,7 +27,7 @@ export interface IDeletePeopleProps {
 
 const DeletePeople: React.FC<IDeletePeopleProps> = ({
   open,
-  openModal,
+  // openModal,
   closeModal,
   userId,
 }) => {
@@ -57,6 +57,7 @@ const DeletePeople: React.FC<IDeletePeopleProps> = ({
         },
       );
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSuccess: (data, variables, context) => {
       closeModal();
       queryClient.invalidateQueries({ queryKey: ['users'] });

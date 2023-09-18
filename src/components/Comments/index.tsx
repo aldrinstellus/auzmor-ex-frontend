@@ -1,5 +1,5 @@
 /* Comment RTE - Post Level Comment Editor */
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Comment } from './components/Comment';
 import { useInfiniteComments } from 'queries/comments';
 import { DeltaStatic } from 'quill';
@@ -19,7 +19,7 @@ import {
   IMediaValidationError,
   MediaValidationError,
 } from 'contexts/CreatePostContext';
-import { getMediaObj } from 'utils/misc';
+// import { getMediaObj } from 'utils/misc';
 import { useUploadState } from 'hooks/useUploadState';
 
 export const validImageTypesForComments = [
@@ -137,7 +137,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
               <div className="flex flex-col gap-4">
                 {commentIds
                   ?.filter(({ id }) => !!comment[id])
-                  .map(({ id }, i: any) => (
+                  .map(({ id }, _i: any) => (
                     <Comment key={id} comment={comment[id]} />
                   ))}
               </div>

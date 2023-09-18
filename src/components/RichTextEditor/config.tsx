@@ -9,29 +9,29 @@ import {
 } from './mentions/utils';
 import { extractFirstWord } from 'utils/misc';
 
-interface IOrg {
-  id: string;
-  name: string;
-}
-interface IFlags {
-  isDeactivated: string;
-  isReported: string;
-}
-interface IUserMentions {
-  id: string;
-  charDenotation: string;
-  fullName: string;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  primaryEmail: string;
-  org: IOrg;
-  workEmail: string;
-  role: string;
-  flags: IFlags;
-  createdAt: string;
-  status: string;
-}
+// interface IOrg {
+//   id: string;
+//   name: string;
+// }
+// interface IFlags {
+//   isDeactivated: string;
+//   isReported: string;
+// }
+// interface IUserMentions {
+//   id: string;
+//   charDenotation: string;
+//   fullName: string;
+//   firstName: string;
+//   middleName?: string;
+//   lastName: string;
+//   primaryEmail: string;
+//   org: IOrg;
+//   workEmail: string;
+//   role: string;
+//   flags: IFlags;
+//   createdAt: string;
+//   status: string;
+// }
 
 interface IHashtags {
   id: string;
@@ -97,7 +97,7 @@ export const mention = {
   renderLoading: () => {
     return renderToString(<ReactionSkeleton />);
   },
-  renderItem: (item: any, searchItem: any) => {
+  renderItem: (item: any, _searchItem: any) => {
     if (item?.charDenotation === '@') {
       return `
       <div class="user-container">

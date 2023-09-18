@@ -91,7 +91,7 @@ const RichTextEditor = React.forwardRef(
       previewUrl,
       setPreviewUrl,
       poll,
-      setPoll,
+      // setPoll,
       setShoutoutUserIds,
       postType,
       setPostType,

@@ -1,6 +1,6 @@
 import React, { SVGProps } from 'react';
 
-const WebIcon = (props: SVGProps<SVGSVGElement>) => {
+const WebIcon = (_props: SVGProps<SVGSVGElement>) => {
   return (
     <svg
       width="24"

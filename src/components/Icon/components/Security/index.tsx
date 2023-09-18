@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 
-const SvgSecurity = (props: SVGProps<SVGSVGElement>) => (
+const SvgSecurity = (_props: SVGProps<SVGSVGElement>) => (
   <svg
     width={24}
     height={24}

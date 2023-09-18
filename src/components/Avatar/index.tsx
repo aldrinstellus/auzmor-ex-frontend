@@ -1,10 +1,4 @@
-import React, {
-  MouseEventHandler,
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useMemo,
-} from 'react';
+import React, { MouseEventHandler, ReactNode, useMemo } from 'react';
 import clsx from 'clsx';
 import isDarkColor from 'is-dark-color';
 import { getInitials } from 'utils/misc';

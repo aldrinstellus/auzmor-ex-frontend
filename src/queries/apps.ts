@@ -1,7 +1,7 @@
 import {
   QueryFunctionContext,
   useInfiniteQuery,
-  useQuery,
+  // useQuery,
 } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useAppStore } from 'stores/appStore';

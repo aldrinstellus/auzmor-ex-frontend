@@ -54,7 +54,7 @@ const LoginViaSSO: React.FC<ILoginViaSSOProps> = ({ setViaSSO }) => {
     },
   );
 
-  const onSubmit = (formData: IForm) => {
+  const onSubmit = (_formData: IForm) => {
     refetch();
   };
 

@@ -6,9 +6,9 @@ import 'moment-timezone';
 import useRole from 'hooks/useRole';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateCurrentUser, updateUserById } from 'queries/users';
-import Icon from 'components/Icon';
-import { twConfig } from 'utils/misc';
-import { toastConfig } from '../utils';
+// import Icon from 'components/Icon';
+// import { twConfig } from 'utils/misc';
+// import { toastConfig } from '../utils';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Layout, { FieldType } from 'components/Form';
@@ -34,8 +34,8 @@ const DateOfJoiningRow: React.FC<AppProps> = ({ data }) => {
       ? (data: any) => updateUserById(userId, data)
       : updateCurrentUser,
     mutationKey: ['update-user-joinDate-mutation'],
-    onError: (error: any) => {},
-    onSuccess: async (response: any) => {
+    onError: (_error: any) => {},
+    onSuccess: async (_response: any) => {
       successToastConfig();
       ref?.current?.setEditMode(false);
       if (userId) {

@@ -5,7 +5,7 @@ import Footer from './components/Footer';
 import EntitySearchModalBody from './components/EntitySearchModalBody';
 import { useForm } from 'react-hook-form';
 import { IGetUser } from 'queries/users';
-import { ITeam } from 'queries/teams';
+// import { ITeam } from 'queries/teams';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 
 export enum EntitySearchModalType {
@@ -56,7 +56,7 @@ const EntitySearchModal: React.FC<IEntitySearchModalProps> = ({
   onCancel = () => {},
   submitButtonText = 'Next',
   cancelButtonText = 'Back',
-  entityRenderer = (data: any) => <></>,
+  entityRenderer = (_data: any) => <></>,
   selectedMemberIds = [],
 }) => {
   const audienceForm = useForm<any>({

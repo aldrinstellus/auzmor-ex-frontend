@@ -6,7 +6,7 @@ type AppProps = {
   data: Record<string, any>;
 };
 
-const PostsControl: React.FC<AppProps> = ({ data }) => {
+const PostsControl: React.FC<AppProps> = ({ data: _data }) => {
   const settings = [
     {
       label: 'Someone comments on my posts',

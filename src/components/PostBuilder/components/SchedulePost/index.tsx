@@ -5,7 +5,7 @@ import timezones from 'utils/timezones.json';
 import Footer from './Footer';
 import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
-import { useCurrentUser } from 'queries/users';
+// import { useCurrentUser } from 'queries/users';
 import {
   afterXUnit,
   beforeXUnit,

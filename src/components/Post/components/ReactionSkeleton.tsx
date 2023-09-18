@@ -1,4 +1,4 @@
-import Divider, { Variant } from 'components/Divider';
+// import Divider, { Variant } from 'components/Divider';
 import React, { ReactElement } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';

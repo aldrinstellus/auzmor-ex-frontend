@@ -4,7 +4,7 @@ import { VIEW_POST } from './constant';
 import useAuth from 'hooks/useAuth';
 import { IAudience, ICreatedBy } from 'queries/post';
 import { Link } from 'react-router-dom';
-import clsx from 'clsx';
+// import clsx from 'clsx';
 import { getAvatarColor, getFullName, getProfileImage } from 'utils/misc';
 import AudiencePopup from 'components/AudiencePopup';
 
@@ -25,7 +25,7 @@ const Actor: React.FC<ActorProps> = ({
   createdBy,
   dataTestId,
   postType,
-  disabled = false,
+  // disabled = false,
   entityId,
   audience,
 }) => {

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import Icon from 'components/Icon';
 import { clearInputValue, getBlobUrl, twConfig } from 'utils/misc';
 import useModal from 'hooks/useModal';

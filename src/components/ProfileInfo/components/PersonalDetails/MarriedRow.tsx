@@ -4,9 +4,9 @@ import 'moment-timezone';
 import useRole from 'hooks/useRole';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateCurrentUser, updateUserById } from 'queries/users';
-import Icon from 'components/Icon';
-import { convertUpperCaseToPascalCase, twConfig } from 'utils/misc';
-import { toastConfig } from '../utils';
+// import Icon from 'components/Icon';
+import { convertUpperCaseToPascalCase } from 'utils/misc';
+// import { toastConfig } from '../utils';
 import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
 import { useParams } from 'react-router-dom';
@@ -29,8 +29,8 @@ const MarriedRow: React.FC<AppProps> = ({ data }) => {
       ? (data: any) => updateUserById(userId, data)
       : updateCurrentUser,
     mutationKey: ['update-user-married-mutation'],
-    onError: (error: any) => {},
-    onSuccess: async (response: any) => {
+    onError: (_error: any) => {},
+    onSuccess: async (_response: any) => {
       successToastConfig();
       ref?.current?.setEditMode(false);
       if (userId) {

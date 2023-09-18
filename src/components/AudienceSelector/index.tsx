@@ -4,7 +4,7 @@ import Icon from 'components/Icon';
 import { AudienceFlow } from 'components/PostBuilder/components/Audience';
 import useRole from 'hooks/useRole';
 import { useOrganization } from 'queries/organization';
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import _ from 'lodash';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 

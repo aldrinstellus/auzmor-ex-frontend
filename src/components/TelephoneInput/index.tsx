@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Control, useController } from 'react-hook-form';
 import { usePhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
@@ -21,11 +21,11 @@ type TelephoneInputProps = {
 const TelephoneInput: React.FC<TelephoneInputProps> = ({
   name,
   label,
-  className,
+  // className,
   disabled,
   control,
   dataTestId,
-  errorDataTestId,
+  // errorDataTestId,
 }): ReactElement => {
   const { field } = useController({
     name,

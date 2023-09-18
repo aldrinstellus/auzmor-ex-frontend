@@ -1,6 +1,6 @@
 import Button from 'components/Button';
 import Icon from 'components/Icon';
-import React, { useState } from 'react';
+import React from 'react';
 import Card from 'components/Card';
 import EntitySearchModal, {
   EntitySearchModalType,
@@ -52,7 +52,7 @@ const TeamDetail: React.FC<ITeamMemberProps> = () => {
     mutationFn: (payload: any) => {
       return addTeamMember(id || '', payload);
     },
-    onError: (error: any) => {
+    onError: (_error: any) => {
       toast(
         <FailureToast
           content={`Error Adding Team Members`}

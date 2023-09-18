@@ -1,7 +1,7 @@
 import {
   QueryFunctionContext,
   useInfiniteQuery,
-  useQuery,
+  // useQuery,
 } from '@tanstack/react-query';
 import { IComment } from 'components/Comments';
 import { useCommentStore } from 'stores/commentStore';

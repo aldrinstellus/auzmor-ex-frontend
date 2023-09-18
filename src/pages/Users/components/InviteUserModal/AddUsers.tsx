@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+// import _ from 'lodash';
 import {
   Control,
   FieldArrayWithId,
@@ -7,8 +7,8 @@ import {
   UseFieldArrayAppend,
   UseFieldArrayRemove,
 } from 'react-hook-form';
-import { IEmailValidationErrors, IRoleOption, IUserForm, roleOptions } from '.';
-import { twConfig } from 'utils/misc';
+import { IEmailValidationErrors, IUserForm, roleOptions } from '.';
+// import { twConfig } from 'utils/misc';
 import Icon from 'components/Icon';
 import useHover from 'hooks/useHover';
 import Banner, { Variant as BannerVariant } from 'components/Banner';

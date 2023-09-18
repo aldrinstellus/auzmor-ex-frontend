@@ -4,7 +4,7 @@ import Avatar from 'components/Avatar';
 import { IAvatarUser } from 'components/AvatarChip';
 import Icon from 'components/Icon';
 import useAuth from 'hooks/useAuth';
-import { getFullName, getProfileImage, twConfig } from 'utils/misc';
+import { getFullName, getProfileImage } from 'utils/misc';
 
 interface IUserRowProps {
   user: IAvatarUser;

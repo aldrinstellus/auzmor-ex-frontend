@@ -10,7 +10,7 @@ import {
 } from 'components/PostBuilder/components/RichTextEditor/mentions/types';
 import DeactivatedCoverImage from 'images/deactivatedCoverPhoto.png';
 import DefaultCoverImage from 'images/png/CoverImage.png';
-import { capitalize } from 'lodash';
+import capitalize from 'lodash/capitalize';
 import DeactivatedUser from 'images/DeactivatedUser.png';
 import { EditUserSection, UserRole, UserStatus } from 'queries/users';
 

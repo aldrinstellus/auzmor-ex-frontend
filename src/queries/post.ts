@@ -205,12 +205,12 @@ export interface ICreatedBy {
   workLocation?: string;
 }
 
-interface IAnnounce {
-  entityId: string;
-  entityType: string;
-  type: string;
-  reaction: string;
-}
+// interface IAnnounce {
+//   entityId: string;
+//   entityType: string;
+//   type: string;
+//   reaction: string;
+// }
 
 export enum PostType {
   Update = 'UPDATE',

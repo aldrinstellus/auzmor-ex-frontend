@@ -2,7 +2,7 @@ import Layout, { FieldType } from 'components/Form';
 import React from 'react';
 import { IFilterForm, UserStatus } from '.';
 import { IRadioListOption } from 'components/RadioGroup';
-import { Control, FieldValues } from 'react-hook-form';
+import { Control } from 'react-hook-form';
 
 interface IUserStatusProps {
   control: Control<IFilterForm, any>;

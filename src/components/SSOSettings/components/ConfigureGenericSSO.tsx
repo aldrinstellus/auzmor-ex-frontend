@@ -17,7 +17,7 @@ import apiService from 'utils/apiService';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
 import queryClient from 'utils/queryClient';
 import useAuth from 'hooks/useAuth';
-import { PRIMARY_COLOR } from 'utils/constants';
+// import { PRIMARY_COLOR } from 'utils/constants';
 
 type ConfigureGenericSSOProps = {
   open: boolean;

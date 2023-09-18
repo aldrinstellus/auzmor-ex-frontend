@@ -8,11 +8,11 @@ import Button, {
   Type as ButtonType,
 } from 'components/Button';
 import Modal from 'components/Modal';
-import { UserStatus, deleteUser, updateStatus } from 'queries/users';
+import { UserStatus, updateStatus } from 'queries/users';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import queryClient from 'utils/queryClient';
+// import queryClient from 'utils/queryClient';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
-import FailureToast from 'components/Toast/variants/FailureToast';
+// import FailureToast from 'components/Toast/variants/FailureToast';
 import { toast } from 'react-toastify';
 import Icon from 'components/Icon';
 import { twConfig } from 'utils/misc';
@@ -27,7 +27,7 @@ export interface IReactivatePeopleProps {
 
 const DeactivatePeople: React.FC<IReactivatePeopleProps> = ({
   open,
-  openModal,
+  // openModal,
   closeModal,
   userId,
 }) => {

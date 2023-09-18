@@ -18,7 +18,7 @@ interface ISetting {
 }
 
 const UserSettings = () => {
-  const [isHeaderVisible, setIsHeaderVisible] = useState(false);
+  const [_, setIsHeaderVisible] = useState(false);
 
   const settings = [
     {

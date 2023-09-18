@@ -42,7 +42,7 @@ const CreatableSearch = React.forwardRef(
       className = '',
       disabled = false,
       dataTestId = '',
-      addItemDataTestId = '',
+      // addItemDataTestId = '',
       error,
       control,
       label = '',

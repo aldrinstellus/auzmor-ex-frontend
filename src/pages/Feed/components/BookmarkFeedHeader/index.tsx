@@ -1,16 +1,18 @@
 import Icon from 'components/Icon';
 import React from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { twConfig } from 'utils/misc';
+import { Link } from 'react-router-dom';
+// import { twConfig } from 'utils/misc';
 
 interface IBookmarkFeedHeaderProps {
   setAppliedFeedFilters: (appliedFeedFilters: Record<string, any>) => void;
 }
 
-const BookmarkFeedHeader: React.FC<IBookmarkFeedHeaderProps> = ({
-  setAppliedFeedFilters,
-}) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+const BookmarkFeedHeader: React.FC<IBookmarkFeedHeaderProps> = (
+  {
+    // setAppliedFeedFilters,
+  },
+) => {
+  // const [searchParams, setSearchParams] = useSearchParams();
 
   const btnStyle =
     'min-w-[106px] inline-flex py-2 px-4 justify-center align-center rounded-full text-sm font-bold';

@@ -1,9 +1,9 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import Button from 'components/Button';
-import UpdateProfileImage from 'components/UpdateProfileImage';
+// import UpdateProfileImage from 'components/UpdateProfileImage';
 import Banner, { Variant } from 'components/Banner';
 import Avatar from 'components/Avatar';
-import EditIcon from 'components/Icon/components/Edit';
+// import EditIcon from 'components/Icon/components/Edit';
 import Icon from 'components/Icon';
 import useAuth from 'hooks/useAuth';
 

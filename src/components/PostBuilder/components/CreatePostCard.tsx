@@ -1,5 +1,5 @@
 import React from 'react';
-import clsx from 'clsx';
+// import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 
 // components
@@ -118,16 +118,16 @@ export const postTypeMapIcons: IPostMenu[] = [
 const CreatePostCard: React.FC<ICreatePostCardProps> = ({ openModal }) => {
   const { user } = useAuth();
 
-  const tabStyle = (hasDivider = false) =>
-    clsx(
-      { 'flex justify-center items-center group': true },
-      {
-        'border-r border-neutral-100': hasDivider && window.innerWidth >= 1480,
-      },
-      {
-        'mx-2 px-4': window.innerWidth >= 1480,
-      },
-    );
+  // const tabStyle = (hasDivider = false) =>
+  //   clsx(
+  //     { 'flex justify-center items-center group': true },
+  //     {
+  //       'border-r border-neutral-100': hasDivider && window.innerWidth >= 1480,
+  //     },
+  //     {
+  //       'mx-2 px-4': window.innerWidth >= 1480,
+  //     },
+  //   );
 
   return (
     <Card className="bg-white px-6 pt-6 flex flex-col gap-4">

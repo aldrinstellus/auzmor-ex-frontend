@@ -1,8 +1,8 @@
 import Avatar from 'components/Avatar';
-import Card from 'components/Card';
+// import Card from 'components/Card';
 import React, { ReactElement } from 'react';
-import CircularBorder from './CircularBorder';
-import Icon from 'components/Icon';
+// import CircularBorder from './CircularBorder';
+// import Icon from 'components/Icon';
 
 type MentionUserCardProps = {
   fullName: string;

@@ -55,7 +55,7 @@ const ForgotPassword: React.FC<IForgotPasswordProps> = () => {
       error: errors.email?.message,
       control,
       getValues,
-      onChange: (data: string, e: React.ChangeEvent) => {},
+      onChange: (_data: string, _e: React.ChangeEvent) => {},
     },
   ];
 

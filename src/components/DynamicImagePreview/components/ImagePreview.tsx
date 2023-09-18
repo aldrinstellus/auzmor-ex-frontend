@@ -1,6 +1,6 @@
 import Icon from 'components/Icon';
 import React, { useEffect, useRef, useState } from 'react';
-import { getBlobUrl, twConfig } from 'utils/misc';
+import { getBlobUrl } from 'utils/misc';
 
 interface IImagePreviewProps {
   selectedTemplate: any;
@@ -32,7 +32,9 @@ const ImagePreview: React.FC<IImagePreviewProps> = ({
       return users[0].firstName || users[0].fullName;
     }
     if (_showNameCount === count) {
-      return `${showNames} and ${users[count - 1].firstName || users[count - 1].fullName}`;
+      return `${showNames} and ${
+        users[count - 1].firstName || users[count - 1].fullName
+      }`;
     } else {
       return `${showNames} and ${count - _showNameCount + 1} others`;
     }

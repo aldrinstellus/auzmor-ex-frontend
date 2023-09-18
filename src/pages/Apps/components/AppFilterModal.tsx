@@ -31,7 +31,7 @@ const AppFilterModal: React.FC<ITeamFilterModalProps> = ({
   const [selectedCategories, setSelectedCategories] = useState<any>([]);
   const [selectedTeams, setSelectedTeams] = useState<any>([]);
 
-  const onSubmit = (value: any) => {
+  const onSubmit = (_value: any) => {
     closeModal();
     setFilters({
       categories: selectedCategories,

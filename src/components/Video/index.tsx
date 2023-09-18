@@ -8,9 +8,9 @@ export type VideoProps = {
 const Video = ({ video }: VideoProps) => {
   const videoRef = useRef(null);
 
-  const videoHandler = () => {
-    //   videoRef.current.play();
-  };
+  // const videoHandler = () => {
+  //   videoRef.current.play();
+  // };
   return (
     <div className="w-full h-full flex items-center ">
       <video

@@ -7,7 +7,7 @@ import { CreateAnnouncementMode } from '.';
 import { useMutation } from '@tanstack/react-query';
 import { IPost, updatePost } from 'queries/post';
 import queryClient from 'utils/queryClient';
-import { Dayjs } from 'dayjs';
+// import { Dayjs } from 'dayjs';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import Icon from 'components/Icon';
@@ -75,7 +75,7 @@ const Footer: React.FC<IFooterProps> = ({
               : [],
         });
     },
-    onMutate: (variables) => {
+    onMutate: (_variables) => {
       const previousPost = getPost(data!.id!);
       const formData = getFormValues();
       const expiryDate = formData?.date.toISOString().substring(0, 19) + 'Z';

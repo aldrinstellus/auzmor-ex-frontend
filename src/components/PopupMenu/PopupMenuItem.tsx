@@ -1,10 +1,10 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { IMenuItem } from '.';
 import Icon from 'components/Icon';
-import { twConfig } from 'utils/misc';
+// import { twConfig } from 'utils/misc';
 import useHover from 'hooks/useHover';
 import clsx from 'clsx';
-import IconWrapper from 'components/Icon/components/IconWrapper';
+// import IconWrapper from 'components/Icon/components/IconWrapper';
 
 type PopupMenuItemProps = {
   menuItem: IMenuItem;
@@ -18,7 +18,7 @@ const PopupMenuItem: React.FC<PopupMenuItemProps> = ({
   border = false,
 }) => {
   const [hovered, eventHandlers] = useHover();
-  const itemRef = useRef<HTMLButtonElement>(null);
+  // const itemRef = useRef<HTMLButtonElement>(null);
   return (
     <div
       className={clsx(

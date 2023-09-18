@@ -2,7 +2,7 @@ import {
   FetchNextPageOptions,
   InfiniteQueryObserverResult,
 } from '@tanstack/react-query';
-import Icon from 'components/Icon';
+// import Icon from 'components/Icon';
 import React, { ReactElement } from 'react';
 
 type LoadMoreProps = {

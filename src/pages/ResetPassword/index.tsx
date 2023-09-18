@@ -72,8 +72,8 @@ const ResetPassword = () => {
       error: errors.newPassword?.message,
       setError,
       control,
-      onChange: (e: any) => {
-        const value = e.target.value;
+      onChange: (_e: any) => {
+        // const value = e.target.value;
       },
       dataTestId: 'new-password',
       inputClassName: 'h-[44px]',

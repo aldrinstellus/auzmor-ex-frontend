@@ -4,11 +4,11 @@ import { renderToString } from 'react-dom/server';
 import './index.css';
 import UserNode from './UserNode';
 import ExpandButtonContent from './ExpandButtonContent';
-import UserCard from 'components/UserCard';
-import { getOrgChart } from 'queries/users';
+// import UserCard from 'components/UserCard';
+// import { getOrgChart } from 'queries/users';
 import Spinner from 'components/Spinner';
 import clsx from 'clsx';
-import { QueryFunctionContext } from '@tanstack/react-query';
+// import { QueryFunctionContext } from '@tanstack/react-query';
 import Button, { Variant } from 'components/Button';
 
 export interface INode {
@@ -53,19 +53,19 @@ const Chart: React.FC<IChart> = ({
         chart = new OrgChart()
           .container(chartRef.current)
           .data(data)
-          .nodeHeight((d: any) => 128)
-          .nodeWidth((d: any) => 256)
+          .nodeHeight((_d: any) => 128)
+          .nodeWidth((_d: any) => 256)
           .compact(false)
-          .childrenMargin((d: any) => 50)
-          .compactMarginBetween((d: any) => 25)
-          .compactMarginPair((d: any) => 50)
-          .neightbourMargin((a: any, b: any) => 25)
-          .siblingsMargin((d: any) => 25)
+          .childrenMargin((_d: any) => 50)
+          .compactMarginBetween((_d: any) => 25)
+          .compactMarginPair((_d: any) => 50)
+          .neightbourMargin((_a: any, _b: any) => 25)
+          .siblingsMargin((_d: any) => 25)
           .svgHeight(window.innerHeight - 290)
-          .buttonContent(({ node, state }: any) => {
+          .buttonContent(({ node, _state }: any) => {
             return renderToString(<ExpandButtonContent node={node} />);
           })
-          .nodeContent((node: any, i: any, arr: any, state: any) => {
+          .nodeContent((node: any, _i: any, _arr: any, _state: any) => {
             return renderToString(<UserNode node={node} />);
           })
           // .hoverCardContent((d) => {

@@ -88,7 +88,7 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
   closeModal,
   ssoSetting,
 }): ReactElement => {
-  const [currentScreen, prev, next, setCurrentScreen] = useCarousel(0, 3);
+  const [currentScreen, _prev, next, setCurrentScreen] = useCarousel(0, 3);
   const [connectionSettingsError, setConnectionSettingsError] =
     useState<boolean>(false);
   const [userFieldsMappingError, setUserFieldsMappingError] =
@@ -181,7 +181,7 @@ const ConfigureLDAP: React.FC<ConfigureLDAPProps> = ({
   // -----------------------------------------------------------------------
 
   // FORM 2: GROUP FIELD MAPPING FORM
-  const [groupFieldsMappingData, setGroupFieldsMappingData] =
+  const [groupFieldsMappingData, _setGroupFieldsMappingData] =
     useState<IGroupFieldsMappingForm>({
       groupName: groupFieldMapConfig?.groupName,
       groupMemberUID: groupFieldMapConfig?.groupMemberUID,

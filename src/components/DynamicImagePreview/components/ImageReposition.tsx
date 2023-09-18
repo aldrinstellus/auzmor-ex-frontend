@@ -38,7 +38,7 @@ const ImageResosition: React.FC<IImageResositionProps> = ({
     const img = new Image();
 
     img.onload = () => {
-      const getWidthFactor = (width: number): number => {
+      const _getWidthFactor = (width: number): number => {
         // Need better algorithm here
         let factor = 0.6;
         if (width > 3000) factor = 0.7;

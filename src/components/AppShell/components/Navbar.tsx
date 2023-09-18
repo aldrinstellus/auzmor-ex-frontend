@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+// import { useForm } from 'react-hook-form';
 
 // components
 import { Logo } from 'components/Logo';
 import Divider, { Variant } from 'components/Divider';
 import NotificationsOverview from 'components/NotificationsOverview';
-import Layout, { FieldType } from 'components/Form';
+// import Layout, { FieldType } from 'components/Form';
 import AccountCard from './AccountCard';
 import NavbarMenuItem from './NavbarMenuItem';
 
@@ -27,9 +27,9 @@ const adminNavigations = [
 const Navbar = () => {
   const { isAdmin } = useRole();
 
-  const { control } = useForm({
-    mode: 'onChange',
-  });
+  // const { control } = useForm({
+  //   mode: 'onChange',
+  // });
 
   const navigations = [
     // {

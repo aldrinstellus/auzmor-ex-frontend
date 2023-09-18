@@ -3,7 +3,7 @@ import Button, { Variant } from 'components/Button';
 import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import Modal from 'components/Modal';
-import { IPostPayload, updatePost } from 'queries/post';
+import { updatePost } from 'queries/post';
 import ErrorWarningPng from 'images/error-warning-line.png';
 import React from 'react';
 import { useFeedStore } from 'stores/feedStore';

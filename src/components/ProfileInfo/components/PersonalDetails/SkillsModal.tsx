@@ -17,7 +17,7 @@ import Layout, { FieldType } from 'components/Form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Icon from 'components/Icon';
 import { updateCurrentUser } from 'queries/users';
-import { twConfig, convertUpperCaseToPascalCase } from 'utils/misc';
+import { twConfig } from 'utils/misc';
 import { toastConfig } from '../utils';
 export interface ISkillsModalProps {
   open: boolean;
@@ -35,8 +35,8 @@ const SkillsModal: React.FC<ISkillsModalProps> = ({
   const updateUserSkillsMutation = useMutation({
     mutationFn: updateCurrentUser,
     mutationKey: ['update-user-skills-mutation'],
-    onError: (error: any) => {},
-    onSuccess: async (response: any) => {
+    onError: (_error: any) => {},
+    onSuccess: async (_response: any) => {
       toastConfig(
         <Icon
           name="closeCircleOutline"
@@ -49,7 +49,7 @@ const SkillsModal: React.FC<ISkillsModalProps> = ({
     },
   });
 
-  const { handleSubmit, control, reset, getValues } = useForm<any>({
+  const { handleSubmit, control, getValues } = useForm<any>({
     mode: 'onSubmit',
     defaultValues: {
       personal: {

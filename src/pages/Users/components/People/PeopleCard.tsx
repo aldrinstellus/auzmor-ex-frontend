@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import useHover from 'hooks/useHover';
@@ -10,7 +10,7 @@ import {
   IGetUser,
   UserStatus,
   updateRoleToAdmin,
-  updateStatus,
+  // updateStatus,
   useResendInvitation,
 } from 'queries/users';
 import { toast } from 'react-toastify';
@@ -87,40 +87,40 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
     useModal();
 
   const resendInviteMutation = useResendInvitation();
-  const updateUserStatusMutation = useMutation({
-    mutationFn: updateStatus,
-    mutationKey: ['update-user-status'],
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      toast(
-        <SuccessToast
-          content={`User has been ${
-            (status as any) === UserStatus.Inactive
-              ? 'reactivated'
-              : 'deactivated'
-          }`}
-        />,
-        {
-          closeButton: (
-            <Icon
-              name="closeCircleOutline"
-              color="text-primary-500"
-              size={20}
-            />
-          ),
-          style: {
-            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
-            borderRadius: '6px',
-            display: 'flex',
-            alignItems: 'center',
-          },
-          autoClose: TOAST_AUTOCLOSE_TIME,
-          transition: slideInAndOutTop,
-          theme: 'dark',
-        },
-      );
-    },
-  });
+  // const updateUserStatusMutation = useMutation({
+  //   mutationFn: updateStatus,
+  //   mutationKey: ['update-user-status'],
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ['users'] });
+  //     toast(
+  //       <SuccessToast
+  //         content={`User has been ${
+  //           (status as any) === UserStatus.Inactive
+  //             ? 'reactivated'
+  //             : 'deactivated'
+  //         }`}
+  //       />,
+  //       {
+  //         closeButton: (
+  //           <Icon
+  //             name="closeCircleOutline"
+  //             color="text-primary-500"
+  //             size={20}
+  //           />
+  //         ),
+  //         style: {
+  //           border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+  //           borderRadius: '6px',
+  //           display: 'flex',
+  //           alignItems: 'center',
+  //         },
+  //         autoClose: TOAST_AUTOCLOSE_TIME,
+  //         transition: slideInAndOutTop,
+  //         theme: 'dark',
+  //       },
+  //     );
+  //   },
+  // });
 
   const updateUserRoleMutation = useMutation({
     mutationFn: updateRoleToAdmin,

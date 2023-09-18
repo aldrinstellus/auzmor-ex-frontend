@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import * as yup from 'yup';
 import Button, { Variant as ButtonVariant } from 'components/Button';
 import Modal from 'components/Modal';

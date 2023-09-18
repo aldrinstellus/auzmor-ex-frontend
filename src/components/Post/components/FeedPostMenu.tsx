@@ -79,7 +79,7 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
         setFeed(context?.previousFeed);
       }
     },
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (_data, _variables, _context) => {
       toast(
         <SuccessToast
           content="Post deleted successfully"
