@@ -65,4 +65,4 @@ const UserCard: React.FC<IUserCardProps> = ({ className }) => {
   );
 };
 
-export default UserCard;
+export default React.memo(UserCard);

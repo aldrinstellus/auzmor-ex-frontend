@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Icon from 'components/Icon';
 import PopupMenu from 'components/PopupMenu';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -11,12 +11,14 @@ import useRole from 'hooks/useRole';
 import { canPerform, twConfig } from 'utils/misc';
 import { useFeedStore } from 'stores/feedStore';
 import _ from 'lodash';
-import { CreatePostFlow } from 'contexts/CreatePostContext';
+import { CreatePostFlow, POST_TYPE } from 'contexts/CreatePostContext';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import { toast } from 'react-toastify';
 import FailureToast from 'components/Toast/variants/FailureToast';
+import ClosePollModal from './ClosePollModal';
+import PollVotesModal from './PollVotesModal';
 import ChangeToRegularPostModal from './ChangeToRegularPostModal';
 import AnnouncementAnalytics from './AnnouncementAnalytics';
 
@@ -27,25 +29,28 @@ export interface IFeedPostMenuProps {
 const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
   const { user } = useAuth();
   const { isMember } = useRole();
+  const feedRef = useRef(useFeedStore.getState().feed);
   const [confirm, showConfirm, closeConfirm] = useModal();
   const [analytics, showAnalytics, closeAnalytics] = useModal();
   const [removeAnnouncement, showRemoveAnnouncement, closeRemoveAnnouncement] =
     useModal();
+  const [closePoll, showClosePoll, closeClosePoll] = useModal();
+  const [pollVotes, showPollVotes, closePollVotes] = useModal();
   const [open, openModal, closeModal] = useModal(undefined, false);
   const [customActiveFlow, setCustomActiveFlow] = useState<CreatePostFlow>(
     CreatePostFlow.CreatePost,
   );
 
   const queryClient = useQueryClient();
-  const { feed, setFeed, updateFeed } = useFeedStore();
+  const setFeed = useFeedStore((state) => state.setFeed);
   const { isAdmin } = useRole();
 
   const deletePostMutation = useMutation({
     mutationKey: ['deletePostMutation', data.id],
     mutationFn: deletePost,
     onMutate: (variables) => {
-      const previousFeed = feed;
-      setFeed({ ..._.omit(feed, [variables]) });
+      const previousFeed = feedRef.current;
+      setFeed({ ..._.omit(feedRef.current, [variables]) });
       closeConfirm();
       return { previousFeed };
     },
@@ -113,6 +118,7 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
         setCustomActiveFlow(CreatePostFlow.CreateAnnouncement);
         openModal();
       },
+      stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-promote-to-announcement',
       permissions: ['CREATE_ANNOUNCEMENTS'],
       enabled: !data.isAnnouncement,
@@ -124,6 +130,7 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
         setCustomActiveFlow(CreatePostFlow.CreateAnnouncement);
         openModal();
       },
+      stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-edit-announcement',
       permissions: ['UPDATE_ANNOUNCEMENTS'],
       enabled: data.isAnnouncement,
@@ -132,6 +139,7 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
       icon: 'cyclicArrow',
       label: 'Change to regular post',
       onClick: () => showRemoveAnnouncement(),
+      stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-changeto-regularpost',
       permissions: ['UPDATE_ANNOUNCEMENTS'],
       enabled: data.isAnnouncement,
@@ -143,9 +151,22 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
         setCustomActiveFlow(CreatePostFlow.CreatePost);
         openModal();
       },
+      stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-edit-post',
       permissions: ['UPDATE_MY_POSTS'],
       enabled: data.createdBy?.userId === user?.id,
+    },
+    {
+      icon: 'closeCircle',
+      label: 'Close Poll',
+      onClick: () => showClosePoll(),
+      stroke: 'text-neutral-900',
+      dataTestId: 'post-ellipsis-close-poll',
+      permissions: ['UPDATE_MY_POSTS', 'CLOSE_POLLS'],
+      enabled:
+        data.type === POST_TYPE.Poll &&
+        data.pollContext?.closedAt > new Date().toISOString() &&
+        (isAdmin || data.createdBy?.userId === user?.id),
     },
     {
       icon: 'delete',
@@ -158,9 +179,21 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
       enabled: isAdmin || data.createdBy?.userId === user?.id,
     },
     {
+      icon: 'chartOutline',
+      label: 'See who voted',
+      onClick: () => showPollVotes(),
+      stroke: 'text-neutral-900',
+      dataTestId: 'post-ellipsis-see-poll-votes',
+      permissions: [],
+      enabled:
+        data.type === POST_TYPE.Poll &&
+        (isAdmin || data.createdBy?.userId === user?.id),
+    },
+    {
       icon: 'announcementChart',
       label: 'View acknowledgement report',
       onClick: () => showAnalytics(),
+      stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-view-acknowledgement-report',
       permissions: ['CREATE_ANNOUNCEMENTS', 'UPDATE_ANNOUNCEMENTS'],
       enabled: data.isAnnouncement,
@@ -179,6 +212,11 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
       }
       return true;
     });
+
+  useEffect(
+    () => useFeedStore.subscribe((state) => (feedRef.current = state.feed)),
+    [],
+  );
 
   if (postOptions.length) {
     return (
@@ -230,6 +268,20 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
           closeModal={closeRemoveAnnouncement}
           data={data}
         />
+        {closePoll && (
+          <ClosePollModal
+            open={closePoll}
+            closeModal={closeClosePoll}
+            data={data}
+          />
+        )}
+        {pollVotes && (
+          <PollVotesModal
+            post={data}
+            open={pollVotes}
+            closeModal={closePollVotes}
+          />
+        )}
         {data?.id && analytics && (
           <AnnouncementAnalytics
             post={data}

@@ -214,4 +214,4 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
   );
 };
 
-export default CelebrationWidget;
+export default React.memo(CelebrationWidget);
