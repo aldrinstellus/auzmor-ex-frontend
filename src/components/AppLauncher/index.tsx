@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { memo } from 'react';
+import Skeleton from 'react-loading-skeleton';
 
 import Card from 'components/Card';
 import Icon from 'components/Icon';
@@ -7,24 +8,23 @@ import Button, { Size, Variant } from 'components/Button';
 import AppWidgetCard from './components/AppWidgetCard';
 import SelectAppModal from './components/SelectAppModal';
 import EmptyState from './components/EmptyState';
+import AppLauncherSkeleton from './components/AppLauncherSkeleton';
 
 import useModal from 'hooks/useModal';
-
-import { useInfiniteApps } from 'queries/apps';
-import { useAppStore } from 'stores/appStore';
 import useRole from 'hooks/useRole';
 
+import { useInfiniteWidgetApps } from 'queries/apps';
+import { useAppStore } from 'stores/appStore';
+
 import { isFiltersEmpty } from 'utils/misc';
-import AppLauncherSkeleton from './components/AppLauncherSkeleton';
-import Skeleton from 'react-loading-skeleton';
 
 const AppLauncher = () => {
   const navigate = useNavigate();
   const { isAdmin } = useRole();
-  const { apps } = useAppStore();
+  const widgetApps = useAppStore((state) => state.widgetApps);
   const [open, openCollpase, closeCollapse] = useModal(true, false);
   const [openAddApp, openAddAppModal, closeAddAppModal] = useModal();
-  const { data, isLoading } = useInfiniteApps(
+  const { data, isLoading } = useInfiniteWidgetApps(
     isFiltersEmpty({
       limit: 3,
     }),
@@ -106,11 +106,9 @@ const AppLauncher = () => {
             return (
               <div className="flex flex-col gap-4 mt-4">
                 <div className="flex items-center gap-8 w-full">
-                  {appIds
-                    ?.filter(({ id }: any) => !!apps[id])
-                    ?.map(({ id }: any) => (
-                      <AppWidgetCard data={apps[id]} key={id} />
-                    ))}
+                  {appIds?.map(({ id }: any) => (
+                    <AppWidgetCard data={widgetApps[id]} key={id} />
+                  ))}
                 </div>
                 <Button
                   variant={Variant.Secondary}
@@ -131,9 +129,7 @@ const AppLauncher = () => {
         <SelectAppModal
           open={openAddApp}
           closeModal={closeAddAppModal}
-          widgetApps={appIds
-            ?.filter(({ id }: any) => !!apps[id])
-            ?.map(({ id }: any) => apps[id])}
+          widgetApps={appIds?.map(({ id }: any) => widgetApps[id])}
         />
       )}
     </Card>

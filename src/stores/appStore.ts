@@ -4,14 +4,17 @@ import { App } from 'queries/apps';
 export interface IAppsStore {
   apps: { [key: string]: App };
   featuredApps: { [key: string]: App };
-  setApp: (comment: { [key: string]: App }) => void;
-  setFeaturedApp: (comment: { [key: string]: App }) => void;
-  updateApp: (id: string, comment: App) => void;
+  widgetApps: { [key: string]: App };
+  setApp: (app: { [key: string]: App }) => void;
+  setFeaturedApp: (app: { [key: string]: App }) => void;
+  setWidgetApp: (app: { [key: string]: App }) => void;
+  updateApp: (id: string, app: App) => void;
 }
 
 export const useAppStore = create<IAppsStore>((set) => ({
   apps: {},
   featuredApps: {},
+  widgetApps: {},
   setApp: (apps) =>
     set(() => ({
       apps: { ...apps },
@@ -19,6 +22,10 @@ export const useAppStore = create<IAppsStore>((set) => ({
   setFeaturedApp: (apps) =>
     set(() => ({
       featuredApps: { ...apps },
+    })),
+  setWidgetApp: (apps) =>
+    set(() => ({
+      widgetApps: { ...apps },
     })),
   updateApp: (id, updatedApp) =>
     set(({ apps }: IAppsStore) => ({
