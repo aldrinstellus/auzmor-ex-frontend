@@ -5,12 +5,11 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import { DeltaStatic } from 'quill';
-import { isValidUrl } from 'utils/misc';
+import { isValidUrl, chain } from 'utils/misc';
 import { IMedia, IPoll, POST_TYPE } from 'contexts/CreatePostContext';
 import { IComment } from 'components/Comments';
 import { Metadata } from 'components/PreviewLink/types';
 import { useFeedStore } from 'stores/feedStore';
-import chain from 'lodash/chain';
 import { ITeam } from './teams';
 import { IGetUser } from './users';
 

@@ -6,7 +6,7 @@ import {
 import { IComment } from 'components/Comments';
 import { useCommentStore } from 'stores/commentStore';
 import apiService from 'utils/apiService';
-import chain from 'lodash/chain';
+import { chain } from 'utils/misc';
 
 interface IContent {
   html: string;

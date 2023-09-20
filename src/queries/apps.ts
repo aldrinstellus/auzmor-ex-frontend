@@ -3,7 +3,7 @@ import {
   useInfiniteQuery,
   // useQuery,
 } from '@tanstack/react-query';
-import chain from 'lodash/chain';
+import { chain } from 'utils/misc';
 import { useAppStore } from 'stores/appStore';
 import apiService from 'utils/apiService';
 

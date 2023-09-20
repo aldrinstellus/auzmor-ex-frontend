@@ -285,3 +285,19 @@ export const convertUpperCaseToPascalCase = (value: string) => {
   }
   return value[0] + value.substring(1, value.length).toLowerCase();
 };
+
+type Chainable<T> = {
+  value: () => T;
+  keyBy: (key: string) => Chainable<{ [key: string]: any }>;
+};
+
+export const chain = <T>(input: T): Chainable<T> => ({
+  value: () => input,
+  keyBy: (key: string) =>
+    chain(
+      (input as any[]).reduce((acc: { [key: string]: any }, item: any) => {
+        acc[item[key]] = item;
+        return acc;
+      }, {}),
+    ),
+});
