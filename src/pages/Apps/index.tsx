@@ -26,6 +26,7 @@ import Icon from 'components/Icon';
 import AppBannerSkeleton from './components/Skeletons/AppBannerSkeleton';
 import useRole from 'hooks/useRole';
 import Skeleton from 'react-loading-skeleton';
+import Sort from 'components/Sort';
 
 interface IAppsProps {}
 interface IAppSearchForm {
@@ -121,6 +122,10 @@ const Apps: React.FC<IAppsProps> = () => {
     }
   };
 
+  const handleSetSortFilter = (sortValue: any) => {
+    setSortByFilter(sortValue);
+  };
+
   return (
     <div>
       <Card className="p-8">
@@ -213,56 +218,17 @@ const Apps: React.FC<IAppsProps> = () => {
               variant={IconVariant.Secondary}
               size={IconSize.Medium}
               borderAround
-              className="bg-white"
+              className="bg-white !p-[10px]"
               onClick={openFilterModal}
               dataTestId="app-filters"
             />
-            <PopupMenu
-              triggerNode={
-                <IconButton
-                  icon="arrowSwap"
-                  variant={IconVariant.Secondary}
-                  size={IconSize.Medium}
-                  borderAround
-                  className="bg-white"
-                  dataTestId="apps-sort"
-                />
-              }
-              title={
-                <div className="bg-blue-50 flex px-6 py-2 font-xs font-medium text-neutral-500">
-                  Sort by
-                </div>
-              }
-              menuItems={[
-                {
-                  icon: 'calendar',
-                  label: 'Date added',
-                  onClick: () => {
-                    setSortByFilter('createdAt:DESC');
-                  },
-                  dataTestId: 'app-filter-sort-date',
-                  permissions: [''],
-                },
-                {
-                  icon: 'sortByAcs',
-                  label: 'A to Z',
-                  onClick: () => {
-                    setSortByFilter('createdAt:ASC');
-                  },
-                  dataTestId: 'app-filter-sort-ascending',
-                  permissions: [''],
-                },
-                {
-                  icon: 'sortByDesc',
-                  label: 'Z to A',
-                  onClick: () => {
-                    setSortByFilter('createdAt:DESC');
-                  },
-                  dataTestId: 'app-filter-sort-descending',
-                  permissions: [''],
-                },
-              ]}
-              className="right-48 w-[157px] top-12"
+            <Sort
+              setFilter={handleSetSortFilter}
+              filterKey={{ createdAt: 'createdAt', aToZ: 'name' }}
+              selectedValue={sortByFilter}
+              filterValue={{ asc: 'ASC', desc: 'DESC' }}
+              dataTestId="teams-sort"
+              entity="apps-filters"
             />
             <Layout
               fields={[
