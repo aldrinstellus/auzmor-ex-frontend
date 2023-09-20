@@ -331,10 +331,10 @@ const Feed: React.FC<IFeedProps> = () => {
                   <div
                     data-testid={`feed-post-${index}`}
                     className="flex flex-col gap-6 mb-6"
-                    key={feedIds[index].id!}
+                    key={regularFeedIds[index].id!}
                     ref={measureRef}
                   >
-                    <Post post={feed[feedIds[index].id!]} />
+                    <Post post={feed[regularFeedIds[index].id!]} />
                   </div>
                 )}
               />
