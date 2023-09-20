@@ -26,7 +26,7 @@ export type IScreen = {
 const UserOnboard: React.FC = (): ReactNode => {
   const [file, setFile] = useState<File>();
   const [open, openModal, closeModal] = useModal(true);
-  const [currentScreen, prev, next] = useCarousel(0, 5);
+  const [currentScreen, _, next] = useCarousel(0, 5);
   const [disableClose, setDisableClose] = useState<boolean>(false);
   const [openEditImage, openEditImageModal, closeEditImageModal] =
     useModal(false);

@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode } from 'react';
+import React, { ReactElement } from 'react';
 import IconButton, { Size, Variant } from 'components/IconButton';
 import PopupMenu from 'components/PopupMenu';
 import useModal from 'hooks/useModal';

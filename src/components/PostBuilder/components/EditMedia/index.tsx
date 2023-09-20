@@ -3,10 +3,9 @@ import Button, {
   Size as ButtonSize,
 } from 'components/Button';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
-import React, { useContext, useEffect, useRef } from 'react';
-import { getBlobUrl, isVideo, twConfig } from 'utils/misc';
+import React, { useContext, useRef } from 'react';
+import { getBlobUrl, isVideo } from 'utils/misc';
 import useCarousel from 'hooks/useCarousel';
-// import SwitchToggle from 'components/SwitchToggle';
 import Header from 'components/ModalHeader';
 import Body from './Body';
 import Footer from './Footer';

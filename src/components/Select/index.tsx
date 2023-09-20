@@ -19,12 +19,12 @@ export type SingleSelectProps = {
 const SingleSelect: React.FC<SingleSelectProps> = ({
   name,
   className = '',
-  disabled = false,
-  dataTestId = '',
+  // disabled = false,
+  // dataTestId = '',
   error,
   control,
   label = '',
-  defaultValue = '',
+  // defaultValue = '',
   placeholder = '',
   options,
 }) => {

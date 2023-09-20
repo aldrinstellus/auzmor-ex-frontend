@@ -5,7 +5,6 @@ import {
   Navigate,
   Route,
 } from 'react-router-dom';
-// import { loader as homeLoader } from 'pages/Home';
 import RequireAuth from 'components/RequireAuth';
 import Notifications from 'pages/Notifications';
 
@@ -73,7 +72,7 @@ const routers = createBrowserRouter(
         <Route
           path="/users/:userId"
           element={<UserDetail />}
-          loader={({ params }) => {
+          loader={({}) => {
             // ⬇️ loader fetch data as earlier as possible
             return '';
           }}
@@ -81,7 +80,7 @@ const routers = createBrowserRouter(
         <Route
           path="/teams/:teamId"
           element={<TeamDetail />}
-          loader={({ params }) => {
+          loader={({}) => {
             // ⬇️ loader fetch data as earlier as possible
             return '';
           }}

@@ -1,7 +1,6 @@
 import Button, { Variant as ButtonVariant } from 'components/Button';
 import Icon from 'components/Icon';
 import React, { ReactNode } from 'react';
-import { twConfig } from 'utils/misc';
 
 export interface IFailureToastProps {
   content?: string | ReactNode;

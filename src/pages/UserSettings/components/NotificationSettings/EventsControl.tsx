@@ -6,7 +6,7 @@ type AppProps = {
   data: Record<string, any>;
 };
 
-const EventsControl: React.FC<AppProps> = ({ data }) => {
+const EventsControl: React.FC<AppProps> = ({ data: _data }) => {
   const settings = [
     {
       label: 'An event is about to start',

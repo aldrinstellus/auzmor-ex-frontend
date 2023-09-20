@@ -2,7 +2,7 @@ import AvatarList from 'components/AvatarList';
 import Card from 'components/Card';
 import React from 'react';
 import useHover from 'hooks/useHover';
-import { truncate } from 'lodash';
+import truncate from 'lodash/truncate';
 import Icon from 'components/Icon';
 import TeamWork from 'images/teamwork.svg';
 import PopupMenu from 'components/PopupMenu';

@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import Divider from 'components/Divider';
 import React, { useMemo } from 'react';
 import { Control, useController } from 'react-hook-form';
 
@@ -51,7 +50,7 @@ const RadioGroup: React.FC<RadioButtonProps> = ({
               type="radio"
               data-testid={option.dataTestId}
               className="w-5 h-5 accent-primary-600"
-              onChange={(e) => {
+              onChange={(_e) => {
                 field.onChange(option);
               }}
               name={name}

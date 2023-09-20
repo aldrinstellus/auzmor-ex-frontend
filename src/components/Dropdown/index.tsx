@@ -1,11 +1,5 @@
 import { Listbox, Transition } from '@headlessui/react';
-import React, {
-  Fragment,
-  ReactElement,
-  ReactNode,
-  useRef,
-  useState,
-} from 'react';
+import React, { Fragment, ReactElement, ReactNode, useState } from 'react';
 
 export type DropdownProps = {
   options: Record<string, any>[];

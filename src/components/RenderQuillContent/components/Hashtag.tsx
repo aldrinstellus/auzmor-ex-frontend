@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useEffect, useRef } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 type HashtagProps = {

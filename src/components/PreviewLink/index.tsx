@@ -26,7 +26,7 @@ export type PreviewLinkProps = {
 
 const PreviewLink: React.FC<PreviewLinkProps> = ({
   previewUrl = '',
-  setPreviewUrl = () => {},
+  // setPreviewUrl = () => {},
   setIsPreviewRemove = () => {},
 }) => {
   const { media } = useContext(CreatePostContext);

@@ -12,7 +12,6 @@ import {
   IMention,
   IPost,
   IPostPayload,
-  IShoutoutRecipient,
   createPost,
   updatePost,
 } from 'queries/post';

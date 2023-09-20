@@ -14,9 +14,9 @@ type HorizontalMenuProps = {
 
 const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
   items,
-  onChange = (id: any) => {},
+  onChange = (_id: any) => {},
 }): ReactElement => {
-  const [currentIndex, prev, next, setCurrentIndex] = useCarousel(
+  const [currentIndex, _prev, _next, setCurrentIndex] = useCarousel(
     0,
     items.length,
   );

@@ -141,7 +141,7 @@ export const filterKeyMap: Record<string | PostType, string> = {
 };
 
 const FeedFilter: React.FC<FeedFilterProps> = ({
-  disabled = false,
+  // disabled = false,
   dataTestId = '',
   appliedFeedFilters = {},
   onApplyFilters,

@@ -119,7 +119,7 @@ const EditSchedulePostModal: React.FC<EditSchedulePostModalProp> = ({
   });
   const userTimezone = getTimezoneNameFromIANA(schedule.timeZone);
   const { currentTimezone } = useCurrentTimezone();
-  const onSubmit = (data: IForm) => {
+  const onSubmit = (_data: IForm) => {
     // console.log(data);
   };
   const {

@@ -1,5 +1,5 @@
 import PageLoader from 'components/PageLoader';
-import React, { LegacyRef, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import useVirtual, { MeasureRef, OnScroll } from 'react-cool-virtual';
 
 export type InfiniteScrollProps = {

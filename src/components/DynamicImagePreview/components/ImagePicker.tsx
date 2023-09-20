@@ -72,7 +72,7 @@ const ImagePicker: React.FC<IImagePickerProps> = ({
   selectedTemplate,
   onSelect,
 }) => {
-  const imageRef = useRef<HTMLInputElement>(null);
+  const _imageRef = useRef<HTMLInputElement>(null);
   const handleSelectTemplate = (item: any) => {
     if (selectedTemplate?.id === item.id) {
       onSelect(null);

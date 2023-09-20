@@ -36,6 +36,7 @@ const DeleteTeam: React.FC<IDeleteTeamProps> = ({
   const deleteTeamMutation = useMutation({
     mutationKey: ['delete-team', teamId],
     mutationFn: deleteTeam,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onError: (error) => {
       toast(<FailureToast content="Error deleting teams" dataTestId="" />, {
         closeButton: (
@@ -52,6 +53,7 @@ const DeleteTeam: React.FC<IDeleteTeamProps> = ({
         theme: 'dark',
       });
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSuccess: (data, variables, context) => {
       closeModal();
       queryClient.invalidateQueries({ queryKey: ['teams'] });

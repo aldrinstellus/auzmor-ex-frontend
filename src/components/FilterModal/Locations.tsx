@@ -5,12 +5,7 @@ import Spinner from 'components/Spinner';
 import { useDebounce } from 'hooks/useDebounce';
 import { ILocation, useInfiniteLocations } from 'queries/location';
 import React, { useEffect } from 'react';
-import {
-  Control,
-  FieldValues,
-  UseFormSetValue,
-  UseFormWatch,
-} from 'react-hook-form';
+import { Control, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
 import { IFilterForm } from '.';
 

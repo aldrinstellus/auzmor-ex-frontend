@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PopupMenu from 'components/PopupMenu';
 import Badge from 'components/Badge';
 import Card from 'components/Card';
@@ -25,7 +25,7 @@ type AppCardProps = {
 const AppCard: React.FC<AppCardProps> = ({ app }) => {
   const { isAdmin } = useRole();
   const [appCardHovered, appCardEventHandlers] = useHover();
-  const [menuHovered, menuEventHandlers] = useHover();
+  // const [menuHovered, menuEventHandlers] = useHover();
 
   const [appDetailModal, openAppDetailModal, closeAppDetailModal] = useModal();
   // Add apps modal
@@ -65,7 +65,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
         },
       );
     },
-    onError: (error: any) => {
+    onError: (_error: any) => {
       toast(
         <FailureToast
           content={`Error while adding app to featured apps`}
@@ -120,7 +120,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
         },
       );
     },
-    onError: (error: any) => {
+    onError: (_error: any) => {
       toast(
         <FailureToast
           content={`Error while removing app from featured apps`}

@@ -29,7 +29,7 @@ const DeleteApp: React.FC<IDeleteAppProps> = ({ open, closeModal, appId }) => {
   const deleteAppMutation = useMutation({
     mutationKey: ['delete-app', appId],
     mutationFn: deleteApp,
-    onError: (error) => {
+    onError: (_error) => {
       closeModal(true);
       toast(<FailureToast content="Error deleting the app" dataTestId="" />, {
         closeButton: (
@@ -46,7 +46,7 @@ const DeleteApp: React.FC<IDeleteAppProps> = ({ open, closeModal, appId }) => {
         theme: 'dark',
       });
     },
-    onSuccess: (data, variables, context) => {
+    onSuccess: (_data, _variables, _context) => {
       closeModal(true);
       queryClient.invalidateQueries({ queryKey: ['apps'] });
       toast(

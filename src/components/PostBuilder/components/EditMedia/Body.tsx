@@ -1,7 +1,6 @@
 import Carousel from 'components/CarouselNew';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
-import React, { useContext, useEffect } from 'react';
-
+import React, { useContext } from 'react';
 export interface IBodyProps {
   currentIndex: number;
   nextSlide: () => void;

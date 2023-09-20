@@ -15,7 +15,7 @@ const Chip: React.FC<ChipsProps> = ({
   label,
   className = '',
   onClick = () => {},
-  onClose = () => {},
+  // onClose = () => {},
 }) => {
   const styles = useMemo(
     () =>

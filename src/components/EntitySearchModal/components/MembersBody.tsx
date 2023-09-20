@@ -5,7 +5,7 @@ import { useDebounce } from 'hooks/useDebounce';
 import { IDepartment, useInfiniteDepartments } from 'queries/department';
 import { ILocation, useInfiniteLocations } from 'queries/location';
 import { IGetUser, useInfiniteUsers } from 'queries/users';
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import UserRow from './UserRow';
 import InfiniteSearch from 'components/InfiniteSearch';

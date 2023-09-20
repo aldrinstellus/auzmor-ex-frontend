@@ -10,7 +10,7 @@ import {
 } from 'components/PostBuilder/components/RichTextEditor/mentions/types';
 import DeactivatedCoverImage from 'images/deactivatedCoverPhoto.png';
 import DefaultCoverImage from 'images/png/CoverImage.png';
-import { capitalize } from 'lodash';
+import capitalize from 'lodash/capitalize';
 import DeactivatedUser from 'images/DeactivatedUser.png';
 import { EditUserSection, UserRole, UserStatus } from 'queries/users';
 
@@ -285,3 +285,19 @@ export const convertUpperCaseToPascalCase = (value: string) => {
   }
   return value[0] + value.substring(1, value.length).toLowerCase();
 };
+
+type Chainable<T> = {
+  value: () => T;
+  keyBy: (key: string) => Chainable<{ [key: string]: any }>;
+};
+
+export const chain = <T>(input: T): Chainable<T> => ({
+  value: () => input,
+  keyBy: (key: string) =>
+    chain(
+      (input as any[]).reduce((acc: { [key: string]: any }, item: any) => {
+        acc[item[key]] = item;
+        return acc;
+      }, {}),
+    ),
+});

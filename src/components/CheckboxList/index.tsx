@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
 
 export interface ICheckboxListOption {

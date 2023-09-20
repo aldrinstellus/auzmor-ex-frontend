@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import { checkLogin, login } from 'queries/account';
-import React, { useEffect, useState } from 'react';
+import { login } from 'queries/account';
+import React from 'react';
 import { Variant as InputVariant } from 'components/Input';
 import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
@@ -17,7 +17,7 @@ import {
   readFirstAxiosError,
   redirectWithToken,
 } from 'utils/misc';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
 import { useGetSSOFromDomain } from 'queries/organization';
 import { useLoginViaSSO } from 'queries/auth';
@@ -54,10 +54,7 @@ const LoginViaCred: React.FC<ILoginViaCredProps> = ({ setViaSSO }) => {
   });
 
   const domain = getSubDomain(window.location.host);
-  const { data, isLoading } = useGetSSOFromDomain(
-    domain,
-    domain !== '' ? true : false,
-  );
+  const { data } = useGetSSOFromDomain(domain, domain !== '' ? true : false);
 
   const { refetch } = useLoginViaSSO(
     { domain },

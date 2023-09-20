@@ -1,7 +1,6 @@
 import React from 'react';
 import Icon from 'components/Icon';
 import ReactQuill from 'react-quill';
-import { twConfig } from 'utils/misc';
 
 interface IToolbarProps {
   isCharLimit: boolean;

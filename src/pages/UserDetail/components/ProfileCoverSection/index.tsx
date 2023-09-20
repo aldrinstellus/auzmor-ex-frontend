@@ -76,6 +76,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({ userDetails }) => {
   );
   const [socialLink, showSocialLinks, closeSocialLinks] = useModal();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isHovered, eventHandlers] = useHover();
   const [isCoverImageRemoved, setIsCoverImageRemoved] = useState(false);
 

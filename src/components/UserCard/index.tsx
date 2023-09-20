@@ -1,7 +1,7 @@
 import Avatar from 'components/Avatar';
 import Button from 'components/Button';
 import Divider from 'components/Divider';
-import { IGetUser, getUser } from 'queries/users';
+import { IGetUser } from 'queries/users';
 import React from 'react';
 import { getAvatarColor, getFullName, getProfileImage } from 'utils/misc';
 

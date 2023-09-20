@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ContactWidget from 'components/ContactWidget';
 import {
   UserEditType,
@@ -7,7 +7,6 @@ import {
   useSingleUser,
 } from 'queries/users';
 import ProfileInfo from 'components/ProfileInfo';
-import Spinner from 'components/Spinner';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import ProfileActivityFeed from './components/ProfileActivityFeed';
 import useAuth from 'hooks/useAuth';

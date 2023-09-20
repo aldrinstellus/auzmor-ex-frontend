@@ -6,7 +6,7 @@ type AppProps = {
   data: Record<string, any>;
 };
 
-const MentionsControl: React.FC<AppProps> = ({ data }) => {
+const MentionsControl: React.FC<AppProps> = ({ data: _data }) => {
   const settings = [
     {
       label: 'Someone mentions me in a post',
