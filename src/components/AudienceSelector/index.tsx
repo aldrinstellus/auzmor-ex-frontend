@@ -13,6 +13,7 @@ interface IAudienceSelectorProps {
   setAudienceFlow: any;
   isEveryoneSelected: boolean;
   setIsEveryoneSelected: (value: boolean) => void;
+  infoText?: string;
 }
 
 const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
@@ -20,6 +21,7 @@ const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
   setAudienceFlow,
   isEveryoneSelected,
   setIsEveryoneSelected,
+  infoText = 'Your post will appear in Feed, on your profile and in search results. You can change the audience of this specific post.',
 }) => {
   const { isAdmin } = useRole();
   const { data } = useOrganization();
@@ -89,8 +91,7 @@ const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
               <Icon name="infoCircleOutline" hover={false} />
             </div>
             <div className="ml-2.5 text-neutral-500 font-medium text-sm">
-              Your post will appear in Feed, on your profile and in search
-              results. You can change the audience of this specific post.
+              {infoText}
             </div>
           </div>
           {audienceEntity.map((entity) => (

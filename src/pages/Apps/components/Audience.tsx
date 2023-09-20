@@ -153,20 +153,13 @@ const Audience: React.FC<IAudienceProps> = ({
           }}
           closeBtnDataTestId="schedule-post-modal-close"
         />
-        <div className="px-2 py-4 rounded bg-neutral-100 shadow m-4 flex items-center gap-2">
-          <div className="p-1 rounded bg-neutral-200">
-            <Icon name="infoCircleOutline" />
-          </div>
-          <span className="text-sm">
-            The app will be visible to the audience selected. You can change the
-            audience of this specific app.
-          </span>
-        </div>
         <AudienceSelector
           audienceFlow={audienceFlow}
           setAudienceFlow={setAudienceFlow}
           isEveryoneSelected={isEveryoneSelected}
           setIsEveryoneSelected={setIsEveryoneSelected}
+          infoText="The app will be visible to the audience selected. You can change the
+            audience of this specific app."
         />
         <Footer
           isValid

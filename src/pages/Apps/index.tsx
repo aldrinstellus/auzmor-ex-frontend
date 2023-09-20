@@ -376,6 +376,18 @@ const Apps: React.FC<IAppsProps> = () => {
                 queryParams={{
                   limit: 5,
                   featured: true,
+                  q: debouncedSearchValue,
+                  sort: sortByFilter,
+                  teamId:
+                    appFilters.teams.length > 0
+                      ? appFilters.teams.map((team: any) => team.id).join(',')
+                      : undefined,
+                  categoryId:
+                    appFilters.categories.length > 0
+                      ? appFilters.categories
+                          .map((category: any) => category.id)
+                          .join(',')
+                      : undefined,
                 }}
                 isInfinite={false}
                 showEmptyState={false}
