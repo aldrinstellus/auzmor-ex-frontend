@@ -2,9 +2,9 @@ import Avatar from 'components/Avatar';
 import Button from 'components/Button';
 import Divider from 'components/Divider';
 import Icon from 'components/Icon';
-import IconWrapper, { Type } from 'components/Icon/components/IconWrapper';
-import { IGetUser, getUser } from 'queries/users';
-import React from 'react';
+import IconWrapper from 'components/Icon/components/IconWrapper';
+import { IGetUser } from 'queries/users';
+import { FC } from 'react';
 import { getAvatarColor, getFullName, getProfileImage } from 'utils/misc';
 
 export enum UsercardVariant {
@@ -17,7 +17,7 @@ interface IUserCardProp {
   variant?: UsercardVariant;
 }
 
-const UserCard: React.FC<IUserCardProp> = ({
+const UserCard: FC<IUserCardProp> = ({
   user,
   variant = UsercardVariant.Small,
 }) => {

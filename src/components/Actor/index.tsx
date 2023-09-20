@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import Avatar from 'components/Avatar';
 import { VIEW_POST } from './constant';
 import useAuth from 'hooks/useAuth';
@@ -20,13 +20,13 @@ type ActorProps = {
   postType?: string;
 };
 
-const Actor: React.FC<ActorProps> = ({
+const Actor: FC<ActorProps> = ({
   contentMode,
   createdTime,
   createdBy,
   dataTestId,
   postType,
-  disabled = false,
+  // disabled = false,
   entityId,
   audience,
 }) => {

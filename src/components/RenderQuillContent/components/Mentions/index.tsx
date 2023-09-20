@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import { FC, ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 import useAuth from 'hooks/useAuth';
 import Tooltip, { Variant } from 'components/Tooltip';
@@ -16,11 +16,10 @@ type MentionProps = {
   location?: ILocation;
 };
 
-const Mention: React.FC<MentionProps> = ({
+const Mention: FC<MentionProps> = ({
   value,
   fullName,
   profileImage,
-  active,
   email,
   userId,
   location,
