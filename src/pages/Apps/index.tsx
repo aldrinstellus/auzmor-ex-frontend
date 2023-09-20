@@ -17,7 +17,6 @@ import {
   useInfiniteFeaturedApps,
 } from 'queries/apps';
 import { useAppStore } from 'stores/appStore';
-import PopupMenu from 'components/PopupMenu';
 import { useDebounce } from 'hooks/useDebounce';
 import { isFiltersEmpty } from 'utils/misc';
 import AppFilterModal from './components/AppFilterModal';

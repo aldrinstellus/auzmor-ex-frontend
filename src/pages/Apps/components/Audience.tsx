@@ -6,7 +6,6 @@ import { IAudienceForm } from 'components/EntitySearchModal';
 import { AudienceEntityType, IAudience } from 'queries/apps';
 import Footer from './Footer';
 import { ADD_APP_FLOW } from './AddApp';
-import Icon from 'components/Icon';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 
 interface IAudienceProps {
