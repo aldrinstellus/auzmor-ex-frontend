@@ -1,7 +1,5 @@
-import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import Modal from 'components/Modal';
-import Tabs from 'components/Tabs';
 import { FC, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import AppDetailsForm from './AppDetailsForm';
@@ -21,6 +19,7 @@ import { twConfig } from 'utils/misc';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import FailureToast from 'components/Toast/variants/FailureToast';
 import Audience from './Audience';
+import Header from 'components/ModalHeader';
 
 export enum APP_MODE {
   Create = 'CREATE',
@@ -308,31 +307,37 @@ const AddApp: FC<AddAppProps> = ({
       open={open}
       closeModal={closeModal}
       className={clsx('max-w-[868px]', {
-        'min-h-[630px] max-h-[650px] ': activeFlow === ADD_APP_FLOW.AddApp,
+        'min-h-[543px] max-h-[543px] ': activeFlow === ADD_APP_FLOW.AddApp,
         '!max-w-[638px]': activeFlow === ADD_APP_FLOW.AudienceSelector,
       })}
     >
       {activeFlow === ADD_APP_FLOW.AddApp && (
         <div className="flex flex-col h-full">
-          <div className="p-4 flex items-center justify-between">
-            <p className="text-neutral-900 font-extrabold text-lg">Add app</p>
-            <Icon
-              name="close"
-              onClick={closeModal}
-              dataTestId="add-app-close"
-            />
-          </div>
-          <Divider />
+          <Header
+            title="Add app"
+            onClose={closeModal}
+            closeBtnDataTestId="add-app-close"
+          />
           <form
             onSubmit={onSubmit}
             className="flex flex-col justify-between h-full"
           >
-            <Tabs
+            {/* <Tabs
               tabs={tabs}
               disableAnimation={true}
               activeTabIndex={activeTab}
               onTabChange={(tab: any) => setActiveTab(tab)}
-            />
+            /> */}
+            <div className="py-3 px-6">
+              <AppDetailsForm
+                control={control}
+                errors={errors}
+                setValue={setValue}
+                defaultValues={getValues}
+                setActiveFlow={setActiveFlow}
+                audience={audience}
+              />
+            </div>
             <div className="bg-blue-50 flex items-center justify-end gap-x-3 px-6 py-4 mt-auto rounded-9xl">
               <Button
                 label="Cancel"

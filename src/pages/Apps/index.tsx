@@ -125,6 +125,10 @@ const Apps: FC<IAppsProps> = () => {
     setSortByFilter(sortValue);
   };
 
+  const handleTabChange = (tab: AppGroup) => {
+    setSelectedAppGroup(tab);
+  };
+
   return (
     <div>
       <Card className="p-8">
@@ -162,8 +166,8 @@ const Apps: FC<IAppsProps> = () => {
                   selectedAppGroup === AppGroup.MY_APPS
                     ? selectedButtonClassName
                     : regularButtonClassName
-                } cursor-not-allowed`}
-                // onClick={() => setSelectedAppGroup(AppGroup.MY_APPS)}
+                }`}
+                onClick={() => handleTabChange(AppGroup.MY_APPS)}
               />
             )}
             <Button
@@ -175,7 +179,7 @@ const Apps: FC<IAppsProps> = () => {
                   : regularButtonClassName
               }
               dataTestId="all-apps"
-              onClick={() => setSelectedAppGroup(AppGroup.ALL_APPS)}
+              onClick={() => handleTabChange(AppGroup.ALL_APPS)}
             />
             <Button
               variant={ButtonVariant.Secondary}
@@ -186,7 +190,7 @@ const Apps: FC<IAppsProps> = () => {
                   ? selectedButtonClassName
                   : regularButtonClassName
               }
-              onClick={() => setSelectedAppGroup(AppGroup.FEATURED)}
+              onClick={() => handleTabChange(AppGroup.FEATURED)}
             />
             {flattenCategories &&
               flattenCategories.length > 0 &&

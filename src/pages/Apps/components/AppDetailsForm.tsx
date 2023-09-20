@@ -127,7 +127,7 @@ const AppDetailsForm: FC<AppDetailsFormProps> = ({
 
   return (
     <div className="py-3">
-      <div className="pt-3">
+      <div className="">
         <Layout fields={urlField} />
       </div>
       <div className="flex justify-between gap-x-6 pt-6">
