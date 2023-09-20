@@ -44,7 +44,6 @@ import { useFeedStore } from 'stores/feedStore';
 
 // misc
 import NoPosts from 'images/NoPostsFound.png';
-import { InfiniteScroll } from 'components/InfiniteScroll';
 
 interface IFeedProps {}
 
@@ -322,24 +321,7 @@ const Feed: FC<IFeedProps> = () => {
               </div>
             ))}
 
-            {regularFeedIds && (
-              <InfiniteScroll
-                itemCount={regularFeedIds?.length}
-                loadMore={fetchNextPage}
-                isFetchingNextPage={isFetchingNextPage}
-                itemRenderer={(index, measureRef) => (
-                  <div
-                    data-testid={`feed-post-${index}`}
-                    className="flex flex-col gap-6 mb-6"
-                    key={regularFeedIds[index].id!}
-                    ref={measureRef}
-                  >
-                    <Post post={feed[regularFeedIds[index].id!]} />
-                  </div>
-                )}
-              />
-            )}
-            {/* {regularFeedIds?.map((feedId, index) => (
+            {regularFeedIds?.map((feedId, index) => (
               <div
                 data-testid={`feed-post-${index}`}
                 className="flex flex-col gap-6"
@@ -347,7 +329,7 @@ const Feed: FC<IFeedProps> = () => {
               >
                 <Post post={feed[feedId.id!]} />
               </div>
-            ))} */}
+            ))}
           </div>
         )}
 
