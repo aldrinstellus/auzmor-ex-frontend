@@ -1,5 +1,5 @@
 import Avatar from 'components/Avatar';
-import React, { ReactElement } from 'react';
+import { FC, ReactElement } from 'react';
 
 type MentionUserCardProps = {
   fullName: string;
@@ -8,7 +8,7 @@ type MentionUserCardProps = {
   email?: string;
 };
 
-const UserCard: React.FC<MentionUserCardProps> = ({
+const UserCard: FC<MentionUserCardProps> = ({
   fullName,
   image,
   active,

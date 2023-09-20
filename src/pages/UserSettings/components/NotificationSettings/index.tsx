@@ -1,10 +1,7 @@
 import Card from 'components/Card';
-import React from 'react';
 import GeneralSetting from './GeneralSettings';
 
 const NotificationSettings = () => {
-  // const { data, isLoading } = useNotificationSettings();
-
   return (
     <div className="space-y-4">
       <Card className="!px-6 !py-4">

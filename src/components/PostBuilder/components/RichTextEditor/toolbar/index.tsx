@@ -1,18 +1,14 @@
-import React from 'react';
 import Icon from 'components/Icon';
+import { FC, RefObject } from 'react';
 import ReactQuill from 'react-quill';
 
 interface IToolbarProps {
   isCharLimit: boolean;
   dataTestId?: string;
-  quillRef: React.RefObject<ReactQuill>;
+  quillRef: RefObject<ReactQuill>;
 }
 
-const Toolbar: React.FC<IToolbarProps> = ({
-  isCharLimit,
-  dataTestId,
-  quillRef,
-}) => {
+const Toolbar: FC<IToolbarProps> = ({ isCharLimit, dataTestId, quillRef }) => {
   return (
     <div id="toolbar">
       <div className="relative">

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import Icon from 'components/Icon';
 import isDate from 'lodash/isDate';
-import React, { ReactElement, useMemo, useState } from 'react';
+import { FC, MouseEvent, ReactElement, useMemo, useState } from 'react';
 import {
   Control,
   UseFormClearErrors,
@@ -49,14 +49,14 @@ interface TimePickerProps {
   errorDataTestId?: string;
   control?: Control<Record<string, any>>;
   label?: string;
-  onLeftIconClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  onRightIconClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onLeftIconClick?: (e: MouseEvent<HTMLDivElement>) => void;
+  onRightIconClick?: (e: MouseEvent<HTMLDivElement>) => void;
   onEnter?: any;
   customLabelRightElement?: ReactElement;
   isClearable?: boolean;
 }
 
-const TimePicker: React.FC<TimePickerProps> = ({
+const TimePicker: FC<TimePickerProps> = ({
   name,
   id,
   setValue,

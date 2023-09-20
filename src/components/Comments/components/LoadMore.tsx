@@ -2,7 +2,7 @@ import {
   FetchNextPageOptions,
   InfiniteQueryObserverResult,
 } from '@tanstack/react-query';
-import React, { ReactElement } from 'react';
+import { FC, ReactElement } from 'react';
 
 type LoadMoreProps = {
   onClick: (
@@ -12,7 +12,7 @@ type LoadMoreProps = {
   dataTestId?: string;
 };
 
-const LoadMore: React.FC<LoadMoreProps> = ({
+const LoadMore: FC<LoadMoreProps> = ({
   onClick,
   label,
   dataTestId,

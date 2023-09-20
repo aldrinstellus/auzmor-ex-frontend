@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { FC, MouseEvent, MouseEventHandler, useMemo, useState } from 'react';
 import Carousel from 'components/Carousel';
 import MediaRender from './components/MediaRender';
 import Button, { Variant as ButtonVariant, Size } from 'components/Button';
@@ -18,13 +18,13 @@ export interface IMediaPreviewProps {
   className?: string;
   mode?: Mode;
   onClick?: (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    e: MouseEvent<HTMLDivElement>,
     clickIndex: number,
     media: IMedia,
   ) => void;
-  onAddButtonClick?: React.MouseEventHandler<Element>;
-  onCloseButtonClick?: React.MouseEventHandler<Element>;
-  onEditButtonClick?: React.MouseEventHandler<Element>;
+  onAddButtonClick?: MouseEventHandler<Element>;
+  onCloseButtonClick?: MouseEventHandler<Element>;
+  onEditButtonClick?: MouseEventHandler<Element>;
   coverImageMap?: ICoverImageMap[];
   dataTestId?: string;
   showAddMediaButton?: boolean;
@@ -33,7 +33,7 @@ export interface IMediaPreviewProps {
   isAnnouncementWidgetPreview?: boolean;
 }
 
-const MediaPreview: React.FC<IMediaPreviewProps> = ({
+const MediaPreview: FC<IMediaPreviewProps> = ({
   media,
   className,
   mode = Mode.View,
@@ -81,7 +81,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
       return (
         <MediaRender
           data={media[0]}
-          onClick={(e) => {
+          onClick={(e: MouseEvent<HTMLDivElement>) => {
             if (mode === Mode.View) {
               setIndexAndOpenCarousel(0);
             } else {
@@ -105,7 +105,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[0]}
             localClassName="col-span-1"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(0);
               } else {
@@ -120,7 +120,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[1]}
             localClassName="col-span-1"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(1);
               } else {
@@ -144,7 +144,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[0]}
             localClassName="row-span-2 col-span-1"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(0);
               } else {
@@ -159,7 +159,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[1]}
             localClassName="col-span-1"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(1);
               } else {
@@ -174,7 +174,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[2]}
             localClassName="col-span-1"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(2);
               } else {
@@ -197,7 +197,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
         >
           <MediaRender
             data={media[0]}
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(0);
               } else {
@@ -211,7 +211,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           />
           <MediaRender
             data={media[1]}
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(1);
               } else {
@@ -225,7 +225,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           />
           <MediaRender
             data={media[2]}
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(2);
               } else {
@@ -239,7 +239,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           />
           <MediaRender
             data={media[3]}
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(3);
               } else {
@@ -263,7 +263,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[0]}
             localClassName="col-span-3"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(0);
               } else {
@@ -278,7 +278,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[1]}
             localClassName="col-span-3"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(1);
               } else {
@@ -293,7 +293,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[2]}
             localClassName="col-span-2"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(2);
               } else {
@@ -308,7 +308,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[3]}
             localClassName="col-span-2"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(3);
               } else {
@@ -323,7 +323,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[4]}
             localClassName="col-span-2"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(4);
               } else {
@@ -347,7 +347,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[0]}
             localClassName="col-span-3"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(0);
               } else {
@@ -362,7 +362,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[1]}
             localClassName="col-span-3"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(1);
               } else {
@@ -377,7 +377,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[2]}
             localClassName="col-span-2"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(2);
               } else {
@@ -392,7 +392,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
           <MediaRender
             data={media[3]}
             localClassName="col-span-2"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(3);
               } else {
@@ -409,7 +409,7 @@ const MediaPreview: React.FC<IMediaPreviewProps> = ({
             isAnnouncementWidgetPreview={isAnnouncementWidgetPreview}
             data={media[4]}
             localClassName="col-span-2"
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (mode === Mode.View) {
                 setIndexAndOpenCarousel(4);
               } else {

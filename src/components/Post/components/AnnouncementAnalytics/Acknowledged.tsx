@@ -2,7 +2,7 @@ import {
   CircularProgressbarWithChildren,
   buildStyles,
 } from 'react-circular-progressbar';
-import React, { useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import AvatarRowSkeleton from './AvatarRowSkeleton';
 import AvatarRow from './AvatarRow';
@@ -15,7 +15,7 @@ type AppProps = {
   closeModal: () => any;
 };
 
-const Acknowledged: React.FC<AppProps> = ({ post, closeModal }) => {
+const Acknowledged: FC<AppProps> = ({ post, closeModal }) => {
   const { ref, inView } = useInView();
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =

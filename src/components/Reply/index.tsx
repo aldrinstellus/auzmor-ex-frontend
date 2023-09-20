@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { FC, useState } from 'react';
 import { useInfiniteReplies } from 'queries/reaction';
 import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
@@ -28,7 +28,7 @@ export interface activeCommentsDataType {
   type: string;
 }
 
-const Comments: React.FC<CommentsProps> = ({ entityId, className }) => {
+const Comments: FC<CommentsProps> = ({ entityId, className }) => {
   const { user } = useAuth();
   const {
     inputRef,

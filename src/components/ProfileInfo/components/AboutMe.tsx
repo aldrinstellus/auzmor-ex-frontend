@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { FC, Fragment, useEffect, useState } from 'react';
 import Card from 'components/Card';
 import useHover from 'hooks/useHover';
 import Header from './Header';
@@ -25,7 +25,7 @@ export interface IAboutMeProps {
   searchParams?: any;
 }
 
-const AboutMe: React.FC<IAboutMeProps> = ({
+const AboutMe: FC<IAboutMeProps> = ({
   aboutMeData,
   canEdit,
   editSection,
@@ -102,7 +102,7 @@ const AboutMe: React.FC<IAboutMeProps> = ({
       const beforeText = text?.substring(lastIndex, startIndex);
       const linkText = match;
       elements.push(
-        <React.Fragment key={index}>
+        <Fragment key={index}>
           {beforeText}
           <a
             href={match}
@@ -112,7 +112,7 @@ const AboutMe: React.FC<IAboutMeProps> = ({
           >
             {linkText}
           </a>
-        </React.Fragment>,
+        </Fragment>,
       );
 
       lastIndex = endIndex;

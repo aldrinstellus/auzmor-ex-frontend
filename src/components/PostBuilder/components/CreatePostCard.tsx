@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 // components
@@ -12,6 +11,7 @@ import { IPostMenu } from './CreatePostModal';
 // hooks
 import useAuth from 'hooks/useAuth';
 import Divider, { Variant } from 'components/Divider';
+import { FC, memo } from 'react';
 
 export interface ICreatePostCardProps {
   openModal: () => void;
@@ -114,7 +114,7 @@ export const postTypeMapIcons: IPostMenu[] = [
   },
 ];
 
-const CreatePostCard: React.FC<ICreatePostCardProps> = ({ openModal }) => {
+const CreatePostCard: FC<ICreatePostCardProps> = ({ openModal }) => {
   const { user } = useAuth();
 
   // const tabStyle = (hasDivider = false) =>
@@ -173,4 +173,4 @@ const CreatePostCard: React.FC<ICreatePostCardProps> = ({ openModal }) => {
   );
 };
 
-export default React.memo(CreatePostCard);
+export default memo(CreatePostCard);

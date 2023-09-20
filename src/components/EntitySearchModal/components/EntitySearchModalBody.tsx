@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 import { EntitySearchModalType } from '..';
 import MembersBody from './MembersBody';
 import TeamsBody from './TeamsBody';
@@ -15,7 +15,7 @@ interface IEntitySearchModalBodyProps {
   showJobTitleFilter?: boolean;
 }
 
-const EntitySearchModalBody: React.FC<IEntitySearchModalBodyProps> = ({
+const EntitySearchModalBody: FC<IEntitySearchModalBodyProps> = ({
   entityType,
   entityRenderer,
   selectedMemberIds = [],

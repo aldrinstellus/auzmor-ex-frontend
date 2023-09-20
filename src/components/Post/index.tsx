@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef } from 'react';
+import { FC, ReactNode, memo, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router';
@@ -67,7 +67,7 @@ type PostProps = {
   customNode?: ReactNode;
 };
 
-const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
+const Post: FC<PostProps> = ({ post, customNode = null }) => {
   const [showComments, openComments, closeComments] = useModal(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -370,4 +370,4 @@ const Post: React.FC<PostProps> = ({ post, customNode = null }) => {
   );
 };
 
-export default React.memo(Post);
+export default memo(Post);
