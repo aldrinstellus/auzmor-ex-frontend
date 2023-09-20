@@ -2,7 +2,6 @@ import { IMedia } from 'contexts/CreatePostContext';
 import React from 'react';
 import { Mode } from '..';
 import Icon from 'components/Icon';
-// import { twConfig } from 'utils/misc';
 import BlurImg from 'components/Image/components/BlurImg';
 
 export interface IMediaRenderProps {

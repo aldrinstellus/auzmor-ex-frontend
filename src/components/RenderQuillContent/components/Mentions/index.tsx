@@ -1,5 +1,4 @@
 import React, { ReactElement } from 'react';
-// import useHover from 'hooks/useHover';
 import { Link } from 'react-router-dom';
 import useAuth from 'hooks/useAuth';
 import Tooltip, { Variant } from 'components/Tooltip';

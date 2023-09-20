@@ -1,8 +1,6 @@
 import Button, { Variant as ButtonVariant, Type } from 'components/Button';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
 import React, { useContext } from 'react';
-// import { UseFormHandleSubmit } from 'react-hook-form';
-// import { IForm } from '.';
 
 interface IFooter {
   isValid: boolean;

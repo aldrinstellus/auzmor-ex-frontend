@@ -1,9 +1,7 @@
 import React, { memo } from 'react';
 import Card from 'components/Card';
 import clsx from 'clsx';
-// import useHover from 'hooks/useHover';
 import Header from '../Header';
-// import { OptionType } from 'components/UserOnboard/components/SelectTimeZone';
 import DateOfBirthRow from './DateOfBirthRow';
 import GenderRow from './GenderRow';
 import MarriedRow from './MarriedRow';

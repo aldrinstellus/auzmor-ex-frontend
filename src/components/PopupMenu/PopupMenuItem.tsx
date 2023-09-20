@@ -1,10 +1,8 @@
 import React from 'react';
 import { IMenuItem } from '.';
 import Icon from 'components/Icon';
-// import { twConfig } from 'utils/misc';
 import useHover from 'hooks/useHover';
 import clsx from 'clsx';
-// import IconWrapper from 'components/Icon/components/IconWrapper';
 
 type PopupMenuItemProps = {
   menuItem: IMenuItem;

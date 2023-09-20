@@ -1,5 +1,4 @@
 import React from 'react';
-// import Icon from 'components/Icon';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import { twConfig } from 'utils/misc';
