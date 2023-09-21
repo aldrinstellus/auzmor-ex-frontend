@@ -40,11 +40,17 @@ export interface IAudience {
   name?: string;
 }
 
+export interface IProfileImage {
+  blurHash: string;
+  id: string;
+  original: string;
+}
+
 export interface IShoutoutRecipient {
   fullName: string;
-  profileImage: object;
+  profileImage: IProfileImage;
   status: string;
-  workLocation: Record<string, string>;
+  workLocation: ILocation;
   designation: string;
   userId: string;
 }
@@ -61,7 +67,7 @@ export interface IPost {
     designation?: string;
     fullName?: string;
     profileImage: {
-      blurHash?: string;
+      blurHash: string;
       id: string;
       original: string;
     };
@@ -197,13 +203,14 @@ export interface ICreatedBy {
   designation?: string;
   fullName?: string;
   profileImage: {
-    blurHash?: string;
+    blurHash: string;
     id: string;
     original: string;
   };
   status?: string;
   userId?: string;
   workLocation?: string;
+  email?: string;
 }
 
 // interface IAnnounce {

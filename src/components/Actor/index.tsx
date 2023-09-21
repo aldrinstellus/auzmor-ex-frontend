@@ -79,10 +79,13 @@ const Actor: FC<ActorProps> = ({
               <UserCard
                 user={{
                   id: createdBy?.userId || '',
-                  fullName: createdBy?.fullName,
-                  workEmail: 'Field not specified',
-                  // workLocation: createdBy?.workLocation || {id:'', name: ''},
-                  // profileImage: createdBy?.profileImage,
+                  fullName: createdBy?.fullName || 'Field not specified',
+                  workEmail: createdBy?.email || 'Field not specified',
+                  workLocation: {
+                    id: '',
+                    name: createdBy?.workLocation || 'Field not specified',
+                  },
+                  profileImage: createdBy?.profileImage,
                 }}
               />
             }
