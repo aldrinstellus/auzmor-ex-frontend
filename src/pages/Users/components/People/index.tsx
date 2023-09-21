@@ -368,6 +368,7 @@ const People: FC<IPeopleProps> = ({
                       key={user.id}
                       teamId={teamId}
                       isTeamPeople={isTeamPeople}
+                      teamMemberId={user.id}
                       {...{
                         userData: isTeamPeople
                           ? {
