@@ -41,6 +41,8 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
     onSuccess: () => {
       queryClient.invalidateQueries(['apps']);
       queryClient.invalidateQueries(['featured-apps']);
+      queryClient.invalidateQueries(['my-apps']);
+      queryClient.invalidateQueries(['my-featured-apps']);
       toast(
         <SuccessToast
           content={`App has been added to featured apps`}
@@ -96,6 +98,8 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
     onSuccess: () => {
       queryClient.invalidateQueries(['apps']);
       queryClient.invalidateQueries(['featured-apps']);
+      queryClient.invalidateQueries(['my-apps']);
+      queryClient.invalidateQueries(['my-featured-apps']);
       toast(
         <SuccessToast
           content={`App has been removed featured apps`}
@@ -210,6 +214,8 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
       id: 4,
       label: 'Delete',
       icon: 'delete',
+      iconClassName: '!text-red-500',
+      labelClassName: '!text-red-500',
       dataTestId: 'app-card-delete',
       onClick: openDeleteAppModal,
       hidden: !isAdmin,

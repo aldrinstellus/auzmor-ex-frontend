@@ -114,6 +114,7 @@ const AddApp: FC<AddAppProps> = ({
     mutationFn: createApp,
     onSuccess: async () => {
       await queryClient.invalidateQueries(['apps']);
+      queryClient.invalidateQueries(['my-apps']);
       toast(<SuccessToast content={'App added successfully'} />, {
         closeButton: (
           <Icon name="closeCircleOutline" color="text-primary-500" size={20} />
@@ -160,6 +161,7 @@ const AddApp: FC<AddAppProps> = ({
     mutationFn: (payload) => editApp(data?.id || '', payload as any),
     onSuccess: () => {
       queryClient.invalidateQueries(['apps']);
+      queryClient.invalidateQueries(['my-apps']);
       toast(
         <SuccessToast
           content={`App has been updated`}
@@ -314,7 +316,7 @@ const AddApp: FC<AddAppProps> = ({
       {activeFlow === ADD_APP_FLOW.AddApp && (
         <div className="flex flex-col h-full">
           <Header
-            title="Add app"
+            title={mode === APP_MODE.Create ? 'Add app' : 'Edit App'}
             onClose={closeModal}
             closeBtnDataTestId="add-app-close"
           />

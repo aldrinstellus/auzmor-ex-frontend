@@ -49,6 +49,7 @@ const DeleteApp: FC<IDeleteAppProps> = ({ open, closeModal, appId }) => {
     onSuccess: (_data, _variables, _context) => {
       closeModal(true);
       queryClient.invalidateQueries({ queryKey: ['apps'] });
+      queryClient.invalidateQueries({ queryKey: ['my-apps'] });
       toast(
         <SuccessToast
           content="App has been deleted successfully"

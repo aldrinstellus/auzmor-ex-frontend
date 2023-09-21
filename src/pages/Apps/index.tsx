@@ -94,7 +94,9 @@ const Apps: FC<IAppsProps> = () => {
     AppGroup.MY_APPS,
     AppGroup.FEATURED,
   ].includes(selectedAppGroup);
-  const isAllAppsGroupSelected = selectedAppGroup === AppGroup.ALL_APPS;
+  const isAllAppsGroupSelected = [AppGroup.ALL_APPS, AppGroup.MY_APPS].includes(
+    selectedAppGroup,
+  );
 
   const { data: categories } = useInfiniteCategories(
     isFiltersEmpty({
@@ -432,6 +434,7 @@ const Apps: FC<IAppsProps> = () => {
                 setAppsCount={setFeaturedAppsCount}
                 setAppsLoading={setIsFeaturedAppLoading}
                 startFetching={startFetching}
+                myApp={selectedAppGroup === AppGroup.MY_APPS || !isAdmin}
               />
               {featuredAppsCount > 0 && !isFeauturedAppLoading && (
                 <div className="text-xl font-bold mt-6">All Apps</div>
@@ -472,18 +475,11 @@ const Apps: FC<IAppsProps> = () => {
             openAddAppModal={openModal}
             resetField={resetField}
             startFetching={startFetching}
+            myApp={selectedAppGroup === AppGroup.MY_APPS || !isAdmin}
           />
         </div>
       </Card>
       <AddApp open={open} closeModal={closeModal} />
-      {/* {showFilterModal && (
-        <AppFilterModal
-          open={showFilterModal}
-          filters={appFilters}
-          closeModal={closeFilterModal}
-          setFilters={onApplyFilter}
-        />
-      )} */}
       {showFilterModal && (
         <FilterModal
           open={showFilterModal}

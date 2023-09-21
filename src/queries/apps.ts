@@ -148,7 +148,74 @@ export const fetchApps = async (
   }
 };
 
+export const fetchMyApps = async (
+  context: QueryFunctionContext<
+    (string | Record<string, any> | undefined)[],
+    any
+  >,
+  apps: {
+    [key: string]: App;
+  },
+  setApp: (apps: { [key: string]: App }) => void,
+) => {
+  let response = null;
+  if (!!!context.pageParam) {
+    response = await apiService.get('/apps', context.queryKey[1]);
+    setApp({
+      ...apps,
+      ...chain(response.data.result.data).keyBy('id').value(),
+    });
+    response.data.result.data = response.data.result.data.map(
+      (eachApp: App) => ({ id: eachApp.id }),
+    );
+    return response;
+  } else {
+    response = await apiService.get(context.pageParam, context.queryKey[1]);
+    setApp({
+      ...apps,
+      ...chain(response.data.result.data).keyBy('id').value(),
+    });
+    response.data.result.data = response.data.result.data.map(
+      (eachApp: App) => ({ id: eachApp.id }),
+    );
+    return response;
+  }
+};
+
 export const fetchFeaturedApps = async (
+  context: QueryFunctionContext<
+    (string | Record<string, any> | undefined)[],
+    any
+  >,
+  featuredApps: {
+    [key: string]: App;
+  },
+  setFeaturedApp: (apps: { [key: string]: App }) => void,
+) => {
+  let response = null;
+  if (!!!context.pageParam) {
+    response = await apiService.get('/apps', context.queryKey[1]);
+    setFeaturedApp({
+      ...featuredApps,
+      ...chain(response.data.result.data).keyBy('id').value(),
+    });
+    response.data.result.data = response.data.result.data.map(
+      (eachApp: App) => ({ id: eachApp.id }),
+    );
+    return response;
+  } else {
+    response = await apiService.get(context.pageParam, context.queryKey[1]);
+    setFeaturedApp({
+      ...featuredApps,
+      ...chain(response.data.result.data).keyBy('id').value(),
+    });
+    response.data.result.data = response.data.result.data.map(
+      (eachApp: App) => ({ id: eachApp.id }),
+    );
+    return response;
+  }
+};
+export const fetchMyFeaturedApps = async (
   context: QueryFunctionContext<
     (string | Record<string, any> | undefined)[],
     any
@@ -185,16 +252,20 @@ export const fetchFeaturedApps = async (
 export const useInfiniteFeaturedApps = ({
   q,
   startFetching = true,
+  myApp = false,
 }: {
   q?: Record<string, any>;
   startFetching?: boolean;
+  myApp?: boolean;
 }) => {
   const { featuredApps, setFeaturedApp } = useAppStore();
   return {
     ...useInfiniteQuery({
-      queryKey: ['featured-apps', q],
+      queryKey: [myApp ? 'my-featured-apps' : 'featured-apps', q],
       queryFn: (context) =>
-        fetchFeaturedApps(context, featuredApps, setFeaturedApp),
+        myApp
+          ? fetchMyFeaturedApps(context, featuredApps, setFeaturedApp)
+          : fetchFeaturedApps(context, featuredApps, setFeaturedApp),
       getNextPageParam: (lastPage: any) => {
         const pageDataLen = lastPage?.data?.result?.data?.length;
         const pageLimit = lastPage?.data?.result?.paging?.limit;
@@ -215,16 +286,21 @@ export const useInfiniteFeaturedApps = ({
 
 export const useInfiniteApps = ({
   q,
+  myApp = false,
   startFetching = true,
 }: {
   q?: Record<string, any>;
   startFetching?: boolean;
+  myApp?: boolean;
 }) => {
   const { apps, setApp } = useAppStore();
   return {
     ...useInfiniteQuery({
-      queryKey: ['apps', q],
-      queryFn: (context) => fetchApps(context, apps, setApp),
+      queryKey: [myApp ? 'my-apps' : 'apps', q],
+      queryFn: (context) =>
+        myApp
+          ? fetchMyApps(context, apps, setApp)
+          : fetchApps(context, apps, setApp),
       getNextPageParam: (lastPage: any) => {
         const pageDataLen = lastPage?.data?.result?.data?.length;
         const pageLimit = lastPage?.data?.result?.paging?.limit;
