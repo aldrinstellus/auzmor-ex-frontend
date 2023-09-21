@@ -104,7 +104,7 @@ const Footer: FC<IFooterProps> = ({
     onError: (error, variables, context) => {
       updateFeed(context!.previousPost.id!, context!.previousPost!);
     },
-    onSuccess: async (data) => {
+    onSuccess: async () => {
       toast(
         <SuccessToast
           content="Your post  was converted to an announcement"
