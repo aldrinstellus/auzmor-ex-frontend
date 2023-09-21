@@ -162,6 +162,8 @@ const AddApp: FC<AddAppProps> = ({
     onSuccess: () => {
       queryClient.invalidateQueries(['apps']);
       queryClient.invalidateQueries(['my-apps']);
+      queryClient.invalidateQueries(['featured-apps']);
+      queryClient.invalidateQueries(['my-featured-apps']);
       toast(
         <SuccessToast
           content={`App has been updated`}
@@ -263,7 +265,7 @@ const AddApp: FC<AddAppProps> = ({
       const req = {
         url: formData.url,
         label: formData.label,
-        featured: false,
+        featured: mode === APP_MODE.Edit ? !!data?.featured : false,
         ...(formData.description && { description: formData.description }),
         ...(formData.category &&
           formData.category.label && { category: formData.category.label }),
