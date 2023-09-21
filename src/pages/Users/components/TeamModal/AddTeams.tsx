@@ -1,10 +1,10 @@
-import React from 'react';
 import { Control, FieldErrors, UseFormGetValues } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
 import { Variant as InputVariant } from 'components/Input';
 import { ITeamForm } from '.';
 import { CategoryType, useInfiniteCategories } from 'queries/apps';
 import { ICategoryDetail } from 'queries/category';
+import { FC } from 'react';
 
 export interface IAddTeamsProps {
   control: Control<ITeamForm, any>;
@@ -12,11 +12,7 @@ export interface IAddTeamsProps {
   defaultValues: UseFormGetValues<ITeamForm>;
 }
 
-const AddTeams: React.FC<IAddTeamsProps> = ({
-  control,
-  errors,
-  defaultValues,
-}) => {
+const AddTeams: FC<IAddTeamsProps> = ({ control, errors, defaultValues }) => {
   const formatCategories = (data: any) => {
     const categoriesData = data?.pages.flatMap((page: any) => {
       return page?.data?.result?.data.map((category: any) => {
@@ -34,7 +30,7 @@ const AddTeams: React.FC<IAddTeamsProps> = ({
         label: category?.name,
         type: category?.type,
         id: category?.id,
-        dataTestId: `category-option-${category?.type?.toLowerCase()}-${
+        dataTestId: `team-category-${category?.type?.toLowerCase()}-${
           category?.name
         }`,
       }),
@@ -58,6 +54,7 @@ const AddTeams: React.FC<IAddTeamsProps> = ({
       dataTestId: 'add-team-name',
       showCounter: true,
       maxLength: 100,
+      errorDataTestId: 'team-name-error-message',
     },
   ];
   const teamCategory = [
@@ -75,6 +72,7 @@ const AddTeams: React.FC<IAddTeamsProps> = ({
       getFormattedData: formatCategories,
       error: errors.category?.message,
       dataTestId: 'select-team-category',
+      addItemDataTestId: 'add-new-category',
     },
   ];
   const teamDescription = [
@@ -83,13 +81,14 @@ const AddTeams: React.FC<IAddTeamsProps> = ({
       name: 'description',
       label: 'Team description',
       placeholder: 'What is the purpose of this team',
-      dataTestId: 'adding-team-description',
+      dataTestId: 'add-team-description',
       control,
       defaultValue: defaultValues()?.description || '',
       className: 'resize-none rounded-19xl',
       rows: 4,
       maxLength: 200,
       showCounter: true,
+      errorDataTestId: 'team-description-error-message',
     },
   ];
   return (

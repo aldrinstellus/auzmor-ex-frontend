@@ -1,13 +1,12 @@
 import Button, { Variant as ButtonVariant } from 'components/Button';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
-import React, { useContext } from 'react';
+import { FC, useContext } from 'react';
 import { FieldValues, UseFormHandleSubmit } from 'react-hook-form';
 import { afterXUnit } from 'utils/time';
 import { CreateAnnouncementMode } from '.';
 import { useMutation } from '@tanstack/react-query';
 import { IPost, updatePost } from 'queries/post';
 import queryClient from 'utils/queryClient';
-import { Dayjs } from 'dayjs';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import Icon from 'components/Icon';
@@ -27,7 +26,7 @@ export interface IFooterProps {
   getFormValues?: any;
 }
 
-const Footer: React.FC<IFooterProps> = ({
+const Footer: FC<IFooterProps> = ({
   handleSubmit,
   isValid,
   mode,
@@ -35,7 +34,8 @@ const Footer: React.FC<IFooterProps> = ({
   data,
   getFormValues,
 }) => {
-  const { feed, updateFeed } = useFeedStore();
+  const getPost = useFeedStore((state) => state.getPost);
+  const updateFeed = useFeedStore((state) => state.updateFeed);
   const { setAnnouncement, setActiveFlow, announcement } =
     useContext(CreatePostContext);
   const { user } = useAuth();
@@ -76,14 +76,14 @@ const Footer: React.FC<IFooterProps> = ({
             : [],
       });
     },
-    onMutate: (variables) => {
-      const previousPost = feed[data!.id!];
+    onMutate: (_variables) => {
+      const previousPost = getPost(data!.id!);
       const formData = getFormValues();
       const expiryDate = formData?.date.toISOString().substring(0, 19) + 'Z';
       if (data?.id) {
         updateFeed(
           data.id,
-          produce(feed[data.id], (draft) => {
+          produce(getPost(data!.id || ''), (draft) => {
             (draft.announcement = {
               actor: {
                 userId: user?.id,

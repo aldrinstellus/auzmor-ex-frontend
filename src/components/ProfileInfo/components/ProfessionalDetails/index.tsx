@@ -1,10 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Card from 'components/Card';
-import useHover from 'hooks/useHover';
 import clsx from 'clsx';
 import 'moment-timezone';
 import Header from '../Header';
-import useRole from 'hooks/useRole';
 import TimezoneRow from './TimezoneRow';
 import DateOfJoiningRow from './DateOfJoiningRow';
 import EmployeeIdRow from './EmployeeIdRow';
@@ -17,16 +15,14 @@ export interface IProfessionalDetailsProps {
   searchParams?: any;
 }
 
-const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
+const ProfessionalDetails: FC<IProfessionalDetailsProps> = ({
   professionalDetails,
   canEdit,
-  editSection,
+  // editSection,
   setSearchParams,
   searchParams,
 }) => {
-  const [isHovered, eventHandlers] = useHover();
-  const [isEditable, setIsEditable] = useState<boolean>(false);
-  const { isAdmin } = useRole();
+  const [isEditable, _setIsEditable] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isEditable && searchParams.has('edit')) {
@@ -35,15 +31,12 @@ const ProfessionalDetails: React.FC<IProfessionalDetailsProps> = ({
     }
   }, [isEditable]);
 
-  const onHoverStyles = useMemo(
-    () => clsx({ 'mb-8': true }, { 'shadow-xl': isHovered && canEdit }),
-    [isHovered],
-  );
+  const onHoverStyles = clsx({ 'mb-8': true });
 
   return (
-    <div {...eventHandlers}>
+    <div>
       <Header title="Professional Details" dataTestId="professional-details" />
-      <Card className={onHoverStyles}>
+      <Card className={onHoverStyles} shadowOnHover={canEdit}>
         <div className="px-4">
           <EmployeeIdRow data={professionalDetails} />
           <DateOfJoiningRow data={professionalDetails} />

@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import clsx from 'clsx';
-import React, { ReactElement } from 'react';
+import { ChangeEvent, FC, ReactElement } from 'react';
 import { useController } from 'react-hook-form';
 
 export type CheckboxProps = {
   name: string;
   label?: ReactElement | string;
   className?: string;
+  inputClassName?: string;
   error?: string;
   loading?: boolean;
   disabled?: boolean;
@@ -15,12 +17,12 @@ export type CheckboxProps = {
   labelDescription?: string;
   transform?: {
     input: (value: any) => boolean;
-    output: (e: React.ChangeEvent<HTMLInputElement>) => any;
+    output: (e: ChangeEvent<HTMLInputElement>) => any;
   };
   defaultChecked?: boolean;
 };
 
-const Checkbox: React.FC<CheckboxProps> = ({
+const Checkbox: FC<CheckboxProps> = ({
   name,
   className = '',
   dataTestId = '',
@@ -32,6 +34,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   labelDescription,
   transform,
   defaultChecked,
+  inputClassName,
   ...rest
 }) => {
   const { field } = useController({ name, control });
@@ -45,7 +48,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
     <div className="flex items-center">
       <input
         type="checkbox"
-        className="h-5 w-5 rounded-xl flex-shrink-0 cursor-pointer accent-primary-600"
+        className={`h-5 w-5 rounded-xl flex-shrink-0 cursor-pointer accent-primary-600 ${inputClassName}`}
         name={field.name}
         ref={field.ref}
         disabled={loading || disabled}

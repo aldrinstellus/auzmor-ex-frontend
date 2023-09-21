@@ -1,23 +1,23 @@
-import React, { useRef } from 'react';
+import { FC, useRef } from 'react';
 import InfoRow from '../InfoRow';
 import moment from 'moment';
 import * as yup from 'yup';
 import 'moment-timezone';
 import useRole from 'hooks/useRole';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateCurrentUser } from 'queries/users';
-import Icon from 'components/Icon';
-import { twConfig } from 'utils/misc';
-import { toastConfig } from '../utils';
+import { updateCurrentUser, updateUserById } from 'queries/users';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Layout, { FieldType } from 'components/Form';
+import { useParams } from 'react-router-dom';
+import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 
 type AppProps = {
   data: any;
 };
 
-const DateOfJoiningRow: React.FC<AppProps> = ({ data }) => {
+const DateOfJoiningRow: FC<AppProps> = ({ data }) => {
+  const { userId = '' } = useParams();
   const queryClient = useQueryClient();
   const ref = useRef<any>(null);
   const { isAdmin } = useRole();
@@ -27,19 +27,19 @@ const DateOfJoiningRow: React.FC<AppProps> = ({ data }) => {
   });
 
   const updateUserJoinDateMutation = useMutation({
-    mutationFn: updateCurrentUser,
+    mutationFn: userId
+      ? (data: any) => updateUserById(userId, data)
+      : updateCurrentUser,
     mutationKey: ['update-user-joinDate-mutation'],
-    onError: (error: any) => {},
-    onSuccess: async (response: any) => {
-      toastConfig(
-        <Icon
-          name="closeCircleOutline"
-          color={twConfig.theme.colors.primary['500']}
-          size={20}
-        />,
-      );
+    onError: (_error: any) => {},
+    onSuccess: async (_response: any) => {
+      successToastConfig();
       ref?.current?.setEditMode(false);
-      await queryClient.invalidateQueries(['current-user-me']);
+      if (userId) {
+        await queryClient.invalidateQueries(['user', userId]);
+      } else {
+        await queryClient.invalidateQueries(['current-user-me']);
+      }
     },
   });
 

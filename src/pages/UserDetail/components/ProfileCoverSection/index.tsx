@@ -1,5 +1,5 @@
 import Card from 'components/Card';
-import React, { useRef, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import Avatar from 'components/Avatar';
 import Divider, { Variant as DividerVariant } from 'components/Divider';
 import Button, {
@@ -20,7 +20,6 @@ import {
   clearInputValue,
   getBlobUrl,
   getCoverImage,
-  getEditSection,
   getFullName,
   getProfileImage,
   twConfig,
@@ -32,7 +31,7 @@ import {
   UserStatus,
   updateCurrentUser,
   updateRoleToAdmin,
-  updateStatus,
+  updateUserById,
   useResendInvitation,
 } from 'queries/users';
 import UserProfileDropdown from 'components/UserProfileDropdown';
@@ -40,12 +39,11 @@ import useHover from 'hooks/useHover';
 import useRole from 'hooks/useRole';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
-import { PRIMARY_COLOR, TOAST_AUTOCLOSE_TIME } from 'utils/constants';
+import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import DeletePeople from 'pages/Users/components/DeleteModals/People';
 import ReactivatePeople from 'pages/Users/components/ReactivateModal/Reactivate';
 import DeactivatePeople from 'pages/Users/components/DeactivateModal/Deactivate';
-import useAuth from 'hooks/useAuth';
 import {
   FacebookIcon,
   InstagramIcon,
@@ -53,25 +51,22 @@ import {
   TwitterIcon,
   WebIcon,
 } from 'components/Icon/socialIcons';
+import { useParams } from 'react-router-dom';
+import SocialLinksModal from 'components/ProfileInfo/components/SocialLinksModal';
+import useAuth from 'hooks/useAuth';
 
 export interface IProfileCoverProps {
   userDetails: Record<string, any>;
-  canEdit: boolean;
-  setSearchParams?: any;
-  searchParams?: URLSearchParams;
 }
 
-const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
-  userDetails,
-  canEdit,
-  setSearchParams,
-  searchParams,
-}) => {
+const ProfileCoverSection: FC<IProfileCoverProps> = ({ userDetails }) => {
   const [file, setFile] = useState<IUpdateProfileImage | Record<string, any>>(
     {},
   );
+  const { userId = '' } = useParams();
   const { user } = useAuth();
-  const { isAdmin } = useRole();
+  const { isOwner, isOwnerOrAdmin } = useRole({ userId: userId || user?.id });
+  const canEdit = isOwnerOrAdmin;
   const queryClient = useQueryClient();
   const [openEditProfile, openEditProfileModal, closeEditProfileModal] =
     useModal(undefined, false);
@@ -79,6 +74,9 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
     undefined,
     false,
   );
+  const [socialLink, showSocialLinks, closeSocialLinks] = useModal();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isHovered, eventHandlers] = useHover();
   const [isCoverImageRemoved, setIsCoverImageRemoved] = useState(false);
 
@@ -95,7 +93,9 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
     : file?.coverImage && getBlobUrl(file?.coverImage);
 
   const deleteCoverImageMutation = useMutation({
-    mutationFn: updateCurrentUser,
+    mutationFn: userId
+      ? (data: any) => updateUserById(userId, data)
+      : updateCurrentUser,
     mutationKey: ['update-users-mutation'],
     onError: (error: any) => {
       console.log('API call resulted in error: ', error);
@@ -157,41 +157,6 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
     useModal();
 
   const resendInviteMutation = useResendInvitation();
-  const updateUserStatusMutation = useMutation({
-    mutationFn: updateStatus,
-    mutationKey: ['update-user-status'],
-    onSuccess: () => {
-      queryClient.invalidateQueries(['user', userDetails?.id]);
-      toast(
-        <SuccessToast
-          content={`User has been ${
-            (userDetails?.status as any) === UserStatus.Inactive
-              ? 'reactivated'
-              : 'deactivated'
-          }`}
-          dataTestId="deactivate -toaster-msg"
-        />,
-        {
-          closeButton: (
-            <Icon
-              name="closeCircleOutline"
-              color="text-primary-500"
-              size={20}
-            />
-          ),
-          style: {
-            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
-            borderRadius: '6px',
-            display: 'flex',
-            alignItems: 'center',
-          },
-          autoClose: TOAST_AUTOCLOSE_TIME,
-          transition: slideInAndOutTop,
-          theme: 'dark',
-        },
-      );
-    },
-  });
 
   const updateUserRoleMutation = useMutation({
     mutationFn: updateRoleToAdmin,
@@ -249,7 +214,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           )}
         </div>
 
-        <div className="absolute left-8 bottom-4">
+        <div className="absolute left-8 bottom-3">
           <Avatar
             name={getFullName(userDetails)}
             image={getProfileImage(userDetails, 'large')}
@@ -270,11 +235,11 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
             >
               {getFullName(userDetails)}
             </div>
-            <div className="flex space-x-4">
+            <div className="flex space-x-2 mt-[-2px]">
               <Button
                 className="flex"
-                leftIconClassName="mr-1"
                 label={'Follow'}
+                labelClassName={'text-sm'}
                 leftIcon={'addCircle'}
                 size={ButtonSize.Small}
                 variant={ButtonVariant.Secondary}
@@ -284,7 +249,7 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
               <UserProfileDropdown
                 triggerNode={
                   <div
-                    className="rounded-[24px] font-bold border py-[8px] px-[16px] border-[#e5e5e5] cursor-pointer"
+                    className="rounded-[24px] font-bold border py-[7.5px] px-[16px] text-sm border-[#e5e5e5] cursor-pointer"
                     data-testid="profile-more-cta"
                   >
                     More
@@ -293,7 +258,6 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                 id={userDetails.id}
                 role={userDetails.role}
                 status={userDetails.status}
-                isAdmin={isAdmin}
                 isHovered={isHovered}
                 showOnHover={false}
                 className="mt-[3.5%] right-8 border border-[#e5e5e5]"
@@ -330,10 +294,13 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
               />
             </div>
           </div>
-          <div className="flex space-x-6 items-center">
+          <div className="flex space-x-3 items-center mt-[4px]">
             <div className="flex space-x-2 items-center">
-              <IconWrapper type={Type.Square} className="cursor-pointer">
-                <Icon name="briefcase" size={16} color="text-primary-500" />
+              <IconWrapper
+                type={Type.Square}
+                className="cursor-pointer rounded-6xl"
+              >
+                <Icon name="userRole" size={15} color="text-primary-500" />
               </IconWrapper>
               <div
                 className="text-sm font-normal text-neutral-400"
@@ -342,10 +309,13 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                 {userDetails?.designation || '-'}
               </div>
             </div>
-            <Divider variant={DividerVariant.Vertical} className="h-8" />
+            <Divider variant={DividerVariant.Vertical} className="!h-6" />
             <div className="flex space-x-2 items-center">
-              <IconWrapper type={Type.Square} className="cursor-pointer">
-                <Icon name="briefcase" size={16} color="text-primary-500" />
+              <IconWrapper
+                type={Type.Square}
+                className="cursor-pointer rounded-6xl"
+              >
+                <Icon name="briefcase" size={15} color="text-primary-500" />
               </IconWrapper>
               <div
                 className="text-sm font-normal text-neutral-400"
@@ -354,10 +324,13 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
                 {userDetails?.department?.name || '-'}
               </div>
             </div>
-            <Divider variant={DividerVariant.Vertical} className="h-8" />
+            <Divider variant={DividerVariant.Vertical} className="!h-6" />
             <div className="flex space-x-2 items-center">
-              <IconWrapper type={Type.Square} className="cursor-pointer">
-                <Icon name="location" size={16} color="text-primary-500" />
+              <IconWrapper
+                type={Type.Square}
+                className="cursor-pointer rounded-6xl"
+              >
+                <Icon name="location" size={15} color="text-primary-500" />
               </IconWrapper>
               <div
                 className="text-sm font-normal text-neutral-400"
@@ -367,7 +340,15 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
               </div>
             </div>
           </div>
-          <div className="mt-3 flex items-center space-x-2">
+          <div
+            className="mt-[10px] flex items-center space-x-2 cursor-pointer"
+            onClick={(e) => {
+              if (isOwner) {
+                e.preventDefault();
+                showSocialLinks();
+              }
+            }}
+          >
             <LinkedinIcon />
             <TwitterIcon />
             <InstagramIcon />
@@ -376,23 +357,26 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
           </div>
         </div>
       </Card>
-      <EditProfileModal
-        userDetails={userDetails}
-        openEditProfile={openEditProfile}
-        openEditImageModal={openEditImageModal}
-        closeEditProfileModal={closeEditProfileModal}
-        userProfileImageRef={userProfileImageRef}
-        userCoverImageRef={userCoverImageRef}
-        key={'edit-profile'}
-        dataTestId="edit-profile"
-        isCoverImageRemoved={isCoverImageRemoved}
-        setIsCoverImageRemoved={setIsCoverImageRemoved}
-        setImageFile={setFile}
-        imageFile={file}
-      />
+      {openEditProfile && (
+        <EditProfileModal
+          userDetails={userDetails}
+          openEditProfile={openEditProfile}
+          openEditImageModal={openEditImageModal}
+          closeEditProfileModal={closeEditProfileModal}
+          userProfileImageRef={userProfileImageRef}
+          userCoverImageRef={userCoverImageRef}
+          key={'edit-profile'}
+          dataTestId="edit-profile"
+          isCoverImageRemoved={isCoverImageRemoved}
+          setIsCoverImageRemoved={setIsCoverImageRemoved}
+          setImageFile={setFile}
+          imageFile={file}
+        />
+      )}
 
       {openEditImage && (
         <EditImageModal
+          userId={userId}
           title={getBlobFile ? 'Apply Changes' : 'Reposition'}
           openEditImage={openEditImage}
           closeEditImageModal={closeEditImageModal}
@@ -457,6 +441,13 @@ const ProfileCoverSection: React.FC<IProfileCoverProps> = ({
             }}
           />
         </div>
+      )}
+      {socialLink && (
+        <SocialLinksModal
+          open={socialLink}
+          closeModal={closeSocialLinks}
+          socialLinks={{}}
+        />
       )}
       <DeletePeople
         open={openDelete}

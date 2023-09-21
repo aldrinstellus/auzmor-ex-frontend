@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { FC, RefObject, useRef } from 'react';
 import IconButton, {
   Variant as IconVariant,
   Size as SizeVariant,
@@ -44,7 +44,7 @@ interface CommentFormProps {
   mode?: PostCommentMode;
   setEditComment?: (edit: boolean) => void;
   commentData?: IComment;
-  inputRef?: React.RefObject<HTMLInputElement> | null;
+  inputRef?: RefObject<HTMLInputElement> | null;
   media?: IMedia[];
   removeMedia?: () => void;
   files?: File[];
@@ -63,7 +63,7 @@ interface IUpdateCommentPayload {
   files: string[];
 }
 
-export const CommentsRTE: React.FC<CommentFormProps> = ({
+export const CommentsRTE: FC<CommentFormProps> = ({
   className = '',
   entityId,
   entityType,
@@ -84,7 +84,8 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
     setComment,
     updateComment: updateStoredComment,
   } = useCommentStore();
-  const { feed, updateFeed } = useFeedStore();
+  const getPost = useFeedStore((state) => state.getPost);
+  const updateFeed = useFeedStore((state) => state.updateFeed);
   const queryClient = useQueryClient();
   const quillRef = useRef<ReactQuill>(null);
   const { uploadMedia } = useUpload();
@@ -95,7 +96,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
     onError: (error: any) => {
       console.log(error);
     },
-    onSuccess: async (data: any, variables, context) => {
+    onSuccess: async (data: any, _variables, _context) => {
       if (mode === PostCommentMode.SendWish) {
         queryClient.invalidateQueries(['celebrations'], {
           exact: false,
@@ -118,9 +119,10 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
       );
       if (entityType === 'post' && entityId) {
         setComment({ ...comment, [data.id]: { ...data } });
+        const post = getPost(entityId);
         updateFeed(
           entityId,
-          produce(feed[entityId], (draft) => {
+          produce(post, (draft) => {
             draft.commentsCount = draft.commentsCount + 1;
           }),
         );
@@ -189,7 +191,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
         },
       );
     },
-    onSuccess: (data: any) => {
+    onSuccess: (_data: any) => {
       toast(
         <SuccessToast
           content={`${
@@ -225,6 +227,7 @@ export const CommentsRTE: React.FC<CommentFormProps> = ({
     const hashtagList: string[] = [];
     if (files.length) {
       const uploadedMedia = await uploadMedia(files, EntityType.Comment);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       fileIds = uploadedMedia.map((media: IMedia) => media.id);
     }
     if (mode === PostCommentMode.Create || mode === PostCommentMode.SendWish) {

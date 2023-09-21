@@ -1,4 +1,11 @@
-import React, { ReactNode, createContext, useRef, useState } from 'react';
+import {
+  FC,
+  ReactNode,
+  RefObject,
+  createContext,
+  useRef,
+  useState,
+} from 'react';
 import { DeltaStatic } from 'quill';
 import { getBlobUrl, getMediaObj } from 'utils/misc';
 import { IAudience } from 'queries/post';
@@ -21,7 +28,7 @@ export enum CreatePostFlow {
 export enum POST_TYPE {
   Media = 'MEDIA',
   Poll = 'POLL',
-  Shoutout = 'SHOUTOUT',
+  Shoutout = 'SHOUT_OUT',
 }
 
 export interface IAnnouncement {
@@ -34,7 +41,7 @@ export const VIDEO_FILE_SIZE_LIMIT = 2; //GB
 export const MEDIA_LIMIT = 10; // number of media can be uploaded
 
 export interface IPollOption {
-  id?: string;
+  _id?: string; //Has to be reverted to id once BE is fixed
   text: string;
   votes?: number;
 }
@@ -58,8 +65,8 @@ export interface ICreatePostContext {
   files: File[];
   setFiles: (files: File[]) => void;
   setMedia: (media: IMedia[]) => void;
-  inputImgRef: React.RefObject<HTMLInputElement> | null;
-  inputVideoRef: React.RefObject<HTMLInputElement> | null;
+  inputImgRef: RefObject<HTMLInputElement> | null;
+  inputVideoRef: RefObject<HTMLInputElement> | null;
   setUploads: (uploads: File[], isCoverImage?: boolean) => void;
   replaceMedia: (index: number, data: File) => void;
   removeMedia: (index: number, callback?: () => void) => void;
@@ -208,9 +215,7 @@ export const CreatePostContext = createContext<ICreatePostContext>({
   setPostType: () => {},
 });
 
-const CreatePostProvider: React.FC<ICreatePostProviderProps> = ({
-  children,
-}) => {
+const CreatePostProvider: FC<ICreatePostProviderProps> = ({ children }) => {
   const [activeFlow, setActiveFlow] = useState(CreatePostFlow.CreatePost);
   const [announcement, setAnnouncement] = useState<null | IAnnouncement>(null);
   const [editorValue, setEditorValue] = useState<IEditorValue>({

@@ -1,12 +1,13 @@
 import clsx from 'clsx';
 import Avatar from 'components/Avatar';
-import React from 'react';
+import { FC } from 'react';
 
 export type AvatarListProps = {
   users: any;
   moreCount?: number;
   size?: number;
   className?: string;
+  avatarClassName?: string;
   onClick?: () => null;
   dataTestId?: string;
 };
@@ -17,10 +18,11 @@ interface IUser {
   image: string;
 }
 
-const AvatarList: React.FC<AvatarListProps> = ({
+const AvatarList: FC<AvatarListProps> = ({
   users,
   moreCount = 0,
   className = '',
+  avatarClassName = '',
   size = 48,
   onClick = () => {},
   dataTestId = '',
@@ -37,16 +39,19 @@ const AvatarList: React.FC<AvatarListProps> = ({
               name={user?.name}
               image={user?.image}
               active={false}
+              className={`border-[2px] border-white ${avatarClassName}`}
             />
           );
         })
         .slice(0, 2)}
-      {users.length > 2 && (
+      {moreCount > 2 && (
         <Avatar
           size={size}
           name={`+${moreCount - 2}`}
           onClick={onClick}
           active={false}
+          className={`border-[2px] border-white ${avatarClassName}`}
+          isCounter
         />
       )}
     </div>

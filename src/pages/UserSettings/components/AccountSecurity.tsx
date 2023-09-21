@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import Button, { Type } from 'components/Button';
 import Divider from 'components/Divider';
 import Layout, { FieldType } from 'components/Form';
 import Icon from 'components/Icon';
 import { changePassword } from 'queries/account';
-import { Link } from 'react-router-dom';
 import { Variant as InputVariant } from 'components/Input';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -16,6 +15,7 @@ import { getSubDomain, twConfig } from 'utils/misc';
 import { useGetSSOFromDomain } from 'queries/organization';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
+import Card from 'components/Card';
 
 interface IForm {
   currentPassword: string;
@@ -42,9 +42,7 @@ const schema = yup.object({
     .oneOf([yup.ref('newPassword')], 'Passwords do not match'),
 });
 
-const AccountSecurity: React.FC<IAccountSecurity> = ({
-  setIsHeaderVisible,
-}) => {
+const AccountSecurity: FC<IAccountSecurity> = ({ setIsHeaderVisible }) => {
   const [err, setErr] = useState(false);
 
   const domain = getSubDomain(window.location.host);
@@ -62,7 +60,7 @@ const AccountSecurity: React.FC<IAccountSecurity> = ({
           });
         }
       },
-      onSuccess: (data) => {
+      onSuccess: (_data) => {
         reset();
         toast(<SuccessToast content={'Password updated successfully'} />, {
           closeButton: (
@@ -130,6 +128,7 @@ const AccountSecurity: React.FC<IAccountSecurity> = ({
       errorDataTestId: 'change-password-error',
       showChecks: false,
       disabled: isLoading || data?.result?.data?.sso?.active,
+      inputClassName: 'h-[44px]',
     },
     {
       type: FieldType.Password,
@@ -146,6 +145,7 @@ const AccountSecurity: React.FC<IAccountSecurity> = ({
       dataTestId: 'change-password-new-password',
       errorDataTestId: 'change-password-error',
       disabled: isLoading || data?.result?.data?.sso?.active,
+      inputClassName: 'h-[44px]',
     },
   ];
 
@@ -166,6 +166,7 @@ const AccountSecurity: React.FC<IAccountSecurity> = ({
       errorDataTestId: 'change-password-error',
       showChecks: false,
       disabled: isLoading || data?.result?.data?.sso?.active,
+      inputClassName: 'h-[44px]',
     },
   ];
 
@@ -179,64 +180,70 @@ const AccountSecurity: React.FC<IAccountSecurity> = ({
   const [isSettings, setIsSettings] = useState(false);
 
   return (
-    <div className="w-full">
-      {!isSettings ? (
-        <div className="flex justify-between items-center">
-          <div>Password</div>
-          <Button
-            label="Change Password"
-            onClick={() => {
-              setIsSettings(true);
-              setIsHeaderVisible(true);
-            }}
-            dataTestId="change-password-btn"
-          />
-        </div>
-      ) : (
-        <div className="flex justify-between items-center space-x-14 w-full">
-          <div className="bg-white rounded-9xl w-full">
-            <div
-              className="flex mb-4 cursor-pointer"
+    <Card className="py-4 px-6 space-y-4">
+      <div className="text-neutral-900 text-base font-bold">
+        Sign in & Security
+      </div>
+      <Divider />
+      <div className="w-full">
+        {!isSettings ? (
+          <div className="flex justify-between items-center">
+            <div>Password</div>
+            <Button
+              label="Change Password"
               onClick={() => {
-                setIsSettings(false);
-                setIsHeaderVisible(false);
+                setIsSettings(true);
+                setIsHeaderVisible(true);
               }}
-            >
-              <Icon className="rotate-90" name={'arrowDown'} />
-              <div className="text-base font-bold">Change Password</div>
-            </div>
-            <Divider className="mb-10" />
-            <form className="" onSubmit={handleSubmit(onSubmit)}>
-              <Layout fields={passwordField} className="mb-4" />
-              <Layout fields={confirmPasswordField} />
-              <div className="flex justify-between items-center mt-28">
-                <div
-                  className="text-primary-500 text-base font-bold"
-                  data-testId="forgot-password-cta"
-                >
-                  <a
-                    href={`${process.env.REACT_APP_BASE_URL}/forgot-password`}
-                    className="text-primary-500"
-                  >
-                    Forgot Password
-                  </a>
-                </div>
-                <div className="">
-                  <Button
-                    type={Type.Submit}
-                    label={'Change Password'}
-                    className="w-full"
-                    loading={changePasswordMutation.isLoading}
-                    disabled={!isValid}
-                    dataTestId="change-password-btn"
-                  />
-                </div>
-              </div>
-            </form>
+              dataTestId="change-password-btn"
+            />
           </div>
-        </div>
-      )}
-    </div>
+        ) : (
+          <div className="flex justify-between items-center space-x-14 w-full">
+            <div className="bg-white rounded-9xl w-full">
+              <div
+                className="flex mb-4 cursor-pointer"
+                onClick={() => {
+                  setIsSettings(false);
+                  setIsHeaderVisible(false);
+                }}
+              >
+                <Icon className="rotate-90" name={'arrowDown'} />
+                <div className="text-base font-bold">Change Password</div>
+              </div>
+              <Divider className="mb-10" />
+              <form className="" onSubmit={handleSubmit(onSubmit)}>
+                <Layout fields={passwordField} className="mb-4" />
+                <Layout fields={confirmPasswordField} />
+                <div className="flex justify-between items-center mt-28">
+                  <div
+                    className="text-primary-500 text-base font-bold"
+                    data-testId="forgot-password-cta"
+                  >
+                    <a
+                      href={`${process.env.REACT_APP_BASE_URL}/forgot-password`}
+                      className="text-primary-500"
+                    >
+                      Forgot Password
+                    </a>
+                  </div>
+                  <div className="">
+                    <Button
+                      type={Type.Submit}
+                      label={'Change Password'}
+                      className="w-full"
+                      loading={changePasswordMutation.isLoading}
+                      disabled={!isValid}
+                      dataTestId="change-password-btn"
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    </Card>
   );
 };
 

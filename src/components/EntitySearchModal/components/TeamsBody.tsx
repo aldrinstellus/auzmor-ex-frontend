@@ -2,7 +2,7 @@ import Divider from 'components/Divider';
 import Layout, { FieldType } from 'components/Form';
 import Spinner from 'components/Spinner';
 import { useDebounce } from 'hooks/useDebounce';
-import React, { ReactNode, useEffect, useState } from 'react';
+import { ChangeEvent, FC, ReactNode, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { ITeam, useInfiniteTeams } from 'queries/teams';
 import TeamRow from './TeamRow';
@@ -16,7 +16,7 @@ interface ITeamsBodyProps {
   dataTestId?: string;
 }
 
-const TeamsBody: React.FC<ITeamsBodyProps> = ({
+const TeamsBody: FC<ITeamsBodyProps> = ({
   entityRenderer,
   selectedTeamIds = [],
   dataTestId,
@@ -37,8 +37,10 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
   const debouncedSearchValue = useDebounce(teamSearch || '', 500);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteTeams({
-      q: debouncedSearchValue,
-      category: selectedCategories,
+      q: {
+        q: debouncedSearchValue,
+        category: selectedCategories,
+      },
     });
   const teamsData = data?.pages
     .flatMap((page) => {
@@ -109,7 +111,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
     !!!teamsData?.length && debouncedSearchValue !== '';
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-[489px]">
       <div className="flex flex-col py-4 px-6">
         <Layout
           fields={[
@@ -121,13 +123,14 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
               placeholder: 'Search via team name',
               isClearable: true,
               dataTestId: `select-${dataTestId}-search`,
+              inputClassName: 'text-sm py-[9px]',
             },
           ]}
           className="pb-4"
         />
         <div className="flex items-center justify-between">
           <div
-            className={`flex items-center text-neutral-500 font-medium ${
+            className={`flex items-center text-neutral-500 font-medium text-sm ${
               isControlsDisabled && 'opacity-50 pointer-events-none'
             }`}
           >
@@ -170,7 +173,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
             </div>
           </div>
           <div
-            className={`cursor-pointer text-neutral-500 font-medium hover:underline ${
+            className={`cursor-pointer text-neutral-500 text-sm font-medium hover:underline ${
               isControlsDisabled && 'opacity-50 pointer-events-none'
             }`}
             onClick={() => {
@@ -205,7 +208,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
                     input: (value: boolean) => {
                       return value;
                     },
-                    output: (e: React.ChangeEvent<HTMLInputElement>) => {
+                    output: (e: ChangeEvent<HTMLInputElement>) => {
                       if (e.target.checked) {
                         selectAllEntity();
                       } else {
@@ -267,7 +270,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
                             updateSelectAll();
                             return !!value;
                           },
-                          output: (e: React.ChangeEvent<HTMLInputElement>) => {
+                          output: (e: ChangeEvent<HTMLInputElement>) => {
                             if (e.target.checked) return team;
                             return false;
                           },

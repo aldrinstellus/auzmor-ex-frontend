@@ -1,5 +1,5 @@
 import Avatar from 'components/Avatar';
-import React, { ReactElement } from 'react';
+import { FC, ReactElement } from 'react';
 import NotificationCard from './NotificationCard';
 import {
   getNotificationMessage,
@@ -15,7 +15,7 @@ import { getProfileImage } from 'utils/misc';
 
 type NotificationCardProps = NotificationProps;
 
-const Notification: React.FC<NotificationCardProps> = ({
+const Notification: FC<NotificationCardProps> = ({
   actor,
   action,
   target,
@@ -123,7 +123,9 @@ const Notification: React.FC<NotificationCardProps> = ({
             </div>
             {/* Unread indicator (orange dot) */}
             <div className="w-2 h-2 mt-2">
-              {!isRead && <div className="bg-orange-400 rounded-full" />}
+              {!isRead && (
+                <div className="bg-orange-400 w-2 h-2 rounded-full" />
+              )}
             </div>
           </div>
         </div>

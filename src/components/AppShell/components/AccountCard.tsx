@@ -1,4 +1,3 @@
-import React from 'react';
 import Avatar from 'components/Avatar';
 import useAuth from 'hooks/useAuth';
 import Popover from 'components/Popover';
@@ -8,7 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import { logout } from 'queries/account';
 import { Link, useNavigate } from 'react-router-dom';
 import Icon from 'components/Icon';
-import { twConfig, userChannel } from 'utils/misc';
+import { userChannel } from 'utils/misc';
 import useRole from 'hooks/useRole';
 
 const AccountCard = () => {
@@ -37,12 +36,15 @@ const AccountCard = () => {
     <>
       <Popover
         triggerNode={
-          <Avatar
-            dataTestId="my-profile-avatar"
-            name={user?.name || 'U'}
-            size={32}
-            image={user?.profileImage}
-          />
+          <div className="flex gap-1 items-center">
+            <Avatar
+              dataTestId="my-profile-avatar"
+              name={user?.name || 'U'}
+              size={32}
+              image={user?.profileImage}
+            />
+            <Icon name="arrowDownOutline" size={16} />
+          </div>
         }
         className="-right-2 top-[52px] rounded-9xl"
         contentRenderer={(close) => (

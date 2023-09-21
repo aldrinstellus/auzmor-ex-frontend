@@ -3,10 +3,11 @@ import Button, { Variant } from 'components/Button';
 import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import Modal from 'components/Modal';
-import { IPostPayload, updatePost } from 'queries/post';
-import React from 'react';
+import { updatePost } from 'queries/post';
+import ErrorWarningPng from 'images/error-warning-line.png';
 import { useFeedStore } from 'stores/feedStore';
 import { produce } from 'immer';
+import { FC } from 'react';
 
 type AppProps = {
   open: boolean;
@@ -14,22 +15,19 @@ type AppProps = {
   data: Record<string, any>;
 };
 
-const ChangeToRegularPostModal: React.FC<AppProps> = ({
-  open,
-  closeModal,
-  data,
-}) => {
+const ChangeToRegularPostModal: FC<AppProps> = ({ open, closeModal, data }) => {
   const queryClient = useQueryClient();
-  const { feed, setFeed, updateFeed } = useFeedStore();
+  const getPost = useFeedStore((state) => state.getPost);
+  const updateFeed = useFeedStore((state) => state.updateFeed);
 
   const removeAnnouncementMutation = useMutation({
     mutationKey: ['removeAnnouncementMutation', data.id],
     mutationFn: (payload: any) => updatePost(payload.id || '', payload),
     onMutate: (variables) => {
-      const previousPost = feed[variables.id!];
+      const previousPost = getPost(variables.id);
       updateFeed(
         variables.id!,
-        produce(feed[variables.id!], (draft) => {
+        produce(getPost(variables.id), (draft) => {
           (draft.announcement = { end: '' }), (draft.isAnnouncement = false);
         }),
       );
@@ -54,18 +52,13 @@ const ChangeToRegularPostModal: React.FC<AppProps> = ({
         <Icon
           name="close"
           onClick={closeModal}
-          disabled={true}
+          size={16}
           dataTestId="changeto-regularpost-closemodal"
         />
       </div>
       <Divider />
       <div className="flex flex-col gap-y-4 items-center justify-center text-neutral-900 text-base p-6">
-        <Icon
-          name="infoCircle"
-          color="text-[#3F83F8]"
-          size={66}
-          disabled={true}
-        />
+        <img src={ErrorWarningPng} width={66} height={66} />
         <p className="font-semibold">
           Are you sure you want to change this announcement to a regular post?
         </p>

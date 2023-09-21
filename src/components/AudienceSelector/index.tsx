@@ -4,8 +4,7 @@ import Icon from 'components/Icon';
 import { AudienceFlow } from 'components/PostBuilder/components/Audience';
 import useRole from 'hooks/useRole';
 import { useOrganization } from 'queries/organization';
-import React, { useCallback, useEffect } from 'react';
-import _ from 'lodash';
+import { FC, useEffect } from 'react';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 
 interface IAudienceSelectorProps {
@@ -15,7 +14,7 @@ interface IAudienceSelectorProps {
   setIsEveryoneSelected: (value: boolean) => void;
 }
 
-const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
+const AudienceSelector: FC<IAudienceSelectorProps> = ({
   audienceFlow,
   setAudienceFlow,
   isEveryoneSelected,
@@ -28,7 +27,10 @@ const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
   const [teams, channels, users] = form!.watch(['teams', 'channels', 'users']);
 
   useEffect(() => {
-    if (!isAdmin && !!data?.adminSettings?.postingControls.limitGlobalPosting) {
+    if (
+      !isAdmin &&
+      !!data?.adminSettings?.postingControls?.limitGlobalPosting
+    ) {
       setIsEveryoneSelected(false);
     }
   }, [data]);
@@ -41,7 +43,7 @@ const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
       subTitle: 'Anyone who is a part of this organisation can see this post.',
       onClick: () => setIsEveryoneSelected(true),
       isHidden:
-        data?.adminSettings?.postingControls.limitGlobalPosting && !isAdmin,
+        data?.adminSettings?.postingControls?.limitGlobalPosting && !isAdmin,
       isSelected: isEveryoneSelected,
       selectedCount: 0,
       dataTestId: 'audience-selection-everyone',

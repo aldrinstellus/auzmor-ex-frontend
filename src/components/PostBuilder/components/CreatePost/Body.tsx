@@ -5,7 +5,7 @@ import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
 import useAuth from 'hooks/useAuth';
 import { IPost } from 'queries/post';
 import { DeltaStatic } from 'quill';
-import React, { ForwardedRef, Ref, useContext } from 'react';
+import { ForwardedRef, RefObject, forwardRef, useContext } from 'react';
 import ReactQuill from 'react-quill';
 import RichTextEditor from '../RichTextEditor';
 import Toolbar from '../RichTextEditor/toolbar';
@@ -18,11 +18,11 @@ import Button, { Size, Variant } from 'components/Button';
 export interface IBodyProps {
   data?: IPost;
   dataTestId?: string;
-  quillRef: React.RefObject<ReactQuill>;
+  quillRef: RefObject<ReactQuill>;
   mode: PostBuilderMode;
 }
 
-const Body = React.forwardRef(
+const Body = forwardRef(
   (
     { data, dataTestId, quillRef, mode }: IBodyProps,
     ref: ForwardedRef<ReactQuill>,
@@ -40,27 +40,27 @@ const Body = React.forwardRef(
     const { currentTimezone } = useCurrentTimezone();
     const updateContext = () => {
       setEditorValue({
-        text: (ref as React.RefObject<ReactQuill>)
+        text: (ref as RefObject<ReactQuill>)
           .current!.makeUnprivilegedEditor(
-            (ref as React.RefObject<ReactQuill>).current!.getEditor(),
+            (ref as RefObject<ReactQuill>).current!.getEditor(),
           )
           .getText(),
-        html: (ref as React.RefObject<ReactQuill>).current
+        html: (ref as RefObject<ReactQuill>).current
           ?.makeUnprivilegedEditor(
-            (ref as React.RefObject<ReactQuill>)!.current!.getEditor(),
+            (ref as RefObject<ReactQuill>)!.current!.getEditor(),
           )
           .getHTML(),
-        json: (ref as React.RefObject<ReactQuill>).current
+        json: (ref as RefObject<ReactQuill>).current
           ?.makeUnprivilegedEditor(
-            (ref as React.RefObject<ReactQuill>)!.current!.getEditor(),
+            (ref as RefObject<ReactQuill>)!.current!.getEditor(),
           )
           .getContents(),
       });
     };
     return (
       <div className="text-sm text-neutral-900">
-        <div className="max-h-[75vh] overflow-y-auto">
-          <div className="flex justify-between items-center">
+        <div className="max-h-[75vh] overflow-y-auto flex flex-col gap-2">
+          <div className="flex justify-between gap-3 items-center pt-6 px-6">
             <Actor
               contentMode={CREATE_POST}
               dataTestId={`${dataTestId}-creatorname`}
@@ -72,7 +72,7 @@ const Body = React.forwardRef(
                 }
               }
             />
-            <div className="flex items-center mr-6 cursor-pointer">
+            <div className="flex items-center cursor-pointer">
               {audience.length > 0 ? (
                 <div className="flex gap-2">
                   <Button
@@ -125,23 +125,22 @@ const Body = React.forwardRef(
             </div>
           </div>
           {schedule && (
-            <div className="px-3 py-2 bg-primary-50 flex justify-between mx-4 mb-4">
-              <div className="flex">
-                <div className="mr-2">
-                  <Icon name="calendarTwo" size={16} />
-                </div>
-                <div>
-                  Post scheduled for{' '}
-                  {getTimeInScheduleFormat(
-                    new Date(schedule.date),
-                    schedule.time,
-                    schedule.timezone,
-                    currentTimezone,
-                  )}
-                </div>
+            <div className="px-3 py-2 bg-primary-50 flex items-center gap-2 mx-6 my-2">
+              <div>
+                <Icon name="calendarTwo" size={16} />
               </div>
-              <div className="flex">
-                <div className="mr-4">
+              <div className="flex-1">
+                Post scheduled for{' '}
+                {getTimeInScheduleFormat(
+                  new Date(schedule.date),
+                  schedule.time,
+                  schedule.timezone,
+                  currentTimezone,
+                )}
+              </div>
+
+              <div className="flex gap-2">
+                <div>
                   <Icon
                     name="edit"
                     size={16}

@@ -1,12 +1,6 @@
-import React, { ReactNode } from 'react';
-import { EntitySearchModalType, IAudienceForm } from '..';
+import { FC, ReactNode } from 'react';
+import { EntitySearchModalType } from '..';
 import MembersBody from './MembersBody';
-import {
-  Control,
-  UseFormResetField,
-  UseFormSetValue,
-  UseFormWatch,
-} from 'react-hook-form';
 import TeamsBody from './TeamsBody';
 import ChannelsBody from './ChannelsBody';
 
@@ -17,15 +11,19 @@ interface IEntitySearchModalBodyProps {
   selectedChannelIds?: string[];
   selectedTeamIds?: string[];
   entitySearchLabel?: string;
+  hideCurrentUser?: boolean;
+  showJobTitleFilter?: boolean;
 }
 
-const EntitySearchModalBody: React.FC<IEntitySearchModalBodyProps> = ({
+const EntitySearchModalBody: FC<IEntitySearchModalBodyProps> = ({
   entityType,
   entityRenderer,
   selectedMemberIds = [],
   selectedChannelIds = [],
   selectedTeamIds = [],
   entitySearchLabel,
+  hideCurrentUser,
+  showJobTitleFilter,
 }) => {
   switch (entityType) {
     case EntitySearchModalType.User:
@@ -33,6 +31,8 @@ const EntitySearchModalBody: React.FC<IEntitySearchModalBodyProps> = ({
         <MembersBody
           entityRenderer={entityRenderer}
           selectedMemberIds={selectedMemberIds}
+          hideCurrentUser={hideCurrentUser}
+          showJobTitleFilter={showJobTitleFilter}
           dataTestId="user"
           entitySearchLabel={entitySearchLabel}
         />

@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import { FC, memo, useContext, useRef } from 'react';
 import momentTz from 'moment-timezone';
 import Card from 'components/Card';
 import Icon from 'components/Icon';
@@ -22,7 +22,7 @@ interface CelebrationWidgetProps {
   type: CELEBRATION_TYPE;
 }
 
-const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
+const CelebrationWidget: FC<CelebrationWidgetProps> = ({ type }) => {
   const { user } = useContext(AuthContext);
   const { currentTimezone } = useCurrentTimezone();
   const userTimezone = user?.timezone || currentTimezone || 'Asia/Kolkata';
@@ -34,7 +34,7 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
 
   const isBirthday = type === CELEBRATION_TYPE.Birthday;
 
-  const { data, isLoading } = useCelebrations(
+  const { data, isLoading, hasNextPage } = useCelebrations(
     isFiltersEmpty({
       limit: 3,
       type: isBirthday ? 'BIRTHDAY' : 'WORK_ANNIVERSARY',
@@ -184,7 +184,7 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
                       ))}
                     </>
                   )}
-                  {isAllCelebrationsDisplyed && (
+                  {isAllCelebrationsDisplyed && hasNextPage && (
                     <Button
                       variant={Variant.Secondary}
                       size={Size.Small}
@@ -214,4 +214,4 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
   );
 };
 
-export default CelebrationWidget;
+export default memo(CelebrationWidget);

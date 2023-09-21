@@ -1,10 +1,4 @@
-import React, {
-  ReactNode,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import { FC, ReactNode, useContext, useEffect, useMemo, useRef } from 'react';
 import Modal from 'components/Modal';
 import CreatePost from 'components/PostBuilder/components/CreatePost';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -12,7 +6,6 @@ import {
   IMention,
   IPost,
   IPostPayload,
-  IShoutoutRecipient,
   createPost,
   updatePost,
 } from 'queries/post';
@@ -24,6 +17,7 @@ import {
   CreatePostContext,
   IEditorValue,
   IMedia,
+  POST_TYPE,
 } from 'contexts/CreatePostContext';
 import { PostBuilderMode } from '..';
 import { EntityType } from 'queries/files';
@@ -64,7 +58,7 @@ interface ICreatePostModal {
   customActiveFlow?: CreatePostFlow;
 }
 
-const CreatePostModal: React.FC<ICreatePostModal> = ({
+const CreatePostModal: FC<ICreatePostModal> = ({
   open,
   closeModal,
   data,
@@ -93,6 +87,8 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     setAudience,
     shoutoutUserIds,
     setShoutoutUserIds,
+    postType,
+    setPostType,
   } = useContext(CreatePostContext);
 
   const mediaRef = useRef<IMedia[]>([]);
@@ -119,6 +115,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
   useEffect(() => {
     if (data) {
       setEditorValue(data.content.editor);
+      setPostType(data.type);
       if (data.isAnnouncement) {
         setAnnouncement({ label: 'Custom Date', value: data.announcement.end });
       }
@@ -155,6 +152,26 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
     onError: (error) => {
       clearPostContext();
       closeModal();
+      toast(
+        <FailureToast
+          content={`Error while trying to create post`}
+          dataTestId="comment-toaster"
+        />,
+        {
+          closeButton: (
+            <Icon name="closeCircleOutline" color="text-red-500" size={20} />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.red['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+          theme: 'dark',
+        },
+      );
       console.log(error);
     },
     onSuccess: async ({
@@ -369,7 +386,7 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
           html: content?.html || editorValue.html,
           editor: content?.json || editorValue.json,
         },
-        type: 'UPDATE',
+        type: postType && postType !== POST_TYPE.Media ? postType : 'UPDATE',
         files: fileIds,
         mentions: mentionList || [],
         hashtags: hashtagList || [],
@@ -419,13 +436,14 @@ const CreatePostModal: React.FC<ICreatePostModal> = ({
       mediaRef.current = sortedIds.map(
         (id: string) => mediaRef.current.find((media) => media.id === id)!,
       );
+      console.log({ postType });
       updatePostMutation.mutate({
         content: {
           text: content?.text || editorValue.text,
           html: content?.html || editorValue.html,
           editor: content?.json || editorValue.json,
         },
-        type: 'UPDATE',
+        type: postType && postType !== POST_TYPE.Media ? postType : 'UPDATE',
         files: sortedIds,
         mentions: mentionList || [],
         hashtags: hashtagList || [],

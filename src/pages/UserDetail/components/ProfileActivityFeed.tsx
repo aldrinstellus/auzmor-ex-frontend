@@ -1,4 +1,3 @@
-import React from 'react';
 import Post from 'components/Post';
 import {
   useInfiniteMyProfileFeed,
@@ -9,6 +8,7 @@ import NoDataCard from './NoDataCard';
 import PostBuilder from 'components/PostBuilder';
 import SkeletonLoader from 'pages/Feed/components/SkeletonLoader';
 import { useFeedStore } from 'stores/feedStore';
+import { FC } from 'react';
 
 export interface IProfileActivityFeedProps {
   data: any;
@@ -19,7 +19,7 @@ export interface IProfileActivityFeedProps {
   pathname?: string;
 }
 
-const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
+const ProfileActivityFeed: FC<IProfileActivityFeedProps> = ({
   data,
   pathname,
   userId,
@@ -59,31 +59,29 @@ const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
       : [];
 
     return (
-      <div>
-        <CreatePostCard
-          open={open}
-          openModal={openModal}
-          closeModal={closeModal}
-        />
+      <div className="pt-2">
+        <CreatePostCard openModal={openModal} />
         <PostBuilder
           open={open}
           openModal={openModal}
           closeModal={closeModal}
         />
-        <div className="mt-4">
+        <div className="pt-6">
           {myProfileFeedLoading ? (
             <SkeletonLoader />
           ) : feedIds.length === 0 ? (
-            <NoDataCard user={data?.fullName} />
+            <div className="mt-[-0.5rem]">
+              <NoDataCard user={data?.fullName} dataType={'activity'} />
+            </div>
           ) : (
-            <>
+            <div className="flex flex-col gap-6">
               {announcementFeedIds.map((post: { id: string }) => (
                 <Post post={feed[post.id]} key={post.id} />
               ))}
               {regularFeedIds.map((post: { id: string }) => (
                 <Post post={feed[post.id]} key={post.id} />
               ))}
-            </>
+            </div>
           )}
         </div>
       </div>
@@ -119,22 +117,24 @@ const ProfileActivityFeed: React.FC<IProfileActivityFeedProps> = ({
       : [];
 
     return (
-      <div>
+      <div className="pt-2">
         {isPeopleProfileFeedLoading && <SkeletonLoader />}
-        <div className="mt-4">
+        <div className="pt-2">
           {isPeopleProfileFeedLoading ? (
             <SkeletonLoader />
           ) : feedIds.length === 0 ? (
-            <NoDataCard user={data?.fullName} />
+            <div className="mt-[-0.5rem]">
+              <NoDataCard user={data?.fullName} dataType={'activity'} />
+            </div>
           ) : (
-            <>
+            <div className="flex flex-col gap-6">
               {announcementFeedIds.map((post: { id: string }) => (
                 <Post post={feed[post.id]} key={post.id} />
               ))}
               {regularFeedIds.map((post: { id: string }) => (
                 <Post post={feed[post.id]} key={post.id} />
               ))}
-            </>
+            </div>
           )}
         </div>
       </div>

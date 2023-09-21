@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, ReactElement, useMemo } from 'react';
+import { MouseEventHandler, ReactElement, useMemo } from 'react';
 import clsx from 'clsx';
 import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
@@ -109,6 +109,10 @@ const Button = ({
     [variant, size, className, active],
   );
 
+  const iconWrapperClassName = clsx({
+    'brightness-75': disabled,
+  });
+
   return (
     <button
       type={type.toLowerCase() as any}
@@ -118,14 +122,16 @@ const Button = ({
       data-testid={dataTestId}
     >
       {leftIcon && (
-        <Icon
-          name={leftIcon}
-          color={iconColor}
-          className={leftIconClassName}
-          disabled={disabled || loading}
-          size={leftIconSize || (size === Size.Small ? 16 : 24)}
-          isActive={active}
-        />
+        <div className={iconWrapperClassName}>
+          <Icon
+            name={leftIcon}
+            color={iconColor}
+            className={leftIconClassName}
+            disabled={disabled || loading}
+            size={leftIconSize || (size === Size.Small ? 16 : 24)}
+            isActive={active}
+          />
+        </div>
       )}
 
       <div className={labelClassName}>{label}</div>

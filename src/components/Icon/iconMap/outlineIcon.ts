@@ -92,6 +92,8 @@ import SvgHomeOutline from '../components/Home/HomeOutline';
 import SvgFeedOutline from '../components/Feed/FeedOutline';
 import SvgLauncherOutline from '../components/Launcher/LauncherOutline';
 import SvgExploreOutline from '../components/Explore/ExploreOutline';
+import SvgUserRoleOutline from '../components/UserRole/UserRole';
+import SvgWarningCircleOutline from '../components/WarningCircle/WarningCircleOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -184,8 +186,10 @@ export const outlineIcon = {
   trashOutline: SvgTrashOutline,
   userManagementOutline: SvgUserManagementOutline,
   userRemoveOutline: SvgUserRemoveOutline,
+  userRole: SvgUserRoleOutline,
   usersOutline: SvgUsersOutline,
   videoOutline: SvgVideoOutline,
+  warningCirlceOutline: SvgWarningCircleOutline,
   zoomInOutline: SvgZoomInOutline,
   zoomOutOutline: SvgZoomOutOutline,
 };

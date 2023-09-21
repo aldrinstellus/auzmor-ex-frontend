@@ -1,7 +1,7 @@
 import AvatarChip, { IAvatarUser } from 'components/AvatarChip';
 import useModal from 'hooks/useModal';
-import React from 'react';
 import UserListModal from './components/UserListModal';
+import { FC } from 'react';
 
 interface IAvatarChipsProps {
   users: IAvatarUser[];
@@ -12,7 +12,7 @@ interface IAvatarChipsProps {
   dataTestId?: string;
 }
 
-const AvatarChips: React.FC<IAvatarChipsProps> = ({
+const AvatarChips: FC<IAvatarChipsProps> = ({
   users,
   showCount,
   className,
@@ -41,7 +41,7 @@ const AvatarChips: React.FC<IAvatarChipsProps> = ({
         {users.length > showCount && (
           <div
             className={`flex items-center w-fit gap-1 rounded-[24px] border-1 border-neutral-200 bg-neutral-100
-      px-2 py-3 text-primary-500 text-semibold text-sm 
+      px-3 py-2 text-primary-500 text-semibold text-sm 
       hover:border-primary-500 transition cursor-pointer ${avatarClassName}`}
             onClick={openModal}
             data-testid={`${dataTestId}morecta`}

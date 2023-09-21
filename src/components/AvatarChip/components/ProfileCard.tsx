@@ -1,18 +1,18 @@
-import React from 'react';
 import { IAvatarUser } from '..';
 import Avatar from 'components/Avatar';
 import { getFullName, getProfileImage } from 'utils/misc';
 import Icon from 'components/Icon';
+import { FC } from 'react';
 
 interface IProfileCardProps {
   user: IAvatarUser;
 }
 
-const ProfileCard: React.FC<IProfileCardProps> = ({ user }) => {
+const ProfileCard: FC<IProfileCardProps> = ({ user }) => {
   return (
     <div className="flex gap-4 min-w-[200px]">
       <Avatar
-        name={getFullName(user)}
+        name={getFullName(user) || user.email}
         image={getProfileImage(user, 'medium')}
         size={80}
       />

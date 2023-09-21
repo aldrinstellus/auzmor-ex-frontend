@@ -1,10 +1,10 @@
-import React from 'react';
 import Avatar from 'components/Avatar';
 import { getFullName, getProfileImage } from 'utils/misc';
 import useAuth from 'hooks/useAuth';
 import { Link } from 'react-router-dom';
 import Tooltip, { Variant } from 'components/Tooltip';
 import ProfileCard from './components/ProfileCard';
+import { FC } from 'react';
 
 export interface IAvatarUser {
   fullName: string;
@@ -23,7 +23,7 @@ interface IAvatarChipProps {
   dataTestId?: string;
 }
 
-const AvatarChip: React.FC<IAvatarChipProps> = ({
+const AvatarChip: FC<IAvatarChipProps> = ({
   className,
   user,
   size = 16,
@@ -46,7 +46,7 @@ const AvatarChip: React.FC<IAvatarChipProps> = ({
       >
         <div
           className={`flex items-center w-fit gap-1 rounded-[24px] border-1 border-neutral-200 bg-neutral-100
-      px-2 py-3 text-primary-500 text-semibold text-sm hover:border-primary-500 transition cursor-pointer ${className} hover:shadow-lg`}
+      px-3 py-2 text-primary-500 font-medium text-sm hover:border-primary-500 transition cursor-pointer ${className} hover:shadow-lg`}
           data-testid={`${dataTestId}${getFullName(user) || user.email}`}
         >
           <Avatar

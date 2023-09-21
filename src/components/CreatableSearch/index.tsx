@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { forwardRef, useMemo, useState } from 'react';
 import { Control, Controller, useController } from 'react-hook-form';
 import clsx from 'clsx';
 import { Select, ConfigProvider } from 'antd';
@@ -35,14 +35,14 @@ export interface ICreatableSearch {
   getPopupContainer?: any;
 }
 
-const CreatableSearch = React.forwardRef(
+const CreatableSearch = forwardRef(
   (
     {
       name,
       className = '',
       disabled = false,
       dataTestId = '',
-      addItemDataTestId = '',
+      // addItemDataTestId = '',
       error,
       control,
       label = '',
@@ -102,7 +102,9 @@ const CreatableSearch = React.forwardRef(
     );
 
     const isOptionContains = (searchValue: string) =>
-      (transformedOptions || []).find((option) => searchValue === option.label);
+      (transformedOptions || []).find(
+        (option) => searchValue.toLowerCase() === option.label.toLowerCase(),
+      );
 
     const addOptionObject =
       !disableCreate &&
@@ -181,7 +183,7 @@ const CreatableSearch = React.forwardRef(
                   onChange={(_, option) => {
                     field.onChange(option);
                   }}
-                  suffixIcon={<Icon name="arrowDown" size={18} />}
+                  suffixIcon={<Icon name="arrowDown" size={16} />}
                   className="creatable-search"
                 >
                   {(options || []).map((option) => (
@@ -193,7 +195,7 @@ const CreatableSearch = React.forwardRef(
                       {option.isNew ? (
                         <div
                           className="flex items-center justify-start"
-                          data-testid={addItemDataTestId}
+                          data-testid={`addItemDataTestId-${option.label}`}
                         >
                           <Icon name="add" size={16} color="text-neutral-900" />
                           <span className="ml-[10px] mr-[6px]">Add</span>
