@@ -305,7 +305,8 @@ const People: FC<IPeopleProps> = ({
         </div>
 
         <div className="text-neutral-500">
-          Showing {!isLoading && usersData?.length} results
+          Showing {!isLoading && data?.pages[0]?.data?.result?.totalCount}{' '}
+          results
         </div>
 
         {appliedFilters.status &&
@@ -366,6 +367,7 @@ const People: FC<IPeopleProps> = ({
                       key={user.id}
                       teamId={teamId}
                       isTeamPeople={isTeamPeople}
+                      teamMemberId={user.id}
                       {...{
                         userData: isTeamPeople
                           ? {
