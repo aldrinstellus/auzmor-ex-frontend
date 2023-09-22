@@ -66,15 +66,15 @@ const MembersBody: FC<IMembersBodyProps> = ({
     useInfiniteUsers({
       q: {
         q: debouncedSearchValue,
-        department:
+        departments:
           selectedDepartments.length > 0
             ? selectedDepartments.join(',')
             : undefined,
-        location:
+        locations:
           selectedLocations.length > 0
             ? selectedLocations.join(',')
             : undefined,
-        designation:
+        designations:
           selectedDesignations.length > 0
             ? selectedDesignations.join(',')
             : undefined,
@@ -343,11 +343,15 @@ const MembersBody: FC<IMembersBodyProps> = ({
             onClick={() => {
               setSelectedDepartments([]);
               setSelectedLocations([]);
-              Object.keys(departments).forEach((key: string) =>
+              setSelectedDesignations([]);
+              Object.keys(departments || {}).forEach((key: string) =>
                 setValue(`departments.${key}`, false),
               );
-              Object.keys(locations).forEach((key: string) =>
+              Object.keys(locations || {}).forEach((key: string) =>
                 setValue(`locations.${key}`, false),
+              );
+              Object.keys(designations || {}).forEach((key: string) =>
+                setValue(`designations.${key}`, false),
               );
             }}
             data-testid={`select-${dataTestId}-clearfilter`}
