@@ -51,7 +51,7 @@ const AudiencePopup: FC<IAudiencePopupProps> = ({
             <Icon name="noteFavourite" size={16} />
           </Menu.Button>
           <Menu.Items
-            className={`bg-white rounded-9xl shadow-lg absolute z-[99999] overflow-hidden min-w-[256px] border border-neutral-200`}
+            className={`bg-white rounded-9xl shadow-lg absolute z-[99999] overflow-hidden min-w-[256px] border border-neutral-200 outline-none`}
           >
             {({ open }) => {
               if (!data && open && !error) {
