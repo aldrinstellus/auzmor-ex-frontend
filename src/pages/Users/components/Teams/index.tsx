@@ -547,7 +547,7 @@ const Team: FC<ITeamProps> = ({
                           <div className="flex space-x-1 items-start">
                             <Icon name="briefcase" size={16} />
                             <div className="text-xs font-normal text-neutral-500">
-                              {data?.designation}
+                              {data?.designation?.name}
                             </div>
                           </div>
                         )}

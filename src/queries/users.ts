@@ -55,6 +55,11 @@ export interface IPostUsers {
   users: IPostUser[];
 }
 
+export interface IDesignation {
+  designationId: string;
+  name: string;
+}
+
 export enum UserStatus {
   Created = 'CREATED',
   Invited = 'INVITED',
@@ -107,7 +112,7 @@ export interface IGetUser {
   timeZone?: string;
   workLocation?: ILocation;
   department?: IDepartment;
-  designation?: string;
+  designation?: IDesignation | null;
   coverImage?: { blurHash: string; id: string; original: string };
   freezeEdit?: {
     department?: boolean;
