@@ -7,6 +7,7 @@ import {
 import apiService from 'utils/apiService';
 import { IDepartment } from './department';
 import { ILocation } from './location';
+import { IDesignation } from './designation';
 
 // for future filters
 export enum PeopleFilterKeys {
@@ -90,24 +91,24 @@ export interface IGetUser {
   lastName?: string;
   userName?: string;
   primaryEmail?: string;
-  org: {
+  org?: {
     id: string;
     name?: string;
     domain: string;
   };
-  workEmail: string;
+  workEmail?: string;
   profileImage?: { blurHash: string; id: string; original: string };
-  role: UserRole;
-  flags: {
+  role?: UserRole;
+  flags?: {
     isDeactivated: boolean;
     isReported: boolean;
   };
-  createdAt: string;
-  status: string;
+  createdAt?: string;
+  status?: string;
   timeZone?: string;
   workLocation?: ILocation;
   department?: IDepartment;
-  designation?: string;
+  designation?: IDesignation;
   coverImage?: { blurHash: string; id: string; original: string };
   freezeEdit?: {
     department?: boolean;

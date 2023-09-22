@@ -65,22 +65,28 @@ export const iconsStyle = (key: string) => {
 type PostProps = {
   post: IPost;
   customNode?: ReactNode;
+  setHasChanges?: (flag: boolean) => any;
 };
 
-const Post: FC<PostProps> = ({ post, customNode = null }) => {
+const Post: FC<PostProps> = ({ post, customNode = null, setHasChanges }) => {
   const [showComments, openComments, closeComments] = useModal(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
   const [showReactionModal, openReactionModal, closeReactionModal] =
     useModal(false);
+
   const reaction = post?.myReaction?.reaction;
+
   const totalCount = Object.values(post.reactionsCount || {}).reduce(
     (total, count) => total + count,
     0,
   );
   const getPost = useFeedStore((state) => state.getPost);
   const updateFeed = useFeedStore((state) => state.updateFeed);
+
   const previousShowComment = useRef<boolean>(false);
+
   const { currentTimezone } = useCurrentTimezone();
 
   const createBookmarkMutation = useMutation({
@@ -164,6 +170,7 @@ const Post: FC<PostProps> = ({ post, customNode = null }) => {
     if (showComments) {
       previousShowComment.current = true;
     }
+    setHasChanges?.(showComments);
   }, [showComments]);
 
   const [showPublishModal, openPublishModal, closePublishModal] = useModal();
@@ -188,7 +195,6 @@ const Post: FC<PostProps> = ({ post, customNode = null }) => {
               entityId={post.id}
               postType={post.type}
             />
-
             <Tooltip
               tooltipContent={
                 post.bookmarked ? 'Remove from bookmark' : 'Bookmark post'
@@ -207,7 +213,6 @@ const Post: FC<PostProps> = ({ post, customNode = null }) => {
               <FeedPostMenu data={post as unknown as IPost} />
             </div>
           </div>
-
           {post?.schedule && (
             <div className="flex items-center gap-2 bg-primary-50 justify-between px-3 py-2">
               <Icon name="calendarOutline" size={16} color="text-neutral-900" />
@@ -228,8 +233,7 @@ const Post: FC<PostProps> = ({ post, customNode = null }) => {
                   onClick={openEditSchedulePostModal}
                 />
                 <div
-                  className="text-xs font-bold whitespace-nowrap text-neutral-900 
-                underline cursor-pointer hover:text-primary-500 decoration-neutral-400 hover:decoration-primary-400"
+                  className="text-xs font-bold whitespace-nowrap text-neutral-900 underline cursor-pointer hover:text-primary-500 decoration-neutral-400 hover:decoration-primary-400"
                   onClick={openPublishModal}
                   data-testid="scheduledpost-tab-publishnow"
                 >
@@ -238,10 +242,8 @@ const Post: FC<PostProps> = ({ post, customNode = null }) => {
               </div>
             </div>
           )}
-
           <RenderQuillContent data={post} />
           {/* Reaction Count */}
-
           {(totalCount > 0 || post?.commentsCount > 0) && !!!post.schedule && (
             <div className="flex flex-row justify-between py-3 border-y-1 border-y-neutral-100">
               <div
@@ -298,7 +300,6 @@ const Post: FC<PostProps> = ({ post, customNode = null }) => {
               )}
             </div>
           )}
-
           {!!!post.schedule && (
             <div className="flex justify-between">
               <div className="flex space-x-6">
@@ -328,26 +329,19 @@ const Post: FC<PostProps> = ({ post, customNode = null }) => {
                   data-testid="feed-post-comment"
                 />
               </div>
-              {/* <div
-                className="flex items-center space-x-1 cursor-pointer text-neutral-500 hover:text-primary-500"
-                data-testid="feed-post-repost"
-              >
-                <Icon name="repost" size={16} />
-                <span className="text-xs font-normal">Repost</span>
-              </div> */}
             </div>
           )}
         </div>
-
         {/* Comments */}
         {showComments ? (
-          <div className="pb-3 px-3">
+          <div className="pb-3 px-6">
             <CommentCard entityId={post?.id || ''} />
           </div>
         ) : (
           !previousShowComment.current && customNode
         )}
       </Card>
+
       {showReactionModal && (
         <ReactionModal
           closeModal={() => closeReactionModal()}

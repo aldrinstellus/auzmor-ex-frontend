@@ -79,7 +79,7 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
         .length,
       dataTestId: 'audience-selection-teams',
     },
-  ];
+  ].filter((entity) => !entity.isHidden);
 
   switch (audienceFlow) {
     case AudienceFlow.EntitySelect: {
