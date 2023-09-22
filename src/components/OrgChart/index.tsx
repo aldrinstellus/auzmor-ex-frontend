@@ -48,7 +48,7 @@ const OrganizationChart: FC<IOrgChart> = ({ setShowOrgChart }) => {
         appliedFilters.status?.value === 'ALL'
           ? undefined
           : appliedFilters.status?.value,
-      expand: activeMode === OrgChartMode.Team ? 2 : 0,
+      expand: activeMode === OrgChartMode.Team ? 1 : undefined,
     }),
   );
 
