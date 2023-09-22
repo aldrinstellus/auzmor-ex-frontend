@@ -5,7 +5,7 @@ import Spinner from 'components/Spinner';
 import { useAudience } from 'queries/audience';
 import { IAudience } from 'queries/post';
 import { ITeam } from 'queries/teams';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, ReactNode } from 'react';
 import TeamWork from 'images/teamwork.svg';
 import { useInView } from 'react-intersection-observer';
 
@@ -13,12 +13,14 @@ interface IAudiencePopupProps {
   entityId?: string;
   audience?: IAudience[];
   title?: string;
+  triggerBtn?: ReactNode;
 }
 
 const AudiencePopup: FC<IAudiencePopupProps> = ({
   entityId,
   audience,
   title = 'Posted to:',
+  triggerBtn,
 }) => {
   if (audience && audience.length && entityId) {
     const {
@@ -47,8 +49,8 @@ const AudiencePopup: FC<IAudiencePopupProps> = ({
     return (
       <div className="relative">
         <Menu>
-          <Menu.Button as="div">
-            <Icon name="noteFavourite" size={16} />
+          <Menu.Button>
+            {triggerBtn || <Icon name="noteFavourite" size={16} />}
           </Menu.Button>
           <Menu.Items
             className={`bg-white rounded-9xl shadow-lg absolute z-[99999] overflow-hidden min-w-[256px] border border-neutral-200`}
@@ -83,10 +85,10 @@ const AudiencePopup: FC<IAudiencePopupProps> = ({
                         <div className="flex items-center px-6 py-3 border-b border-neutral-200">
                           {eachTeam.recentMembers.length > 0 ? (
                             <AvatarList
-                              size={16}
+                              size={20}
                               users={eachTeam.recentMembers || []}
                               moreCount={eachTeam.totalMembers}
-                              className="mr-2 -space-x-2"
+                              className="mr-2 -space-x-[10px]"
                             />
                           ) : (
                             <div className="w-4 h-4 bg-neutral-200 rounded-full mr-2">

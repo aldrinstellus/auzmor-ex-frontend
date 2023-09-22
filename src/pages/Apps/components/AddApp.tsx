@@ -12,7 +12,7 @@ import { TOAST_AUTOCLOSE_TIME, URL_REGEX } from 'utils/constants';
 import { UploadStatus, useUpload } from 'hooks/useUpload';
 import { EntityType } from 'queries/files';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { App, AppAudience, createApp, editApp } from 'queries/apps';
+import { App, IAudience, createApp, editApp } from 'queries/apps';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { toast } from 'react-toastify';
 import { twConfig } from 'utils/misc';
@@ -42,7 +42,7 @@ export interface IAddAppForm {
   label: string;
   description?: string;
   category?: any;
-  audience?: AppAudience[];
+  audience?: IAudience[];
   icon?: any;
   acsUrl?: string;
   entityId?: string;

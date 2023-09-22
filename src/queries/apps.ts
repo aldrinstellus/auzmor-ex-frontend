@@ -29,12 +29,6 @@ export enum AudienceType {
   CHANNEL = 'CHANNEL',
 }
 
-export type AppAudience = {
-  entityType: AudienceType;
-  entityId: string;
-  name: string;
-};
-
 export type App = {
   id: string;
   url: string;
@@ -43,7 +37,7 @@ export type App = {
   category: Record<string, any>;
   icon: AppIcon;
   credentials: AppCredentials;
-  audience?: AppAudience[];
+  audience?: IAudience[];
   featured?: boolean;
   createdAt: string;
 };

@@ -9,6 +9,7 @@ import { App } from 'queries/apps';
 import AppDetailSVG from './../../../images/appDetails.svg';
 import { FC } from 'react';
 import DefaultAppIcon from 'images/DefaultAppIcon.svg';
+import AudiencePopup from 'components/AudiencePopup';
 
 type AppDetailModalProps = {
   app: App;
@@ -128,11 +129,19 @@ const AppDetailModal: FC<AppDetailModalProps> = ({
                         </span>
                       </div>
                       {app.audience.length > 1 && (
-                        <div className={audienceChipStyle}>
-                          <span className={audienceLabelStyle}>
-                            {`+ ${app.audience.length - 1} more`}
-                          </span>
-                        </div>
+                        <AudiencePopup
+                          triggerBtn={
+                            <div
+                              className={`${audienceChipStyle} cursor-pointer`}
+                            >
+                              <span className={audienceLabelStyle}>
+                                {`+ ${app.audience.length - 1} more`}
+                              </span>
+                            </div>
+                          }
+                          entityId={app.id}
+                          audience={app.audience}
+                        />
                       )}
                     </div>
                   ) : (
