@@ -19,7 +19,12 @@ import queryClient from 'utils/queryClient';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import useModal from 'hooks/useModal';
 import People from 'pages/Users/components/People';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import TeamModal from 'pages/Users/components/TeamModal';
 import { TeamFlow, TeamTab } from 'pages/Users/components/Teams';
 import DeleteTeam from 'pages/Users/components/DeleteModals/Team';
@@ -116,6 +121,10 @@ const TeamDetail: FC<ITeamMemberProps> = () => {
       navigate(`/teams`);
     }
   };
+
+  if (!teamDetail?.isLoading && !data) {
+    return <Navigate to="/404" />;
+  }
 
   return (
     <>
