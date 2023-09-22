@@ -11,7 +11,7 @@ export const getAllDesignations = async ({
   queryKey,
 }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
   if (pageParam === null) {
-    return await apiService.get('/departments', queryKey[1]);
+    return await apiService.get('/designations', queryKey[1]);
   } else return await apiService.get(pageParam);
 };
 

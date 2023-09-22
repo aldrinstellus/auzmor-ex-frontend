@@ -66,9 +66,18 @@ const MembersBody: FC<IMembersBodyProps> = ({
     useInfiniteUsers({
       q: {
         q: debouncedSearchValue,
-        department: selectedDepartments,
-        location: selectedLocations,
-        designation: selectedDesignations,
+        department:
+          selectedDepartments.length > 0
+            ? selectedDepartments.join(',')
+            : undefined,
+        location:
+          selectedLocations.length > 0
+            ? selectedLocations.join(',')
+            : undefined,
+        designation:
+          selectedDesignations.length > 0
+            ? selectedDesignations.join(',')
+            : undefined,
       },
     });
   const usersData = data?.pages
