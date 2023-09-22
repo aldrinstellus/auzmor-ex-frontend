@@ -58,7 +58,7 @@ const AppLauncher = () => {
       >
         <div className="font-bold">App Launcher</div>
         <div className="flex items-center gap-2">
-          {(appIds || []).length > 0 && isAdmin && (
+          {/* {(appIds || []).length > 0 && isAdmin && (
             <Icon
               name="edit"
               size={20}
@@ -69,7 +69,7 @@ const AppLauncher = () => {
                 openAddAppModal();
               }}
             />
-          )}
+          )} */}
           <Icon
             name={open ? 'arrowUp' : 'arrowDown'}
             size={20}
