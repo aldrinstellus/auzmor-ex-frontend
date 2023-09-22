@@ -6,6 +6,7 @@ import BlurImg from 'components/Image/components/BlurImg';
 import DefaultAppIcon from 'images/DefaultAppIcon.svg';
 
 import { App } from 'queries/apps';
+import Tooltip from 'components/Tooltip';
 
 interface IAppWidgetCardProps {
   data: App;
@@ -29,12 +30,17 @@ const AppWidgetCard: FC<IAppWidgetCardProps> = ({ data }) => {
         <div className="p-[12px] rounded-full border border-neutral-200 h-[60px] w-[60px]">
           <BlurImg {...blurImageProps} />
         </div>
-        <p className="text-xs truncate">
-          {truncate(data.label, {
-            length: 12,
-            separator: '',
-          })}
-        </p>
+        <Tooltip
+          tooltipContent={data.label}
+          showTooltip={data.label.length > 12}
+        >
+          <p className="text-xs truncate" data-tip={data.label}>
+            {truncate(data.label, {
+              length: 12,
+              separator: '',
+            })}
+          </p>
+        </Tooltip>
       </div>
     </Link>
   );
