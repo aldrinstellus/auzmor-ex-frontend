@@ -25,6 +25,7 @@ const NotificationsOverview: FC = () => {
 
   const markReadMutation = useMutation(() => markAllNotificationsAsRead(), {
     onSuccess: () => {
+      queryClient.invalidateQueries(['unread-count']);
       queryClient.invalidateQueries(['get-notifications']);
     },
   });
@@ -66,7 +67,7 @@ const NotificationsOverview: FC = () => {
       dataTestId: 'notifications-mentions',
     },
   ];
-
+  console.log(data?.data?.result?.unread);
   return (
     <Popover
       triggerNode={
