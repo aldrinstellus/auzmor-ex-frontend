@@ -135,6 +135,7 @@ export interface IGetUser {
   };
   permissions?: string[];
   workPhone?: string | null;
+  isPresent?: boolean;
 }
 
 interface IGetOrgChartPayload {

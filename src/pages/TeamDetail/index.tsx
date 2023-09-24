@@ -285,7 +285,7 @@ const TeamDetail: FC<ITeamMemberProps> = () => {
           closeModal={closeAddMemberModal}
           entityType={EntitySearchModalType.User}
           fetchUsers={useInfiniteMembers}
-          usersQueryParams={{ entityType: 'team', entityId: data.id }}
+          usersQueryParams={{ entityType: 'TEAM', entityId: data.id }}
           entityRenderer={(data: IGetUser) => {
             return (
               <div className="flex space-x-4 w-full">
@@ -326,9 +326,11 @@ const TeamDetail: FC<ITeamMemberProps> = () => {
                       <div className="text-xs font-normal text-neutral-500">
                         {data?.primaryEmail}
                       </div>
-                      <div className="text-xs font-semibold text-neutral-500">
-                        Already a member
-                      </div>
+                      {data?.isPresent && (
+                        <div className="text-xs font-semibold text-neutral-500">
+                          Already a member
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
