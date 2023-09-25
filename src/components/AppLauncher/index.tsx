@@ -116,7 +116,9 @@ const AppLauncher = () => {
                   className="py-[7px]"
                   label="View all"
                   dataTestId="app-launcher-view-all"
-                  onClick={() => navigate('/apps')}
+                  onClick={() =>
+                    navigate(isAdmin ? '/apps?tab=myApps' : '/apps')
+                  }
                 />
               </div>
             );
