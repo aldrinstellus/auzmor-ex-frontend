@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import Card from 'components/Card';
 import Divider from 'components/Divider';
 import { useState } from 'react';
@@ -7,14 +8,18 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
 import timezones from 'utils/timezones.json';
-import { getTimezoneNameFromIANA } from 'utils/time';
-import useAuth from 'hooks/useAuth';
+import { getNow, getTimezoneNameFromIANA, nDaysFromNow } from 'utils/time';
 import { oooReasons } from '../data';
 import Button, { Size, Variant } from 'components/Button';
 import SwitchToggle from 'components/SwitchToggle';
+import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
+import { useMutation } from '@tanstack/react-query';
+import { updateUserById } from 'queries/users';
+import { successToastConfig } from 'components/Toast/variants/SuccessToast';
+import useAuth from 'hooks/useAuth';
 
 interface IForm {
-  timezone: string;
+  timezone: { value: string; label: string };
   'ooo.start': Date;
   'ooo.end': Date;
   'ooo.reason': string;
@@ -22,7 +27,7 @@ interface IForm {
 }
 
 const schema = yup.object({
-  timezone: yup.string().required(),
+  timezone: yup.object(),
   'ooo.start': yup.date(),
   'ooo.end': yup.date(),
   'ooo.reason': yup.string(),
@@ -32,8 +37,17 @@ const schema = yup.object({
 });
 
 const BasicSettings = () => {
-  const { user } = useAuth();
   const [ooo, setOOO] = useState(false);
+  const { user } = useAuth();
+  const userTimezone = getTimezoneNameFromIANA(user?.timezone || '');
+
+  const updateMutation = useMutation({
+    mutationKey: ['update-user-settings'],
+    mutationFn: (data: any) => updateUserById(user?.id || '', data),
+    onSuccess: async () => {
+      successToastConfig();
+    },
+  });
 
   const {
     control,
@@ -43,22 +57,35 @@ const BasicSettings = () => {
   } = useForm<IForm>({
     resolver: yupResolver(schema),
     mode: 'all',
+    defaultValues: {
+      timezone: {
+        value: user?.timezone,
+        label: userTimezone,
+      },
+      'ooo.start': getNow(),
+      'ooo.end': nDaysFromNow(1),
+    },
   });
 
   const oooReason: any = watch('ooo.reason');
 
-  const timezoneField = [
+  const timezoneField: any = [
     {
       type: FieldType.SingleSelect,
-      label: 'Time zone',
+      label: 'Timezone',
       name: 'timezone',
       control: control,
       options: timezones.map((timeZone) => ({
         label: getTimezoneNameFromIANA(timeZone.iana),
         value: timeZone.iana,
+        dataTestId: `scheduledpost-timezone-${timeZone.iana}`,
       })),
-      defaultValue: user?.timezone || '',
-      dataTestId: 'timezone',
+      defaultValue:
+        {
+          value: user?.timezone,
+          label: userTimezone,
+        } || '',
+      dataTestId: 'timezone-title',
     },
   ];
 
@@ -70,7 +97,7 @@ const BasicSettings = () => {
       className: '',
       minDate: new Date(),
       control,
-      dataTestId: 'ooo-start',
+      dataTestId: 'ooo-startdate',
       disabled: !ooo,
     },
     {
@@ -80,7 +107,7 @@ const BasicSettings = () => {
       className: '',
       minDate: new Date(),
       control,
-      dataTestId: 'ooo-stop',
+      dataTestId: 'ooo-enddate',
       disabled: !ooo,
     },
   ];
@@ -93,7 +120,7 @@ const BasicSettings = () => {
       control: control,
       options: oooReasons,
       placeholder: 'Select a reason',
-      dataTestId: 'ooo-message',
+      dataTestId: 'ooo-reason',
       disabled: !ooo,
     },
   ];
@@ -105,14 +132,29 @@ const BasicSettings = () => {
       name: 'ooo.message',
       control: control,
       placeholder: 'ex. family function. will be available through text',
-      dataTestId: 'ooo-message',
+      dataTestId: 'ooo-others-message',
       error: errors?.['ooo.message']?.message,
+      errorDataTestId: 'ooo-reason-error-message',
       disabled: !ooo,
     },
   ];
 
   const onSubmit = (data: any) => {
-    console.log('------->>>>', data);
+    let payload: Record<string, any> = {
+      timeZone: data.timezone?.value,
+    };
+    if (ooo) {
+      payload = {
+        ...payload,
+        outOfOffice: {
+          outOfOffice: true,
+          start: data?.ooo?.start?.toISOString(),
+          end: data?.ooo?.end?.toISOString(),
+          otherReason: data?.ooo?.reason?.key,
+        },
+      };
+    }
+    updateMutation.mutate(payload);
   };
 
   return (
@@ -129,11 +171,13 @@ const BasicSettings = () => {
                   label="Cancel"
                   size={Size.Small}
                   variant={Variant.Secondary}
+                  dataTestId="basic-settings-cancel"
                 />
                 <Button
                   label="Save changes"
                   size={Size.Small}
                   onClick={handleSubmit(onSubmit)}
+                  dataTestId="basic-settings-save-changes"
                 />
               </div>
             )}
@@ -141,7 +185,10 @@ const BasicSettings = () => {
           <div className="mt-4 text-sm text-neutral-500">
             To change your personal settings{' '}
             <Link to="/profile">
-              <span className="text-primary-500 font-bold">
+              <span
+                className="text-primary-500 font-bold"
+                data-testid="goto-myprofile"
+              >
                 go to my profile
               </span>
             </Link>
@@ -158,13 +205,17 @@ const BasicSettings = () => {
         </Card>
         <Card className="!px-6 !pt-0 !pb-6 !mt-4">
           <div className="flex justify-between items-center">
-            <div className="text-neutral-900 text-base font-bold py-4">
+            <div
+              className="text-neutral-900 text-base font-bold py-4"
+              data-testid="outofoffice-title"
+            >
               Out of Office
             </div>
             <div>
               <SwitchToggle
                 defaultValue={ooo}
                 onChange={(checked) => setOOO(checked)}
+                dataTestId="ooo-toggle"
               />
             </div>
           </div>

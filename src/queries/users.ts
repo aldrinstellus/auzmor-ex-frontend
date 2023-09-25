@@ -369,3 +369,8 @@ export const useOrgChart = (
     ...rest,
   });
 };
+
+export const updateUserSettings = async (payload: Record<string, any>) => {
+  const { data } = await apiService.post('/users/update', payload);
+  return data;
+};
