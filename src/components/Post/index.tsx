@@ -193,7 +193,7 @@ const Post: FC<PostProps> = ({ post, customNode = null, setHasChanges }) => {
               audience={post.audience}
               dataTestId="feedpage-activity-username"
               entityId={post.id}
-              postType={post.type}
+              postType={post?.occasionContext?.type}
             />
             <Tooltip
               tooltipContent={

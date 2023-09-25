@@ -61,6 +61,7 @@ export interface IPost {
     html: string;
     editor: DeltaStatic;
   };
+  occasionContext?: Record<string, any>;
   mentions?: IMention[];
   createdBy?: {
     department?: string;
