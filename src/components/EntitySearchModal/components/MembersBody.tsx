@@ -13,6 +13,7 @@ import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 import useAuth from 'hooks/useAuth';
 import { IDesignationAPI, useInfiniteDesignations } from 'queries/designation';
 
+type ApiCallFunction = (queryParams: any) => any;
 interface IMembersBodyProps {
   entityRenderer?: (data: IGetUser) => ReactNode;
   selectedMemberIds?: string[];
@@ -20,6 +21,9 @@ interface IMembersBodyProps {
   entitySearchLabel?: string;
   hideCurrentUser?: boolean;
   showJobTitleFilter?: boolean;
+  disableKey?: string;
+  fetchUsers?: ApiCallFunction;
+  usersQueryParams?: Record<string, any>;
 }
 
 const MembersBody: FC<IMembersBodyProps> = ({
@@ -29,6 +33,9 @@ const MembersBody: FC<IMembersBodyProps> = ({
   entitySearchLabel,
   hideCurrentUser,
   showJobTitleFilter,
+  disableKey,
+  fetchUsers = useInfiniteUsers,
+  usersQueryParams = {},
 }) => {
   const { user: currentUser } = useAuth();
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
@@ -63,7 +70,7 @@ const MembersBody: FC<IMembersBodyProps> = ({
   // fetch users from search input
   const debouncedSearchValue = useDebounce(memberSearch || '', 500);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfiniteUsers({
+    fetchUsers({
       q: {
         q: debouncedSearchValue,
         departments:
@@ -78,10 +85,12 @@ const MembersBody: FC<IMembersBodyProps> = ({
           selectedDesignations.length > 0
             ? selectedDesignations.join(',')
             : undefined,
+        ...usersQueryParams,
       },
     });
+
   const usersData = data?.pages
-    .flatMap((page) => {
+    .flatMap((page: any) => {
       return page?.data?.result?.data.map((user: IGetUser) => {
         try {
           return user;
@@ -427,8 +436,13 @@ const MembersBody: FC<IMembersBodyProps> = ({
               <Spinner />
             </div>
           ) : usersData?.length ? (
-            usersData?.map((user, index) => (
-              <div key={user.id}>
+            usersData?.map((user:any, index:any) => (
+              <div
+                key={user.id}
+                className={`${
+                  user[disableKey || ''] && 'opacity-50 pointer-events-none'
+                }`}
+              >
                 <div className="py-2 flex items-center">
                   <Layout
                     fields={[
