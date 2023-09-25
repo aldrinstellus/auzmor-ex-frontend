@@ -161,6 +161,14 @@ const Feed: FC<IFeedProps> = () => {
         ].filter((each) => each !== filter),
       });
     }
+    if (appliedFeedFilters[PostFilterKeys.PostPreference]) {
+      setAppliedFeedFilters({
+        ...appliedFeedFilters,
+        [PostFilterKeys.PostPreference]: appliedFeedFilters[
+          PostFilterKeys.PostPreference
+        ].filter((each) => each !== filter),
+      });
+    }
   };
 
   const handleApplyFilter = useCallback((filters: IPostFilters) => {

@@ -61,7 +61,7 @@ const AnnouncementAnalytics: FC<AppProps> = ({ post, open, closeModal }) => {
   );
 
   return (
-    <Modal open={open} className="max-w-2xl">
+    <Modal open={open} className="max-w-2xl overflow-hidden">
       <div>
         <div className="flex items-center justify-between p-4 border-b border-neutral-200">
           <div className="font-bold text-lg text-gray-900">
