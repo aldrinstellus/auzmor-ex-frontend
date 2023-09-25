@@ -46,7 +46,7 @@ const Chart: FC<IChart> = ({
   onClearFilter,
 }) => {
   const chartRef = useRef(null);
-  let chart: OrgChart<any> | null = null;
+  let chart: any | null = null;
   useEffect(() => {
     if (chartRef.current) {
       if (!chart && data.length) {
