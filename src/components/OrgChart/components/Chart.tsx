@@ -70,7 +70,7 @@ const Chart: FC<IChart> = ({
               return renderToString(<UserNode node={node} />);
             }) as any
         )
-          .hoverCardContent((d) => {
+          .hoverCardContent((d: any) => {
             return renderToString(
               <UserCard user={d.userData} variant={UsercardVariant.Large} />,
             );
