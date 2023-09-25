@@ -45,6 +45,7 @@ import { useFeedStore } from 'stores/feedStore';
 
 // misc
 import NoPosts from 'images/NoPostsFound.png';
+import AppLauncher from 'components/AppLauncher';
 
 interface IFeedProps {}
 
@@ -157,6 +158,14 @@ const Feed: FC<IFeedProps> = () => {
         ...appliedFeedFilters,
         [PostFilterKeys.PostType]: appliedFeedFilters[
           PostFilterKeys.PostType
+        ].filter((each) => each !== filter),
+      });
+    }
+    if (appliedFeedFilters[PostFilterKeys.PostPreference]) {
+      setAppliedFeedFilters({
+        ...appliedFeedFilters,
+        [PostFilterKeys.PostPreference]: appliedFeedFilters[
+          PostFilterKeys.PostPreference
         ].filter((each) => each !== filter),
       });
     }
@@ -340,6 +349,7 @@ const Feed: FC<IFeedProps> = () => {
     <div className="pb-6 gap-[52px] flex justify-between ">
       <div className="z-10 min-w-[293px] max-w-[293px] flex flex-col gap-6 sticky top-28 overflow-y-auto max-h-[calc(100vh-140px)] widget-hide-scroll">
         <UserCard />
+        <AppLauncher />
         <MyTeamWidget />
       </div>
       <div className="flex-grow w-0 flex flex-col gap-[26px]">

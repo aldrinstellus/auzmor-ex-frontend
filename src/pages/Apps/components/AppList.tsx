@@ -18,8 +18,11 @@ interface IAppListProps {
   showEmptyState?: boolean;
   openAddAppModal?: () => void;
   setAppsCount?: (params: any) => void;
+  setTotalAppsCount?: (params: any) => void;
   setAppsLoading?: (params: any) => void;
   resetField?: (key: any, param: any) => void;
+  startFetching: boolean;
+  myApp: boolean;
 }
 
 const AppList: FC<IAppListProps> = ({
@@ -32,15 +35,20 @@ const AppList: FC<IAppListProps> = ({
   openAddAppModal,
   resetField,
   setAppsCount,
+  setTotalAppsCount,
   setAppsLoading,
+  startFetching,
+  myApp,
 }) => {
   const { ref, inView } = useInView();
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    fetchQuery(
-      isFiltersEmpty({
+    fetchQuery({
+      q: isFiltersEmpty({
         ...queryParams,
       }),
-    );
+      startFetching,
+      myApp,
+    });
 
   const appIds = data?.pages.flatMap((page: any) => {
     return page.data?.result?.data.map((apps: any) => {
@@ -55,6 +63,9 @@ const AppList: FC<IAppListProps> = ({
   useEffect(() => {
     if (setAppsCount && appIds) {
       setAppsCount(appIds.length);
+    }
+    if (setTotalAppsCount && appIds) {
+      setTotalAppsCount(data?.pages[0]?.data?.result?.totalCount);
     }
   }, [appIds]);
 
@@ -91,10 +102,14 @@ const AppList: FC<IAppListProps> = ({
                   ?.filter(({ id }: any) => !!apps[id])
                   ?.map(({ id }: any) => apps[id])}
               />
-              <div className="h-12 w-12">
-                {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
-              </div>
-              {isFetchingNextPage && <PageLoader />}
+              {hasNextPage && !isFetchingNextPage && (
+                <div ref={ref} className="h-12 w-12" />
+              )}
+              {isFetchingNextPage && (
+                <div className="h-12">
+                  <PageLoader />
+                </div>
+              )}
             </>
           );
         }
@@ -103,6 +118,8 @@ const AppList: FC<IAppListProps> = ({
           return (
             <>
               {(queryParams.q === undefined || queryParams.q === '') &&
+              (queryParams.categoryId || []).length === 0 &&
+              (queryParams.teamId || []).length === 0 &&
               (!appIds || appIds?.length === 0) ? (
                 <div className="flex flex-col space-y-3 items-center w-full">
                   <div className="flex flex-col space-y-6 items-center">

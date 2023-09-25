@@ -21,6 +21,7 @@ import {
   MediaValidationError,
 } from 'contexts/CreatePostContext';
 import { useNavigate } from 'react-router-dom';
+import Tooltip from 'components/Tooltip';
 
 interface UserProps {
   type: CELEBRATION_TYPE;
@@ -157,6 +158,7 @@ const User: FC<UserProps> = ({
             entityId={post?.id}
             entityType="post"
             className="w-full"
+            wrapperClassName="!py-[7px]"
             mode={PostCommentMode.SendWish}
             inputRef={inputRef}
             media={media}
@@ -236,24 +238,40 @@ const User: FC<UserProps> = ({
             className="min-w-[32px]"
           />
           <div className="flex flex-col">
-            <p
-              className="text-sm font-bold truncate"
-              data-testid={`${
-                isBirthday ? 'birthday' : 'anniversaries'
-              }-profile-name`}
+            <Tooltip
+              tooltipContent={getFullName(featuredUser) || featuredUser.email}
+              showTooltip={
+                (getFullName(featuredUser) || featuredUser.email).length >
+                (isModalView ? 40 : 14)
+              }
             >
-              {truncate(getFullName(featuredUser) || featuredUser.email, {
-                length: isModalView ? 40 : 14,
-                separator: '',
-              })}
-            </p>
-            {featuredUser.designation && (
-              <p className="text-xs truncate text-neutral-500">
-                {truncate(featuredUser.designation, {
+              <p
+                className="text-sm font-bold truncate"
+                data-testid={`${
+                  isBirthday ? 'birthday' : 'anniversaries'
+                }-profile-name`}
+              >
+                {truncate(getFullName(featuredUser) || featuredUser.email, {
                   length: isModalView ? 40 : 14,
                   separator: '',
                 })}
               </p>
+            </Tooltip>
+
+            {featuredUser.designation && (
+              <Tooltip
+                tooltipContent={featuredUser.designation}
+                showTooltip={
+                  featuredUser.designation.length > (isModalView ? 40 : 14)
+                }
+              >
+                <p className="text-xs truncate text-neutral-500">
+                  {truncate(featuredUser.designation, {
+                    length: isModalView ? 40 : 14,
+                    separator: '',
+                  })}
+                </p>
+              </Tooltip>
             )}
           </div>
         </div>

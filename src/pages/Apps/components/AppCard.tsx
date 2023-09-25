@@ -17,6 +17,7 @@ import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useRole from 'hooks/useRole';
 import { FC } from 'react';
+import DefaultAppIcon from 'images/DefaultAppIcon.svg';
 
 type AppCardProps = {
   app: App;
@@ -40,6 +41,8 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
     onSuccess: () => {
       queryClient.invalidateQueries(['apps']);
       queryClient.invalidateQueries(['featured-apps']);
+      queryClient.invalidateQueries(['my-apps']);
+      queryClient.invalidateQueries(['my-featured-apps']);
       toast(
         <SuccessToast
           content={`App has been added to featured apps`}
@@ -95,6 +98,8 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
     onSuccess: () => {
       queryClient.invalidateQueries(['apps']);
       queryClient.invalidateQueries(['featured-apps']);
+      queryClient.invalidateQueries(['my-apps']);
+      queryClient.invalidateQueries(['my-featured-apps']);
       toast(
         <SuccessToast
           content={`App has been removed featured apps`}
@@ -209,6 +214,8 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
       id: 4,
       label: 'Delete',
       icon: 'delete',
+      iconClassName: '!text-red-500',
+      labelClassName: '!text-red-500',
       dataTestId: 'app-card-delete',
       onClick: openDeleteAppModal,
       hidden: !isAdmin,
@@ -255,11 +262,13 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
           </div>
           <div className="pb-8">
             <div className="flex items-center justify-between">
-              {app?.icon?.original && (
-                <div className="p-1 bg-neutral-100 rounded-xl">
-                  <img src={app?.icon?.original} height={20} width={20} />
-                </div>
-              )}
+              <div className="p-1 bg-neutral-100 rounded-xl">
+                <img
+                  src={app?.icon?.original || DefaultAppIcon}
+                  height={20}
+                  width={20}
+                />
+              </div>
             </div>
             <div className="py-2">
               <p

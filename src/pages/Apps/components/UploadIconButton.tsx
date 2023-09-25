@@ -172,6 +172,7 @@ const UploadIconButton: FC<UploadIconButtonProps> = ({ setValue, icon }) => {
                 className="hidden"
                 accept="image/jpeg, image/png, image/svg+xml"
                 onChange={(e) => {
+                  setError('');
                   if (e.target.files?.length) {
                     // Check for all three conditions:
                     const file = e.target.files[0];
@@ -260,7 +261,7 @@ const UploadIconButton: FC<UploadIconButtonProps> = ({ setValue, icon }) => {
               </div>
               <img
                 id="icon"
-                className="h-[71px] w-auto group-hover:opacity-50 transition-opacity duration-100"
+                className="h-[52px] w-auto group-hover:opacity-50 transition-opacity duration-100"
               />
             </div>
           </div>

@@ -1,12 +1,10 @@
-import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import Modal from 'components/Modal';
-import Tabs from 'components/Tabs';
-import { FC, FormEvent, MouseEvent, useEffect, useState } from 'react';
+import { FC, FormEvent, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import AppDetailsForm from './AppDetailsForm';
 import clsx from 'clsx';
-import AppCredentialsForm from './AppCredentialsForm';
+// import AppCredentialsForm from './AppCredentialsForm';
 import Button, { Variant as ButtonVariant, Type } from 'components/Button';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -14,13 +12,14 @@ import { TOAST_AUTOCLOSE_TIME, URL_REGEX } from 'utils/constants';
 import { UploadStatus, useUpload } from 'hooks/useUpload';
 import { EntityType } from 'queries/files';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { App, AppAudience, createApp, editApp } from 'queries/apps';
+import { App, IAudience, createApp, editApp } from 'queries/apps';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { toast } from 'react-toastify';
 import { twConfig } from 'utils/misc';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import FailureToast from 'components/Toast/variants/FailureToast';
 import Audience from './Audience';
+import Header from 'components/ModalHeader';
 
 export enum APP_MODE {
   Create = 'CREATE',
@@ -43,7 +42,7 @@ export interface IAddAppForm {
   label: string;
   description?: string;
   category?: any;
-  audience?: AppAudience[];
+  audience?: IAudience[];
   icon?: any;
   acsUrl?: string;
   entityId?: string;
@@ -79,7 +78,7 @@ const AddApp: FC<AddAppProps> = ({
 }) => {
   const {
     control,
-    formState: { errors, isValid },
+    formState: { errors },
     trigger,
     setValue,
     getValues,
@@ -106,7 +105,7 @@ const AddApp: FC<AddAppProps> = ({
   });
   const [activeFlow, setActiveFlow] = useState(ADD_APP_FLOW.AddApp);
   const [audience, setAudience] = useState<any>(data?.audience || []);
-  const [activeTab, setActiveTab] = useState(0);
+  // const [activeTab, setActiveTab] = useState(0);
 
   const queryClient = useQueryClient();
 
@@ -115,6 +114,7 @@ const AddApp: FC<AddAppProps> = ({
     mutationFn: createApp,
     onSuccess: async () => {
       await queryClient.invalidateQueries(['apps']);
+      queryClient.invalidateQueries(['my-apps']);
       toast(<SuccessToast content={'App added successfully'} />, {
         closeButton: (
           <Icon name="closeCircleOutline" color="text-primary-500" size={20} />
@@ -161,6 +161,9 @@ const AddApp: FC<AddAppProps> = ({
     mutationFn: (payload) => editApp(data?.id || '', payload as any),
     onSuccess: () => {
       queryClient.invalidateQueries(['apps']);
+      queryClient.invalidateQueries(['my-apps']);
+      queryClient.invalidateQueries(['featured-apps']);
+      queryClient.invalidateQueries(['my-featured-apps']);
       toast(
         <SuccessToast
           content={`App has been updated`}
@@ -214,37 +217,37 @@ const AddApp: FC<AddAppProps> = ({
 
   const { uploadMedia, uploadStatus } = useUpload();
 
-  const tabStyles = (_active: boolean) =>
-    clsx({
-      'text-neutral-900 font-bold cursor-pointer': true,
-    });
+  // const tabStyles = (_active: boolean) =>
+  //   clsx({
+  //     'text-neutral-900 font-bold cursor-pointer': true,
+  //   });
 
-  const tabs = [
-    {
-      tabLabel: (isActive: boolean) => (
-        <div className={tabStyles(isActive)}>Add apps</div>
-      ),
-      dataTestId: 'add-app-addapps',
-      tabContent: (
-        <AppDetailsForm
-          control={control}
-          errors={errors}
-          setValue={setValue}
-          defaultValues={getValues}
-          setActiveFlow={setActiveFlow}
-          audience={audience}
-        />
-      ),
-    },
-    {
-      tabLabel: (isActive: boolean) => (
-        <div className={tabStyles(isActive)}>App credentials</div>
-      ),
-      disabled: !isValid,
-      dataTestId: 'add-app-credentials',
-      tabContent: <AppCredentialsForm control={control} errors={errors} />,
-    },
-  ];
+  // const tabs = [
+  //   {
+  //     tabLabel: (isActive: boolean) => (
+  //       <div className={tabStyles(isActive)}>Add apps</div>
+  //     ),
+  //     dataTestId: 'add-app-addapps',
+  //     tabContent: (
+  //       <AppDetailsForm
+  //         control={control}
+  //         errors={errors}
+  //         setValue={setValue}
+  //         defaultValues={getValues}
+  //         setActiveFlow={setActiveFlow}
+  //         audience={audience}
+  //       />
+  //     ),
+  //   },
+  //   {
+  //     tabLabel: (isActive: boolean) => (
+  //       <div className={tabStyles(isActive)}>App credentials</div>
+  //     ),
+  //     disabled: !isValid,
+  //     dataTestId: 'add-app-credentials',
+  //     tabContent: <AppCredentialsForm control={control} errors={errors} />,
+  //   },
+  // ];
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -262,7 +265,7 @@ const AddApp: FC<AddAppProps> = ({
       const req = {
         url: formData.url,
         label: formData.label,
-        featured: false,
+        featured: mode === APP_MODE.Edit ? !!data?.featured : false,
         ...(formData.description && { description: formData.description }),
         ...(formData.category &&
           formData.category.label && { category: formData.category.label }),
@@ -288,18 +291,18 @@ const AddApp: FC<AddAppProps> = ({
     }
   };
 
-  const handleNextTab = (e: MouseEvent<Element>) => {
-    e.preventDefault();
-    trigger();
-    if (isValid) {
-      setActiveTab(activeTab + 1);
-    }
-  };
+  // const handleNextTab = (e: MouseEvent<Element>) => {
+  //   e.preventDefault();
+  //   trigger();
+  //   if (isValid) {
+  //     setActiveTab(activeTab + 1);
+  //   }
+  // };
 
   useEffect(() => {
     if (!open) {
       reset();
-      setActiveTab(0);
+      // setActiveTab(0);
     }
   }, [open]);
 
@@ -308,31 +311,37 @@ const AddApp: FC<AddAppProps> = ({
       open={open}
       closeModal={closeModal}
       className={clsx('max-w-[868px]', {
-        'min-h-[630px] max-h-[650px] ': activeFlow === ADD_APP_FLOW.AddApp,
+        'min-h-[543px] max-h-[543px] ': activeFlow === ADD_APP_FLOW.AddApp,
         '!max-w-[638px]': activeFlow === ADD_APP_FLOW.AudienceSelector,
       })}
     >
       {activeFlow === ADD_APP_FLOW.AddApp && (
         <div className="flex flex-col h-full">
-          <div className="p-4 flex items-center justify-between">
-            <p className="text-neutral-900 font-extrabold text-lg">Add app</p>
-            <Icon
-              name="close"
-              onClick={closeModal}
-              dataTestId="add-app-close"
-            />
-          </div>
-          <Divider />
+          <Header
+            title={mode === APP_MODE.Create ? 'Add app' : 'Edit App'}
+            onClose={closeModal}
+            closeBtnDataTestId="add-app-close"
+          />
           <form
             onSubmit={onSubmit}
             className="flex flex-col justify-between h-full"
           >
-            <Tabs
+            {/* <Tabs
               tabs={tabs}
               disableAnimation={true}
               activeTabIndex={activeTab}
               onTabChange={(tab: any) => setActiveTab(tab)}
-            />
+            /> */}
+            <div className="py-3 px-6">
+              <AppDetailsForm
+                control={control}
+                errors={errors}
+                setValue={setValue}
+                defaultValues={getValues}
+                setActiveFlow={setActiveFlow}
+                audience={audience}
+              />
+            </div>
             <div className="bg-blue-50 flex items-center justify-end gap-x-3 px-6 py-4 mt-auto rounded-9xl">
               <Button
                 label="Cancel"
@@ -340,7 +349,17 @@ const AddApp: FC<AddAppProps> = ({
                 onClick={closeModal}
                 dataTestId="add-app-cancel"
               />
-              {activeTab === tabs.length - 1 ? (
+              <Button
+                label="Save"
+                type={Type.Submit}
+                dataTestId="add-app-save"
+                loading={
+                  addAppMutation?.isLoading ||
+                  updateAppMutation.isLoading ||
+                  uploadStatus === UploadStatus.Uploading
+                }
+              />
+              {/* {activeTab === tabs.length - 1 ? (
                 <Button
                   label="Save"
                   type={Type.Submit}
@@ -358,7 +377,7 @@ const AddApp: FC<AddAppProps> = ({
                   onClick={(e) => handleNextTab(e)}
                   dataTestId="add-app-next-cta"
                 />
-              )}
+              )} */}
             </div>
           </form>
         </div>

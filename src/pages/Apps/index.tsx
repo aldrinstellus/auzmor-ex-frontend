@@ -1,6 +1,6 @@
 import Button, { Variant as ButtonVariant } from 'components/Button';
 import Card from 'components/Card';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import AppsBanner from 'images/appsBanner.png';
 import IconButton, {
   Variant as IconVariant,
@@ -17,15 +17,16 @@ import {
   useInfiniteFeaturedApps,
 } from 'queries/apps';
 import { useAppStore } from 'stores/appStore';
-import PopupMenu from 'components/PopupMenu';
 import { useDebounce } from 'hooks/useDebounce';
 import { isFiltersEmpty } from 'utils/misc';
-import AppFilterModal from './components/AppFilterModal';
 import AppList from './components/AppList';
 import Icon from 'components/Icon';
 import AppBannerSkeleton from './components/Skeletons/AppBannerSkeleton';
 import useRole from 'hooks/useRole';
 import Skeleton from 'react-loading-skeleton';
+import Sort from 'components/Sort';
+import useURLParams from 'hooks/useURLParams';
+import FilterModal, { FilterModalVariant } from 'components/FilterModal';
 
 interface IAppsProps {}
 interface IAppSearchForm {
@@ -33,12 +34,19 @@ interface IAppSearchForm {
 }
 
 enum AppGroup {
-  MY_APPS = 'My apps',
-  ALL_APPS = 'All apps',
-  FEATURED = 'Featured',
+  MY_APPS = 'myApps',
+  ALL_APPS = 'allApps',
+  FEATURED = 'featured',
 }
 
 const Apps: FC<IAppsProps> = () => {
+  const {
+    searchParams,
+    updateParam,
+    deleteParam,
+    serializeFilter,
+    parseParams,
+  } = useURLParams();
   // Form for searching apps
   const {
     control,
@@ -48,13 +56,16 @@ const Apps: FC<IAppsProps> = () => {
     formState: { errors },
   } = useForm<IAppSearchForm>({
     mode: 'onChange',
+    defaultValues: {
+      search: searchParams.get('search'),
+    },
   });
 
   const { apps, featuredApps } = useAppStore();
   const { isAdmin } = useRole();
   // State to store apps group
   const [selectedAppGroup, setSelectedAppGroup] = useState<AppGroup>(
-    AppGroup.ALL_APPS,
+    searchParams.get('tab') || AppGroup.ALL_APPS,
   );
 
   // Add apps modal
@@ -70,6 +81,7 @@ const Apps: FC<IAppsProps> = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFeauturedAppLoading, setIsFeaturedAppLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
+  const [startFetching, setStartFetching] = useState(false);
 
   const selectedButtonClassName = '!bg-primary-50 text-primary-500 text-sm';
   const regularButtonClassName = '!text-neutral-500 text-sm';
@@ -82,7 +94,9 @@ const Apps: FC<IAppsProps> = () => {
     AppGroup.MY_APPS,
     AppGroup.FEATURED,
   ].includes(selectedAppGroup);
-  const isAllAppsGroupSelected = selectedAppGroup === AppGroup.ALL_APPS;
+  const isAllAppsGroupSelected = [AppGroup.ALL_APPS, AppGroup.MY_APPS].includes(
+    selectedAppGroup,
+  );
 
   const { data: categories } = useInfiniteCategories(
     isFiltersEmpty({
@@ -101,10 +115,17 @@ const Apps: FC<IAppsProps> = () => {
   });
 
   const handleRemoveFilters = (key: any, id: any) => {
-    setAppFilters({
+    const updatedFilter = {
       ...appFilters,
       [key]: appFilters[key].filter((item: any) => item.id !== id),
-    });
+    };
+    if (updatedFilter[key].length === 0) {
+      deleteParam(key);
+    } else {
+      const serializedFilters = serializeFilter(updatedFilter[key]);
+      updateParam(key, serializedFilters);
+    }
+    setAppFilters(updatedFilter);
   };
 
   const clearFilters = () => {
@@ -112,14 +133,79 @@ const Apps: FC<IAppsProps> = () => {
       categories: [],
       teams: [],
     });
+    deleteParam('categories');
+    deleteParam('teams');
   };
 
   const onApplyFilter = (filters: any) => {
     setAppFilters(filters);
     if (filters.categories.length > 0) {
-      setSelectedAppGroup(AppGroup.ALL_APPS);
+      const serializedCategories = serializeFilter(
+        filters.categories.map((category: any) => ({
+          id: category.id,
+          name: category.name,
+        })),
+      );
+      updateParam('categories', serializedCategories);
     }
+    if (filters.teams.length > 0) {
+      const serializedTeams = serializeFilter(
+        filters.teams.map((team: any) => ({
+          id: team.id,
+          name: team.name,
+        })),
+      );
+      updateParam('teams', serializedTeams);
+    }
+    if (filters.categories.length > 0) {
+      setSelectedAppGroup(AppGroup.ALL_APPS);
+      deleteParam('tab');
+    }
+    closeFilterModal();
   };
+
+  const handleSetSortFilter = (sortValue: any) => {
+    setSortByFilter(sortValue);
+  };
+
+  const handleTabChange = (tab: AppGroup) => {
+    setSelectedAppGroup(tab);
+    updateParam('tab', tab);
+  };
+
+  const handleQuickCategorySelect = (category: any) => {
+    setSelectedAppGroup(category.id);
+    updateParam('tab', category.id);
+    setAppFilters((prevFilters: any) => ({
+      ...prevFilters,
+      categories: [],
+    }));
+  };
+
+  // parse the persisted filters from the URL on page load
+  useEffect(() => {
+    const parsedCategories = parseParams('categories');
+    const parsedTeams = parseParams('teams');
+    const parsedSort = parseParams('sort');
+    setAppFilters({
+      ...appFilters,
+      ...(parsedCategories && { categories: parsedCategories }),
+      ...(parsedTeams && { teams: parsedTeams }),
+    });
+    if (parsedSort) {
+      setSortByFilter(parsedSort);
+    }
+    setStartFetching(true);
+  }, []);
+
+  // Change URL params for search filters
+  useEffect(() => {
+    if (debouncedSearchValue) {
+      updateParam('search', debouncedSearchValue);
+    } else {
+      deleteParam('search');
+    }
+  }, [debouncedSearchValue]);
 
   return (
     <div>
@@ -152,37 +238,37 @@ const Apps: FC<IAppsProps> = () => {
             {isAdmin && (
               <Button
                 variant={ButtonVariant.Secondary}
-                label={AppGroup.MY_APPS}
+                label="My apps"
                 dataTestId="my-apps"
                 className={`${
                   selectedAppGroup === AppGroup.MY_APPS
                     ? selectedButtonClassName
                     : regularButtonClassName
-                } cursor-not-allowed`}
-                // onClick={() => setSelectedAppGroup(AppGroup.MY_APPS)}
+                }`}
+                onClick={() => handleTabChange(AppGroup.MY_APPS)}
               />
             )}
             <Button
               variant={ButtonVariant.Secondary}
-              label={AppGroup.ALL_APPS}
+              label="All apps"
               className={
                 selectedAppGroup === AppGroup.ALL_APPS
                   ? selectedButtonClassName
                   : regularButtonClassName
               }
               dataTestId="all-apps"
-              onClick={() => setSelectedAppGroup(AppGroup.ALL_APPS)}
+              onClick={() => handleTabChange(AppGroup.ALL_APPS)}
             />
             <Button
               variant={ButtonVariant.Secondary}
-              label={AppGroup.FEATURED}
+              label="Featured"
               dataTestId="featured-apps"
               className={
                 selectedAppGroup === AppGroup.FEATURED
                   ? selectedButtonClassName
                   : regularButtonClassName
               }
-              onClick={() => setSelectedAppGroup(AppGroup.FEATURED)}
+              onClick={() => handleTabChange(AppGroup.FEATURED)}
             />
             {flattenCategories &&
               flattenCategories.length > 0 &&
@@ -196,13 +282,7 @@ const Apps: FC<IAppsProps> = () => {
                         ? selectedButtonClassName
                         : regularButtonClassName
                     }
-                    onClick={() => {
-                      setSelectedAppGroup(category.id);
-                      setAppFilters((prevFilters: any) => ({
-                        ...prevFilters,
-                        categories: [],
-                      }));
-                    }}
+                    onClick={() => handleQuickCategorySelect(category)}
                   />
                 </div>
               ))}
@@ -213,56 +293,17 @@ const Apps: FC<IAppsProps> = () => {
               variant={IconVariant.Secondary}
               size={IconSize.Medium}
               borderAround
-              className="bg-white"
+              className="bg-white !p-[10px]"
               onClick={openFilterModal}
               dataTestId="app-filters"
             />
-            <PopupMenu
-              triggerNode={
-                <IconButton
-                  icon="arrowSwap"
-                  variant={IconVariant.Secondary}
-                  size={IconSize.Medium}
-                  borderAround
-                  className="bg-white"
-                  dataTestId="apps-sort"
-                />
-              }
-              title={
-                <div className="bg-blue-50 flex px-6 py-2 font-xs font-medium text-neutral-500">
-                  Sort by
-                </div>
-              }
-              menuItems={[
-                {
-                  icon: 'calendar',
-                  label: 'Date added',
-                  onClick: () => {
-                    setSortByFilter('createdAt:DESC');
-                  },
-                  dataTestId: 'app-filter-sort-date',
-                  permissions: [''],
-                },
-                {
-                  icon: 'sortByAcs',
-                  label: 'A to Z',
-                  onClick: () => {
-                    setSortByFilter('createdAt:ASC');
-                  },
-                  dataTestId: 'app-filter-sort-ascending',
-                  permissions: [''],
-                },
-                {
-                  icon: 'sortByDesc',
-                  label: 'Z to A',
-                  onClick: () => {
-                    setSortByFilter('createdAt:DESC');
-                  },
-                  dataTestId: 'app-filter-sort-descending',
-                  permissions: [''],
-                },
-              ]}
-              className="right-48 w-[157px] top-12"
+            <Sort
+              setFilter={handleSetSortFilter}
+              filterKey={{ createdAt: 'createdAt', aToZ: 'name' }}
+              selectedValue={sortByFilter}
+              filterValue={{ asc: 'ASC', desc: 'DESC' }}
+              dataTestId="teams-sort"
+              entity="apps-filters"
             />
             <Layout
               fields={[
@@ -286,7 +327,7 @@ const Apps: FC<IAppsProps> = () => {
         <div className="flex flex-col gap-6">
           {!isLoading ? (
             <div className="text-neutral-500">
-              Showing {!isLoading && !!appsCount && appsCount} results
+              Showing {!isLoading && appsCount} results
             </div>
           ) : (
             <Skeleton
@@ -312,7 +353,7 @@ const Apps: FC<IAppsProps> = () => {
                   >
                     <div className="mr-1 text-neutral-500 whitespace-nowrap">
                       Category{' '}
-                      <span className="text-primary-500">L{category.name}</span>
+                      <span className="text-primary-500">{category.name}</span>
                     </div>
                     <Icon
                       name="close"
@@ -333,8 +374,7 @@ const Apps: FC<IAppsProps> = () => {
                     data-testid={`people-filterby`}
                   >
                     <div className="mr-1 text-neutral-500">
-                      Team{' '}
-                      <span className="text-primary-500">L{team.name}</span>
+                      Team <span className="text-primary-500">{team.name}</span>
                     </div>
                     <Icon
                       name="close"
@@ -364,7 +404,7 @@ const Apps: FC<IAppsProps> = () => {
                   <div className="text-xl font-bold">Featured</div>
                   <div
                     className="text-base font-semibold text-primary-500 cursor-pointer"
-                    onClick={() => setSelectedAppGroup(AppGroup.FEATURED)}
+                    onClick={() => handleTabChange(AppGroup.FEATURED)}
                   >
                     View all featured
                   </div>
@@ -376,14 +416,28 @@ const Apps: FC<IAppsProps> = () => {
                 queryParams={{
                   limit: 5,
                   featured: true,
+                  q: debouncedSearchValue,
+                  sort: sortByFilter,
+                  teamId:
+                    appFilters.teams.length > 0
+                      ? appFilters.teams.map((team: any) => team.id).join(',')
+                      : undefined,
+                  categoryId:
+                    appFilters.categories.length > 0
+                      ? appFilters.categories
+                          .map((category: any) => category.id)
+                          .join(',')
+                      : undefined,
                 }}
                 isInfinite={false}
                 showEmptyState={false}
                 setAppsCount={setFeaturedAppsCount}
                 setAppsLoading={setIsFeaturedAppLoading}
+                startFetching={startFetching}
+                myApp={selectedAppGroup === AppGroup.MY_APPS || !isAdmin}
               />
               {featuredAppsCount > 0 && !isFeauturedAppLoading && (
-                <div className="text-xl font-bold">All Apps</div>
+                <div className="text-xl font-bold mt-6">All Apps</div>
               )}
             </div>
           )}
@@ -416,20 +470,27 @@ const Apps: FC<IAppsProps> = () => {
                         : undefined,
                   }),
             }}
-            setAppsCount={setAppsCount}
+            setTotalAppsCount={setAppsCount}
             setAppsLoading={setIsLoading}
             openAddAppModal={openModal}
             resetField={resetField}
+            startFetching={startFetching}
+            myApp={selectedAppGroup === AppGroup.MY_APPS || !isAdmin}
           />
         </div>
       </Card>
       <AddApp open={open} closeModal={closeModal} />
       {showFilterModal && (
-        <AppFilterModal
+        <FilterModal
           open={showFilterModal}
-          filters={appFilters}
           closeModal={closeFilterModal}
-          setFilters={onApplyFilter}
+          appliedFilters={appFilters}
+          variant={FilterModalVariant.App}
+          onApply={onApplyFilter}
+          onClear={() => {
+            clearFilters();
+            closeFilterModal();
+          }}
         />
       )}
     </div>

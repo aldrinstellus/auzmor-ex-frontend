@@ -43,7 +43,7 @@ const Acknowledged: FC<AppProps> = ({ post, closeModal }) => {
         <div className="flex justify-center items-center py-5 border-b">
           <div style={{ width: 64, height: 64 }}>
             <CircularProgressbarWithChildren
-              value={completePercent}
+              value={completePercent || 0}
               className="center"
               strokeWidth={12}
               styles={buildStyles({
@@ -55,7 +55,9 @@ const Acknowledged: FC<AppProps> = ({ post, closeModal }) => {
                 trailColor: '#A3A3A3',
               })}
             >
-              <div className="text-sm font-semibold">{completePercent}%</div>
+              <div className="text-sm font-semibold">
+                {completePercent || 0}%
+              </div>
             </CircularProgressbarWithChildren>
           </div>
           <div className="ml-4">
