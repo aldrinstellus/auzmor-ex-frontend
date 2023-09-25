@@ -2,7 +2,7 @@ import Icon from 'components/Icon';
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
 import Tabs from 'components/Tabs';
-import PollOptionTab from './PollOptionTab';
+import PollVoteTab from './PollVoteTab';
 import { IPost } from 'queries/post';
 import { FC } from 'react';
 
@@ -24,8 +24,6 @@ const PollVotesModal: FC<IPollVotesModalProps> = ({
     .filter((option) => option.votes)
     .sort((a, b) => a.votes! - b.votes!);
 
-  const totalVotes = pollOptions.reduce((a, b) => a + b.votes!, 0);
-
   return (
     <Modal open={open} closeModal={closeModal} className="max-w-xl">
       <Header
@@ -37,29 +35,27 @@ const PollVotesModal: FC<IPollVotesModalProps> = ({
         }
         onClose={closeModal}
       />
-      <Tabs
-        tabContentClassName="px-6 h-[390px] overflow-y-auto" // update style
-        tabs={[
-          {
-            tabLabel: (isActive: boolean) => (
-              <div className={getClassName(isActive)}>
-                {`All (${totalVotes})`}
-              </div>
-            ),
-            tabContent: <PollOptionTab postId={post.id!} />,
-          },
-          ...pollOptions.map((option) => ({
-            tabLabel: (isActive: boolean) => (
-              <div className={getClassName(isActive)}>
-                {`${option.text} (${option.votes})`}
-              </div>
-            ),
-            tabContent: (
-              <PollOptionTab postId={post.id!} optionId={option._id!} />
-            ),
-          })),
-        ]}
-      />
+      {pollOptions.length && (
+        <Tabs
+          tabContentClassName="px-6 h-[390px] overflow-y-auto" // update style
+          tabs={[
+            ...pollOptions.map((option) => ({
+              tabLabel: (isActive: boolean) => (
+                <div className={getClassName(isActive)}>
+                  {`${option.text} (${option.votes})`}
+                </div>
+              ),
+              tabContent: (
+                <PollVoteTab
+                  postId={post.id!}
+                  optionId={option._id!}
+                  limit={20}
+                />
+              ),
+            })),
+          ]}
+        />
+      )}
     </Modal>
   );
 };
