@@ -42,10 +42,10 @@ const OrganizationChart: FC<IOrgChart> = ({ setShowOrgChart }) => {
       root: parentId || startWithSpecificUser?.id,
       expandAll: isExpandAll,
       locations:
-        appliedFilters?.location?.map((location) => location.locationId) || [],
+        appliedFilters?.location?.map((location) => (location as any).id) || [],
       departments:
         appliedFilters?.departments?.map(
-          (department) => department.departmentId,
+          (department) => (department as any).id,
         ) || [],
       status:
         appliedFilters.status?.value === 'ALL'
