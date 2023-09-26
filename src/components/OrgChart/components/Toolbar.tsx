@@ -92,7 +92,7 @@ const Toolbar: FC<IToolbarProps> = ({
   const debouncedMemberSearchValue = useDebounce(memberSearchString || '', 300);
   const { data: fetchedMembers, isLoading: isFetching } = useOrgChart({
     q: debouncedMemberSearchValue,
-    expandAll: true,
+    expandAll: false,
   });
   const userData = useMemo(
     () =>

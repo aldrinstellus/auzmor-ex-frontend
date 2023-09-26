@@ -8,19 +8,22 @@ import Spinner from 'components/Spinner';
 import clsx from 'clsx';
 import Button, { Variant } from 'components/Button';
 import UserCard, { UsercardVariant } from 'components/UserCard';
-import { getOrgChart } from 'queries/users';
+import { UserStatus, getOrgChart } from 'queries/users';
 import { QueryFunctionContext } from '@tanstack/react-query';
+import { IDesignation } from 'queries/designation';
+import { IProfileImage } from 'queries/post';
 
 export interface INode {
   id: string;
   parentId: string;
-  profileImage?: string;
+  profileImage?: IProfileImage;
   userName?: string;
-  jobTitle?: string;
-  location?: { id: string; name: string };
-  department?: { id: string; name: string };
-  directReportees?: number;
+  jobTitle?: IDesignation;
+  location?: string;
+  department?: string;
+  directReporteesCount?: number;
   matchesCriteria?: boolean;
+  status?: UserStatus;
   _centered?: any;
   _centeredWithDescendants?: any;
   _directSubordinates?: number;
@@ -76,14 +79,15 @@ const Chart: FC<IChart> = ({
             );
           })
           .onExpandCollapseClick((d: any, _data: any) => {
-            if (d.data.directReportees > 0 && !!d.children) {
+            if (d.data.directReporteesCount > 0 && !!d.children) {
               getOrgChart({
                 queryKey: [
                   'organization-chart',
                   { root: d.data.id, expand: 0 },
                 ],
               } as QueryFunctionContext<any>).then((response: any) => {
-                response.result.data.users.forEach((node: INode) =>
+                console.log(response);
+                response.data.result.data.forEach((node: INode) =>
                   chart?.addNode(node),
                 );
               });
