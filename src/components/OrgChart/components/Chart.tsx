@@ -8,19 +8,22 @@ import Spinner from 'components/Spinner';
 import clsx from 'clsx';
 import Button, { Variant } from 'components/Button';
 import UserCard, { UsercardVariant } from 'components/UserCard';
-import { getOrgChart } from 'queries/users';
+import { IGetUser, UserStatus, getOrgChart } from 'queries/users';
 import { QueryFunctionContext } from '@tanstack/react-query';
+import { IDesignation } from 'queries/designation';
+import { IProfileImage } from 'queries/post';
 
 export interface INode {
   id: string;
   parentId: string;
-  profileImage?: string;
+  profileImage?: IProfileImage;
   userName?: string;
-  jobTitle?: string;
-  location?: { id: string; name: string };
-  department?: { id: string; name: string };
-  directReportees?: number;
+  jobTitle?: IDesignation;
+  location?: string;
+  department?: string;
+  directReporteesCount?: number;
   matchesCriteria?: boolean;
+  status?: UserStatus;
   _centered?: any;
   _centeredWithDescendants?: any;
   _directSubordinates?: number;
@@ -36,6 +39,7 @@ interface IChart {
   data: INode[];
   isFilterApplied: boolean;
   onClearFilter: () => void;
+  startWithSpecificUser: IGetUser | null;
 }
 
 const Chart: FC<IChart> = ({
@@ -44,6 +48,7 @@ const Chart: FC<IChart> = ({
   isLoading,
   isFilterApplied,
   onClearFilter,
+  startWithSpecificUser,
 }) => {
   const chartRef = useRef(null);
   let chart: any | null = null;
@@ -67,7 +72,12 @@ const Chart: FC<IChart> = ({
               return renderToString(<ExpandButtonContent node={node} />);
             })
             .nodeContent((node: any, _i: any, _arr: any, _state: any) => {
-              return renderToString(<UserNode node={node} />);
+              return renderToString(
+                <UserNode
+                  node={node}
+                  isFilterApplied={isFilterApplied && !!!startWithSpecificUser}
+                />,
+              );
             }) as any
         )
           .hoverCardContent((d: any) => {
@@ -76,14 +86,15 @@ const Chart: FC<IChart> = ({
             );
           })
           .onExpandCollapseClick((d: any, _data: any) => {
-            if (d.data.directReportees > 0 && !!d.children) {
+            if (d.data.directReporteesCount > 0 && !!d.children) {
               getOrgChart({
                 queryKey: [
                   'organization-chart',
                   { root: d.data.id, expand: 0 },
                 ],
               } as QueryFunctionContext<any>).then((response: any) => {
-                response.result.data.users.forEach((node: INode) =>
+                console.log(response);
+                response.data.result.data.forEach((node: INode) =>
                   chart?.addNode(node),
                 );
               });
@@ -109,7 +120,7 @@ const Chart: FC<IChart> = ({
         return;
       }
     }
-  }, [chartRef.current, data]);
+  }, [chartRef.current, data, isFilterApplied]);
 
   const loaderStyle = useMemo(
     () =>

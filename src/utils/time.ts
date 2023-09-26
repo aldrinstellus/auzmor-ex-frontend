@@ -33,11 +33,15 @@ export const getTimezoneNameFromIANA = (
 ): string => {
   const timezone = timezones.find((tz) => tz.iana == iana);
   if (!timezone) return iana;
-  const date = (dateString && moment.tz(dateString, iana)) || moment.tz(iana);
-  const offset = date.isDST() ? timezone.DST_offset : timezone.raw_offset;
-  return `(GMT${offset.replace(/\s/g, '')}) ${timezone.display_name} - ${
-    timezone.iana.split('/')[1]
-  }`.replace(/_/g, ' ');
+  try {
+    const date = (dateString && moment.tz(dateString, iana)) || moment.tz(iana);
+    const offset = date.isDST() ? timezone.DST_offset : timezone.raw_offset;
+    return `(GMT${offset.replace(/\s/g, '')}) ${timezone.display_name} - ${
+      timezone.iana.split('/')[1]
+    }`.replace(/_/g, ' ');
+  } catch (e) {
+    return iana;
+  }
 };
 
 export const hasDatePassed = (date: string) => {
@@ -132,3 +136,7 @@ export const getTimeFromNow = (dateStr: string) => {
     .filter(Boolean)
     .join(', ');
 };
+
+export const getNow = () => moment().toDate();
+
+export const nDaysFromNow = (n = 1) => moment().add(n, 'days').toDate();

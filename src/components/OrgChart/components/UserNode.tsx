@@ -5,22 +5,39 @@ import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import clsx from 'clsx';
 import { FC } from 'react';
+import { UserStatus } from 'queries/users';
+import { getAvatarColor, getFullName, getProfileImage } from 'utils/misc';
 
 interface IUserNode {
   node: { data: INode };
+  isFilterApplied: boolean;
 }
 
-const UserNode: FC<IUserNode> = ({ node }) => {
+const UserNode: FC<IUserNode> = ({ node, isFilterApplied }) => {
   const departmentStyle = clsx({
     'bg-neutral-100': true,
     'bg-pink-100 text-pink-500':
-      node.data?.department?.name.toLowerCase() === 'marketing',
+      node.data?.department?.toLowerCase() === 'marketing',
     'absolute bottom-2 flex px-2 py-0.5 text-xxs font-semibold rounded': true,
+  });
+  const userStatusStyle = clsx({
+    'absolute top-1 right-1 text-xxs font-medium flex bg-neutral-100 px-1.5 rounded-xl items-center text-neutral-500 py-0.5':
+      true,
   });
   const classNane = clsx({
     'flex flex-col rounded-9xl pt-3 px-2 pb-2 bg-white w-full h-full relative':
       true,
   });
+  const getOpacity = () => {
+    if (!isFilterApplied) return '1';
+    if (
+      node?.data?.status === UserStatus.Inactive ||
+      !!!node?.data.matchesCriteria
+    ) {
+      return '0.5';
+    }
+    return '1';
+  };
   if (node.data.parentId !== '' || node.data.id !== 'root') {
     return (
       <div
@@ -30,17 +47,30 @@ const UserNode: FC<IUserNode> = ({ node }) => {
           backgroundColor: !!node?.data?._upToTheRootHighlightedNode
             ? '#F0F8FF'
             : 'white',
-          opacity: node?.data.matchesCriteria ? '1' : '0.5',
+          opacity: getOpacity(),
         }}
       >
-        <div className="flex">
-          <Avatar name={node.data.userName} image={node.data.profileImage} />
+        <div className="flex overflow-hidden">
+          <Avatar
+            name={
+              getFullName({ ...node?.data, fullName: node?.data.userName }) ||
+              'U'
+            }
+            image={getProfileImage({
+              ...node?.data,
+              profileImage:
+                (node?.data?.profileImage as any) === ''
+                  ? undefined
+                  : node?.data.profileImage,
+            })}
+            bgColor={getAvatarColor(node?.data)}
+          />
           <div className="flex flex-col ml-4">
             <div className="text-sm font-bold">
               {node.data.userName || 'Field not specified'}
             </div>
             <div className="text-sm my-1">
-              {node.data.jobTitle || 'Field not specified'}
+              {node.data.jobTitle?.name || 'Field not specified'}
             </div>
             <div className="flex items-center">
               <div className="mr-1">
@@ -51,15 +81,21 @@ const UserNode: FC<IUserNode> = ({ node }) => {
                   hover={false}
                 />
               </div>
-              <div className="text-sm text-neutral-500">
-                {node.data.jobTitle || 'Field not specified'}
+              <div className="text-sm text-neutral-500 truncate">
+                {node?.data?.location || 'Field not specified'}
               </div>
             </div>
           </div>
         </div>
-        {node.data?.department?.name && (
+        {node.data?.department && (
           <div className={departmentStyle}>
-            <div>{node.data.department.name}</div>
+            <div>{node.data.department}</div>
+          </div>
+        )}
+        {node?.data?.status && node?.data?.status === UserStatus.Inactive && (
+          <div className={userStatusStyle}>
+            <Icon name="cancel" size={12} />{' '}
+            <div className="ml-0.5">Deactivated</div>
           </div>
         )}
       </div>
