@@ -8,7 +8,7 @@ import PostBuilder, { PostBuilderMode } from 'components/PostBuilder';
 import useModal from 'hooks/useModal';
 import useAuth from 'hooks/useAuth';
 import useRole from 'hooks/useRole';
-import { canPerform, twConfig } from 'utils/misc';
+import { canPerform, isRegularPost, twConfig } from 'utils/misc';
 import { useFeedStore } from 'stores/feedStore';
 import omit from 'lodash/omit';
 import { CreatePostFlow, POST_TYPE } from 'contexts/CreatePostContext';
@@ -44,6 +44,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
   const queryClient = useQueryClient();
   const setFeed = useFeedStore((state) => state.setFeed);
   const { isAdmin } = useRole();
+  const currentDate = new Date().toISOString();
 
   const deletePostMutation = useMutation({
     mutationKey: ['deletePostMutation', data.id],
@@ -121,7 +122,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
       stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-promote-to-announcement',
       permissions: ['CREATE_ANNOUNCEMENTS'],
-      enabled: !data.isAnnouncement,
+      enabled: isRegularPost(data, currentDate, isAdmin),
     },
     {
       icon: 'editReceipt',
@@ -133,7 +134,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
       stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-edit-announcement',
       permissions: ['UPDATE_ANNOUNCEMENTS'],
-      enabled: data.isAnnouncement,
+      enabled: !isRegularPost(data, currentDate, isAdmin),
     },
     {
       icon: 'cyclicArrow',
@@ -142,7 +143,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
       stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-changeto-regularpost',
       permissions: ['UPDATE_ANNOUNCEMENTS'],
-      enabled: data.isAnnouncement,
+      enabled: !isRegularPost(data, currentDate, isAdmin),
     },
     {
       icon: 'edit',
@@ -165,7 +166,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
       permissions: ['UPDATE_MY_POSTS', 'CLOSE_POLLS'],
       enabled:
         data.type === POST_TYPE.Poll &&
-        data.pollContext?.closedAt > new Date().toISOString() &&
+        data.pollContext?.closedAt > currentDate &&
         (isAdmin || data.createdBy?.userId === user?.id),
     },
     {
@@ -196,7 +197,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
       stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-view-acknowledgement-report',
       permissions: ['CREATE_ANNOUNCEMENTS', 'UPDATE_ANNOUNCEMENTS'],
-      enabled: data.isAnnouncement,
+      enabled: !isRegularPost(data, currentDate, isAdmin),
     },
   ];
 

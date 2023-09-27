@@ -26,7 +26,12 @@ import { previewLinkRegex } from 'components/RichTextEditor/config';
 import EditMedia from './EditMedia';
 import { IMenuItem } from 'components/PopupMenu';
 import Icon from 'components/Icon';
-import { hideEmojiPalette, quillHashtagConversion, twConfig } from 'utils/misc';
+import {
+  hideEmojiPalette,
+  isRegularPost,
+  quillHashtagConversion,
+  twConfig,
+} from 'utils/misc';
 import { useFeedStore } from 'stores/feedStore';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
@@ -40,6 +45,7 @@ import moment from 'moment';
 import Audience from './Audience';
 import CreateShoutout from './Shoutout';
 import { afterXUnit } from 'utils/time';
+import useRole from 'hooks/useRole';
 
 export interface IPostMenu {
   id: number;
@@ -99,15 +105,23 @@ const CreatePostModal: FC<ICreatePostModal> = ({
 
   const { uploadMedia, uploadStatus, useUploadCoverImage } = useUpload();
 
+  const { isAdmin } = useRole();
+
   // When we need to show create announcement modal directly
   useMemo(() => {
     if (customActiveFlow === CreatePostFlow.CreateAnnouncement) {
-      setAnnouncement({
-        label: data?.announcement?.end ? 'Custom Date' : '1 week',
-        value:
-          data?.announcement?.end ||
-          afterXUnit(1, 'weeks').toISOString().substring(0, 19) + 'Z',
-      });
+      const currentDate = new Date().toISOString();
+      const newAnnouncement = isRegularPost(data, currentDate, isAdmin);
+      if (newAnnouncement) {
+        setAnnouncement({
+          label: '1 week',
+          value: afterXUnit(1, 'weeks').toISOString().substring(0, 19) + 'Z',
+        });
+      } else
+        setAnnouncement({
+          label: 'Custom Date',
+          value: data?.announcement?.end || '',
+        });
       setActiveFlow(CreatePostFlow.CreateAnnouncement);
     }
   }, [customActiveFlow]);

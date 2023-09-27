@@ -16,6 +16,7 @@ import { EditUserSection, UserRole, UserStatus } from 'queries/users';
 import { MouseEvent, MouseEventHandler } from 'react';
 import { ILocation } from 'queries/location';
 import { IDesignation } from 'queries/designation';
+import { IPost } from 'queries/post';
 
 export const twConfig: any = resolveConfig(tailwindConfig);
 
@@ -130,6 +131,17 @@ export const getMediaObj = (files: File[]): IMedia[] => {
         type: getType(file.type),
       } as IMedia),
   );
+};
+
+export const isRegularPost = (
+  post: IPost | undefined,
+  currentDate: string,
+  isAdmin: boolean,
+) => {
+  if (!post?.announcement?.end) return true;
+  if (currentDate > post.announcement.end) return true;
+  if (!isAdmin && post?.acknowledged) return true;
+  return false;
 };
 
 export const isVideo = (type: string) => {

@@ -9,6 +9,8 @@ import PostBuilder from 'components/PostBuilder';
 import SkeletonLoader from 'pages/Feed/components/SkeletonLoader';
 import { useFeedStore } from 'stores/feedStore';
 import { FC } from 'react';
+import useRole from 'hooks/useRole';
+import { isRegularPost } from 'utils/misc';
 
 export interface IProfileActivityFeedProps {
   data: any;
@@ -28,6 +30,8 @@ const ProfileActivityFeed: FC<IProfileActivityFeedProps> = ({
   closeModal,
 }) => {
   const { feed } = useFeedStore();
+  const { isAdmin } = useRole();
+  const currentDate = new Date().toISOString();
   if (pathname === '/profile') {
     const { data: myProfileFeed, isLoading: myProfileFeedLoading } =
       useInfiniteMyProfileFeed();
@@ -47,14 +51,13 @@ const ProfileActivityFeed: FC<IProfileActivityFeedProps> = ({
     const announcementFeedIds = feedIds
       ? feedIds.filter(
           (post: { id: string }) =>
-            !!feed[post.id]?.announcement?.end && !feed[post.id]?.acknowledged,
+            !isRegularPost(feed[post.id], currentDate, isAdmin),
         )
       : [];
 
     const regularFeedIds = feedIds
-      ? feedIds.filter(
-          (post: { id: string }) =>
-            !!!feed[post.id]?.announcement?.end || feed[post.id]?.acknowledged,
+      ? feedIds.filter((post: { id: string }) =>
+          isRegularPost(feed[post.id], currentDate, isAdmin),
         )
       : [];
 
@@ -105,14 +108,13 @@ const ProfileActivityFeed: FC<IProfileActivityFeedProps> = ({
     const announcementFeedIds = feedIds
       ? feedIds.filter(
           (post: { id: string }) =>
-            !!feed[post.id]?.announcement?.end && !feed[post.id]?.acknowledged,
+            !isRegularPost(feed[post.id], currentDate, isAdmin),
         )
       : [];
 
     const regularFeedIds = feedIds
-      ? feedIds.filter(
-          (post: { id: string }) =>
-            !!!feed[post.id]?.announcement?.end || feed[post.id]?.acknowledged,
+      ? feedIds.filter((post: { id: string }) =>
+          isRegularPost(feed[post.id], currentDate, isAdmin),
         )
       : [];
 

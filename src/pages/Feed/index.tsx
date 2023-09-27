@@ -46,6 +46,8 @@ import { useFeedStore } from 'stores/feedStore';
 // misc
 import NoPosts from 'images/NoPostsFound.png';
 import AppLauncher from 'components/AppLauncher';
+import useRole from 'hooks/useRole';
+import { isRegularPost } from 'utils/misc';
 
 interface IFeedProps {}
 
@@ -86,6 +88,8 @@ const Feed: FC<IFeedProps> = () => {
     [PostFilterKeys.PostPreference]: [],
   });
   const { feed } = useFeedStore();
+  const { isAdmin } = useRole();
+  const currentDate = new Date().toISOString();
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteFeed(pathname, {
@@ -125,14 +129,13 @@ const Feed: FC<IFeedProps> = () => {
   const announcementFeedIds = feedIds
     ? feedIds.filter(
         (post: { id: string }) =>
-          !!feed[post.id]?.announcement?.end && !feed[post.id]?.acknowledged,
+          !isRegularPost(feed[post.id], currentDate, isAdmin),
       )
     : [];
 
   const regularFeedIds = feedIds
-    ? feedIds.filter(
-        (post: { id: string }) =>
-          !!!feed[post.id]?.announcement?.end || feed[post.id]?.acknowledged,
+    ? feedIds.filter((post: { id: string }) =>
+        isRegularPost(feed[post.id], currentDate, isAdmin),
       )
     : [];
 
