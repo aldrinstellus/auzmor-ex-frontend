@@ -18,7 +18,7 @@ const PostPage: FC = () => {
   }
 
   const { isLoading, isError } = useGetPost(id, commentId);
-  const getPost = useFeedStore((state) => state.getPost);
+  const { getPost } = useFeedStore();
 
   if (isLoading) {
     return <PageLoader />;
@@ -27,6 +27,7 @@ const PostPage: FC = () => {
   }
 
   const post = getPost(id);
+
   return (
     <>
       <div className="mb-12 space-x-8 flex w-full">
