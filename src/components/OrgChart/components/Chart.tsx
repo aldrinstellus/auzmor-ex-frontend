@@ -93,10 +93,7 @@ const Chart: FC<IChart> = ({
                   { root: d.data.id, expand: 0 },
                 ],
               } as QueryFunctionContext<any>).then((response: any) => {
-                console.log(response);
-                response.data.result.data.forEach((node: INode) =>
-                  chart?.addNode(node),
-                );
+                chart?.addNodes(response.data.result.data);
               });
             } else {
               chart?.update(d);
