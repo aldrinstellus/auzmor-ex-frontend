@@ -646,29 +646,22 @@ export const useInfiniteFeed = (pathname: string, q?: Record<string, any>) => {
 
 const getPost = async (
   id: string,
-  feed: {
-    [key: string]: IPost;
-  },
-  setFeed: (feed: { [key: string]: IPost }) => void,
+  updateFeed: (id: string, post: IPost) => void,
   commentId?: string,
 ) => {
   const response = await apiService.get(
     `/posts/${id}${commentId ? '?commentId=' + commentId : ''}`,
   );
-  console.log(response);
-  setFeed({
-    ...feed,
-    [response.data.result.data.id]: response.data.result.data,
-  });
+  updateFeed(id, response.data.result.data);
   response.data.result.data = { id: response.data.result.data.id };
   return response;
 };
 
 export const useGetPost = (id: string, commentId?: string) => {
-  const { feed, setFeed } = useFeedStore();
+  const { updateFeed } = useFeedStore();
   return useQuery({
     queryKey: ['posts', id, commentId],
-    queryFn: () => getPost(id, feed, setFeed, commentId),
+    queryFn: () => getPost(id, updateFeed, commentId),
   });
 };
 

@@ -18,13 +18,15 @@ const PostPage: FC = () => {
   }
 
   const { isLoading, isError } = useGetPost(id, commentId);
-  const { feed } = useFeedStore();
+  const { getPost } = useFeedStore();
 
   if (isLoading) {
     return <PageLoader />;
   } else if (isError) {
     return <div>Error...</div>;
   }
+
+  const post = getPost(id);
   return (
     <>
       <div className="mb-12 space-x-8 flex w-full">
@@ -33,16 +35,16 @@ const PostPage: FC = () => {
         </div>
         <div className="w-1/2">
           <Post
-            post={feed[id]}
+            post={post}
             customNode={
-              feed[id]?.comment && (
+              post?.comment && (
                 <div className="mt-6">
                   <Comment
-                    comment={feed[id].comment}
+                    comment={post.comment}
                     customNode={
-                      feed[id]?.comment?.comment ? (
+                      post?.comment?.comment ? (
                         <div className="mt-4">
-                          <Reply comment={feed[id]?.comment?.comment} />
+                          <Reply comment={post?.comment?.comment} />
                         </div>
                       ) : null
                     }
@@ -53,7 +55,7 @@ const PostPage: FC = () => {
           />
         </div>
         <div className="min-w-[293px] max-w-[293px]">
-          <AnnouncementCard postId={feed[id].id} />
+          <AnnouncementCard postId={post.id} />
         </div>
       </div>
     </>
