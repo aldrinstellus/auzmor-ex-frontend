@@ -386,6 +386,6 @@ export const deleteApp = async (id: string) => {
 };
 
 export const launchApp = async (id: string) => {
-  const { data } = await apiService.post(`/apps/${id}/launch`);
-  return data;
+  const { result } = await apiService.post(`/apps/${id}/launch`);
+  return result.data;
 };
