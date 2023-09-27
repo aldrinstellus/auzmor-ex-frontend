@@ -14,6 +14,7 @@ import { PostBuilderMode } from 'components/PostBuilder';
 import { getTimeInScheduleFormat } from 'utils/time';
 import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 import Button, { Size, Variant } from 'components/Button';
+import { operatorXOR } from 'utils/misc';
 
 export interface IBodyProps {
   data?: IPost;
@@ -35,6 +36,9 @@ const Body = forwardRef(
       setActiveFlow,
       media,
       audience,
+      previewUrl,
+      isPreviewRemoved,
+      poll,
     } = useContext(CreatePostContext);
     const { user } = useAuth();
     const { currentTimezone } = useCurrentTimezone();
@@ -169,7 +173,10 @@ const Body = forwardRef(
           <RichTextEditor
             placeholder="What’s on your mind?"
             className={`max-h-64 overflow-y-auto ${
-              !media.length && 'min-h-[128px]'
+              !media.length &&
+              !operatorXOR(isPreviewRemoved, !!previewUrl) &&
+              !poll &&
+              'min-h-[128px]'
             }`}
             defaultValue={
               data?.content?.editor || (editorValue.json as DeltaStatic)

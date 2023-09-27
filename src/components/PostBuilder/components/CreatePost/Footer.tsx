@@ -63,11 +63,13 @@ const Footer: FC<IFooterProps> = ({
 
   const isMediaDisabled =
     operatorXOR(isPreviewRemoved, !!previewUrl) ||
-    !!(postType && postType !== POST_TYPE.Media);
+    (!!postType && postType !== POST_TYPE.Media);
   const isShoutoutDisabled =
     operatorXOR(isPreviewRemoved, !!previewUrl) ||
     (!!postType && postType !== POST_TYPE.Shoutout);
-  const isPollDisabled = !!postType && postType !== POST_TYPE.Poll;
+  const isPollDisabled =
+    operatorXOR(isPreviewRemoved, !!previewUrl) ||
+    (!!postType && postType !== POST_TYPE.Poll);
 
   const postMenuItems = useMemo(
     () => [
