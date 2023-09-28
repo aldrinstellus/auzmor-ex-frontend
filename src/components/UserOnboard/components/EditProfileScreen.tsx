@@ -5,7 +5,7 @@ import Avatar from 'components/Avatar';
 import Icon from 'components/Icon';
 import useAuth from 'hooks/useAuth';
 
-type EditProfileScreenProps = {
+type AppProps = {
   next: () => void;
   setDisableClose: (disableClose: boolean) => void;
   dataTestId?: string;
@@ -14,7 +14,7 @@ type EditProfileScreenProps = {
   loading?: boolean;
 };
 
-const EditProfileScreen: FC<EditProfileScreenProps> = ({
+const EditProfileScreen: FC<AppProps> = ({
   next,
   setDisableClose,
   dataTestId,

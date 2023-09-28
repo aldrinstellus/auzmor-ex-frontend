@@ -27,7 +27,7 @@ import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import PageLoader from 'components/PageLoader';
 
-export interface IEditImageModalProps {
+export interface AppProps {
   title: string;
   openEditImage: boolean;
   openEditProfileModal?: () => void;
@@ -49,7 +49,7 @@ export enum Shape {
   Rectangle = 'rectangle',
 }
 
-const EditImageModal: FC<IEditImageModalProps> = ({
+const EditImageModal: FC<AppProps> = ({
   title,
   openEditImage,
   image,

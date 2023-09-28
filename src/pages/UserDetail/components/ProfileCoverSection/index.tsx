@@ -54,6 +54,7 @@ import {
 import { useParams } from 'react-router-dom';
 import SocialLinksModal from 'components/ProfileInfo/components/SocialLinksModal';
 import useAuth from 'hooks/useAuth';
+import clsx from 'clsx';
 
 export interface IProfileCoverProps {
   userDetails: Record<string, any>;
@@ -225,6 +226,19 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({ userDetails }) => {
                 : '#343434'
             }
             dataTestId={profileImageName || 'edit-profile-pic'}
+            indicatorIcon={
+              isOwnerOrAdmin && (
+                <div className="absolute bg-white rounded-full p-[5px] cursor-pointer top-1 right-1">
+                  <Icon
+                    name="edit"
+                    size={15}
+                    color="text-black"
+                    onClick={() => userProfileImageRef?.current?.click()}
+                    dataTestId="edit-profilepic"
+                  />
+                </div>
+              )
+            }
           />
         </div>
         <div className="ml-[192px] mr-6 mt-2.5">
@@ -295,7 +309,17 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({ userDetails }) => {
             </div>
           </div>
           <div className="flex space-x-3 items-center mt-[4px]">
-            <div className="flex space-x-2 items-center">
+            <div
+              className={clsx(
+                { 'flex space-x-2 items-center': true },
+                { 'cursor-pointer': isOwnerOrAdmin },
+              )}
+              onClick={() => {
+                if (isOwnerOrAdmin) {
+                  openEditProfileModal();
+                }
+              }}
+            >
               <IconWrapper
                 type={Type.Square}
                 className="cursor-pointer rounded-6xl"
@@ -306,11 +330,21 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({ userDetails }) => {
                 className="text-sm font-normal text-neutral-400"
                 data-testid="user-designation"
               >
-                {userDetails?.designation?.name || '-'}
+                {userDetails?.designation?.name || 'Field not specified'}
               </div>
             </div>
             <Divider variant={DividerVariant.Vertical} className="!h-6" />
-            <div className="flex space-x-2 items-center">
+            <div
+              className={clsx(
+                { 'flex space-x-2 items-center': true },
+                { 'cursor-pointer': isOwnerOrAdmin },
+              )}
+              onClick={() => {
+                if (isOwnerOrAdmin) {
+                  openEditProfileModal();
+                }
+              }}
+            >
               <IconWrapper
                 type={Type.Square}
                 className="cursor-pointer rounded-6xl"
@@ -321,11 +355,21 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({ userDetails }) => {
                 className="text-sm font-normal text-neutral-400"
                 data-testid="user-department"
               >
-                {userDetails?.department?.name || '-'}
+                {userDetails?.department?.name || 'Field not specified'}
               </div>
             </div>
             <Divider variant={DividerVariant.Vertical} className="!h-6" />
-            <div className="flex space-x-2 items-center">
+            <div
+              className={clsx(
+                { 'flex space-x-2 items-center': true },
+                { 'cursor-pointer': isOwnerOrAdmin },
+              )}
+              onClick={() => {
+                if (isOwnerOrAdmin) {
+                  openEditProfileModal();
+                }
+              }}
+            >
               <IconWrapper
                 type={Type.Square}
                 className="cursor-pointer rounded-6xl"
@@ -336,7 +380,7 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({ userDetails }) => {
                 className="text-sm font-normal text-neutral-400"
                 data-testid="user-location"
               >
-                {userDetails?.workLocation?.name || '-'}
+                {userDetails?.workLocation?.name || 'Field not specified'}
               </div>
             </div>
           </div>

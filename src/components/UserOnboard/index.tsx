@@ -119,6 +119,7 @@ const UserOnboard: FC = (): ReactNode => {
           userProfileImageRef={profilePictureRef}
           image={getBlobUrl(file)}
           onBoardImageFile={file}
+          imageFile={file}
           imageName={file?.name}
           fileEntityType={EntityType?.UserProfileImage}
         />
