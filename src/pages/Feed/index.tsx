@@ -15,7 +15,6 @@ import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import PageLoader from 'components/PageLoader';
 import SkeletonLoader from './components/SkeletonLoader';
-import MyTeamWidget from 'components/MyTeamWidget';
 import HashtagFeedHeader from './components/HashtagFeedHeader';
 import BookmarkFeedHeader from './components/BookmarkFeedHeader';
 import ScheduledFeedHeader from './components/ScheduledFeedHeader';
@@ -46,6 +45,8 @@ import { useFeedStore } from 'stores/feedStore';
 // misc
 import NoPosts from 'images/NoPostsFound.png';
 import AppLauncher from 'components/AppLauncher';
+import useRole from 'hooks/useRole';
+import { isRegularPost } from 'utils/misc';
 
 interface IFeedProps {}
 
@@ -86,6 +87,8 @@ const Feed: FC<IFeedProps> = () => {
     [PostFilterKeys.PostPreference]: [],
   });
   const { feed } = useFeedStore();
+  const { isAdmin } = useRole();
+  const currentDate = new Date().toISOString();
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteFeed(pathname, {
@@ -125,14 +128,13 @@ const Feed: FC<IFeedProps> = () => {
   const announcementFeedIds = feedIds
     ? feedIds.filter(
         (post: { id: string }) =>
-          !!feed[post.id]?.announcement?.end && !feed[post.id]?.acknowledged,
+          !isRegularPost(feed[post.id], currentDate, isAdmin),
       )
     : [];
 
   const regularFeedIds = feedIds
-    ? feedIds.filter(
-        (post: { id: string }) =>
-          !!!feed[post.id]?.announcement?.end || feed[post.id]?.acknowledged,
+    ? feedIds.filter((post: { id: string }) =>
+        isRegularPost(feed[post.id], currentDate, isAdmin),
       )
     : [];
 
@@ -362,13 +364,13 @@ const Feed: FC<IFeedProps> = () => {
   }, [inView]);
 
   return (
-    <div className="pb-6 gap-[52px] flex justify-between ">
-      <div className="z-10 min-w-[293px] max-w-[293px] flex flex-col gap-6 sticky top-28 overflow-y-auto max-h-[calc(100vh-140px)] widget-hide-scroll">
+    <div className="pb-6 flex justify-between ">
+      <div className="z-10 w-[293px] flex flex-col gap-6 sticky top-28 overflow-y-auto max-h-[calc(100vh-140px)] widget-hide-scroll">
         <UserCard />
         <AppLauncher />
-        <MyTeamWidget />
+        {/* <MyTeamWidget /> */}
       </div>
-      <div className="flex-grow w-0 flex flex-col gap-[26px]">
+      <div className="flex-grow w-0 flex flex-col gap-[26px] px-12">
         {FeedHeader}
         {isLoading ? (
           <SkeletonLoader />
@@ -405,7 +407,7 @@ const Feed: FC<IFeedProps> = () => {
           <div className="h-12 w-12">{hasNextPage && <div ref={ref} />}</div>
         )}
       </div>
-      <div className="min-w-[293px] max-w-[293px]">
+      <div className="w-[293px]">
         <div className="flex flex-col gap-6 sticky top-28 overflow-y-auto max-h-[calc(100vh-120px)] widget-hide-scroll">
           <CelebrationWidget type={CELEBRATION_TYPE.Birthday} />
           <CelebrationWidget type={CELEBRATION_TYPE.WorkAnniversary} />

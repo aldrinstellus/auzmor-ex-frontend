@@ -133,6 +133,18 @@ export const getNotificationElementContent = (
     }
   }
 
+  // if the action performed is ACKNOWLEDGEMENT_REMINDER
+  else if (action.type === ActionType.ACKNOWLEDGEMENT_REMINDER) {
+    // If target length is 1
+    if (target.length === 1) {
+      const post = target[0];
+      cardContent.BottomCardContent = post.content;
+      cardContent.image = post?.image?.thumbnailUrl || undefined;
+
+      redirect = `/posts/${post.entityId}`;
+    }
+  }
+
   return {
     cardContent,
     redirect,
@@ -159,6 +171,8 @@ export const getNotificationMessage = (
       message += 'reacted to your post';
     } else if (actionType === ActionType.SHOUTOUT) {
       message = 'You Received a Shout Out From';
+    } else if (actionType === ActionType.ACKNOWLEDGEMENT_REMINDER) {
+      message = 'shared an announcement';
     }
   } else if (targetType === TargetType[TargetType.TEAM]) {
     if (actionType === ActionType[ActionType.NEW_MEMBERS_TO_TEAM]) {

@@ -11,7 +11,7 @@ const AppShell: FC<IAppShellProps> = ({ children }) => {
   return (
     <div className="bg-neutral-100 h-screen overflow-y-auto">
       <Navbar />
-      <div className="pt-12 px-14 flex w-full justify-center min-h-[calc(100%-64px)]">
+      <div className="pt-10 px-14 flex w-full justify-center min-h-[calc(100%-64px)]">
         <div className="w-full max-w-[1440px]">{children}</div>
       </div>
       {/* <div className="pt-8 px-14 flex w-full justify-center">{children}</div> */}

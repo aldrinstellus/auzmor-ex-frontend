@@ -3,11 +3,12 @@ import Button, { Size, Variant } from 'components/Button';
 import Icon from 'components/Icon';
 import { announcementRead } from 'queries/post';
 import { useFeedStore } from 'stores/feedStore';
-import { hasDatePassed } from 'utils/time';
 import { produce } from 'immer';
 import useAuth from 'hooks/useAuth';
 import ProgressBar from 'components/ProgressBar';
 import { FC } from 'react';
+import { isRegularPost } from 'utils/misc';
+import useRole from 'hooks/useRole';
 
 export interface IAcknowledgementBannerProps {
   data: any;
@@ -18,10 +19,11 @@ const AcknowledgementBanner: FC<IAcknowledgementBannerProps> = ({ data }) => {
   const updateFeed = useFeedStore((state) => state.updateFeed);
   const queryClient = useQueryClient();
   const { user } = useAuth();
-
-  const isAnnouncement = data?.isAnnouncement;
-
-  const createdByMe = user?.id === data?.announcement?.actor?.userId;
+  const { isAdmin } = useRole();
+  const postCreatedByMe = user?.id === data?.createdBy?.userId;
+  const announcementCreatedByMe =
+    user?.id === data?.announcement?.actor?.userId;
+  const currentDate = new Date().toISOString();
 
   const acknowledgeMutation = useMutation({
     mutationKey: ['acknowledge-announcement'],
@@ -51,8 +53,7 @@ const AcknowledgementBanner: FC<IAcknowledgementBannerProps> = ({ data }) => {
     },
   });
 
-  return isAnnouncement &&
-    !(data?.acknowledged || hasDatePassed(data?.announcement?.end)) ? (
+  return !isRegularPost(data, currentDate, isAdmin) ? (
     <div
       className={`flex justify-between items-center bg-blue-700 px-6 py-2 rounded-t-9xl min-h-[42px]`}
       data-testid="announcement-header"
@@ -61,7 +62,7 @@ const AcknowledgementBanner: FC<IAcknowledgementBannerProps> = ({ data }) => {
         <Icon name="flashIcon" size={16} className="text-white" hover={false} />
         <div className="text-xs font-bold">Announcement</div>
       </div>
-      {createdByMe ? (
+      {postCreatedByMe || announcementCreatedByMe || data?.acknowledged ? (
         <ProgressBar
           total={data?.acknowledgementStats?.audience}
           completed={data?.acknowledgementStats?.acknowledged}

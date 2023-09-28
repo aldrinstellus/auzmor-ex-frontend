@@ -5,7 +5,7 @@ import Avatar from 'components/Avatar';
 import Icon from 'components/Icon';
 import useAuth from 'hooks/useAuth';
 
-type EditProfileScreenProps = {
+type AppProps = {
   next: () => void;
   setDisableClose: (disableClose: boolean) => void;
   dataTestId?: string;
@@ -14,7 +14,7 @@ type EditProfileScreenProps = {
   loading?: boolean;
 };
 
-const EditProfileScreen: FC<EditProfileScreenProps> = ({
+const EditProfileScreen: FC<AppProps> = ({
   next,
   setDisableClose,
   dataTestId,
@@ -36,14 +36,15 @@ const EditProfileScreen: FC<EditProfileScreenProps> = ({
           <Avatar
             size={144}
             indicatorIcon={
-              <Icon
-                name="edit"
-                size={20}
-                className="absolute bg-primary-500 border-1 border-white rounded-full p-1 cursor-pointer top-0 right-1"
-                color="text-white"
-                onClick={() => profilePictureRef?.current?.click()}
-                dataTestId="edit-profilepic"
-              />
+              <div className="absolute bg-primary-500 border-2 border-white rounded-full p-1.5 cursor-pointer top-0 right-1">
+                <Icon
+                  name="edit"
+                  size={16}
+                  color="text-white"
+                  onClick={() => profilePictureRef?.current?.click()}
+                  dataTestId="edit-profilepic"
+                />
+              </div>
             }
             name={user?.name}
             image={user?.profileImage}

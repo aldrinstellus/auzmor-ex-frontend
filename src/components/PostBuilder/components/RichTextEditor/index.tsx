@@ -175,7 +175,7 @@ const RichTextEditor = forwardRef(
         html: (ref as any).current
           ?.makeUnprivilegedEditor((ref as any).current?.getEditor())
           .getHTML(),
-        json: (ref as any).current
+        editor: (ref as any).current
           ?.makeUnprivilegedEditor((ref as any).current?.getEditor())
           .getContents(),
       });
@@ -350,14 +350,12 @@ const RichTextEditor = forwardRef(
           <MediaPreview
             media={media}
             className="m-6"
-            mode={mode === PostBuilderMode.Create ? Mode.Edit : Mode.View}
+            mode={Mode.Edit}
             onAddButtonClick={() => inputImgRef?.current?.click()}
             onCloseButtonClick={media.length > 1 ? showConfirm : onRemoveMedia}
-            showEditButton={mode === PostBuilderMode.Create}
-            showCloseButton={mode === PostBuilderMode.Create}
-            showAddMediaButton={
-              mode === PostBuilderMode.Create && postType !== POST_TYPE.Shoutout
-            }
+            showEditButton
+            showCloseButton
+            showAddMediaButton={postType !== POST_TYPE.Shoutout}
             onEditButtonClick={onMediaEdit}
             coverImageMap={coverImageMap}
             dataTestId={dataTestId}

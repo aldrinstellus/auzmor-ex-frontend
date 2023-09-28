@@ -4,7 +4,6 @@ import PreviewLink from 'components/PreviewLink';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
 import useAuth from 'hooks/useAuth';
 import { IPost } from 'queries/post';
-import { DeltaStatic } from 'quill';
 import { ForwardedRef, RefObject, forwardRef, useContext } from 'react';
 import ReactQuill from 'react-quill';
 import RichTextEditor from '../RichTextEditor';
@@ -14,6 +13,7 @@ import { PostBuilderMode } from 'components/PostBuilder';
 import { getTimeInScheduleFormat } from 'utils/time';
 import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 import Button, { Size, Variant } from 'components/Button';
+import { operatorXOR } from 'utils/misc';
 
 export interface IBodyProps {
   data?: IPost;
@@ -35,6 +35,9 @@ const Body = forwardRef(
       setActiveFlow,
       media,
       audience,
+      previewUrl,
+      isPreviewRemoved,
+      poll,
     } = useContext(CreatePostContext);
     const { user } = useAuth();
     const { currentTimezone } = useCurrentTimezone();
@@ -50,7 +53,7 @@ const Body = forwardRef(
             (ref as RefObject<ReactQuill>)!.current!.getEditor(),
           )
           .getHTML(),
-        json: (ref as RefObject<ReactQuill>).current
+        editor: (ref as RefObject<ReactQuill>).current
           ?.makeUnprivilegedEditor(
             (ref as RefObject<ReactQuill>)!.current!.getEditor(),
           )
@@ -169,11 +172,12 @@ const Body = forwardRef(
           <RichTextEditor
             placeholder="What’s on your mind?"
             className={`max-h-64 overflow-y-auto ${
-              !media.length && 'min-h-[128px]'
+              !media.length &&
+              !operatorXOR(isPreviewRemoved, !!previewUrl) &&
+              !poll &&
+              'min-h-[128px]'
             }`}
-            defaultValue={
-              data?.content?.editor || (editorValue.json as DeltaStatic)
-            }
+            defaultValue={editorValue.editor}
             ref={ref}
             mode={mode}
             renderToolbar={(isCharLimit: boolean) => {

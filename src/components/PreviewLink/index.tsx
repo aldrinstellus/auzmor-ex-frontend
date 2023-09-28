@@ -29,7 +29,7 @@ const PreviewLink: FC<PreviewLinkProps> = ({
   // setPreviewUrl = () => {},
   setIsPreviewRemove = () => {},
 }) => {
-  const { media } = useContext(CreatePostContext);
+  const { media, poll } = useContext(CreatePostContext);
   const debouncePreviewUrl = useDebounce(previewUrl, 1000);
 
   const { data, isLoading, isError } = usePreviewLink(debouncePreviewUrl);
@@ -44,7 +44,7 @@ const PreviewLink: FC<PreviewLinkProps> = ({
 
   return (
     <div className="relative m-6">
-      {isMetaDataPresent && !isLoading && media.length === 0 && (
+      {isMetaDataPresent && !isLoading && media.length === 0 && !poll && (
         <IconButton
           icon="closeOutline"
           className="absolute bg-white top-4 right-4 border-1 border-neutral-200 border-solid !rounded-7xl p-2"
@@ -56,7 +56,7 @@ const PreviewLink: FC<PreviewLinkProps> = ({
           dataTestId="createpost-remove-sharedlink"
         />
       )}
-      {media.length === 0 && (
+      {media.length === 0 && !poll && (
         <PreviewCard metaData={data} isLoading={isLoading} isError={isError} />
       )}
     </div>

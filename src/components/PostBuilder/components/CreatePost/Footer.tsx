@@ -55,7 +55,7 @@ const Footer: FC<IFooterProps> = ({
       html: quillRef.current
         ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
         .getHTML(),
-      json: quillRef.current
+      editor: quillRef.current
         ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
         .getContents(),
     });
@@ -63,11 +63,13 @@ const Footer: FC<IFooterProps> = ({
 
   const isMediaDisabled =
     operatorXOR(isPreviewRemoved, !!previewUrl) ||
-    !!(postType && postType !== POST_TYPE.Media);
+    (!!postType && postType !== POST_TYPE.Media);
   const isShoutoutDisabled =
     operatorXOR(isPreviewRemoved, !!previewUrl) ||
     (!!postType && postType !== POST_TYPE.Shoutout);
-  const isPollDisabled = !!postType && postType !== POST_TYPE.Poll;
+  const isPollDisabled =
+    operatorXOR(isPreviewRemoved, !!previewUrl) ||
+    (!!postType && postType !== POST_TYPE.Poll);
 
   const postMenuItems = useMemo(
     () => [
@@ -316,7 +318,7 @@ const Footer: FC<IFooterProps> = ({
                   quillRef.current
                     ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
                     .getHTML() || '',
-                json: quillRef.current
+                editor: quillRef.current
                   ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
                   .getContents() as DeltaStatic,
               },

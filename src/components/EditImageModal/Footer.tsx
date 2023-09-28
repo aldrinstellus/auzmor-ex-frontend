@@ -115,10 +115,10 @@ const Footer: FC<IFooterProps> = ({
               } else if (imageFile?.coverImage) {
                 userCoverImageRef?.current?.click();
               } else {
-                if (imageFile?.profileImage) {
-                  userProfileImageRef?.current?.click();
-                } else {
+                if (imageFile?.coverImage) {
                   userCoverImageRef?.current?.click();
+                } else {
+                  userProfileImageRef?.current?.click();
                 }
               }
             }}
