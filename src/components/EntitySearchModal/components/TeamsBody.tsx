@@ -9,6 +9,10 @@ import TeamRow from './TeamRow';
 import InfiniteSearch from 'components/InfiniteSearch';
 import { ICategory, useInfiniteCategories } from 'queries/category';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
+import useAuth from 'hooks/useAuth';
+import { isFiltersEmpty } from 'utils/misc';
+import { useOrganization } from 'queries/organization';
+import useRole from 'hooks/useRole';
 
 interface ITeamsBodyProps {
   entityRenderer?: (data: ITeam) => ReactNode;
@@ -24,6 +28,9 @@ const TeamsBody: FC<ITeamsBodyProps> = ({
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const { form } = useEntitySearchFormStore();
   const { watch, setValue, control } = form!;
+  const { user } = useAuth();
+  const { isAdmin } = useRole();
+  const { data: organization } = useOrganization();
   const [teamSearch, showSelectedMembers, teams, categorySearch, categories] =
     watch([
       'teamSearch',
@@ -37,10 +44,15 @@ const TeamsBody: FC<ITeamsBodyProps> = ({
   const debouncedSearchValue = useDebounce(teamSearch || '', 500);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteTeams({
-      q: {
+      q: isFiltersEmpty({
         q: debouncedSearchValue,
         category: selectedCategories,
-      },
+        userId:
+          organization?.adminSettings?.postingControls?.limitGlobalPosting &&
+          !isAdmin
+            ? user?.id
+            : undefined,
+      }),
     });
   const teamsData = data?.pages
     .flatMap((page) => {
