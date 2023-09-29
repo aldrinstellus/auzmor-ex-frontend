@@ -124,7 +124,6 @@ const TeamDetail: FC<ITeamMemberProps> = () => {
           });
           return newData;
         } catch (e) {
-          console.log(e);
           return oldData;
         }
       });
