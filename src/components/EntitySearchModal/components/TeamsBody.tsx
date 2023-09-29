@@ -9,6 +9,7 @@ import TeamRow from './TeamRow';
 import InfiniteSearch from 'components/InfiniteSearch';
 import { ICategory, useInfiniteCategories } from 'queries/category';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
+import { CategoryType } from 'queries/apps';
 
 interface ITeamsBodyProps {
   entityRenderer?: (data: ITeam) => ReactNode;
@@ -69,6 +70,7 @@ const TeamsBody: FC<ITeamsBodyProps> = ({
     hasNextPage: hasNextCategoryPage,
   } = useInfiniteCategories({
     q: debouncedCategorySearchValue,
+    type: CategoryType.TEAM,
   });
   const categoryData = fetchedCategories?.pages.flatMap((page) => {
     return page?.data?.result?.data.map((category: ICategory) => {
