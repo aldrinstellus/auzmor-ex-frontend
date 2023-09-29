@@ -111,7 +111,7 @@ index fe34324..a278e83 100644
 - 
 \ No newline at end of file
 diff --git a/node_modules/d3-org-chart/src/d3-org-chart.js b/node_modules/d3-org-chart/src/d3-org-chart.js
-index 871f2d8..3069b06 100644
+index 871f2d8..bacf61e 100644
 --- a/node_modules/d3-org-chart/src/d3-org-chart.js
 +++ b/node_modules/d3-org-chart/src/d3-org-chart.js
 @@ -1,104 +1,148 @@
@@ -830,7 +830,7 @@ index 871f2d8..3069b06 100644
 +      highlightedNodeId: '',
 +      hoverCardContent: (d) => `<div>Tooltip</div>`,
 +      tooltipData: {},
-+      onZoom: (zoomScale, range) => {}
++      onZoom: (zoomScale, range) => {},
 +    };
 +
 +    this.getChartState = () => attrs;
@@ -2510,7 +2510,7 @@ index 871f2d8..3069b06 100644
                    M ${mx} ${my}
                    L ${mx} ${y}
                    L ${x} ${y}
-@@ -1042,544 +1438,626 @@ export class OrgChart {
+@@ -1042,544 +1438,633 @@ export class OrgChart {
                      ${ex - w * xrvs}  ${ey}
                    L ${ex} ${ey}
         `;
@@ -3293,13 +3293,20 @@ index 871f2d8..3069b06 100644
 +  // Zoom in exposed method
 +  zoomIn() {
 +    const { svg, zoomBehavior } = this.getChartState();
-+    svg.transition().call(zoomBehavior.scaleBy, 1.3);
++    svg.transition().call(zoomBehavior.scaleBy, 1.1);
 +  }
 +
 +  // Zoom out exposed method
 +  zoomOut() {
 +    const { svg, zoomBehavior } = this.getChartState();
-+    svg.transition().call(zoomBehavior.scaleBy, 0.78);
++    svg.transition().call(zoomBehavior.scaleBy, 0.9);
++  }
++
++  // set zoom
++  setZoom(zoomScale) {
++    const { svg, zoomBehavior } = this.getChartState();
++    svg.transition().call(zoomBehavior.scaleTo, zoomScale);
++    return this;
 +  }
 +
 +  toDataURL(url, callback) {

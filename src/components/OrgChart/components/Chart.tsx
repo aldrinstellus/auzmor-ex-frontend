@@ -12,7 +12,9 @@ import { IGetUser, UserStatus, getOrgChart } from 'queries/users';
 import { QueryFunctionContext } from '@tanstack/react-query';
 import { IDesignation } from 'queries/designation';
 import { IProfileImage } from 'queries/post';
-import { IZoom, MAX_ZOOM, MIN_ZOOM } from '..';
+import { FOCUS_ZOOM, IZoom, MAX_ZOOM, MIN_ZOOM } from '..';
+import useAuth from 'hooks/useAuth';
+import { mapRanges } from 'utils/misc';
 
 export interface INode {
   id: string;
@@ -55,6 +57,7 @@ const Chart: FC<IChart> = ({
 }) => {
   const chartRef = useRef(null);
   let chart: any | null = null;
+  const { user } = useAuth();
   useEffect(() => {
     if (chartRef.current) {
       if (!chart && data.length) {
@@ -128,8 +131,17 @@ const Chart: FC<IChart> = ({
           //   }
           // })
           .render()
+          .setUpToTheRootHighlighted(user?.id || '')
           .expandAll()
-          .fit();
+          .setCentered(user?.id)
+          .render();
+        setTimeout(
+          () =>
+            chart
+              .setZoom(mapRanges(0, 100, MIN_ZOOM, MAX_ZOOM, FOCUS_ZOOM))
+              .render(),
+          400,
+        );
         orgChartRef.current = chart;
         return;
       }
@@ -149,7 +161,7 @@ const Chart: FC<IChart> = ({
   const orgChartContainerStyle = useMemo(
     () =>
       clsx({
-        relative: true,
+        'relative w-full': true,
         'opacity-0': isLoading || !!!data?.length,
         'opacity-100': !isLoading,
       }),

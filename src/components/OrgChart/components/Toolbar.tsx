@@ -6,7 +6,7 @@ import IconButton, {
 import useModal from 'hooks/useModal';
 import { FC, MutableRefObject, useEffect, useMemo, useState } from 'react';
 import { Control, UseFormResetField, UseFormWatch } from 'react-hook-form';
-import { IForm, IZoom, OrgChartMode } from '..';
+import { FOCUS_ZOOM, IForm, IZoom, MAX_ZOOM, MIN_ZOOM, OrgChartMode } from '..';
 import clsx from 'clsx';
 import Icon from 'components/Icon';
 import Tooltip from 'components/Tooltip';
@@ -63,7 +63,7 @@ const Toolbar: FC<IToolbarProps> = ({
   zoom,
 }) => {
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
-  const [isSpotlightActive, setIsSpotlightActive] = useState(false);
+  const [isSpotlightActive, setIsSpotlightActive] = useState(true);
   const [memberSearchString, setMemberSearchString] = useState<string>('');
   const [specificPersonSearch] = watch(['specificPersonSearch']);
 
@@ -218,7 +218,7 @@ const Toolbar: FC<IToolbarProps> = ({
   };
   return (
     <>
-      <div className="flex flex-col mt-7 px-4 py-3 mb-8 w-full shadow-lg rounded-9xl bg-white">
+      <div className="flex flex-col mt-7 px-4 py-3 mb-8 w-full shadow-lg rounded-9xl bg-white max-w-[1440px]">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Layout fields={memberSearchfields} />
@@ -364,9 +364,23 @@ const Toolbar: FC<IToolbarProps> = ({
                         clearAllFilters();
                         chartRef.current
                           ?.setUpToTheRootHighlighted(user?.id || '')
-                          .render()
-                          .fit();
-                        chartRef.current?.setCentered(user?.id || '').render();
+                          .setCentered(user?.id || '')
+                          .render();
+                        setTimeout(
+                          () =>
+                            chartRef.current
+                              ?.setZoom(
+                                mapRanges(
+                                  0,
+                                  100,
+                                  MIN_ZOOM,
+                                  MAX_ZOOM,
+                                  FOCUS_ZOOM,
+                                ),
+                              )
+                              .render(),
+                          400,
+                        );
                       }
                       setIsSpotlightActive(!isSpotlightActive);
                     }}
@@ -388,7 +402,7 @@ const Toolbar: FC<IToolbarProps> = ({
                   />
                 </Tooltip>
               </div>
-              <div className="text-neutral-900 font-bold text-sm mx-4">
+              <div className="text-neutral-900 font-bold text-sm mx-4 w-6 flex justify-center">
                 {Math.round(
                   mapRanges(zoom.range[0], zoom.range[1], 0, 100, zoom.zoom),
                 )}
