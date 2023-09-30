@@ -22,7 +22,7 @@ const PollVotesModal: FC<IPollVotesModalProps> = ({
 
   const pollOptions = (post.pollContext?.options || [])
     .filter((option) => option.votes)
-    .sort((a, b) => a.votes! - b.votes!);
+    .sort((a, b) => b.votes! - a.votes!);
 
   return (
     <Modal open={open} closeModal={closeModal} className="max-w-xl">
@@ -37,7 +37,7 @@ const PollVotesModal: FC<IPollVotesModalProps> = ({
       />
       {pollOptions.length && (
         <Tabs
-          tabContentClassName="px-6 h-[390px] overflow-y-auto" // update style
+          tabContentClassName=""
           tabs={[
             ...pollOptions.map((option) => ({
               tabLabel: (isActive: boolean) => (
@@ -49,7 +49,7 @@ const PollVotesModal: FC<IPollVotesModalProps> = ({
                 <PollVoteTab
                   postId={post.id!}
                   optionId={option._id!}
-                  limit={20}
+                  limit={30}
                 />
               ),
             })),
