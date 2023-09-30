@@ -15,30 +15,11 @@ export interface ISkillDetail {
 
 const getAllSkills = async ({
   pageParam = null,
+  queryKey,
 }: // queryKey,
 QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
   if (pageParam === null) {
-    // return await apiService.get('/skills', queryKey[1]);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          message: 'Successful',
-          code: 200,
-          result: {
-            data: [
-              { id: 'OP1', name: 'OP1' },
-              { id: 'OP2', name: 'OP2' },
-              { id: 'OP3', name: 'OP3' },
-            ],
-            paging: {
-              prev: 'https://office-dev.api.auzmor.com/api/v1/skills',
-              next: 'https://office-dev.api.auzmor.com/api/v1/skills',
-              limit: 30,
-            },
-          },
-        });
-      }, 1000);
-    });
+    return await apiService.get('/skills', queryKey[1]);
   } else return await apiService.get(pageParam);
 };
 
