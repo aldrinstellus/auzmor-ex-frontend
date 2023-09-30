@@ -30,6 +30,7 @@ interface IForm {
 const ManagerWidget: React.FC<AppProps> = ({ data, canEdit }) => {
   const [isHovered, eventHandlers] = useHover();
   const [isEditable, setIsEditable] = useState(false);
+  const [search, setSearch] = useState('');
   const queryClient = useQueryClient();
   const { userId = '' } = useParams();
   const {
@@ -39,6 +40,7 @@ const ManagerWidget: React.FC<AppProps> = ({ data, canEdit }) => {
     hasNextPage,
     isFetching,
   } = useInfiniteUsers({
+    q: { q: search },
     startFetching: true,
   });
 
@@ -66,7 +68,7 @@ const ManagerWidget: React.FC<AppProps> = ({ data, canEdit }) => {
   });
 
   const onSubmit = async (data: any) => {
-    await updateMutation.mutateAsync({ manager: data?.manager?.value });
+    await updateMutation.mutateAsync({ manager: data?.manager?.value || null });
     await queryClient.invalidateQueries(['current-user-me']);
     setIsEditable(false);
   };
@@ -106,7 +108,8 @@ const ManagerWidget: React.FC<AppProps> = ({ data, canEdit }) => {
       isFetchingNextPage,
       fetchNextPage,
       hasNextPage,
-      // dataTestId: 'member-search',
+      onSearch: (q: string) => setSearch(q),
+      dataTestId: 'manager-search',
     },
   ];
 
