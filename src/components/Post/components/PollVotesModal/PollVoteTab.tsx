@@ -10,8 +10,11 @@ interface IPollVoteTabProps {
 }
 
 const PollVoteTab: FC<IPollVoteTabProps> = ({ postId, optionId, limit }) => {
-  console.log({ postId, optionId });
-  const { ref, inView } = useInView();
+  const rootId = `pollvote-${postId}-${optionId}`;
+  const { ref, inView } = useInView({
+    root: document.getElementById(rootId),
+    rootMargin: '20%',
+  });
 
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useInfinitePollVotes({ postId, optionId, limit });
@@ -37,7 +40,7 @@ const PollVoteTab: FC<IPollVoteTabProps> = ({ postId, optionId, limit }) => {
   }) as IGetPollVote[];
 
   return (
-    <>
+    <div id={rootId} className="px-6 h-[390px] overflow-y-auto">
       {isLoading ? (
         <PollVoteSkeleton />
       ) : (
@@ -52,7 +55,7 @@ const PollVoteTab: FC<IPollVoteTabProps> = ({ postId, optionId, limit }) => {
         {hasNextPage && isFetchingNextPage && <PollVoteRow isLoading={true} />}
         {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
       </div>
-    </>
+    </div>
   );
 };
 
