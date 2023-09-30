@@ -5,11 +5,11 @@ import { Select, ConfigProvider } from 'antd';
 import './index.css';
 import { SelectCommonPlacement } from 'antd/es/_util/motion';
 import Icon from 'components/Icon';
-import { useInView } from 'react-intersection-observer';
 import {
   FetchNextPageOptions,
   InfiniteQueryObserverResult,
 } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
 
 const { Option } = Select;
 export interface IOption {
@@ -126,7 +126,18 @@ const AsyncSingleSelect = forwardRef(
       }
     }, [inView]);
 
-    console.log('___>>>', fetchNextPage && hasNextPage && !isFetchingNextPage);
+    const onPopupScroll = (e: any) => {
+      e.persist();
+      const target = e.target;
+
+      if (target.scrollTop + target.offsetHeight > target.scrollHeight - 1) {
+        if (fetchNextPage && hasNextPage && !isFetchingNextPage) {
+          // dynamic add options...
+          fetchNextPage();
+        }
+      }
+    };
+
     return (
       <ConfigProvider
         theme={{
@@ -164,6 +175,7 @@ const AsyncSingleSelect = forwardRef(
                   placeholder={placeholder}
                   defaultValue={defaultValue}
                   placement={menuPlacement ? menuPlacement : undefined}
+                  onPopupScroll={onPopupScroll}
                   getPopupContainer={(triggerNode) => {
                     if (getPopupContainer) {
                       return getPopupContainer;
@@ -190,7 +202,7 @@ const AsyncSingleSelect = forwardRef(
                   {(options || []).map((option) => {
                     return (
                       <Option
-                        key={`async-${Math.random().toString(16).slice(2)}`}
+                        key={option.value}
                         value={option.value}
                         label={option.label}
                       >
@@ -206,6 +218,11 @@ const AsyncSingleSelect = forwardRef(
                   })}
                   {fetchNextPage && hasNextPage && !isFetchingNextPage && (
                     <div ref={loadMoreRef} />
+                  )}
+                  {isFetchingNextPage && (
+                    <div className="text-xs font-bold text-neutral-500 text-center">
+                      Loading...
+                    </div>
                   )}
                 </Select>
               )}
