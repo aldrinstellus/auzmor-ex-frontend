@@ -5,7 +5,7 @@ import { CELEBRATION_TYPE } from '..';
 import clsx from 'clsx';
 import Button, { Size } from 'components/Button';
 import { formatDate, isCelebrationToday } from '../utils';
-import { getFullName, getNouns } from 'utils/misc';
+import { getFullName, getNouns, getProfileImage } from 'utils/misc';
 import { AuthContext } from 'contexts/AuthContext';
 import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 import Icon from 'components/Icon';
@@ -116,6 +116,7 @@ const User: FC<UserProps> = ({
     <div className="flex gap-2 w-full">
       <Avatar
         name={getFullName(featuredUser) || featuredUser.email}
+        image={getProfileImage(featuredUser)}
         size={48}
         className="min-w-[48px]"
       />
@@ -246,6 +247,7 @@ const User: FC<UserProps> = ({
         <div className="flex items-center gap-2">
           <Avatar
             name={getFullName(featuredUser) || featuredUser.email}
+            image={getProfileImage(featuredUser)}
             size={32}
             className="min-w-[32px]"
           />
@@ -294,7 +296,7 @@ const User: FC<UserProps> = ({
             className={`px-[6px] rounded-[4px] text-xs font-semibold whitespace-nowrap ${dateStyles}`}
             data-testid={`${isBirthday ? 'birthday' : 'anniversaries'}-date`}
           >
-            {celebrationDate}
+            {`${celebrationDate} ${userIsMe ? wishEmoji : ''}`.trim()}
           </div>
         )}
       </div>
