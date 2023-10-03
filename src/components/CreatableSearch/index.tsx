@@ -69,7 +69,7 @@ const CreatableSearch = forwardRef(
     const debouncedSearchValue = useDebounce(searchValue || '', 500);
     const { data, isLoading } = fetchQuery(
       isFiltersEmpty({
-        q: debouncedSearchValue.toLowerCase().trim(),
+        q: debouncedSearchValue?.toLowerCase().trim(),
         limit: 10,
         ...queryParams,
       }),
@@ -102,7 +102,7 @@ const CreatableSearch = forwardRef(
 
     const isOptionContains = (searchValue: string) =>
       (transformedOptions || []).find(
-        (option) => searchValue.toLowerCase() === option.label.toLowerCase(),
+        (option) => searchValue?.toLowerCase() === option.label?.toLowerCase(),
       );
 
     const addOptionObject =

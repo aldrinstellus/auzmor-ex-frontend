@@ -7,12 +7,13 @@ import Icon from 'components/Icon';
 import IconWrapper, { Type } from 'components/Icon/components/IconWrapper';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import useHover from 'hooks/useHover';
+import { isEmpty } from 'lodash';
 import {
   updateCurrentUser,
   updateUserById,
   useInfiniteUsers,
 } from 'queries/users';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { getFullName, getProfileImage } from 'utils/misc';
@@ -23,12 +24,13 @@ type AppProps = {
 };
 
 interface IForm {
-  manager: string;
+  manager: any;
 }
 
 const ManagerWidget: React.FC<AppProps> = ({ data, canEdit }) => {
   const [isHovered, eventHandlers] = useHover();
   const [isEditable, setIsEditable] = useState(false);
+  const [search, setSearch] = useState('');
   const queryClient = useQueryClient();
   const { userId = '' } = useParams();
   const {
@@ -38,6 +40,7 @@ const ManagerWidget: React.FC<AppProps> = ({ data, canEdit }) => {
     hasNextPage,
     isFetching,
   } = useInfiniteUsers({
+    q: { q: search },
     startFetching: true,
   });
 
@@ -60,12 +63,20 @@ const ManagerWidget: React.FC<AppProps> = ({ data, canEdit }) => {
   const { handleSubmit, control, reset } = useForm<IForm>({
     mode: 'onSubmit',
     defaultValues: {
-      manager: data?.manager?.id,
+      manager: data?.manager?.userId
+        ? { value: data?.manager?.userId, label: data?.manager?.fullName }
+        : '',
     },
   });
 
+  useEffect(() => {
+    reset({
+      manager: { value: data?.manager?.userId, label: data?.manager?.fullName },
+    });
+  }, [data]);
+
   const onSubmit = async (data: any) => {
-    await updateMutation.mutateAsync({ manager: data?.manager?.value });
+    await updateMutation.mutateAsync({ manager: data?.manager?.value || null });
     await queryClient.invalidateQueries(['current-user-me']);
     setIsEditable(false);
   };
@@ -95,17 +106,21 @@ const ManagerWidget: React.FC<AppProps> = ({ data, canEdit }) => {
       ),
       isClearable: true,
       isLoading: isFetching,
-      options: usersData?.map((member: any) => ({
-        value: member.id,
-        label: member.fullName,
-        disabled: false,
-        dataTestId: member.id,
-        rowData: member,
-      })),
+      options: usersData
+        ?.map((member: any) => ({
+          value: member?.id,
+          label: member.fullName,
+          disabled: false,
+          dataTestId: member?.id,
+          rowData: member,
+        }))
+        .filter((member) => member.value !== data?.id),
       isFetchingNextPage,
       fetchNextPage,
       hasNextPage,
-      // dataTestId: 'member-search',
+      onSearch: (q: string) => setSearch(q),
+      dataTestId: 'manager-search',
+      onClear: () => reset({ manager: null }),
     },
   ];
 
@@ -135,7 +150,7 @@ const ManagerWidget: React.FC<AppProps> = ({ data, canEdit }) => {
                 </IconWrapper>
               ) : (
                 isEditable && (
-                  <div className="flex space-x-3">
+                  <div className="flex space-x-1">
                     <Button
                       variant={Variant.Secondary}
                       label={'Cancel'}
@@ -161,6 +176,10 @@ const ManagerWidget: React.FC<AppProps> = ({ data, canEdit }) => {
               {isEditable ? (
                 <div>
                   <Layout fields={fields} />
+                </div>
+              ) : isEmpty(data?.manager) ? (
+                <div className="text-sm text-neutral-500">
+                  No manager assigned
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">

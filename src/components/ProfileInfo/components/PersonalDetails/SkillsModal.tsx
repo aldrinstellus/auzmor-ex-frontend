@@ -45,7 +45,7 @@ const SkillsModal: FC<ISkillsModalProps> = ({ open, closeModal, skills }) => {
     },
   });
 
-  const { handleSubmit, control, getValues } = useForm<any>({
+  const { handleSubmit, control } = useForm<any>({
     mode: 'onSubmit',
     defaultValues: {
       personal: {
@@ -60,10 +60,9 @@ const SkillsModal: FC<ISkillsModalProps> = ({ open, closeModal, skills }) => {
     },
   });
 
-  const onSubmit = () => {
-    const { personal } = getValues();
+  const onSubmit = (formData: any) => {
     updateUserSkillsMutation.mutate({
-      personal: { gender: personal?.gender?.value },
+      personal: { skills: [formData?.skills?.value] },
     });
   };
 

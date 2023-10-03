@@ -5,11 +5,11 @@ import { Select, ConfigProvider } from 'antd';
 import './index.css';
 import { SelectCommonPlacement } from 'antd/es/_util/motion';
 import Icon from 'components/Icon';
-import { useInView } from 'react-intersection-observer';
 import {
   FetchNextPageOptions,
   InfiniteQueryObserverResult,
 } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
 
 const { Option } = Select;
 export interface IOption {
@@ -86,11 +86,13 @@ const AsyncSingleSelect = forwardRef(
     }: IAsyncSingleSelectProps,
     ref?: any,
   ) => {
+    const [search, setSearch] = useState('');
     const { ref: loadMoreRef, inView } = useInView();
     const { field } = useController({
       name,
       control,
     });
+
     const labelStyle = useMemo(
       () =>
         clsx(
@@ -125,6 +127,28 @@ const AsyncSingleSelect = forwardRef(
         fetchNextPage();
       }
     }, [inView]);
+
+    const onPopupScroll = (e: any) => {
+      e.persist();
+      const target = e.target;
+
+      if (target.scrollTop + target.offsetHeight > target.scrollHeight - 1) {
+        if (fetchNextPage && hasNextPage && !isFetchingNextPage) {
+          // dynamic add options...
+          fetchNextPage();
+        }
+      }
+    };
+
+    const handleSearch = (q: string) => {
+      if (onSearch) {
+        onSearch(q);
+      }
+      setSearch(q);
+    };
+
+    const filterOption = (input: any, option: any) =>
+      (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
     return (
       <ConfigProvider
@@ -161,20 +185,21 @@ const AsyncSingleSelect = forwardRef(
                   showSearch={showSearch}
                   disabled={disabled}
                   placeholder={placeholder}
-                  defaultValue={defaultValue}
                   placement={menuPlacement ? menuPlacement : undefined}
+                  onPopupScroll={onPopupScroll}
                   getPopupContainer={(triggerNode) => {
                     if (getPopupContainer) {
                       return getPopupContainer;
                     }
                     return triggerNode.parentElement;
                   }}
-                  onSearch={onSearch ? (q) => onSearch(q) : undefined}
+                  onSearch={handleSearch}
+                  filterOption={filterOption}
                   notFoundContent={noContentFound()}
                   onInputKeyDown={() => setOpen(true)}
                   allowClear={isClearable}
                   loading={isLoading}
-                  {...field}
+                  value={field.value}
                   ref={ref}
                   onBlur={() => setOpen(false)}
                   onChange={(_, option) => {
@@ -184,12 +209,18 @@ const AsyncSingleSelect = forwardRef(
                   className={`async-single-select ${selectClassName}`}
                   clearIcon={clearIcon}
                   suffixIcon={suffixIcon || <Icon name="arrowDown" size={18} />}
-                  onClear={onClear}
+                  onClear={() => {
+                    field.onChange(null);
+                    if (onClear) {
+                      onClear();
+                    }
+                  }}
+                  searchValue={search}
                 >
                   {(options || []).map((option) => {
                     return (
                       <Option
-                        key={`async-${Math.random().toString(16).slice(2)}`}
+                        key={option.value}
                         value={option.value}
                         label={option.label}
                       >
@@ -205,6 +236,11 @@ const AsyncSingleSelect = forwardRef(
                   })}
                   {fetchNextPage && hasNextPage && !isFetchingNextPage && (
                     <div ref={loadMoreRef} />
+                  )}
+                  {isFetchingNextPage && (
+                    <div className="text-xs font-bold text-neutral-500 text-center">
+                      Loading...
+                    </div>
                   )}
                 </Select>
               )}
