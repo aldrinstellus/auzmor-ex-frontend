@@ -405,7 +405,7 @@ const MembersBody: FC<IMembersBodyProps> = ({
                       return e.target.checked;
                     },
                   },
-                  disabled: totalCount === selectedCount || showSelectedMembers,
+                  disabled: showSelectedMembers,
                   dataTestId: `select-${dataTestId}-selectall`,
                 },
               ]}
