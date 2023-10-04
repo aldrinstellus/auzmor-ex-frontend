@@ -181,7 +181,11 @@ const MembersBody: FC<IMembersBodyProps> = ({
     });
   });
 
-  const { ref, inView } = useInView();
+  const { ref, inView } = useInView({
+    root: document.getElementById('entity-search-members-body'),
+    rootMargin: '20%',
+  });
+
   useEffect(() => {
     if (inView) {
       fetchNextPage();
@@ -189,7 +193,9 @@ const MembersBody: FC<IMembersBodyProps> = ({
   }, [inView]);
 
   const selectAllEntity = () => {
-    usersData?.forEach((user: IGetUser) => setValue(`users.${user.id}`, user));
+    usersData?.forEach((user: IGetUser) => {
+      if (!user.isPresent) setValue(`users.${user.id}`, user);
+    });
   };
 
   const deselectAll = () => {
@@ -198,11 +204,23 @@ const MembersBody: FC<IMembersBodyProps> = ({
     });
   };
 
+  const userKeys = Object.keys(users);
+  const totalCount = userKeys.length;
+  const selectedCount = userKeys.filter((key) => !!users[key]).length;
+  const ignoredCount = userKeys.filter(
+    (key) =>
+      !users[key] &&
+      usersData.find((user: IGetUser) => user.id === key && user.isPresent),
+  ).length;
+
+  const selectableCount = totalCount - ignoredCount;
+  const unselectedCount = totalCount - ignoredCount - selectedCount;
+
   const updateSelectAll = () => {
-    if (Object.keys(users).some((key: string) => !!!users[key])) {
-      setValue('selectAll', false);
-    } else {
+    if (selectableCount > 0 && unselectedCount === 0) {
       setValue('selectAll', true);
+    } else {
+      setValue('selectAll', false);
     }
   };
 
@@ -398,6 +416,7 @@ const MembersBody: FC<IMembersBodyProps> = ({
                       return e.target.checked;
                     },
                   },
+                  disabled: selectableCount === 0 || showSelectedMembers,
                   dataTestId: `select-${dataTestId}-selectall`,
                 },
               ]}
@@ -408,11 +427,9 @@ const MembersBody: FC<IMembersBodyProps> = ({
                   type: FieldType.Checkbox,
                   name: 'showSelectedMembers',
                   control,
-                  label: `Show selected members (${
-                    Object.keys(users).filter((key: string) => !!users[key])
-                      .length
-                  })`,
+                  label: `Show selected members (${selectedCount})`,
                   className: 'flex item-center',
+                  disabled: selectedCount === 0,
                   dataTestId: `select-${dataTestId}-showselected`,
                 },
               ]}
@@ -431,7 +448,10 @@ const MembersBody: FC<IMembersBodyProps> = ({
             clear all
           </div>
         </div>
-        <div className="flex flex-col max-h-72 overflow-scroll">
+        <div
+          className="flex flex-col max-h-72 overflow-scroll"
+          id="entity-search-members-body"
+        >
           {isLoading ? (
             <div className="flex items-center w-full justify-center p-12">
               <Spinner />
@@ -440,9 +460,11 @@ const MembersBody: FC<IMembersBodyProps> = ({
             usersData?.map((user: any, index: any) => (
               <div
                 key={user.id}
-                className={`${
-                  user[disableKey || ''] && 'opacity-50 pointer-events-none'
-                }`}
+                className={
+                  user[disableKey || '']
+                    ? 'opacity-50 pointer-events-none'
+                    : undefined
+                }
               >
                 <div className="py-2 flex items-center">
                   <Layout
@@ -462,6 +484,7 @@ const MembersBody: FC<IMembersBodyProps> = ({
                             return false;
                           },
                         },
+                        disable: user.isPresent,
                         defaultChecked: selectedMemberIds.includes(user.id),
                       },
                     ]}
@@ -490,7 +513,14 @@ const MembersBody: FC<IMembersBodyProps> = ({
               </div>
             </div>
           )}
-          {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
+          {hasNextPage && !showSelectedMembers && !isFetchingNextPage && (
+            <div ref={ref} />
+          )}
+          {isFetchingNextPage && (
+            <div className="flex items-center w-full justify-center p-12">
+              <Spinner />
+            </div>
+          )}
         </div>
       </div>
     </div>
