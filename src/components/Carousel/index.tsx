@@ -14,7 +14,7 @@ import Icon from 'components/Icon';
 import useCarousel from 'hooks/useCarousel';
 import { IMedia } from 'contexts/CreatePostContext';
 import { twConfig } from 'utils/misc';
-import SuccessToast from 'components/Toast/variants/SuccessToast';
+// import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { toast } from 'react-toastify';
 import FailureToast from 'components/Toast/variants/FailureToast';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
@@ -29,33 +29,45 @@ export type CarouselProps = {
 };
 
 export const fetchFile = (url: string) => {
-  fetch(url)
-    .then((res) => res.blob())
-    .then((file) => {
-      const tempUrl = URL.createObjectURL(file);
-      const aTag = document.createElement('a');
-      aTag.href = tempUrl;
-      aTag.download = url.replace(/^.*[\\\/]/, '');
-      document.body.appendChild(aTag);
-      aTag.click();
-      toast(<SuccessToast content={'Download successful'} />, {
-        closeButton: (
-          <Icon name="closeCircleOutline" color="text-primary-500" size={20} />
-        ),
-        style: {
-          border: `1px solid ${twConfig.theme.colors.primary['300']}`,
-          borderRadius: '6px',
-          display: 'flex',
-          alignItems: 'center',
-        },
-        autoClose: TOAST_AUTOCLOSE_TIME,
-        transition: slideInAndOutTop,
-        theme: 'dark',
+  fetch(url, {
+    credentials: 'include',
+  })
+    // .then((res) => res.blob())
+    .then((response) => {
+      // const tempUrl = URL.createObjectURL(file);
+      // const aTag = document.createElement('a');
+      // aTag.href = tempUrl;
+      // aTag.download = url.replace(/^.*[\\\/]/, '');
+      // document.body.appendChild(aTag);
+      // aTag.click();
+      // toast(<SuccessToast content={'Download successful'} />, {
+      //   closeButton: (
+      //     <Icon name="closeCircleOutline" color="text-primary-500" size={20} />
+      //   ),
+      //   style: {
+      //     border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+      //     borderRadius: '6px',
+      //     display: 'flex',
+      //     alignItems: 'center',
+      //   },
+      //   autoClose: TOAST_AUTOCLOSE_TIME,
+      //   transition: slideInAndOutTop,
+      //   theme: 'dark',
+      // });
+      // URL.revokeObjectURL(tempUrl);
+      // aTag.remove();
+      response.arrayBuffer().then(function (buffer) {
+        const url = window.URL.createObjectURL(new Blob([buffer]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'image.png'); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
       });
-      URL.revokeObjectURL(tempUrl);
-      aTag.remove();
     })
-    .catch(() => {
+    .catch((e) => {
+      console.log(e);
       toast(<FailureToast content={'Download failed'} />, {
         closeButton: (
           <Icon name="closeCircleOutline" color="text-red-500" size={20} />
