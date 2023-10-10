@@ -28,6 +28,7 @@ import FilterModal, {
   UserStatus,
 } from 'components/FilterModal';
 import useURLParams from 'hooks/useURLParams';
+import NoDataFound from 'components/NoDataFound';
 
 export interface IPeopleProps {
   showModal: boolean;
@@ -421,24 +422,18 @@ const People: FC<IPeopleProps> = ({
                 />
               </div>
             ) : (
-              <div className="py-16 w-full">
-                <div className="flex w-full justify-center">
-                  <img src={require('images/noResult.png')} />
-                </div>
-                <div className="text-center">
-                  <div
-                    className="mt-8 text-lg font-bold"
-                    data-testid="no-result-found"
-                  >
-                    {`No result found`}
-                    {!!searchValue && ` for '${searchValue}'`}
-                  </div>
-                  <div className="text-sm text-gray-500 mt-2">
+              <NoDataFound
+                className="py-4 w-full"
+                searchString={searchValue}
+                message={
+                  <p>
                     Sorry we can&apos;t find the profile you are looking for.
                     <br /> Please check the spelling or try again.
-                  </div>
-                </div>
-              </div>
+                  </p>
+                }
+                hideClearBtn
+                dataTestId="people"
+              />
             );
           })()}
         </div>

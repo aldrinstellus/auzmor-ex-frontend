@@ -1,4 +1,3 @@
-import Button, { Variant } from 'components/Button';
 import { FC, useEffect } from 'react';
 import { isFiltersEmpty } from 'utils/misc';
 import AppCardSkeleton from './Skeletons/AppCardSkeleton';
@@ -6,6 +5,7 @@ import AppGrid from './AppGrid';
 import { useInView } from 'react-intersection-observer';
 import PageLoader from 'components/PageLoader';
 import TeamNotFound from 'images/TeamNotFound.svg';
+import NoDataFound from 'components/NoDataFound';
 
 type ApiCallFunction = (queryParams: any) => any;
 
@@ -151,37 +151,20 @@ const AppList: FC<IAppListProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className="py-16 w-full">
-                  <div className="flex w-full justify-center">
-                    <img src={require('images/noResult.png')} />
-                  </div>
-                  <div className="text-center">
-                    <div
-                      className="mt-8 text-lg font-bold"
-                      data-testid="apps-noresult-found"
-                    >
-                      {`No result found ${
-                        queryParams.q && `for '${queryParams.q}'`
-                      }`}
-                    </div>
-                    <div className="text-sm text-gray-500 mt-2">
+                <NoDataFound
+                  className="py-16 w-full"
+                  searchString={queryParams.q}
+                  onClearSearch={() => {
+                    resetField && resetField('search', { defaultValue: '' });
+                  }}
+                  message={
+                    <p>
                       Sorry we can&apos;t find the app you are looking for.
-                      <br /> Please try using different filters.
-                    </div>
-                  </div>
-
-                  <div className="flex justify-center mt-6">
-                    <Button
-                      label={'Clear search'}
-                      variant={Variant.Secondary}
-                      onClick={() => {
-                        resetField &&
-                          resetField('search', { defaultValue: '' });
-                      }}
-                      dataTestId="apps-clear-applied-filter"
-                    />
-                  </div>
-                </div>
+                      <br /> Please try using different filters
+                    </p>
+                  }
+                  dataTestId="app"
+                />
               )}
             </>
           );
