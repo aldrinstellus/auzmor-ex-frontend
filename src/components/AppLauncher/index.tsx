@@ -105,7 +105,7 @@ const AppLauncher = () => {
           if (appIds.length > 0) {
             return (
               <div className="flex flex-col gap-4 mt-4">
-                <div className="flex items-center gap-8 w-full">
+                <div className="flex items-center justify-center gap-8 w-full">
                   {appIds?.map(({ id }: any) => (
                     <AppWidgetCard data={widgetApps[id]} key={id} />
                   ))}
