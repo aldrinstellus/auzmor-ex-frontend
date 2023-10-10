@@ -34,7 +34,7 @@ export interface IAsyncSingleSelectProps {
   menuPlacement: SelectCommonPlacement;
   isLoading?: boolean;
   onSearch?: (inputValue: string) => void;
-  noOptionsMessage?: string;
+  noOptionsMessage?: string | ReactNode;
   isClearable?: boolean;
   height?: number;
   fontSize?: number;

@@ -13,7 +13,6 @@ import UserNode from './UserNode';
 import ExpandButtonContent from './ExpandButtonContent';
 import Spinner from 'components/Spinner';
 import clsx from 'clsx';
-import Button, { Variant } from 'components/Button';
 import { IGetUser, UserStatus, getOrgChart } from 'queries/users';
 import { QueryFunctionContext } from '@tanstack/react-query';
 import { IDesignation } from 'queries/designation';
@@ -21,6 +20,7 @@ import { IProfileImage } from 'queries/post';
 import { FOCUS_ZOOM, IZoom, MAX_ZOOM, MIN_ZOOM } from '..';
 import useAuth from 'hooks/useAuth';
 import { mapRanges } from 'utils/misc';
+import NoDataFound from 'components/NoDataFound';
 
 export interface INode {
   id: string;
@@ -176,8 +176,8 @@ const Chart: FC<IChart> = ({
     () =>
       clsx({
         'relative w-full': true,
-        'opacity-0': isLoading || !!!data?.length,
         'opacity-100': !isLoading,
+        'opacity-0': isLoading || !!!data?.length,
       }),
     [isLoading],
   );
@@ -188,28 +188,18 @@ const Chart: FC<IChart> = ({
         <Spinner />
       </div>
       {!!!data?.length && !!!isLoading && (
-        <div className="flex flex-col w-full h-full items-center justify-center bg-white rounded-9xl p-8">
-          <div className="mt-8 mb-4">
-            <img src={require('images/noResult.png')} />
-          </div>
-          <div className="text-neutral-900 text-lg font-bold mb-4">
-            No result found
-          </div>
-          <div className="text-neutral-500 text-xs">
-            Sorry we can’t find the member you are looking for.
-          </div>
-          <div className="text-neutral-500 text-xs">
-            Please check the spelling or try again.
-          </div>
-          {isFilterApplied && (
-            <Button
-              label="Clear filter"
-              onClick={onClearFilter}
-              className="mt-6"
-              variant={Variant.Secondary}
-            />
-          )}
-        </div>
+        <NoDataFound
+          className="py-4 w-full"
+          onClearSearch={onClearFilter}
+          message={
+            <p>
+              Sorry we can&apos;t find the member you are looking for.
+              <br /> Please check the spelling or try again.
+            </p>
+          }
+          clearBtnLabel="Clear filter"
+          dataTestId="data"
+        />
       )}
       <div id="org-chart-container" className={orgChartContainerStyle}>
         <div ref={chartRef} className="h-[calc(100vh-290px)]" />
