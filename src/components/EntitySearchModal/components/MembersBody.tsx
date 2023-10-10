@@ -12,6 +12,7 @@ import InfiniteSearch from 'components/InfiniteSearch';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 import useAuth from 'hooks/useAuth';
 import { IDesignationAPI, useInfiniteDesignations } from 'queries/designation';
+import NoDataFound from 'components/NoDataFound';
 
 type ApiCallFunction = (queryParams: any) => any;
 interface IMembersBodyProps {
@@ -513,21 +514,18 @@ const MembersBody: FC<IMembersBodyProps> = ({
               </div>
             ))
           ) : (
-            <div className="flex flex-col items-center w-full justify-center">
-              <div className="mt-8 mb-4">
-                <img src={require('images/noResult.png')} />
-              </div>
-              <div className="text-neutral-900 text-lg font-bold mb-4">
-                No result found
-                {!!memberSearch && ` for ‘${memberSearch}’`}
-              </div>
-              <div className="text-neutral-500 text-xs">
-                Sorry we can’t find the member you are looking for.
-              </div>
-              <div className="text-neutral-500 text-xs">
-                Please check the spelling or try again.
-              </div>
-            </div>
+            <NoDataFound
+              className="py-4 w-full"
+              searchString={memberSearch}
+              message={
+                <p>
+                  Sorry we can&apos;t find the member you are looking for.
+                  <br /> Please check the spelling or try again.
+                </p>
+              }
+              hideClearBtn
+              dataTestId="user"
+            />
           )}
           {hasNextPage && !showSelectedMembers && !isFetchingNextPage && (
             <div ref={ref} />

@@ -34,6 +34,7 @@ import FilterModal, {
 import { INode } from './Chart';
 import { mapRanges } from 'utils/misc';
 import { QueryFunctionContext } from '@tanstack/react-query';
+import NoDataFound from 'components/NoDataFound';
 
 interface IToolbarProps {
   activeMode: OrgChartMode;
@@ -211,6 +212,20 @@ const Toolbar: FC<IToolbarProps> = ({
       onClear: () => {
         chartRef.current?.clearHighlighting();
       },
+      noOptionsMessage: (
+        <NoDataFound
+          className="py-4 w-full"
+          searchString={debouncedMemberSearchValue}
+          message={
+            <p>
+              Sorry we can&apos;t find the member you are looking for.
+              <br /> Please check the spelling or try again.
+            </p>
+          }
+          hideClearBtn
+          dataTestId="membersearch"
+        />
+      ),
       // dataTestId: 'member-search',
     },
   ];
