@@ -39,7 +39,10 @@ class ApiService {
         return response;
       },
       (error: any) => {
-        if (error?.response?.status === 401) {
+        if (
+          !window.location.hostname?.startsWith('office') &&
+          error?.response?.status === 401
+        ) {
           window.location.href = '/login';
         }
         return Promise.reject(error);
