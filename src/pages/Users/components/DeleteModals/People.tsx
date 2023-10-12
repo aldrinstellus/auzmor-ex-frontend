@@ -60,8 +60,15 @@ const DeletePeople: FC<IDeletePeopleProps> = ({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSuccess: (data, variables, context) => {
       closeModal();
+      queryClient.invalidateQueries(['user', userId]);
       queryClient.invalidateQueries({ queryKey: ['users'] });
       queryClient.invalidateQueries(['feed'], { exact: false });
+      queryClient.invalidateQueries(['feed-announcements-widget']);
+      queryClient.invalidateQueries(['post-announcements-widget']);
+      queryClient.invalidateQueries(['bookmarks']);
+      queryClient.invalidateQueries(['scheduledPosts']);
+      queryClient.invalidateQueries(['posts'], { exact: false });
+      queryClient.invalidateQueries(['team-members']);
       toast(
         <SuccessToast
           content="Member has been deleted"
