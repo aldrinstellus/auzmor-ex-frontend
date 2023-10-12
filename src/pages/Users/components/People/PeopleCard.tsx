@@ -30,7 +30,6 @@ import UserProfileDropdown from 'components/UserProfileDropdown';
 import DeactivatePeople from '../DeactivateModal/Deactivate';
 import ReactivatePeople from '../ReactivateModal/Reactivate';
 import clsx from 'clsx';
-import truncate from 'lodash/truncate';
 import RemoveTeamMember from '../DeleteModals/TeamMember';
 import { FC } from 'react';
 
@@ -298,7 +297,7 @@ const PeopleCard: FC<IPeopleCardProps> = ({
         )}
 
         <div
-          className="flex flex-col gap-4 items-center z-10 py-6 justify-between h-full"
+          className="flex flex-col gap-4 items-center z-10 py-6 px-4 justify-between h-full"
           onClick={() => {
             if (id === user?.id) {
               return navigate('/profile');
@@ -318,20 +317,17 @@ const PeopleCard: FC<IPeopleCardProps> = ({
               (status as any) === UserStatus.Inactive ? '#ffffff' : undefined
             }
           />
-          <div className="flex flex-col items-center gap-2 justify-start flex-1">
-            <div className="flex flex-col items-center gap-1">
+          <div className="flex flex-col items-center gap-2 justify-start flex-1 w-full">
+            <div className="flex flex-col items-center gap-1 w-full">
               <div
-                className="text-neutral-900 text-base font-bold truncate"
+                className="text-neutral-900 text-base font-bold truncate w-full block text-center"
                 data-testid={`people-card-name-${fullName || workEmail}`}
               >
-                {truncate(fullName || workEmail, {
-                  length: 18,
-                  separator: ' ',
-                })}
+                {fullName || workEmail}
               </div>
               {designation?.name && (
                 <div
-                  className="text-neutral-900 text-xs font-normal line-clamp-1"
+                  className="text-neutral-900 text-xs font-normal line-clamp-1 truncate w-full block text-center"
                   data-testid={`people-card-title-${designation.designationId}`}
                 >
                   {designation?.name}
