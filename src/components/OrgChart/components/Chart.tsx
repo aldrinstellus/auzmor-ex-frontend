@@ -73,7 +73,7 @@ const Chart: FC<IChart> = ({
             .scaleExtent([MIN_ZOOM, MAX_ZOOM])
             .container(chartRef.current)
             .data(data)
-            .nodeHeight((_d: any) => 128)
+            .nodeHeight((_d: any) => 111)
             .nodeWidth((_d: any) => 256)
             .compact(false)
             .childrenMargin((_d: any) => 50)
@@ -172,15 +172,11 @@ const Chart: FC<IChart> = ({
     [isLoading],
   );
 
-  const orgChartContainerStyle = useMemo(
-    () =>
-      clsx({
-        'relative w-full': true,
-        'opacity-100': !isLoading,
-        'opacity-0': isLoading || !!!data?.length,
-      }),
-    [isLoading],
-  );
+  const orgChartContainerStyle = clsx({
+    'relative w-full': true,
+    'opacity-100': !isLoading,
+    '!opacity-0': isLoading || !!!data?.length,
+  });
 
   return (
     <>
@@ -189,7 +185,7 @@ const Chart: FC<IChart> = ({
       </div>
       {!!!data?.length && !!!isLoading && (
         <NoDataFound
-          className="py-4 w-full"
+          className="p-8 w-full bg-white max-w-[1440px] rounded-9xl"
           onClearSearch={onClearFilter}
           message={
             <p>
