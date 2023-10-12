@@ -124,9 +124,9 @@ const EditProfileModal: FC<IEditProfileModal> = ({
     });
     console.log('OPTIONS DATA FLAT >>>>>', optionsData);
     const transformedOption = optionsData?.map((option: any) => ({
-      value: option?.departmentId || option?.designationId,
+      value: option?.name,
       label: option?.name,
-      id: option?.departmentId || option?.designationId,
+      id: option?.id,
       dataTestId: `${dataTestId}-${option?.name}`,
     }));
     return transformedOption;
