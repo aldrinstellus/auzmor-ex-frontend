@@ -42,6 +42,7 @@ import { useMutation } from '@tanstack/react-query';
 import useURLParams from 'hooks/useURLParams';
 import useRole from 'hooks/useRole';
 import queryClient from 'utils/queryClient';
+import NoDataFound from 'components/NoDataFound';
 interface IForm {
   search?: string;
 }
@@ -196,7 +197,9 @@ const Team: FC<ITeamProps> = ({
         transition: slideInAndOutTop,
         theme: 'dark',
       });
+      queryClient.invalidateQueries(['team-members']);
       queryClient.invalidateQueries(['team', teamId]);
+      queryClient.invalidateQueries(['teams'], { exact: false });
     },
   });
 
@@ -475,35 +478,20 @@ const Team: FC<ITeamProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className="py-16 w-full">
-                  <div className="flex w-full justify-center">
-                    <img src={require('images/noResult.png')} />
-                  </div>
-                  <div className="text-center">
-                    <div
-                      className="mt-8 text-lg font-bold"
-                      data-testid="teams-noresult-found"
-                    >
-                      {`No result found`}
-                      {searchValue && ` for '${searchValue}'`}
-                    </div>
-                    <div className="text-sm text-gray-500 mt-2">
+                <NoDataFound
+                  className="py-4 w-full"
+                  searchString={searchValue}
+                  message={
+                    <p>
                       Sorry we can&apos;t find the team you are looking for.
                       <br /> Please try using different filters.
-                    </div>
-                  </div>
-
-                  <div className="flex justify-center mt-6">
-                    <Button
-                      label={'Clear search'}
-                      variant={Variant.Secondary}
-                      onClick={() => {
-                        resetField('search', { defaultValue: '' });
-                      }}
-                      dataTestId="teams-clear-applied-filter"
-                    />
-                  </div>
-                </div>
+                    </p>
+                  }
+                  onClearSearch={() => {
+                    resetField('search', { defaultValue: '' });
+                  }}
+                  dataTestId="team"
+                />
               )}
             </>
           );

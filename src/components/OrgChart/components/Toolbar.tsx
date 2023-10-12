@@ -28,12 +28,12 @@ import Divider from 'components/Divider';
 import Avatar from 'components/Avatar';
 import FilterModal, {
   IAppliedFilters,
-  UserStatus,
   FilterModalVariant,
 } from 'components/FilterModal';
 import { INode } from './Chart';
-import { mapRanges } from 'utils/misc';
+import { isFiltersEmpty, mapRanges } from 'utils/misc';
 import { QueryFunctionContext } from '@tanstack/react-query';
+import NoDataFound from 'components/NoDataFound';
 
 interface IToolbarProps {
   activeMode: OrgChartMode;
@@ -77,7 +77,9 @@ const Toolbar: FC<IToolbarProps> = ({
   const { user } = useAuth();
 
   const isFilterApplied =
-    !!appliedFilters?.departments?.length || !!appliedFilters?.location?.length;
+    !!appliedFilters?.departments?.length ||
+    !!appliedFilters?.location?.length ||
+    !!appliedFilters?.status?.length;
 
   // fetch users on start with specific user
   const debouncedPersonSearchValue = useDebounce(
@@ -105,9 +107,10 @@ const Toolbar: FC<IToolbarProps> = ({
   // fetch members on search
   const debouncedMemberSearchValue = useDebounce(memberSearchString || '', 300);
   const { data: fetchedMembers, isLoading: isFetching } = useOrgChart(
-    {
+    isFiltersEmpty({
       q: debouncedMemberSearchValue,
-      expandAll: true,
+      root: parentId || undefined,
+      expand: parentId ? 1 : undefined,
       locations:
         appliedFilters?.location?.map((location) => (location as any).id) || [],
       departments:
@@ -115,10 +118,9 @@ const Toolbar: FC<IToolbarProps> = ({
           (department) => (department as any).id,
         ) || [],
       status:
-        appliedFilters.status?.value === 'ALL'
-          ? undefined
-          : appliedFilters.status?.value,
-    },
+        appliedFilters?.status?.map((eachStatus) => (eachStatus as any).id) ||
+        [],
+    }),
     {
       enable: debouncedMemberSearchValue !== '',
     },
@@ -167,50 +169,101 @@ const Toolbar: FC<IToolbarProps> = ({
         <UserRow
           user={{
             ...option.rowData,
-            profileImage: { original: option.rowData.profileImage },
             fullName: option.rowData.userName,
+            profileImage: !!!option.rowData.profileImage
+              ? undefined
+              : option.rowData.profileImage,
           }}
           dataTestId={option.dataTestId}
           className="w-full"
-          onClick={(user) => {
+          onClick={(user: any) => {
             clearSpotlight();
             setMemberSearchString(user?.fullName || '');
-            getOrgChart({
-              queryKey: [
-                'organization-chart',
-                {
-                  q: user?.fullName,
-                  expandAll: true,
-                  locations:
-                    appliedFilters?.location?.map(
-                      (location) => (location as any).id,
-                    ) || [],
-                  departments:
-                    appliedFilters?.departments?.map(
-                      (department) => (department as any).id,
-                    ) || [],
-                  status:
-                    appliedFilters.status?.value === 'ALL'
-                      ? undefined
-                      : appliedFilters.status?.value,
-                },
-              ],
-            } as QueryFunctionContext<any>).then((data) => {
-              chartRef.current?.addNodes(data.data.result.data);
+            if (
+              chartRef.current?.data()?.some((node) => node.id === user?.id)
+            ) {
+              // if node already in the chart
               chartRef.current
                 ?.expandAll()
                 ?.setFocus(
                   user?.id,
                   mapRanges(0, 100, MIN_ZOOM, MAX_ZOOM, FOCUS_ZOOM),
                 );
-              setIsExpandAll(true);
-            });
+            } else {
+              // fetch missing nodes.
+              getOrgChart({
+                queryKey: [
+                  'organization-chart',
+                  {
+                    locations:
+                      appliedFilters?.location?.map(
+                        (location) => (location as any).id,
+                      ) || [],
+                    departments:
+                      appliedFilters?.departments?.map(
+                        (department) => (department as any).id,
+                      ) || [],
+                    status:
+                      appliedFilters.status?.map(
+                        (eachStatus) => (eachStatus as any).id,
+                      ) || [],
+                    target: user?.id,
+                  },
+                ],
+              } as QueryFunctionContext<any>).then((data) => {
+                chartRef.current?.addNodes(data.data.result.data);
+                getOrgChart({
+                  queryKey: [
+                    'organization-chart',
+                    {
+                      root: user?.parentId,
+                      locations:
+                        appliedFilters?.location?.map(
+                          (location) => (location as any).id,
+                        ) || [],
+                      departments:
+                        appliedFilters?.departments?.map(
+                          (department) => (department as any).id,
+                        ) || [],
+                      status:
+                        appliedFilters.status?.map(
+                          (eachStatus) => (eachStatus as any).id,
+                        ) || [],
+                      expand: 0,
+                    },
+                  ],
+                } as QueryFunctionContext<any>).then((data) => {
+                  chartRef.current?.addNodes(data.data.result.data);
+                  chartRef.current
+                    ?.expandAll()
+                    ?.setFocus(
+                      user?.id,
+                      mapRanges(0, 100, MIN_ZOOM, MAX_ZOOM, FOCUS_ZOOM),
+                    );
+                  setIsExpandAll(true);
+                });
+              });
+            }
           }}
         />
       ),
       onClear: () => {
         chartRef.current?.clearHighlighting();
       },
+      noOptionsMessage: (
+        <NoDataFound
+          className="py-4 w-full"
+          searchString={debouncedMemberSearchValue}
+          message={
+            <p>
+              Sorry we can&apos;t find the member you are looking for.
+              <br /> Please check the spelling or try again.
+            </p>
+          }
+          hideClearBtn
+          dataTestId="membersearch"
+        />
+      ),
       // dataTestId: 'member-search',
     },
   ];
@@ -249,7 +302,7 @@ const Toolbar: FC<IToolbarProps> = ({
     setAppliedFilters({
       location: [],
       departments: [],
-      status: { value: UserStatus.All, label: 'all' },
+      status: [],
     });
   };
   const clearAllFilters = () => {
@@ -395,9 +448,9 @@ const Toolbar: FC<IToolbarProps> = ({
                                   (department) => (department as any).id,
                                 ) || [],
                               status:
-                                appliedFilters.status?.value === 'ALL'
-                                  ? undefined
-                                  : appliedFilters.status?.value,
+                                appliedFilters.status?.map(
+                                  (eachStatus) => (eachStatus as any).id,
+                                ) || [],
                             },
                           ],
                         } as QueryFunctionContext<any>).then(
@@ -612,6 +665,51 @@ const Toolbar: FC<IToolbarProps> = ({
                         setAppliedFilters({
                           ...appliedFilters,
                           departments: [],
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+              {!!appliedFilters?.status?.length && (
+                <div
+                  className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-neutral-200 rounded-7xl justify-between mr-2 hover:border-primary-600 group cursor-pointer"
+                  onClick={() =>
+                    setAppliedFilters({
+                      ...appliedFilters,
+                      status: [],
+                    })
+                  }
+                >
+                  <div className="font-medium text-sm text-neutral-900 mr-1">
+                    Status{' '}
+                    {appliedFilters.status.map((eachStatus, index) => (
+                      <>
+                        <span
+                          key={eachStatus.id}
+                          className="text-primary-500 font-bold text-sm"
+                        >
+                          {eachStatus.name}
+                        </span>
+                        {appliedFilters?.status &&
+                          index !== appliedFilters?.status?.length - 1 && (
+                            <span>
+                              {appliedFilters?.status?.length === 2
+                                ? ' and '
+                                : ', '}
+                            </span>
+                          )}
+                      </>
+                    ))}
+                  </div>
+                  <div className="flex items-center">
+                    <Icon
+                      name="close"
+                      size={16}
+                      onClick={() =>
+                        setAppliedFilters({
+                          ...appliedFilters,
+                          status: [],
                         })
                       }
                     />

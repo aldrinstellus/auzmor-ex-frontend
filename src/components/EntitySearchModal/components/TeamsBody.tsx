@@ -14,6 +14,7 @@ import { isFiltersEmpty } from 'utils/misc';
 import { useOrganization } from 'queries/organization';
 import useRole from 'hooks/useRole';
 import { CategoryType } from 'queries/apps';
+import NoDataFound from 'components/NoDataFound';
 
 interface ITeamsBodyProps {
   entityRenderer?: (data: ITeam) => ReactNode;
@@ -302,21 +303,19 @@ const TeamsBody: FC<ITeamsBodyProps> = ({
               </div>
             ))
           ) : (
-            <div className="flex flex-col items-center w-full justify-center">
-              <div className="mt-8 mb-4">
-                <img src={require('images/noResult.png')} />
-              </div>
-              <div className="text-neutral-900 text-lg font-bold mb-4">
-                No result found
-                {!!teamSearch && ` for ‘${teamSearch}’`}
-              </div>
-              <div className="text-neutral-500 text-xs">
-                Sorry we can’t find the member you are looking for.
-              </div>
-              <div className="text-neutral-500 text-xs">
-                Please check the spelling or try again.
-              </div>
-            </div>
+            <NoDataFound
+              className="py-4 w-full"
+              searchString={teamSearch}
+              onClearSearch={() => {}}
+              message={
+                <p>
+                  Sorry we can&apos;t find the member you are looking for.
+                  <br /> Please check the spelling or try again.
+                </p>
+              }
+              hideClearBtn
+              dataTestId="team"
+            />
           )}
           {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
         </div>

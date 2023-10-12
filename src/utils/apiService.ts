@@ -33,6 +33,22 @@ class ApiService {
         },
       };
     });
+
+    this.instance.interceptors.response.use(
+      (response: any) => {
+        return response;
+      },
+      (error: any) => {
+        if (
+          !window.location.hostname?.startsWith('office') &&
+          !window.location.pathname?.includes('logout') &&
+          error?.response?.status === 401
+        ) {
+          window.location.href = '/login';
+        }
+        return Promise.reject(error);
+      },
+    );
   }
 
   updateContentType = (contentType: string) => {

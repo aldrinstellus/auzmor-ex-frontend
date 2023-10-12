@@ -1,7 +1,7 @@
 import Button, { Variant } from 'components/Button';
 import { FC, useEffect, useRef, useState } from 'react';
 import Toolbar from './components/Toolbar';
-import Chart from './components/Chart';
+import Chart, { INode } from './components/Chart';
 import { OrgChart } from 'd3-org-chart';
 import { useForm } from 'react-hook-form';
 import { IGetUser, useOrgChart } from 'queries/users';
@@ -44,7 +44,7 @@ const OrganizationChart: FC<IOrgChart> = ({ setShowOrgChart }) => {
   const [appliedFilters, setAppliedFilters] = useState<IAppliedFilters>({
     location: [],
     departments: [],
-    status: null,
+    status: [],
   });
   const [parentId, setParentId] = useState<string | null>(null);
   const { data, isLoading } = useOrgChart(
@@ -57,9 +57,8 @@ const OrganizationChart: FC<IOrgChart> = ({ setShowOrgChart }) => {
           (department) => (department as any).id,
         ) || [],
       status:
-        appliedFilters.status?.value === 'ALL'
-          ? undefined
-          : appliedFilters.status?.value,
+        appliedFilters.status?.map((eachStatus) => (eachStatus as any).id) ||
+        [],
       expand: activeMode === OrgChartMode.Team ? 1 : undefined,
     }),
   );
@@ -75,7 +74,17 @@ const OrganizationChart: FC<IOrgChart> = ({ setShowOrgChart }) => {
     return () => setIsOrgChartMounted(false);
   }, []);
 
-  const userSearch = watch('userSearch');
+  const getNodes = () => {
+    if (
+      (!!appliedFilters?.departments?.length ||
+        !!appliedFilters?.location?.length ||
+        !!appliedFilters?.status?.length) &&
+      data &&
+      !!!data?.data.result.data.some((node: INode) => node.matchesCriteria)
+    ) {
+      return [];
+    } else return data?.data.result.data || [];
+  };
 
   return (
     <div className="flex flex-col w-full h-full items-center">
@@ -111,13 +120,13 @@ const OrganizationChart: FC<IOrgChart> = ({ setShowOrgChart }) => {
       />
       <Chart
         orgChartRef={chartRef}
-        data={data?.data.result.data || []}
+        data={getNodes()}
         isLoading={isLoading}
         onClearFilter={() => {
           setAppliedFilters({
             location: [],
             departments: [],
-            status: null,
+            status: [],
           });
           setStartWithSpecificUser(null);
           resetField('userSearch');
@@ -125,10 +134,8 @@ const OrganizationChart: FC<IOrgChart> = ({ setShowOrgChart }) => {
         isFilterApplied={
           !!appliedFilters?.departments?.length ||
           !!appliedFilters?.location?.length ||
-          !!startWithSpecificUser ||
-          !!userSearch
+          !!appliedFilters?.status?.length
         }
-        startWithSpecificUser={startWithSpecificUser}
         setZoom={setZoom}
       />
     </div>

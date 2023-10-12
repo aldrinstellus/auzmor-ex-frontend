@@ -34,7 +34,7 @@ export interface IAsyncSingleSelectProps {
   menuPlacement: SelectCommonPlacement;
   isLoading?: boolean;
   onSearch?: (inputValue: string) => void;
-  noOptionsMessage?: string;
+  noOptionsMessage?: string | ReactNode;
   isClearable?: boolean;
   height?: number;
   fontSize?: number;
@@ -220,7 +220,7 @@ const AsyncSingleSelect = forwardRef(
                   {(options || []).map((option) => {
                     return (
                       <Option
-                        key={option.value}
+                        key={`${option.value}-${Math.random()}`}
                         value={option.value}
                         label={option.label}
                       >

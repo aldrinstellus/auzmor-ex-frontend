@@ -21,6 +21,7 @@ import ClosePollModal from './ClosePollModal';
 import PollVotesModal from './PollVotesModal';
 import ChangeToRegularPostModal from './ChangeToRegularPostModal';
 import AnnouncementAnalytics from './AnnouncementAnalytics';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export interface IFeedPostMenuProps {
   data: IPost;
@@ -29,6 +30,8 @@ export interface IFeedPostMenuProps {
 const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
   const { user } = useAuth();
   const { isMember } = useRole();
+  const location = useLocation();
+  const navigate = useNavigate();
   const feedRef = useRef(useFeedStore.getState().feed);
   const [confirm, showConfirm, closeConfirm] = useModal();
   const [analytics, showAnalytics, closeAnalytics] = useModal();
@@ -46,12 +49,14 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
   const { isAdmin } = useRole();
   const currentDate = new Date().toISOString();
 
+  const isPostPage = location.pathname.startsWith('/posts/');
+
   const deletePostMutation = useMutation({
     mutationKey: ['deletePostMutation', data.id],
     mutationFn: deletePost,
     onMutate: (variables) => {
       const previousFeed = feedRef.current;
-      setFeed({ ...omit(feedRef.current, [variables]) });
+      if (!isPostPage) setFeed({ ...omit(feedRef.current, [variables]) });
       closeConfirm();
       return { previousFeed };
     },
@@ -80,7 +85,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
         setFeed(context?.previousFeed);
       }
     },
-    onSuccess: async (_data, _variables, _context) => {
+    onSuccess: async (_data, variables, _context) => {
       toast(
         <SuccessToast
           content="Post deleted successfully"
@@ -105,9 +110,15 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
           theme: 'dark',
         },
       );
+      if (isPostPage) navigate('/feed');
+      await queryClient.invalidateQueries(['feed']);
       await queryClient.invalidateQueries(['feed-announcements-widget']);
       await queryClient.invalidateQueries(['post-announcements-widget']);
-      await queryClient.invalidateQueries(['my-bookmarks']);
+      await queryClient.invalidateQueries(['bookmarks']);
+      await queryClient.invalidateQueries(['scheduledPosts']);
+      await queryClient.invalidateQueries(['posts', variables], {
+        exact: false,
+      });
     },
   });
 

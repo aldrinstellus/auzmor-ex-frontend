@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Card from 'components/Card';
 import Divider from 'components/Divider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
 import timezones from 'utils/timezones.json';
 import {
+  beforeXUnit,
   getNow,
   getTimezoneNameFromIANA,
   nDaysFromNow,
@@ -42,7 +43,7 @@ const schema = yup.object({
 });
 
 const BasicSettings = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [ooo, setOOO] = useState(user?.outOfOffice?.outOfOffice);
   const userTimezone = getTimezoneNameFromIANA(user?.timezone || '');
   const queryClient = useQueryClient();
@@ -70,12 +71,24 @@ const BasicSettings = () => {
   const updateMutation = useMutation({
     mutationKey: ['update-user-settings'],
     mutationFn: (data: any) => updateUserById(user?.id || '', data),
-    onSuccess: async () => {
+    onSuccess: async (res: any) => {
+      // @ts-ignore
+      updateUser({ outOfOffice: res?.result?.data?.outOfOffice });
       successToastConfig();
       await queryClient.invalidateQueries(['current-user-me']);
       reset({}, { keepValues: true });
     },
   });
+
+  useEffect(() => {
+    if (!ooo) {
+      updateMutation.mutate({
+        outOfOffice: {
+          outOfOffice: false,
+        },
+      });
+    }
+  }, [ooo]);
 
   const oooReason: any = watch('ooo.reason');
 
@@ -105,7 +118,7 @@ const BasicSettings = () => {
       name: 'ooo.start',
       label: 'Start date',
       className: '',
-      minDate: new Date(),
+      minDate: beforeXUnit(1, 'days').toDate(),
       control,
       dataTestId: 'ooo-startdate',
       disabled: !ooo,
@@ -158,8 +171,8 @@ const BasicSettings = () => {
         ...payload,
         outOfOffice: {
           outOfOffice: true,
-          start: data?.ooo?.start?.toISOString(),
-          end: data?.ooo?.end?.toISOString(),
+          start: data?.ooo?.start?.format('YYYY-MM-DD'),
+          end: data?.ooo?.end?.format('YYYY-MM-DD'),
           otherReason: data?.ooo?.reason?.key,
         },
       };
