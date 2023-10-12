@@ -1,4 +1,3 @@
-import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Card from 'components/Card';
 import { announcementRead, useAnnouncementsWidget } from 'queries/post';
@@ -12,13 +11,15 @@ import { Link } from 'react-router-dom';
 import useAuth from 'hooks/useAuth';
 import { getFullName, getProfileImage } from 'utils/misc';
 import EmptyState from './components/EmptyState';
+import { FC, memo } from 'react';
+import { isEmpty } from 'lodash';
 
 export interface IAnnouncementCardProps {
   postId?: string;
   openModal?: () => void;
 }
 
-const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({
+const AnnouncementCard: FC<IAnnouncementCardProps> = ({
   postId,
   openModal,
 }) => {
@@ -48,7 +49,6 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({
   const { data, isLoading } = useAnnouncementsWidget(limit, queryKey);
 
   const result = data?.data?.result?.data;
-  const itemCount = result?.length;
 
   // By default, postData will be result[0].
   // If postId is defined and result[0].id === postId, then set postData = result[1]
@@ -63,6 +63,7 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({
   const hasLoggedInUserCreatedAnnouncement =
     user?.id === postData?.announcement?.actor?.userId;
 
+  const itemCount = isEmpty(postData) ? 0 : result?.length;
   return (
     <div className="min-w-[240px]">
       <div className="flex justify-between items-center ">
@@ -99,14 +100,15 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({
                         className="border-2 border-white"
                       />
 
-                      <div>
-                        <div className="flex space-x-1 text-sm">
-                          <span className="text-neutral-900 font-bold">
-                            {getFullName(postData?.createdBy)}
+                      <div className="w-full">
+                        <div className="flex w-full space-x-1 text-sm">
+                          <span className="text-neutral-900">
+                            <b>{getFullName(postData?.createdBy)}</b> shared a
+                            post
                           </span>
-                          <span className="text-neutral-900 font-normal">
+                          {/* <span className="text-neutral-900 font-normal bg-yellow-100">
                             shared a post
-                          </span>
+                          </span> */}
                         </div>
                         <div className="flex space-x-2 items-center">
                           <div className="text-xs text-gray-500">
@@ -158,4 +160,4 @@ const AnnouncementCard: React.FC<IAnnouncementCardProps> = ({
   );
 };
 
-export default AnnouncementCard;
+export default memo(AnnouncementCard);

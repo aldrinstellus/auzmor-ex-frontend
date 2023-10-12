@@ -1,5 +1,5 @@
 import { FieldType } from 'components/Form';
-import React, { useContext } from 'react';
+import { FC, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   CreatePostContext,
@@ -34,7 +34,7 @@ export interface ICreateAnnouncementProps {
   data?: IPost;
 }
 
-const CreateAnnouncement: React.FC<ICreateAnnouncementProps> = ({
+const CreateAnnouncement: FC<ICreateAnnouncementProps> = ({
   closeModal,
   mode,
   data,
@@ -42,7 +42,7 @@ const CreateAnnouncement: React.FC<ICreateAnnouncementProps> = ({
   const { setActiveFlow, announcement, clearPostContext } =
     useContext(CreatePostContext);
 
-  const { control, handleSubmit, watch, setValue, getValues } =
+  const { control, handleSubmit, watch, getValues } =
     useForm<IAnnouncementForm>({
       mode: 'onChange',
       defaultValues: {
@@ -110,12 +110,12 @@ const CreateAnnouncement: React.FC<ICreateAnnouncementProps> = ({
   return (
     <>
       <Header
-        title={'Create an announcement'}
-        onBackIconClick={
-          mode === CreateAnnouncementMode.POST_BUILDER
-            ? () => setActiveFlow(CreatePostFlow.CreatePost)
-            : undefined
+        title={
+          mode === CreateAnnouncementMode.DIRECT
+            ? 'Edit announcement expiry'
+            : 'Create an announcement'
         }
+        onBackIconClick={() => setActiveFlow(CreatePostFlow.CreatePost)}
         onClose={() => {
           clearPostContext();
           closeModal();

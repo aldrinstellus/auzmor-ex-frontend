@@ -1,16 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Header from 'components/ModalHeader';
-import {
-  CreatePostContext,
-  CreatePostFlow,
-  POST_TYPE,
-} from 'contexts/CreatePostContext';
+import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
 import Body from './Body';
 import Button from 'components/Button';
 import { Variant as ButtonVariant } from 'components/Button';
 import { IAudienceForm } from 'components/EntitySearchModal';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
+import { PostType } from 'queries/post';
 
 interface ICreateShoutoutProps {
   closeModal: () => void;
@@ -21,7 +18,7 @@ export enum SHOUTOUT_STEPS {
   ImageSelect = 'IMAGE_SELECT',
 }
 
-const CreateShoutout: React.FC<ICreateShoutoutProps> = ({ closeModal }) => {
+const CreateShoutout: FC<ICreateShoutoutProps> = ({ closeModal }) => {
   const {
     setActiveFlow,
     setUploads,
@@ -58,7 +55,7 @@ const CreateShoutout: React.FC<ICreateShoutoutProps> = ({ closeModal }) => {
   };
 
   const onSubmit = () => {
-    setPostType(POST_TYPE.Shoutout);
+    setPostType(PostType.Shoutout);
     setActiveFlow(CreatePostFlow.CreatePost);
   };
 
@@ -134,7 +131,9 @@ const CreateShoutout: React.FC<ICreateShoutoutProps> = ({ closeModal }) => {
         users={selectedUsers}
         shoutoutTemplate={shoutoutTemplate}
         setShoutoutTemplate={setShoutoutTemplate}
-        selectedUserIds={Object.keys(users).filter((key: string) => users[key])}
+        selectedUserIds={Object.keys(users || {}).filter(
+          (key: string) => users[key],
+        )}
       />
       <div className="bg-blue-50 flex items-center justify-end p-3 gap-x-3 rounded-9xl w-full">
         <Button

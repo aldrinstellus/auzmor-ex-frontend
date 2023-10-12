@@ -1,12 +1,17 @@
 /* Comment RTE - Post Level Comment Editor */
-import React, { useRef, useState } from 'react';
+import { FC, useState } from 'react';
 import { Comment } from './components/Comment';
 import { useInfiniteComments } from 'queries/comments';
 import { DeltaStatic } from 'quill';
 import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
-import { ICreated, IMyReactions } from 'pages/Feed';
-import { IMention, IReactionsCount, IShoutoutRecipient } from 'queries/post';
+import { IMyReactions } from 'pages/Feed';
+import {
+  ICreatedBy,
+  IMention,
+  IReactionsCount,
+  IShoutoutRecipient,
+} from 'queries/post';
 import Spinner from 'components/Spinner';
 import { PRIMARY_COLOR } from 'utils/constants';
 import LoadMore from './components/LoadMore';
@@ -19,7 +24,6 @@ import {
   IMediaValidationError,
   MediaValidationError,
 } from 'contexts/CreatePostContext';
-import { getMediaObj } from 'utils/misc';
 import { useUploadState } from 'hooks/useUploadState';
 
 export const validImageTypesForComments = [
@@ -47,7 +51,7 @@ export interface IComment {
   orgId: string;
   createdAt: string;
   updatedAt: string;
-  createdBy: ICreated;
+  createdBy: ICreatedBy;
   id: string;
   myReaction?: IMyReactions;
   reactionsCount: IReactionsCount;
@@ -57,7 +61,7 @@ export interface IComment {
   shoutoutRecipients?: IShoutoutRecipient[];
 }
 
-const Comments: React.FC<CommentsProps> = ({ entityId }) => {
+const Comments: FC<CommentsProps> = ({ entityId }) => {
   const { user } = useAuth();
   const {
     inputRef,
@@ -95,8 +99,8 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
 
   return (
     <div>
-      <div className="flex flex-row items-center justify-between p-0">
-        <div className="flex-none grow-0 order-none pr-2">
+      <div className="flex flex-row items-center justify-between p-0 gap-2">
+        <div>
           <Avatar
             name={user?.name || 'U'}
             size={32}
@@ -104,7 +108,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
           />
         </div>
         <CommentsRTE
-          className="w-full"
+          className="w-0 flex-grow"
           entityId={entityId}
           entityType="post"
           inputRef={inputRef}
@@ -137,7 +141,7 @@ const Comments: React.FC<CommentsProps> = ({ entityId }) => {
               <div className="flex flex-col gap-4">
                 {commentIds
                   ?.filter(({ id }) => !!comment[id])
-                  .map(({ id }, i: any) => (
+                  .map(({ id }, _i: any) => (
                     <Comment key={id} comment={comment[id]} />
                   ))}
               </div>

@@ -3,14 +3,14 @@ import Card from 'components/Card';
 import Icon from 'components/Icon';
 import useAuth from 'hooks/useAuth';
 import { useCurrentUser } from 'queries/users';
-import React from 'react';
+import { FC, memo } from 'react';
 import { Link } from 'react-router-dom';
 
 export interface IUserCardProps {
   className?: string;
 }
 
-const UserCard: React.FC<IUserCardProps> = ({ className }) => {
+const UserCard: FC<IUserCardProps> = ({ className }) => {
   const { user } = useAuth();
   const { data } = useCurrentUser();
 
@@ -38,12 +38,12 @@ const UserCard: React.FC<IUserCardProps> = ({ className }) => {
               {userDetails?.fullName}
             </div>
 
-            {userDetails?.designation && (
+            {userDetails?.designation?.name && (
               <div
                 className="text-xs font-normal truncate w-full text-center text-neutral-500"
                 data-testid="profilecard-designation"
               >
-                {userDetails?.designation}
+                {userDetails?.designation?.name}
               </div>
             )}
 
@@ -65,4 +65,4 @@ const UserCard: React.FC<IUserCardProps> = ({ className }) => {
   );
 };
 
-export default UserCard;
+export default memo(UserCard);

@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { INode } from './Chart';
 import Icon from 'components/Icon';
 
@@ -6,10 +6,9 @@ interface IExpandButtonContent {
   node: { data: INode; children?: any };
 }
 
-const ExpandButtonContent: React.FC<IExpandButtonContent> = ({ node }) => {
+const ExpandButtonContent: FC<IExpandButtonContent> = ({ node }) => {
   return (
-    <div className="text-right text-sm text-neutral-500 mt-2 absolute right-0 bottom-0 flex items-center">
-      <div>{node.data._directSubordinates} direct reports</div>{' '}
+    <div className="text-right text-xs text-neutral-500 flex items-center flex-row-reverse">
       <div className="ml-2">
         {node?.children ? (
           <Icon name="arrowUp" size={16} />
@@ -17,6 +16,7 @@ const ExpandButtonContent: React.FC<IExpandButtonContent> = ({ node }) => {
           <Icon name="arrowDown" size={16} />
         )}
       </div>
+      <div>{node.data.directReporteesCount} direct reports</div>{' '}
     </div>
   );
 };

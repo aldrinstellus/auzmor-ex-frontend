@@ -1,4 +1,3 @@
-import React from 'react';
 import IconButton, {
   Size,
   Variant as IconVariant,
@@ -17,26 +16,23 @@ import Layout, { FieldType } from 'components/Form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Icon from 'components/Icon';
 import { updateCurrentUser } from 'queries/users';
-import { twConfig, convertUpperCaseToPascalCase } from 'utils/misc';
+import { twConfig } from 'utils/misc';
 import { toastConfig } from '../utils';
+import { FC, useEffect } from 'react';
 export interface ISkillsModalProps {
   open: boolean;
   closeModal: () => void;
   skills: ISkillsOption[];
 }
 
-const SkillsModal: React.FC<ISkillsModalProps> = ({
-  open,
-  closeModal,
-  skills,
-}) => {
+const SkillsModal: FC<ISkillsModalProps> = ({ open, closeModal, skills }) => {
   const queryClient = useQueryClient();
 
   const updateUserSkillsMutation = useMutation({
     mutationFn: updateCurrentUser,
     mutationKey: ['update-user-skills-mutation'],
-    onError: (error: any) => {},
-    onSuccess: async (response: any) => {
+    onError: (_error: any) => {},
+    onSuccess: async (_response: any) => {
       toastConfig(
         <Icon
           name="closeCircleOutline"
@@ -49,25 +45,28 @@ const SkillsModal: React.FC<ISkillsModalProps> = ({
     },
   });
 
-  const { handleSubmit, control, reset, getValues } = useForm<any>({
+  const { handleSubmit, reset, control } = useForm<any>({
     mode: 'onSubmit',
     defaultValues: {
       personal: {
         skills: skills?.map(
           (skill) =>
             ({
-              label: skill.value,
-              value: skill.id,
+              label: skill,
+              value: skill,
             } || []),
         ),
       },
     },
   });
 
-  const onSubmit = () => {
-    const { personal } = getValues();
+  useEffect(() => {
+    reset({ skills: skills.map((s) => ({ label: s, value: s })) });
+  }, [skills]);
+
+  const onSubmit = (formData: any) => {
     updateUserSkillsMutation.mutate({
-      personal: { gender: personal?.gender?.value },
+      personal: { skills: formData?.skills?.map((s: any) => s.label) },
     });
   };
 
@@ -83,7 +82,7 @@ const SkillsModal: React.FC<ISkillsModalProps> = ({
     });
 
     const transformedOption = skillsData?.map((skill: ISkillDetail) => ({
-      value: skill?.id,
+      value: skill?.name,
       label: skill?.name,
       id: skill?.id,
       dataTestId: `skill-option-${skill?.name}`,
@@ -106,10 +105,11 @@ const SkillsModal: React.FC<ISkillsModalProps> = ({
       // error: errors.skills?.message,
       dataTestId: 'select-skills',
       getPopupContainer: document.body,
+      multi: true,
     },
   ];
 
-  const Header: React.FC = () => (
+  const Header: FC = () => (
     <div className="flex flex-wrap items-center p-4 space-x-3 border-neutral-100 border-b-1">
       <div className="text-lg text-neutral-900 font-extrabold flex-auto">
         Add your skills
@@ -125,7 +125,7 @@ const SkillsModal: React.FC<ISkillsModalProps> = ({
     </div>
   );
 
-  const Footer: React.FC = () => (
+  const Footer: FC = () => (
     <div className="flex justify-end space-x-3 items-center h-16 p-6 bg-blue-50 rounded-b-9xl border-neutral-100 border-t-1">
       <Button
         variant={ButtonVariant.Secondary}
@@ -157,10 +157,10 @@ const SkillsModal: React.FC<ISkillsModalProps> = ({
           <Layout fields={skillField} />
         </form>
 
-        <div className="flex flex-col space-y-4">
+        {/* <div className="flex flex-col space-y-4">
           <div className="font-bold">Recommeded based on your profile</div>
           <div>Skills List</div>
-        </div>
+        </div> */}
       </div>
       <Footer />
     </Modal>

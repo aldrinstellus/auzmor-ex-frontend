@@ -2,9 +2,8 @@ import {
   CircularProgressbarWithChildren,
   buildStyles,
 } from 'react-circular-progressbar';
-import React, { useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useInfiniteUsers } from 'queries/users';
 import AvatarRowSkeleton from './AvatarRowSkeleton';
 import AvatarRow from './AvatarRow';
 import PageLoader from 'components/PageLoader';
@@ -16,7 +15,7 @@ type AppProps = {
   closeModal: () => any;
 };
 
-const Acknowledged: React.FC<AppProps> = ({ post, closeModal }) => {
+const Acknowledged: FC<AppProps> = ({ post, closeModal }) => {
   const { ref, inView } = useInView();
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
@@ -32,11 +31,10 @@ const Acknowledged: React.FC<AppProps> = ({ post, closeModal }) => {
     }
   }, [inView]);
 
-  const completePercent =
-    Math.ceil(
-      post?.acknowledgementStats?.acknowledged /
-        post?.acknowledgementStats?.audience,
-    ) * 100;
+  const completePercent = Math.round(
+    (post?.acknowledgementStats?.acknowledged * 100) /
+      post?.acknowledgementStats?.audience,
+  );
 
   return (
     <div>
@@ -44,7 +42,7 @@ const Acknowledged: React.FC<AppProps> = ({ post, closeModal }) => {
         <div className="flex justify-center items-center py-5 border-b">
           <div style={{ width: 64, height: 64 }}>
             <CircularProgressbarWithChildren
-              value={completePercent}
+              value={completePercent || 0}
               className="center"
               strokeWidth={12}
               styles={buildStyles({
@@ -56,7 +54,9 @@ const Acknowledged: React.FC<AppProps> = ({ post, closeModal }) => {
                 trailColor: '#A3A3A3',
               })}
             >
-              <div className="text-sm font-semibold">{completePercent}%</div>
+              <div className="text-sm font-semibold">
+                {completePercent || 0}%
+              </div>
             </CircularProgressbarWithChildren>
           </div>
           <div className="ml-4">

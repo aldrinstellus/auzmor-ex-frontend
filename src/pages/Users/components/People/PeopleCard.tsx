@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import Avatar from 'components/Avatar';
 import Card from 'components/Card';
 import useHover from 'hooks/useHover';
@@ -10,7 +9,7 @@ import {
   IGetUser,
   UserStatus,
   updateRoleToAdmin,
-  updateStatus,
+  // updateStatus,
   useResendInvitation,
 } from 'queries/users';
 import { toast } from 'react-toastify';
@@ -18,6 +17,7 @@ import SuccessToast from 'components/Toast/variants/SuccessToast';
 import {
   getEditSection,
   getProfileImage,
+  isNewEntity,
   titleCase,
   twConfig,
 } from 'utils/misc';
@@ -30,12 +30,14 @@ import UserProfileDropdown from 'components/UserProfileDropdown';
 import DeactivatePeople from '../DeactivateModal/Deactivate';
 import ReactivatePeople from '../ReactivateModal/Reactivate';
 import clsx from 'clsx';
-import _ from 'lodash';
+import truncate from 'lodash/truncate';
 import RemoveTeamMember from '../DeleteModals/TeamMember';
+import { FC } from 'react';
 
 export interface IPeopleCardProps {
   userData: IGetUser;
   teamId?: string;
+  teamMemberId?: string;
   isTeamPeople?: boolean;
 }
 
@@ -55,9 +57,10 @@ const statusColorMap: Record<string, string> = {
   [Status.SUPERADMIN]: PRIMARY_COLOR,
 };
 
-const PeopleCard: React.FC<IPeopleCardProps> = ({
+const PeopleCard: FC<IPeopleCardProps> = ({
   userData,
   teamId,
+  teamMemberId,
   isTeamPeople,
 }) => {
   const {
@@ -69,6 +72,7 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
     department,
     workLocation,
     workEmail,
+    createdAt,
   } = userData;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -87,40 +91,40 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
     useModal();
 
   const resendInviteMutation = useResendInvitation();
-  const updateUserStatusMutation = useMutation({
-    mutationFn: updateStatus,
-    mutationKey: ['update-user-status'],
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      toast(
-        <SuccessToast
-          content={`User has been ${
-            (status as any) === UserStatus.Inactive
-              ? 'reactivated'
-              : 'deactivated'
-          }`}
-        />,
-        {
-          closeButton: (
-            <Icon
-              name="closeCircleOutline"
-              color="text-primary-500"
-              size={20}
-            />
-          ),
-          style: {
-            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
-            borderRadius: '6px',
-            display: 'flex',
-            alignItems: 'center',
-          },
-          autoClose: TOAST_AUTOCLOSE_TIME,
-          transition: slideInAndOutTop,
-          theme: 'dark',
-        },
-      );
-    },
-  });
+  // const updateUserStatusMutation = useMutation({
+  //   mutationFn: updateStatus,
+  //   mutationKey: ['update-user-status'],
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ['users'] });
+  //     toast(
+  //       <SuccessToast
+  //         content={`User has been ${
+  //           (status as any) === UserStatus.Inactive
+  //             ? 'reactivated'
+  //             : 'deactivated'
+  //         }`}
+  //       />,
+  //       {
+  //         closeButton: (
+  //           <Icon
+  //             name="closeCircleOutline"
+  //             color="text-primary-500"
+  //             size={20}
+  //           />
+  //         ),
+  //         style: {
+  //           border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+  //           borderRadius: '6px',
+  //           display: 'flex',
+  //           alignItems: 'center',
+  //         },
+  //         autoClose: TOAST_AUTOCLOSE_TIME,
+  //         transition: slideInAndOutTop,
+  //         theme: 'dark',
+  //       },
+  //     );
+  //   },
+  // });
 
   const updateUserRoleMutation = useMutation({
     mutationFn: updateRoleToAdmin,
@@ -168,6 +172,16 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
         </div>
       );
     }
+    if (isNewEntity(createdAt)) {
+      return (
+        <div
+          className={`${rightChipStyle} bg-primary-100 text-primary-600`}
+          data-testid={`member-badge`}
+        >
+          New joinee
+        </div>
+      );
+    }
     return null;
   };
 
@@ -176,12 +190,12 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
       return (
         <div
           style={{
-            backgroundColor: statusColorMap[role],
+            backgroundColor: statusColorMap[role || ''],
           }}
           className={leftChipStyle}
           data-testid={`people-card-role-${role}`}
         >
-          {titleCase(role)}
+          {titleCase(role || '')}
         </div>
       );
     }
@@ -202,7 +216,7 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
         <UserProfileDropdown
           id={id}
           loggedInUserId={user?.id}
-          role={role}
+          role={role || ''}
           status={status}
           isHovered={isHovered}
           onDeleteClick={openDeleteModal}
@@ -310,17 +324,17 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
                 className="text-neutral-900 text-base font-bold truncate"
                 data-testid={`people-card-name-${fullName || workEmail}`}
               >
-                {_.truncate(fullName || workEmail, {
+                {truncate(fullName || workEmail, {
                   length: 18,
                   separator: ' ',
                 })}
               </div>
-              {designation && (
+              {designation?.name && (
                 <div
                   className="text-neutral-900 text-xs font-normal line-clamp-1"
-                  data-testid={`people-card-title-${designation}`}
+                  data-testid={`people-card-title-${designation.designationId}`}
                 >
-                  {designation}
+                  {designation?.name}
                 </div>
               )}
             </div>
@@ -368,7 +382,7 @@ const PeopleCard: React.FC<IPeopleCardProps> = ({
       <RemoveTeamMember
         open={openRemoveTeamMember}
         closeModal={closeRemoveTeamMemberModal}
-        userId={id}
+        userId={teamMemberId || ''}
         teamId={teamId || ''}
       />
       <DeactivatePeople

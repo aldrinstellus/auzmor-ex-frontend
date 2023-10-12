@@ -1,55 +1,66 @@
-import React, { useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import Icon from 'components/Icon';
 import PopupMenu from 'components/PopupMenu';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import ConfirmationBox from 'components/ConfirmationBox';
-import { IPost, deletePost } from 'queries/post';
+import { IPost, PostType, deletePost } from 'queries/post';
 import PostBuilder, { PostBuilderMode } from 'components/PostBuilder';
 import useModal from 'hooks/useModal';
 import useAuth from 'hooks/useAuth';
 import useRole from 'hooks/useRole';
-import { canPerform, twConfig } from 'utils/misc';
+import { canPerform, isRegularPost, twConfig } from 'utils/misc';
 import { useFeedStore } from 'stores/feedStore';
-import _ from 'lodash';
+import omit from 'lodash/omit';
 import { CreatePostFlow } from 'contexts/CreatePostContext';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import { toast } from 'react-toastify';
 import FailureToast from 'components/Toast/variants/FailureToast';
+import ClosePollModal from './ClosePollModal';
+import PollVotesModal from './PollVotesModal';
 import ChangeToRegularPostModal from './ChangeToRegularPostModal';
 import AnnouncementAnalytics from './AnnouncementAnalytics';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export interface IFeedPostMenuProps {
   data: IPost;
 }
 
-const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
+const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
   const { user } = useAuth();
   const { isMember } = useRole();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const feedRef = useRef(useFeedStore.getState().feed);
   const [confirm, showConfirm, closeConfirm] = useModal();
   const [analytics, showAnalytics, closeAnalytics] = useModal();
   const [removeAnnouncement, showRemoveAnnouncement, closeRemoveAnnouncement] =
     useModal();
+  const [closePoll, showClosePoll, closeClosePoll] = useModal();
+  const [pollVotes, showPollVotes, closePollVotes] = useModal();
   const [open, openModal, closeModal] = useModal(undefined, false);
   const [customActiveFlow, setCustomActiveFlow] = useState<CreatePostFlow>(
     CreatePostFlow.CreatePost,
   );
 
   const queryClient = useQueryClient();
-  const { feed, setFeed, updateFeed } = useFeedStore();
+  const setFeed = useFeedStore((state) => state.setFeed);
   const { isAdmin } = useRole();
+  const currentDate = new Date().toISOString();
+
+  const isPostPage = location.pathname.startsWith('/posts/');
 
   const deletePostMutation = useMutation({
     mutationKey: ['deletePostMutation', data.id],
     mutationFn: deletePost,
     onMutate: (variables) => {
-      const previousFeed = feed;
-      setFeed({ ..._.omit(feed, [variables]) });
+      const previousFeed = feedRef.current;
+      if (!isPostPage) setFeed({ ...omit(feedRef.current, [variables]) });
       closeConfirm();
       return { previousFeed };
     },
-    onError: (error, variables, context) => {
+    onError: (_error, _variables, context) => {
       toast(
         <FailureToast
           content="Error deleting post"
@@ -74,7 +85,7 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
         setFeed(context?.previousFeed);
       }
     },
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (_data, _variables, _context) => {
       toast(
         <SuccessToast
           content="Post deleted successfully"
@@ -99,9 +110,12 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
           theme: 'dark',
         },
       );
+      if (isPostPage) navigate('/feed');
+      await queryClient.invalidateQueries(['feed']);
       await queryClient.invalidateQueries(['feed-announcements-widget']);
       await queryClient.invalidateQueries(['post-announcements-widget']);
-      await queryClient.invalidateQueries(['my-bookmarks']);
+      await queryClient.invalidateQueries(['bookmarks']);
+      await queryClient.invalidateQueries(['scheduledPosts']);
     },
   });
 
@@ -113,9 +127,10 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
         setCustomActiveFlow(CreatePostFlow.CreateAnnouncement);
         openModal();
       },
+      stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-promote-to-announcement',
       permissions: ['CREATE_ANNOUNCEMENTS'],
-      enabled: !data.isAnnouncement,
+      enabled: isRegularPost(data, currentDate, isAdmin),
     },
     {
       icon: 'editReceipt',
@@ -124,17 +139,19 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
         setCustomActiveFlow(CreatePostFlow.CreateAnnouncement);
         openModal();
       },
+      stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-edit-announcement',
       permissions: ['UPDATE_ANNOUNCEMENTS'],
-      enabled: data.isAnnouncement,
+      enabled: !isRegularPost(data, currentDate, isAdmin),
     },
     {
       icon: 'cyclicArrow',
       label: 'Change to regular post',
       onClick: () => showRemoveAnnouncement(),
+      stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-changeto-regularpost',
       permissions: ['UPDATE_ANNOUNCEMENTS'],
-      enabled: data.isAnnouncement,
+      enabled: !isRegularPost(data, currentDate, isAdmin),
     },
     {
       icon: 'edit',
@@ -143,9 +160,22 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
         setCustomActiveFlow(CreatePostFlow.CreatePost);
         openModal();
       },
+      stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-edit-post',
       permissions: ['UPDATE_MY_POSTS'],
       enabled: data.createdBy?.userId === user?.id,
+    },
+    {
+      icon: 'closeCircle',
+      label: 'Close Poll',
+      onClick: () => showClosePoll(),
+      stroke: 'text-neutral-900',
+      dataTestId: 'post-ellipsis-close-poll',
+      permissions: ['UPDATE_MY_POSTS', 'CLOSE_POLLS'],
+      enabled:
+        data.type === PostType.Poll &&
+        data.pollContext?.closedAt > currentDate &&
+        (isAdmin || data.createdBy?.userId === user?.id),
     },
     {
       icon: 'delete',
@@ -158,12 +188,24 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
       enabled: isAdmin || data.createdBy?.userId === user?.id,
     },
     {
+      icon: 'chartOutline',
+      label: 'See who voted',
+      onClick: () => showPollVotes(),
+      stroke: 'text-neutral-900',
+      dataTestId: 'post-ellipsis-see-poll-votes',
+      permissions: [],
+      enabled:
+        data.type === PostType.Poll &&
+        (isAdmin || data.createdBy?.userId === user?.id),
+    },
+    {
       icon: 'announcementChart',
       label: 'View acknowledgement report',
       onClick: () => showAnalytics(),
+      stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-view-acknowledgement-report',
       permissions: ['CREATE_ANNOUNCEMENTS', 'UPDATE_ANNOUNCEMENTS'],
-      enabled: data.isAnnouncement,
+      enabled: !isRegularPost(data, currentDate, isAdmin),
     },
   ];
 
@@ -180,6 +222,11 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
       return true;
     });
 
+  useEffect(
+    () => useFeedStore.subscribe((state) => (feedRef.current = state.feed)),
+    [],
+  );
+
   if (postOptions.length) {
     return (
       <>
@@ -190,7 +237,7 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
             </div>
           }
           menuItems={postOptions}
-          className="mt-1 right-0 border-1 border-neutral-200"
+          className="mt-1 right-0 border-1 border-neutral-200 focus-visible:outline-none"
         />
         {open && (
           <PostBuilder
@@ -208,8 +255,7 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
           title="Delete"
           description={
             <span>
-              Are you sure you want to delete this post?
-              <br /> This cannot be undone.
+              Are you sure you want to delete this post? This cannot be undone
             </span>
           }
           success={{
@@ -230,6 +276,20 @@ const FeedPostMenu: React.FC<IFeedPostMenuProps> = ({ data }) => {
           closeModal={closeRemoveAnnouncement}
           data={data}
         />
+        {closePoll && (
+          <ClosePollModal
+            open={closePoll}
+            closeModal={closeClosePoll}
+            data={data}
+          />
+        )}
+        {pollVotes && (
+          <PollVotesModal
+            post={data}
+            open={pollVotes}
+            closeModal={closePollVotes}
+          />
+        )}
         {data?.id && analytics && (
           <AnnouncementAnalytics
             post={data}

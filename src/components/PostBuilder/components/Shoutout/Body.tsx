@@ -1,13 +1,13 @@
-import React from 'react';
 import clsx from 'clsx';
 import EntitySearchModalBody from 'components/EntitySearchModal/components/EntitySearchModalBody';
 import { EntitySearchModalType } from 'components/EntitySearchModal';
 import Icon from 'components/Icon';
 import Avatar from 'components/Avatar';
-import { IGetUser } from 'queries/users';
+import { IGetUser, UserStatus } from 'queries/users';
 import DynamicImagePreview from 'components/DynamicImagePreview';
 import { SHOUTOUT_STEPS } from '.';
 import { getProfileImage } from 'utils/misc';
+import { FC } from 'react';
 
 interface ShoutoutBodyProps {
   step: SHOUTOUT_STEPS;
@@ -20,7 +20,7 @@ interface ShoutoutBodyProps {
   setShoutoutTemplate?: ({ file, type }: { file: any; type: string }) => void;
 }
 
-const Body: React.FC<ShoutoutBodyProps> = ({
+const Body: FC<ShoutoutBodyProps> = ({
   step,
   triggerSubmit,
   getFile,
@@ -42,6 +42,7 @@ const Body: React.FC<ShoutoutBodyProps> = ({
           selectedMemberIds={selectedUserIds}
           entitySearchLabel="Give kudos to:"
           hideCurrentUser
+          showJobTitleFilter
           entityRenderer={(data: IGetUser) => {
             return (
               <div className="flex space-x-4 w-full pr-2">
@@ -57,11 +58,11 @@ const Body: React.FC<ShoutoutBodyProps> = ({
                         {data?.fullName}
                       </div>
                       <div className="flex space-x-[14px] items-center">
-                        {data?.designation && (
+                        {data?.designation?.name && (
                           <div className="flex space-x-1 items-start">
                             <Icon name="briefcase" size={16} />
                             <div className="text-xs font-normal text-neutral-500">
-                              {data?.designation}
+                              {data?.designation.name}
                             </div>
                           </div>
                         )}
@@ -86,6 +87,7 @@ const Body: React.FC<ShoutoutBodyProps> = ({
               </div>
             );
           }}
+          usersQueryParams={{ status: [UserStatus.Active] }}
         />
       )}
       {step === SHOUTOUT_STEPS.ImageSelect && (

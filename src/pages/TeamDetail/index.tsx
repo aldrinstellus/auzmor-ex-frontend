@@ -1,6 +1,5 @@
 import Button from 'components/Button';
 import Icon from 'components/Icon';
-import React, { useState } from 'react';
 import Card from 'components/Card';
 import EntitySearchModal, {
   EntitySearchModalType,
@@ -9,26 +8,36 @@ import Tooltip from 'components/Tooltip';
 import PopupMenu from 'components/PopupMenu';
 import { IGetUser } from 'queries/users';
 import Avatar from 'components/Avatar';
-import { addTeamMember, useSingleTeam } from 'queries/teams';
+import {
+  addTeamMember,
+  useInfiniteMembers,
+  useSingleTeam,
+} from 'queries/teams';
 import FailureToast from 'components/Toast/variants/FailureToast';
 import { toast } from 'react-toastify';
 import { useMutation } from '@tanstack/react-query';
-import { getProfileImage, twConfig } from 'utils/misc';
+import { getFullName, getProfileImage, twConfig } from 'utils/misc';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import queryClient from 'utils/queryClient';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import useModal from 'hooks/useModal';
 import People from 'pages/Users/components/People';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import TeamModal from 'pages/Users/components/TeamModal';
 import { TeamFlow, TeamTab } from 'pages/Users/components/Teams';
 import DeleteTeam from 'pages/Users/components/DeleteModals/Team';
 import TeamDetailSkeleton from './components/TeamDetailSkeleton';
+import { FC } from 'react';
 
 export interface ITeamMemberProps {}
 
-const TeamDetail: React.FC<ITeamMemberProps> = () => {
+const TeamDetail: FC<ITeamMemberProps> = () => {
   const params = useParams();
   const { state } = useLocation();
   const { prevRoute } = state || {};
@@ -45,14 +54,14 @@ const TeamDetail: React.FC<ITeamMemberProps> = () => {
 
   const teamDetail = useSingleTeam(id || '');
 
-  const data = teamDetail?.data?.data?.result;
+  const data = teamDetail?.data?.data?.result.data;
 
   const addTeamMemberMutation = useMutation({
     mutationKey: ['add-team-member', id],
     mutationFn: (payload: any) => {
       return addTeamMember(id || '', payload);
     },
-    onError: (error: any) => {
+    onError: (_error: any) => {
       toast(
         <FailureToast
           content={`Error Adding Team Members`}
@@ -105,7 +114,9 @@ const TeamDetail: React.FC<ITeamMemberProps> = () => {
           theme: 'dark',
         },
       );
-      queryClient.invalidateQueries(['get-team-members']);
+      queryClient.invalidateQueries(['team-members']);
+      queryClient.invalidateQueries(['team', id]);
+      queryClient.invalidateQueries(['teams'], { exact: false });
     },
   });
 
@@ -116,6 +127,10 @@ const TeamDetail: React.FC<ITeamMemberProps> = () => {
       navigate(`/teams`);
     }
   };
+
+  if (!teamDetail?.isLoading && !data) {
+    return <Navigate to="/404" />;
+  }
 
   return (
     <>
@@ -200,7 +215,7 @@ const TeamDetail: React.FC<ITeamMemberProps> = () => {
                     className="text-xl font-semibold"
                     data-testid="tem-details-people-count"
                   >
-                    {data.teamMembers || 0}
+                    {data.totalMembers || 0}
                   </div>
                 </div>
                 <div className="relative">
@@ -271,26 +286,28 @@ const TeamDetail: React.FC<ITeamMemberProps> = () => {
           openModal={openAddMemberModal}
           closeModal={closeAddMemberModal}
           entityType={EntitySearchModalType.User}
+          fetchUsers={useInfiniteMembers}
+          usersQueryParams={{ entityType: 'TEAM', entityId: data.id }}
           entityRenderer={(data: IGetUser) => {
             return (
               <div className="flex space-x-4 w-full">
                 <Avatar
-                  name={data?.fullName || 'U'}
+                  name={getFullName(data) || 'U'}
                   size={32}
                   image={getProfileImage(data)}
                 />
                 <div className="flex space-x-6 w-full">
                   <div className="flex flex-col w-full">
                     <div className="flex justify-between items-center">
-                      <div className="text-sm font-bold text-neutral-900">
-                        {data?.fullName}
+                      <div className="text-sm font-bold text-neutral-900 whitespace-nowrap line-clamp-1">
+                        {getFullName(data)}
                       </div>
                       <div className="flex space-x-[14px] items-center">
-                        {data?.designation && (
+                        {data?.designation?.name && (
                           <div className="flex space-x-1 items-start">
                             <Icon name="briefcase" size={16} />
                             <div className="text-xs font-normal text-neutral-500">
-                              {data?.designation}
+                              {data?.designation.name}
                             </div>
                           </div>
                         )}
@@ -300,15 +317,22 @@ const TeamDetail: React.FC<ITeamMemberProps> = () => {
                         {data?.workLocation?.name && (
                           <div className="flex space-x-1 items-start">
                             <Icon name="location" size={16} />
-                            <div className="text-xs font-normal text-neutral-500">
+                            <div className="text-xs font-normal text-neutral-500 whitespace-nowrap">
                               {data?.workLocation.name}
                             </div>
                           </div>
                         )}
                       </div>
                     </div>
-                    <div className="text-xs font-normal text-neutral-500">
-                      {data?.primaryEmail}
+                    <div className="flex items-center gap-1">
+                      <div className="text-xs font-normal text-neutral-500">
+                        {data?.primaryEmail}
+                      </div>
+                      {data?.isPresent && (
+                        <div className="text-xs font-semibold text-neutral-500">
+                          Already a member
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -319,6 +343,7 @@ const TeamDetail: React.FC<ITeamMemberProps> = () => {
             addTeamMemberMutation.mutate({ userIds: userIds });
             closeAddMemberModal();
           }}
+          disableKey="isPresent"
           title="Add team members"
           submitButtonText="Add Members"
           onCancel={closeAddMemberModal}

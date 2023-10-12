@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import React from 'react';
 import { iconMap } from './iconMap/index';
+import { FC } from 'react';
 
 export type IconProps = {
   name: string;
@@ -16,7 +16,7 @@ export type IconProps = {
   hoverColor?: string;
 };
 
-const Icon: React.FC<IconProps> = ({
+const Icon: FC<IconProps> = ({
   name,
   size = 24,
   onClick = null,
@@ -41,7 +41,7 @@ const Icon: React.FC<IconProps> = ({
   const disabledClass = `text-neutral-200 cursor-not-allowed pointer-events-none`;
 
   const styles = clsx({
-    'text-neutral-500 hover:text-primary-500 group-hover:text-primary-500 hover:cursor-pointer':
+    'text-neutral-500 hover:text-primary-500 group-hover:text-primary-500 hover:cursor-pointer transition-colors ease-out duration-default':
       !disabled,
     'cursor-pointer': !!onClick && !disabled,
     [colorClass]: color && !disabled,

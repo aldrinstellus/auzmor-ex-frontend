@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import * as yup from 'yup';
 import Button, { Variant as ButtonVariant } from 'components/Button';
 import Modal from 'components/Modal';
@@ -16,6 +15,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import FailureToast from 'components/Toast/variants/FailureToast';
 import Icon from 'components/Icon';
 import { TeamFlow } from '../Teams';
+import { FC } from 'react';
 
 export interface ITeamForm {
   name: string;
@@ -33,7 +33,7 @@ export interface IAddTeamModalProps {
   setShowTeamDetail?: (detail: Record<string, any> | null) => void;
 }
 
-const TeamModal: React.FC<IAddTeamModalProps> = ({
+const TeamModal: FC<IAddTeamModalProps> = ({
   open,
   closeModal,
   teamFlowMode,
@@ -190,15 +190,9 @@ const TeamModal: React.FC<IAddTeamModalProps> = ({
   });
 
   const onSubmit = (data: any) => {
-    let categoryValue;
-    if (data?.category?.type === 'TEAM') {
-      categoryValue = data?.category?.value;
-    } else {
-      categoryValue = data?.category?.value;
-    }
     const payload = {
       name: data?.name,
-      category: categoryValue,
+      category: data?.category?.label,
       description: data?.description,
     };
     if (teamFlowMode === TeamFlow.CreateTeam)

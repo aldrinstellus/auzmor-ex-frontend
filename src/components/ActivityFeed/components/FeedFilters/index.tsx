@@ -4,12 +4,12 @@ import Card from 'components/Card';
 import Icon from 'components/Icon';
 import Tooltip from 'components/Tooltip';
 import {
-  ActivityType,
   IPostFilters,
   PostFilterKeys,
+  PostFilterPreference,
   PostType,
 } from 'queries/post';
-import React, { ReactElement, useEffect, useState } from 'react';
+import { FC, ReactElement, memo, useEffect, useState } from 'react';
 
 export enum FeedFilterContentType {
   Filter = 'FILTER',
@@ -64,7 +64,7 @@ const feedFilterOptions: FeedFilterOption[] = [
   },
   {
     label: 'Shoutouts',
-    value: PostType.ShoutOut,
+    value: PostType.Shoutout,
     filterKey: PostFilterKeys.PostType,
     type: FeedFilterContentType.Filter,
     dataTestId: 'filterby-shoutouts',
@@ -105,23 +105,23 @@ const feedFilterOptions: FeedFilterOption[] = [
   },
   {
     label: 'My posts',
-    value: 'my-posts',
-    filterKey: PostFilterKeys.MyPosts,
+    value: PostFilterPreference.MyPosts,
+    filterKey: PostFilterKeys.PostPreference,
     type: FeedFilterContentType.Filter,
     dataTestId: 'filterby-myposts',
   },
   {
     label: 'Mentions',
-    value: ActivityType.Mentioned,
-    filterKey: PostFilterKeys.MentionedInPost,
+    value: PostFilterPreference.MentionedInPost,
+    filterKey: PostFilterKeys.PostPreference,
     type: FeedFilterContentType.Filter,
     dataTestId: 'filterby-mentions',
   },
   {
     label: 'Bookmarked by me',
-    value: ActivityType.Bookemarked,
+    value: PostFilterPreference.BookmarkedByMe,
     type: FeedFilterContentType.Filter,
-    filterKey: PostFilterKeys.BookmarkedByMe,
+    filterKey: PostFilterKeys.PostPreference,
     dataTestId: 'filterby-bookmarkedbyme',
   },
 ];
@@ -130,18 +130,18 @@ export const filterKeyMap: Record<string | PostType, string> = {
   [PostType.Update]: 'Updates',
   [PostType.Event]: 'Events',
   [PostType.Document]: 'Documents',
-  [PostType.ShoutOut]: 'Shoutouts',
+  [PostType.Shoutout]: 'Shoutouts',
   [PostType.Birthday]: 'Birthdays',
   [PostType.WorkAniversary]: 'Work anniversary',
   [PostType.WelcomNewHire]: 'Welcome new hire',
   [PostType.Poll]: 'Polls',
-  'my-posts': 'My Posts',
-  [ActivityType.Mentioned]: 'Mentions',
-  [ActivityType.Bookemarked]: 'Bookmark by me',
+  [PostFilterPreference.MyPosts]: 'My Posts',
+  [PostFilterPreference.MentionedInPost]: 'Mentions',
+  [PostFilterPreference.BookmarkedByMe]: 'Bookmark by me',
 };
 
-const FeedFilter: React.FC<FeedFilterProps> = ({
-  disabled = false,
+const FeedFilter: FC<FeedFilterProps> = ({
+  // disabled = false,
   dataTestId = '',
   appliedFeedFilters = {},
   onApplyFilters,
@@ -169,12 +169,10 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
           return feedFilters[PostFilterKeys.PostType]?.includes(
             option.value as PostType,
           );
-        case PostFilterKeys.MyPosts:
-          return feedFilters[PostFilterKeys.MyPosts];
-        case PostFilterKeys.MentionedInPost:
-          return feedFilters[PostFilterKeys.MentionedInPost];
-        case PostFilterKeys.BookmarkedByMe:
-          return feedFilters[PostFilterKeys.BookmarkedByMe];
+        case PostFilterKeys.PostPreference:
+          return feedFilters[PostFilterKeys.PostPreference]?.includes(
+            option.value as PostFilterPreference,
+          );
         default:
           return false;
       }
@@ -185,9 +183,7 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
     setFeedFilters({
       ...feedFilters,
       [PostFilterKeys.PostType]: [],
-      [PostFilterKeys.MyPosts]: false,
-      [PostFilterKeys.MentionedInPost]: false,
-      [PostFilterKeys.BookmarkedByMe]: false,
+      [PostFilterKeys.PostPreference]: [],
     });
     setHaveFiltersBeenModified(true);
   };
@@ -195,9 +191,7 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
   const isFeelFiltersEmpty = () => {
     if (
       feedFilters[PostFilterKeys.PostType]?.length ||
-      feedFilters[PostFilterKeys.MyPosts] ||
-      feedFilters[PostFilterKeys.MentionedInPost] ||
-      feedFilters[PostFilterKeys.BookmarkedByMe]
+      feedFilters[PostFilterKeys.PostPreference]?.length
     ) {
       return false;
     }
@@ -224,23 +218,29 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
           ],
         });
       }
-    } else if (option.filterKey === PostFilterKeys.MentionedInPost) {
-      setFeedFilters({
-        ...feedFilters,
-        [PostFilterKeys.MentionedInPost]:
-          !feedFilters[PostFilterKeys.MentionedInPost],
-      });
-    } else if (option.filterKey === PostFilterKeys.MyPosts) {
-      setFeedFilters({
-        ...feedFilters,
-        [PostFilterKeys.MyPosts]: !feedFilters[PostFilterKeys.MyPosts],
-      });
-    } else if (option.filterKey === PostFilterKeys.BookmarkedByMe) {
-      setFeedFilters({
-        ...feedFilters,
-        [PostFilterKeys.BookmarkedByMe]:
-          !feedFilters[PostFilterKeys.BookmarkedByMe],
-      });
+    } else if (option.filterKey === PostFilterKeys.PostPreference) {
+      if (
+        feedFilters[PostFilterKeys.PostPreference]?.includes(
+          option.value as PostFilterPreference,
+        )
+      ) {
+        setFeedFilters({
+          ...feedFilters,
+          [PostFilterKeys.PostPreference]: feedFilters[
+            PostFilterKeys.PostPreference
+          ].filter((each) => each !== option.value),
+        });
+      } else {
+        setFeedFilters({
+          ...feedFilters,
+          [PostFilterKeys.PostPreference]: [
+            ...((feedFilters[
+              PostFilterKeys.PostPreference
+            ] as PostFilterPreference[]) || []),
+            option.value as PostFilterPreference,
+          ],
+        });
+      }
     }
     setHaveFiltersBeenModified(true);
   };
@@ -360,4 +360,4 @@ const FeedFilter: React.FC<FeedFilterProps> = ({
   );
 };
 
-export default FeedFilter;
+export default memo(FeedFilter);

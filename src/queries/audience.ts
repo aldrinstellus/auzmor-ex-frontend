@@ -1,7 +1,7 @@
 import {
   QueryFunctionContext,
   useInfiniteQuery,
-  useQuery,
+  // useQuery,
 } from '@tanstack/react-query';
 import apiService from 'utils/apiService';
 
@@ -18,15 +18,19 @@ const getAudience = async ({
   queryKey,
 }: QueryFunctionContext<any>) => {
   if (pageParam === null) {
-    return await apiService.get(`/posts/${queryKey[1]}/audience`, {
+    return await apiService.get(`/${queryKey[1]}/${queryKey[2]}/audience`, {
       limit: 10,
     });
   } else return await apiService.get(pageParam);
 };
 
-export const useAudience = (entityId: string, rest: Record<string, any>) => {
+export const useAudience = (
+  entity: string,
+  entityId: string,
+  rest: Record<string, any>,
+) => {
   return useInfiniteQuery({
-    queryKey: ['audience', entityId],
+    queryKey: ['audience', entity, entityId],
     queryFn: getAudience,
     getNextPageParam: (lastPage: any) => {
       const pageDataLen = lastPage?.data?.result?.data?.length;

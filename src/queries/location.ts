@@ -1,7 +1,16 @@
-import { QueryFunctionContext, useInfiniteQuery } from '@tanstack/react-query';
+import {
+  // QueryFunction,
+  QueryFunctionContext,
+  useInfiniteQuery,
+  useQuery,
+} from '@tanstack/react-query';
 import apiService from 'utils/apiService';
 
 export interface ILocation {
+  locationId: string;
+  name: string;
+}
+export interface ILocationAPI {
   id: string;
   name: string;
 }
@@ -34,7 +43,14 @@ export const useInfiniteLocations = (q?: Record<string, any>) => {
   });
 };
 
-export const getGooglePlaces = async (payload: { q: string }) => {
+const getGooglePlaces = async (payload: { q: string }) => {
   const data = await apiService.get('/google-maps/places', payload);
   return data.data.result.data;
+};
+
+export const useGooglePlaces = (payload: { q: string }) => {
+  return useQuery({
+    queryKey: ['google-maps-places', payload],
+    queryFn: () => getGooglePlaces(payload),
+  });
 };

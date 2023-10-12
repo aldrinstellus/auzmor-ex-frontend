@@ -1,6 +1,6 @@
 import Card from 'components/Card';
 import Divider from 'components/Divider';
-import React from 'react';
+import { FC } from 'react';
 
 export type NotificationCardProps = {
   TopCardContent?: string;
@@ -14,7 +14,7 @@ export enum NOTIFICATION_CARD_TYPE {
   Content = 'CONTENT',
 }
 
-const NotificationCard: React.FC<NotificationCardProps> = ({
+const NotificationCard: FC<NotificationCardProps> = ({
   TopCardContent,
   BottomCardContent,
   image = undefined,
@@ -59,7 +59,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
     <div>
       {TopCardContent && (
         <p
-          className="my-2 text-sm text-neutral-900 font-medium"
+          className="text-sm text-neutral-900 font-medium"
           dangerouslySetInnerHTML={{
             __html: TopCardContent,
           }}

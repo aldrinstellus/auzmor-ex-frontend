@@ -4,8 +4,7 @@ import Icon from 'components/Icon';
 import { AudienceFlow } from 'components/PostBuilder/components/Audience';
 import useRole from 'hooks/useRole';
 import { useOrganization } from 'queries/organization';
-import React, { useCallback, useEffect } from 'react';
-import _ from 'lodash';
+import { FC, useEffect } from 'react';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 
 interface IAudienceSelectorProps {
@@ -13,13 +12,15 @@ interface IAudienceSelectorProps {
   setAudienceFlow: any;
   isEveryoneSelected: boolean;
   setIsEveryoneSelected: (value: boolean) => void;
+  infoText?: string;
 }
 
-const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
+const AudienceSelector: FC<IAudienceSelectorProps> = ({
   audienceFlow,
   setAudienceFlow,
   isEveryoneSelected,
   setIsEveryoneSelected,
+  infoText = 'Your post will appear in Feed, on your profile and in search results. You can change the audience of this specific post.',
 }) => {
   const { isAdmin } = useRole();
   const { data } = useOrganization();
@@ -78,7 +79,7 @@ const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
         .length,
       dataTestId: 'audience-selection-teams',
     },
-  ];
+  ].filter((entity) => !entity.isHidden);
 
   switch (audienceFlow) {
     case AudienceFlow.EntitySelect: {
@@ -89,8 +90,7 @@ const AudienceSelector: React.FC<IAudienceSelectorProps> = ({
               <Icon name="infoCircleOutline" hover={false} />
             </div>
             <div className="ml-2.5 text-neutral-500 font-medium text-sm">
-              Your post will appear in Feed, on your profile and in search
-              results. You can change the audience of this specific post.
+              {infoText}
             </div>
           </div>
           {audienceEntity.map((entity) => (

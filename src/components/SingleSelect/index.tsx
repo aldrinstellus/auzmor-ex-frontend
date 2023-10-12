@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { ReactNode, forwardRef, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { Control, useController, Controller } from 'react-hook-form';
 import { Select, ConfigProvider } from 'antd';
@@ -32,10 +32,12 @@ export interface ISingleSelectProps {
   menuPlacement: SelectCommonPlacement;
   getPopupContainer?: any;
   noOptionsMessage?: string;
-  suffixIcon?: React.ReactNode | null;
+  suffixIcon?: ReactNode | null;
+  clearIcon?: ReactNode | null;
+  isClearable?: boolean;
 }
 
-const SingleSelect = React.forwardRef(
+const SingleSelect = forwardRef(
   (
     {
       name,
@@ -55,6 +57,8 @@ const SingleSelect = React.forwardRef(
       getPopupContainer = null,
       noOptionsMessage = 'No options',
       suffixIcon = null,
+      clearIcon = null,
+      isClearable = false,
     }: ISingleSelectProps,
     ref?: any,
   ) => {
@@ -147,7 +151,9 @@ const SingleSelect = React.forwardRef(
                   onSearch={() => setOpen(true)}
                   className={`single-select ${selectClassName}`}
                   suffixIcon={suffixIcon || <Icon name="arrowDown" size={18} />}
+                  clearIcon={clearIcon}
                   ref={ref}
+                  allowClear={isClearable}
                 >
                   {(options || []).map((option) => (
                     <Option

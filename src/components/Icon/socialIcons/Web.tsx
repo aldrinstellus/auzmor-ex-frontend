@@ -1,4 +1,4 @@
-import React, { SVGProps } from 'react';
+import { SVGProps } from 'react';
 
 const WebIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
@@ -8,6 +8,7 @@ const WebIcon = (props: SVGProps<SVGSVGElement>) => {
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
       <rect width="24" height="24" rx="12" fill="#3F83F8" />
       <path

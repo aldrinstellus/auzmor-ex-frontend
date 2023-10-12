@@ -1,6 +1,5 @@
 import IconButton, { Variant } from 'components/IconButton';
 import Modal from 'components/Modal';
-import React from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {
@@ -17,6 +16,11 @@ import Button, {
   Size,
   Type as ButtonType,
 } from 'components/Button';
+import { FC } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
+import { updateCurrentUser, updateUserById } from 'queries/users';
+import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 
 type AppProps = {
   open: boolean;
@@ -25,24 +29,40 @@ type AppProps = {
 };
 
 interface IForm {
-  linkedin: string;
+  linkedIn: string;
   instagram: string;
   facebook: string;
   twitter: string;
-  web: string;
+  website: string;
 }
 
-const SocialLinksModal: React.FC<AppProps> = ({
-  open,
-  closeModal,
-  socialLinks,
-}) => {
+const SocialLinksModal: FC<AppProps> = ({ open, closeModal, socialLinks }) => {
+  const { userId = '' } = useParams();
   const schema = yup.object({
-    linkedin: yup.string().url(),
+    linkedIn: yup.string().url(),
     instagram: yup.string().url(),
     facebook: yup.string().url(),
     twitter: yup.string().url(),
-    web: yup.string().url(),
+    website: yup.string().url(),
+  });
+
+  const queryClient = useQueryClient();
+
+  const updateUserMutation = useMutation({
+    mutationFn: userId
+      ? (data: any) => updateUserById(userId, data)
+      : updateCurrentUser,
+    mutationKey: ['update-user-social-accounts-mutation'],
+    onError: (_error: any) => {},
+    onSuccess: async (_response: any) => {
+      successToastConfig();
+      if (userId) {
+        await queryClient.invalidateQueries(['user', userId]);
+      } else {
+        await queryClient.invalidateQueries(['current-user-me']);
+      }
+      closeModal();
+    },
   });
 
   const {
@@ -58,11 +78,11 @@ const SocialLinksModal: React.FC<AppProps> = ({
   const fields = [
     {
       type: FieldType.Input,
-      name: 'linkedin',
+      name: 'linkedIn',
       placeholder: 'www.linkedin.com',
       control,
       dataTestId: 'linkedin-url',
-      error: errors.linkedin?.message,
+      error: errors.linkedIn?.message,
       fieldIcon: (
         <div className="p-2 border rounded-full mr-2">
           <LinkedinIcon />
@@ -110,11 +130,11 @@ const SocialLinksModal: React.FC<AppProps> = ({
     },
     {
       type: FieldType.Input,
-      name: 'web',
+      name: 'website',
       placeholder: 'www.abc.com',
       control,
       dataTestId: 'web-url',
-      error: errors.web?.message,
+      error: errors.website?.message,
       fieldIcon: (
         <div className="p-2 border rounded-full mr-2">
           <WebIcon />
@@ -124,7 +144,7 @@ const SocialLinksModal: React.FC<AppProps> = ({
   ];
 
   const onSubmit = (links: any) => {
-    console.log('>>>>>>', links);
+    updateUserMutation.mutate({ personal: { socialAccounts: links } });
   };
 
   return (
@@ -154,6 +174,7 @@ const SocialLinksModal: React.FC<AppProps> = ({
           label={'Cancel'}
           dataTestId="cancel-cta"
           onClick={closeModal}
+          disabled={updateUserMutation.isLoading}
         />
         <Button
           label={'Save'}
@@ -162,6 +183,7 @@ const SocialLinksModal: React.FC<AppProps> = ({
           type={ButtonType.Submit}
           dataTestId="save-cta"
           onClick={handleSubmit(onSubmit)}
+          loading={updateUserMutation.isLoading}
         />
       </div>
     </Modal>

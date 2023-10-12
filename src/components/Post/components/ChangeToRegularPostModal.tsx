@@ -3,11 +3,12 @@ import Button, { Variant } from 'components/Button';
 import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import Modal from 'components/Modal';
-import { IPostPayload, updatePost } from 'queries/post';
+import { updatePost } from 'queries/post';
 import ErrorWarningPng from 'images/error-warning-line.png';
-import React from 'react';
 import { useFeedStore } from 'stores/feedStore';
 import { produce } from 'immer';
+import { FC } from 'react';
+import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 
 type AppProps = {
   open: boolean;
@@ -15,22 +16,19 @@ type AppProps = {
   data: Record<string, any>;
 };
 
-const ChangeToRegularPostModal: React.FC<AppProps> = ({
-  open,
-  closeModal,
-  data,
-}) => {
+const ChangeToRegularPostModal: FC<AppProps> = ({ open, closeModal, data }) => {
   const queryClient = useQueryClient();
-  const { feed, setFeed, updateFeed } = useFeedStore();
+  const getPost = useFeedStore((state) => state.getPost);
+  const updateFeed = useFeedStore((state) => state.updateFeed);
 
   const removeAnnouncementMutation = useMutation({
     mutationKey: ['removeAnnouncementMutation', data.id],
     mutationFn: (payload: any) => updatePost(payload.id || '', payload),
     onMutate: (variables) => {
-      const previousPost = feed[variables.id!];
+      const previousPost = getPost(variables.id);
       updateFeed(
         variables.id!,
-        produce(feed[variables.id!], (draft) => {
+        produce(getPost(variables.id), (draft) => {
           (draft.announcement = { end: '' }), (draft.isAnnouncement = false);
         }),
       );
@@ -43,6 +41,7 @@ const ChangeToRegularPostModal: React.FC<AppProps> = ({
     onSuccess: async () => {
       await queryClient.invalidateQueries(['feed-announcements-widget']);
       await queryClient.invalidateQueries(['post-announcements-widget']);
+      successToastConfig('Announcement changed to a regular post');
     },
   });
 
@@ -61,7 +60,9 @@ const ChangeToRegularPostModal: React.FC<AppProps> = ({
       </div>
       <Divider />
       <div className="flex flex-col gap-y-4 items-center justify-center text-neutral-900 text-base p-6">
-        <img src={ErrorWarningPng} width={66} height={66} />
+        <div className="flex justify-center">
+          <img src={ErrorWarningPng} width={80} height={80} />
+        </div>
         <p className="font-semibold">
           Are you sure you want to change this announcement to a regular post?
         </p>
@@ -81,10 +82,8 @@ const ChangeToRegularPostModal: React.FC<AppProps> = ({
           variant={Variant.Primary}
           label="Yes"
           onClick={() => {
-            const fileIds = data.files?.map((file: any) => file.id);
             const payload = {
               ...data,
-              files: fileIds,
               isAnnouncement: false,
               announcement: {
                 end: '',

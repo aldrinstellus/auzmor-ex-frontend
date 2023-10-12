@@ -1,11 +1,11 @@
-import React, { useContext, useMemo, useState } from 'react';
+import { FC, memo, useContext, useMemo, useState } from 'react';
 import truncate from 'lodash/truncate';
 import Avatar from 'components/Avatar';
 import { CELEBRATION_TYPE } from '..';
 import clsx from 'clsx';
 import Button, { Size } from 'components/Button';
 import { formatDate, isCelebrationToday } from '../utils';
-import { getFullName, getNouns } from 'utils/misc';
+import { getFullName, getNouns, getProfileImage } from 'utils/misc';
 import { AuthContext } from 'contexts/AuthContext';
 import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 import Icon from 'components/Icon';
@@ -21,6 +21,7 @@ import {
   MediaValidationError,
 } from 'contexts/CreatePostContext';
 import { useNavigate } from 'react-router-dom';
+import Tooltip from 'components/Tooltip';
 
 interface UserProps {
   type: CELEBRATION_TYPE;
@@ -30,7 +31,7 @@ interface UserProps {
   closeModal?: () => void;
 }
 
-const User: React.FC<UserProps> = ({
+const User: FC<UserProps> = ({
   type,
   isModalView = false,
   data,
@@ -55,13 +56,15 @@ const User: React.FC<UserProps> = ({
 
   const userTimezone = user?.timezone || currentTimezone || 'Asia/Kolkata';
   const isBirthday = type === CELEBRATION_TYPE.Birthday;
-  const anniversaryYears = data.diffInYears;
+  const anniversaryYears = data.diffInYears || 0;
   const celebrationDate = isBirthday
     ? formatDate(data.nextOcassionDateTime, userTimezone)
     : `${anniversaryYears} ${getNouns('yr', anniversaryYears)} (${formatDate(
         data.nextOcassionDateTime,
         userTimezone,
       )})`;
+
+  const userIsMe = user?.id === featuredUser.userId;
 
   const showSendWishBtn =
     isCelebrationToday(data.nextOcassionDateTime, userTimezone) &&
@@ -91,27 +94,38 @@ const User: React.FC<UserProps> = ({
     [type],
   );
 
+  const wishEmoji = isBirthday ? '🎂' : '🎉';
+
   const wishesSent = useMemo(
     () => (
       <div
         data-testid={`${isBirthday ? 'birthday' : 'anniversaries'}-wishes-sent`}
         className={`py-[2px] px-[6px] rounded-[4px] text-xs font-bold flex items-center ${dateStyles} w-fit whitespace-nowrap`}
       >
-        Wishes sent {isBirthday ? '🎂' : '🎉'}
+        Wishes sent {wishEmoji}
       </div>
     ),
     [],
   );
 
+  const wishText = isBirthday
+    ? 'It is your birthday today. Happy birthday! 🎂'
+    : 'It is your Work Anniversary today! Congrats! 🎉';
+
   return showSendWishRTELayout ? (
     <div className="flex gap-2 w-full">
       <Avatar
         name={getFullName(featuredUser) || featuredUser.email}
+        image={getProfileImage(featuredUser)}
         size={48}
         className="min-w-[48px]"
       />
       <div
-        className={clsx('flex flex-col gap-3 w-full', '!gap-2', alreadyWished)}
+        className={clsx(
+          'flex flex-col gap-3 flex-grow w-0',
+          '!gap-2',
+          alreadyWished,
+        )}
       >
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
@@ -146,13 +160,18 @@ const User: React.FC<UserProps> = ({
             <Icon name="arrowRightUp" size={12} color="text-primary-500" />
           </div>
         </div>
-        {alreadyWished ? (
+        {userIsMe ? (
+          <div className="text-neutral-900 text-xs leading-normal font-normal">
+            {wishText}
+          </div>
+        ) : alreadyWished ? (
           wishesSent
         ) : (
           <CommentsRTE
             entityId={post?.id}
             entityType="post"
             className="w-full"
+            wrapperClassName="!py-[7px]"
             mode={PostCommentMode.SendWish}
             inputRef={inputRef}
             media={media}
@@ -228,28 +247,45 @@ const User: React.FC<UserProps> = ({
         <div className="flex items-center gap-2">
           <Avatar
             name={getFullName(featuredUser) || featuredUser.email}
+            image={getProfileImage(featuredUser)}
             size={32}
             className="min-w-[32px]"
           />
           <div className="flex flex-col">
-            <p
-              className="text-sm font-bold truncate"
-              data-testid={`${
-                isBirthday ? 'birthday' : 'anniversaries'
-              }-profile-name`}
+            <Tooltip
+              tooltipContent={getFullName(featuredUser) || featuredUser.email}
+              showTooltip={
+                (getFullName(featuredUser) || featuredUser.email).length >
+                (isModalView ? 40 : 14)
+              }
             >
-              {truncate(getFullName(featuredUser) || featuredUser.email, {
-                length: isModalView ? 40 : 14,
-                separator: '',
-              })}
-            </p>
-            {featuredUser.designation && (
-              <p className="text-xs truncate text-neutral-500">
-                {truncate(featuredUser.designation, {
+              <p
+                className="text-sm font-bold truncate"
+                data-testid={`${
+                  isBirthday ? 'birthday' : 'anniversaries'
+                }-profile-name`}
+              >
+                {truncate(getFullName(featuredUser) || featuredUser.email, {
                   length: isModalView ? 40 : 14,
                   separator: '',
                 })}
               </p>
+            </Tooltip>
+
+            {featuredUser.designation && (
+              <Tooltip
+                tooltipContent={featuredUser.designation}
+                showTooltip={
+                  featuredUser.designation.length > (isModalView ? 40 : 14)
+                }
+              >
+                <p className="text-xs truncate text-neutral-500">
+                  {truncate(featuredUser.designation, {
+                    length: isModalView ? 40 : 14,
+                    separator: '',
+                  })}
+                </p>
+              </Tooltip>
             )}
           </div>
         </div>
@@ -260,11 +296,17 @@ const User: React.FC<UserProps> = ({
             className={`px-[6px] rounded-[4px] text-xs font-semibold whitespace-nowrap ${dateStyles}`}
             data-testid={`${isBirthday ? 'birthday' : 'anniversaries'}-date`}
           >
-            {celebrationDate}
+            {`${celebrationDate} ${userIsMe ? wishEmoji : ''}`.trim()}
           </div>
         )}
       </div>
-      {alreadyWished ? (
+      {userIsMe && showSendWishBtn ? (
+        <div className="text-neutral-900 text-xs leading-normal font-normal">
+          {wishText}
+        </div>
+      ) : null}
+      {alreadyWished ||
+      (userIsMe && (showSendWishBtn || showSendWishRTELayout)) ? (
         <Button
           size={Size.Small}
           className="!bg-primary-50 !text-primary-500 px-4 py-2 rounded-[8px]"
@@ -289,4 +331,4 @@ const User: React.FC<UserProps> = ({
   );
 };
 
-export default React.memo(User);
+export default memo(User);

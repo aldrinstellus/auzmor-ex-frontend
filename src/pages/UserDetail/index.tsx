@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import ContactWidget from 'components/ContactWidget';
 import {
   UserEditType,
@@ -7,8 +6,12 @@ import {
   useSingleUser,
 } from 'queries/users';
 import ProfileInfo from 'components/ProfileInfo';
-import Spinner from 'components/Spinner';
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
+import {
+  Navigate,
+  useLocation,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 import ProfileActivityFeed from './components/ProfileActivityFeed';
 import useAuth from 'hooks/useAuth';
 import NoDataCard from './components/NoDataCard';
@@ -19,6 +22,8 @@ import UserDetailSkeleton from './components/UserDetailSkeleton';
 import ContactSkeleton from 'components/ContactWidget/components/Skeletons';
 import useModal from 'hooks/useModal';
 import useRole from 'hooks/useRole';
+import { FC } from 'react';
+import ManagerWidget from 'components/ManagerWidget';
 
 export interface IUpdateProfileImage {
   profileImage: File;
@@ -27,7 +32,7 @@ export interface IUpdateProfileImage {
 
 interface IUserDetailProps {}
 
-const UserDetail: React.FC<IUserDetailProps> = () => {
+const UserDetail: FC<IUserDetailProps> = () => {
   const [open, openModal, closeModal] = useModal(undefined, false);
   const { user } = useAuth();
   const { isAdmin } = useRole();
@@ -37,7 +42,6 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
   let editType = UserEditType.NONE;
 
   let userDetail;
-
   if (pathname === '/profile') {
     userDetail = useCurrentUser();
   } else {
@@ -120,6 +124,10 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
     },
   ];
 
+  if (!userDetail?.isLoading && !data) {
+    return <Navigate to="/404" />;
+  }
+
   return (
     <div className="flex flex-col space-y-10 w-full">
       {userDetail?.isLoading ? (
@@ -129,15 +137,20 @@ const UserDetail: React.FC<IUserDetailProps> = () => {
       )}
 
       <div className="mb-32 flex w-full">
-        <div className="w-1/4 pr-10">
-          {userDetail?.isLoading ? (
-            <ContactSkeleton />
-          ) : (
-            <ContactWidget
-              contactCardData={data}
-              canEdit={pathname === '/profile'}
-            />
-          )}
+        <div className="w-1/4 pr-10 space-y-6">
+          <div>
+            {userDetail?.isLoading ? (
+              <ContactSkeleton />
+            ) : (
+              <ContactWidget
+                contactCardData={data}
+                canEdit={pathname === '/profile'}
+              />
+            )}
+          </div>
+          <div>
+            <ManagerWidget data={data} canEdit={isAdmin} />
+          </div>
         </div>
         <div className="w-1/2 px-3">
           <Tabs

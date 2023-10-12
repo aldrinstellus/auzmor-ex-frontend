@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { forwardRef, useMemo, useState } from 'react';
 import { Control, Controller, useController } from 'react-hook-form';
 import clsx from 'clsx';
 import { Select, ConfigProvider } from 'antd';
@@ -33,22 +33,22 @@ export interface ICreatableSearch {
   height?: number;
   fontSize?: number;
   getPopupContainer?: any;
+  multi?: boolean;
 }
 
-const CreatableSearch = React.forwardRef(
+const CreatableSearch = forwardRef(
   (
     {
       name,
       className = '',
       disabled = false,
       dataTestId = '',
-      addItemDataTestId = '',
+      // addItemDataTestId = '',
       error,
       control,
       label = '',
       required = false,
       placeholder = '',
-      defaultValue,
       menuPlacement = 'bottomLeft',
       fetchQuery,
       queryParams,
@@ -58,25 +58,26 @@ const CreatableSearch = React.forwardRef(
       height = 44,
       fontSize = 14,
       getPopupContainer = null,
+      multi = false,
     }: ICreatableSearch,
     ref?: any,
   ) => {
+    const { field } = useController({
+      name,
+      control,
+    });
+
     const [searchValue, setSearchValue] = useState<string>('');
     const debouncedSearchValue = useDebounce(searchValue || '', 500);
     const { data, isLoading } = fetchQuery(
       isFiltersEmpty({
-        q: debouncedSearchValue.toLowerCase().trim(),
+        q: debouncedSearchValue?.toLowerCase().trim(),
         limit: 10,
         ...queryParams,
       }),
     );
 
     const transformedOptions = getFormattedData(data);
-
-    const { field } = useController({
-      name,
-      control,
-    });
 
     const [open, setOpen] = useState<boolean>(false);
 
@@ -103,7 +104,7 @@ const CreatableSearch = React.forwardRef(
 
     const isOptionContains = (searchValue: string) =>
       (transformedOptions || []).find(
-        (option) => searchValue.toLowerCase() === option.label.toLowerCase(),
+        (option) => searchValue?.toLowerCase() === option.label?.toLowerCase(),
       );
 
     const addOptionObject =
@@ -161,9 +162,9 @@ const CreatableSearch = React.forwardRef(
                 <Select
                   open={open}
                   showSearch
+                  mode={multi ? 'multiple' : undefined}
                   disabled={disabled}
                   placeholder={placeholder}
-                  defaultValue={defaultValue}
                   placement={menuPlacement ? menuPlacement : undefined}
                   getPopupContainer={(triggerNode) => {
                     if (getPopupContainer) {
@@ -176,12 +177,19 @@ const CreatableSearch = React.forwardRef(
                   filterOption={false}
                   notFoundContent={noContentFound()}
                   onInputKeyDown={() => setOpen(true)}
-                  {...field}
+                  value={field.value}
+                  defaultActiveFirstOption={false}
                   ref={ref}
                   onBlur={() => setOpen(false)}
                   optionLabelProp="label"
-                  onChange={(_, option) => {
-                    field.onChange(option);
+                  onChange={(values, option) => {
+                    if (multi) {
+                      field.onChange(
+                        values?.map((v: string) => ({ value: v, label: v })),
+                      );
+                    } else {
+                      field.onChange(option);
+                    }
                   }}
                   suffixIcon={<Icon name="arrowDown" size={16} />}
                   className="creatable-search"

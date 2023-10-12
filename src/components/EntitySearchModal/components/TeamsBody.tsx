@@ -2,13 +2,19 @@ import Divider from 'components/Divider';
 import Layout, { FieldType } from 'components/Form';
 import Spinner from 'components/Spinner';
 import { useDebounce } from 'hooks/useDebounce';
-import React, { ReactNode, useEffect, useState } from 'react';
+import { ChangeEvent, FC, ReactNode, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { ITeam, useInfiniteTeams } from 'queries/teams';
 import TeamRow from './TeamRow';
 import InfiniteSearch from 'components/InfiniteSearch';
 import { ICategory, useInfiniteCategories } from 'queries/category';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
+import useAuth from 'hooks/useAuth';
+import { isFiltersEmpty } from 'utils/misc';
+import { useOrganization } from 'queries/organization';
+import useRole from 'hooks/useRole';
+import { CategoryType } from 'queries/apps';
+import NoDataFound from 'components/NoDataFound';
 
 interface ITeamsBodyProps {
   entityRenderer?: (data: ITeam) => ReactNode;
@@ -16,7 +22,7 @@ interface ITeamsBodyProps {
   dataTestId?: string;
 }
 
-const TeamsBody: React.FC<ITeamsBodyProps> = ({
+const TeamsBody: FC<ITeamsBodyProps> = ({
   entityRenderer,
   selectedTeamIds = [],
   dataTestId,
@@ -24,6 +30,9 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const { form } = useEntitySearchFormStore();
   const { watch, setValue, control } = form!;
+  const { user } = useAuth();
+  const { isAdmin } = useRole();
+  const { data: organization } = useOrganization();
   const [teamSearch, showSelectedMembers, teams, categorySearch, categories] =
     watch([
       'teamSearch',
@@ -37,10 +46,15 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
   const debouncedSearchValue = useDebounce(teamSearch || '', 500);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteTeams({
-      q: {
+      q: isFiltersEmpty({
         q: debouncedSearchValue,
         category: selectedCategories,
-      },
+        userId:
+          organization?.adminSettings?.postingControls?.limitGlobalPosting &&
+          !isAdmin
+            ? user?.id
+            : undefined,
+      }),
     });
   const teamsData = data?.pages
     .flatMap((page) => {
@@ -69,6 +83,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
     hasNextPage: hasNextCategoryPage,
   } = useInfiniteCategories({
     q: debouncedCategorySearchValue,
+    type: CategoryType.TEAM,
   });
   const categoryData = fetchedCategories?.pages.flatMap((page) => {
     return page?.data?.result?.data.map((category: ICategory) => {
@@ -111,7 +126,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
     !!!teamsData?.length && debouncedSearchValue !== '';
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-[489px]">
       <div className="flex flex-col py-4 px-6">
         <Layout
           fields={[
@@ -123,13 +138,14 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
               placeholder: 'Search via team name',
               isClearable: true,
               dataTestId: `select-${dataTestId}-search`,
+              inputClassName: 'text-sm py-[9px]',
             },
           ]}
           className="pb-4"
         />
         <div className="flex items-center justify-between">
           <div
-            className={`flex items-center text-neutral-500 font-medium ${
+            className={`flex items-center text-neutral-500 font-medium text-sm ${
               isControlsDisabled && 'opacity-50 pointer-events-none'
             }`}
           >
@@ -172,7 +188,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
             </div>
           </div>
           <div
-            className={`cursor-pointer text-neutral-500 font-medium hover:underline ${
+            className={`cursor-pointer text-neutral-500 text-sm font-medium hover:underline ${
               isControlsDisabled && 'opacity-50 pointer-events-none'
             }`}
             onClick={() => {
@@ -207,7 +223,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
                     input: (value: boolean) => {
                       return value;
                     },
-                    output: (e: React.ChangeEvent<HTMLInputElement>) => {
+                    output: (e: ChangeEvent<HTMLInputElement>) => {
                       if (e.target.checked) {
                         selectAllEntity();
                       } else {
@@ -240,6 +256,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
           <div
             className="cursor-pointer text-neutral-500 font-semibold hover:underline"
             onClick={() => {
+              deselectAll();
               setValue('selectAll', false);
               setValue('showSelectedMembers', false);
             }}
@@ -269,7 +286,7 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
                             updateSelectAll();
                             return !!value;
                           },
-                          output: (e: React.ChangeEvent<HTMLInputElement>) => {
+                          output: (e: ChangeEvent<HTMLInputElement>) => {
                             if (e.target.checked) return team;
                             return false;
                           },
@@ -286,21 +303,19 @@ const TeamsBody: React.FC<ITeamsBodyProps> = ({
               </div>
             ))
           ) : (
-            <div className="flex flex-col items-center w-full justify-center">
-              <div className="mt-8 mb-4">
-                <img src={require('images/noResult.png')} />
-              </div>
-              <div className="text-neutral-900 text-lg font-bold mb-4">
-                No result found
-                {!!teamSearch && ` for ‘${teamSearch}’`}
-              </div>
-              <div className="text-neutral-500 text-xs">
-                Sorry we can’t find the member you are looking for.
-              </div>
-              <div className="text-neutral-500 text-xs">
-                Please check the spelling or try again.
-              </div>
-            </div>
+            <NoDataFound
+              className="py-4 w-full"
+              searchString={teamSearch}
+              onClearSearch={() => {}}
+              message={
+                <p>
+                  Sorry we can&apos;t find the member you are looking for.
+                  <br /> Please check the spelling or try again.
+                </p>
+              }
+              hideClearBtn
+              dataTestId="team"
+            />
           )}
           {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
         </div>

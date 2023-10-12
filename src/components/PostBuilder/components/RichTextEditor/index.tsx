@@ -1,9 +1,12 @@
-import React, {
+import {
+  ForwardedRef,
   LegacyRef,
   ReactNode,
+  forwardRef,
   memo,
   useCallback,
   useContext,
+  useEffect,
 } from 'react';
 import ReactQuill, { Quill, UnprivilegedEditor } from 'react-quill';
 import { DeltaStatic, Sources } from 'quill';
@@ -20,13 +23,12 @@ import EmojiBlot from './blots/emoji';
 import EmojiToolbar from './emoji';
 import { mention, previewLinkRegex } from './config';
 import Icon from 'components/Icon';
-import { twConfig } from 'utils/misc';
+import { hideMentionHashtagPalette, isEmptyEditor, twConfig } from 'utils/misc';
 import {
   CreatePostContext,
   CreatePostFlow,
   IMediaValidationError,
   MediaValidationError,
-  POST_TYPE,
 } from 'contexts/CreatePostContext';
 import moment from 'moment';
 import MediaPreview, { Mode } from 'components/MediaPreview';
@@ -36,6 +38,7 @@ import Poll, { PollMode } from 'components/Poll';
 import { PostBuilderMode } from 'components/PostBuilder';
 import useModal from 'hooks/useModal';
 import ConfirmationBox from 'components/ConfirmationBox';
+import { PostType } from 'queries/post';
 
 export interface IEditorContentChanged {
   text: string;
@@ -58,7 +61,7 @@ export interface IQuillEditorProps {
   mode: PostBuilderMode;
 }
 
-const RichTextEditor = React.forwardRef(
+const RichTextEditor = forwardRef(
   (
     {
       className,
@@ -70,7 +73,7 @@ const RichTextEditor = React.forwardRef(
       dataTestId,
       mode,
     }: IQuillEditorProps,
-    ref: React.ForwardedRef<ReactQuill>,
+    ref: ForwardedRef<ReactQuill>,
   ) => {
     const {
       announcement,
@@ -82,6 +85,7 @@ const RichTextEditor = React.forwardRef(
       isPreviewRemoved,
       isCharLimit,
       setIsCharLimit,
+      setIsEmpty,
       setIsPreviewRemoved,
       removeAllMedia,
       coverImageMap,
@@ -91,7 +95,7 @@ const RichTextEditor = React.forwardRef(
       previewUrl,
       setPreviewUrl,
       poll,
-      setPoll,
+      // setPoll,
       setShoutoutUserIds,
       postType,
       setPostType,
@@ -158,6 +162,9 @@ const RichTextEditor = React.forwardRef(
           setPreviewUrl('');
         }
       }
+      setIsEmpty(
+        isEmptyEditor(editor.getText(), editor.getContents().ops || []),
+      );
     };
 
     const updateContext = () => {
@@ -168,7 +175,7 @@ const RichTextEditor = React.forwardRef(
         html: (ref as any).current
           ?.makeUnprivilegedEditor((ref as any).current?.getEditor())
           .getHTML(),
-        json: (ref as any).current
+        editor: (ref as any).current
           ?.makeUnprivilegedEditor((ref as any).current?.getEditor())
           .getContents(),
       });
@@ -258,13 +265,13 @@ const RichTextEditor = React.forwardRef(
     const onRemoveMedia = () => {
       removeAllMedia();
       setShoutoutUserIds([]);
-      setPostType(null);
+      setPostType(PostType.Update);
       closeConfirm();
     };
 
     const onMediaEdit = () => {
       updateContext();
-      if (postType === POST_TYPE.Shoutout) {
+      if (postType === PostType.Shoutout) {
         setActiveFlow(CreatePostFlow.CreateShoutout);
       } else {
         setActiveFlow(CreatePostFlow.EditMedia);
@@ -272,6 +279,21 @@ const RichTextEditor = React.forwardRef(
     };
 
     const [confirm, showConfirm, closeConfirm] = useModal();
+
+    useEffect(() => {
+      if (ref && ((ref as any).current as ReactQuill)) {
+        const ops =
+          ((ref as any).current as ReactQuill).getEditor().getContents().ops ||
+          [];
+        const content = ((ref as any).current as ReactQuill)
+          .getEditor()
+          .getText();
+
+        setIsEmpty(isEmptyEditor(content, ops));
+      }
+    }, []);
+
+    useEffect(() => () => hideMentionHashtagPalette(), []);
 
     return (
       <div data-testid={`${dataTestId}-content`}>
@@ -330,21 +352,21 @@ const RichTextEditor = React.forwardRef(
           <MediaPreview
             media={media}
             className="m-6"
-            mode={mode === PostBuilderMode.Create ? Mode.Edit : Mode.View}
+            mode={Mode.Edit}
             onAddButtonClick={() => inputImgRef?.current?.click()}
             onCloseButtonClick={media.length > 1 ? showConfirm : onRemoveMedia}
-            showEditButton={mode === PostBuilderMode.Create}
-            showCloseButton={mode === PostBuilderMode.Create}
-            showAddMediaButton={
-              mode === PostBuilderMode.Create && postType !== POST_TYPE.Shoutout
-            }
+            showEditButton={postType !== PostType.Shoutout}
+            showCloseButton={postType !== PostType.Shoutout}
+            showAddMediaButton={postType !== PostType.Shoutout}
             onEditButtonClick={onMediaEdit}
             coverImageMap={coverImageMap}
             dataTestId={dataTestId}
             onClick={(e, index) => {
               updateContext();
-              setMediaOpenIndex(index - 1);
-              setActiveFlow(CreatePostFlow.EditMedia);
+              if (postType !== PostType.Shoutout) {
+                setMediaOpenIndex(index - 1);
+                setActiveFlow(CreatePostFlow.EditMedia);
+              }
             }}
           />
         )}
@@ -356,6 +378,7 @@ const RichTextEditor = React.forwardRef(
               total={poll.total}
               closedAt={poll.closedAt}
               mode={PollMode.EDIT}
+              isDeletable={mode === PostBuilderMode.Create}
             />
           </div>
         )}

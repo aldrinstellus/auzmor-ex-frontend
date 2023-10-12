@@ -7,24 +7,24 @@ import {
   CreatePostContext,
   CreatePostFlow,
   IEditorValue,
-  POST_TYPE,
 } from 'contexts/CreatePostContext';
 import useRole from 'hooks/useRole';
 import { DeltaStatic } from 'quill';
-import React, { useContext, useMemo } from 'react';
+import { FC, RefObject, useContext, useMemo } from 'react';
 import ReactQuill from 'react-quill';
 import { convert } from 'html-to-text';
-import { operatorXOR, twConfig } from 'utils/misc';
+import { operatorXOR } from 'utils/misc';
 import { PostBuilderMode } from 'components/PostBuilder';
+import { PostType } from 'queries/post';
 
 export interface IFooterProps {
   isLoading: boolean;
-  quillRef: React.RefObject<ReactQuill>;
+  quillRef: RefObject<ReactQuill>;
   handleSubmitPost: (content: IEditorValue, files: File[]) => void;
   mode: PostBuilderMode;
 }
 
-const Footer: React.FC<IFooterProps> = ({
+const Footer: FC<IFooterProps> = ({
   isLoading,
   quillRef,
   handleSubmitPost,
@@ -42,6 +42,7 @@ const Footer: React.FC<IFooterProps> = ({
     previewUrl,
     schedule,
     postType,
+    isEmpty,
   } = useContext(CreatePostContext);
   const { isMember } = useRole();
   const canSchedule = !(!!!schedule && mode === PostBuilderMode.Edit);
@@ -54,19 +55,20 @@ const Footer: React.FC<IFooterProps> = ({
       html: quillRef.current
         ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
         .getHTML(),
-      json: quillRef.current
+      editor: quillRef.current
         ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
         .getContents(),
     });
   };
 
   const isMediaDisabled =
-    operatorXOR(isPreviewRemoved, !!previewUrl) ||
-    !!(postType && postType !== POST_TYPE.Media);
+    operatorXOR(isPreviewRemoved, !!previewUrl) || postType !== PostType.Update;
   const isShoutoutDisabled =
     operatorXOR(isPreviewRemoved, !!previewUrl) ||
-    (!!postType && postType !== POST_TYPE.Shoutout);
-  const isPollDisabled = !!postType && postType !== POST_TYPE.Poll;
+    (postType !== PostType.Shoutout && postType !== PostType.Update);
+  const isPollDisabled =
+    operatorXOR(isPreviewRemoved, !!previewUrl) ||
+    (postType !== PostType.Poll && postType !== PostType.Update);
 
   const postMenuItems = useMemo(
     () => [
@@ -112,7 +114,9 @@ const Footer: React.FC<IFooterProps> = ({
             disabled: true,
           },
         ],
-        hidden: mode === PostBuilderMode.Edit,
+        hidden: [PostType.Poll, PostType.Shoutout].includes(
+          postType || PostType.Update,
+        ),
         divider: <Divider variant={DividerVariant.Vertical} />,
       },
       {
@@ -292,7 +296,12 @@ const Footer: React.FC<IFooterProps> = ({
         )}
         <Button
           label={schedule ? 'Schedule' : 'Post'}
-          disabled={isLoading || isCharLimit || !!mediaValidationErrors?.length}
+          disabled={
+            isLoading ||
+            isCharLimit ||
+            isEmpty ||
+            !!mediaValidationErrors?.length
+          }
           labelClassName="text-sm leadind-snug"
           onClick={() => {
             updateContext();
@@ -310,7 +319,7 @@ const Footer: React.FC<IFooterProps> = ({
                   quillRef.current
                     ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
                     .getHTML() || '',
-                json: quillRef.current
+                editor: quillRef.current
                   ?.makeUnprivilegedEditor(quillRef.current?.getEditor())
                   .getContents() as DeltaStatic,
               },

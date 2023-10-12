@@ -1,4 +1,3 @@
-import React from 'react';
 import Card from 'components/Card';
 import Icon from 'components/Icon';
 import useModal from 'hooks/useModal';
@@ -10,13 +9,14 @@ import Button, { Size, Variant } from 'components/Button';
 import { useNavigate } from 'react-router-dom';
 import SkeletonLoader from './components/SkeletonLoader';
 import TeamNotFound from 'images/TeamNotFound.svg';
+import { memo } from 'react';
 
 const MyTeamWidget = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [open, openCollpase, closeCollapse] = useModal(true, false);
 
-  const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteTeams({
+  const { data, isLoading, hasNextPage } = useInfiniteTeams({
     q: isFiltersEmpty({
       userId: user?.id,
       limit: 3,
@@ -108,4 +108,4 @@ const MyTeamWidget = () => {
   );
 };
 
-export default MyTeamWidget;
+export default memo(MyTeamWidget);

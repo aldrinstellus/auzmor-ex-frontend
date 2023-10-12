@@ -1,5 +1,5 @@
 import Avatar from 'components/Avatar';
-import React, { ReactElement } from 'react';
+import { FC, ReactElement } from 'react';
 import NotificationCard from './NotificationCard';
 import {
   getNotificationMessage,
@@ -15,7 +15,7 @@ import { getProfileImage } from 'utils/misc';
 
 type NotificationCardProps = NotificationProps;
 
-const Notification: React.FC<NotificationCardProps> = ({
+const Notification: FC<NotificationCardProps> = ({
   actor,
   action,
   target,
@@ -29,12 +29,11 @@ const Notification: React.FC<NotificationCardProps> = ({
     interactionCount,
   );
 
-  const { cardContent, redirect } = getNotificationElementContent(
+  const { cardContent, redirect, showActor } = getNotificationElementContent(
     action,
     target,
     actor,
   );
-  console.log(isRead);
 
   const markNotificationAsReadMutation = useMutation({
     mutationKey: ['mark-notification-as-read'],
@@ -61,14 +60,21 @@ const Notification: React.FC<NotificationCardProps> = ({
       return (
         <>
           <span className="font-bold">{notificationMessage}&nbsp;</span>
-          <span className="font-bold text-primary-500">{actor.fullName}</span>
+          <span className="font-bold text-primary-500">
+            {actor.fullName} {actor.status === 'INACTIVE' && '(deactivated)'}
+          </span>
           <span className="font-bold">! 🎉🥳</span>
         </>
       );
+    } else if (action.type === ActionType.NEW_MEMBERS_TO_TEAM) {
+      return <span className="font-bold">{notificationMessage}</span>;
     } else {
       return (
         <>
-          <span className="font-bold">{actor.fullName}&nbsp;</span>
+          <span className="font-bold">
+            {actor.fullName} {actor.status === 'INACTIVE' && '(deactivated)'}
+            &nbsp;
+          </span>
           {notificationMessage}
         </>
       );
@@ -83,12 +89,7 @@ const Notification: React.FC<NotificationCardProps> = ({
   };
 
   return (
-    <Link
-      to={`/posts/${redirect?.postId}${
-        redirect?.commentId ? '?commentId=' + redirect?.commentId : ''
-      }`}
-      onClick={handleOnClick}
-    >
+    <Link to={redirect} onClick={handleOnClick}>
       <div
         className={`${
           !isRead ? 'bg-orange-50' : 'bg-white'
@@ -97,13 +98,15 @@ const Notification: React.FC<NotificationCardProps> = ({
       >
         <div className="flex gap-x-2">
           {/* Avatar of the actor with indicator */}
-          <div className="w-fit">
-            <Avatar
-              name={actor.fullName}
-              image={getProfileImage(actor)}
-              size={32}
-            />
-          </div>
+          {showActor && (
+            <div className="w-fit">
+              <Avatar
+                name={actor.fullName}
+                image={getProfileImage(actor)}
+                size={32}
+              />
+            </div>
+          )}
           {/* Content */}
           <div className="flex items-start justify-between gap-x-2 w-full mr-4">
             <div className="flex flex-col gap-y-2 w-full">

@@ -1,10 +1,9 @@
 import Header from 'components/ModalHeader';
-import React, { useContext } from 'react';
+import { FC, useContext } from 'react';
 import {
   CreatePostContext,
   CreatePostFlow,
   IPoll,
-  POST_TYPE,
 } from 'contexts/CreatePostContext';
 import Body from './Body';
 import * as yup from 'yup';
@@ -19,6 +18,7 @@ import {
   Type,
 } from 'components/Button';
 import Button from 'components/Button';
+import { PostType } from 'queries/post';
 
 type CreatePollProps = {
   closeModal: () => void;
@@ -43,7 +43,7 @@ const schema = yup.object({
   ),
 });
 
-const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
+const CreatePoll: FC<CreatePollProps> = ({ closeModal }) => {
   const { poll, setActiveFlow, setPoll, setPostType } =
     useContext(CreatePostContext);
 
@@ -183,7 +183,7 @@ const CreatePoll: React.FC<CreatePollProps> = ({ closeModal }) => {
     });
     // After setting poll, switch back to create post mode.
     setActiveFlow(CreatePostFlow.CreatePost);
-    setPostType(POST_TYPE.Poll);
+    setPostType(PostType.Poll);
   }
 
   return (

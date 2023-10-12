@@ -5,7 +5,7 @@ import Spinner from 'components/Spinner';
 import { useAudience } from 'queries/audience';
 import { IAudience } from 'queries/post';
 import { ITeam } from 'queries/teams';
-import React, { useEffect } from 'react';
+import { FC, useEffect, ReactNode } from 'react';
 import TeamWork from 'images/teamwork.svg';
 import { useInView } from 'react-intersection-observer';
 
@@ -13,12 +13,16 @@ interface IAudiencePopupProps {
   entityId?: string;
   audience?: IAudience[];
   title?: string;
+  triggerBtn?: ReactNode;
+  entity?: string;
 }
 
-const AudiencePopup: React.FC<IAudiencePopupProps> = ({
+const AudiencePopup: FC<IAudiencePopupProps> = ({
   entityId,
   audience,
   title = 'Posted to:',
+  triggerBtn,
+  entity = 'posts',
 }) => {
   if (audience && audience.length && entityId) {
     const {
@@ -29,7 +33,7 @@ const AudiencePopup: React.FC<IAudiencePopupProps> = ({
       fetchNextPage,
       hasNextPage,
       isFetchingNextPage,
-    } = useAudience(entityId, {
+    } = useAudience(entity, entityId, {
       enabled: false,
     });
 
@@ -48,10 +52,10 @@ const AudiencePopup: React.FC<IAudiencePopupProps> = ({
       <div className="relative">
         <Menu>
           <Menu.Button as="div">
-            <Icon name="noteFavourite" size={16} />
+            {triggerBtn || <Icon name="noteFavourite" size={16} />}
           </Menu.Button>
           <Menu.Items
-            className={`bg-white rounded-9xl shadow-lg absolute z-[99999] overflow-hidden min-w-[256px] border border-neutral-200`}
+            className={`bg-white rounded-9xl shadow-lg absolute z-[99999] overflow-hidden min-w-[256px] border border-neutral-200 focus-visible:outline-none outline-none`}
           >
             {({ open }) => {
               if (!data && open && !error) {
@@ -64,32 +68,23 @@ const AudiencePopup: React.FC<IAudiencePopupProps> = ({
                   <div className="px-6 py-3 text-sm text-neutral-900 font-medium">
                     {title}
                   </div>
-                  <div className="max-h-80 overflow-scroll">
-                    {/* <div className="bg-blue-50 px-6 py-1 text-neutral-500 text-xs font-medium">
-                    Channels
+                  <div className="bg-blue-50 px-6 py-1 text-neutral-500 text-xs font-medium">
+                    Teams
                   </div>
-                  <div className="flex items-center px-6 py-3 border-b border-neutral-200">
-                    <div className="w-4 h-4 rounded-full bg-blue-500 mr-2.5"></div>
-                    <div className="text-xs font-medium text-neutral-900">
-                      HR updates
-                    </div>
-                  </div> */}
-
-                    <div className="bg-blue-50 px-6 py-1 text-neutral-500 text-xs font-medium">
-                      Teams
-                    </div>
+                  <div className="max-h-80 overflow-scroll">
                     {audienceData?.map((eachTeam: ITeam) => (
                       <Menu.Item key={eachTeam.id}>
-                        <div className="flex items-center px-6 py-3 border-b border-neutral-200">
+                        <div className="flex items-center px-6 py-4 border-b border-neutral-200">
                           {eachTeam.recentMembers.length > 0 ? (
                             <AvatarList
-                              size={16}
+                              size={20}
                               users={eachTeam.recentMembers || []}
                               moreCount={eachTeam.totalMembers}
-                              className="mr-2 -space-x-2"
+                              className="-space-x-[8px] mr-2.5"
+                              avatarClassName="!b-[1px]"
                             />
                           ) : (
-                            <div className="w-4 h-4 bg-neutral-200 rounded-full mr-2">
+                            <div className="w-4 h-4 bg-neutral-200 rounded-full mr-2.5">
                               <img src={TeamWork} height={16} width={16} />
                             </div>
                           )}

@@ -1,17 +1,23 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { ReactNode, forwardRef, useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { Control, useController, Controller } from 'react-hook-form';
 import { Select, ConfigProvider } from 'antd';
 import './index.css';
 import { SelectCommonPlacement } from 'antd/es/_util/motion';
 import Icon from 'components/Icon';
+import {
+  FetchNextPageOptions,
+  InfiniteQueryObserverResult,
+} from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
 
 const { Option } = Select;
-interface IOptions {
+export interface IOption {
   value: string;
   label: string;
   disabled: boolean;
   dataTestId?: string;
+  rowData?: any;
 }
 export interface IAsyncSingleSelectProps {
   name: string;
@@ -19,29 +25,40 @@ export interface IAsyncSingleSelectProps {
   disabled?: boolean;
   error?: string;
   className?: string;
+  selectClassName?: string;
   dataTestId?: string;
   control?: Control<Record<string, any>>;
   label?: string;
   placeholder?: string;
-  options: IOptions[];
+  options: IOption[];
   menuPlacement: SelectCommonPlacement;
   isLoading?: boolean;
-  loadOptions: (
-    inputValue: string,
-    callBack: (options: IOptions[]) => void,
-  ) => Promise<any>;
-  noOptionsMessage?: string;
+  onSearch?: (inputValue: string) => void;
+  noOptionsMessage?: string | ReactNode;
   isClearable?: boolean;
   height?: number;
   fontSize?: number;
   getPopupContainer?: any;
+  clearIcon?: ReactNode | null;
+  showSearch?: boolean;
+  suffixIcon?: ReactNode | null;
+  optionRenderer?: null | ((option: IOption) => ReactNode);
+  isFetchingNextPage?: boolean;
+  fetchNextPage?:
+    | ((
+        options?: FetchNextPageOptions | undefined,
+      ) => Promise<InfiniteQueryObserverResult<any, unknown>>)
+    | null;
+  hasNextPage?: boolean;
+  onClear?: () => void;
 }
 
-const AsyncSingleSelect = React.forwardRef(
+const AsyncSingleSelect = forwardRef(
   (
     {
       name,
       className = '',
+      selectClassName = '',
       disabled = false,
       dataTestId = '',
       error,
@@ -49,22 +66,33 @@ const AsyncSingleSelect = React.forwardRef(
       label = '',
       placeholder = '',
       options,
-      defaultValue,
+      defaultValue = [],
       menuPlacement = 'bottomLeft',
       isLoading = false,
-      loadOptions,
+      onSearch,
       noOptionsMessage = 'No options',
       isClearable = false,
       height = 44,
       fontSize = 14,
       getPopupContainer = null,
+      clearIcon = null,
+      showSearch = true,
+      suffixIcon = null,
+      optionRenderer = null,
+      isFetchingNextPage = false,
+      fetchNextPage = null,
+      hasNextPage = false,
+      onClear = () => {},
     }: IAsyncSingleSelectProps,
     ref?: any,
   ) => {
+    const [search, setSearch] = useState('');
+    const { ref: loadMoreRef, inView } = useInView();
     const { field } = useController({
       name,
       control,
     });
+
     const labelStyle = useMemo(
       () =>
         clsx(
@@ -87,19 +115,40 @@ const AsyncSingleSelect = React.forwardRef(
     );
 
     const [open, setOpen] = useState<boolean>(false);
-    const [asyncOptions, setAsyncOptions] = useState<IOptions[]>(options);
-
-    useEffect(() => {
-      if (defaultValue?.label) {
-        loadOptions(defaultValue.label, setAsyncOptions);
-      }
-    }, []);
 
     const noContentFound = () => (
       <div className="px-6 py-2 text-neutral-500 text-center">
         {isLoading ? 'Loading...' : noOptionsMessage}
       </div>
     );
+
+    useEffect(() => {
+      if (inView && fetchNextPage) {
+        fetchNextPage();
+      }
+    }, [inView]);
+
+    const onPopupScroll = (e: any) => {
+      e.persist();
+      const target = e.target;
+
+      if (target.scrollTop + target.offsetHeight > target.scrollHeight - 1) {
+        if (fetchNextPage && hasNextPage && !isFetchingNextPage) {
+          // dynamic add options...
+          fetchNextPage();
+        }
+      }
+    };
+
+    const handleSearch = (q: string) => {
+      if (onSearch) {
+        onSearch(q);
+      }
+      setSearch(q);
+    };
+
+    const filterOption = (input: any, option: any) =>
+      (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
     return (
       <ConfigProvider
@@ -127,47 +176,72 @@ const AsyncSingleSelect = React.forwardRef(
             }}
           >
             <Controller
-              name={name}
+              name={field.name}
               control={control}
               defaultValue={defaultValue}
               render={() => (
                 <Select
                   open={open}
-                  showSearch
+                  showSearch={showSearch}
                   disabled={disabled}
                   placeholder={placeholder}
-                  defaultValue={defaultValue}
                   placement={menuPlacement ? menuPlacement : undefined}
+                  onPopupScroll={onPopupScroll}
                   getPopupContainer={(triggerNode) => {
                     if (getPopupContainer) {
                       return getPopupContainer;
                     }
                     return triggerNode.parentElement;
                   }}
-                  onSearch={(q) => loadOptions(q, setAsyncOptions)}
+                  onSearch={handleSearch}
+                  filterOption={filterOption}
                   notFoundContent={noContentFound()}
                   onInputKeyDown={() => setOpen(true)}
                   allowClear={isClearable}
                   loading={isLoading}
-                  {...field}
-                  onBlur={() => setOpen(false)}
+                  value={field.value}
                   ref={ref}
+                  onBlur={() => setOpen(false)}
                   onChange={(_, option) => {
                     field.onChange(option);
                   }}
                   optionLabelProp="label"
-                  suffixIcon={<Icon name="arrowDown" size={16} />}
-                  className="async-single-select"
+                  className={`async-single-select ${selectClassName}`}
+                  clearIcon={clearIcon}
+                  suffixIcon={suffixIcon || <Icon name="arrowDown" size={18} />}
+                  onClear={() => {
+                    field.onChange(null);
+                    if (onClear) {
+                      onClear();
+                    }
+                  }}
+                  searchValue={search}
                 >
-                  {(asyncOptions || []).map((option) => (
-                    <Option
-                      key={option.value}
-                      value={option.value}
-                      label={option.label}
-                    >
-                      <div data-testid={option.dataTestId}>{option.label}</div>
-                    </Option>
-                  ))}
+                  {(options || []).map((option) => {
+                    return (
+                      <Option
+                        key={`${option.value}-${Math.random()}`}
+                        value={option.value}
+                        label={option.label}
+                      >
+                        {optionRenderer ? (
+                          optionRenderer(option)
+                        ) : (
+                          <div data-testid={option.dataTestId}>
+                            {option.label}
+                          </div>
+                        )}
+                      </Option>
+                    );
+                  })}
+                  {fetchNextPage && hasNextPage && !isFetchingNextPage && (
+                    <div ref={loadMoreRef} />
+                  )}
+                  {isFetchingNextPage && (
+                    <div className="text-xs font-bold text-neutral-500 text-center">
+                      Loading...
+                    </div>
+                  )}
                 </Select>
               )}
             />

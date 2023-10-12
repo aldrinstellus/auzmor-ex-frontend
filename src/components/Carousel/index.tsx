@@ -1,6 +1,8 @@
-import React, {
+import {
+  FC,
   MouseEventHandler,
   ReactElement,
+  useEffect,
   useRef,
   useState,
 } from 'react';
@@ -12,11 +14,12 @@ import Icon from 'components/Icon';
 import useCarousel from 'hooks/useCarousel';
 import { IMedia } from 'contexts/CreatePostContext';
 import { twConfig } from 'utils/misc';
-import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { toast } from 'react-toastify';
 import FailureToast from 'components/Toast/variants/FailureToast';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
+import Banner, { Variant } from 'components/Banner';
+import SuccessToast from 'components/Toast/variants/SuccessToast';
 
 export type CarouselProps = {
   media: IMedia[];
@@ -26,7 +29,9 @@ export type CarouselProps = {
 };
 
 export const fetchFile = (url: string) => {
-  fetch(url)
+  fetch(url, {
+    credentials: 'include',
+  })
     .then((res) => res.blob())
     .then((file) => {
       const tempUrl = URL.createObjectURL(file);
@@ -70,7 +75,7 @@ export const fetchFile = (url: string) => {
     });
 };
 
-const Carousel: React.FC<CarouselProps> = ({
+const Carousel: FC<CarouselProps> = ({
   media,
   index,
   closeModal,
@@ -84,7 +89,7 @@ const Carousel: React.FC<CarouselProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-
+  const [canPlay, setCanPlay] = useState<boolean>(true);
   const containerStyles = clsx({
     'm-auto w-full h-full relative rounded-xl': true,
   });
@@ -99,12 +104,11 @@ const Carousel: React.FC<CarouselProps> = ({
   });
 
   const leftArrowIconStyles = clsx({
-    '!absolute !top-[50%] !left-1 !rounded-lg !cursor-pointer !p-1 !px-3 bg-white':
-      true,
+    '!absolute !top-[50%] !left-1 !rounded-lg !cursor-pointer !p-1 !px-3': true,
   });
 
   const rightArrowIconStyles = clsx({
-    '!absolute !top-[50%] !right-1 !rounded-lg !cursor-pointer !p-1 !px-3 bg-white':
+    '!absolute !top-[50%] !right-1 !rounded-lg !cursor-pointer !p-1 !px-3':
       true,
   });
 
@@ -121,6 +125,14 @@ const Carousel: React.FC<CarouselProps> = ({
     { hidden: isPlaying },
   );
 
+  useEffect(() => {
+    if (videoRef.current) {
+      setCanPlay(
+        !!videoRef.current.canPlayType(media[currentIndex].contentType),
+      );
+    }
+  }, [videoRef.current, media[currentIndex]]);
+
   if (media.length > 0) {
     return (
       <div className={containerStyles}>
@@ -128,7 +140,7 @@ const Carousel: React.FC<CarouselProps> = ({
           {media[currentIndex].type === 'IMAGE' ? (
             <Image image={media[currentIndex]} />
           ) : (
-            <div className="w-full h-full flex items-center ">
+            <div className="w-full h-full flex items-center flex-col gap-2">
               <video
                 className="w-full h-full"
                 src={media[currentIndex].original}
@@ -139,6 +151,14 @@ const Carousel: React.FC<CarouselProps> = ({
                 onPause={() => setIsPlaying(false)}
                 autoPlay={index > -1}
               />
+              {!canPlay && (
+                <div className="w-full">
+                  <Banner
+                    title="Incompatible video format, but you can download it"
+                    variant={Variant.Grey}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -166,16 +186,20 @@ const Carousel: React.FC<CarouselProps> = ({
         </div>
         {media[currentIndex].type !== 'IMAGE' && (
           <div className={playBtnStyle}>
-            <Icon
-              name="playFilled"
-              color="text-white"
-              size={32}
-              onClick={() => {
-                isPlaying
-                  ? videoRef.current?.pause()
-                  : videoRef.current?.play();
-              }}
-            />
+            {canPlay ? (
+              <Icon
+                name="playFilled"
+                color="text-white"
+                size={32}
+                onClick={() => {
+                  isPlaying
+                    ? videoRef.current?.pause()
+                    : videoRef.current?.play();
+                }}
+              />
+            ) : (
+              <Icon name="videoSlash" size={50} hover={false} />
+            )}
           </div>
         )}
       </div>

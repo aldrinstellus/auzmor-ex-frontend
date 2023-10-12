@@ -1,4 +1,12 @@
-import React, { LegacyRef, ReactNode, memo, useContext, useState } from 'react';
+import {
+  LegacyRef,
+  ReactNode,
+  forwardRef,
+  memo,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import ReactQuill, { Quill, UnprivilegedEditor } from 'react-quill';
 import { DeltaStatic, Sources } from 'quill';
 import moment from 'moment';
@@ -27,6 +35,7 @@ import MediaPreview, { Mode } from 'components/MediaPreview';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
 
 import { hasDatePassed } from 'utils/time';
+import { hideMentionHashtagPalette } from 'utils/misc';
 
 export interface IEditorContentChanged {
   text: string;
@@ -90,7 +99,7 @@ fill="none"
 />
 </svg>`;
 
-const RichTextEditor = React.forwardRef(
+const RichTextEditor = forwardRef(
   (
     {
       toolbarId,
@@ -181,14 +190,19 @@ const RichTextEditor = React.forwardRef(
         html: (ref as any).current
           ?.makeUnprivilegedEditor((ref as any).current?.getEditor())
           .getHTML(),
-        json: (ref as any).current
+        editor: (ref as any).current
           ?.makeUnprivilegedEditor((ref as any).current?.getEditor())
           .getContents(),
       });
     };
 
+    useEffect(() => () => hideMentionHashtagPalette(), []);
+
     return (
-      <div className="w-full relative" data-testid={dataTestId}>
+      <div
+        className="w-full relative flex flex-wrap gap-2"
+        data-testid={dataTestId}
+      >
         <ReactQuill
           id="quill"
           className={className}

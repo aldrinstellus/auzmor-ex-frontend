@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useState, useEffect } from 'react';
+import { ReactNode, createContext, useState, useEffect, FC } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { getItem, removeAllItems, setItem } from 'utils/persist';
 import { fetchMe } from 'queries/account';
@@ -6,6 +6,8 @@ import UserOnboard from 'components/UserOnboard';
 import { Role } from 'utils/enum';
 import PageLoader from 'components/PageLoader';
 import { userChannel } from 'utils/misc';
+import { ILocation } from 'queries/location';
+import { IDepartment } from 'queries/department';
 
 type AuthContextProps = {
   children: ReactNode;
@@ -22,15 +24,16 @@ export interface IUser {
   email: string;
   role: Role;
   organization: IOrganization;
-  workLocation?: Record<string, string>;
+  workLocation?: ILocation;
   preferredName?: string;
   designation?: string;
-  department?: Record<string, string>;
+  department?: IDepartment;
   location?: string;
   profileImage?: string;
   coverImage?: string;
   permissions?: [];
   timezone?: string;
+  outOfOffice?: Record<string, any>;
 }
 
 interface IAuthContext {
@@ -45,7 +48,7 @@ export const AuthContext = createContext<IAuthContext>({
   updateUser: () => {},
 });
 
-const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
+const AuthProvider: FC<AuthContextProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const queryClient = useQueryClient();
   const [showOnboard, setShowOnboard] = useState<boolean>(false);
@@ -90,6 +93,9 @@ const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
             data?.profileImage?.small || data?.profileImage?.original,
           permissions: data?.permissions,
           timezone: data?.timeZone,
+          department: data?.department,
+          workLocation: data?.workLocation,
+          outOfOffice: data?.outOfOffice,
         });
       } catch (e: any) {
         if (e?.response?.status === 401) {

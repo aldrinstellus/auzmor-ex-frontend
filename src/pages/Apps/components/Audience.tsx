@@ -1,12 +1,11 @@
 import Header from 'components/ModalHeader';
-import React, { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import AudienceSelector from 'components/AudienceSelector';
 import { useForm } from 'react-hook-form';
 import { IAudienceForm } from 'components/EntitySearchModal';
 import { AudienceEntityType, IAudience } from 'queries/apps';
 import Footer from './Footer';
 import { ADD_APP_FLOW } from './AddApp';
-import Icon from 'components/Icon';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 
 interface IAudienceProps {
@@ -22,7 +21,7 @@ export enum AudienceFlow {
   ChannelSelect = 'CHANNEL_SELECT',
 }
 
-const Audience: React.FC<IAudienceProps> = ({
+const Audience: FC<IAudienceProps> = ({
   audience,
   setAudience,
   setActiveFlow,
@@ -153,20 +152,13 @@ const Audience: React.FC<IAudienceProps> = ({
           }}
           closeBtnDataTestId="schedule-post-modal-close"
         />
-        <div className="px-2 py-4 rounded bg-neutral-100 shadow m-4 flex items-center gap-2">
-          <div className="p-1 rounded bg-neutral-200">
-            <Icon name="infoCircleOutline" />
-          </div>
-          <span className="text-sm">
-            The app will be visible to the audience selected. You can change the
-            audience of this specific app.
-          </span>
-        </div>
         <AudienceSelector
           audienceFlow={audienceFlow}
           setAudienceFlow={setAudienceFlow}
           isEveryoneSelected={isEveryoneSelected}
           setIsEveryoneSelected={setIsEveryoneSelected}
+          infoText="The app will be visible to the audience selected. You can change the
+            audience of this specific app."
         />
         <Footer
           isValid

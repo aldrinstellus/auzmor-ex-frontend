@@ -1,7 +1,7 @@
 import Card from 'components/Card';
 import Divider from 'components/Divider';
 import Icon from 'components/Icon';
-import React, { useRef } from 'react';
+import { FC, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import Spinner from 'components/Spinner';
 import Popover from 'components/Popover';
@@ -18,13 +18,14 @@ export enum NotificationType {
   MENTIONS = 'Mentions',
 }
 
-const NotificationsOverview: React.FC = () => {
+const NotificationsOverview: FC = () => {
   const { data, isLoading, isError } = useGetUnreadNotificationsCount();
   const viewAllRef = useRef<HTMLButtonElement>(null);
   const queryClient = useQueryClient();
 
   const markReadMutation = useMutation(() => markAllNotificationsAsRead(), {
     onSuccess: () => {
+      queryClient.invalidateQueries(['unread-count']);
       queryClient.invalidateQueries(['get-notifications']);
     },
   });
@@ -66,7 +67,6 @@ const NotificationsOverview: React.FC = () => {
       dataTestId: 'notifications-mentions',
     },
   ];
-
   return (
     <Popover
       triggerNode={
@@ -104,7 +104,11 @@ const NotificationsOverview: React.FC = () => {
               className="flex items-center gap-x-1 cursor-pointer"
               onClick={() => markReadMutation.mutate()}
             >
-              <Icon name="checkbox" color="text-primary-600" size={18} />
+              <Icon
+                name="checkboxOutline"
+                color="!text-primary-600"
+                size={18}
+              />
               <p className="text-primary-600 font-bold text-sm cursor-pointer">
                 Mark all as read
               </p>

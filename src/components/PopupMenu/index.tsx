@@ -1,4 +1,11 @@
-import React, { ElementType, ReactElement, ReactNode, useRef } from 'react';
+import {
+  ElementType,
+  FC,
+  ReactElement,
+  ReactNode,
+  cloneElement,
+  useRef,
+} from 'react';
 import { Menu } from '@headlessui/react';
 import PopupMenuItem from './PopupMenuItem';
 
@@ -30,7 +37,7 @@ export interface IPopupMenuProps {
   isOpen?: boolean;
 }
 
-const PopupMenu: React.FC<IPopupMenuProps> = ({
+const PopupMenu: FC<IPopupMenuProps> = ({
   triggerNode,
   menuItems,
   className,
@@ -43,17 +50,13 @@ const PopupMenu: React.FC<IPopupMenuProps> = ({
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   return (
     <Menu>
-      <Menu.Button
-        as="div"
-        ref={menuButtonRef}
-        disabled={disabled}
-      >
+      <Menu.Button as="div" ref={menuButtonRef} disabled={disabled}>
         {triggerNode}
       </Menu.Button>
       {(controlled ? isOpen : true) && (
         <Menu.Items
           static={controlled}
-          className={`bg-white rounded-9xl shadow-lg absolute z-[99999] overflow-hidden ${className}`}
+          className={`bg-white rounded-9xl shadow-lg absolute z-[99999] overflow-hidden focus-visible:outline-none ${className}`}
         >
           {title && title}
           {menuItems.map((menuItem: IMenuItem, idx: number) => (
@@ -62,7 +65,7 @@ const PopupMenu: React.FC<IPopupMenuProps> = ({
                 <Menu.Item key={`menu-item-${idx}`} as={menuItem.as}>
                   {(() => {
                     if (menuItem.renderNode) {
-                      const menuItemWithDataTestId = React.cloneElement(
+                      const menuItemWithDataTestId = cloneElement(
                         menuItem.renderNode,
                         { 'data-testid': menuItem.dataTestId },
                       );

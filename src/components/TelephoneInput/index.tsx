@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import { FC, ReactElement, useEffect, useState } from 'react';
 import { Control, useController } from 'react-hook-form';
 import { usePhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
@@ -18,14 +18,14 @@ type TelephoneInputProps = {
   errorDataTestId?: string;
 };
 
-const TelephoneInput: React.FC<TelephoneInputProps> = ({
+const TelephoneInput: FC<TelephoneInputProps> = ({
   name,
   label,
-  className,
+  // className,
   disabled,
   control,
   dataTestId,
-  errorDataTestId,
+  // errorDataTestId,
 }): ReactElement => {
   const { field } = useController({
     name,
@@ -88,7 +88,7 @@ const TelephoneInput: React.FC<TelephoneInputProps> = ({
         />
 
         {showDropdown && (
-          <Card className="absolute left-0 top-12 p-4 w-96 shadow-xl">
+          <Card className="absolute z-50 left-0 top-12 p-4 w-96 shadow-xl">
             <div className="flex relative items-center w-full">
               <div className="absolute ml-5">
                 <Icon name="search" size={16} disabled />

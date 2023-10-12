@@ -9,7 +9,7 @@ import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 import moment from 'moment';
 import { IPost, IPostPayload, updatePost } from 'queries/post';
-import React, { useState } from 'react';
+import { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useFeedStore } from 'stores/feedStore';
@@ -39,22 +39,23 @@ export interface IForm {
   time: string;
 }
 
-const EditSchedulePostModal: React.FC<EditSchedulePostModalProp> = ({
+const EditSchedulePostModal: FC<EditSchedulePostModalProp> = ({
   closeModal,
   schedule,
   post,
 }) => {
   const [timezoneFieldVisible, setTimezoneFieldVisible] = useState(false);
-  const { feed, updateFeed } = useFeedStore();
+  const getPost = useFeedStore((state) => state.getPost);
+  const updateFeed = useFeedStore((state) => state.updateFeed);
   const updatePostMutation = useMutation({
     mutationKey: ['updatePostMutation'],
     mutationFn: (payload: IPostPayload) =>
       updatePost(payload.id || '', payload as IPostPayload),
     onMutate: (variables) => {
       if (variables?.id) {
-        const previousData = feed[variables.id];
+        const previousData = getPost(variables.id);
         updateFeed(variables.id, {
-          ...feed[variables.id],
+          ...getPost(variables.id),
           ...variables,
         } as IPost);
         closeModal && closeModal();
@@ -118,7 +119,7 @@ const EditSchedulePostModal: React.FC<EditSchedulePostModalProp> = ({
   });
   const userTimezone = getTimezoneNameFromIANA(schedule.timeZone);
   const { currentTimezone } = useCurrentTimezone();
-  const onSubmit = (data: IForm) => {
+  const onSubmit = (_data: IForm) => {
     // console.log(data);
   };
   const {

@@ -1,10 +1,10 @@
 import Icon from 'components/Icon';
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
-import React from 'react';
 import Tabs from 'components/Tabs';
 import ReactionTab from './ReactionTab';
 import { IReactionsCount } from 'queries/post';
+import { FC } from 'react';
 
 export interface IReactionModalProps {
   closeModal?: () => void;
@@ -13,7 +13,7 @@ export interface IReactionModalProps {
   entityType: string;
 }
 
-const ReactionModal: React.FC<IReactionModalProps> = ({
+const ReactionModal: FC<IReactionModalProps> = ({
   closeModal,
   reactionCounts,
   postId,
@@ -36,7 +36,7 @@ const ReactionModal: React.FC<IReactionModalProps> = ({
     <Modal open={true} closeModal={closeModal} className="max-w-2xl">
       <Header title="Reactions" onClose={closeModal} />
       <Tabs
-        tabContentClassName="px-6 h-[482px] overflow-y-auto" // update style
+        tabContentClassName=""
         tabs={[
           {
             tabLabel: (isActive: boolean) => (
@@ -49,11 +49,9 @@ const ReactionModal: React.FC<IReactionModalProps> = ({
             ),
             tabContent: (
               <ReactionTab
-                getReactionQuery={{
-                  entityId: postId,
-                  entityType,
-                  limit: 5,
-                }}
+                entityId={postId}
+                entityType={entityType}
+                limit={30}
               />
             ),
           },
@@ -70,12 +68,10 @@ const ReactionModal: React.FC<IReactionModalProps> = ({
             ),
             tabContent: (
               <ReactionTab
-                getReactionQuery={{
-                  entityId: postId,
-                  reaction: 'like',
-                  entityType,
-                  limit: 5,
-                }}
+                entityId={postId}
+                reaction="like"
+                entityType={entityType}
+                limit={30}
               />
             ),
           },
@@ -92,12 +88,10 @@ const ReactionModal: React.FC<IReactionModalProps> = ({
             ),
             tabContent: (
               <ReactionTab
-                getReactionQuery={{
-                  entityId: postId,
-                  reaction: 'love',
-                  entityType,
-                  limit: 5,
-                }}
+                entityId={postId}
+                reaction="love"
+                entityType={entityType}
+                limit={30}
               />
             ),
           },
@@ -114,12 +108,10 @@ const ReactionModal: React.FC<IReactionModalProps> = ({
             ),
             tabContent: (
               <ReactionTab
-                getReactionQuery={{
-                  entityId: postId,
-                  reaction: 'funny',
-                  entityType,
-                  limit: 5,
-                }}
+                entityId={postId}
+                reaction="funny"
+                entityType={entityType}
+                limit={30}
               />
             ),
           },
@@ -136,12 +128,10 @@ const ReactionModal: React.FC<IReactionModalProps> = ({
             ),
             tabContent: (
               <ReactionTab
-                getReactionQuery={{
-                  entityId: postId,
-                  reaction: 'celebrate',
-                  entityType,
-                  limit: 5,
-                }}
+                entityId={postId}
+                reaction="celebrate"
+                entityType={entityType}
+                limit={30}
               />
             ),
           },
@@ -158,12 +148,10 @@ const ReactionModal: React.FC<IReactionModalProps> = ({
             ),
             tabContent: (
               <ReactionTab
-                getReactionQuery={{
-                  entityId: postId,
-                  reaction: 'insightful',
-                  entityType,
-                  limit: 5,
-                }}
+                entityId={postId}
+                reaction="insightful"
+                entityType={entityType}
+                limit={30}
               />
             ),
           },
@@ -180,12 +168,10 @@ const ReactionModal: React.FC<IReactionModalProps> = ({
             ),
             tabContent: (
               <ReactionTab
-                getReactionQuery={{
-                  entityId: postId,
-                  reaction: 'support',
-                  entityType,
-                  limit: 5,
-                }}
+                entityId={postId}
+                reaction="support"
+                entityType={entityType}
+                limit={30}
               />
             ),
           },

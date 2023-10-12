@@ -5,14 +5,14 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import { DeltaStatic } from 'quill';
-import { isValidUrl } from 'utils/misc';
-import { IMedia, IPoll, POST_TYPE } from 'contexts/CreatePostContext';
+import { isValidUrl, chain } from 'utils/misc';
+import { IMedia, IPoll } from 'contexts/CreatePostContext';
 import { IComment } from 'components/Comments';
 import { Metadata } from 'components/PreviewLink/types';
 import { useFeedStore } from 'stores/feedStore';
-import _ from 'lodash';
 import { ITeam } from './teams';
 import { IGetUser } from './users';
+import { ILocation } from './location';
 
 export interface IReactionsCount {
   [key: string]: number;
@@ -24,6 +24,7 @@ export interface IMention {
   entityType: string;
   image?: string;
   email?: string;
+  location?: ILocation;
 }
 
 export enum AudienceEntityType {
@@ -39,11 +40,17 @@ export interface IAudience {
   name?: string;
 }
 
+export interface IProfileImage {
+  blurHash: string;
+  id: string;
+  original: string;
+}
+
 export interface IShoutoutRecipient {
   fullName: string;
-  profileImage: object;
+  profileImage: IProfileImage;
   status: string;
-  workLocation: Record<string, string>;
+  workLocation: ILocation;
   designation: string;
   userId: string;
 }
@@ -54,30 +61,22 @@ export interface IPost {
     html: string;
     editor: DeltaStatic;
   };
+  occasionContext?: Record<string, any>;
   mentions?: IMention[];
-  createdBy?: {
-    department?: string;
-    designation?: string;
-    fullName?: string;
-    profileImage: {
-      blurHash?: string;
-      id: string;
-      original: string;
-    };
-    status?: string;
-    userId?: string;
-    workLocation?: string;
-  };
+  createdBy?: ICreatedBy;
+  intendedUsers?: ICreatedBy[];
   hashtags: string[] | [];
   files?: string[] | IMedia[];
   pollContext?: IPoll;
-  type: POST_TYPE;
+  type: PostType;
   audience: IAudience[];
   isAnnouncement: boolean;
   announcement: {
+    actor?: Record<string, any>;
     end: string;
   };
   id?: string;
+  acknowledgementStats?: Record<string, any>;
   myAcknowledgement?: {
     // createdBy: {
     //   department?: string;
@@ -120,7 +119,7 @@ export interface IPost {
 
 export interface IPostPayload {
   id?: string;
-  content: {
+  content?: {
     text: string;
     html: string;
     editor: DeltaStatic;
@@ -139,18 +138,18 @@ export interface IPostPayload {
     userId?: string;
     workLocation?: string;
   };
-  hashtags: string[] | [];
+  hashtags?: string[] | [];
   files?: string[] | IMedia[];
   type: string;
-  audience: IAudience[];
+  audience?: IAudience[];
   shoutoutRecipients?: string[] | IShoutoutRecipient[];
-  isAnnouncement: boolean;
-  announcement: {
+  isAnnouncement?: boolean;
+  announcement?: {
     end: string;
   };
   pollContext?: IPoll;
   link?: Metadata | string;
-  schedule: {
+  schedule?: {
     dateTime: string;
     timeZone: string;
   } | null;
@@ -196,28 +195,29 @@ export interface ICreatedBy {
   designation?: string;
   fullName?: string;
   profileImage: {
-    blurHash?: string;
+    blurHash: string;
     id: string;
     original: string;
   };
   status?: string;
   userId?: string;
   workLocation?: string;
+  email?: string;
 }
 
-interface IAnnounce {
-  entityId: string;
-  entityType: string;
-  type: string;
-  reaction: string;
-}
+// interface IAnnounce {
+//   entityId: string;
+//   entityType: string;
+//   type: string;
+//   reaction: string;
+// }
 
 export enum PostType {
   Update = 'UPDATE',
   Event = 'EVENT',
   Document = 'DOCUMENT',
   Poll = 'POLL',
-  ShoutOut = 'SHOUT_OUT',
+  Shoutout = 'SHOUT_OUT',
   Birthday = 'BIRTHDAY',
   WorkAniversary = 'WORK_ANNIVERSARY',
   WelcomNewHire = 'WELCOME_NEW_HIRE',
@@ -243,8 +243,6 @@ export enum PostFilterKeys {
   PostType = 'type',
   ActorId = 'actorId',
   ActivityType = 'activityType',
-  MyPosts = 'myPosts',
-  MentionedInPost = 'mentionedInPost',
   Limit = 'limit',
   Hashtags = 'hashtags',
   Sort = 'sort',
@@ -252,23 +250,27 @@ export enum PostFilterKeys {
   Next = 'next',
   Prev = 'prev',
   Bookmarks = 'bookmarks',
-  BookmarkedByMe = 'bookmarkedbyme',
   Scheduled = 'scheduled',
+  PostPreference = 'preference',
+}
+
+export enum PostFilterPreference {
+  BookmarkedByMe = 'bookmarkedbyme',
+  MyPosts = 'myPosts',
+  MentionedInPost = 'mentionedInPost',
 }
 
 export interface IPostFilters {
   [PostFilterKeys.PostType]?: PostType[];
+  [PostFilterKeys.PostPreference]?: PostFilterPreference[];
   [PostFilterKeys.ActorId]?: string;
   [PostFilterKeys.ActivityType]?: ActivityType;
-  [PostFilterKeys.MyPosts]?: boolean;
-  [PostFilterKeys.MentionedInPost]?: boolean;
   [PostFilterKeys.Limit]?: number;
   [PostFilterKeys.Hashtags]?: string[];
   [PostFilterKeys.Sort]?: { createdAt: 'ASC' | 'DESC' };
   [PostFilterKeys.Feed]?: FeedType;
   [PostFilterKeys.Next]?: number;
   [PostFilterKeys.Prev]?: number;
-  [PostFilterKeys.BookmarkedByMe]?: boolean;
 }
 
 export const createPost = async (payload: IPostPayload) => {
@@ -294,7 +296,25 @@ export const usePreviewLink = (previewUrl: string) => {
 };
 
 export const updatePost = async (id: string, payload: IPostPayload) => {
-  await apiService.put(`/posts/${id}`, payload);
+  const fileIds = payload.files
+    ? payload.files.map((file) => (typeof file === 'string' ? file : file.id))
+    : payload.files;
+  const shoutoutRecipentIds = payload.shoutoutRecipients
+    ? payload.shoutoutRecipients.map((recipient) =>
+        typeof recipient === 'string' ? recipient : recipient.userId,
+      )
+    : payload.shoutoutRecipients;
+  const link =
+    !payload.link || typeof payload.link === 'string'
+      ? payload.link
+      : payload.link.url;
+  const data = await apiService.put(`/posts/${id}`, {
+    ...payload,
+    files: fileIds,
+    shoutoutRecipients: shoutoutRecipentIds,
+    link: link,
+  });
+  return data;
 };
 
 export const deletePost = async (id: string) => {
@@ -393,7 +413,7 @@ export const myProfileFeed = async (
     response = await apiService.get('/posts/my-profile', context.queryKey[1]);
     setFeed({
       ...feed,
-      ..._.chain(response.data.result.data).keyBy('id').value(),
+      ...chain(response.data.result.data).keyBy('id').value(),
     });
     response.data.result.data = response.data.result.data.map(
       (eachPost: IPost) => ({ id: eachPost.id }),
@@ -403,7 +423,7 @@ export const myProfileFeed = async (
     response = await apiService.get(context.pageParam, context.queryKey[1]);
     setFeed({
       ...feed,
-      ..._.chain(response.data.result.data).keyBy('id').value(),
+      ...chain(response.data.result.data).keyBy('id').value(),
     });
     response.data.result.data = response.data.result.data.map(
       (eachPost: IPost) => ({ id: eachPost.id }),
@@ -454,7 +474,7 @@ export const peopleProfileFeed = async (
     );
     setFeed({
       ...feed,
-      ..._.chain(response.data.result.data).keyBy('id').value(),
+      ...chain(response.data.result.data).keyBy('id').value(),
     });
     response.data.result.data = response.data.result.data.map(
       (eachPost: IPost) => ({ id: eachPost.id }),
@@ -464,7 +484,7 @@ export const peopleProfileFeed = async (
     response = await apiService.get(context.pageParam, context.queryKey[1]);
     setFeed({
       ...feed,
-      ..._.chain(response.data.result.data).keyBy('id').value(),
+      ...chain(response.data.result.data).keyBy('id').value(),
     });
     response.data.result.data = response.data.result.data.map(
       (eachPost: IPost) => ({ id: eachPost.id }),
@@ -514,7 +534,7 @@ export const fetchFeed = async (
     response = await apiService.get('/posts', context.queryKey[1]);
     setFeed({
       ...feed,
-      ..._.chain(response.data.result.data).keyBy('id').value(),
+      ...chain(response.data.result.data).keyBy('id').value(),
     });
     response.data.result.data = response.data.result.data.map(
       (eachPost: IPost) => ({ id: eachPost.id }),
@@ -524,7 +544,7 @@ export const fetchFeed = async (
     response = await apiService.get(context.pageParam, context.queryKey[1]);
     setFeed({
       ...feed,
-      ..._.chain(response.data.result.data).keyBy('id').value(),
+      ...chain(response.data.result.data).keyBy('id').value(),
     });
     response.data.result.data = response.data.result.data.map(
       (eachPost: IPost) => ({ id: eachPost.id }),
@@ -548,7 +568,7 @@ export const fetchScheduledPosts = async (
     response = await apiService.get('/posts/scheduled');
     setFeed({
       ...feed,
-      ..._.chain(response.data.result.data).keyBy('id').value(),
+      ...chain(response.data.result.data).keyBy('id').value(),
     });
     response.data.result.data = response.data.result.data.map(
       (eachPost: IPost) => ({ id: eachPost.id }),
@@ -558,7 +578,7 @@ export const fetchScheduledPosts = async (
     response = await apiService.get(context.pageParam, context.queryKey[1]);
     setFeed({
       ...feed,
-      ..._.chain(response.data.result.data).keyBy('id').value(),
+      ...chain(response.data.result.data).keyBy('id').value(),
     });
     response.data.result.data = response.data.result.data.map(
       (eachPost: IPost) => ({ id: eachPost.id }),
@@ -582,7 +602,7 @@ export const fetchBookmarks = async (
     response = await apiService.get('/posts/my-bookmarks');
     setFeed({
       ...feed,
-      ..._.chain(response.data.result.data).keyBy('id').value(),
+      ...chain(response.data.result.data).keyBy('id').value(),
     });
     response.data.result.data = response.data.result.data.map(
       (eachPost: IPost) => ({ id: eachPost.id }),
@@ -592,7 +612,7 @@ export const fetchBookmarks = async (
     response = await apiService.get(context.pageParam, context.queryKey[1]);
     setFeed({
       ...feed,
-      ..._.chain(response.data.result.data).keyBy('id').value(),
+      ...chain(response.data.result.data).keyBy('id').value(),
     });
     response.data.result.data = response.data.result.data.map(
       (eachPost: IPost) => ({ id: eachPost.id }),
@@ -627,22 +647,30 @@ export const useInfiniteFeed = (pathname: string, q?: Record<string, any>) => {
         return currentPage?.data?.result?.paging?.prev;
       },
       staleTime: 5 * 60 * 1000,
+      refetchOnMount: 'always',
     }),
     feed,
   };
 };
 
-const getPost = async (id: string, commentId?: string) => {
-  const data = await apiService.get(
+const getPost = async (
+  id: string,
+  updateFeed: (id: string, post: IPost) => void,
+  commentId?: string,
+) => {
+  const response = await apiService.get(
     `/posts/${id}${commentId ? '?commentId=' + commentId : ''}`,
   );
-  return data;
+  updateFeed(id, response.data.result.data);
+  response.data.result.data = { id: response.data.result.data.id };
+  return response;
 };
 
 export const useGetPost = (id: string, commentId?: string) => {
+  const updateFeed = useFeedStore((state) => state.updateFeed);
   return useQuery({
-    queryKey: ['get-post', id, commentId],
-    queryFn: () => getPost(id, commentId),
+    queryKey: ['posts', id, commentId],
+    queryFn: () => getPost(id, updateFeed, commentId),
   });
 };
 

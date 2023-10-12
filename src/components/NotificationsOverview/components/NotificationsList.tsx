@@ -1,10 +1,10 @@
-import React from 'react';
 import Divider from 'components/Divider';
 import { useGetNotifications } from 'queries/notifications';
 import NotificationProps from './Notification';
 import Notification from './Notification';
 import { IMedia } from 'contexts/CreatePostContext';
 import NotificationsOverviewSkeleton from './NotificationsOverviewSkeleton';
+import { forwardRef } from 'react';
 
 type NotificationsList = {
   mentions?: boolean;
@@ -17,11 +17,14 @@ export enum ActionType {
   MENTION = 'MENTION',
   SCHEDULE_POST = 'SCHEDULE_POST',
   SHOUTOUT = 'SHOUT_OUT',
+  NEW_MEMBERS_TO_TEAM = 'NEW_MEMBERS_TO_TEAM',
+  ACKNOWLEDGEMENT_REMINDER = 'ACKNOWLEDGEMENT_REMINDER',
 }
 
 export enum TargetType {
   POST = 'POST',
   COMMENT = 'COMMENT',
+  TEAM = 'TEAM',
 }
 
 export type Actor = {
@@ -49,6 +52,7 @@ export type Target = {
   type: string;
   content: string;
   entityId: string;
+  entityName?: string;
   image?: IMedia;
 };
 
@@ -62,7 +66,7 @@ export type NotificationProps = {
   interactionCount?: number;
 };
 
-const NotificationsList = React.forwardRef(
+const NotificationsList = forwardRef(
   ({ mentions, className }: NotificationsList, ref: any) => {
     const { data, isLoading, isError } = useGetNotifications(mentions);
 

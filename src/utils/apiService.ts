@@ -1,5 +1,8 @@
 import qs from 'qs';
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios, {
+  AxiosInstance,
+  // InternalAxiosRequestConfig
+} from 'axios';
 
 import { getItem } from './persist';
 
@@ -30,6 +33,21 @@ class ApiService {
         },
       };
     });
+
+    this.instance.interceptors.response.use(
+      (response: any) => {
+        return response;
+      },
+      (error: any) => {
+        if (
+          !window.location.hostname?.startsWith('office') &&
+          error?.response?.status === 401
+        ) {
+          window.location.href = '/login';
+        }
+        return Promise.reject(error);
+      },
+    );
   }
 
   updateContentType = (contentType: string) => {
@@ -37,7 +55,7 @@ class ApiService {
   };
 
   async get(url: string, params = {}) {
-    const _params = qs.stringify(params, { arrayFormat: 'repeat' });
+    const _params = qs.stringify(params, { arrayFormat: 'comma' });
     let _url = url;
     if (_params) {
       _url += `?${_params}`;

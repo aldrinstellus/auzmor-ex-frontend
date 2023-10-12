@@ -1,13 +1,12 @@
 import Button, { Variant as ButtonVariant } from 'components/Button';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
-import React, { useContext } from 'react';
+import { FC, useContext } from 'react';
 import { FieldValues, UseFormHandleSubmit } from 'react-hook-form';
 import { afterXUnit } from 'utils/time';
 import { CreateAnnouncementMode } from '.';
 import { useMutation } from '@tanstack/react-query';
-import { IPost, updatePost } from 'queries/post';
+import { IPost, PostType, updatePost } from 'queries/post';
 import queryClient from 'utils/queryClient';
-import { Dayjs } from 'dayjs';
 import { toast } from 'react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import Icon from 'components/Icon';
@@ -16,6 +15,7 @@ import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import { useFeedStore } from 'stores/feedStore';
 import { produce } from 'immer';
+import useAuth from 'hooks/useAuth';
 
 export interface IFooterProps {
   handleSubmit: UseFormHandleSubmit<FieldValues>;
@@ -26,20 +26,21 @@ export interface IFooterProps {
   getFormValues?: any;
 }
 
-const Footer: React.FC<IFooterProps> = ({
+const Footer: FC<IFooterProps> = ({
   handleSubmit,
   isValid,
   mode,
   closeModal,
   data,
-  getFormValues,
 }) => {
-  const { feed, updateFeed } = useFeedStore();
+  const getPost = useFeedStore((state) => state.getPost);
+  const updateFeed = useFeedStore((state) => state.updateFeed);
   const { setAnnouncement, setActiveFlow, announcement } =
     useContext(CreatePostContext);
+  const { user } = useAuth();
 
-  const onSubmit = (data: any) => {
-    setAnnouncement({
+  const getSelectedAnnouncement = (data: any) => {
+    return {
       label: data?.expiryOption?.label || announcement?.label || '1 Week',
       value:
         data?.expiryOption?.label === 'Custom Date'
@@ -47,46 +48,42 @@ const Footer: React.FC<IFooterProps> = ({
           : data?.expiryOption?.value ||
             announcement?.value ||
             afterXUnit(1, 'weeks').toISOString().substring(0, 19) + 'Z',
-    });
+    };
+  };
+
+  const onSubmit = (data: any) => {
+    setAnnouncement(getSelectedAnnouncement(data));
     setActiveFlow(CreatePostFlow.CreatePost);
+  };
+
+  const onDirectSubmit = (data: any) => {
+    makePostAnnouncementMutation.mutate(getSelectedAnnouncement(data).value);
   };
 
   const makePostAnnouncementMutation = useMutation({
     mutationKey: ['makePostAnnouncementMutation', data?.id],
-    mutationFn: async () => {
-      const formData = getFormValues();
-      const expiryDate = formData?.date.toISOString().substring(0, 19) + 'Z';
-      const fileIds = data?.files?.map((file: any) => file.id);
-      if (data?.id)
-        await updatePost(data?.id, {
-          ...data,
-          files: fileIds,
-          isAnnouncement: true,
-          announcement: {
-            end:
-              expiryDate ||
-              formData?.expiryOption?.value ||
-              afterXUnit(1, 'weeks').toISOString().substring(0, 19) + 'Z',
-          },
-          shoutoutRecipients:
-            data.shoutoutRecipients && data.shoutoutRecipients.length > 0
-              ? data.shoutoutRecipients.map((user) => user.userId)
-              : [],
-        });
+    mutationFn: (endDate: string) => {
+      return updatePost(data!.id!, {
+        ...data,
+        type: data?.type || PostType.Update,
+        isAnnouncement: true,
+        announcement: {
+          end: endDate,
+        },
+      });
     },
-    onMutate: (variables) => {
-      const previousPost = feed[data!.id!];
-      const formData = getFormValues();
-      const expiryDate = formData?.date.toISOString().substring(0, 19) + 'Z';
+    onMutate: (endDate) => {
+      const previousPost = getPost(data!.id!);
       if (data?.id) {
         updateFeed(
           data.id,
-          produce(feed[data.id], (draft) => {
+          produce(previousPost, (draft) => {
             (draft.announcement = {
-              end:
-                expiryDate ||
-                formData?.expiryOption?.value ||
-                afterXUnit(1, 'weeks').toISOString().substring(0, 19) + 'Z',
+              actor: {
+                userId: user?.id,
+                ...user,
+              },
+              end: endDate,
             }),
               (draft.isAnnouncement = true),
               (draft.acknowledged = false);
@@ -95,10 +92,20 @@ const Footer: React.FC<IFooterProps> = ({
       }
       return { previousPost };
     },
-    onError: (error, variables, context) => {
+    onError: (_error, _variables, context) => {
       updateFeed(context!.previousPost.id!, context!.previousPost!);
     },
-    onSuccess: async () => {
+    onSuccess: async (res: any) => {
+      const data = res?.result?.data;
+      if (data?.id) {
+        updateFeed(
+          data.id,
+          produce(getPost(data!.id || ''), (draft) => {
+            draft.acknowledgementStats = data?.acknowledgementStats || {};
+          }),
+        );
+      }
+
       toast(
         <SuccessToast
           content="Your post  was converted to an announcement"
@@ -168,7 +175,7 @@ const Footer: React.FC<IFooterProps> = ({
           <Button
             label={'Done'}
             loading={makePostAnnouncementMutation.isLoading}
-            onClick={() => makePostAnnouncementMutation.mutate()}
+            onClick={handleSubmit(onDirectSubmit)}
             dataTestId="promote-to-announcement-done"
             disabled={!isValid}
           />

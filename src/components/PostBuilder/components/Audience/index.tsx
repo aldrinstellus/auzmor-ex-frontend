@@ -1,6 +1,6 @@
 import Header from 'components/ModalHeader';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import Footer from './Footer';
 import AudienceSelector from 'components/AudienceSelector';
 import { useForm } from 'react-hook-form';
@@ -20,11 +20,11 @@ export enum AudienceFlow {
   ChannelSelect = 'CHANNEL_SELECT',
 }
 
-const Audience: React.FC<IAudienceProps> = ({ closeModal, dataTestId }) => {
+const Audience: FC<IAudienceProps> = ({ closeModal, dataTestId }) => {
   const { setActiveFlow, clearPostContext, audience, setAudience } =
     useContext(CreatePostContext);
   const [isEveryoneSelected, setIsEveryoneSelected] = useState<boolean>(
-    !!!audience.length,
+    audience && audience.length === 0 ? true : false,
   );
   const [audienceFlow, setAudienceFlow] = useState(AudienceFlow.EntitySelect);
   const { form, setForm } = useEntitySearchFormStore();
@@ -34,7 +34,7 @@ const Audience: React.FC<IAudienceProps> = ({ closeModal, dataTestId }) => {
       showSelectedMembers: false,
       selectAll: false,
       teams: {
-        ...audience
+        ...(audience || [])
           .filter(
             (value: IAudience) => value.entityType === AudienceEntityType.Team,
           )
@@ -47,7 +47,7 @@ const Audience: React.FC<IAudienceProps> = ({ closeModal, dataTestId }) => {
           ),
       },
       channels: {
-        ...audience
+        ...(audience || [])
           .filter(
             (value: IAudience) =>
               value.entityType === AudienceEntityType.Channel,
@@ -61,7 +61,7 @@ const Audience: React.FC<IAudienceProps> = ({ closeModal, dataTestId }) => {
           ),
       },
       users: {
-        ...audience
+        ...(audience || [])
           .filter(
             (value: IAudience) => value.entityType === AudienceEntityType.User,
           )

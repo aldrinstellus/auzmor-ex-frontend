@@ -10,9 +10,15 @@ import {
 } from 'components/PostBuilder/components/RichTextEditor/mentions/types';
 import DeactivatedCoverImage from 'images/deactivatedCoverPhoto.png';
 import DefaultCoverImage from 'images/png/CoverImage.png';
-import { capitalize } from 'lodash';
+import capitalize from 'lodash/capitalize';
 import DeactivatedUser from 'images/DeactivatedUser.png';
 import { EditUserSection, UserRole, UserStatus } from 'queries/users';
+import { MouseEvent, MouseEventHandler } from 'react';
+import { ILocation } from 'queries/location';
+import { IDepartment } from 'queries/department';
+import { IDesignation } from 'queries/designation';
+import { IPost } from 'queries/post';
+import moment from 'moment';
 
 export const twConfig: any = resolveConfig(tailwindConfig);
 
@@ -129,6 +135,17 @@ export const getMediaObj = (files: File[]): IMedia[] => {
   );
 };
 
+export const isRegularPost = (
+  post: IPost | undefined,
+  currentDate: string,
+  isAdmin: boolean,
+) => {
+  if (!post?.announcement?.end) return true;
+  if (currentDate > post.announcement.end) return true;
+  if (!isAdmin && post?.acknowledged) return true;
+  return false;
+};
+
 export const isVideo = (type: string) => {
   if (validImageTypes.indexOf(type) === -1) {
     return true;
@@ -199,8 +216,8 @@ export const isFiltersEmpty = <T extends Record<string, any>>(
   return filteredValues;
 };
 
-export const clearInputValue = (
-  event: React.MouseEvent<HTMLInputElement, MouseEvent>,
+export const clearInputValue: MouseEventHandler<HTMLElement> = (
+  event: MouseEvent<HTMLInputElement>,
 ) => {
   const element = event.target as HTMLInputElement;
   element.value = '';
@@ -223,6 +240,25 @@ export const isSubset = (subset?: string[], set?: string[]) => {
 export const hideEmojiPalette = (id = 'emoji-close-div') => {
   const ele = document.getElementById(id);
   ele?.click();
+};
+
+export const hideMentionHashtagPalette = () => {
+  try {
+    const mentionElements = document.getElementsByClassName(
+      'ql-mention-list-container',
+    );
+    for (const ele of mentionElements) {
+      ele.remove();
+    }
+    const hashtagElements = document.getElementsByClassName(
+      'ql-hash-list-container',
+    );
+    for (const ele of hashtagElements) {
+      ele.remove();
+    }
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 export const getNouns = (label: string, count: number) => {
@@ -284,4 +320,98 @@ export const convertUpperCaseToPascalCase = (value: string) => {
     return '';
   }
   return value[0] + value.substring(1, value.length).toLowerCase();
+};
+
+type Chainable<T> = {
+  value: () => T;
+  keyBy: (key: string) => Chainable<{ [key: string]: any }>;
+};
+
+export const chain = <T>(input: T): Chainable<T> => ({
+  value: () => input,
+  keyBy: (key: string) =>
+    chain(
+      (input as any[]).reduce((acc: { [key: string]: any }, item: any) => {
+        acc[item[key]] = item;
+        return acc;
+      }, {}),
+    ),
+});
+
+export const isEmptyEditor = (content: string, ops: any) => {
+  for (const op of ops) {
+    if (op.insert && op.insert.emoji) {
+      return false;
+    }
+  }
+  if (content === '\n' || content === '') {
+    return true;
+  }
+  return false;
+};
+
+export const getUserCardTooltipProps = (user: any) => {
+  let workLocation: ILocation = { locationId: '', name: 'Field not specified' };
+  if (typeof user?.workLocation === 'string') {
+    workLocation.name = user?.workLocation;
+  } else if (typeof user?.workLocation === 'object') {
+    workLocation = user?.workLocation;
+  } else if (typeof user?.location === 'string') {
+    workLocation.name = user?.location;
+  }
+
+  let designation: IDesignation = {
+    designationId: '',
+    name: 'Field not specified',
+  };
+  if (typeof user?.designation === 'string') {
+    designation.name = user?.designation;
+  } else if (typeof user?.designation === 'object') {
+    designation = user?.designation;
+  } else if (typeof user?.jobTitle === 'object') {
+    designation = user?.jobTitle;
+  }
+
+  let department: IDepartment = {
+    departmentId: '',
+    name: 'Field not specified',
+  };
+  if (typeof user?.department === 'string') {
+    department.name = user?.department;
+  } else if (typeof user?.department === 'object') {
+    department = user?.department;
+  }
+
+  return {
+    id: user?.id || user?.userId || '',
+    fullName:
+      user?.fullName || user?.userName || user?.name || 'Field not specified',
+    workEmail: user?.email || user?.workEmail || 'Field not specified',
+    workLocation: workLocation,
+    designation: designation,
+    department: department,
+    profileImage: user?.profileImage,
+    status: user?.status,
+  };
+};
+
+export const isNewEntity = (
+  createdAt?: string,
+  limit = -1000 * 60 * 60 * 24 * 7,
+) => {
+  if (createdAt) {
+    const duration = moment.duration(moment(createdAt).diff(moment()));
+    return duration.asMilliseconds() > limit;
+  }
+  return false;
+};
+
+export const mapRanges = (
+  oldMin: number,
+  oldMax: number,
+  newMin: number,
+  newMax: number,
+  value: number,
+) => {
+  return newMin + ((newMax - newMin) / (oldMax - oldMin)) * (value - oldMin);
 };

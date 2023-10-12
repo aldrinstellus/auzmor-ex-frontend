@@ -1,4 +1,3 @@
-import React from 'react';
 import { renderToString } from 'react-dom/server';
 import ReactionSkeleton from 'components/Post/components/ReactionSkeleton';
 import apiService from 'utils/apiService';
@@ -8,30 +7,31 @@ import {
   newHashtags,
 } from './mentions/utils';
 import { extractFirstWord } from 'utils/misc';
+import { UserStatus } from 'queries/users';
 
-interface IOrg {
-  id: string;
-  name: string;
-}
-interface IFlags {
-  isDeactivated: string;
-  isReported: string;
-}
-interface IUserMentions {
-  id: string;
-  charDenotation: string;
-  fullName: string;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  primaryEmail: string;
-  org: IOrg;
-  workEmail: string;
-  role: string;
-  flags: IFlags;
-  createdAt: string;
-  status: string;
-}
+// interface IOrg {
+//   id: string;
+//   name: string;
+// }
+// interface IFlags {
+//   isDeactivated: string;
+//   isReported: string;
+// }
+// interface IUserMentions {
+//   id: string;
+//   charDenotation: string;
+//   fullName: string;
+//   firstName: string;
+//   middleName?: string;
+//   lastName: string;
+//   primaryEmail: string;
+//   org: IOrg;
+//   workEmail: string;
+//   role: string;
+//   flags: IFlags;
+//   createdAt: string;
+//   status: string;
+// }
 
 interface IHashtags {
   id: string;
@@ -49,6 +49,7 @@ const mentionEntityFetch = async (character: string, searchTerm: string) => {
   if (character === '@' && !isContainWhiteSpace) {
     const { data: mentions } = await apiService.get('/users', {
       q: searchTerm,
+      status: [UserStatus.Active],
     });
     const mentionList = mentions?.result?.data;
     return createMentionsList(mentionList, character);
@@ -97,7 +98,7 @@ export const mention = {
   renderLoading: () => {
     return renderToString(<ReactionSkeleton />);
   },
-  renderItem: (item: any, searchItem: any) => {
+  renderItem: (item: any, _searchItem: any) => {
     if (item?.charDenotation === '@') {
       return `
       <div class="user-container">

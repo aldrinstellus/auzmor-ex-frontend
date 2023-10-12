@@ -1,5 +1,4 @@
-import React, { MouseEventHandler, ReactNode, useMemo } from 'react';
-import clsx from 'clsx';
+import { MouseEventHandler, ReactNode } from 'react';
 import { PlacesType, Tooltip as ReactTooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 
@@ -15,6 +14,7 @@ export type TooltipProps = {
   className?: string;
   onClick?: MouseEventHandler<Element>;
   tooltipPosition?: PlacesType;
+  showTooltip?: boolean;
 };
 
 const Tooltip = ({
@@ -24,19 +24,22 @@ const Tooltip = ({
   className = '',
   onClick = () => {},
   tooltipPosition = 'top',
+  showTooltip = true,
 }: TooltipProps) => {
   const id = Math.random().toString(16).slice(2);
   return (
     <span onClick={onClick}>
-      <ReactTooltip
-        className={className}
-        id={`tooltip-${id}`}
-        react-tooltip-arrow
-        anchorSelect={`#anchor-${id}`}
-        clickable
-      >
-        {tooltipContent}
-      </ReactTooltip>
+      {showTooltip && (
+        <ReactTooltip
+          className={className}
+          id={`tooltip-${id}`}
+          react-tooltip-arrow
+          anchorSelect={`#anchor-${id}`}
+          clickable
+        >
+          {tooltipContent}
+        </ReactTooltip>
+      )}
       <a
         id={`anchor-${id}`}
         href="#"

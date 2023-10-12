@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import PopupMenu from 'components/PopupMenu';
 import Badge from 'components/Badge';
 import Card from 'components/Card';
@@ -17,15 +16,17 @@ import { slideInAndOutTop } from 'utils/react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useRole from 'hooks/useRole';
+import { FC } from 'react';
+import DefaultAppIcon from 'images/DefaultAppIcon.svg';
 
 type AppCardProps = {
   app: App;
 };
 
-const AppCard: React.FC<AppCardProps> = ({ app }) => {
+const AppCard: FC<AppCardProps> = ({ app }) => {
   const { isAdmin } = useRole();
   const [appCardHovered, appCardEventHandlers] = useHover();
-  const [menuHovered, menuEventHandlers] = useHover();
+  // const [menuHovered, menuEventHandlers] = useHover();
 
   const [appDetailModal, openAppDetailModal, closeAppDetailModal] = useModal();
   // Add apps modal
@@ -40,6 +41,8 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
     onSuccess: () => {
       queryClient.invalidateQueries(['apps']);
       queryClient.invalidateQueries(['featured-apps']);
+      queryClient.invalidateQueries(['my-apps']);
+      queryClient.invalidateQueries(['my-featured-apps']);
       toast(
         <SuccessToast
           content={`App has been added to featured apps`}
@@ -65,7 +68,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
         },
       );
     },
-    onError: (error: any) => {
+    onError: (_error: any) => {
       toast(
         <FailureToast
           content={`Error while adding app to featured apps`}
@@ -95,6 +98,8 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
     onSuccess: () => {
       queryClient.invalidateQueries(['apps']);
       queryClient.invalidateQueries(['featured-apps']);
+      queryClient.invalidateQueries(['my-apps']);
+      queryClient.invalidateQueries(['my-featured-apps']);
       toast(
         <SuccessToast
           content={`App has been removed featured apps`}
@@ -120,7 +125,7 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
         },
       );
     },
-    onError: (error: any) => {
+    onError: (_error: any) => {
       toast(
         <FailureToast
           content={`Error while removing app from featured apps`}
@@ -209,6 +214,8 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
       id: 4,
       label: 'Delete',
       icon: 'delete',
+      iconClassName: '!text-red-500',
+      labelClassName: '!text-red-500',
       dataTestId: 'app-card-delete',
       onClick: openDeleteAppModal,
       hidden: !isAdmin,
@@ -253,13 +260,15 @@ const AppCard: React.FC<AppCardProps> = ({ app }) => {
               )}
             </div>
           </div>
-          <div className="pb-8">
+          <div className="pb-8" onClick={openAppDetailModal}>
             <div className="flex items-center justify-between">
-              {app?.icon?.original && (
-                <div className="p-1 bg-neutral-100 rounded-xl">
-                  <img src={app?.icon?.original} height={20} width={20} />
-                </div>
-              )}
+              <div className="p-1 bg-neutral-100 rounded-xl">
+                <img
+                  src={app?.icon?.original || DefaultAppIcon}
+                  height={20}
+                  width={20}
+                />
+              </div>
             </div>
             <div className="py-2">
               <p

@@ -1,11 +1,10 @@
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
-import React, { ReactNode, useEffect } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import Footer from './components/Footer';
 import EntitySearchModalBody from './components/EntitySearchModalBody';
 import { useForm } from 'react-hook-form';
 import { IGetUser } from 'queries/users';
-import { ITeam } from 'queries/teams';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 
 export enum EntitySearchModalType {
@@ -13,6 +12,8 @@ export enum EntitySearchModalType {
   Team = 'TEAM',
   Channel = 'CHANNEL',
 }
+
+type ApiCallFunction = (queryParams: any) => any;
 
 interface IEntitySearchModalProps {
   open: boolean;
@@ -27,6 +28,9 @@ interface IEntitySearchModalProps {
   entityRenderer?: (data: IGetUser) => ReactNode;
   onSubmit?: (data: string[]) => void;
   onCancel?: () => void;
+  disableKey?: string;
+  fetchUsers?: ApiCallFunction;
+  usersQueryParams?: Record<string, any>;
 }
 
 export interface IAudienceForm {
@@ -37,6 +41,8 @@ export interface IAudienceForm {
   departments: Record<string, boolean | undefined>;
   locationSearch: string;
   locations: Record<string, boolean | undefined>;
+  designationSearch: string;
+  designations: Record<string, boolean | undefined>;
   selectAll: boolean;
   showSelectedMembers: boolean;
   privacy: { value: string; label: string };
@@ -47,7 +53,7 @@ export interface IAudienceForm {
   users: Record<string, IGetUser | false>;
 }
 
-const EntitySearchModal: React.FC<IEntitySearchModalProps> = ({
+const EntitySearchModal: FC<IEntitySearchModalProps> = ({
   open,
   closeModal,
   title = 'Add team members',
@@ -56,8 +62,11 @@ const EntitySearchModal: React.FC<IEntitySearchModalProps> = ({
   onCancel = () => {},
   submitButtonText = 'Next',
   cancelButtonText = 'Back',
-  entityRenderer = (data: any) => <></>,
+  entityRenderer = (_data: any) => <></>,
   selectedMemberIds = [],
+  disableKey,
+  fetchUsers,
+  usersQueryParams,
 }) => {
   const audienceForm = useForm<any>({
     defaultValues: {
@@ -78,7 +87,7 @@ const EntitySearchModal: React.FC<IEntitySearchModalProps> = ({
   }, []);
   return form ? (
     <Modal open={open} closeModal={closeModal} className="max-w-[638px]">
-      <form>
+      <form onSubmit={(e) => e.preventDefault()}>
         <Header
           title={title || ''}
           onBackIconClick={() => {}}
@@ -88,6 +97,9 @@ const EntitySearchModal: React.FC<IEntitySearchModalProps> = ({
           entityType={EntitySearchModalType.User}
           selectedMemberIds={selectedMemberIds}
           entityRenderer={entityRenderer}
+          disableKey={disableKey}
+          fetchUsers={fetchUsers}
+          usersQueryParams={usersQueryParams}
         />
         <Footer
           handleSubmit={form.handleSubmit}

@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import { FC, memo, useContext, useRef } from 'react';
 import momentTz from 'moment-timezone';
 import Card from 'components/Card';
 import Icon from 'components/Icon';
@@ -22,7 +22,7 @@ interface CelebrationWidgetProps {
   type: CELEBRATION_TYPE;
 }
 
-const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
+const CelebrationWidget: FC<CelebrationWidgetProps> = ({ type }) => {
   const { user } = useContext(AuthContext);
   const { currentTimezone } = useCurrentTimezone();
   const userTimezone = user?.timezone || currentTimezone || 'Asia/Kolkata';
@@ -125,7 +125,11 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
         onClick={toggleModal}
       >
         <div className="font-bold">{widgetTitle}</div>
-        <Icon name={open ? 'arrowUp' : 'arrowDown'} size={20} />
+        <Icon
+          name={open ? 'arrowUp' : 'arrowDown'}
+          size={20}
+          color="text-neutral-900"
+        />
       </div>
       <div
         className={`transition-max-h duration-300 ease-in-out overflow-hidden ${
@@ -214,4 +218,4 @@ const CelebrationWidget: React.FC<CelebrationWidgetProps> = ({ type }) => {
   );
 };
 
-export default CelebrationWidget;
+export default memo(CelebrationWidget);

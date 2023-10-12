@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { Control, useController } from 'react-hook-form';
 import { DatePicker } from 'antd';
 import './index.css';
@@ -19,7 +19,7 @@ export interface IDatePickerInputProps {
   disabled?: boolean;
 }
 
-const DatePickerInput: React.FC<IDatePickerInputProps> = ({
+const DatePickerInput: FC<IDatePickerInputProps> = ({
   control,
   name,
   label = '',
@@ -100,7 +100,6 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
           date?.set('minute', 0);
           date?.set('second', 0);
           date?.set('millisecond', 0);
-
           // Call onChange functions
           field.onChange(date);
           if (date) onDateChange?.(date);

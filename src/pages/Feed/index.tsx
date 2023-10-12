@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { Link, useSearchParams, useLocation } from 'react-router-dom';
 
@@ -7,16 +7,14 @@ import PostBuilder from 'components/PostBuilder';
 import UserCard from 'components/UserWidget';
 import AnnouncementCard from 'components/AnnouncementWidget';
 import CreatePostCard from 'components/PostBuilder/components/CreatePostCard';
-import Post from 'components/Post';
+import VirtualisedPost from 'components/VirtualisedPost';
 import FeedFilter, {
   filterKeyMap,
 } from 'components/ActivityFeed/components/FeedFilters';
 import Divider from 'components/Divider';
-import SortByDropdown from 'components/ActivityFeed/components/SortByDropdown';
 import Icon from 'components/Icon';
 import PageLoader from 'components/PageLoader';
 import SkeletonLoader from './components/SkeletonLoader';
-import MyTeamWidget from 'components/MyTeamWidget';
 import HashtagFeedHeader from './components/HashtagFeedHeader';
 import BookmarkFeedHeader from './components/BookmarkFeedHeader';
 import ScheduledFeedHeader from './components/ScheduledFeedHeader';
@@ -36,6 +34,7 @@ import useModal from 'hooks/useModal';
 import {
   IPostFilters,
   PostFilterKeys,
+  PostFilterPreference,
   PostType,
   useInfiniteFeed,
 } from 'queries/post';
@@ -45,6 +44,9 @@ import { useFeedStore } from 'stores/feedStore';
 
 // misc
 import NoPosts from 'images/NoPostsFound.png';
+import AppLauncher from 'components/AppLauncher';
+import useRole from 'hooks/useRole';
+import { isRegularPost } from 'utils/misc';
 
 interface IFeedProps {}
 
@@ -69,7 +71,7 @@ export interface IMyReactions {
   createdBy?: ICreated;
 }
 
-const Feed: React.FC<IFeedProps> = () => {
+const Feed: FC<IFeedProps> = () => {
   useScrollTop();
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
@@ -82,11 +84,26 @@ const Feed: React.FC<IFeedProps> = () => {
   const [open, openModal, closeModal] = useModal(undefined, false);
   const [appliedFeedFilters, setAppliedFeedFilters] = useState<IPostFilters>({
     [PostFilterKeys.PostType]: [],
+    [PostFilterKeys.PostPreference]: [],
   });
   const { feed } = useFeedStore();
+  const { isAdmin } = useRole();
+  const currentDate = new Date().toISOString();
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfiniteFeed(pathname, appliedFeedFilters);
+    useInfiniteFeed(pathname, {
+      [PostFilterKeys.PostType]: appliedFeedFilters[PostFilterKeys.PostType],
+      ...(appliedFeedFilters[PostFilterKeys.PostPreference]?.includes(
+        PostFilterPreference.BookmarkedByMe,
+      ) && { [PostFilterPreference.BookmarkedByMe]: true }),
+      ...(appliedFeedFilters[PostFilterKeys.PostPreference]?.includes(
+        PostFilterPreference.MentionedInPost,
+      ) && { [PostFilterPreference.MentionedInPost]: true }),
+      ...(appliedFeedFilters[PostFilterKeys.PostPreference]?.includes(
+        PostFilterPreference.MyPosts,
+      ) && { [PostFilterPreference.MyPosts]: true }),
+      hashtags: [hashtag],
+    });
 
   const feedIds = (
     (data?.pages.flatMap((page) =>
@@ -112,14 +129,13 @@ const Feed: React.FC<IFeedProps> = () => {
   const announcementFeedIds = feedIds
     ? feedIds.filter(
         (post: { id: string }) =>
-          !!feed[post.id]?.announcement?.end && !feed[post.id]?.acknowledged,
+          !isRegularPost(feed[post.id], currentDate, isAdmin),
       )
     : [];
 
   const regularFeedIds = feedIds
-    ? feedIds.filter(
-        (post: { id: string }) =>
-          !!!feed[post.id]?.announcement?.end || feed[post.id]?.acknowledged,
+    ? feedIds.filter((post: { id: string }) =>
+        isRegularPost(feed[post.id], currentDate, isAdmin),
       )
     : [];
 
@@ -127,17 +143,26 @@ const Feed: React.FC<IFeedProps> = () => {
     setAppliedFeedFilters({
       ...appliedFeedFilters,
       [PostFilterKeys.PostType]: [],
-      [PostFilterKeys.MyPosts]: false,
-      [PostFilterKeys.MentionedInPost]: false,
+      [PostFilterKeys.PostPreference]: [],
     });
   };
 
   const getAppliedFiltersCount = () => {
-    return appliedFeedFilters[PostFilterKeys.PostType]?.length || 0;
+    return (
+      appliedFeedFilters[PostFilterKeys.PostType]?.length ||
+      appliedFeedFilters[PostFilterKeys.PostPreference]?.length ||
+      0
+    );
   };
 
-  const removePostTypeFilter = (filter: PostType) => {
-    if (appliedFeedFilters[PostFilterKeys.PostType]) {
+  const removePostTypeFilter = (
+    filter: PostType | PostFilterPreference,
+    type: PostFilterKeys.PostType | PostFilterKeys.PostPreference,
+  ) => {
+    if (
+      type === PostFilterKeys.PostType &&
+      appliedFeedFilters[PostFilterKeys.PostType]
+    ) {
       setAppliedFeedFilters({
         ...appliedFeedFilters,
         [PostFilterKeys.PostType]: appliedFeedFilters[
@@ -145,7 +170,22 @@ const Feed: React.FC<IFeedProps> = () => {
         ].filter((each) => each !== filter),
       });
     }
+    if (
+      type === PostFilterKeys.PostPreference &&
+      appliedFeedFilters[PostFilterKeys.PostPreference]
+    ) {
+      setAppliedFeedFilters({
+        ...appliedFeedFilters,
+        [PostFilterKeys.PostPreference]: appliedFeedFilters[
+          PostFilterKeys.PostPreference
+        ].filter((each) => each !== filter),
+      });
+    }
   };
+
+  const handleApplyFilter = useCallback((filters: IPostFilters) => {
+    setAppliedFeedFilters(filters);
+  }, []);
 
   const getEmptyFeedComponent = () => {
     if (bookmarks) {
@@ -182,6 +222,30 @@ const Feed: React.FC<IFeedProps> = () => {
       return <></>;
     }
   };
+
+  const FilterPill = ({
+    name,
+    onClick,
+  }: {
+    name: string;
+    onClick: () => void;
+  }) => (
+    <div
+      key={name}
+      className="border border-neutral-200 rounded-[24px] px-3 py-1 bg-white items-center flex gap-2"
+    >
+      <div className="text-sm font-medium whitespace-nowrap text-neutral-900">
+        {name}
+      </div>
+      <Icon
+        name="closeCircleOutline"
+        color="text-neutral-900"
+        className="cursor-pointer"
+        size={16}
+        onClick={onClick}
+      />
+    </div>
+  );
 
   const FeedHeader = useMemo(() => {
     if (hashtag) {
@@ -243,9 +307,7 @@ const Feed: React.FC<IFeedProps> = () => {
                 )}
                 <FeedFilter
                   appliedFeedFilters={appliedFeedFilters}
-                  onApplyFilters={(filters: IPostFilters) => {
-                    setAppliedFeedFilters(filters);
-                  }}
+                  onApplyFilters={handleApplyFilter}
                   dataTestId="filters-dropdown"
                 />
                 {/* <SortByDropdown /> */}
@@ -259,21 +321,27 @@ const Feed: React.FC<IFeedProps> = () => {
                 </div> */}
                 {appliedFeedFilters[PostFilterKeys.PostType]?.map(
                   (filter: PostType) => (
-                    <div
+                    <FilterPill
                       key={filter}
-                      className="border border-neutral-200 rounded-[24px] px-3 py-1 bg-white items-center flex gap-2"
-                    >
-                      <div className="text-sm font-medium whitespace-nowrap text-neutral-900">
-                        {filterKeyMap[filter]}
-                      </div>
-                      <Icon
-                        name="closeCircleOutline"
-                        color="text-neutral-900"
-                        className="cursor-pointer"
-                        size={16}
-                        onClick={() => removePostTypeFilter(filter)}
-                      />
-                    </div>
+                      name={filterKeyMap[filter]}
+                      onClick={() =>
+                        removePostTypeFilter(filter, PostFilterKeys.PostType)
+                      }
+                    />
+                  ),
+                )}
+                {appliedFeedFilters[PostFilterKeys.PostPreference]?.map(
+                  (filter: PostFilterPreference) => (
+                    <FilterPill
+                      key={filter}
+                      name={filterKeyMap[filter]}
+                      onClick={() =>
+                        removePostTypeFilter(
+                          filter,
+                          PostFilterKeys.PostPreference,
+                        )
+                      }
+                    />
                   ),
                 )}
               </div>
@@ -297,12 +365,13 @@ const Feed: React.FC<IFeedProps> = () => {
   }, [inView]);
 
   return (
-    <div className="mb-12 gap-[52px] flex justify-between ">
-      <div className="z-10 min-w-[293px] max-w-[293px] flex flex-col gap-6 sticky top-28 overflow-y-auto max-h-[calc(100vh-120px)] widget-hide-scroll">
+    <div className="pb-6 flex justify-between">
+      <div className="z-10 w-[293px] flex flex-col gap-6 sticky overflow-y-auto max-h-[calc(100vh-140px)] widget-hide-scroll">
         <UserCard />
-        <MyTeamWidget />
+        <AppLauncher />
+        {/* <MyTeamWidget /> */}
       </div>
-      <div className="w-1/2 flex flex-col gap-[26px]">
+      <div className="flex-grow w-0 flex flex-col gap-[26px] px-12">
         {FeedHeader}
         {isLoading ? (
           <SkeletonLoader />
@@ -316,7 +385,7 @@ const Feed: React.FC<IFeedProps> = () => {
                 className="flex flex-col gap-6"
                 key={feedId.id}
               >
-                <Post post={feed[feedId.id!]} />
+                <VirtualisedPost post={feed[feedId.id!]} />
               </div>
             ))}
             {regularFeedIds?.map((feedId, index) => (
@@ -325,25 +394,34 @@ const Feed: React.FC<IFeedProps> = () => {
                 className="flex flex-col gap-6"
                 key={feedId.id}
               >
-                <Post post={feed[feedId.id!]} />
+                <VirtualisedPost post={feed[feedId.id!]} />
               </div>
             ))}
           </div>
         )}
 
-        <div className="h-12 w-12">
-          {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
-        </div>
-        {isFetchingNextPage && <PageLoader />}
+        {isFetchingNextPage ? (
+          <div className="h-2">
+            <PageLoader />
+          </div>
+        ) : (
+          <div className="h-12 w-12">{hasNextPage && <div ref={ref} />}</div>
+        )}
       </div>
-      <div className="min-w-[293px] max-w-[293px]">
-        <div className="flex flex-col gap-6 sticky top-28 overflow-y-auto max-h-[calc(100vh-120px)] widget-hide-scroll">
+      <div className="w-[293px]">
+        <div className="flex flex-col gap-6 sticky overflow-y-auto max-h-[calc(100vh-120px)] widget-hide-scroll">
           <CelebrationWidget type={CELEBRATION_TYPE.Birthday} />
           <CelebrationWidget type={CELEBRATION_TYPE.WorkAnniversary} />
           <AnnouncementCard openModal={openModal} />
         </div>
       </div>
-      <PostBuilder open={open} openModal={openModal} closeModal={closeModal} />
+      {open && (
+        <PostBuilder
+          open={open}
+          openModal={openModal}
+          closeModal={closeModal}
+        />
+      )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import Icon from 'components/Icon';
 import useModal from 'hooks/useModal';
-import React, { ReactElement, ReactNode, useMemo } from 'react';
+import { FC, ReactElement, ReactNode, useMemo } from 'react';
 
 type CollapseProps = {
   label: string;
@@ -9,19 +9,21 @@ type CollapseProps = {
   className?: string;
   headerClassName?: string;
   headerTextClassName?: string;
+  defaultOpen?: boolean;
   dataTestId?: string;
 };
 
-const Collapse: React.FC<CollapseProps> = ({
+const Collapse: FC<CollapseProps> = ({
   label,
   children,
   className,
   headerClassName = '',
   headerTextClassName = '',
+  defaultOpen = false,
   dataTestId,
 }): ReactElement => {
   // If you think about it, modal has similar interactivity as collapse
-  const [open, openCollpase, closeCollapse] = useModal();
+  const [open, openCollpase, closeCollapse] = useModal(defaultOpen);
   const toggleModal = () => {
     if (open) closeCollapse();
     else openCollpase();

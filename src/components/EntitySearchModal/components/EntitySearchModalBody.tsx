@@ -1,15 +1,10 @@
-import React, { ReactNode } from 'react';
-import { EntitySearchModalType, IAudienceForm } from '..';
+import { FC, ReactNode } from 'react';
+import { EntitySearchModalType } from '..';
 import MembersBody from './MembersBody';
-import {
-  Control,
-  UseFormResetField,
-  UseFormSetValue,
-  UseFormWatch,
-} from 'react-hook-form';
 import TeamsBody from './TeamsBody';
 import ChannelsBody from './ChannelsBody';
 
+type ApiCallFunction = (queryParams: any) => any;
 interface IEntitySearchModalBodyProps {
   entityType: EntitySearchModalType;
   entityRenderer?: (data: any) => ReactNode;
@@ -18,9 +13,13 @@ interface IEntitySearchModalBodyProps {
   selectedTeamIds?: string[];
   entitySearchLabel?: string;
   hideCurrentUser?: boolean;
+  showJobTitleFilter?: boolean;
+  disableKey?: string;
+  fetchUsers?: ApiCallFunction;
+  usersQueryParams?: Record<string, any>;
 }
 
-const EntitySearchModalBody: React.FC<IEntitySearchModalBodyProps> = ({
+const EntitySearchModalBody: FC<IEntitySearchModalBodyProps> = ({
   entityType,
   entityRenderer,
   selectedMemberIds = [],
@@ -28,6 +27,10 @@ const EntitySearchModalBody: React.FC<IEntitySearchModalBodyProps> = ({
   selectedTeamIds = [],
   entitySearchLabel,
   hideCurrentUser,
+  showJobTitleFilter,
+  disableKey,
+  fetchUsers,
+  usersQueryParams,
 }) => {
   switch (entityType) {
     case EntitySearchModalType.User:
@@ -36,8 +39,12 @@ const EntitySearchModalBody: React.FC<IEntitySearchModalBodyProps> = ({
           entityRenderer={entityRenderer}
           selectedMemberIds={selectedMemberIds}
           hideCurrentUser={hideCurrentUser}
+          showJobTitleFilter={showJobTitleFilter}
           dataTestId="user"
+          disableKey={disableKey}
           entitySearchLabel={entitySearchLabel}
+          fetchUsers={fetchUsers}
+          usersQueryParams={usersQueryParams}
         />
       );
     case EntitySearchModalType.Team:

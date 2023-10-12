@@ -7,6 +7,7 @@ import {
 import apiService from 'utils/apiService';
 import { IDepartment } from './department';
 import { ILocation } from './location';
+import { IDesignation } from './designation';
 
 // for future filters
 export enum PeopleFilterKeys {
@@ -90,24 +91,62 @@ export interface IGetUser {
   lastName?: string;
   userName?: string;
   primaryEmail?: string;
-  org: {
+  org?: {
     id: string;
     name?: string;
     domain: string;
   };
-  workEmail: string;
+  workEmail?: string;
   profileImage?: { blurHash: string; id: string; original: string };
-  role: UserRole;
-  flags: {
+  role?: UserRole;
+  flags?: {
     isDeactivated: boolean;
     isReported: boolean;
   };
-  createdAt: string;
-  status: string;
+  createdAt?: string;
+  status?: string;
   timeZone?: string;
-  workLocation?: Record<string, string>;
-  designation?: string;
+  workLocation?: ILocation;
   department?: IDepartment;
+  designation?: IDesignation;
+  coverImage?: { blurHash: string; id: string; original: string };
+  freezeEdit?: {
+    department?: boolean;
+    designation?: boolean;
+    firstName?: boolean;
+    fullName?: boolean;
+    joinDate?: boolean;
+    lastName?: boolean;
+    manager?: boolean;
+    middleName?: boolean;
+  };
+  manager?: {
+    designation: string;
+    fullName: string;
+    profileImage: {
+      id: string;
+      original: string;
+      blurHash: string;
+    };
+    userId: string;
+    workLocation: string;
+    status: string;
+    department: string;
+  };
+  permissions?: string[];
+  workPhone?: string | null;
+  isPresent?: boolean;
+}
+
+interface IGetOrgChartPayload {
+  q?: string;
+  root?: string;
+  target?: string;
+  departments?: string[];
+  locations?: string[];
+  status?: string[]; // Active, Invited, Inactive
+  expand?: number; // +/- integer. Expand -> root +/- number levels
+  expandAll?: boolean;
 }
 
 export const getAllUser = async ({
@@ -236,6 +275,10 @@ export const acceptInviteSetPassword = async (q: Record<string, any>) => {
   return await apiService.put('/users/invite/reset-password', q);
 };
 
+export const getOrgChart = async ({ queryKey }: QueryFunctionContext<any>) => {
+  return await apiService.get('/users/chart', queryKey[1]);
+};
+
 /* REACT QUERY */
 
 // use react query to get single user
@@ -248,7 +291,11 @@ export const useSingleUser = (userId: string) => {
 };
 
 export const updateUserAPI = async (user: IUserUpdate) => {
-  const { id, ...rest } = user;
+  const {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    id,
+    ...rest
+  } = user;
   const data = await apiService.patch(`/users/${user.id}`, { ...rest });
   return data;
 };
@@ -309,4 +356,21 @@ export const useIsUserExistAuthenticated = (email = '') => {
     queryFn: () => isUserExistAuthenticated({ email }),
     staleTime: 1000,
   });
+};
+
+export const useOrgChart = (
+  payload?: IGetOrgChartPayload,
+  rest?: Record<string, any>,
+) => {
+  return useQuery({
+    queryKey: ['organization-chart', payload],
+    queryFn: getOrgChart,
+    staleTime: 5 * 60 * 1000,
+    ...rest,
+  });
+};
+
+export const updateUserSettings = async (payload: Record<string, any>) => {
+  const { data } = await apiService.post('/users/update', payload);
+  return data;
 };

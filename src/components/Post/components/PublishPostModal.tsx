@@ -1,6 +1,5 @@
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
-import React from 'react';
 import ErrorWarningPng from 'images/error-warning-line.png';
 import Button, { Variant as ButtonVariant } from 'components/Button';
 import { useMutation } from '@tanstack/react-query';
@@ -13,26 +12,24 @@ import { twConfig } from 'utils/misc';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
+import { FC } from 'react';
 
 interface PublishPostModalProps {
   post: IPost;
   closeModal?: () => void;
 }
 
-const PublishPostModal: React.FC<PublishPostModalProps> = ({
-  closeModal,
-  post,
-}) => {
-  const { feed, updateFeed } = useFeedStore();
+const PublishPostModal: FC<PublishPostModalProps> = ({ closeModal, post }) => {
+  const getPost = useFeedStore((state) => state.getPost);
+  const updateFeed = useFeedStore((state) => state.updateFeed);
   const updatePostMutation = useMutation({
     mutationKey: ['updatePostMutation'],
-    mutationFn: (payload: IPostPayload) =>
-      updatePost(payload.id || '', payload as IPostPayload),
+    mutationFn: (payload: IPostPayload) => updatePost(post.id || '', payload),
     onMutate: (variables) => {
       if (variables?.id) {
-        const previousData = feed[variables.id];
+        const previousData = getPost(variables.id);
         updateFeed(variables.id, {
-          ...feed[variables.id],
+          ...getPost(variables.id),
           ...variables,
         } as IPost);
         closeModal && closeModal();
@@ -121,7 +118,10 @@ const PublishPostModal: React.FC<PublishPostModalProps> = ({
             label={'Post now'}
             dataTestId="publishnow-postnowcta"
             onClick={() => {
-              updatePostMutation.mutate({ ...post, schedule: null });
+              updatePostMutation.mutate({
+                ...post,
+                schedule: null,
+              });
             }}
           />
         </div>

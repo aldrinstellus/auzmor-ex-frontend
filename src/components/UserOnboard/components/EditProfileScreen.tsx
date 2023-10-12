@@ -1,22 +1,20 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import { FC, ReactElement, RefObject, useEffect } from 'react';
 import Button from 'components/Button';
-import UpdateProfileImage from 'components/UpdateProfileImage';
 import Banner, { Variant } from 'components/Banner';
 import Avatar from 'components/Avatar';
-import EditIcon from 'components/Icon/components/Edit';
 import Icon from 'components/Icon';
 import useAuth from 'hooks/useAuth';
 
-type EditProfileScreenProps = {
+type AppProps = {
   next: () => void;
   setDisableClose: (disableClose: boolean) => void;
   dataTestId?: string;
-  profilePictureRef?: React.RefObject<HTMLInputElement> | null;
+  profilePictureRef?: RefObject<HTMLInputElement> | null;
   error?: boolean;
   loading?: boolean;
 };
 
-const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
+const EditProfileScreen: FC<AppProps> = ({
   next,
   setDisableClose,
   dataTestId,
@@ -35,22 +33,23 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
           <div className="text-2xl font-bold text-neutral-900">
             {user?.name}
           </div>
-          <Avatar
-            size={144}
-            indicatorIcon={
+          <div className="relative">
+            <Avatar
+              size={144}
+              name={user?.name}
+              image={user?.profileImage}
+              bgColor="#DBEAFE"
+            />
+            <div className="absolute bg-primary-500 border-2 border-white rounded-full p-1.5 cursor-pointer top-0 right-1">
               <Icon
                 name="edit"
-                size={20}
-                className="absolute bg-primary-500 border-1 border-white rounded-full p-2 cursor-pointer top-0 right-1"
+                size={16}
                 color="text-white"
                 onClick={() => profilePictureRef?.current?.click()}
                 dataTestId="edit-profilepic"
               />
-            }
-            name={user?.name}
-            image={user?.profileImage}
-            bgColor="#DBEAFE"
-          />
+            </div>
+          </div>
 
           <div className="flex flex-col items-center mt-4 gap-y-6">
             <div className="flex flex-col items-center gap-y-1">

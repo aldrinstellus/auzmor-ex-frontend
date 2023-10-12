@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import Likes from 'components/Reactions';
 import IconButton, {
   Variant as IconVariant,
@@ -9,19 +9,19 @@ import { useMutation } from '@tanstack/react-query';
 import Popover from 'components/Popover';
 import clsx from 'clsx';
 import { humanizeTime } from 'utils/time';
-import { iconsStyle } from 'components/Post';
 import useAuth from 'hooks/useAuth';
 import Reply from '../../Reply';
 import Icon from 'components/Icon';
 import { Link } from 'react-router-dom';
 import RenderQuillContent from 'components/RenderQuillContent';
 import ReactionModal from 'components/Post/components/ReactionModal';
-import _ from 'lodash';
+import omit from 'lodash/omit';
 import useModal from 'hooks/useModal';
 import {
   getAvatarColor,
   getFullName,
   getProfileImage,
+  getUserCardTooltipProps,
   twConfig,
 } from 'utils/misc';
 import { IComment } from '..';
@@ -37,18 +37,17 @@ import { useFeedStore } from 'stores/feedStore';
 import { useCommentStore } from 'stores/commentStore';
 import { produce } from 'immer';
 import Divider, { Variant } from 'components/Divider';
-import MediaPreview from 'components/MediaPreview';
+import Tooltip, { Variant as TooltipVariant } from 'components/Tooltip';
+import UserCard from 'components/UserCard';
 
 interface CommentProps {
   comment: IComment;
   customNode?: ReactNode;
 }
 
-export const Comment: React.FC<CommentProps> = ({
-  comment,
-  customNode = null,
-}) => {
-  const { feed, updateFeed } = useFeedStore();
+export const Comment: FC<CommentProps> = ({ comment, customNode = null }) => {
+  const getPost = useFeedStore((state) => state.getPost);
+  const updateFeed = useFeedStore((state) => state.updateFeed);
   const { comment: storedcomments, setComment } = useCommentStore();
   const [showReactionModal, setShowReactionModal] = useState(false);
   const [confirm, showConfirm, closeConfirm] = useModal();
@@ -82,13 +81,14 @@ export const Comment: React.FC<CommentProps> = ({
     mutationFn: deleteComment,
     onMutate: (variables) => {
       const previousData = storedcomments;
+      const post = getPost(storedcomments[variables].entityId);
       updateFeed(
-        feed[storedcomments[variables].entityId].id!,
-        produce(feed[storedcomments[variables].entityId], (draft) => {
+        post.id!,
+        produce(post, (draft) => {
           draft.commentsCount = draft.commentsCount - 1;
         }),
       );
-      setComment({ ..._.omit(storedcomments, [variables]) });
+      setComment({ ...omit(storedcomments, [variables]) });
       closeConfirm();
       return { previousData };
     },
@@ -146,9 +146,32 @@ export const Comment: React.FC<CommentProps> = ({
   return (
     <div className="flex flex-col">
       <div className="bg-neutral-100 p-3 rounded-9xl mb-4">
-        <div className="flex justify-between">
-          <div className="flex">
-            <div className="mr-4">
+        <div className="flex flex-row justify-between gap-4">
+          <div>
+            <Link
+              to={
+                comment?.createdBy?.userId &&
+                comment.createdBy.userId !== user?.id
+                  ? '/users/' + comment.createdBy.userId
+                  : '/profile'
+              }
+            >
+              <Avatar
+                name={comment?.createdBy?.fullName}
+                size={32}
+                image={getProfileImage(comment?.createdBy)}
+                bgColor={getAvatarColor(comment?.createdBy)}
+              />
+            </Link>
+          </div>
+          <div className="flex flex-col items-start p-0 flex-grow w-0">
+            <Tooltip
+              tooltipContent={
+                <UserCard user={getUserCardTooltipProps(comment?.createdBy)} />
+              }
+              variant={TooltipVariant.Light}
+              className="!p-4 !shadow-md !rounded-9xl !z-[999]"
+            >
               <Link
                 to={
                   comment?.createdBy?.userId &&
@@ -157,94 +180,75 @@ export const Comment: React.FC<CommentProps> = ({
                     : '/profile'
                 }
               >
-                <Avatar
-                  name={comment?.createdBy?.fullName}
-                  size={32}
-                  image={getProfileImage(comment?.createdBy)}
-                  bgColor={getAvatarColor(comment?.createdBy)}
-                />
-              </Link>
-            </div>
-            <div className="flex flex-col items-start p-0 w-64">
-              <Link
-                to={
-                  comment?.createdBy?.userId &&
-                  comment.createdBy.userId !== user?.id
-                    ? '/users/' + comment.createdBy.userId
-                    : '/profile'
-                }
-              >
-                <div className="text-neutral-900 font-bold text-sm">
+                <div className="text-neutral-900 font-bold text-sm hover:text-primary-500 hover:underline">
                   {getFullName(comment?.createdBy)}
                 </div>
               </Link>
-              <div className="font-normal text-neutral-500 text-xs">
-                {comment?.createdBy?.designation}
-              </div>
+            </Tooltip>
+            <div className="font-normal text-neutral-500 text-xs">
+              {comment?.createdBy?.designation}
             </div>
           </div>
-          <div className="flex">
-            <div className="text-neutral-500 font-normal text-xs mt-1">
-              {humanizeTime(comment.updatedAt)}
-            </div>
-            <div className="ml-4">
-              {user?.id === comment?.createdBy?.userId && (
-                <Popover
-                  triggerNode={
-                    <IconButton
-                      icon={'more'}
-                      className="!p-0 !bg-inherit"
-                      variant={IconVariant.Primary}
-                      size={Size.Large}
-                      dataTestId="comment-ellipsis"
-                    />
-                  }
-                  ref={closePopOver}
-                  className="left-0 rounded-9xl"
-                >
-                  <div>
-                    {!editComment && (
-                      <div className="w-48">
-                        <div
-                          className={`${menuItemStyle} rounded-t-9xl`}
-                          onClick={() => {
-                            setEditComment(true);
-                            closePopOver?.current?.click();
-                          }}
-                          data-testid="post-ellipsis-edit-comment"
-                        >
-                          <Icon
-                            name={'edit'}
-                            size={16}
-                            color="text-neutral-200"
-                          />
-                          <div className="text-sm font-medium text-neutral-900">
-                            Edit comment
-                          </div>
-                        </div>
-                        <div
-                          className={`${menuItemStyle} rounded-b-9xl`}
-                          onClick={() => {
-                            showConfirm();
-                          }}
-                        >
-                          <Icon
-                            name={'delete'}
-                            size={16}
-                            color="text-neutral-200"
-                          />
-                          <div
-                            className={`text-sm font-medium text-neutral-900 `}
-                          >
-                            Delete comment
-                          </div>
+          <div className="text-neutral-500 font-normal text-xs mt-1">
+            {humanizeTime(comment.updatedAt)}
+          </div>
+          <div>
+            {user?.id === comment?.createdBy?.userId && (
+              <Popover
+                triggerNode={
+                  <IconButton
+                    icon={'more'}
+                    className="!p-0 !bg-inherit"
+                    variant={IconVariant.Primary}
+                    size={Size.Large}
+                    dataTestId="comment-ellipsis"
+                  />
+                }
+                ref={closePopOver}
+                className="left-0 rounded-9xl"
+              >
+                <div>
+                  {!editComment && (
+                    <div className="w-48">
+                      <div
+                        className={`${menuItemStyle} rounded-t-9xl`}
+                        onClick={() => {
+                          setEditComment(true);
+                          closePopOver?.current?.click();
+                        }}
+                        data-testid="post-ellipsis-edit-comment"
+                      >
+                        <Icon
+                          name={'edit'}
+                          size={16}
+                          color="text-neutral-200"
+                        />
+                        <div className="text-sm font-medium text-neutral-900">
+                          Edit comment
                         </div>
                       </div>
-                    )}
-                  </div>
-                </Popover>
-              )}
-            </div>
+                      <div
+                        className={`${menuItemStyle} rounded-b-9xl`}
+                        onClick={() => {
+                          showConfirm();
+                        }}
+                      >
+                        <Icon
+                          name={'delete'}
+                          size={16}
+                          color="text-neutral-200"
+                        />
+                        <div
+                          className={`text-sm font-medium text-neutral-900 `}
+                        >
+                          Delete comment
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </Popover>
+            )}
           </div>
         </div>
         {/* Comment Edit at Post level type Post */}

@@ -1,8 +1,7 @@
 import AvatarList from 'components/AvatarList';
 import Card from 'components/Card';
-import React from 'react';
 import useHover from 'hooks/useHover';
-import { truncate } from 'lodash';
+import truncate from 'lodash/truncate';
 import Icon from 'components/Icon';
 import TeamWork from 'images/teamwork.svg';
 import PopupMenu from 'components/PopupMenu';
@@ -10,15 +9,16 @@ import useRole from 'hooks/useRole';
 import DeleteTeam from '../DeleteModals/Team';
 import useModal from 'hooks/useModal';
 import { TeamFlow } from '.';
-import moment from 'moment';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { FC } from 'react';
+import { isNewEntity } from 'utils/misc';
 
 export interface ITeamsCardProps {
   id: string;
   name: string;
   category: Record<string, any>;
   description: string;
-  createdAtDate: string;
+  createdAt: string;
   totalMembers: number;
   recentMembers: any;
   setTeamFlow: (mode: string) => void;
@@ -26,12 +26,12 @@ export interface ITeamsCardProps {
   setShowTeamDetail: (detail: Record<string, any> | null) => void;
 }
 
-const TeamsCard: React.FC<ITeamsCardProps> = ({
+const TeamsCard: FC<ITeamsCardProps> = ({
   id,
   name,
   description,
   category,
-  createdAtDate,
+  createdAt,
   totalMembers,
   recentMembers = [],
   setTeamFlow,
@@ -43,7 +43,6 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
   const [isHovered, eventHandlers] = useHover();
   const [showDeleteModal, openDeleteModal, closeDeleteModal] = useModal(false);
   const { isAdmin, isMember, isSuperAdmin } = useRole();
-  const currentDate = moment();
 
   const teamAllOption = [
     {
@@ -57,7 +56,7 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
           name: name,
           description: description,
           category: category,
-          createdAt: createdAtDate,
+          createdAt: createdAt,
           totalMembers: totalMembers,
         });
       },
@@ -106,12 +105,7 @@ const TeamsCard: React.FC<ITeamsCardProps> = ({
             className="-right-36 w-44 top-8"
           />
         )}
-        {moment(createdAtDate)?.isBetween(
-          moment().subtract(7, 'days'),
-          currentDate,
-          null,
-          '[]',
-        ) && (
+        {isNewEntity(createdAt) && (
           <div
             style={{
               backgroundColor: '#D1FAE5',

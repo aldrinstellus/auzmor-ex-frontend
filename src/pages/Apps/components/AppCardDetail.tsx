@@ -6,9 +6,10 @@ import Icon from 'components/Icon';
 import Modal from 'components/Modal';
 import useRole from 'hooks/useRole';
 import { App } from 'queries/apps';
-import React from 'react';
-import { twConfig } from 'utils/misc';
 import AppDetailSVG from './../../../images/appDetails.svg';
+import { FC } from 'react';
+import DefaultAppIcon from 'images/DefaultAppIcon.svg';
+import AudiencePopup from 'components/AudiencePopup';
 
 type AppDetailModalProps = {
   app: App;
@@ -18,7 +19,7 @@ type AppDetailModalProps = {
   openDeleteAppModal: () => void;
 };
 
-const AppDetailModal: React.FC<AppDetailModalProps> = ({
+const AppDetailModal: FC<AppDetailModalProps> = ({
   app,
   open,
   closeModal,
@@ -36,12 +37,14 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-4">
           <div className="flex gap-x-3 items-center">
-            {app?.icon?.original && (
-              <div className="p-1 bg-neutral-100 rounded-xl">
-                <img src={app?.icon?.original} height={20} width={20} />
-              </div>
-            )}
-            <p className="text-neutral-900 text-lg font-extrabold">
+            <div className="p-1 bg-neutral-100 rounded-xl">
+              <img
+                src={app?.icon?.original || DefaultAppIcon}
+                height={20}
+                width={20}
+              />
+            </div>
+            <p className="text-neutral-900 text-lg font-extrabold line-clamp-1">
               {app.label}
             </p>
           </div>
@@ -80,7 +83,12 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
                 </div>
                 <div
                   className="cursor-pointer text-primary-500 text-lg font-medium flex items-center gap-1"
-                  onClick={() => window.open(app.url, '_target')}
+                  onClick={() =>
+                    window.open(
+                      `${window.location.origin}/apps/${app.id}/launch`,
+                      '_target',
+                    )
+                  }
                 >
                   <span>Visit app</span>
                   <Icon name="arrowRightUp" className="text-primary-500" />
@@ -89,16 +97,14 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
               <div className="pb-8">
                 {/* The icon, name and description */}
                 <div className="flex px-6 pt-4 gap-x-6">
-                  {app?.icon?.original && (
-                    <div className="min-w-[100px] min-h-[100px]">
-                      <img
-                        src={app?.icon?.original}
-                        className="p-1 rounded-xl"
-                        height={100}
-                        width={100}
-                      />
-                    </div>
-                  )}
+                  <div className="min-w-[100px] min-h-[100px]">
+                    <img
+                      src={app?.icon?.original || DefaultAppIcon}
+                      className="p-1 rounded-xl"
+                      height={100}
+                      width={100}
+                    />
+                  </div>
                   <div>
                     <p
                       className="text-3xl text-neutral-900 font-semibold"
@@ -107,7 +113,7 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
                       {app.label}
                     </p>
                     <p
-                      className="pt-1 text-neutral-900 font-normal line-clamp-3"
+                      className="pt-1 text-neutral-900 font-normal"
                       data-testid="app-details-description"
                     >
                       {app.description}
@@ -128,11 +134,21 @@ const AppDetailModal: React.FC<AppDetailModalProps> = ({
                         </span>
                       </div>
                       {app.audience.length > 1 && (
-                        <div className={audienceChipStyle}>
-                          <span className={audienceLabelStyle}>
-                            {`+ ${app.audience.length - 1} more`}
-                          </span>
-                        </div>
+                        <AudiencePopup
+                          title="Audience:"
+                          triggerBtn={
+                            <div
+                              className={`${audienceChipStyle} cursor-pointer`}
+                            >
+                              <span className={audienceLabelStyle}>
+                                {`+ ${app.audience.length - 1} more`}
+                              </span>
+                            </div>
+                          }
+                          entityId={app.id}
+                          entity="apps"
+                          audience={app.audience}
+                        />
                       )}
                     </div>
                   ) : (

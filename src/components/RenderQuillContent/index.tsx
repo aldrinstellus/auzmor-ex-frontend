@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useMemo } from 'react';
+import { FC, ReactElement, useEffect, useMemo } from 'react';
 import { DeltaOperation } from 'quill';
 import clsx from 'clsx';
 
@@ -7,7 +7,7 @@ import Mention from './components/Mentions';
 import Hashtag from './components/Hashtag';
 import Emoji from './components/Emoji';
 import { Text } from './components/Text';
-import MediaPreview, { Mode } from 'components/MediaPreview';
+import MediaPreview from 'components/MediaPreview';
 import PreviewCard from 'components/PreviewCard';
 import { IComment } from 'components/Comments';
 import { IMedia } from 'contexts/CreatePostContext';
@@ -28,7 +28,7 @@ type RenderQuillContent = {
   isAnnouncementWidgetPreview?: boolean;
 };
 
-const RenderQuillContent: React.FC<RenderQuillContent> = ({
+const RenderQuillContent: FC<RenderQuillContent> = ({
   data,
   isComment = false,
   isAnnouncementWidgetPreview = false,
@@ -42,14 +42,14 @@ const RenderQuillContent: React.FC<RenderQuillContent> = ({
   const postType = (data as IPost)?.type;
 
   const isEmpty = useMemo(() => {
-    const ops = data.content.editor.ops || [];
+    const ops = data?.content.editor.ops || [];
 
     for (const op of ops) {
       if (op.insert && op.insert.emoji) {
         return false; // If an emoji is found, return false
       }
     }
-    return data.content.text === '\n' || data.content.text === '';
+    return data?.content.text === '\n' || data?.content.text === '';
   }, [data]);
 
   useEffect(() => {

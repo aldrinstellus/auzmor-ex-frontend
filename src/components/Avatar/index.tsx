@@ -1,15 +1,12 @@
-import React, {
-  MouseEventHandler,
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useMemo,
-} from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { FC, MouseEventHandler, ReactNode, memo, useMemo } from 'react';
 import clsx from 'clsx';
 import isDarkColor from 'is-dark-color';
 import { getInitials } from 'utils/misc';
 import Spinner from 'components/Spinner';
 import { PRIMARY_COLOR } from 'utils/constants';
+import BlurImg from 'components/Image/components/BlurImg';
+import Icon from 'components/Icon';
 
 export type AvatarProps = {
   name?: string;
@@ -25,11 +22,13 @@ export type AvatarProps = {
   loading?: boolean;
   dataTestId?: string;
   disable?: boolean;
+  blurhash?: string;
   isCounter?: boolean;
   fontSize?: number;
+  outOfOffice?: boolean;
 };
 
-const Avatar: React.FC<AvatarProps> = ({
+const Avatar: FC<AvatarProps> = ({
   name = 'U',
   className = '',
   round = true,
@@ -43,7 +42,9 @@ const Avatar: React.FC<AvatarProps> = ({
   loading = false,
   dataTestId = '',
   disable = false,
+  blurhash = '',
   isCounter = false,
+  outOfOffice = false,
 }) => {
   const containerStyles = useMemo(
     () =>
@@ -85,7 +86,9 @@ const Avatar: React.FC<AvatarProps> = ({
   const divStyle = useMemo(
     () => ({
       height: `${size}px`,
+      minHeight: `${size}px`,
       width: `${size}px`,
+      minWidth: `${size}px`,
       backgroundColor: bgColor,
     }),
     [size, bgColor],
@@ -112,6 +115,17 @@ const Avatar: React.FC<AvatarProps> = ({
     { 'flex items-center': true },
   );
 
+  const blurImageProps = {
+    src: image,
+    className: imgStyles,
+    key: name,
+    alt: name,
+    blurhash: blurhash,
+    dataTestid: `${dataTestId}-avatar-img`,
+  };
+
+  const avatarName = name && !isCounter ? getInitials(name) : name;
+
   return (
     <div
       className={containerStyles}
@@ -120,12 +134,7 @@ const Avatar: React.FC<AvatarProps> = ({
       data-testid={dataTestId}
     >
       {!!image && !loading ? (
-        <img
-          className={imgStyles}
-          style={{ pointerEvents: disable ? 'none' : 'auto' }}
-          src={image}
-          alt={name}
-        />
+        <BlurImg {...blurImageProps} />
       ) : (
         <span
           className={textStyles}
@@ -134,14 +143,21 @@ const Avatar: React.FC<AvatarProps> = ({
           }}
         >
           {loading && <Spinner color={PRIMARY_COLOR} />}
-          {!loading && name && getInitials(name)}
+          {!loading && avatarName}
         </span>
       )}
-      {!!indicatorIcon && !loading
-        ? indicatorIcon
-        : showActiveIndicator && activeIndicator}
+      {(() => {
+        if (outOfOffice) {
+          return (
+            <div className="absolute -top-1 -right-1">
+              <Icon name="outOfOffice" />
+            </div>
+          );
+        }
+        return null;
+      })()}
     </div>
   );
 };
 
-export default React.memo(Avatar);
+export default memo(Avatar);

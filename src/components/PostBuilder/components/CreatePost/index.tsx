@@ -1,15 +1,14 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import { FC, useContext, useEffect, useRef } from 'react';
 import {
   CreatePostContext,
   IEditorValue,
   IMG_FILE_SIZE_LIMIT,
   MEDIA_LIMIT,
   MediaValidationError,
-  POST_TYPE,
   VIDEO_FILE_SIZE_LIMIT,
 } from 'contexts/CreatePostContext';
 import ReactQuill from 'react-quill';
-import { IPost } from 'queries/post';
+import { IPost, PostType } from 'queries/post';
 import Header from 'components/ModalHeader';
 import Body from './Body';
 import Footer from './Footer';
@@ -26,7 +25,7 @@ interface ICreatePostProps {
   mode: PostBuilderMode;
 }
 
-const CreatePost: React.FC<ICreatePostProps> = ({
+const CreatePost: FC<ICreatePostProps> = ({
   data,
   closeModal,
   handleSubmitPost,
@@ -105,7 +104,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({
                 errorType: MediaValidationError.MediaLengthExceed,
               });
             }
-            setPostType(POST_TYPE.Media);
+            setPostType(PostType.Update);
             setUploads(
               Array.prototype.slice
                 .call(e.target.files)
@@ -186,7 +185,7 @@ const CreatePost: React.FC<ICreatePostProps> = ({
                 errorType: MediaValidationError.MediaLengthExceed,
               });
             }
-            setPostType(POST_TYPE.Media);
+            setPostType(PostType.Update);
             setUploads(
               Array.prototype.slice
                 .call(e.target.files)

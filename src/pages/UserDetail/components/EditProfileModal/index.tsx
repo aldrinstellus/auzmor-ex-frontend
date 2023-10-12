@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { FC, RefObject, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import debounce from 'lodash/debounce';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -17,7 +16,7 @@ import { Variant as InputVariant } from 'components/Input';
 import { getProfileImage, twConfig } from 'utils/misc';
 import { IUpdateProfileImage } from 'pages/UserDetail';
 import { useMutation } from '@tanstack/react-query';
-import { updateCurrentUser } from 'queries/users';
+import { updateCurrentUser, updateUserById } from 'queries/users';
 import useAuth from 'hooks/useAuth';
 import queryClient from 'utils/queryClient';
 import Header from 'components/ModalHeader';
@@ -27,9 +26,12 @@ import SuccessToast from 'components/Toast/variants/SuccessToast';
 import Icon from 'components/Icon';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
-import { getGooglePlaces } from 'queries/location';
-import { IDepartment, useInfiniteDepartments } from 'queries/department';
+import { useGooglePlaces } from 'queries/location';
+import { useInfiniteDepartments } from 'queries/department';
 import useRole from 'hooks/useRole';
+import { useInfiniteDesignations } from 'queries/designation';
+import { useDebounce } from 'hooks/useDebounce';
+import { useParams } from 'react-router-dom';
 
 interface IOptions {
   value: string;
@@ -38,7 +40,7 @@ interface IOptions {
 
 export interface IUpdateProfileForm {
   fullName: string;
-  designation: IOptions;
+  designation: IOptions | null;
   department: IOptions | null;
   preferredName: string;
   workLocation: IOptions | null;
@@ -51,8 +53,8 @@ interface IEditProfileModal {
   openEditImageModal: () => void;
   imageFile: IUpdateProfileImage | Record<string, any>;
   setImageFile?: (file: IUpdateProfileImage | Record<string, any>) => void;
-  userProfileImageRef: React.RefObject<HTMLInputElement> | null;
-  userCoverImageRef: React.RefObject<HTMLInputElement> | null;
+  userProfileImageRef: RefObject<HTMLInputElement> | null;
+  userCoverImageRef: RefObject<HTMLInputElement> | null;
   dataTestId?: string;
   isCoverImageRemoved?: boolean;
   setIsCoverImageRemoved?: (flag: boolean) => void;
@@ -62,7 +64,7 @@ const EditProfileSchema = yup.object({
   fullName: yup.string().required('This field cannot be empty'),
 });
 
-const EditProfileModal: React.FC<IEditProfileModal> = ({
+const EditProfileModal: FC<IEditProfileModal> = ({
   userDetails,
   openEditProfile,
   closeEditProfileModal,
@@ -76,6 +78,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
   setIsCoverImageRemoved = () => {},
 }) => {
   const { isAdmin } = useRole();
+  const { userId = '' } = useParams();
   const {
     control,
     handleSubmit,
@@ -88,7 +91,12 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     defaultValues: {
       fullName: userDetails?.fullName,
       preferredName: userDetails?.preferredName,
-      designation: userDetails?.designation,
+      designation: userDetails?.designation?.name
+        ? {
+            value: userDetails?.designation?.name,
+            label: userDetails?.designation?.name,
+          }
+        : null,
       workLocation: userDetails?.workLocation?.name
         ? {
             value: userDetails?.workLocation?.name,
@@ -103,49 +111,38 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
         : null,
     },
   });
-  const [locationLoading, setLocationLoading] = useState(false);
 
-  const loadLocations = async (
-    inputValue: string,
-    callback: (options: any[]) => void,
-  ) => {
-    setLocationLoading(true);
-    const data = await getGooglePlaces({
-      q: inputValue || userDetails?.workLocation?.name || 'a',
-    });
-    callback(
-      data.map((place: any) => ({
-        label: place.name,
-        value: place.name,
-        dataTestId: `${dataTestId}-location-${place.name}`,
-      })),
-    );
-    setLocationLoading(false);
-  };
-
-  const formatDepartments = (data: any) => {
-    const departmentsData = data?.pages.flatMap((page: any) => {
-      return page?.data?.result?.data.map((department: any) => {
+  const formatCreatableOptions = (data: any, dataTestId: string) => {
+    const optionsData = data?.pages.flatMap((page: any) => {
+      return page?.data?.result?.data.map((option: any) => {
         try {
-          return { ...department, label: department.name };
+          return { ...option, label: option.name };
         } catch (e) {
-          console.log('Error', { department });
+          console.log('Error', { option });
         }
       });
     });
-    const transformedOption = departmentsData?.map(
-      (department: IDepartment) => ({
-        value: department?.id,
-        label: department?.name,
-        id: department?.id,
-        dataTestId: `dept-option-${department?.name}`,
-      }),
-    );
+    console.log('OPTIONS DATA FLAT >>>>>', optionsData);
+    const transformedOption = optionsData?.map((option: any) => ({
+      value: option?.departmentId || option?.designationId,
+      label: option?.name,
+      id: option?.departmentId || option?.designationId,
+      dataTestId: `${dataTestId}-${option?.name}`,
+    }));
     return transformedOption;
   };
 
-  // Declare a debounced version of loadLocations
-  const debouncedLoadLocations = debounce(loadLocations, 500);
+  const [locationSearchString, setLocationSearchString] = useState<string>('');
+
+  // fetch members on search
+  const debouncedLocationSearchValue = useDebounce(
+    locationSearchString || 'a',
+    300,
+  );
+  const { data: fetchedLocations, isLoading: isLocationsLoading } =
+    useGooglePlaces({
+      q: debouncedLocationSearchValue,
+    });
 
   const nameField = [
     {
@@ -178,7 +175,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
 
   const positionTitlefields = [
     {
-      type: FieldType.Input,
+      type: FieldType.CreatableSearch,
       variant: InputVariant.Text,
       name: 'designation',
       defaultValue: getValues().designation,
@@ -187,7 +184,15 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       label: 'Position title',
       disabled: userDetails.freezeEdit?.designation,
       control,
-      inputClassName: 'h-[40px] !text-sm',
+      fetchQuery: (q: any) =>
+        useInfiniteDesignations({ q, startFetching: true }),
+      getFormattedData: (data: any) =>
+        formatCreatableOptions(data, 'designation-option'),
+      queryParams: {},
+      disableCreate: !isAdmin,
+      getPopupContainer: document.body,
+      noOptionsMessage: 'No Designations found',
+      height: 40,
     },
   ];
 
@@ -200,34 +205,37 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       label: 'Department',
       dataTestId: `${dataTestId}-department`,
       fetchQuery: useInfiniteDepartments,
-      getFormattedData: formatDepartments,
+      getFormattedData: (data: any) =>
+        formatCreatableOptions(data, 'dept-option'),
       queryParams: {},
       disabled: userDetails.freezeEdit?.department,
       disableCreate: !isAdmin,
       getPopupContainer: document.body,
-      noOptionsMessage: () => 'No Departments found',
+      noOptionsMessage: 'No Departments found',
       height: 40,
       control,
     },
   ];
+
   const locationField = [
     {
       type: FieldType.AsyncSingleSelect,
+      control,
       name: 'workLocation',
       defaultValue: getValues().workLocation,
       dataTestId: `${dataTestId}-location`,
       placeholder: 'Select a location',
       label: 'Location',
-      loadOptions: (
-        inputValue: string,
-        callback: (options: IOptions[]) => void,
-      ) => {
-        debouncedLoadLocations(inputValue, callback);
-      },
+      options:
+        fetchedLocations?.map((location: any) => ({
+          value: location.name.description,
+          label: location.name.description,
+          dataTestId: `${dataTestId}-location-${location.name.description}`,
+        })) || [],
+      onSearch: (searchString: string) => setLocationSearchString(searchString),
       noOptionsMessage: 'No locations',
-      control,
       height: 40,
-      isLoading: locationLoading,
+      isLoading: isLocationsLoading,
       getPopupContainer: document.body,
       menuPlacement: 'topLeft',
     },
@@ -284,30 +292,35 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
   );
 
   const updateUsersMutation = useMutation({
-    mutationFn: updateCurrentUser,
+    mutationFn: userId
+      ? (data: any) => updateUserById(userId, data)
+      : updateCurrentUser,
     mutationKey: ['update-users-mutation'],
     onError: (error: any) => {
       console.log('API call resulted in error: ', error);
     },
     onSuccess: async (response: Record<string, any>) => {
       const userUpdateResponse = response?.result?.data;
-      updateUser({
-        name: userUpdateResponse.fullName,
-        id: userUpdateResponse.id,
-        email: userUpdateResponse.primaryEmail,
-        role: userUpdateResponse.role,
-        organization: {
-          id: userUpdateResponse.org?.id,
-          domain: userUpdateResponse.org?.domain,
-        },
-        workLocation: userUpdateResponse.workLocation,
-        preferredName: userUpdateResponse.preferredName,
-        designation: userUpdateResponse.designation,
-        department: userUpdateResponse.department,
-        location: userUpdateResponse.location,
-        profileImage: userUpdateResponse.profileImage?.original,
-        coverImage: userUpdateResponse.profileImage?.original,
-      });
+      if (!userId) {
+        updateUser({
+          name: userUpdateResponse.fullName,
+          id: userUpdateResponse.id,
+          email: userUpdateResponse.primaryEmail,
+          role: userUpdateResponse.role,
+          organization: {
+            id: userUpdateResponse.org?.id,
+            domain: userUpdateResponse.org?.domain,
+          },
+          workLocation: userUpdateResponse.workLocation,
+          preferredName: userUpdateResponse.preferredName,
+          designation: userUpdateResponse.designation,
+          department: userUpdateResponse.department,
+          location: userUpdateResponse.location,
+          profileImage: userUpdateResponse.profileImage?.original,
+          coverImage: userUpdateResponse.profileImage?.original,
+        });
+      }
+
       toast(<SuccessToast content={'User Profile Updated Successfully'} />, {
         closeButton: (
           <Icon name="closeCircleOutline" color="text-primary-500" size={20} />
@@ -325,14 +338,18 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
       reset();
       closeEditProfileModal();
       await queryClient.invalidateQueries({ queryKey: ['departments'] });
-      await queryClient.invalidateQueries({ queryKey: ['current-user-me'] });
+      if (userId) {
+        await queryClient.invalidateQueries(['user', userId]);
+      } else {
+        await queryClient.invalidateQueries({ queryKey: ['current-user-me'] });
+      }
     },
   });
 
   const onSubmit = async (user: IUpdateProfileForm) => {
     updateUsersMutation.mutate({
       fullName: user.fullName,
-      designation: user?.designation,
+      designation: user?.designation?.label,
       preferredName: user?.preferredName,
       department: user?.department?.label,
       workLocation: user?.workLocation?.label,

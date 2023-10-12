@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import TeamsCard from './TeamsCard';
 import Button, { Size, Variant } from 'components/Button';
 import Layout, { FieldType } from 'components/Form';
@@ -11,9 +11,8 @@ import useModal from 'hooks/useModal';
 import { useInView } from 'react-intersection-observer';
 import { useForm } from 'react-hook-form';
 import { useDebounce } from 'hooks/useDebounce';
-import TeamFilterModal from '../FilterModals/TeamFilterModal';
 import TeamModal from '../TeamModal';
-import { addTeamMember, useInfiniteTeams } from 'queries/teams';
+import { useInfiniteTeams } from 'queries/teams';
 import { getProfileImage, isFiltersEmpty, twConfig } from 'utils/misc';
 import PageLoader from 'components/PageLoader';
 import TeamNotFound from 'images/TeamNotFound.svg';
@@ -26,18 +25,24 @@ import EntitySearchModal, {
 import { IGetUser } from 'queries/users';
 import Avatar from 'components/Avatar';
 import Icon from 'components/Icon';
+import FilterModal, {
+  FilterModalVariant,
+  IAppliedFilters,
+} from 'components/FilterModal';
+import { ICategory } from 'queries/category';
+import { addTeamMember } from 'queries/teams';
+
 import useAuth from 'hooks/useAuth';
-import { useSearchParams } from 'react-router-dom';
 import SuccessToast from 'components/Toast/variants/SuccessToast';
 import { toast } from 'react-toastify';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
-import queryClient from 'utils/queryClient';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import FailureToast from 'components/Toast/variants/FailureToast';
 import { useMutation } from '@tanstack/react-query';
 import useURLParams from 'hooks/useURLParams';
-import { Role } from 'utils/enum';
 import useRole from 'hooks/useRole';
+import queryClient from 'utils/queryClient';
+import NoDataFound from 'components/NoDataFound';
 interface IForm {
   search?: string;
 }
@@ -73,7 +78,7 @@ export interface ITeamProps {
   closeTeamModal: () => void;
 }
 
-const Team: React.FC<ITeamProps> = ({
+const Team: FC<ITeamProps> = ({
   showTeamModal,
   openTeamModal,
   closeTeamModal,
@@ -94,16 +99,16 @@ const Team: React.FC<ITeamProps> = ({
     any
   > | null>({});
   const [sortByFilter, setSortByFilter] = useState<string>('');
-  const [filters, setFilters] = useState<any>({
-    categories: [],
-  });
   const [tab, setTab] = useState<TeamTab | string>(
-    searchParams.get('tab') || isAdmin ? TeamTab.AllTeams : TeamTab.MyTeams,
+    searchParams.get('tab') || (isAdmin ? TeamTab.AllTeams : TeamTab.MyTeams),
   );
   const [startFetching, setStartFetching] = useState(false);
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
+  const [appliedFilters, setAppliedFilters] = useState<IAppliedFilters>({
+    categories: [],
+  });
 
   const { ref, inView } = useInView();
 
@@ -131,8 +136,10 @@ const Team: React.FC<ITeamProps> = ({
         sort: sortByFilter,
         userId: tab === TeamTab.MyTeams ? user?.id : undefined,
         categoryId:
-          filters.categories.length > 0
-            ? filters.categories.map((category: any) => category?.id).join(',')
+          appliedFilters.categories && appliedFilters.categories.length > 0
+            ? appliedFilters?.categories
+                ?.map((category: ICategory) => category?.id)
+                .join(',')
             : undefined,
       }),
     });
@@ -144,7 +151,7 @@ const Team: React.FC<ITeamProps> = ({
     mutationFn: (payload: any) => {
       return addTeamMember(teamId || '', payload);
     },
-    onError: (error: any) => {
+    onError: () => {
       toast(
         <FailureToast
           content={`Error Adding Team Members`}
@@ -190,6 +197,9 @@ const Team: React.FC<ITeamProps> = ({
         transition: slideInAndOutTop,
         theme: 'dark',
       });
+      queryClient.invalidateQueries(['team-members']);
+      queryClient.invalidateQueries(['team', teamId]);
+      queryClient.invalidateQueries(['teams'], { exact: false });
     },
   });
 
@@ -209,24 +219,24 @@ const Team: React.FC<ITeamProps> = ({
     });
   });
 
-  const handleRemoveFilters = (key: any, id: any) => {
-    const updatedFilter = filters[key].filter((item: any) => item.id !== id);
+  const handleRemoveFilters = (key: string, id: any) => {
+    const updatedFilter = (appliedFilters as any)[
+      key as keyof IAppliedFilters
+    ]!.filter((item: any) => item.id !== id);
     const serializedFilters = serializeFilter(updatedFilter);
     if (updatedFilter.length === 0) {
       deleteParam(key);
     } else {
       updateParam(key, serializedFilters);
     }
-    setFilters((prevFilters: any) => ({
-      ...prevFilters,
-      [key]: updatedFilter,
-    }));
+    setAppliedFilters({ ...appliedFilters, [key]: updatedFilter });
   };
 
-  const onApplyFilter = (filter: any) => {
-    setFilters(filter);
-    const serializedCategories = serializeFilter(filter.categories);
+  const onApplyFilter = (appliedFilters: IAppliedFilters) => {
+    setAppliedFilters(appliedFilters);
+    const serializedCategories = serializeFilter(appliedFilters.categories);
     updateParam('categories', serializedCategories);
+    closeFilterModal();
   };
 
   const handleSetSortFilter = (sortValue: any) => {
@@ -241,7 +251,8 @@ const Team: React.FC<ITeamProps> = ({
 
   const clearFilters = () => {
     deleteParam('categories');
-    setFilters({
+    setAppliedFilters({
+      ...appliedFilters,
       categories: [],
     });
   };
@@ -251,10 +262,10 @@ const Team: React.FC<ITeamProps> = ({
     const parsedCategories = parseParams('categories');
     const parsedSort = parseParams('sort');
     if (parsedCategories) {
-      setFilters((prevFilters: any) => ({
-        ...prevFilters,
+      setAppliedFilters({
+        ...appliedFilters,
         categories: parsedCategories,
-      }));
+      });
     }
     if (parsedSort) {
       setSortByFilter(parsedSort);
@@ -345,8 +356,7 @@ const Team: React.FC<ITeamProps> = ({
 
       {!isLoading ? (
         <div className="text-neutral-500 mt-6 mb-6">
-          Showing{' '}
-          {!isLoading && data?.pages[0]?.data?.result?.paging?.totalCount}{' '}
+          Showing {!isLoading && data?.pages[0]?.data?.result?.totalCount}{' '}
           results
         </div>
       ) : (
@@ -358,17 +368,19 @@ const Team: React.FC<ITeamProps> = ({
       )}
 
       {/* CATEGORY FILTER */}
-      {filters.categories.length > 0 && (
+
+      {appliedFilters?.categories && appliedFilters?.categories?.length > 0 && (
         <div className="flex justify-between items-start mb-6">
           <div className="flex items-center space-x-2 flex-wrap gap-y-2">
             <div className="text-base text-neutral-500 whitespace-nowrap">
               Filter By
             </div>
-            {filters.categories.map((category: any) => (
+            {appliedFilters?.categories?.map((category: ICategory) => (
               <div
                 key={category.id}
-                className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1"
+                className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1 hover:text-primary-600 hover:border-primary-600 cursor-pointer group"
                 data-testid={`people-filterby`}
+                onClick={() => handleRemoveFilters('categories', category.id)}
               >
                 <div className="mr-1 text-neutral-500 whitespace-nowrap">
                   Category{' '}
@@ -466,35 +478,20 @@ const Team: React.FC<ITeamProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className="py-16 w-full">
-                  <div className="flex w-full justify-center">
-                    <img src={require('images/noResult.png')} />
-                  </div>
-                  <div className="text-center">
-                    <div
-                      className="mt-8 text-lg font-bold"
-                      data-testid="teams-noresult-found"
-                    >
-                      {`No result found`}
-                      {searchValue && ` for '${searchValue}'`}
-                    </div>
-                    <div className="text-sm text-gray-500 mt-2">
+                <NoDataFound
+                  className="py-4 w-full"
+                  searchString={searchValue}
+                  message={
+                    <p>
                       Sorry we can&apos;t find the team you are looking for.
                       <br /> Please try using different filters.
-                    </div>
-                  </div>
-
-                  <div className="flex justify-center mt-6">
-                    <Button
-                      label={'Clear search'}
-                      variant={Variant.Secondary}
-                      onClick={() => {
-                        resetField('search', { defaultValue: '' });
-                      }}
-                      dataTestId="teams-clear-applied-filter"
-                    />
-                  </div>
-                </div>
+                    </p>
+                  }
+                  onClearSearch={() => {
+                    resetField('search', { defaultValue: '' });
+                  }}
+                  dataTestId="team"
+                />
               )}
             </>
           );
@@ -535,11 +532,11 @@ const Team: React.FC<ITeamProps> = ({
                         {data?.fullName}
                       </div>
                       <div className="flex space-x-[14px] items-center">
-                        {data?.designation && (
+                        {data?.designation?.name && (
                           <div className="flex space-x-1 items-start">
                             <Icon name="briefcase" size={16} />
                             <div className="text-xs font-normal text-neutral-500">
-                              {data?.designation}
+                              {data?.designation?.name}
                             </div>
                           </div>
                         )}
@@ -574,12 +571,20 @@ const Team: React.FC<ITeamProps> = ({
         />
       )}
 
-      <TeamFilterModal
-        open={showFilterModal}
-        closeModal={closeFilterModal}
-        filters={filters}
-        onApply={onApplyFilter}
-      />
+      {showFilterModal && (
+        <FilterModal
+          open={showFilterModal}
+          closeModal={closeFilterModal}
+          appliedFilters={appliedFilters}
+          variant={FilterModalVariant.Team}
+          onApply={onApplyFilter}
+          onClear={() => {
+            deleteParam('categories');
+            setAppliedFilters({ ...appliedFilters, categories: [] });
+            closeFilterModal();
+          }}
+        />
+      )}
     </div>
   );
 };
