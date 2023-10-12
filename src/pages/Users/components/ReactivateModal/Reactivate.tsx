@@ -37,6 +37,11 @@ const ReactivatePeople: FC<IReactivatePeopleProps> = ({
       queryClient.invalidateQueries(['user', userId]);
       queryClient.invalidateQueries(['users']);
       queryClient.invalidateQueries(['feed'], { exact: false });
+      queryClient.invalidateQueries(['feed-announcements-widget']);
+      queryClient.invalidateQueries(['post-announcements-widget']);
+      queryClient.invalidateQueries(['bookmarks']);
+      queryClient.invalidateQueries(['scheduledPosts']);
+      queryClient.invalidateQueries(['posts'], { exact: false });
       queryClient.invalidateQueries(['team-members']);
       toast(<SuccessToast content={`User has been reactivated`} />, {
         closeButton: (
