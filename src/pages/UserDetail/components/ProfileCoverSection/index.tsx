@@ -218,7 +218,7 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({ userDetails }) => {
         <div className="absolute left-8 bottom-3">
           <Avatar
             name={getFullName(userDetails)}
-            image={getProfileImage(userDetails, 'large')}
+            image={getProfileImage(userDetails, 'medium')}
             size={144}
             bgColor={
               userDetails?.status === UserStatus.Inactive
