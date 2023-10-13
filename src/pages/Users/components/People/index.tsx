@@ -238,14 +238,14 @@ const People: FC<IPeopleProps> = ({
           <div className="flex space-x-4">
             {!isTeamPeople && (
               <>
-                <Button
+                {/* <Button
                   label="My Teams"
                   size={Size.Small}
                   disabled
                   variant={Variant.Secondary}
                   className="cursor-not-allowed h-9 grow-0"
                   dataTestId="people-view-my-teams"
-                />
+                /> */}
                 <Button
                   label="All Members"
                   size={Size.Small}

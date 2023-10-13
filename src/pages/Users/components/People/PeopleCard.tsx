@@ -308,7 +308,7 @@ const PeopleCard: FC<IPeopleCardProps> = ({
           <Avatar
             size={80}
             name={fullName || workEmail}
-            image={getProfileImage(userData, 'large')}
+            image={getProfileImage(userData, 'small')}
             active={status === UserStatus.Active}
             dataTestId="people-card-profile-pic"
             showActiveIndicator
