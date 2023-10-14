@@ -442,7 +442,10 @@ const Toolbar: FC<IToolbarProps> = ({
                           queryKey: [
                             'organization-chart',
                             {
-                              expandAll: parentId ? undefined : true,
+                              expandAll:
+                                parentId || !!startWithSpecificUser?.id
+                                  ? undefined
+                                  : true,
                               root: parentId || startWithSpecificUser?.id,
                               locations:
                                 appliedFilters?.location?.map(
