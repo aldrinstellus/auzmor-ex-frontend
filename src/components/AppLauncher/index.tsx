@@ -92,9 +92,8 @@ const AppLauncher = () => {
                     <div className="flex flex-col gap-2" key={element}>
                       <Skeleton
                         className="!h-[60px] !w-[60px]"
-                        borderRadius={60}
+                        borderRadius={12}
                       />
-                      <Skeleton className="h-[18px]" borderRadius={10} />
                     </div>
                   ))}
                 </div>
