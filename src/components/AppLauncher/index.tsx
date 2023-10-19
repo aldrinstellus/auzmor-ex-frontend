@@ -79,8 +79,8 @@ const AppLauncher = () => {
         </div>
       </div>
       <div
-        className={`transition-max-h px-6 mt-4 duration-300 ease-in-out overflow-hidden ${
-          open ? 'max-h-[500px]' : 'max-h-[0]'
+        className={`transition-max-h px-6 duration-300 ease-in-out overflow-hidden ${
+          open ? 'max-h-[500px] mt-4' : 'max-h-[0]'
         }`}
       >
         {(() => {
