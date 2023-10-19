@@ -214,6 +214,7 @@ const Poll: FC<IPoll & PollProps> = ({
             <div
               className={`grid ${cursorClass}`}
               key={option._id}
+              data-testid={`feed-post-poll-ans${index + 1}`}
               onClick={() => {
                 if (cursorPointer && !isLoading && postId && option._id) {
                   if (votedThisOption) {
@@ -265,7 +266,10 @@ const Poll: FC<IPoll & PollProps> = ({
         {showTotal && (
           <Fragment>
             <div className="bg-neutral-500 rounded-full w-1 h-1" />
-            <p className="text-neutral-500 font-normal">{`${total} votes`}</p>
+            <p
+              className="text-neutral-500 font-normal"
+              data-testid="feed-post-poll-votes"
+            >{`${total} votes`}</p>
           </Fragment>
         )}
         {showViewResults && (
@@ -278,6 +282,9 @@ const Poll: FC<IPoll & PollProps> = ({
               label={showResults ? 'Undo' : 'View results'}
               labelClassName="text-primary-500 font-bold leading-normal"
               onClick={() => setShowResults(!showResults)}
+              dataTestId={`feed-post-poll-${
+                showResults ? 'undo' : 'viewresult'
+              }`}
             />
           </Fragment>
         )}
