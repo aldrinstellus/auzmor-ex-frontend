@@ -296,7 +296,7 @@ const User: FC<UserProps> = ({
             className={`px-[6px] rounded-[4px] text-xs font-semibold whitespace-nowrap ${dateStyles}`}
             data-testid={`${isBirthday ? 'birthday' : 'anniversaries'}-date`}
           >
-            {`${celebrationDate} ${userIsMe ? wishEmoji : ''}`.trim()}
+            {`${celebrationDate}`.trim()}
           </div>
         )}
       </div>
