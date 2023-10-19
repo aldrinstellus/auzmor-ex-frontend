@@ -23,7 +23,7 @@ const Status: FC<IStatusProps> = ({ control, watch, setValue }) => {
       placeholder: 'Search',
       isClearable: true,
       leftIcon: 'search',
-      dataTestId: `location-search`,
+      dataTestId: `status-search`,
     },
   ];
 
