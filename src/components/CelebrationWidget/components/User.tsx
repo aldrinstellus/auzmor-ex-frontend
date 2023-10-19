@@ -94,15 +94,13 @@ const User: FC<UserProps> = ({
     [type],
   );
 
-  const wishEmoji = isBirthday ? '🎂' : '🎉';
-
   const wishesSent = useMemo(
     () => (
       <div
         data-testid={`${isBirthday ? 'birthday' : 'anniversaries'}-wishes-sent`}
         className={`py-[2px] px-[6px] rounded-[4px] text-xs font-bold flex items-center ${dateStyles} w-fit whitespace-nowrap`}
       >
-        Wishes sent {wishEmoji}
+        Wishes sent
       </div>
     ),
     [],
