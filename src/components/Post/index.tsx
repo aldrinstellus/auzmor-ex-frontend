@@ -102,7 +102,7 @@ const Post: FC<PostProps> = ({ post, customNode = null, setHasChanges }) => {
       toast(
         <SuccessToast
           content="Post has been bookmarked successfully!"
-          data-testid="toast-successfully-bookmarked"
+          data-testid="successfully-bookmarked-toast"
           actionLabel="View Bookmarks"
           action={() => navigate('/bookmarks')}
         />,
@@ -138,7 +138,7 @@ const Post: FC<PostProps> = ({ post, customNode = null, setHasChanges }) => {
       toast(
         <SuccessToast
           content="Post removed from your bookmarks"
-          data-testid="toast-removed-bookmark"
+          data-testid="removed-bookmark-toast"
         />,
         {
           closeButton: (
