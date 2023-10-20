@@ -114,10 +114,10 @@ const Footer: FC<IFooterProps> = ({
               ? 'Your post  was converted to an announcement'
               : 'Your announcement was updated successfully'
           }
-          data-testid={
+          dataTestId={
             isEmpty(data.announcement)
               ? 'convert-to-announcement-toast'
-              : 'notification-announcement-to-post'
+              : 'announcement-updated-toast'
           }
         />,
         {
