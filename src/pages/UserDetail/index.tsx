@@ -153,9 +153,6 @@ const UserDetail: FC<IUserDetailProps> = () => {
               />
             )}
           </div>
-          <div>
-            <ManagerWidget data={data} canEdit={isAdmin} />
-          </div>
         </div>
         <div className="w-1/2 px-3">
           <Tabs
@@ -167,7 +164,11 @@ const UserDetail: FC<IUserDetailProps> = () => {
             tabContentClassName="mt-5"
           />
         </div>
-        <div className="w-1/4 pl-12"></div>
+        <div className="w-1/4 pl-12">
+          <div>
+            <ManagerWidget data={data} canEdit={isAdmin} />
+          </div>
+        </div>
       </div>
     </div>
   );
