@@ -14,7 +14,6 @@ import {
 } from 'react-router-dom';
 import ProfileActivityFeed from './components/ProfileActivityFeed';
 import useAuth from 'hooks/useAuth';
-import NoDataCard from './components/NoDataCard';
 import ProfileCoverSection from './components/ProfileCoverSection';
 import clsx from 'clsx';
 import Tabs from 'components/Tabs';
@@ -24,6 +23,7 @@ import useModal from 'hooks/useModal';
 import useRole from 'hooks/useRole';
 import { FC } from 'react';
 import ManagerWidget from 'components/ManagerWidget';
+import Recognitions from './components/Recognitions';
 
 export interface IUpdateProfileImage {
   profileImage: File;
@@ -117,9 +117,14 @@ const UserDetail: FC<IUserDetailProps> = () => {
       title: 'Recognitions',
       dataTestId: 'user-recognitions-tab',
       tabContent: (
-        <div className="pt-2">
-          <NoDataCard user={data?.fullName} dataType="recognition" />
-        </div>
+        <Recognitions
+          pathname={pathname}
+          userId={params?.userId || user?.id || ''}
+          open={open}
+          openModal={openModal}
+          closeModal={closeModal}
+          data={data}
+        />
       ),
     },
   ];
