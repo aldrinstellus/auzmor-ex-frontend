@@ -135,7 +135,7 @@ const Team: FC<ITeamProps> = ({
         q: debouncedSearchValue,
         sort: sortByFilter,
         userId: tab === TeamTab.MyTeams ? user?.id : undefined,
-        categoryId:
+        categoryIds:
           appliedFilters.categories && appliedFilters.categories.length > 0
             ? appliedFilters?.categories
                 ?.map((category: ICategory) => category?.id)
@@ -379,12 +379,12 @@ const Team: FC<ITeamProps> = ({
               <div
                 key={category.id}
                 className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1 hover:text-primary-600 hover:border-primary-600 cursor-pointer group"
-                data-testid={`people-filterby`}
+                data-testid={`teams-filterby`}
                 onClick={() => handleRemoveFilters('categories', category.id)}
               >
                 <div className="mr-1 text-neutral-500 whitespace-nowrap">
                   Category{' '}
-                  <span className="text-primary-500">L{category.name}</span>
+                  <span className="text-primary-500">{category.name}</span>
                 </div>
                 <Icon
                   name="close"
@@ -392,7 +392,7 @@ const Team: FC<ITeamProps> = ({
                   color="text-neutral-900"
                   className="cursor-pointer"
                   onClick={() => handleRemoveFilters('categories', category.id)}
-                  dataTestId={`people-filterby-close`}
+                  dataTestId={`applied-filter-close`}
                 />
               </div>
             ))}
@@ -400,6 +400,7 @@ const Team: FC<ITeamProps> = ({
           <div
             className="text-neutral-500 border px-3 py-[3px] whitespace-nowrap rounded-7xl hover:text-primary-600 hover:border-primary-600 cursor-pointer"
             onClick={clearFilters}
+            data-testid={`teams-clear-filters`}
           >
             Clear Filters
           </div>
