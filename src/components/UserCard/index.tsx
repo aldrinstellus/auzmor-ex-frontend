@@ -57,10 +57,16 @@ const UserCard: FC<IUserCardProp> = ({
             />
           </div>
           <div className="flex flex-col justify-between h-full">
-            <div className="text-base font-bold text-neutral-900 truncate">
+            <div
+              className="text-base font-bold text-neutral-900 truncate"
+              data-testid="usercard-name"
+            >
               {getFullName(user) || 'Field not specified'}
             </div>
-            <div className="text-sm font-normal text-neutral-500 truncate">
+            <div
+              className="text-sm font-normal text-neutral-500 truncate"
+              data-testid="usercard-email"
+            >
               {user?.workEmail || 'Field not specified'}
             </div>
             <div className="flex items-center">
