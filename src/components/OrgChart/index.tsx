@@ -93,8 +93,22 @@ const OrganizationChart: FC<IOrgChart> = ({ setShowOrgChart }) => {
   };
 
   const isLoading = isDataLoading || isDataFetching || showLoader;
-
-  return (
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  return isSafari ? (
+    <div className="flex flex-col gap-6 items-center justify-center absolute top-0 left-0 w-screen h-screen">
+      <p>Safari does support Organization chart.</p>
+      <Button
+        className="flex space-x-[6px] group"
+        label="View People Hub"
+        variant={Variant.Secondary}
+        leftIcon="peopleOutline"
+        leftIconSize={20}
+        dataTestId="view-peoplehub-cta"
+        iconColor="text-black"
+        onClick={() => setShowOrgChart(false)}
+      />
+    </div>
+  ) : (
     <div className="flex flex-col w-full h-full items-center">
       <div className="flex justify-between w-full max-w-[1440px]">
         <div className="text-2xl font-bold">Organization Chart</div>
