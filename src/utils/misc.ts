@@ -363,7 +363,7 @@ export const removeEmptyLines = (content: {
   // replace more than 2 empty lines with 2 empty lines
   content.html = content.html.replaceAll(
     /(<p><br><\/p>){3,}/gm,
-    '<p><br/></p>',
+    '<p><br/></p><p><br/></p>',
   );
 
   // replace more than 2 empty lines with 2 empty lines
