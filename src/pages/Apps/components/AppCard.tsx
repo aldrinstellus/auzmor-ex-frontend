@@ -230,12 +230,9 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
   };
 
   return (
-    <div {...appCardEventHandlers} data-testid="app-card">
+    <div {...appCardEventHandlers} data-testid="app-card" className="w-full">
       {/* <Link to={app.url} target="_blank"> */}
-      <Card
-        className="relative border-1 p-3 flex w-[256px] gap-2"
-        shadowOnHover
-      >
+      <Card className="relative border-1 p-3 flex gap-2" shadowOnHover>
         {/* App logo */}
         <div className="p-2 bg-neutral-100 rounded-xl min-w-[60px] min-h-[60px]">
           <img
