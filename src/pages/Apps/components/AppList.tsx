@@ -102,9 +102,7 @@ const AppList: FC<IAppListProps> = ({
                   ?.filter(({ id }: any) => !!apps[id])
                   ?.map(({ id }: any) => apps[id])}
               />
-              {hasNextPage && !isFetchingNextPage && (
-                <div ref={ref} className="h-12 w-12" />
-              )}
+              {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
               {isFetchingNextPage && (
                 <div className="h-12">
                   <PageLoader />
