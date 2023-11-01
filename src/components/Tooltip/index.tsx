@@ -42,7 +42,6 @@ const Tooltip = ({
       )}
       <div
         id={`anchor-${id}`}
-        className="cursor-default mt-10"
         data-tooltip-id={`tooltip-${id}`}
         data-tooltip-content={`${
           typeof tooltipContent === 'string' ? tooltipContent : ''
