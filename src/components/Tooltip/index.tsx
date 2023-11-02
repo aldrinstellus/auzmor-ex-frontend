@@ -48,6 +48,7 @@ const Tooltip = ({
         }`}
         data-tooltip-variant={variant}
         data-tooltip-place={`${tooltipPosition}`}
+        className="inline"
       >
         <span>{children}</span>
       </div>
