@@ -93,22 +93,8 @@ const OrganizationChart: FC<IOrgChart> = ({ setShowOrgChart }) => {
 
   const isLoading = isDataLoading || isDataFetching || showLoader;
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  return isSafari ? (
-    <div className="flex flex-col gap-6 items-center justify-center absolute top-0 left-0 w-screen h-screen">
-      <p>Safari does support Organization chart.</p>
-      <Button
-        className="flex space-x-[6px] group"
-        label="View People Hub"
-        variant={Variant.Secondary}
-        leftIcon="peopleOutline"
-        leftIconSize={20}
-        dataTestId="view-peoplehub-cta"
-        iconColor="text-black"
-        onClick={() => setShowOrgChart(false)}
-      />
-    </div>
-  ) : (
-    <div className="flex flex-col w-full h-full items-center">
+  return (
+    <div className="flex flex-col w-full h-full items-center relative">
       <Toolbar
         activeMode={activeMode}
         setActiveMode={setActiveMode}
@@ -127,28 +113,35 @@ const OrganizationChart: FC<IOrgChart> = ({ setShowOrgChart }) => {
         parentId={parentId}
         setShowLoader={setShowLoader}
         setShowOrgChart={setShowOrgChart}
+        isSafari={isSafari}
       />
-      <Chart
-        orgChartRef={chartRef}
-        data={getNodes()}
-        isLoading={isLoading}
-        onClearFilter={() => {
-          setAppliedFilters({
-            locations: [],
-            departments: [],
-            status: [],
-          });
-          setStartWithSpecificUser(null);
-          resetField('userSearch');
-        }}
-        isFilterApplied={
-          !!appliedFilters?.departments?.length ||
-          !!appliedFilters?.locations?.length ||
-          !!appliedFilters?.status?.length
-        }
-        setZoom={setZoom}
-        isMyTeam={!!parentId}
-      />
+      {isSafari ? (
+        <div className="flex flex-col gap-6 items-center justify-center absolute top-0 left-0 w-screen h-screen z-0">
+          <p>Safari does support Organization chart.</p>
+        </div>
+      ) : (
+        <Chart
+          orgChartRef={chartRef}
+          data={getNodes()}
+          isLoading={isLoading}
+          onClearFilter={() => {
+            setAppliedFilters({
+              locations: [],
+              departments: [],
+              status: [],
+            });
+            setStartWithSpecificUser(null);
+            resetField('userSearch');
+          }}
+          isFilterApplied={
+            !!appliedFilters?.departments?.length ||
+            !!appliedFilters?.locations?.length ||
+            !!appliedFilters?.status?.length
+          }
+          setZoom={setZoom}
+          isMyTeam={!!parentId}
+        />
+      )}
     </div>
   );
 };
