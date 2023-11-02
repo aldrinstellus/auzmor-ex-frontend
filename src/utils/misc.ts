@@ -354,14 +354,20 @@ export const removeEmptyLines = (content: {
   for (const op of content.editor.ops) {
     if (op.insert) {
       try {
-        op.insert = op.insert?.replaceAll(EMPTY_REGEX, '\n').trim();
+        // replace more than 2 empty lines with 2 empty lines
+        op.insert = op.insert?.replaceAll(EMPTY_REGEX, '\n\n');
       } catch (e) {}
     }
   }
 
-  content.text = content.text.replaceAll(EMPTY_REGEX, '\n').trim();
+  // replace more than 2 empty lines with 2 empty lines
+  content.html = content.html.replaceAll(
+    /(<p><br><\/p>){3,}/gm,
+    '<p><br/></p><p><br/></p>',
+  );
 
-  content.html = content.html.replaceAll('<p><br></p>', '').trim();
+  // replace more than 2 empty lines with 2 empty lines
+  content.text = content.text?.replaceAll(EMPTY_REGEX, '\n\n');
 
   return content;
 };

@@ -97,6 +97,7 @@ const People: FC<IPeopleProps> = ({
     watch,
     getValues,
     setValue,
+    resetField,
     formState: { errors },
   } = useForm<IForm>({
     mode: 'onChange',
@@ -333,7 +334,7 @@ const People: FC<IPeopleProps> = ({
 
   return (
     <div className="relative pb-8">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <div className="flex space-x-4">
             {!isTeamPeople && (
@@ -375,6 +376,7 @@ const People: FC<IPeopleProps> = ({
               selectedValue={filterSortBy}
               filterValue={{ asc: 'ASC', desc: 'DESC' }}
               entity={isTeamPeople ? EntitySearchModalType.Team : 'USER'}
+              dataTestId="people-sort"
             />
             <div>
               <Layout
@@ -513,7 +515,7 @@ const People: FC<IPeopleProps> = ({
 
         <div>
           {showGrid ? (
-            <div className="grid grid-cols-6 gap-6 justify-items-center lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+            <div className="grid grid-cols-3 gap-6 justify-items-center lg:grid-cols-4 xl:grid-cols-5 1.5xl:grid-cols-6 2xl:grid-cols-6">
               {isLoading
                 ? [...Array(30)].map((element) => (
                     <div key={element}>
@@ -594,13 +596,19 @@ const People: FC<IPeopleProps> = ({
             <NoDataFound
               className="py-4 w-full"
               searchString={searchValue}
+              illustration="noResultAlt"
               message={
                 <p>
                   Sorry we can&apos;t find the profile you are looking for.
                   <br /> Please check the spelling or try again.
                 </p>
               }
-              hideClearBtn
+              clearBtnLabel={searchValue ? 'Clear Search' : 'Clear Filters'}
+              onClearSearch={() => {
+                searchValue && resetField
+                  ? resetField('search', { defaultValue: '' })
+                  : clearFilters();
+              }}
               dataTestId="people"
             />
           ) : null}
