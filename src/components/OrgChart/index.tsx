@@ -9,8 +9,10 @@ import { isFiltersEmpty } from 'utils/misc';
 import { useOrgChartStore } from 'stores/orgChartStore';
 
 export const MIN_ZOOM = 0.2;
-export const MAX_ZOOM = 5;
-export const FOCUS_ZOOM = 18; //range 0 to 100
+export const MAX_ZOOM = 2;
+export const FOCUS_ZOOM = 100; //range 18 to 200
+export const MAX_ZOOM_PERCENTAGE = 200;
+export const MIN_ZOOM_PERCENTAGE = 18;
 
 export enum OrgChartMode {
   Team = 'TEAM',

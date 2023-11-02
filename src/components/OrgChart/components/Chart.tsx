@@ -17,7 +17,14 @@ import { UserStatus, getOrgChart } from 'queries/users';
 import { QueryFunctionContext } from '@tanstack/react-query';
 import { IDesignation } from 'queries/designation';
 import { IProfileImage } from 'queries/post';
-import { FOCUS_ZOOM, IZoom, MAX_ZOOM, MIN_ZOOM } from '..';
+import {
+  FOCUS_ZOOM,
+  IZoom,
+  MAX_ZOOM,
+  MAX_ZOOM_PERCENTAGE,
+  MIN_ZOOM,
+  MIN_ZOOM_PERCENTAGE,
+} from '..';
 import useAuth from 'hooks/useAuth';
 import { mapRanges } from 'utils/misc';
 import NoDataFound from 'components/NoDataFound';
@@ -77,7 +84,7 @@ const Chart: FC<IChart> = ({
             .container(chartRef.current)
             .data(data)
             .nodeHeight((_d: any) => (_d.data.id === 'root' ? 80 : 111))
-            .nodeWidth((_d: any) => 256)
+            .nodeWidth((_d: any) => 252)
             .compact(false)
             .childrenMargin((_d: any) => 50)
             .compactMarginBetween((_d: any) => 25)
@@ -201,7 +208,13 @@ const Chart: FC<IChart> = ({
             .render()
             .setFocus(
               user?.id,
-              mapRanges(0, 100, MIN_ZOOM, MAX_ZOOM, FOCUS_ZOOM),
+              mapRanges(
+                MIN_ZOOM_PERCENTAGE,
+                MAX_ZOOM_PERCENTAGE,
+                MIN_ZOOM,
+                MAX_ZOOM,
+                FOCUS_ZOOM,
+              ),
             );
           setAutoSpotlight(false);
         } else if (isMyTeam) {
@@ -209,7 +222,13 @@ const Chart: FC<IChart> = ({
             .expandAll()
             .setFocus(
               user?.id,
-              mapRanges(0, 100, MIN_ZOOM, MAX_ZOOM, FOCUS_ZOOM),
+              mapRanges(
+                MIN_ZOOM_PERCENTAGE,
+                MAX_ZOOM_PERCENTAGE,
+                MIN_ZOOM,
+                MAX_ZOOM,
+                FOCUS_ZOOM,
+              ),
             );
         } else {
           chart.fit();
