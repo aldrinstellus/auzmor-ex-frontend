@@ -6,7 +6,16 @@ import IconButton, {
 import useModal from 'hooks/useModal';
 import { FC, MutableRefObject, useMemo, useState } from 'react';
 import { Control, UseFormResetField, UseFormWatch } from 'react-hook-form';
-import { FOCUS_ZOOM, IForm, IZoom, MAX_ZOOM, MIN_ZOOM, OrgChartMode } from '..';
+import {
+  FOCUS_ZOOM,
+  IForm,
+  IZoom,
+  MAX_ZOOM,
+  MAX_ZOOM_PERCENTAGE,
+  MIN_ZOOM,
+  MIN_ZOOM_PERCENTAGE,
+  OrgChartMode,
+} from '..';
 import clsx from 'clsx';
 import Icon from 'components/Icon';
 import Tooltip from 'components/Tooltip';
@@ -199,7 +208,13 @@ const Toolbar: FC<IToolbarProps> = ({
                 ?.expandAll()
                 ?.setFocus(
                   user?.id,
-                  mapRanges(0, 100, MIN_ZOOM, MAX_ZOOM, FOCUS_ZOOM),
+                  mapRanges(
+                    MIN_ZOOM_PERCENTAGE,
+                    MAX_ZOOM_PERCENTAGE,
+                    MIN_ZOOM,
+                    MAX_ZOOM,
+                    FOCUS_ZOOM,
+                  ),
                 );
             } else {
               // fetch missing nodes.
@@ -250,7 +265,13 @@ const Toolbar: FC<IToolbarProps> = ({
                     ?.expandAll()
                     ?.setFocus(
                       user?.id,
-                      mapRanges(0, 100, MIN_ZOOM, MAX_ZOOM, FOCUS_ZOOM),
+                      mapRanges(
+                        MIN_ZOOM_PERCENTAGE,
+                        MAX_ZOOM_PERCENTAGE,
+                        MIN_ZOOM,
+                        MAX_ZOOM,
+                        FOCUS_ZOOM,
+                      ),
                     );
                   setIsExpandAll(true);
                 });
@@ -537,7 +558,13 @@ const Toolbar: FC<IToolbarProps> = ({
                       clearAllFilters();
                       chartRef.current?.setFocus(
                         user?.id || '',
-                        mapRanges(0, 100, MIN_ZOOM, MAX_ZOOM, FOCUS_ZOOM),
+                        mapRanges(
+                          MIN_ZOOM_PERCENTAGE,
+                          MAX_ZOOM_PERCENTAGE,
+                          MIN_ZOOM,
+                          MAX_ZOOM,
+                          FOCUS_ZOOM,
+                        ),
                       );
                     }}
                     size={24}
@@ -563,7 +590,13 @@ const Toolbar: FC<IToolbarProps> = ({
                 data-testid="zoom-percentage"
               >
                 {Math.round(
-                  mapRanges(zoom.range[0], zoom.range[1], 0, 100, zoom.zoom),
+                  mapRanges(
+                    zoom.range[0],
+                    zoom.range[1],
+                    MIN_ZOOM_PERCENTAGE,
+                    MAX_ZOOM_PERCENTAGE,
+                    zoom.zoom,
+                  ),
                 )}
                 %
               </div>
