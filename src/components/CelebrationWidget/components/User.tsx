@@ -262,10 +262,13 @@ const User: FC<UserProps> = ({
               }
             >
               <p
-                className="text-sm font-bold truncate"
+                className="text-sm font-bold truncate cursor-pointer"
                 data-testid={`${
                   isBirthday ? 'birthday' : 'anniversaries'
                 }-profile-name`}
+                onClick={() =>
+                  navigate(id === user?.id ? '/profile' : `/users/${id}`)
+                }
               >
                 {truncate(getFullName(featuredUser) || featuredUser.email, {
                   length: isModalView ? 40 : 26,
