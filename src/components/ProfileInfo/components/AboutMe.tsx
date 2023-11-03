@@ -68,8 +68,9 @@ const AboutMe: FC<IAboutMeProps> = ({
       type: FieldType.TextArea,
       name: 'personal.about',
       placeholder: 'Write here',
-      dataTestId: 'about-me-edit-text',
+      dataTestId: 'bio-edit-text',
       control,
+      defaultValue: getValues('personal.about') || '',
       className: 'w-full rounded-9xl',
       rows: 8,
       maxLength: 2000,
@@ -134,7 +135,7 @@ const AboutMe: FC<IAboutMeProps> = ({
     <>
       <Header
         title={canEdit ? 'About Me' : 'About'}
-        dataTestId="about-me"
+        dataTestId="bio"
         isHovered={isHovered && canEdit}
         // isEditable={isEditable}
         setIsEditable={setIsEditable}
@@ -150,7 +151,7 @@ const AboutMe: FC<IAboutMeProps> = ({
             {!isEditable ? (
               <div
                 className="whitespace-pre-wrap relative pt-4"
-                data-testid="aboutme-description"
+                data-testid="bio-description"
               >
                 {canEdit && isHovered && (
                   <div className="absolute right-0 top-4">
@@ -158,7 +159,7 @@ const AboutMe: FC<IAboutMeProps> = ({
                       name="edit"
                       size={16}
                       onClick={() => setIsEditable(!isEditable)}
-                      dataTestId="edit-about-me"
+                      dataTestId="edit-bio"
                     />
                   </div>
                 )}
@@ -176,6 +177,7 @@ const AboutMe: FC<IAboutMeProps> = ({
                       setIsEditable(false);
                       reset();
                     }}
+                    dataTestId="cancel-bio"
                   >
                     <Icon name="close" size={16} color="text-neutral-900" />
                   </IconWrapper>
@@ -183,6 +185,7 @@ const AboutMe: FC<IAboutMeProps> = ({
                     type={Type.Circle}
                     className="bg-primary-500 !p-2"
                     onClick={handleSubmit(onSubmit)}
+                    dataTestId="save-bio"
                   >
                     <Icon name="check" size={16} color="text-white" />
                   </IconWrapper>

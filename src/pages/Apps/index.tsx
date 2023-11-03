@@ -269,12 +269,12 @@ const Apps: FC<IAppsProps> = () => {
         <img
           src={AppsBanner}
           alt="Apps Banner"
-          className={`w-full py-6 ${imageLoading ? 'hidden' : ''}`}
+          className={`w-full py-4 ${imageLoading ? 'hidden' : ''}`}
           onLoad={() => setImageLoading(false)}
         />
         {imageLoading && <AppBannerSkeleton />}
         {/* App groups and sort/filter/search */}
-        <div className="flex justify-between pb-6">
+        <div className="flex justify-between pb-4">
           <div className="flex items-center gap-x-4">
             {isAdmin && (
               <Button
@@ -365,7 +365,7 @@ const Apps: FC<IAppsProps> = () => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
           {!isLoading ? (
             <div className="text-neutral-500">
               Showing {!isLoading && appsCount} results
@@ -389,7 +389,7 @@ const Apps: FC<IAppsProps> = () => {
                   <div
                     key={category.id}
                     className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1"
-                    data-testid={`applied-filterby-category`}
+                    data-testid={`apps-filterby-category`}
                   >
                     <div className="mr-1 text-neutral-500 whitespace-nowrap">
                       Category{' '}
@@ -414,7 +414,7 @@ const Apps: FC<IAppsProps> = () => {
                   <div
                     key={team.id}
                     className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1"
-                    data-testid={`people-filterby`}
+                    data-testid={`apps-filterby-team`}
                   >
                     <div className="mr-1 text-neutral-500">
                       Team <span className="text-primary-500">{team.name}</span>
@@ -427,7 +427,7 @@ const Apps: FC<IAppsProps> = () => {
                       onClick={() =>
                         handleRemoveFilters(AppFilterKey.teams, team.id)
                       }
-                      dataTestId={`people-filterby-close`}
+                      dataTestId={`applied-filter-close`}
                     />
                   </div>
                 ))}
@@ -435,7 +435,7 @@ const Apps: FC<IAppsProps> = () => {
               <div
                 className="text-neutral-500 border px-3 py-[3px] whitespace-nowrap rounded-7xl hover:text-primary-600 hover:border-primary-600 cursor-pointer"
                 onClick={clearFilters}
-                data-testid="teams-clear-filters"
+                data-testid="apps-clear-filters"
               >
                 Clear Filters
               </div>
@@ -445,7 +445,7 @@ const Apps: FC<IAppsProps> = () => {
           {!appFilters.featured && (
             <div>
               {featuredAppsCount > 0 && !isFeauturedAppLoading && (
-                <div className="flex justify-between mb-6">
+                <div className="flex justify-between mb-4">
                   <div className="text-xl font-bold">Featured</div>
                   <div
                     className="text-base font-semibold text-primary-500 cursor-pointer"
@@ -482,7 +482,7 @@ const Apps: FC<IAppsProps> = () => {
                 myApp={appFilters.myApp || !isAdmin}
               />
               {featuredAppsCount > 0 && !isFeauturedAppLoading && (
-                <div className="text-xl font-bold mt-6">All Apps</div>
+                <div className="text-xl font-bold mt-4">All Apps</div>
               )}
             </div>
           )}

@@ -8,6 +8,10 @@ import PageLoader from 'components/PageLoader';
 import { userChannel } from 'utils/misc';
 import { ILocation } from 'queries/location';
 import { IDepartment } from 'queries/department';
+import Smartlook from 'smartlook-client';
+import { getRemainingTime } from 'utils/time';
+import SubscriptionExpired from 'components/SubscriptionExpired';
+import AccountDeactivated from 'components/AccountDeactivated';
 
 type AuthContextProps = {
   children: ReactNode;
@@ -18,15 +22,21 @@ interface IOrganization {
   domain: string;
 }
 
+interface ISubscription {
+  type: string;
+  daysRemaining: number;
+}
+
 export interface IUser {
   id: string;
   name: string;
   email: string;
   role: Role;
   organization: IOrganization;
+  subscription?: ISubscription;
   workLocation?: ILocation;
   preferredName?: string;
-  designation?: string;
+  designation?: Record<string, any>;
   department?: IDepartment;
   location?: string;
   profileImage?: string;
@@ -38,12 +48,18 @@ export interface IUser {
 
 interface IAuthContext {
   user: IUser | null;
+  loggedIn: boolean;
+  sessionExpired: boolean;
+  accountDeactivated: boolean;
   reset: () => void;
   updateUser: (user: IUser) => void;
 }
 
 export const AuthContext = createContext<IAuthContext>({
   user: null,
+  loggedIn: false,
+  sessionExpired: false,
+  accountDeactivated: false,
   reset: () => {},
   updateUser: () => {},
 });
@@ -51,8 +67,11 @@ export const AuthContext = createContext<IAuthContext>({
 const AuthProvider: FC<AuthContextProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const queryClient = useQueryClient();
-  const [showOnboard, setShowOnboard] = useState<boolean>(false);
+  const [showOnboard, setShowOnboard] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState<IUser | null>(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const [accountDeactivated, setAccountDeactivated] = useState(false);
 
   const setupSession = async () => {
     const query = new URLSearchParams(window.location.search.substring(1));
@@ -80,6 +99,7 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
       try {
         const userData = await fetchMe();
         const data = userData?.result?.data;
+        setLoggedIn(true);
         setUser({
           id: data?.id,
           name: data?.fullName,
@@ -96,6 +116,13 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
           department: data?.department,
           workLocation: data?.workLocation,
           outOfOffice: data?.outOfOffice,
+          subscription: {
+            type: data?.org?.subscription.type,
+            daysRemaining: Math.max(
+              getRemainingTime(data?.org?.subscription?.subscriptionExpiresAt),
+              0,
+            ),
+          },
         });
       } catch (e: any) {
         if (e?.response?.status === 401) {
@@ -107,8 +134,47 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
     setLoading(false);
   };
 
+  const initSmartlook = () => {
+    // @ts-ignores
+    if (['production', 'staging', 'qa'].includes(process.env.REACT_APP_ENV)) {
+      // @ts-ignores
+      Smartlook.init(process.env.REACT_APP_SMARTLOOK_KEY);
+    }
+  };
+
+  const setupSmartlookIdentity = () => {
+    if (user) {
+      Smartlook.identify(user.id, {
+        uid: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      });
+    }
+  };
+
+  const sessionExpiredCallback = () => setSessionExpired(true);
+
+  const accountDeactivatedCallback = () => setAccountDeactivated(true);
+
   useEffect(() => {
+    initSmartlook();
     setupSession();
+    window.document.addEventListener('session_expired', sessionExpiredCallback);
+    window.document.addEventListener(
+      'account_deactivated',
+      accountDeactivatedCallback,
+    );
+    return () => {
+      window.document.removeEventListener(
+        'session_expired',
+        sessionExpiredCallback,
+      );
+      window.document.removeEventListener(
+        'account_deactivated',
+        accountDeactivatedCallback,
+      );
+    };
   }, []);
 
   const reset = () => {
@@ -126,6 +192,12 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      setupSmartlookIdentity();
+    }
+  }, [user]);
+
   const updateUser = (user: IUser) => setUser((u) => ({ ...u, ...user }));
 
   if (loading) {
@@ -137,9 +209,20 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, reset, updateUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        sessionExpired,
+        accountDeactivated,
+        reset,
+        loggedIn,
+        updateUser,
+      }}
+    >
       {children}
       {showOnboard && <UserOnboard />}
+      {sessionExpired && user?.id && <SubscriptionExpired />}
+      {accountDeactivated && user?.id && <AccountDeactivated />}
     </AuthContext.Provider>
   );
 };

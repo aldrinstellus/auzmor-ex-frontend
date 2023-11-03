@@ -6,7 +6,16 @@ import IconButton, {
 import useModal from 'hooks/useModal';
 import { FC, MutableRefObject, useMemo, useState } from 'react';
 import { Control, UseFormResetField, UseFormWatch } from 'react-hook-form';
-import { FOCUS_ZOOM, IForm, IZoom, MAX_ZOOM, MIN_ZOOM, OrgChartMode } from '..';
+import {
+  FOCUS_ZOOM,
+  IForm,
+  IZoom,
+  MAX_ZOOM,
+  MAX_ZOOM_PERCENTAGE,
+  MIN_ZOOM,
+  MIN_ZOOM_PERCENTAGE,
+  OrgChartMode,
+} from '..';
 import clsx from 'clsx';
 import Icon from 'components/Icon';
 import Tooltip from 'components/Tooltip';
@@ -28,6 +37,7 @@ import { INode } from './Chart';
 import { isFiltersEmpty, mapRanges } from 'utils/misc';
 import { QueryFunctionContext } from '@tanstack/react-query';
 import NoDataFound from 'components/NoDataFound';
+import Button, { Variant } from 'components/Button';
 
 interface IToolbarProps {
   activeMode: OrgChartMode;
@@ -46,6 +56,8 @@ interface IToolbarProps {
   zoom: IZoom;
   parentId: string | null;
   setShowLoader: (flag: boolean) => void;
+  setShowOrgChart: (flag: boolean) => void;
+  isSafari: boolean;
 }
 
 const Toolbar: FC<IToolbarProps> = ({
@@ -65,6 +77,8 @@ const Toolbar: FC<IToolbarProps> = ({
   zoom,
   parentId,
   setShowLoader,
+  setShowOrgChart,
+  isSafari = false,
 }) => {
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const [memberSearchString, setMemberSearchString] = useState<string>('');
@@ -74,7 +88,7 @@ const Toolbar: FC<IToolbarProps> = ({
 
   const isFilterApplied =
     !!appliedFilters?.departments?.length ||
-    !!appliedFilters?.location?.length ||
+    !!appliedFilters?.locations?.length ||
     !!appliedFilters?.status?.length;
 
   // fetch users on start with specific user
@@ -88,7 +102,8 @@ const Toolbar: FC<IToolbarProps> = ({
       root: parentId || undefined,
       expand: parentId ? 1 : undefined,
       locations:
-        appliedFilters?.location?.map((location) => (location as any).id) || [],
+        appliedFilters?.locations?.map((location) => (location as any).id) ||
+        [],
       departments:
         appliedFilters?.departments?.map(
           (department) => (department as any).id,
@@ -122,7 +137,8 @@ const Toolbar: FC<IToolbarProps> = ({
       root: parentId || undefined,
       expand: parentId ? 1 : undefined,
       locations:
-        appliedFilters?.location?.map((location) => (location as any).id) || [],
+        appliedFilters?.locations?.map((location) => (location as any).id) ||
+        [],
       departments:
         appliedFilters?.departments?.map(
           (department) => (department as any).id,
@@ -148,13 +164,15 @@ const Toolbar: FC<IToolbarProps> = ({
       type: FieldType.AsyncSingleSelect,
       control,
       name: 'userSearch',
-      className: 'mr-2 min-w-[245px]',
+      dataTestId: 'orgChart-search',
+      className: `mr-2 min-w-[245px] ${isSafari && 'opacity-50'}`,
       selectClassName: 'org-select',
       placeholder: 'Search members',
       suffixIcon: <></>,
       clearIcon: (
         <Icon name="closeCircle" size={16} className="-mt-0.5 !mr-4" />
       ),
+      disabled: isSafari,
       isClearable: true,
       isLoading: isFetching,
       options: userData?.map(
@@ -163,7 +181,7 @@ const Toolbar: FC<IToolbarProps> = ({
             value: member.userName,
             label: member.userName,
             disabled: false,
-            dataTestId: member.id,
+            dataTestId: `user-search-result-${member.id}`,
             rowData: member,
           } as IOption),
       ),
@@ -190,7 +208,13 @@ const Toolbar: FC<IToolbarProps> = ({
                 ?.expandAll()
                 ?.setFocus(
                   user?.id,
-                  mapRanges(0, 100, MIN_ZOOM, MAX_ZOOM, FOCUS_ZOOM),
+                  mapRanges(
+                    MIN_ZOOM_PERCENTAGE,
+                    MAX_ZOOM_PERCENTAGE,
+                    MIN_ZOOM,
+                    MAX_ZOOM,
+                    FOCUS_ZOOM,
+                  ),
                 );
             } else {
               // fetch missing nodes.
@@ -199,7 +223,7 @@ const Toolbar: FC<IToolbarProps> = ({
                   'organization-chart',
                   {
                     locations:
-                      appliedFilters?.location?.map(
+                      appliedFilters?.locations?.map(
                         (location) => (location as any).id,
                       ) || [],
                     departments:
@@ -221,7 +245,7 @@ const Toolbar: FC<IToolbarProps> = ({
                     {
                       root: user?.parentId,
                       locations:
-                        appliedFilters?.location?.map(
+                        appliedFilters?.locations?.map(
                           (location) => (location as any).id,
                         ) || [],
                       departments:
@@ -241,7 +265,13 @@ const Toolbar: FC<IToolbarProps> = ({
                     ?.expandAll()
                     ?.setFocus(
                       user?.id,
-                      mapRanges(0, 100, MIN_ZOOM, MAX_ZOOM, FOCUS_ZOOM),
+                      mapRanges(
+                        MIN_ZOOM_PERCENTAGE,
+                        MAX_ZOOM_PERCENTAGE,
+                        MIN_ZOOM,
+                        MAX_ZOOM,
+                        FOCUS_ZOOM,
+                      ),
                     );
                   setIsExpandAll(true);
                 });
@@ -303,7 +333,7 @@ const Toolbar: FC<IToolbarProps> = ({
   );
   const resetAppliedFilters = () => {
     setAppliedFilters({
-      location: [],
+      locations: [],
       departments: [],
       status: [],
     });
@@ -325,11 +355,16 @@ const Toolbar: FC<IToolbarProps> = ({
   };
   return (
     <>
-      <div className="flex flex-col mt-7 px-4 py-3 mb-8 w-full shadow-lg rounded-9xl bg-white max-w-[1440px]">
+      <div className="absolute flex flex-col px-4 py-3 w-full shadow-lg rounded-9xl bg-white max-w-[1440px] z-10 top-6">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
+            <div className="text-2xl font-bold mr-4">Organization Chart</div>
             <Layout fields={memberSearchfields} />
-            <div className="flex items-center justify-center w-9 h-9">
+            <div
+              className={`flex items-center justify-center w-9 h-9 ${
+                isSafari && 'pointer-events-none opacity-50'
+              }`}
+            >
               <IconButton
                 onClick={openFilterModal}
                 icon="filterLinear"
@@ -337,11 +372,15 @@ const Toolbar: FC<IToolbarProps> = ({
                 size={IconSize.Medium}
                 borderAround
                 className="bg-white"
-                dataTestId="people-filter"
+                dataTestId="orgchart-filters"
               />
             </div>
           </div>
-          <div className="p-1 rounded-9xl border-neutral-200 border bg-neutral-50 flex items-center">
+          <div
+            className={`p-1 rounded-9xl border-neutral-200 border bg-neutral-50 flex items-center ${
+              isSafari && 'pointer-events-none opacity-50'
+            }`}
+          >
             <div
               className={teamClassName}
               onClick={() => {
@@ -349,6 +388,7 @@ const Toolbar: FC<IToolbarProps> = ({
                 setParentId(getParentId());
                 setStartWithSpecificUser(null);
               }}
+              data-testid="orgchart-myteam-cta"
             >
               My Team
             </div>
@@ -358,6 +398,7 @@ const Toolbar: FC<IToolbarProps> = ({
                 setActiveMode(OrgChartMode.Overall);
                 setParentId(null);
               }}
+              data-testid="orgchart-overall-cta"
             >
               Overall
             </div>
@@ -370,7 +411,11 @@ const Toolbar: FC<IToolbarProps> = ({
               borderAround
               color="text-neutral-900"
             /> */}
-            <div className="border-neutral-200 border rounded-9xl px-6 py-2 flex items-center ml-4">
+            <div
+              className={`border-neutral-200 border rounded-9xl px-6 py-2 flex items-center ml-4 ${
+                isSafari && 'pointer-events-none opacity-50'
+              }`}
+            >
               <Popover
                 triggerNode={
                   <Tooltip
@@ -382,6 +427,7 @@ const Toolbar: FC<IToolbarProps> = ({
                         name="groupOutline"
                         color="text-neutral-900"
                         size={16}
+                        dataTestId="startwith-cta"
                       />
                     </div>
                   </Tooltip>
@@ -405,6 +451,7 @@ const Toolbar: FC<IToolbarProps> = ({
                                 ? undefined
                                 : member.profileImage,
                             }}
+                            dataTestId={`user-search-result-${member.id}`}
                             key={member.id}
                             onClick={() => {
                               clearAllFilters();
@@ -435,6 +482,7 @@ const Toolbar: FC<IToolbarProps> = ({
                 >
                   <Icon
                     name={isExpandAll ? 'collapseOutline' : 'expandOutline'}
+                    dataTestId="expand-collapse-cta"
                     color="text-neutral-900"
                     onClick={() => {
                       if (isExpandAll) {
@@ -451,7 +499,7 @@ const Toolbar: FC<IToolbarProps> = ({
                                   : true,
                               root: parentId || startWithSpecificUser?.id,
                               locations:
-                                appliedFilters?.location?.map(
+                                appliedFilters?.locations?.map(
                                   (location) => (location as any).id,
                                 ) || [],
                               departments:
@@ -490,6 +538,7 @@ const Toolbar: FC<IToolbarProps> = ({
                     name="fullScreen"
                     color="text-neutral-900"
                     className="flex items-center"
+                    dataTestId="orgchart-fittoscreen"
                     onClick={() => {
                       clearSpotlight();
                       chartRef.current?.fit();
@@ -503,12 +552,19 @@ const Toolbar: FC<IToolbarProps> = ({
                   <Icon
                     name="focus"
                     color="text-neutral-900"
+                    dataTestId="orgchart-spotlightme"
                     onClick={() => {
                       clearSpotlight();
                       clearAllFilters();
                       chartRef.current?.setFocus(
                         user?.id || '',
-                        mapRanges(0, 100, MIN_ZOOM, MAX_ZOOM, FOCUS_ZOOM),
+                        mapRanges(
+                          MIN_ZOOM_PERCENTAGE,
+                          MAX_ZOOM_PERCENTAGE,
+                          MIN_ZOOM,
+                          MAX_ZOOM,
+                          FOCUS_ZOOM,
+                        ),
                       );
                     }}
                     size={24}
@@ -520,6 +576,7 @@ const Toolbar: FC<IToolbarProps> = ({
                 <Tooltip tooltipContent="Zoom out" tooltipPosition="bottom">
                   <Icon
                     name="zoomOutOutline"
+                    dataTestId="zoom-out"
                     color="text-neutral-900"
                     onClick={() => {
                       chartRef.current?.zoomOut();
@@ -528,9 +585,18 @@ const Toolbar: FC<IToolbarProps> = ({
                   />
                 </Tooltip>
               </div>
-              <div className="text-neutral-900 font-bold text-sm mx-4 w-6 flex justify-center">
+              <div
+                className="text-neutral-900 font-bold text-sm mx-4 w-6 flex justify-center"
+                data-testid="zoom-percentage"
+              >
                 {Math.round(
-                  mapRanges(zoom.range[0], zoom.range[1], 0, 100, zoom.zoom),
+                  mapRanges(
+                    zoom.range[0],
+                    zoom.range[1],
+                    MIN_ZOOM_PERCENTAGE,
+                    MAX_ZOOM_PERCENTAGE,
+                    zoom.zoom,
+                  ),
                 )}
                 %
               </div>
@@ -538,6 +604,7 @@ const Toolbar: FC<IToolbarProps> = ({
                 <Tooltip tooltipContent="Zoom in" tooltipPosition="bottom">
                   <Icon
                     name="zoomInOutline"
+                    dataTestId="zoom-in"
                     color="text-neutral-900"
                     onClick={() => chartRef.current?.zoomIn()}
                     size={16}
@@ -545,6 +612,16 @@ const Toolbar: FC<IToolbarProps> = ({
                 </Tooltip>
               </div>
             </div>
+            <Button
+              className="flex space-x-[6px] group ml-2"
+              label="View People Hub"
+              variant={Variant.Secondary}
+              leftIcon="peopleOutline"
+              leftIconSize={20}
+              dataTestId="view-peoplehub-cta"
+              iconColor="text-black"
+              onClick={() => setShowOrgChart(false)}
+            />
           </div>
         </div>
         {!!startWithSpecificUser && <Divider className="my-2" />}
@@ -552,7 +629,10 @@ const Toolbar: FC<IToolbarProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               {startWithSpecificUser && (
-                <div className="flex items-center mr-2">
+                <div
+                  className="flex items-center mr-2"
+                  data-testid="startwith-search-result"
+                >
                   <div className="flex items-center text-neutral-900 text-sm font-bold mr-1">
                     Start with specific person:
                   </div>
@@ -587,6 +667,7 @@ const Toolbar: FC<IToolbarProps> = ({
               onClick={() => {
                 setStartWithSpecificUser(null);
               }}
+              data-testid="startwith-clearfilter-cta"
             >
               Clear filters
             </div>
@@ -599,27 +680,27 @@ const Toolbar: FC<IToolbarProps> = ({
               <div className="text-neutral-900 font-bold text-sm mr-2">
                 Filter by:
               </div>
-              {!!appliedFilters?.location?.length && (
+              {!!appliedFilters?.locations?.length && (
                 <div
                   className="flex px-3 py-2 text-primary-500 text-sm font-medium border border-neutral-200 rounded-7xl justify-between mr-2 hover:border-primary-600 group cursor-pointer"
                   onClick={() =>
-                    setAppliedFilters({ ...appliedFilters, location: [] })
+                    setAppliedFilters({ ...appliedFilters, locations: [] })
                   }
                 >
                   <div className="font-medium text-sm text-neutral-900 mr-1">
                     Location{' '}
-                    {appliedFilters.location.map((location, index) => (
+                    {appliedFilters.locations.map((location, index) => (
                       <>
                         <span
-                          key={location.locationId}
+                          key={location.id}
                           className="text-primary-500 font-bold text-sm"
                         >
                           {location.name}
                         </span>
-                        {appliedFilters?.location &&
-                          index !== appliedFilters?.location?.length - 1 && (
+                        {appliedFilters?.locations &&
+                          index !== appliedFilters?.locations?.length - 1 && (
                             <span>
-                              {appliedFilters?.location?.length === 2
+                              {appliedFilters?.locations?.length === 2
                                 ? ' and '
                                 : ', '}
                             </span>
@@ -632,8 +713,9 @@ const Toolbar: FC<IToolbarProps> = ({
                       name="close"
                       size={16}
                       onClick={() =>
-                        setAppliedFilters({ ...appliedFilters, location: [] })
+                        setAppliedFilters({ ...appliedFilters, locations: [] })
                       }
+                      dataTestId="filter-options-close"
                     />
                   </div>
                 </div>
@@ -653,7 +735,7 @@ const Toolbar: FC<IToolbarProps> = ({
                     {appliedFilters.departments.map((department, index) => (
                       <>
                         <span
-                          key={department.departmentId}
+                          key={department.id}
                           className="text-primary-500 font-bold text-sm"
                         >
                           {department.name}
@@ -679,6 +761,7 @@ const Toolbar: FC<IToolbarProps> = ({
                           departments: [],
                         })
                       }
+                      dataTestId="filter-options-close"
                     />
                   </div>
                 </div>
@@ -724,6 +807,7 @@ const Toolbar: FC<IToolbarProps> = ({
                           status: [],
                         })
                       }
+                      dataTestId="filter-options-close"
                     />
                   </div>
                 </div>
@@ -734,6 +818,7 @@ const Toolbar: FC<IToolbarProps> = ({
               onClick={() => {
                 resetAppliedFilters();
               }}
+              data-testid="orgchart-clearfilter-cta"
             >
               Clear filters
             </div>
