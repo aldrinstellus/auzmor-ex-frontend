@@ -48,7 +48,7 @@ const UserCard: FC<IUserCardProps> = ({ className }) => {
             )}
 
             {userDetails?.workLocation?.name && (
-              <div className="text-sm text-neutral-500 leading-[15px] font-normal truncate w-full text-center flex gap-1 justify-center items-center">
+              <div className="text-sm text-neutral-500 leading-[16px] font-normal truncate w-full text-center flex gap-1 justify-center items-center">
                 <Icon
                   name="location"
                   size={16}
