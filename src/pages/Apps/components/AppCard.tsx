@@ -232,43 +232,53 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
   return (
     <div {...appCardEventHandlers} data-testid="app-card" className="w-full">
       {/* <Link to={app.url} target="_blank"> */}
-      <Card className="relative border-1 p-3 flex gap-2" shadowOnHover>
-        {/* App logo */}
-        <div className="p-2 bg-neutral-100 rounded-xl min-w-[60px] min-h-[60px]">
-          <img
-            src={app?.icon?.original || DefaultAppIcon}
-            height={44}
-            width={44}
-          />
-        </div>
-
-        {/* App details */}
-        <div className="flex flex-col gap-1">
-          {/* App name */}
-          <div
-            className="text-sm font-bold text-neutral-900 line-clamp-1"
-            data-testid="app-name"
-          >
-            {app.label}
+      <Card className="relative border-1 p-3 " shadowOnHover>
+        <div
+          className="flex gap-2"
+          onClick={() =>
+            window.open(
+              `${window.location.origin}/apps/${app.id}/launch`,
+              '_target',
+            )
+          }
+        >
+          {/* App logo */}
+          <div className="p-2 bg-neutral-100 rounded-xl min-w-[60px] min-h-[60px]">
+            <img
+              src={app?.icon?.original || DefaultAppIcon}
+              height={44}
+              width={44}
+            />
           </div>
-          {/* App category */}
-          {app.category && (
-            <div className="flex">
-              <Badge
-                text={app.category.name}
-                textClassName="text-blue-500 text-xxs py-0 leading-2"
-                bgClassName="bg-blue-100 border-1 border-blue-300"
-                dataTestId="app-category"
-              />
+
+          {/* App details */}
+          <div className="flex flex-col gap-1">
+            {/* App name */}
+            <div
+              className="text-sm font-bold text-neutral-900 line-clamp-1"
+              data-testid="app-name"
+            >
+              {app.label}
             </div>
-          )}
-          {/* App description */}
-          <p
-            className="text-neutral-500 line-clamp-1 text-xxs"
-            data-testid="app-description"
-          >
-            {app.description}
-          </p>
+            {/* App category */}
+            {app.category && (
+              <div className="flex">
+                <Badge
+                  text={app.category.name}
+                  textClassName="text-blue-500 text-xxs py-0 leading-2"
+                  bgClassName="bg-blue-100 border-1 border-blue-300"
+                  dataTestId="app-category"
+                />
+              </div>
+            )}
+            {/* App description */}
+            <p
+              className="text-neutral-500 line-clamp-1 text-xxs"
+              data-testid="app-description"
+            >
+              {app.description}
+            </p>
+          </div>
         </div>
 
         {/* App menu popover */}
