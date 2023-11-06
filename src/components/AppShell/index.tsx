@@ -4,6 +4,7 @@ import { FC, ReactNode } from 'react';
 import Navbar from './components/Navbar';
 import { useOrgChartStore } from 'stores/orgChartStore';
 import clsx from 'clsx';
+import { useLocation } from 'react-router-dom';
 
 export interface IAppShellProps {
   children: ReactNode;
@@ -11,6 +12,7 @@ export interface IAppShellProps {
 
 const AppShell: FC<IAppShellProps> = ({ children }) => {
   const { isOrgChartMounted } = useOrgChartStore();
+  const { pathname } = useLocation();
   const wraperStyle = clsx({
     'flex w-full justify-center min-h-[calc(100%-64px)]': true,
     'px-14 pt-6': !isOrgChartMounted,
@@ -19,9 +21,13 @@ const AppShell: FC<IAppShellProps> = ({ children }) => {
     'w-full': true,
     'max-w-[1440px]': !isOrgChartMounted,
   });
+
+  const showNavbar =
+    !pathname.startsWith('/apps') || !pathname.endsWith('/launch');
+
   return (
     <div className="bg-neutral-100 h-screen overflow-y-auto">
-      <Navbar />
+      {showNavbar && <Navbar />}
       <div className={wraperStyle}>
         <div className={containerStyle}>{children}</div>
       </div>

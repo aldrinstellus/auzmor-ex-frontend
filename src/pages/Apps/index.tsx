@@ -1,7 +1,7 @@
 import Button, { Variant as ButtonVariant } from 'components/Button';
 import Card from 'components/Card';
 import { FC, useEffect, useState } from 'react';
-import AppsBanner from 'images/appsBanner.png';
+// import AppsBanner from 'images/appsBanner.png';
 import IconButton, {
   Variant as IconVariant,
   Size as IconSize,
@@ -21,7 +21,7 @@ import { useDebounce } from 'hooks/useDebounce';
 import { isFiltersEmpty } from 'utils/misc';
 import AppList from './components/AppList';
 import Icon from 'components/Icon';
-import AppBannerSkeleton from './components/Skeletons/AppBannerSkeleton';
+// import AppBannerSkeleton from './components/Skeletons/AppBannerSkeleton';
 import useRole from 'hooks/useRole';
 import Skeleton from 'react-loading-skeleton';
 import Sort from 'components/Sort';
@@ -96,7 +96,7 @@ const Apps: FC<IAppsProps> = () => {
   const [featuredAppsCount, setFeaturedAppsCount] = useState<any>();
   const [isLoading, setIsLoading] = useState(false);
   const [isFeauturedAppLoading, setIsFeaturedAppLoading] = useState(false);
-  const [imageLoading, setImageLoading] = useState(true);
+  // const [imageLoading, setImageLoading] = useState(true);
   const [startFetching, setStartFetching] = useState(false);
 
   const selectedButtonClassName = '!bg-primary-50 text-primary-500 text-sm';
@@ -266,15 +266,15 @@ const Apps: FC<IAppsProps> = () => {
           )}
         </div>
         {/* Banner */}
-        <img
+        {/* <img
           src={AppsBanner}
           alt="Apps Banner"
           className={`w-full py-4 ${imageLoading ? 'hidden' : ''}`}
           onLoad={() => setImageLoading(false)}
-        />
-        {imageLoading && <AppBannerSkeleton />}
+        /> */}
+        {/* {imageLoading && <AppBannerSkeleton />} */}
         {/* App groups and sort/filter/search */}
-        <div className="flex justify-between pb-4">
+        <div className="flex justify-between py-4">
           <div className="flex items-center gap-x-4">
             {isAdmin && (
               <Button
