@@ -1,10 +1,6 @@
+import { JobTypesEnum, getJobStep, startJobStep } from 'queries/job';
 import { ReactNode } from 'react';
-import apiService from 'utils/apiService';
 import { create } from 'zustand';
-
-enum BulkInsertEnum {
-  UserCreation = 'USER_CREATION',
-}
 
 interface IJobStore {
   progress: number;
@@ -21,8 +17,8 @@ interface IJobStore {
 
 export const useJobStore = create<IJobStore>((set) => ({
   progress: 0,
-  heading: 'Uploading 10 out of 20 members...',
-  showJobProgress: true,
+  heading: '',
+  showJobProgress: false,
   content: null,
   setProgress: (progress) => set(() => ({ progress })),
   setHeading: (heading) => set(() => ({ heading })),
@@ -35,8 +31,8 @@ export const useJobStore = create<IJobStore>((set) => ({
       showJobProgress: true,
       content: null,
     }));
-    const response = await apiService.post(`/jobs/${jobId}/steps`, {
-      type: BulkInsertEnum.UserCreation,
+    const response = await startJobStep(jobId, {
+      type: JobTypesEnum.UserCreation,
     });
     if (response) {
       const progressData = response.result.data;
@@ -46,8 +42,8 @@ export const useJobStore = create<IJobStore>((set) => ({
         showJobProgress: true,
         content: null,
         pollInterval: setInterval(async () => {
-          const progressData = await apiService.get(`/jobs/${jobId}/step`, {
-            type: BulkInsertEnum.UserCreation,
+          const progressData = await getJobStep(jobId, {
+            type: JobTypesEnum.UserCreation,
           });
           console.log(progressData);
         }, 200),
