@@ -94,7 +94,7 @@ const UserSettings = () => {
                 className={`${
                   item.key === activeSettingsPage.key
                     ? 'text-primary-500'
-                    : 'text-neutral-500'
+                    : 'text-neutral-900'
                 } text-sm font-medium p-4 flex items-center gap-x-3`}
               >
                 <Icon

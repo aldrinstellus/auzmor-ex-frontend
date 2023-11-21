@@ -1,31 +1,12 @@
 import Card from 'components/Card';
-import Collapse from 'components/Collapse';
 import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import SSOSettings from 'components/SSOSettings';
-import Spinner from 'components/Spinner';
-import SwitchToggle from 'components/SwitchToggle';
-import {
-  useOrganization,
-  useUpdateLimitGlobalPostingMutation,
-} from 'queries/organization';
+import { useOrganization } from 'queries/organization';
 import { FC, useMemo, useState } from 'react';
-import queryClient from 'utils/queryClient';
-interface IAdminProps {}
+import GeneralSettings from './GeneralSettings';
 
-// interface ISetting {
-//   label: string;
-//   icon: string;
-//   key: string;
-//   component: ReactNode;
-//   disabled: boolean;
-//   hidden: boolean;
-//   dataTestId?: string;
-// }
-
-const Admin: FC<IAdminProps> = () => {
-  const updateLimitPostingControlsMutation =
-    useUpdateLimitGlobalPostingMutation();
+const Admin: FC = () => {
   const { data, isLoading } = useOrganization();
   const settings = useMemo(
     () => [
@@ -33,50 +14,7 @@ const Admin: FC<IAdminProps> = () => {
         label: 'General settings',
         icon: 'gearOutline',
         key: 'general-settings',
-        component: (
-          <Collapse
-            defaultOpen
-            label="Posting controls"
-            className="rounded-9xl overflow-hidden"
-            headerClassName="px-4 py-2 bg-blue-50"
-            headerTextClassName="text-base font-bold text-neutral-900"
-            dataTestId="generalsetting-postingcontrols"
-          >
-            <div className="bg-white">
-              <div className="px-6 py-4 flex justify-between">
-                <div className="flex flex-col">
-                  <div className="text-neutral-900 font-semibold text-sm">
-                    Limit global posting
-                  </div>
-                  <div
-                    className="text-xs text-neutral-900"
-                    data-testid="globalposting-helpnote"
-                  >
-                    When Global Posting is ON, end users can&apos;t post to
-                    everyone, only to their Team(s) or permitted Channels.
-                  </div>
-                </div>
-                {isLoading ? (
-                  <Spinner />
-                ) : (
-                  <SwitchToggle
-                    onChange={(checked: boolean, setChecked) =>
-                      updateLimitPostingControlsMutation.mutate(checked, {
-                        onError: () => setChecked(!checked),
-                        onSuccess: () =>
-                          queryClient.invalidateQueries(['organization']),
-                      })
-                    }
-                    defaultValue={
-                      !!data?.adminSettings?.postingControls?.limitGlobalPosting
-                    }
-                    dataTestId="postingcontrols-globalposting-cta"
-                  />
-                )}
-              </div>
-            </div>
-          </Collapse>
-        ),
+        component: <GeneralSettings />,
         disabled: false,
         hidden: false,
         dataTestId: 'adminsettings-generalsetting',
@@ -96,7 +34,7 @@ const Admin: FC<IAdminProps> = () => {
         key: 'branding-settings',
         component: <div>Branding Settings Page</div>,
         disabled: false,
-        hidden: true,
+        hidden: false,
         dataTestId: 'settings-branding',
       },
       {
@@ -163,7 +101,7 @@ const Admin: FC<IAdminProps> = () => {
                 className={`${
                   item.key === visibleSettings[activeSettingsIndex].key
                     ? 'text-primary-500'
-                    : 'text-neutral-500'
+                    : 'text-neutral-900'
                 } text-sm font-medium p-4 flex items-center gap-x-3`}
               >
                 <Icon
