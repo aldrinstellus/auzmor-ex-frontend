@@ -27,3 +27,6 @@ export const BRANDING = {
     color: '#123456',
   },
 };
+
+export const MB = 1 * 1024 * 1024; // 1 MB
+export const KB = 1 * 1024; // 1 KB
