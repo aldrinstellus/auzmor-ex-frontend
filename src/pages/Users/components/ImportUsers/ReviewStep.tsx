@@ -2,12 +2,13 @@
 import Button, { Size, Variant } from 'components/Button';
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { StepEnum } from './utils';
 import { useInfiniteUsers } from 'queries/users';
 import { useInView } from 'react-intersection-observer';
 import 'react-data-grid/lib/styles.css';
 import DataGrid, { RenderRowProps, Row } from 'react-data-grid';
+import SwitchToggle from 'components/SwitchToggle';
 
 type AppProps = {
   open: boolean;
@@ -16,6 +17,7 @@ type AppProps = {
 };
 
 const ReviewStep: React.FC<AppProps> = ({ open, closeModal, setStep }) => {
+  const [showOnlyError, setShowOnlyError] = useState(false);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteUsers({});
 
@@ -83,8 +85,15 @@ const ReviewStep: React.FC<AppProps> = ({ open, closeModal, setStep }) => {
         ) : (
           <div className="bg-white">
             <div className="px-6">
-              <div className="py-4 text-sm text-neutral-900">
-                Only show rows with problem
+              <div className="py-4 text-sm text-neutral-900 v-center space-x-2">
+                <SwitchToggle
+                  className="!h-5 !w-10"
+                  defaultValue={showOnlyError}
+                  onChange={(c) => {
+                    setShowOnlyError(c);
+                  }}
+                />
+                <span className="text-sm">Only show rows with problem</span>
               </div>
 
               <DataGrid
@@ -94,7 +103,7 @@ const ReviewStep: React.FC<AppProps> = ({ open, closeModal, setStep }) => {
                 rowKeyGetter={rowKeyGetter}
                 rowHeight={32}
                 headerRowHeight={36}
-                className="text-xs rdg-light h-[70vh]"
+                className="text-xs rdg-light h-[65vh]"
                 onScroll={handleScroll}
               />
               {isFetchingNextPage && (
