@@ -17,10 +17,32 @@ import { MB } from 'utils/constants';
 import { IRadioListOption } from 'components/RadioGroup';
 
 const BrandingSettings: FC = () => {
-  const { control, setValue, watch } = useForm();
+  const backgroundOption: IRadioListOption[] = [
+    {
+      data: { value: 'Color' },
+      dataTestId: 'color',
+    },
+    {
+      data: { value: 'Video' },
+      dataTestId: 'video',
+    },
+    {
+      data: { value: 'Image' },
+      dataTestId: 'image',
+    },
+  ];
+  const { control, setValue, watch } = useForm({
+    defaultValues: {
+      primaryColor: '#10B981',
+      secondaryColor: '#1d4ed8',
+      loginBackgroundType: backgroundOption[2].data.value,
+      textColor: '#123456',
+    },
+  });
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
   const [selectedFavicon, setSelectedFavicon] = useState<File | null>(null);
   const [selectedBG, setSelectedBG] = useState<File | null>(null);
+  const [selectedBGVideo, setSelectedBGVideo] = useState<File | null>(null);
   const [logoValidation, setLogoValidation] = useState<IMediaValidationError[]>(
     [],
   );
@@ -28,18 +50,20 @@ const BrandingSettings: FC = () => {
     IMediaValidationError[]
   >([]);
   const [bgValidation, setBGValidation] = useState<IMediaValidationError[]>([]);
+  const [bgVideoValidation, setBGVideoValidation] = useState<
+    IMediaValidationError[]
+  >([]);
   const [showSecondaryColor, setShowSecondaryColor] = useState(false);
   const [layoutAlignment, setLayoutAlignment] = useState<
     'CENTER' | 'LEFT' | 'RIGHT'
   >('RIGHT');
 
-  const [primaryColor, secondaryColor, loginBackgroundType] = watch([
+  const [primaryColor, secondaryColor, loginBackgroundType, textColor] = watch([
     'primaryColor',
     'secondaryColor',
     'loginBackgroundType',
+    'textColor',
   ]);
-
-  console.log(loginBackgroundType);
 
   const { getRootProps: getRootPropsLogo, getInputProps: getInputPropsLogo } =
     useDropzone({
@@ -196,13 +220,13 @@ const BrandingSettings: FC = () => {
         const fimeName = rejection[0].file.name;
         if (error.code === 'file-invalid-type') {
           setBGValidation([
-            ...faviconValidation.filter(
+            ...bgValidation.filter(
               (error) =>
                 error.errorType !== MediaValidationError.FileTypeNotSupported,
             ),
             {
               errorMsg: `File type must be .png, .jpg, .jpeg, .svg, .ico`,
-              errorType: MediaValidationError.IncorrectDimension,
+              errorType: MediaValidationError.FileTypeNotSupported,
               fileName: fimeName,
             },
           ]);
@@ -247,13 +271,69 @@ const BrandingSettings: FC = () => {
       },
     });
 
-  const resetValidationError = (type: 'LOGO' | 'FAVICON' | 'BG') => {
+  const {
+    getRootProps: getRootPropsBGVideo,
+    getInputProps: getInputPropsBGVideo,
+  } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      setSelectedBG(acceptedFiles[0]);
+    },
+    maxFiles: 1,
+    accept: {
+      'video/mp4': ['.mp4'],
+      'video/webm': ['.webm'],
+    },
+    onDropRejected: (rejection) => {
+      // extension validation
+      const error = rejection[0].errors[0];
+      const fimeName = rejection[0].file.name;
+      if (error.code === 'file-invalid-type') {
+        setBGVideoValidation([
+          ...bgVideoValidation.filter(
+            (error) =>
+              error.errorType !== MediaValidationError.FileTypeNotSupported,
+          ),
+          {
+            errorMsg: `File type must be .mp4, .webm`,
+            errorType: MediaValidationError.FileTypeNotSupported,
+            fileName: fimeName,
+          },
+        ]);
+      }
+    },
+    validator: (file) => {
+      // size validation
+      if (file.size > 1 * MB) {
+        setBGValidation([
+          ...faviconValidation.filter(
+            (error) => error.errorType !== MediaValidationError.VideoSizeExceed,
+          ),
+          {
+            errorMsg: `Max file size 5mb`,
+            errorType: MediaValidationError.VideoSizeExceed,
+            fileName: file.name,
+          },
+        ]);
+      }
+      return null;
+    },
+  });
+
+  const resetValidationError = (
+    type: 'LOGO' | 'FAVICON' | 'BACKGROUND_IMAGE' | 'BACKGROUND_VIDEO',
+  ) => {
     switch (type) {
       case 'LOGO':
         setLogoValidation([]);
         return;
       case 'FAVICON':
         setFaviconValidation([]);
+        return;
+      case 'BACKGROUND_IMAGE':
+        setBGValidation([]);
+        return;
+      case 'BACKGROUND_VIDEO':
+        setBGVideoValidation([]);
     }
   };
 
@@ -416,7 +496,6 @@ const BrandingSettings: FC = () => {
                     control,
                     className: '',
                     dataTestId: 'primary-color',
-                    defaultValue: '#10B981',
                     setValue,
                   },
                 ]}
@@ -431,7 +510,6 @@ const BrandingSettings: FC = () => {
                       control,
                       className: '',
                       dataTestId: 'secondary-color',
-                      defaultValue: '#1d4ed8',
                       setValue,
                     },
                   ]}
@@ -449,7 +527,7 @@ const BrandingSettings: FC = () => {
             <div className="w-[182px] flex flex-col rounded-7xl overflow-hidden gap-1 border border-neutral-200 shadow-sm">
               <div
                 className="p-3 flex gap-2 px-2.5"
-                style={{ backgroundColor: secondaryColor || '#1d4ed8' }}
+                style={{ backgroundColor: secondaryColor }}
               >
                 <Icon
                   name="flashIcon"
@@ -469,7 +547,7 @@ const BrandingSettings: FC = () => {
 
               <div
                 className="flex items-center justify-center text-white rounded-19xl px-2.5 py-2 mx-2.5 text-sm font-bold"
-                style={{ backgroundColor: primaryColor || '#10B981' }}
+                style={{ backgroundColor: primaryColor }}
               >
                 Primary
               </div>
@@ -489,7 +567,7 @@ const BrandingSettings: FC = () => {
       >
         <div className="flex flex-col gap-4 bg-white px-6 pb-4 rounded-b-9xl">
           <Divider />
-          <div className="flex justify-between w-full items-center">
+          <div className="flex w-full gap-[120px]">
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3">
                 <p className="text-sm font-bold text-neutral-900">
@@ -555,76 +633,164 @@ const BrandingSettings: FC = () => {
                       name: 'loginBackgroundType',
                       className: 'flex !flex-row gap-4',
                       control,
-                      radioList: [
-                        { data: { type: 'Color' }, dataTestId: 'color' },
-                        { data: { type: 'Video' }, dataTestId: 'video' },
-                        { data: { type: 'Image' }, dataTestId: 'image' },
-                      ],
+                      radioList: backgroundOption,
                       labelRenderer: (option: IRadioListOption) => {
                         return (
-                          <p className="pl-1 text-sm">{option.data.type}</p>
+                          <p className="pl-1 text-sm">{option.data.value}</p>
                         );
                       },
                     },
                   ]}
                 />
               </div>
-              <div className="flex flex-col gap-3">
-                <p className="text-sm font-bold text-neutral-900">
-                  Upload Image
-                </p>
-                <div
-                  {...getRootPropsBG()}
-                  className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center"
-                >
-                  <input {...getInputPropsBG()} />
-                  {selectedBG && !!!bgValidation?.length ? (
-                    <div className="max-h-full max-w-full relative">
-                      <img
-                        src={getMediaObj([selectedBG])[0].original}
-                        className="max-h-full max-w-full"
-                      />
-                      <div
-                        className="absolute -right-3 -top-3 w-6 h-6 rounded-full flex items-center justify-center bg-black group"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedBG(null);
-                          resetValidationError('BG');
-                        }}
-                      >
-                        <Icon name="close" size={16} color="text-white" />
+              {loginBackgroundType === 'Image' && (
+                <div className="flex flex-col gap-3">
+                  <p className="text-sm font-bold text-neutral-900">
+                    Upload Image
+                  </p>
+                  <div
+                    {...getRootPropsBG()}
+                    className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center"
+                  >
+                    <input {...getInputPropsBG()} />
+                    {selectedBG && !!!bgValidation?.length ? (
+                      <div className="max-h-full max-w-full relative">
+                        <img
+                          src={getMediaObj([selectedBG])[0].original}
+                          className="max-h-full max-w-full"
+                        />
+                        <div
+                          className="absolute -right-3 -top-3 w-6 h-6 rounded-full flex items-center justify-center bg-black group"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedBG(null);
+                            resetValidationError('BACKGROUND_IMAGE');
+                          }}
+                        >
+                          <Icon name="close" size={16} color="text-white" />
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col justify-center items-center gap-2">
-                      <Icon
-                        name="documentUpload"
-                        color="text-neutral-900"
-                        hover={false}
-                      />
-                      <div className="text-neutral-900 font-medium">
-                        Upload Image
+                    ) : (
+                      <div className="flex flex-col justify-center items-center gap-2">
+                        <Icon
+                          name="documentUpload"
+                          color="text-neutral-900"
+                          hover={false}
+                        />
+                        <div className="text-neutral-900 font-medium">
+                          Upload Image
+                        </div>
+                        <div className="mt-1 text-neutral-500 text-xs text-center">
+                          Drag and drop or click here to upload file. <br />{' '}
+                          Ideal image size: 1920 x 860 px
+                        </div>
                       </div>
-                      <div className="mt-1 text-neutral-500 text-xs text-center">
-                        Drag and drop or click here to upload file. <br /> Ideal
-                        image size: 1920 x 860 px
-                      </div>
-                    </div>
+                    )}
+                  </div>
+                  {bgValidation?.length > 0 && (
+                    <p className="text-xxs text-neutral-500">
+                      {bgValidation[0].errorMsg}
+                    </p>
                   )}
                 </div>
-                {bgValidation?.length > 0 && (
-                  <p className="text-xxs text-neutral-500">
-                    {bgValidation[0].errorMsg}
+              )}
+              {loginBackgroundType === 'Video' && (
+                <div className="flex flex-col gap-3">
+                  <p className="text-sm font-bold text-neutral-900">
+                    Upload Video
                   </p>
-                )}
-              </div>
+                  <div
+                    {...getRootPropsBGVideo()}
+                    className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center"
+                  >
+                    <input {...getInputPropsBGVideo()} />
+                    {selectedBGVideo && !!!bgVideoValidation?.length ? (
+                      <div className="max-h-full max-w-full relative">
+                        <video
+                          src={getMediaObj([selectedBGVideo])[0].original}
+                          className="max-h-full max-w-full"
+                        />
+                        <div
+                          className="absolute -right-3 -top-3 w-6 h-6 rounded-full flex items-center justify-center bg-black group"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedBGVideo(null);
+                            resetValidationError('BACKGROUND_VIDEO');
+                          }}
+                        >
+                          <Icon name="close" size={16} color="text-white" />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col justify-center items-center gap-2">
+                        <Icon
+                          name="documentUpload"
+                          color="text-neutral-900"
+                          hover={false}
+                        />
+                        <div className="text-neutral-900 font-medium">
+                          Upload Video
+                        </div>
+                        <div className="mt-1 text-neutral-500 text-xs text-center">
+                          Drag and drop or click here to upload file. <br />{' '}
+                          Ideal video dimension: 1920 x 860 px
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  {bgValidation?.length > 0 && (
+                    <p className="text-xxs text-neutral-500">
+                      {bgValidation[0].errorMsg}
+                    </p>
+                  )}
+                </div>
+              )}
+              {loginBackgroundType === 'Color' && (
+                <Layout
+                  fields={[
+                    {
+                      name: 'textColor',
+                      label: 'primary/action colour',
+                      type: FieldType.ColorPicker,
+                      control,
+                      className: '',
+                      dataTestId: 'text-color',
+                      setValue,
+                    },
+                    {
+                      name: 'text',
+                      label: 'Add text',
+                      type: FieldType.Input,
+                      control,
+                      className: '',
+                      dataTestId: 'text',
+                      placeholder: 'ex. welcome to auzmor',
+                      maxLength: 50,
+                    },
+                  ]}
+                />
+              )}
             </div>
-            <div className="flex">
-              <iframe
-                width={400}
-                height={180}
-                src="https://office.auzmor.com"
-              />
+            <div className="flex relative">
+              <div
+                className={`w-[360px] h-[205px] flex items-center relative top-0 right-0 rounded-9xl border border-neutral-200 overflow-hidden ${
+                  layoutAlignment === 'RIGHT' && 'justify-end'
+                }   ${layoutAlignment === 'LEFT' && 'justify-start'}  ${
+                  layoutAlignment === 'CENTER' && 'justify-center'
+                }`}
+                style={{
+                  backgroundColor:
+                    loginBackgroundType === 'Color' ? textColor : '#ffffff',
+                }}
+              >
+                <div
+                  className={`bg-white pt-5 pl-8 pr-[47px] pb-2 relative ${
+                    layoutAlignment === 'CENTER'
+                      ? 'h-[191px] rounded-xl w-[159px]'
+                      : 'h-full w-1/2'
+                  }`}
+                ></div>
+              </div>
             </div>
           </div>
         </div>
