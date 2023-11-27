@@ -205,19 +205,23 @@ const ColorPicker: FC<ColorPickerProps> = ({
                 <div className="flex flex-col gap-2">
                   <div
                     className="w-[200px] h-[140px] flex justify-center items-center border rounded-7xl border-neutral-200"
-                    style={{ backgroundColor: field.value }}
+                    style={{ backgroundColor: field.value || defaultValue }}
                   >
                     <p className="text-2xl font-semibold text-neutral-900">
-                      {field.value}
+                      {field.value || defaultValue}
                     </p>
                   </div>
                   <div className="grid grid-cols-5 justify-items-center content-center gap-2">
                     {colorPalette.map((color: string) => (
                       <div
-                        className="w-8 h-8 rounded-xl"
+                        className="w-8 h-8 rounded-xl cursor-pointer"
                         style={{ backgroundColor: color }}
                         key={color}
-                        onClick={close}
+                        onClick={() => {
+                          setValue(name, color);
+                          setLastValidHex(color);
+                          close();
+                        }}
                       ></div>
                     ))}
                   </div>
@@ -234,6 +238,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
                       onFocus={(e) => e.stopPropagation()}
                       maxLength={maxLength}
                       value={field.value}
+                      defaultValue={defaultValue}
                       onChange={(e) => {
                         field.onChange(e);
                         if (isValidHex(e.target.value)) {

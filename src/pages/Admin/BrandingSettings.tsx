@@ -279,12 +279,11 @@ const BrandingSettings: FC = () => {
       <Collapse
         defaultOpen
         label="Page settings"
-        className="rounded-9xl overflow-hidden"
-        headerClassName="px-6 py-4 bg-white"
         headerTextClassName="text-base font-bold text-neutral-900"
         dataTestId="brandingsetting-pagesettings"
+        height={393}
       >
-        <div className="flex flex-col gap-4 bg-white px-6 pb-4">
+        <div className="flex flex-col gap-4 bg-white px-6 pb-4 rounded-b-9xl">
           <Divider />
           <Layout
             fields={[
@@ -400,12 +399,11 @@ const BrandingSettings: FC = () => {
       <Collapse
         defaultOpen
         label="Colour theme"
-        className="rounded-9xl"
-        headerClassName="px-6 py-4 bg-white"
         headerTextClassName="text-base font-bold text-neutral-900"
         dataTestId="brandingsetting-colour-theme"
+        height={333}
       >
-        <div className="flex flex-col gap-4 bg-white px-6 pb-4">
+        <div className="flex flex-col gap-4 bg-white px-6 pb-4 rounded-b-9xl">
           <Divider />
           <div className="flex w-full items-center gap-[160px]">
             <div className="w-2/5 flex flex-col gap-4">
@@ -485,12 +483,11 @@ const BrandingSettings: FC = () => {
       <Collapse
         defaultOpen
         label="Login"
-        className="rounded-9xl overflow-hidden"
-        headerClassName="px-6 py-4 bg-white"
         headerTextClassName="text-base font-bold text-neutral-900"
         dataTestId="brandingsetting-login"
+        height={511}
       >
-        <div className="flex flex-col gap-4 bg-white px-6 pb-4">
+        <div className="flex flex-col gap-4 bg-white px-6 pb-4 rounded-b-9xl">
           <Divider />
           <div className="flex justify-between w-full items-center">
             <div className="flex flex-col gap-4">
