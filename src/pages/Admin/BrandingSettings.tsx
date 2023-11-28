@@ -4,19 +4,97 @@ import Collapse from 'components/Collapse';
 import Divider from 'components/Divider';
 import Layout, { FieldType } from 'components/Form';
 import Icon from 'components/Icon';
-import { FC, useState } from 'react';
+import { FC, ReactNode, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import NoAnnouncement from 'images/NoAnnouncement.svg';
 import { useDropzone } from 'react-dropzone';
-import { getMediaObj } from 'utils/misc';
+import { getMediaObj, titleCase } from 'utils/misc';
 import {
   IMediaValidationError,
   MediaValidationError,
 } from 'contexts/CreatePostContext';
 import { MB } from 'utils/constants';
 import { IRadioListOption } from 'components/RadioGroup';
+import { useUpdateBrandingMutation } from 'queries/organization';
+import { useBrandingStore } from 'stores/branding';
+import { IBranding } from 'contexts/AuthContext';
 
-const BrandingSettings: FC = () => {
+interface IBrandingSettingsProps {
+  branding?: IBranding;
+}
+
+const Preview: FC<{
+  file: File | null;
+  validation: IMediaValidationError[];
+  url?: string;
+  isVideo?: boolean;
+  title?: string;
+  description?: ReactNode;
+  onRemove?: () => void;
+}> = ({
+  file,
+  validation,
+  url,
+  title,
+  description,
+  onRemove = () => {},
+  isVideo,
+}) => {
+  const [removePreview, setReviewPreview] = useState(false);
+  return file && !!!validation?.length ? (
+    <div className="max-h-full max-w-full relative">
+      {isVideo ? (
+        <video
+          src={getMediaObj([file])[0].original}
+          className="max-h-full max-w-full"
+        />
+      ) : (
+        <img
+          src={getMediaObj([file])[0].original}
+          className="max-h-full max-w-full"
+        />
+      )}
+
+      <div
+        className="absolute -right-3 -top-3 w-6 h-6 rounded-full flex items-center justify-center bg-black group"
+        onClick={(e) => {
+          e.stopPropagation();
+          onRemove();
+        }}
+      >
+        <Icon name="close" size={16} color="text-white" />
+      </div>
+    </div>
+  ) : url && !removePreview ? (
+    <div className="max-h-full max-w-full relative">
+      {isVideo ? (
+        <video src={url} className="max-h-full max-w-full" />
+      ) : (
+        <img src={url} className="object-contain" />
+      )}
+
+      <div
+        className="absolute -right-3 -top-3 w-6 h-6 rounded-full flex items-center justify-center bg-black group"
+        onClick={(e) => {
+          e.stopPropagation();
+          setReviewPreview(true);
+        }}
+      >
+        <Icon name="close" size={16} color="text-white" />
+      </div>
+    </div>
+  ) : (
+    <div className="flex flex-col justify-center items-center gap-2">
+      <Icon name="documentUpload" color="text-neutral-900" hover={false} />
+      <div className="text-neutral-900 font-medium">{title}</div>
+      <div className="mt-1 text-neutral-500 text-xs text-center">
+        {description}
+      </div>
+    </div>
+  );
+};
+
+const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
   const backgroundOption: IRadioListOption[] = [
     {
       data: { value: 'Color' },
@@ -33,12 +111,17 @@ const BrandingSettings: FC = () => {
   ];
   const { control, setValue, watch } = useForm({
     defaultValues: {
-      primaryColor: '#10B981',
-      secondaryColor: '#1d4ed8',
-      loginBackgroundType: backgroundOption[2].data.value,
-      textColor: '#123456',
+      primaryColor: branding?.primaryColor || '#10B981',
+      secondaryColor: branding?.secondaryColor || '#1d4ed8',
+      backgroundType:
+        titleCase(branding?.loginConfig?.backgroundType || '') ||
+        titleCase(backgroundOption[2].data.value),
+      color: branding?.loginConfig?.color || '#123456',
+      pageTitle: branding?.pageTitle || 'Auzmor Office',
+      text: branding?.loginConfig?.text,
     },
   });
+  const setBranding = useBrandingStore((state) => state.setBranding);
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
   const [selectedFavicon, setSelectedFavicon] = useState<File | null>(null);
   const [selectedBG, setSelectedBG] = useState<File | null>(null);
@@ -56,14 +139,18 @@ const BrandingSettings: FC = () => {
   const [showSecondaryColor, setShowSecondaryColor] = useState(false);
   const [layoutAlignment, setLayoutAlignment] = useState<
     'CENTER' | 'LEFT' | 'RIGHT'
-  >('RIGHT');
+  >(branding?.loginConfig?.layout || 'RIGHT');
 
-  const [primaryColor, secondaryColor, loginBackgroundType, textColor] = watch([
-    'primaryColor',
-    'secondaryColor',
-    'loginBackgroundType',
-    'textColor',
-  ]);
+  const [primaryColor, secondaryColor, backgroundType, color, pageTitle] =
+    watch([
+      'primaryColor',
+      'secondaryColor',
+      'backgroundType',
+      'color',
+      'pageTitle',
+    ]);
+
+  const updateBranding = useUpdateBrandingMutation();
 
   const { getRootProps: getRootPropsLogo, getInputProps: getInputPropsLogo } =
     useDropzone({
@@ -247,26 +334,6 @@ const BrandingSettings: FC = () => {
             },
           ]);
         }
-
-        // dimension validation
-        const image = new Image();
-        image.src = getMediaObj([file])[0].original;
-        image.onload = () => {
-          const { height, width } = image;
-          if (height !== 32 || width !== 32) {
-            setBGValidation([
-              ...logoValidation.filter(
-                (error) =>
-                  error.errorType !== MediaValidationError.IncorrectDimension,
-              ),
-              {
-                errorMsg: `Dimension should be 32 x 32 px`,
-                errorType: MediaValidationError.IncorrectDimension,
-                fileName: file.name,
-              },
-            ]);
-          }
-        };
         return null;
       },
     });
@@ -276,7 +343,7 @@ const BrandingSettings: FC = () => {
     getInputProps: getInputPropsBGVideo,
   } = useDropzone({
     onDrop: (acceptedFiles) => {
-      setSelectedBG(acceptedFiles[0]);
+      setSelectedBGVideo(acceptedFiles[0]);
     },
     maxFiles: 1,
     accept: {
@@ -350,7 +417,29 @@ const BrandingSettings: FC = () => {
           <div className="flex flex-col">
             <div className="flex gap-2">
               <Button label="Cancel" variant={Variant.Secondary} />
-              <Button label="Save changes" />
+              <Button
+                label="Save changes"
+                onClick={() => {
+                  setBranding({
+                    primaryColor,
+                    secondaryColor,
+                    pageTitle,
+                    loginConfig: {
+                      layout: layoutAlignment,
+                      backgroundType: backgroundType.toLocaleUpperCase() as any,
+                    },
+                  });
+                  updateBranding.mutate({
+                    primaryColor,
+                    secondaryColor,
+                    pageTitle,
+                    loginConfig: {
+                      layout: layoutAlignment,
+                      backgroundType: backgroundType.toLocaleUpperCase() as any,
+                    },
+                  });
+                }}
+              />
             </div>
             <div></div>
           </div>
@@ -374,7 +463,6 @@ const BrandingSettings: FC = () => {
                 control,
                 className: '',
                 dataTestId: 'page-title',
-                defaultValue: 'Auzmor Office',
               },
             ]}
           />
@@ -386,39 +474,22 @@ const BrandingSettings: FC = () => {
                 className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center"
               >
                 <input {...getInputPropsLogo()} />
-                {selectedLogo && !!!logoValidation?.length ? (
-                  <div className="max-h-full max-w-full relative">
-                    <img
-                      src={getMediaObj([selectedLogo])[0].original}
-                      className="max-h-full max-w-full"
-                    />
-                    <div
-                      className="absolute -right-3 -top-3 w-6 h-6 rounded-full flex items-center justify-center bg-black group"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedLogo(null);
-                        resetValidationError('LOGO');
-                      }}
-                    >
-                      <Icon name="close" size={16} color="text-white" />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col justify-center items-center gap-2">
-                    <Icon
-                      name="documentUpload"
-                      color="text-neutral-900"
-                      hover={false}
-                    />
-                    <div className="text-neutral-900 font-medium">
-                      Upload Logo
-                    </div>
-                    <div className="mt-1 text-neutral-500 text-xs text-center">
+                <Preview
+                  file={selectedLogo}
+                  validation={logoValidation}
+                  url={branding?.logo}
+                  title="Upload Image"
+                  description={
+                    <span>
                       Drag and drop or click here to upload file. <br /> Ideal
                       image size: 150 x 30 px
-                    </div>
-                  </div>
-                )}
+                    </span>
+                  }
+                  onRemove={() => {
+                    setSelectedLogo(null);
+                    resetValidationError('LOGO');
+                  }}
+                />
               </div>
               {logoValidation?.length > 0 && (
                 <p className="text-xxs text-neutral-500">
@@ -433,39 +504,22 @@ const BrandingSettings: FC = () => {
                 className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center"
               >
                 <input {...getInputPropsFavicon()} />
-                {selectedFavicon && !!!faviconValidation?.length ? (
-                  <div className="max-h-full max-w-full relative">
-                    <img
-                      src={getMediaObj([selectedFavicon])[0].original}
-                      className="max-h-full max-w-full"
-                    />
-                    <div
-                      className="absolute -right-3 -top-3 w-6 h-6 rounded-full flex items-center justify-center bg-black group"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedFavicon(null);
-                        resetValidationError('FAVICON');
-                      }}
-                    >
-                      <Icon name="close" size={16} color="text-white" />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col justify-center items-center gap-2">
-                    <Icon
-                      name="documentUpload"
-                      color="text-neutral-900"
-                      hover={false}
-                    />
-                    <div className="text-neutral-900 font-medium">
-                      Upload Icon
-                    </div>
-                    <div className="mt-1 text-neutral-500 text-xs text-center">
+                <Preview
+                  file={selectedFavicon}
+                  validation={faviconValidation}
+                  url={branding?.favicon?.original}
+                  title="Upload Icon"
+                  description={
+                    <span>
                       Drag and drop or click here to upload file. <br /> Ideal
                       image size: 32 x 32 px
-                    </div>
-                  </div>
-                )}
+                    </span>
+                  }
+                  onRemove={() => {
+                    setSelectedFavicon(null);
+                    resetValidationError('FAVICON');
+                  }}
+                />
               </div>
               {faviconValidation?.length > 0 && (
                 <p className="text-xxs text-neutral-500">
@@ -630,7 +684,7 @@ const BrandingSettings: FC = () => {
                   fields={[
                     {
                       type: FieldType.Radio,
-                      name: 'loginBackgroundType',
+                      name: 'backgroundType',
                       className: 'flex !flex-row gap-4',
                       control,
                       radioList: backgroundOption,
@@ -643,49 +697,32 @@ const BrandingSettings: FC = () => {
                   ]}
                 />
               </div>
-              {loginBackgroundType === 'Image' && (
+              {backgroundType === 'Image' && (
                 <div className="flex flex-col gap-3">
                   <p className="text-sm font-bold text-neutral-900">
                     Upload Image
                   </p>
                   <div
                     {...getRootPropsBG()}
-                    className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center"
+                    className="border border-dashed border-neutral-200 rounded-9xl p-6 w-[420px] h-[186px] flex justify-center items-center"
                   >
                     <input {...getInputPropsBG()} />
-                    {selectedBG && !!!bgValidation?.length ? (
-                      <div className="max-h-full max-w-full relative">
-                        <img
-                          src={getMediaObj([selectedBG])[0].original}
-                          className="max-h-full max-w-full"
-                        />
-                        <div
-                          className="absolute -right-3 -top-3 w-6 h-6 rounded-full flex items-center justify-center bg-black group"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedBG(null);
-                            resetValidationError('BACKGROUND_IMAGE');
-                          }}
-                        >
-                          <Icon name="close" size={16} color="text-white" />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col justify-center items-center gap-2">
-                        <Icon
-                          name="documentUpload"
-                          color="text-neutral-900"
-                          hover={false}
-                        />
-                        <div className="text-neutral-900 font-medium">
-                          Upload Image
-                        </div>
-                        <div className="mt-1 text-neutral-500 text-xs text-center">
+                    <Preview
+                      file={selectedBG}
+                      validation={bgValidation}
+                      url={branding?.loginConfig?.image?.original}
+                      title="Upload Image"
+                      description={
+                        <span>
                           Drag and drop or click here to upload file. <br />{' '}
                           Ideal image size: 1920 x 860 px
-                        </div>
-                      </div>
-                    )}
+                        </span>
+                      }
+                      onRemove={() => {
+                        setSelectedBG(null);
+                        resetValidationError('BACKGROUND_IMAGE');
+                      }}
+                    />
                   </div>
                   {bgValidation?.length > 0 && (
                     <p className="text-xxs text-neutral-500">
@@ -694,49 +731,33 @@ const BrandingSettings: FC = () => {
                   )}
                 </div>
               )}
-              {loginBackgroundType === 'Video' && (
+              {backgroundType === 'Video' && (
                 <div className="flex flex-col gap-3">
                   <p className="text-sm font-bold text-neutral-900">
                     Upload Video
                   </p>
                   <div
                     {...getRootPropsBGVideo()}
-                    className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center"
+                    className="border border-dashed border-neutral-200 rounded-9xl p-6 w-[420px] h-[186px] flex justify-center items-center"
                   >
                     <input {...getInputPropsBGVideo()} />
-                    {selectedBGVideo && !!!bgVideoValidation?.length ? (
-                      <div className="max-h-full max-w-full relative">
-                        <video
-                          src={getMediaObj([selectedBGVideo])[0].original}
-                          className="max-h-full max-w-full"
-                        />
-                        <div
-                          className="absolute -right-3 -top-3 w-6 h-6 rounded-full flex items-center justify-center bg-black group"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedBGVideo(null);
-                            resetValidationError('BACKGROUND_VIDEO');
-                          }}
-                        >
-                          <Icon name="close" size={16} color="text-white" />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col justify-center items-center gap-2">
-                        <Icon
-                          name="documentUpload"
-                          color="text-neutral-900"
-                          hover={false}
-                        />
-                        <div className="text-neutral-900 font-medium">
-                          Upload Video
-                        </div>
-                        <div className="mt-1 text-neutral-500 text-xs text-center">
+                    <Preview
+                      file={selectedBGVideo}
+                      validation={bgVideoValidation}
+                      url={branding?.loginConfig?.video?.original}
+                      title="Upload Video"
+                      description={
+                        <span>
                           Drag and drop or click here to upload file. <br />{' '}
-                          Ideal video dimension: 1920 x 860 px
-                        </div>
-                      </div>
-                    )}
+                          Ideal video size: 1920 x 860 px
+                        </span>
+                      }
+                      onRemove={() => {
+                        setSelectedBGVideo(null);
+                        resetValidationError('BACKGROUND_VIDEO');
+                      }}
+                      isVideo
+                    />
                   </div>
                   {bgValidation?.length > 0 && (
                     <p className="text-xxs text-neutral-500">
@@ -745,11 +766,11 @@ const BrandingSettings: FC = () => {
                   )}
                 </div>
               )}
-              {loginBackgroundType === 'Color' && (
+              {backgroundType === 'Color' && (
                 <Layout
                   fields={[
                     {
-                      name: 'textColor',
+                      name: 'color',
                       label: 'primary/action colour',
                       type: FieldType.ColorPicker,
                       control,
@@ -780,7 +801,7 @@ const BrandingSettings: FC = () => {
                 }`}
                 style={{
                   backgroundColor:
-                    loginBackgroundType === 'Color' ? textColor : '#ffffff',
+                    backgroundType === 'Color' ? color : '#ffffff',
                 }}
               >
                 <div

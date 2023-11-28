@@ -84,7 +84,10 @@ const Login: FC<ILoginProps> = () => {
             return (
               <div className="w-full h-full absolute top-0 left-0 bg-no-repeat bg-cover">
                 <video autoPlay muted loop className="h-full w-full">
-                  <source src={branding?.loginConfig?.video} type="video/mp4" />
+                  <source
+                    src={branding?.loginConfig?.video?.original}
+                    type="video/mp4"
+                  />
                 </video>
               </div>
             );

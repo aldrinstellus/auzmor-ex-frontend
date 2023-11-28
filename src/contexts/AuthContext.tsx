@@ -51,13 +51,14 @@ export interface IBranding {
   primaryColor?: string;
   secondaryColor?: string;
   pageTitle?: string;
-  favicon?: string;
+  favicon?: { blurHash?: string; id: string; original: string };
   logo?: string;
   loginConfig: {
     layout: 'LEFT' | 'CENTER' | 'RIGHT'; // default: RIGHT
     backgroundType: 'IMAGE' | 'VIDEO' | 'COLOR'; // default: IMAGE
-    image?: string;
-    video?: string;
+    image?: { blurHash?: string; id: string; original: string };
+    video?: { blurHash?: string; id: string; original: string };
+    text?: string;
     color?: string;
   };
 }
