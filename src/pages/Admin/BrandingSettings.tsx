@@ -787,6 +787,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
         headerTextClassName="text-base font-bold text-neutral-900"
         dataTestId="brandingsetting-login"
         height={511}
+        className="mb-16"
       >
         <div className="flex flex-col gap-4 bg-white px-6 pb-4 rounded-b-9xl">
           <Divider />
