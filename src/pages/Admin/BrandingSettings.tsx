@@ -880,7 +880,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                 }}
               >
                 <div
-                  className={`bg-white pt-5 pl-8 pr-[47px] pb-2 relative ${
+                  className={`bg-neutral-50 pt-5 pl-8 pr-[47px] pb-2 relative ${
                     layoutAlignment === 'CENTER'
                       ? 'h-[191px] rounded-xl w-[159px]'
                       : 'h-full w-3/5'
