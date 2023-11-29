@@ -40,6 +40,7 @@ const ImportingFileStep: React.FC<AppProps> = ({
   });
 
   useEffect(() => {
+    console.log('>>>>', meta);
     if (!meta.parsed) {
       parseMutation.mutate();
     }
@@ -167,11 +168,7 @@ const ImportingFileStep: React.FC<AppProps> = ({
             size={Size.Small}
             dataTestId="import-people-next"
             onClick={() => {
-              if (meta?.parsed) {
-                setStep(StepEnum.Review);
-              } else {
-                validateUserMutation.mutate();
-              }
+              validateUserMutation.mutate();
             }}
             disabled={validateUserMutation.isLoading}
             loading={validateUserMutation.isLoading}
