@@ -222,6 +222,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
                           setLastValidHex(color);
                           close();
                         }}
+                        data-testid="palette-select-color"
                       ></div>
                     ))}
                   </div>
@@ -249,6 +250,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
                         setValue(name, lastValidHex);
                         field.onBlur();
                       }}
+                      data-testid={`${dataTestId}-hexcode`}
                     />
                   </div>
                 </div>

@@ -16,7 +16,7 @@ import {
   titleCase,
   twConfig,
 } from 'utils/misc';
-import { MB } from 'utils/constants';
+import { MB, TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { IRadioListOption } from 'components/RadioGroup';
 import { useUpdateBrandingMutation } from 'queries/organization';
 import { useBrandingStore } from 'stores/branding';
@@ -26,6 +26,9 @@ import ImageResosition from 'components/DynamicImagePreview/components/ImageRepo
 import clsx from 'clsx';
 import { useUpload } from 'hooks/useUpload';
 import { EntityType } from 'queries/files';
+import SuccessToast from 'components/Toast/variants/SuccessToast';
+import { toast } from 'react-toastify';
+import { slideInAndOutTop } from 'utils/react-toastify';
 
 interface IBrandingSettingsProps {
   branding?: IBranding;
@@ -42,6 +45,7 @@ const Preview: FC<{
   imgClassName?: string;
   videoClassName?: string;
   className?: string;
+  dataTestId?: string;
 }> = ({
   file,
   url,
@@ -53,6 +57,7 @@ const Preview: FC<{
   imgClassName,
   videoClassName,
   className = '',
+  dataTestId,
 }) => {
   const [removePreview, setRemovePreview] = useState(false);
   const style = clsx({
@@ -65,9 +70,14 @@ const Preview: FC<{
         <video
           src={getMediaObj([file])[0].original}
           className={videoClassName}
+          data-testid={`branding-uploaded-${dataTestId}`}
         />
       ) : (
-        <img src={getMediaObj([file])[0].original} className={imgClassName} />
+        <img
+          src={getMediaObj([file])[0].original}
+          className={imgClassName}
+          data-testid={`branding-uploaded-${dataTestId}`}
+        />
       )}
 
       <div
@@ -77,15 +87,28 @@ const Preview: FC<{
           onCustomRemove();
         }}
       >
-        <Icon name="close" size={16} color="text-white" />
+        <Icon
+          name="close"
+          size={16}
+          color="text-white"
+          dataTestId={`branding-remove-${dataTestId}`}
+        />
       </div>
     </div>
   ) : url && !removePreview ? (
     <div className={style}>
       {isVideo ? (
-        <video src={url} className={videoClassName} />
+        <video
+          src={url}
+          className={videoClassName}
+          data-testid={`branding-uploaded-${dataTestId}`}
+        />
       ) : (
-        <img src={url} className={imgClassName} />
+        <img
+          src={url}
+          className={imgClassName}
+          data-testid={`branding-uploaded-${dataTestId}`}
+        />
       )}
 
       <div
@@ -96,14 +119,27 @@ const Preview: FC<{
           onBrandingRemove();
         }}
       >
-        <Icon name="close" size={16} color="text-white" />
+        <Icon
+          name="close"
+          size={16}
+          color="text-white"
+          dataTestId={`branding-remove-${dataTestId}`}
+        />
       </div>
     </div>
   ) : (
     <div className="flex flex-col justify-center items-center gap-2">
       <Icon name="documentUpload" color="text-neutral-900" hover={false} />
-      <div className="text-neutral-900 font-medium">{title}</div>
-      <div className="mt-1 text-neutral-500 text-xs text-center">
+      <div
+        className="text-neutral-900 font-medium"
+        data-testid={`branding-upload${dataTestId}`}
+      >
+        {title}
+      </div>
+      <div
+        className="mt-1 text-neutral-500 text-xs text-center"
+        data-testid={`branding-upload${dataTestId}-msg`}
+      >
         {description}
       </div>
     </div>
@@ -114,25 +150,25 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
   const backgroundOption: IRadioListOption[] = [
     {
       data: { value: 'Color' },
-      dataTestId: 'color',
+      dataTestId: 'branding-background-as-color',
     },
     {
       data: { value: 'Video' },
-      dataTestId: 'video',
+      dataTestId: 'branding-background-as-video',
     },
     {
       data: { value: 'Image' },
-      dataTestId: 'image',
+      dataTestId: 'branding-background-as-image',
     },
   ];
-  const { control, setValue, watch } = useForm({
+  const { control, setValue, watch, reset } = useForm({
     defaultValues: {
       primaryColor: branding?.primaryColor || '#10B981',
       secondaryColor: branding?.secondaryColor || '#1d4ed8',
       backgroundType:
         titleCase(branding?.loginConfig?.backgroundType || '') ||
         titleCase(backgroundOption[2].data.value),
-      color: branding?.loginConfig?.color || '#123456',
+      color: branding?.loginConfig?.color || '#777777',
       pageTitle: branding?.pageTitle || 'Auzmor Office',
       text: branding?.loginConfig?.text,
     },
@@ -437,20 +473,53 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
     };
     setBranding(newBranding);
     updateBranding.mutate(newBranding, {
+      onSuccess: () => {
+        toast(
+          <SuccessToast
+            content={'Changes you made have been saved'}
+            dataTestId="branding-changes-saved-toaster"
+          />,
+          {
+            closeButton: (
+              <Icon
+                name="closeCircleOutline"
+                color="text-primary-500"
+                size={20}
+              />
+            ),
+            style: {
+              border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+            },
+            autoClose: TOAST_AUTOCLOSE_TIME,
+            transition: slideInAndOutTop,
+            theme: 'dark',
+          },
+        );
+      },
       onSettled: () => {
         setIsSaving(false);
       },
     });
   };
 
-  const validationErrorTemplate = (message: string, onClick: () => void) => {
+  const validationErrorTemplate = (
+    message: string,
+    onClick: () => void,
+    dataTestId?: string,
+  ) => {
     return (
       <div
         className="w-full h-full flex flex-col items-center justify-center"
         onClick={onClick}
       >
         <Icon name="infoCircle" color="text-red-500" size={32} />
-        <p className="text-red-500 font-medium text-sm mt-2">
+        <p
+          className="text-red-500 font-medium text-sm mt-2"
+          data-testid={`branding-${dataTestId}-failed`}
+        >
           Oops! Upload failed
         </p>
         <p className="text-neutral-500 text-xs font-medium mt-3">
@@ -467,17 +536,24 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
         <div className="flex justify-between w-full">
           <div className="flex flex-col gap-4">
             <p className="text-neutral-900 text-base font-bold">Branding</p>
-            <p className="text-neutral-500 text-sm">
+            <p className="text-neutral-500 text-sm" data-testid="branding-note">
               Branding Options for a Personalized Experience
             </p>
           </div>
           <div className="flex flex-col">
             <div className="flex gap-2">
-              <Button label="Cancel" variant={Variant.Secondary} />
+              <Button
+                label="Cancel"
+                variant={Variant.Secondary}
+                onClick={() => reset()}
+                disabled={isSaving}
+                dataTestId="branding-cancelcta"
+              />
               <Button
                 label="Save changes"
                 loading={isSaving}
                 onClick={handleSaveChanges}
+                dataTestId="branding-savechangescta"
               />
             </div>
             <div></div>
@@ -501,7 +577,11 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                 type: FieldType.Input,
                 control,
                 className: '',
-                dataTestId: 'page-title',
+                dataTestId: 'branding-pagetitle',
+                helpText:
+                  branding?.pageTitle === 'Auzmor office'
+                    ? `Replace 'Auzmor office' name from UI with your own name`
+                    : '',
               },
             ]}
           />
@@ -512,11 +592,15 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                 {...getRootPropsLogo()}
                 className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center cursor-pointer"
               >
-                <input {...getInputPropsLogo()} />
+                <input {...getInputPropsLogo()} data-testid="upload-logo" />
                 {validationErrors.logo ? (
-                  validationErrorTemplate(validationErrors.logo, () => {
-                    setValidationErrors({ ...validationErrors, logo: null });
-                  })
+                  validationErrorTemplate(
+                    validationErrors.logo,
+                    () => {
+                      setValidationErrors({ ...validationErrors, logo: null });
+                    },
+                    'logo',
+                  )
                 ) : (
                   <Preview
                     file={selectedLogo}
@@ -535,6 +619,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                     onBrandingRemove={() =>
                       setRemovedMedia({ ...removedMedia, logo: true })
                     }
+                    dataTestId="logo"
                   />
                 )}
               </div>
@@ -546,11 +631,21 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                 {...getRootPropsFavicon()}
                 className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center cursor-pointer"
               >
-                <input {...getInputPropsFavicon()} />
+                <input
+                  {...getInputPropsFavicon()}
+                  data-testid="upload-favicon"
+                />
                 {validationErrors.favicon ? (
-                  validationErrorTemplate(validationErrors.favicon, () => {
-                    setValidationErrors({ ...validationErrors, favicon: null });
-                  })
+                  validationErrorTemplate(
+                    validationErrors.favicon,
+                    () => {
+                      setValidationErrors({
+                        ...validationErrors,
+                        favicon: null,
+                      });
+                    },
+                    'favicon',
+                  )
                 ) : (
                   <Preview
                     file={selectedFavicon}
@@ -569,6 +664,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                     onBrandingRemove={() =>
                       setRemovedMedia({ ...removedMedia, favicon: true })
                     }
+                    dataTestId="icon"
                   />
                 )}
               </div>
@@ -596,7 +692,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                     type: FieldType.ColorPicker,
                     control,
                     className: '',
-                    dataTestId: 'primary-color',
+                    dataTestId: 'branding-select-primary-color',
                     setValue,
                   },
                 ]}
@@ -619,6 +715,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                 <div
                   className="flex text-primary-500 group cursor-pointer group-hover:text-primary-700 text-base font-bold"
                   onClick={() => setShowSecondaryColor(true)}
+                  data-testid="branding-add-secondary-color"
                 >
                   <Icon name="add" color="text-primary-500" />
                   <p>Add secondary colour</p>
@@ -678,6 +775,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                   <div
                     className="flex flex-col items-center gap-2"
                     onClick={() => setLayoutAlignment('LEFT')}
+                    data-testid="branding-select-left-alignment"
                   >
                     <div
                       className={`w-[100px] h-[60px] bg-neutral-100 relative border border-neutral-200 rounded-7xl ${
@@ -692,6 +790,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                   <div
                     className="flex flex-col items-center gap-2"
                     onClick={() => setLayoutAlignment('CENTER')}
+                    data-testid="branding-select-center-alignment"
                   >
                     <div
                       className={`w-[100px] h-[60px] bg-neutral-100 flex justify-center border border-neutral-200 rounded-7xl ${
@@ -708,6 +807,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                   <div
                     className="flex flex-col items-center gap-2"
                     onClick={() => setLayoutAlignment('RIGHT')}
+                    data-testid="branding-select-right-alignment"
                   >
                     <div
                       className={`w-[100px] h-[60px] bg-neutral-100 relative border border-neutral-200 rounded-7xl ${
@@ -753,7 +853,10 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                     {...getRootPropsBG()}
                     className="border border-dashed border-neutral-200 rounded-9xl px-5 py-2.5 w-[420px] h-[186px] flex justify-center items-center cursor-pointer"
                   >
-                    <input {...getInputPropsBG()} />
+                    <input
+                      {...getInputPropsBG()}
+                      data-testid="upload-background"
+                    />
                     {validationErrors.bg ? (
                       validationErrorTemplate(validationErrors.bg, () => {
                         setValidationErrors({ ...validationErrors, bg: null });
@@ -793,7 +896,10 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                     {...getRootPropsBGVideo()}
                     className="border border-dashed border-neutral-200 rounded-9xl px-5 py-2.5 w-[420px] h-[186px] flex justify-center items-center"
                   >
-                    <input {...getInputPropsBGVideo()} />
+                    <input
+                      {...getInputPropsBGVideo()}
+                      data-testid="upload-background-video"
+                    />
                     {validationErrors.bgVideo ? (
                       validationErrorTemplate(validationErrors.bgVideo, () => {
                         setValidationErrors({
@@ -837,7 +943,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                       type: FieldType.ColorPicker,
                       control,
                       className: '',
-                      dataTestId: 'text-color',
+                      dataTestId: 'select-background-color',
                       setValue,
                     },
                     {
@@ -846,9 +952,14 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                       type: FieldType.Input,
                       control,
                       className: '',
-                      dataTestId: 'text',
+                      dataTestId: 'input-background-text',
                       placeholder: 'ex. welcome to auzmor',
                       maxLength: 50,
+                      customLabelRightElement: (
+                        <span className="text-neutral-500 text-sm">
+                          {text?.length} / 50
+                        </span>
+                      ),
                     },
                   ]}
                 />

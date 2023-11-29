@@ -39,7 +39,7 @@ const Admin: FC = () => {
         disabled: false,
         hidden: false,
         hideDefaultLabelCard: true,
-        dataTestId: 'settings-branding',
+        dataTestId: 'generalsettings-branding',
       },
       {
         label: 'Single Sign-on',

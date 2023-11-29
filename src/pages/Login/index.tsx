@@ -19,7 +19,7 @@ const Login: FC<ILoginProps> = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  const domain = getSubDomain(window.location.host) || 'incendia';
+  const domain = getSubDomain(window.location.host);
   const { isFetching: isDomainInfoLoading } = useGetSSOFromDomain(
     domain,
     domain !== '' ? true : false,
