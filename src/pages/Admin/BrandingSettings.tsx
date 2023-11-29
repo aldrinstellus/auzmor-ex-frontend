@@ -781,7 +781,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                   </p>
                   <div
                     {...getRootPropsBGVideo()}
-                    className="border border-dashed border-neutral-200 rounded-9xl p-6 w-[420px] h-[186px] flex justify-center items-center"
+                    className="border border-dashed border-neutral-200 rounded-9xl px-5 py-2.5 w-[420px] h-[186px] flex justify-center items-center"
                   >
                     <input {...getInputPropsBGVideo()} />
                     {validationErrors.bgVideo ? (
@@ -807,24 +807,9 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                           setRemovedMedia({ ...removedMedia, bgVideo: true })
                         }
                         isVideo
+                        videoClassName="w-[321px] h-[166px] rounded-7xl object-cover"
                       />
                     )}
-                    <Preview
-                      file={selectedBGVideo}
-                      url={branding?.loginConfig?.video?.original}
-                      title="Upload Video"
-                      description={
-                        <span>
-                          Drag and drop or click here to upload file. <br />{' '}
-                          Ideal video size: 1920 x 860 px
-                        </span>
-                      }
-                      onCustomRemove={() => setSelectedBGVideo(null)}
-                      onBrandingRemove={() =>
-                        setRemovedMedia({ ...removedMedia, bgVideo: true })
-                      }
-                      isVideo
-                    />
                   </div>
                   <p className="text-xxs text-neutral-500">Max file size 5mb</p>
                 </div>
