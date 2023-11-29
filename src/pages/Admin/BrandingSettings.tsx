@@ -524,8 +524,11 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                     title="Upload Image"
                     description={
                       <span>
-                        Drag and drop or click here to upload file. <br /> Ideal
-                        image size: 150 x 65 px
+                        Drag and drop or{' '}
+                        <span className="text-primary-500 font-bold">
+                          click here
+                        </span>{' '}
+                        to upload file. <br /> Ideal image size: 150 x 65 px
                       </span>
                     }
                     onCustomRemove={() => setSelectedLogo(null)}
@@ -555,8 +558,11 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                     title="Upload Icon"
                     description={
                       <span>
-                        Drag and drop or click here to upload file. <br /> Ideal
-                        image size: 32 x 32 px
+                        Drag and drop or{' '}
+                        <span className="text-primary-500 font-bold">
+                          click here
+                        </span>{' '}
+                        to upload file. <br /> Ideal image size: 32 x 32 px
                       </span>
                     }
                     onCustomRemove={() => setSelectedFavicon(null)}
@@ -759,8 +765,12 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                         title="Upload Image"
                         description={
                           <span>
-                            Drag and drop or click here to upload file. <br />{' '}
-                            Ideal image size: 1920 x 860 px
+                            Drag and drop or{' '}
+                            <span className="text-primary-500 font-bold">
+                              click here
+                            </span>{' '}
+                            to upload file. <br /> Ideal image size: 1920 x 860
+                            px
                           </span>
                         }
                         onCustomRemove={() => setSelectedBG(null)}
@@ -798,8 +808,12 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                         title="Upload Video"
                         description={
                           <span>
-                            Drag and drop or click here to upload file. <br />{' '}
-                            Ideal video size: 1920 x 860 px
+                            Drag and drop or{' '}
+                            <span className="text-primary-500 font-bold">
+                              click here
+                            </span>{' '}
+                            to upload file. <br /> Ideal video size: 1920 x 860
+                            px
                           </span>
                         }
                         onCustomRemove={() => setSelectedBGVideo(null)}
