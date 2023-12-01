@@ -6,7 +6,11 @@ import { StepEnum } from './utils';
 import Header from 'components/ModalHeader';
 import Icon from 'components/Icon';
 import { useMutation } from '@tanstack/react-query';
-import { parseImport, validateImport } from 'queries/importUsers';
+import {
+  parseImport,
+  updateParseImport,
+  validateImport,
+} from 'queries/importUsers';
 import Button, { Size, Variant } from 'components/Button';
 
 type AppProps = {
@@ -28,10 +32,16 @@ const ImportingFileStep: React.FC<AppProps> = ({
 }) => {
   const isCsv = meta?.file?.name?.includes('.csv');
 
+  const updateParseMutation = useMutation(() =>
+    updateParseImport(importId, {}),
+  );
+
   const parseMutation = useMutation(() => parseImport(importId), {
-    onSuccess: (res: any) => {
+    onSuccess: async (res: any) => {
       setMeta((m: any) => ({ ...m, parsed: true }));
-      if (!isCsv) {
+      if (isCsv) {
+        await updateParseMutation.mutateAsync();
+      } else {
         setMeta((m: any) => ({
           ...m,
           sheetOptions: res.result?.data?.info?.sheets?.map((s: any) => ({
@@ -72,6 +82,7 @@ const ImportingFileStep: React.FC<AppProps> = ({
   };
 
   const _isSuccess = meta?.parsed || parseMutation.isSuccess;
+  const _isLoading = parseMutation.isLoading || updateParseMutation.isLoading;
   const renderForCsv = () => {
     return (
       <div>
@@ -90,7 +101,7 @@ const ImportingFileStep: React.FC<AppProps> = ({
           closeBtnDataTestId="import-people-close"
         />
         {(() => {
-          if (parseMutation.isLoading) {
+          if (_isLoading) {
             return (
               <div className="p-6 space-y-4">
                 <div className="v-center">
@@ -161,7 +172,7 @@ const ImportingFileStep: React.FC<AppProps> = ({
   return (
     <Modal open={open} className="max-w-2xl">
       {isCsv ? renderForCsv() : renderForExcel()}
-      {!parseMutation.isLoading && (
+      {!_isLoading && (
         <div className="flex justify-end items-center h-16 p-6 bg-blue-50 rounded-b-9xl">
           <Button
             label="Cancel"

@@ -29,15 +29,15 @@ const ReviewStep: React.FC<AppProps> = ({
   const { ready, loading } = usePoller(importId, 'validate');
   const [showOnlyError, setShowOnlyError] = useState(false);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfiniteImportData({ importId, startFetching: ready });
+    useInfiniteImportData({
+      importId,
+      startFetching: ready,
+      q: { includeOnlyErrors: showOnlyError || undefined },
+    });
 
   const flatData: any[] = (
     data?.pages.flatMap((page) => {
-      return page?.data?.result?.data?.info.map((user: any) => ({
-        ...user,
-        department: user?.department?.name,
-        location: user?.workLocation?.name,
-      }));
+      return page?.data?.result?.data?.info.map((user: any) => user);
     }) || []
   ).map((f, idx) => ({ idx: idx + 1, ...f }));
 
@@ -49,10 +49,10 @@ const ReviewStep: React.FC<AppProps> = ({
       resizable: true,
       width: 200,
       renderCell: ({ row, tabIndex }: any) => {
-        return row.rowData?.name?.value || row.rowData?.fullName?.value;
+        return row.rowData?.fullName?.value;
       },
       cellClass: (row: any) => {
-        if (!row.rowData.name?.isValid || !row.rowData?.name?.value) {
+        if (!row.rowData?.fullName?.value) {
           return 'text-red-500 bg-red-50';
         }
         return '';
