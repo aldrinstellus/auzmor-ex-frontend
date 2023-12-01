@@ -1183,7 +1183,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                         className="h-full object-cover"
                       />
                     ) : (
-                      <Logo className="h-[12px]" />
+                      <Logo className="!h-[12px]" />
                     )}
                   </div>
                   <div className="w-[110px] p-[5px] h-full flex flex-col gap-1">
