@@ -15,7 +15,7 @@ export const Logo = ({ className = '' }: IProps) => {
   const style = useMemo(
     () =>
       clsx({
-        'h-[68px]': true,
+        'h-[64px]': true,
         [className]: true,
       }),
     [className],

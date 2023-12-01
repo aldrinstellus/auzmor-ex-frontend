@@ -33,6 +33,8 @@ import Tooltip from 'components/Tooltip';
 import { Logo } from 'components/Logo';
 import welcomeToOffice from 'images/welcomeToOffice.png';
 import welcomeToOfficeLarge from 'images/welcomeToOfficeLarge.png';
+import { getTintVariantColor } from 'utils/branding';
+import queryClient from 'utils/queryClient';
 
 interface IBrandingSettingsProps {
   branding?: IBranding;
@@ -504,6 +506,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
             theme: 'dark',
           },
         );
+        queryClient.invalidateQueries(['organization']);
       },
       onSettled: () => {
         setIsSaving(false);
@@ -904,6 +907,16 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
 
               <div
                 className="flex items-center justify-center text-white rounded-19xl px-2.5 py-2 mx-2.5 text-sm font-bold"
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = getTintVariantColor(
+                    primaryColor,
+                    0.1,
+                    'black',
+                  ))
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = primaryColor)
+                }
                 style={{ backgroundColor: primaryColor }}
               >
                 Primary
@@ -1183,7 +1196,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                         className="h-full object-cover"
                       />
                     ) : (
-                      <Logo className="h-[12px]" />
+                      <Logo className="!h-[12px]" />
                     )}
                   </div>
                   <div className="w-[110px] p-[5px] h-full flex flex-col gap-1">

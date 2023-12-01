@@ -13,7 +13,7 @@ const tintVariants = {
   900: 0.7, //70%
 };
 
-const getTintVariantColor = (
+export const getTintVariantColor = (
   color: string,
   intensity: number,
   tintColor: 'white' | 'black',
