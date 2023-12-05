@@ -4,7 +4,7 @@ import Collapse from 'components/Collapse';
 import Divider from 'components/Divider';
 import Layout, { FieldType } from 'components/Form';
 import Icon from 'components/Icon';
-import { FC, ReactNode, useState } from 'react';
+import { FC, ReactNode, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import NoAnnouncement from 'images/NoAnnouncement.svg';
 import { useDropzone } from 'react-dropzone';
@@ -55,6 +55,7 @@ const Preview: FC<{
   videoClassName?: string;
   className?: string;
   dataTestId?: string;
+  showPreview?: boolean;
 }> = ({
   file,
   url,
@@ -67,8 +68,8 @@ const Preview: FC<{
   videoClassName,
   className = '',
   dataTestId,
+  showPreview = true,
 }) => {
-  const [removePreview, setRemovePreview] = useState(false);
   const style = clsx({
     'max-h-full max-w-full relative': true,
     [className]: true,
@@ -104,7 +105,7 @@ const Preview: FC<{
         />
       </div>
     </div>
-  ) : url && !removePreview ? (
+  ) : url && !showPreview ? (
     <div className={style}>
       {isVideo ? (
         <video
@@ -124,7 +125,6 @@ const Preview: FC<{
         className="absolute -right-3 -top-3 w-6 h-6 rounded-full flex items-center justify-center bg-black group"
         onClick={(e) => {
           e.stopPropagation();
-          setRemovePreview(true);
           onBrandingRemove();
         }}
       >
@@ -200,6 +200,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
     bgVideo: boolean;
   }>({ logo: false, favicon: false, bg: false, bgVideo: false });
   const [isSaving, setIsSaving] = useState(false);
+  const [showSaveChanges, setShowSaveChanges] = useState<boolean>(false);
 
   const [primaryColor, secondaryColor, backgroundType, color, pageTitle, text] =
     watch([
@@ -227,6 +228,78 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
     bg: string | null;
     bgVideo: string | null;
   }>({ logo: null, favicon: null, bg: null, bgVideo: null });
+
+  useEffect(() => {
+    if (pageTitle !== branding?.pageTitle) {
+      setShowSaveChanges(true);
+      return;
+    } else {
+      setShowSaveChanges(false);
+    }
+    if (selectedLogo || selectedFavicon || selectedBG || selectedBGVideo) {
+      setShowSaveChanges(true);
+      return;
+    } else {
+      setShowSaveChanges(false);
+    }
+    if (
+      primaryColor !== branding?.primaryColor ||
+      secondaryColor !== branding?.secondaryColor
+    ) {
+      setShowSaveChanges(true);
+      return;
+    } else {
+      setShowSaveChanges(false);
+    }
+    if (layoutAlignment !== branding?.loginConfig?.layout) {
+      setShowSaveChanges(true);
+      return;
+    } else {
+      setShowSaveChanges(false);
+    }
+    if (
+      backgroundType.toLocaleUpperCase() !==
+      branding?.loginConfig?.backgroundType.toLocaleUpperCase()
+    ) {
+      setShowSaveChanges(true);
+      return;
+    } else {
+      setShowSaveChanges(false);
+    }
+    if (
+      color !== branding?.loginConfig?.color ||
+      text !== branding?.loginConfig?.text
+    ) {
+      setShowSaveChanges(true);
+      return;
+    } else {
+      setShowSaveChanges(false);
+    }
+    if (
+      removedMedia.logo ||
+      removedMedia.favicon ||
+      removedMedia?.bg ||
+      removedMedia.bgVideo
+    ) {
+      setShowSaveChanges(true);
+      return;
+    } else {
+      setShowSaveChanges(false);
+    }
+  }, [
+    pageTitle,
+    selectedLogo,
+    selectedFavicon,
+    selectedBG,
+    selectedBGVideo,
+    primaryColor,
+    secondaryColor,
+    layoutAlignment,
+    backgroundType,
+    color,
+    text,
+    removedMedia,
+  ]);
 
   const {
     getRootProps: getRootPropsLogo,
@@ -511,16 +584,28 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
             theme: 'dark',
           },
         );
-        queryClient.invalidateQueries(['organization']);
+        queryClient.refetchQueries(['organization']);
       },
       onSettled: () => {
         setIsSaving(false);
+        handleCancel();
       },
     });
   };
 
   const handleCancel = () => {
-    reset();
+    setShowSaveChanges(false);
+    reset({
+      primaryColor: branding?.primaryColor || '#10B981',
+      secondaryColor: branding?.secondaryColor || '#1d4ed8',
+      backgroundType:
+        titleCase(branding?.loginConfig?.backgroundType || '') ||
+        titleCase(backgroundOption[2].data.value),
+      color: branding?.loginConfig?.color || '#777777',
+      pageTitle: branding?.pageTitle || 'Auzmor Office',
+      text: branding?.loginConfig?.text,
+    });
+    setLayoutAlignment(branding?.loginConfig?.layout || 'RIGHT');
     setRemovedMedia({ logo: false, favicon: false, bg: false, bgVideo: false });
   };
 
@@ -543,7 +628,12 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
         </p>
         <p className="text-neutral-500 text-xs font-medium mt-3">
           {message}{' '}
-          <span className="text-primary-500 font-bold">Try again</span>
+          <span
+            className="text-primary-500 font-bold"
+            data-testid="upload-again"
+          >
+            Try again
+          </span>
         </p>
       </div>
     );
@@ -684,21 +774,23 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
             </p>
           </div>
           <div className="flex flex-col">
-            <div className="flex gap-2">
-              <Button
-                label="Cancel"
-                variant={Variant.Secondary}
-                onClick={handleCancel}
-                disabled={isSaving}
-                dataTestId="branding-cancelcta"
-              />
-              <Button
-                label="Save changes"
-                loading={isSaving}
-                onClick={handleSaveChanges}
-                dataTestId="branding-savechangescta"
-              />
-            </div>
+            {showSaveChanges && (
+              <div className="flex gap-2">
+                <Button
+                  label="Cancel"
+                  variant={Variant.Secondary}
+                  onClick={handleCancel}
+                  disabled={isSaving}
+                  dataTestId="branding-cancelcta"
+                />
+                <Button
+                  label="Save changes"
+                  loading={isSaving}
+                  onClick={handleSaveChanges}
+                  dataTestId="branding-savechangescta"
+                />
+              </div>
+            )}
             <div></div>
           </div>
         </div>
@@ -762,6 +854,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                     onBrandingRemove={() =>
                       setRemovedMedia({ ...removedMedia, logo: true })
                     }
+                    showPreview={removedMedia.logo}
                     dataTestId="logo"
                   />
                 )}
@@ -808,6 +901,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                       setRemovedMedia({ ...removedMedia, favicon: true })
                     }
                     dataTestId="icon"
+                    showPreview={removedMedia.favicon}
                   />
                 )}
               </div>
@@ -835,7 +929,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                     type: FieldType.ColorPicker,
                     control,
                     className: '',
-                    dataTestId: 'branding-select-primary-color',
+                    dataTestId: 'primary-color-palette',
                     setValue,
                     customLabelRightElement: (
                       <Tooltip
@@ -861,7 +955,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                       type: FieldType.ColorPicker,
                       control,
                       className: '',
-                      dataTestId: 'secondary-color',
+                      dataTestId: 'secondary-color-palette',
                       setValue,
                       customLabelRightElement: (
                         <Tooltip
@@ -1059,6 +1153,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                           setRemovedMedia({ ...removedMedia, bg: true })
                         }
                         imgClassName="w-[321px] h-[166px] rounded-7xl"
+                        showPreview={removedMedia.bg}
                       />
                     )}
                   </div>
@@ -1106,6 +1201,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                         }
                         isVideo
                         videoClassName="w-[321px] h-[166px] rounded-7xl object-cover"
+                        showPreview={removedMedia.bgVideo}
                       />
                     )}
                   </div>
@@ -1122,7 +1218,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                         type: FieldType.ColorPicker,
                         control,
                         className: '',
-                        dataTestId: 'select-background-color',
+                        dataTestId: 'login-color-palette',
                         setValue,
                       },
                     ]}
