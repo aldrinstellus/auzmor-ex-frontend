@@ -6,9 +6,11 @@ import { useOrganization } from 'queries/organization';
 import { FC, useMemo, useState } from 'react';
 import GeneralSettings from './GeneralSettings';
 import BrandingSettings from './BrandingSettings';
+import { useBrandingStore } from 'stores/branding';
 
 const Admin: FC = () => {
   const { data, isLoading } = useOrganization();
+  const branding = useBrandingStore((state) => state.branding);
   const settings = useMemo(
     () => [
       {
@@ -35,7 +37,7 @@ const Admin: FC = () => {
         label: 'Branding',
         icon: 'branding',
         key: 'branding-settings',
-        component: <BrandingSettings branding={data?.branding} />,
+        component: <BrandingSettings branding={branding!} />,
         disabled: false,
         hidden: false,
         hideDefaultLabelCard: true,
