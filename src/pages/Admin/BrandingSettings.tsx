@@ -623,7 +623,12 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
         </p>
         <p className="text-neutral-500 text-xs font-medium mt-3">
           {message}{' '}
-          <span className="text-primary-500 font-bold">Try again</span>
+          <span
+            className="text-primary-500 font-bold"
+            data-testid="upload-again"
+          >
+            Try again
+          </span>
         </p>
       </div>
     );
