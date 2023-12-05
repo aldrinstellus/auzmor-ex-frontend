@@ -250,7 +250,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
                         setValue(name, lastValidHex);
                         field.onBlur();
                       }}
-                      data-testid={`${dataTestId}-hexcode`}
+                      data-testid={`${dataTestId}`}
                     />
                   </div>
                 </div>
