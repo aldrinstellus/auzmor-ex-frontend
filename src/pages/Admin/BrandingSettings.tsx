@@ -93,13 +93,9 @@ const Preview: FC<{
           e.stopPropagation();
           onCustomRemove();
         }}
+        data-testid={`branding-remove-${dataTestId}`}
       >
-        <Icon
-          name="close"
-          size={16}
-          color="text-white"
-          dataTestId={`branding-remove-${dataTestId}`}
-        />
+        <Icon name="close" size={16} color="text-white" />
       </div>
     </div>
   ) : url && !showPreview ? (
@@ -124,13 +120,9 @@ const Preview: FC<{
           e.stopPropagation();
           onBrandingRemove();
         }}
+        data-testid={`branding-remove-${dataTestId}`}
       >
-        <Icon
-          name="close"
-          size={16}
-          color="text-white"
-          dataTestId={`branding-remove-${dataTestId}`}
-        />
+        <Icon name="close" size={16} color="text-white" />
       </div>
     </div>
   ) : (
@@ -1166,7 +1158,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = ({ branding }) => {
                   >
                     <input
                       {...getInputPropsBGVideo()}
-                      data-testid="upload-background-video"
+                      data-testid="upload-background"
                     />
                     {validationErrors.bgVideo ? (
                       validationErrorTemplate(validationErrors.bgVideo, () => {
