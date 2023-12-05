@@ -57,13 +57,13 @@ const ConfirmationStep: React.FC<AppProps> = ({
           size={Size.Small}
           className="mr-4"
           onClick={() => setStep(StepEnum.Review)}
-          dataTestId="mport-people-cancel"
+          dataTestId="review-module-cta"
           disabled={startCreatingUserMutation.isLoading}
         />
         <Button
           label="Confirm"
           size={Size.Small}
-          dataTestId="mport-people-next"
+          dataTestId="complete-cta"
           loading={startCreatingUserMutation.isLoading}
           onClick={() => startCreatingUserMutation.mutate()}
         />

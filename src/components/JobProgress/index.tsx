@@ -21,7 +21,10 @@ const Processing: React.FC = () => {
 
   return (
     <div className="fixed w-full bottom-0 flex justify-center px-14 z-50">
-      <div className="w-[1440px] flex flex-row-reverse">
+      <div
+        className="w-[1440px] flex flex-row-reverse"
+        data-testid="progressbar"
+      >
         <div
           className={`${
             complete ? 'h-auto' : collapse ? 'h-[74px]' : 'h-[50px]'
@@ -58,7 +61,11 @@ const Processing: React.FC = () => {
 
             <div className="flex gap-2 items-center">
               {complete ? (
-                <div className="text-sm cursor-pointer" onClick={openModal}>
+                <div
+                  className="text-sm cursor-pointer"
+                  onClick={openModal}
+                  data-testid="viewdetails-progressbar"
+                >
                   View Details
                 </div>
               ) : (
@@ -68,6 +75,7 @@ const Processing: React.FC = () => {
                   hoverColor="text-white"
                   color="!text-white"
                   size={24}
+                  dataTestId="expand-collapse-progressbar"
                 />
               )}
               <Icon

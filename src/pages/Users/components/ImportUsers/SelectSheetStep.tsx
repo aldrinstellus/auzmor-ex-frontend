@@ -64,6 +64,7 @@ const SelectSheetStep: React.FC<AppProps> = ({
       placeholder: 'Select Sheet',
       showSearch: false,
       options: meta.sheetOptions,
+      dataTestId: 'select-sheet',
     },
   ];
 
@@ -80,7 +81,7 @@ const SelectSheetStep: React.FC<AppProps> = ({
           </div>
         }
         onClose={closeModal}
-        closeBtnDataTestId="import-people-close"
+        closeBtnDataTestId="close-modal"
       />
       <div className="px-6 pt-4 pb-6">
         <Layout fields={fields} />
@@ -149,13 +150,13 @@ const SelectSheetStep: React.FC<AppProps> = ({
           size={Size.Small}
           className="mr-4"
           onClick={closeModal}
-          dataTestId="mport-people-cancel"
+          dataTestId="cancel-cta"
           disabled={parseMutation.isLoading || validateUserMutation.isLoading}
         />
         <Button
           label="Confirm"
           size={Size.Small}
-          dataTestId="mport-people-next"
+          dataTestId="confirm-cta"
           onClick={() => {
             validateUserMutation.mutate();
           }}

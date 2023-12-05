@@ -1,16 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import Button, { Size, Variant } from 'components/Button';
-import Modal from 'components/Modal';
-import Header from 'components/ModalHeader';
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import 'react-data-grid/lib/styles.css';
-import DataGrid, { RenderRowProps, Row } from 'react-data-grid';
-import SwitchToggle from 'components/SwitchToggle';
+import DataGrid from 'react-data-grid';
 import { useInfiniteImportResultData } from 'queries/importUsers';
 import Spinner from 'components/Spinner';
-import apiService from 'utils/apiService';
-import useModal from 'hooks/useModal';
-import Icon from 'components/Icon';
 
 type AppProps = {
   importId: string;
@@ -27,7 +19,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
 
   const flatData: any[] = (
     data?.pages.flatMap((page) => {
-      return page?.data?.result?.data?.info.map((user: any) => user);
+      return page?.data?.result?.data?.map((user: any) => user);
     }) || []
   ).map((f, idx) => ({ idx: idx + 1, ...f }));
 
@@ -38,7 +30,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
       name: 'Name',
       resizable: true,
       width: 200,
-      renderCell: ({ row, tabIndex }: any) => {
+      renderCell: ({ row }: any) => {
         return row.rowData?.fullName?.value;
       },
       cellClass: (row: any) => {
@@ -53,7 +45,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
       name: 'Email',
       resizable: true,
       width: 220,
-      renderCell: ({ row, tabIndex }: any) => {
+      renderCell: ({ row }: any) => {
         return row.rowData.email.value;
       },
       cellClass: (row: any) => {
@@ -68,7 +60,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
       name: 'Manager Email',
       resizable: true,
       width: 220,
-      renderCell: ({ row, tabIndex }: any) => {
+      renderCell: ({ row }: any) => {
         return row.rowData.managerEmail.value;
       },
       cellClass: (row: any) => {
@@ -83,7 +75,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
       name: 'Designation',
       resizable: true,
       width: 180,
-      renderCell: ({ row, tabIndex }: any) => {
+      renderCell: ({ row }: any) => {
         return row.rowData.designation.value;
       },
       cellClass: (row: any) => {
@@ -98,7 +90,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
       name: 'Department',
       resizable: true,
       width: 220,
-      renderCell: ({ row, tabIndex }: any) => {
+      renderCell: ({ row }: any) => {
         return row.rowData.department.value;
       },
       cellClass: (row: any) => {
@@ -113,7 +105,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
       name: 'Location',
       resizable: true,
       width: 220,
-      renderCell: ({ row, tabIndex }: any) => {
+      renderCell: ({ row }: any) => {
         return row.rowData.location.value;
       },
       cellClass: (row: any) => {
@@ -128,7 +120,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
       name: 'Employee ID',
       resizable: true,
       width: 120,
-      renderCell: ({ row, tabIndex }: any) => {
+      renderCell: ({ row }: any) => {
         return row.rowData.employeeId.value;
       },
       cellClass: (row: any) => {
@@ -143,7 +135,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
       name: 'Phone',
       resizable: true,
       width: 120,
-      renderCell: ({ row, tabIndex }: any) => {
+      renderCell: ({ row }: any) => {
         return row.rowData.phoneNumber.value;
       },
       cellClass: (row: any) => {
@@ -158,7 +150,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
       name: 'Date of Birth',
       resizable: true,
       width: 140,
-      renderCell: ({ row, tabIndex }: any) => {
+      renderCell: ({ row }: any) => {
         return row.rowData.dateOfBirth.value;
       },
       cellClass: (row: any) => {
@@ -173,7 +165,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
       name: 'Date of Joining',
       resizable: true,
       width: 140,
-      renderCell: ({ row, tabIndex }: any) => {
+      renderCell: ({ row }: any) => {
         return row.rowData.dateOfJoining.value;
       },
       cellClass: (row: any) => {
@@ -188,7 +180,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
       name: 'Marital Status',
       resizable: true,
       width: 120,
-      renderCell: ({ row, tabIndex }: any) => {
+      renderCell: ({ row }: any) => {
         return row.rowData.maritalStatus.value;
       },
       cellClass: (row: any) => {

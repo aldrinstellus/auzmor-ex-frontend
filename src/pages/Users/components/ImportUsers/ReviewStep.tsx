@@ -252,6 +252,7 @@ const ReviewStep: React.FC<AppProps> = ({
         onBackIconClick={() => null}
         title="Bulk Add User info"
         onClose={closeModal}
+        titleDataTestId="back-arrow"
         closeBtnDataTestId="import-people-close"
       />
       <div className="bg-purple-50 pt-4">
@@ -274,6 +275,7 @@ const ReviewStep: React.FC<AppProps> = ({
                   onChange={(c) => {
                     setShowOnlyError(c);
                   }}
+                  dataTestId="show-problem-rows"
                 />
                 <span className="text-sm">Only show rows with problem</span>
               </div>
@@ -288,11 +290,15 @@ const ReviewStep: React.FC<AppProps> = ({
                   headerRowHeight={36}
                   className="text-xs rdg-light h-[65vh] w-auto"
                   onScroll={handleScroll}
+                  data-testid="value-row"
                 />
               ) : (
                 <div className="flex flex-col justify-center items-center p-4">
                   <img src={require('./nodata.png')} />
-                  <div className="pt-4 text-2xl font-bold">
+                  <div
+                    className="pt-4 text-2xl font-bold"
+                    data-testid="no-data-msg"
+                  >
                     No data to display
                   </div>
                 </div>
@@ -313,7 +319,7 @@ const ReviewStep: React.FC<AppProps> = ({
           size={Size.Small}
           className="mr-4"
           onClick={() => setStep(StepEnum.Importing)}
-          dataTestId="mport-people-cancel"
+          dataTestId="go-back-cta"
         />
         <div className="v-center">
           <Button
@@ -322,12 +328,12 @@ const ReviewStep: React.FC<AppProps> = ({
             size={Size.Small}
             className="mr-4"
             onClick={closeModal}
-            dataTestId="mport-people-cancel"
+            dataTestId="cancel-review-cta"
           />
           <Button
             label="Review"
             size={Size.Small}
-            dataTestId="mport-people-next"
+            dataTestId="review-cta"
             onClick={handleClick}
             loading={inProgress}
           />
@@ -342,7 +348,10 @@ const ReviewStep: React.FC<AppProps> = ({
           />
           <div className="flex flex-col justify-center items-center p-4">
             <Icon name="warningCircle" className="text-red-500" size={80} />
-            <div className="text-lg font-bold text-neutral-700 pt-4">
+            <div
+              className="text-lg font-bold text-neutral-700 pt-4"
+              data-testid="issue-count"
+            >
               You have {errorCount} rows with unresolved issue
             </div>
             <div className="text-center mt-4 px-6">
@@ -357,12 +366,12 @@ const ReviewStep: React.FC<AppProps> = ({
               size={Size.Small}
               className="mr-4"
               onClick={closeConfirm}
-              dataTestId="mport-people-cancel"
+              dataTestId="goback-cta"
             />
             <Button
               label="Proceed"
               size={Size.Small}
-              dataTestId="mport-people-next"
+              dataTestId="proceed-cta"
               onClick={() => setStep(StepEnum.Confirmation)}
               loading={inProgress}
             />

@@ -60,7 +60,7 @@ const UploadFileStep: React.FC<AppProps> = ({
       <Header
         title="Import Candidates"
         onClose={closeModal}
-        closeBtnDataTestId="import-people-close"
+        closeBtnDataTestId="close-import-modal"
       />
       <div className="px-6 py-4">
         <div className="flex flex-col justify-center items-center space-y-2">
@@ -72,7 +72,10 @@ const UploadFileStep: React.FC<AppProps> = ({
           <div className="text-xs text-neutral-500">
             File must be in csv, xls or xlsx format and must not exceed 100mb
           </div>
-          <div className="text-primary-600 font-bold text-sm cursor-pointer">
+          <div
+            className="text-primary-600 font-bold text-sm cursor-pointer"
+            data-testid="download-format-cta"
+          >
             Download format
           </div>
         </div>
@@ -105,7 +108,10 @@ const UploadFileStep: React.FC<AppProps> = ({
                   <div className="bg-neutral-100 rounded-full text-xs font-bold">
                     OR
                   </div>
-                  <div className="flex items-center space-x-1 border rounded-full px-4 py-1">
+                  <div
+                    className="flex items-center space-x-1 border rounded-full px-4 py-1"
+                    data-testid="upload-from-system"
+                  >
                     <Icon name="documentUpload" size={18} />
                     <span className="text-sm font-bold">
                       Upload from existing documents
@@ -124,7 +130,7 @@ const UploadFileStep: React.FC<AppProps> = ({
           size={Size.Small}
           className="mr-4"
           onClick={closeModal}
-          dataTestId="import-people-cancel"
+          dataTestId="import-cancel-cta"
           disabled={
             uploadStatus === UploadStatus.Uploading ||
             triggerUserImportMutation.isLoading
@@ -133,7 +139,7 @@ const UploadFileStep: React.FC<AppProps> = ({
         <Button
           label="Next"
           size={Size.Small}
-          dataTestId="import-people-next"
+          dataTestId="import-next-cta"
           onClick={() => triggerUserImportMutation.mutate()}
           disabled={
             uploadStatus === UploadStatus.YetToStart ||

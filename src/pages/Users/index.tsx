@@ -99,11 +99,13 @@ const Users: FC<IUsersProps> = () => {
                   icon: 'addCircle',
                   label: 'Quick Add',
                   onClick: openAddUserModal,
+                  dataTestId: 'people-quick-add',
                 },
                 {
                   icon: 'import',
                   label: 'Import',
                   onClick: openImportUserModal,
+                  dataTestId: 'people-bulk-import',
                 },
               ]}
             />

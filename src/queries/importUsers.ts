@@ -119,3 +119,10 @@ export const useInfiniteImportResultData = ({
     enabled: startFetching,
   });
 };
+
+export const downloadReport = async (importId: string, status: string) => {
+  const { data } = await apiService.get(
+    `/users/import/${importId}/reports/download?status=${status}`,
+  );
+  return data;
+};
