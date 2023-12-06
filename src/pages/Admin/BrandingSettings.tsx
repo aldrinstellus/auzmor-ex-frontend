@@ -23,7 +23,6 @@ import {
   useUpdateBrandingMutation,
 } from 'queries/organization';
 import { useBrandingStore } from 'stores/branding';
-import { IBranding } from 'contexts/AuthContext';
 import useModal from 'hooks/useModal';
 import ImageResosition from 'components/DynamicImagePreview/components/ImageReposition';
 import clsx from 'clsx';
@@ -41,10 +40,6 @@ import queryClient from 'utils/queryClient';
 
 const PRIMARY_COLOR = '#10B981';
 const SECONDARY_COLOR = '#1D4ED8FF';
-
-interface IBrandingSettingsProps {
-  branding?: IBranding;
-}
 
 const Preview: FC<{
   file: File | null;
@@ -156,9 +151,9 @@ const Preview: FC<{
   );
 };
 
-const BrandingSettings: FC<IBrandingSettingsProps> = () => {
-  const { data } = useOrganization();
-  const branding = data?.branding;
+const BrandingSettings: FC = () => {
+  useOrganization();
+  const branding = useBrandingStore((state) => state.branding);
   useEffect(() => {
     reset({
       primaryColor: branding?.primaryColor || PRIMARY_COLOR,
@@ -197,7 +192,6 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
       text: branding?.loginConfig?.text,
     },
   });
-  const setBranding = useBrandingStore((state) => state.setBranding);
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
   const [selectedFavicon, setSelectedFavicon] = useState<File | null>(null);
   const [selectedBG, setSelectedBG] = useState<File | null>(null);
@@ -519,9 +513,8 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
         video: uploadedBGVideo ? uploadedBGVideo[0] : undefined,
       },
     };
-    setBranding(newBranding);
     updateBranding.mutate(newBranding, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast(
           <SuccessToast
             content={'Changes you made have been saved'}
@@ -546,11 +539,11 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
             theme: 'dark',
           },
         );
-        queryClient.refetchQueries(['organization']);
+        await queryClient.refetchQueries(['organization']);
+        handleCancel();
       },
       onSettled: () => {
         setIsSaving(false);
-        handleCancel();
       },
     });
   };
