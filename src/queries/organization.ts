@@ -105,10 +105,10 @@ export const useUpdateLimitGlobalPostingMutation = () => {
 };
 
 export const patchBranding = async (branding: IBranding) => {
-  const { data } = await apiService.patch(`/organizations/configuration`, {
+  const response = await apiService.patch(`/organizations/configuration`, {
     branding,
   });
-  return data;
+  return response;
 };
 
 export const useUpdateBrandingMutation = () => {
