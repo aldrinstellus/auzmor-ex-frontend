@@ -928,32 +928,49 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                   },
                 ]}
               />
+              {(primaryColor.toLocaleUpperCase() === '#FFF' ||
+                primaryColor.toLocaleUpperCase() === '#FFFFFF') && (
+                <p className="text-xs text-yellow-400 -mt-4">
+                  <span className="font-semibold">Readability Alert:</span> We
+                  suggest using high-contrast colors for better readability.
+                </p>
+              )}
               {branding?.secondaryColor || showSecondaryColor ? (
-                <Layout
-                  fields={[
-                    {
-                      name: 'secondaryColor',
-                      label: 'Secondary/action colour',
-                      type: FieldType.ColorPicker,
-                      control,
-                      className: '',
-                      dataTestId: 'secondary-color-palette',
-                      setValue,
-                      customLabelRightElement: (
-                        <Tooltip
-                          tooltipContent={
-                            <p className="text-center text-sm font-medium">
-                              It is used in secondary <br />
-                              buttons, highlights, etc.
-                            </p>
-                          }
-                        >
-                          <Icon name="infoCircle" size={16} hover={false} />
-                        </Tooltip>
-                      ),
-                    },
-                  ]}
-                />
+                <>
+                  <Layout
+                    fields={[
+                      {
+                        name: 'secondaryColor',
+                        label: 'Secondary/action colour',
+                        type: FieldType.ColorPicker,
+                        control,
+                        className: '',
+                        dataTestId: 'secondary-color-palette',
+                        setValue,
+                        customLabelRightElement: (
+                          <Tooltip
+                            tooltipContent={
+                              <p className="text-center text-sm font-medium">
+                                It is used in secondary <br />
+                                buttons, highlights, etc.
+                              </p>
+                            }
+                          >
+                            <Icon name="infoCircle" size={16} hover={false} />
+                          </Tooltip>
+                        ),
+                      },
+                    ]}
+                  />
+                  {(secondaryColor.toLocaleUpperCase() === '#FFF' ||
+                    secondaryColor.toLocaleUpperCase() === '#FFFFFF') && (
+                    <p className="text-xs text-yellow-400 -mt-4">
+                      <span className="font-semibold">Readability Alert:</span>{' '}
+                      We suggest using high-contrast colors for better
+                      readability.
+                    </p>
+                  )}
+                </>
               ) : (
                 <div
                   className="flex text-primary-500 group cursor-pointer group-hover:text-primary-700 text-base font-bold"
