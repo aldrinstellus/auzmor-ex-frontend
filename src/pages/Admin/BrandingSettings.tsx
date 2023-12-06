@@ -18,10 +18,7 @@ import {
 } from 'utils/misc';
 import { MB, TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { IRadioListOption } from 'components/RadioGroup';
-import {
-  useOrganization,
-  useUpdateBrandingMutation,
-} from 'queries/organization';
+import { useUpdateBrandingMutation } from 'queries/organization';
 import { useBrandingStore } from 'stores/branding';
 import useModal from 'hooks/useModal';
 import ImageResosition from 'components/DynamicImagePreview/components/ImageReposition';
@@ -153,20 +150,7 @@ const Preview: FC<{
 };
 
 const BrandingSettings: FC = () => {
-  useOrganization();
-  const branding = useBrandingStore((state) => state.branding);
-  useEffect(() => {
-    reset({
-      primaryColor: branding?.primaryColor || PRIMARY_COLOR,
-      secondaryColor: branding?.secondaryColor || SECONDARY_COLOR,
-      backgroundType:
-        titleCase(branding?.loginConfig?.backgroundType || '') ||
-        titleCase(backgroundOption[2].data.value),
-      color: branding?.loginConfig?.color || '#777777',
-      pageTitle: branding?.pageTitle || 'Auzmor Office',
-      text: branding?.loginConfig?.text,
-    });
-  }, [branding]);
+  const { branding, setBranding } = useBrandingStore();
   const backgroundOption: IRadioListOption[] = [
     {
       data: { value: 'Color' },
@@ -515,7 +499,8 @@ const BrandingSettings: FC = () => {
       },
     };
     updateBranding.mutate(newBranding, {
-      onSuccess: async () => {
+      onSuccess: async (data, _variables, _context) => {
+        const newBranding = data?.result?.data?.branding;
         toast(
           <SuccessToast
             content={'Changes you made have been saved'}
@@ -541,7 +526,18 @@ const BrandingSettings: FC = () => {
           },
         );
         await queryClient.refetchQueries(['organization']);
-        handleCancel();
+        handleCancel(
+          {
+            primaryColor: newBranding.primaryColor,
+            secondaryColor: newBranding.secondaryColor,
+            pageTitle: newBranding?.pageTitle,
+            text: newBranding?.loginConfig?.text,
+            color: newBranding?.loginConfig?.color,
+            backgroundType: titleCase(newBranding?.loginConfig?.backgroundType),
+          },
+          newBranding?.loginConfig?.layout,
+        );
+        setBranding(newBranding);
       },
       onError: () => {
         toast(
@@ -573,23 +569,34 @@ const BrandingSettings: FC = () => {
     });
   };
 
-  const handleCancel = () => {
+  const handleCancel = (
+    formData?: any,
+    layoutAlignment?: 'RIGHT' | 'LEFT' | 'CENTER',
+  ) => {
     setShowSaveChanges(false);
-    reset({
-      primaryColor: branding?.primaryColor || PRIMARY_COLOR,
-      secondaryColor: branding?.secondaryColor || SECONDARY_COLOR,
-      backgroundType:
-        titleCase(branding?.loginConfig?.backgroundType || '') ||
-        titleCase(backgroundOption[2].data.value),
-      color: branding?.loginConfig?.color || '#777777',
-      pageTitle: branding?.pageTitle || 'Auzmor Office',
-      text: branding?.loginConfig?.text,
-    });
+    reset(
+      !!formData
+        ? formData
+        : {
+            primaryColor: branding?.primaryColor || PRIMARY_COLOR,
+            secondaryColor: branding?.secondaryColor || SECONDARY_COLOR,
+            backgroundType:
+              titleCase(branding?.loginConfig?.backgroundType || '') ||
+              titleCase(backgroundOption[2].data.value),
+            color: branding?.loginConfig?.color || '#777777',
+            pageTitle: branding?.pageTitle || 'Auzmor Office',
+            text: branding?.loginConfig?.text,
+          },
+    );
     setSelectedLogo(null);
     setSelectedFavicon(null);
     setSelectedBG(null);
     setSelectedBGVideo(null);
-    setLayoutAlignment(branding?.loginConfig?.layout || 'RIGHT');
+    setLayoutAlignment(
+      layoutAlignment
+        ? layoutAlignment
+        : branding?.loginConfig?.layout || 'RIGHT',
+    );
     setRemovedMedia({ logo: false, favicon: false, bg: false, bgVideo: false });
   };
 
