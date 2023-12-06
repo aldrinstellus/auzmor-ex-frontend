@@ -39,6 +39,9 @@ import welcomeToOfficeLarge from 'images/welcomeToOfficeLarge.png';
 import { getTintVariantColor } from 'utils/branding';
 import queryClient from 'utils/queryClient';
 
+const PRIMARY_COLOR = '#10B981';
+const SECONDARY_COLOR = '#1D4ED8FF';
+
 interface IBrandingSettingsProps {
   branding?: IBranding;
 }
@@ -81,6 +84,9 @@ const Preview: FC<{
           src={getMediaObj([file])[0].original}
           className={videoClassName}
           data-testid={`branding-uploaded-${dataTestId}`}
+          loop
+          muted
+          autoPlay
         />
       ) : (
         <img
@@ -108,6 +114,9 @@ const Preview: FC<{
           src={url}
           className={videoClassName}
           data-testid={`branding-uploaded-${dataTestId}`}
+          loop
+          muted
+          autoPlay
         />
       ) : (
         <img
@@ -150,6 +159,18 @@ const Preview: FC<{
 const BrandingSettings: FC<IBrandingSettingsProps> = () => {
   const { data } = useOrganization();
   const branding = data?.branding;
+  useEffect(() => {
+    reset({
+      primaryColor: branding?.primaryColor || PRIMARY_COLOR,
+      secondaryColor: branding?.secondaryColor || SECONDARY_COLOR,
+      backgroundType:
+        titleCase(branding?.loginConfig?.backgroundType || '') ||
+        titleCase(backgroundOption[2].data.value),
+      color: branding?.loginConfig?.color || '#777777',
+      pageTitle: branding?.pageTitle || 'Auzmor Office',
+      text: branding?.loginConfig?.text,
+    });
+  }, [branding]);
   const backgroundOption: IRadioListOption[] = [
     {
       data: { value: 'Color' },
@@ -164,10 +185,10 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
       dataTestId: 'branding-background-as-image',
     },
   ];
-  const { control, setValue, watch, reset } = useForm({
+  const { control, setValue, watch, reset, formState } = useForm({
     defaultValues: {
-      primaryColor: branding?.primaryColor || '#10B981',
-      secondaryColor: branding?.secondaryColor || '#1d4ed8',
+      primaryColor: branding?.primaryColor || PRIMARY_COLOR,
+      secondaryColor: branding?.secondaryColor || SECONDARY_COLOR,
       backgroundType:
         titleCase(branding?.loginConfig?.backgroundType || '') ||
         titleCase(backgroundOption[2].data.value),
@@ -192,7 +213,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
     bgVideo: boolean;
   }>({ logo: false, favicon: false, bg: false, bgVideo: false });
   const [isSaving, setIsSaving] = useState(false);
-  const [showSaveChanges, setShowSaveChanges] = useState<boolean>(false);
+  const [showSaveChanges, setShowSaveChanges] = useState(false);
 
   const [primaryColor, secondaryColor, backgroundType, color, pageTitle, text] =
     watch([
@@ -203,7 +224,6 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
       'pageTitle',
       'text',
     ]);
-
   const [isEditLogoModalOpen, openEditLogoModal, closeEditLogoModal] =
     useModal();
   const [isEditFaviconModalOpen, openEditFaviconModal, closeEditFaviconModal] =
@@ -222,74 +242,23 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
   }>({ logo: null, favicon: null, bg: null, bgVideo: null });
 
   useEffect(() => {
-    if (pageTitle !== branding?.pageTitle) {
-      setShowSaveChanges(true);
-      return;
-    } else {
-      setShowSaveChanges(false);
-    }
-    if (selectedLogo || selectedFavicon || selectedBG || selectedBGVideo) {
-      setShowSaveChanges(true);
-      return;
-    } else {
-      setShowSaveChanges(false);
-    }
     if (
-      primaryColor !== branding?.primaryColor ||
-      secondaryColor !== branding?.secondaryColor
-    ) {
-      setShowSaveChanges(true);
-      return;
-    } else {
-      setShowSaveChanges(false);
-    }
-    if (layoutAlignment !== branding?.loginConfig?.layout) {
-      setShowSaveChanges(true);
-      return;
-    } else {
-      setShowSaveChanges(false);
-    }
-    if (
-      backgroundType.toLocaleUpperCase() !==
-      branding?.loginConfig?.backgroundType.toLocaleUpperCase()
-    ) {
-      setShowSaveChanges(true);
-      return;
-    } else {
-      setShowSaveChanges(false);
-    }
-    if (
-      color !== branding?.loginConfig?.color ||
-      text !== branding?.loginConfig?.text
-    ) {
-      setShowSaveChanges(true);
-      return;
-    } else {
-      setShowSaveChanges(false);
-    }
-    if (
+      selectedLogo ||
+      selectedFavicon ||
+      selectedBG ||
+      selectedBGVideo ||
       removedMedia.logo ||
       removedMedia.favicon ||
-      removedMedia?.bg ||
+      removedMedia.bg ||
       removedMedia.bgVideo
     ) {
       setShowSaveChanges(true);
-      return;
-    } else {
-      setShowSaveChanges(false);
     }
   }, [
-    pageTitle,
     selectedLogo,
     selectedFavicon,
     selectedBG,
     selectedBGVideo,
-    primaryColor,
-    secondaryColor,
-    layoutAlignment,
-    backgroundType,
-    color,
-    text,
     removedMedia,
   ]);
 
@@ -536,7 +505,8 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
     }
     const newBranding = {
       primaryColor,
-      secondaryColor,
+      secondaryColor:
+        secondaryColor === SECONDARY_COLOR ? undefined : secondaryColor,
       pageTitle,
       logo: uploadedLogo ? uploadedLogo[0] : undefined,
       favicon: uploadedFavicon ? uploadedFavicon[0] : undefined,
@@ -588,8 +558,8 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
   const handleCancel = () => {
     setShowSaveChanges(false);
     reset({
-      primaryColor: branding?.primaryColor || '#10B981',
-      secondaryColor: branding?.secondaryColor || '#1d4ed8',
+      primaryColor: branding?.primaryColor || PRIMARY_COLOR,
+      secondaryColor: branding?.secondaryColor || SECONDARY_COLOR,
       backgroundType:
         titleCase(branding?.loginConfig?.backgroundType || '') ||
         titleCase(backgroundOption[2].data.value),
@@ -742,6 +712,9 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
         <video
           className={`absolute top-0 right-0 object-cover h-full w-full`}
           src={getBlobUrl(selectedBGVideo)}
+          loop
+          muted
+          autoPlay
         />
       );
     } else if (
@@ -752,6 +725,9 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
         <video
           className={`absolute top-0 right-0 object-cover h-full w-full`}
           src={branding?.loginConfig?.video?.original}
+          loop
+          muted
+          autoPlay
         />
       );
     } else {
@@ -770,7 +746,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
             </p>
           </div>
           <div className="flex flex-col">
-            {showSaveChanges && (
+            {(formState.isDirty || showSaveChanges) && (
               <div className="flex gap-2">
                 <Button
                   label="Cancel"
@@ -813,6 +789,12 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                   branding?.pageTitle === 'Auzmor office'
                     ? `Replace 'Auzmor office' name from UI with your own name`
                     : '',
+                maxLenght: 50,
+                customLabelRightElement: (
+                  <span className="text-neutral-500 text-sm">
+                    {text?.length} / 50
+                  </span>
+                ),
               },
             ]}
           />
@@ -846,10 +828,12 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                         to upload file. <br /> Ideal image size: 250 x 150 px
                       </span>
                     }
-                    onCustomRemove={() => setSelectedLogo(null)}
-                    onBrandingRemove={() =>
-                      setRemovedMedia({ ...removedMedia, logo: true })
-                    }
+                    onCustomRemove={() => {
+                      setSelectedLogo(null);
+                    }}
+                    onBrandingRemove={() => {
+                      setRemovedMedia({ ...removedMedia, logo: true });
+                    }}
                     showPreview={removedMedia.logo}
                     dataTestId="logo"
                   />
@@ -892,10 +876,12 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                         to upload file. <br /> Ideal image size: 32 x 32 px
                       </span>
                     }
-                    onCustomRemove={() => setSelectedFavicon(null)}
-                    onBrandingRemove={() =>
-                      setRemovedMedia({ ...removedMedia, favicon: true })
-                    }
+                    onCustomRemove={() => {
+                      setSelectedFavicon(null);
+                    }}
+                    onBrandingRemove={() => {
+                      setRemovedMedia({ ...removedMedia, favicon: true });
+                    }}
                     dataTestId="icon"
                     showPreview={removedMedia.favicon}
                   />
@@ -925,7 +911,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                     type: FieldType.ColorPicker,
                     control,
                     className: '',
-                    dataTestId: 'primary-color-palette',
+                    dataTestId: 'primary',
                     setValue,
                     customLabelRightElement: (
                       <Tooltip
@@ -942,32 +928,49 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                   },
                 ]}
               />
-              {showSecondaryColor ? (
-                <Layout
-                  fields={[
-                    {
-                      name: 'secondaryColor',
-                      label: 'Secondary/action colour',
-                      type: FieldType.ColorPicker,
-                      control,
-                      className: '',
-                      dataTestId: 'secondary-color-palette',
-                      setValue,
-                      customLabelRightElement: (
-                        <Tooltip
-                          tooltipContent={
-                            <p className="text-center text-sm font-medium">
-                              It is used in secondary <br />
-                              buttons, highlights, etc.
-                            </p>
-                          }
-                        >
-                          <Icon name="infoCircle" size={16} hover={false} />
-                        </Tooltip>
-                      ),
-                    },
-                  ]}
-                />
+              {(primaryColor.toLocaleUpperCase() === '#FFF' ||
+                primaryColor.toLocaleUpperCase() === '#FFFFFF') && (
+                <p className="text-xs text-yellow-400 -mt-4">
+                  <span className="font-semibold">Readability Alert:</span> We
+                  suggest using high-contrast colors for better readability.
+                </p>
+              )}
+              {branding?.secondaryColor || showSecondaryColor ? (
+                <>
+                  <Layout
+                    fields={[
+                      {
+                        name: 'secondaryColor',
+                        label: 'Secondary/action colour',
+                        type: FieldType.ColorPicker,
+                        control,
+                        className: '',
+                        dataTestId: 'secondary',
+                        setValue,
+                        customLabelRightElement: (
+                          <Tooltip
+                            tooltipContent={
+                              <p className="text-center text-sm font-medium">
+                                It is used in secondary <br />
+                                buttons, highlights, etc.
+                              </p>
+                            }
+                          >
+                            <Icon name="infoCircle" size={16} hover={false} />
+                          </Tooltip>
+                        ),
+                      },
+                    ]}
+                  />
+                  {(secondaryColor.toLocaleUpperCase() === '#FFF' ||
+                    secondaryColor.toLocaleUpperCase() === '#FFFFFF') && (
+                    <p className="text-xs text-yellow-400 -mt-4">
+                      <span className="font-semibold">Readability Alert:</span>{' '}
+                      We suggest using high-contrast colors for better
+                      readability.
+                    </p>
+                  )}
+                </>
               ) : (
                 <div
                   className="flex text-primary-500 group cursor-pointer group-hover:text-primary-700 text-base font-bold"
@@ -1042,7 +1045,12 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                 <div className="flex gap-[60px]">
                   <div
                     className="flex flex-col items-center gap-2 cursor-pointer"
-                    onClick={() => setLayoutAlignment('LEFT')}
+                    onClick={() => {
+                      setLayoutAlignment('LEFT');
+                      if (layoutAlignment !== 'LEFT') {
+                        setShowSaveChanges(true);
+                      }
+                    }}
                     data-testid="branding-select-left-alignment"
                   >
                     <div
@@ -1057,7 +1065,12 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                   </div>
                   <div
                     className="flex flex-col items-center gap-2 cursor-pointer"
-                    onClick={() => setLayoutAlignment('CENTER')}
+                    onClick={() => {
+                      setLayoutAlignment('CENTER');
+                      if (layoutAlignment !== 'CENTER') {
+                        setShowSaveChanges(true);
+                      }
+                    }}
                     data-testid="branding-select-center-alignment"
                   >
                     <div
@@ -1074,7 +1087,12 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                   </div>
                   <div
                     className="flex flex-col items-center gap-2 cursor-pointer"
-                    onClick={() => setLayoutAlignment('RIGHT')}
+                    onClick={() => {
+                      setLayoutAlignment('RIGHT');
+                      if (layoutAlignment !== 'RIGHT') {
+                        setShowSaveChanges(true);
+                      }
+                    }}
                     data-testid="branding-select-right-alignment"
                   >
                     <div
@@ -1214,7 +1232,7 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
                         type: FieldType.ColorPicker,
                         control,
                         className: '',
-                        dataTestId: 'login-color-palette',
+                        dataTestId: 'login',
                         setValue,
                       },
                     ]}
@@ -1259,17 +1277,6 @@ const BrandingSettings: FC<IBrandingSettingsProps> = () => {
               >
                 {backgroundType === 'Image' && getBackgroundImg()}
                 {backgroundType === 'Video' && getBackgroundVideo()}
-                {(selectedBGVideo ||
-                  branding?.loginConfig?.video?.original) && (
-                  <video
-                    src={
-                      selectedBGVideo
-                        ? getBlobUrl(selectedBGVideo)
-                        : branding?.loginConfig?.video?.original
-                    }
-                    className="absolute top-0 left-0"
-                  />
-                )}
                 {layoutAlignment !== 'CENTER' &&
                   backgroundType === 'Color' &&
                   layoutAlignment === 'RIGHT' && (
