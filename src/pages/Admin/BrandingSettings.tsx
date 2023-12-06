@@ -37,6 +37,7 @@ import welcomeToOffice from 'images/welcomeToOffice.png';
 import welcomeToOfficeLarge from 'images/welcomeToOfficeLarge.png';
 import { getTintVariantColor } from 'utils/branding';
 import queryClient from 'utils/queryClient';
+import FailureToast from 'components/Toast/variants/FailureToast';
 
 const PRIMARY_COLOR = '#10B981';
 const SECONDARY_COLOR = '#1D4ED8FF';
@@ -542,6 +543,30 @@ const BrandingSettings: FC = () => {
         await queryClient.refetchQueries(['organization']);
         handleCancel();
       },
+      onError: () => {
+        toast(
+          <FailureToast
+            content="Changes you made may have not been saved"
+            dataTestId="branding-changes-not-saved-toaster"
+          />,
+          {
+            closeButton: (
+              <Icon name="closeCircleOutline" color="text-red-500" size={20} />
+            ),
+            style: {
+              border: `1px solid ${twConfig.theme.colors.red['300']}`,
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: twConfig.theme.colors.neutral[900],
+            },
+            autoClose: TOAST_AUTOCLOSE_TIME,
+            transition: slideInAndOutTop,
+            theme: 'dark',
+          },
+        );
+        handleCancel();
+      },
       onSettled: () => {
         setIsSaving(false);
       },
@@ -923,7 +948,10 @@ const BrandingSettings: FC = () => {
               />
               {(primaryColor.toLocaleUpperCase() === '#FFF' ||
                 primaryColor.toLocaleUpperCase() === '#FFFFFF') && (
-                <p className="text-xs text-yellow-400 -mt-4">
+                <p
+                  className="text-xs text-yellow-400 -mt-4"
+                  data-testid="readability-warning"
+                >
                   <span className="font-semibold">Readability Alert:</span> We
                   suggest using high-contrast colors for better readability.
                 </p>
@@ -957,7 +985,10 @@ const BrandingSettings: FC = () => {
                   />
                   {(secondaryColor.toLocaleUpperCase() === '#FFF' ||
                     secondaryColor.toLocaleUpperCase() === '#FFFFFF') && (
-                    <p className="text-xs text-yellow-400 -mt-4">
+                    <p
+                      className="text-xs text-yellow-400 -mt-4"
+                      data-testid="readability-warning"
+                    >
                       <span className="font-semibold">Readability Alert:</span>{' '}
                       We suggest using high-contrast colors for better
                       readability.
