@@ -8,6 +8,7 @@ import {
   useController,
 } from 'react-hook-form';
 import { HEX_REGEX } from 'utils/constants';
+import { isDark } from 'utils/misc';
 
 export enum Variant {
   Text = 'TEXT',
@@ -208,7 +209,13 @@ const ColorPicker: FC<ColorPickerProps> = ({
                     className="w-[200px] h-[140px] flex justify-center items-center border rounded-7xl border-neutral-200"
                     style={{ backgroundColor: field.value || defaultValue }}
                   >
-                    <p className="text-2xl font-semibold text-neutral-900">
+                    <p
+                      className={`text-2xl font-semibold text-neutral-900 ${
+                        isDark(field.value || defaultValue)
+                          ? 'text-white'
+                          : 'text-neutral-900'
+                      }`}
+                    >
                       {field.value || defaultValue}
                     </p>
                   </div>
