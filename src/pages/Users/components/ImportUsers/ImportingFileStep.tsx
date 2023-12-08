@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Spinner from 'components/Spinner';
 import Modal from 'components/Modal';
 import { StepEnum } from './utils';
@@ -12,6 +12,7 @@ import {
 } from 'queries/importUsers';
 import Button, { Size, Variant } from 'components/Button';
 import ImportingForExcel from './ImportingForExcel';
+import usePoller from './usePoller';
 
 type AppProps = {
   open: boolean;
@@ -31,15 +32,28 @@ const ImportingFileStep: React.FC<AppProps> = ({
   setMeta,
 }) => {
   const isCsv = meta?.file?.name?.includes('.csv');
+  const [startPolling, setStartPolling] = useState(false);
+  const { ready, loading } = usePoller({
+    importId,
+    action: 'parse',
+    statusCheck: 'PROCESSING',
+    enabled: isCsv && startPolling,
+  });
 
   const updateParseMutation = useMutation(() =>
     updateParseImport(importId, {}),
   );
 
+  useEffect(() => {
+    if (isCsv && ready) {
+      updateParseMutation.mutate();
+    }
+  }, [ready]);
+
   const parseMutation = useMutation(() => parseImport(importId), {
     onSuccess: async () => {
       setMeta((m: any) => ({ ...m, parsed: true }));
-      await updateParseMutation.mutateAsync();
+      setStartPolling(true);
     },
   });
 
@@ -77,8 +91,9 @@ const ImportingFileStep: React.FC<AppProps> = ({
     );
   };
 
-  const _isSuccess = meta?.parsed || parseMutation.isSuccess;
-  const _isLoading = parseMutation.isLoading || updateParseMutation.isLoading;
+  const _isSuccess = (meta?.parsed || parseMutation.isSuccess) && ready;
+  const _isLoading =
+    loading || parseMutation.isLoading || updateParseMutation.isLoading;
   const renderForCsv = () => {
     return (
       <div>

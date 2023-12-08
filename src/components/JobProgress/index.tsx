@@ -11,7 +11,7 @@ const Processing: React.FC = () => {
   const { importId, total, setShowJobProgress, complete, setComplete } =
     useJobStore();
   const [collapse, openCollpase, closeCollapse] = useModal(true);
-  const { ready, data } = usePoller(importId, 'create');
+  const { ready, data } = usePoller({ importId, action: 'create' });
 
   useEffect(() => {
     if (ready) {

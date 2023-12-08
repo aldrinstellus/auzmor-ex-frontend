@@ -16,7 +16,11 @@ const ImportingForExcel: React.FC<AppProps> = ({
   setStep,
   setMeta,
 }) => {
-  const { ready, data } = usePoller(importId, 'parse');
+  const { ready, data } = usePoller({
+    importId,
+    action: 'parse',
+    statusCheck: 'PROCESSING',
+  });
 
   useEffect(() => {
     if (ready) {
