@@ -2,7 +2,19 @@
 import { useEffect, useRef, useState } from 'react';
 import apiService from 'utils/apiService';
 
-const usePoller = (importId: string, action: string) => {
+interface IPoller {
+  importId: string;
+  action: string;
+  enabled?: boolean;
+  statusCheck?: string;
+}
+
+const usePoller = ({
+  importId,
+  action,
+  enabled = true,
+  statusCheck = 'COMPLETED',
+}: IPoller) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>({});
   const readyRef = useRef(false);
@@ -20,7 +32,7 @@ const usePoller = (importId: string, action: string) => {
 
     setData(data);
     const status = data.result.data.status;
-    if (status === 'COMPLETED') {
+    if (status === statusCheck) {
       setLoading(false);
       readyRef.current = true;
       clearInterval(intervalId);
@@ -28,11 +40,14 @@ const usePoller = (importId: string, action: string) => {
   };
 
   useEffect(() => {
-    callFn();
-    const ts = setInterval(() => callFn(), 5000);
-    setIntervalId(ts);
+    let ts: any = null;
+    if (enabled) {
+      callFn();
+      ts = setInterval(() => callFn(), 5000);
+      setIntervalId(ts);
+    }
     return () => clearInterval(ts);
-  }, []);
+  }, [enabled]);
 
   return { loading, ready: readyRef.current, data };
 };

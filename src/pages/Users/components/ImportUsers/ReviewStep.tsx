@@ -29,7 +29,7 @@ const ReviewStep: React.FC<AppProps> = ({
   closeModal,
   setStep,
 }) => {
-  const { ready, loading } = usePoller(importId, 'validate');
+  const { ready, loading } = usePoller({ importId, action: 'validate' });
   const [showOnlyError, setShowOnlyError] = useState(false);
   const [inProgress, setInProgress] = useState(false);
   const [errorCount, setErrorCount] = useState(0);
