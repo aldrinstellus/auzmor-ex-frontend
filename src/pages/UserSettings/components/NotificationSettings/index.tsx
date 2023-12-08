@@ -17,7 +17,7 @@ const NotificationSettings = () => {
           General&nbsp;Notifications
         </div>
         <div className="mt-3 text-sm text-neutral-500">
-          Manage your Channel notifications per channel
+          Manage your notifications
         </div>
       </Card>
       <GeneralNotifications />

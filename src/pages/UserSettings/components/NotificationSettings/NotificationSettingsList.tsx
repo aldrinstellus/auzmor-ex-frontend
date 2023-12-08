@@ -27,11 +27,6 @@ const settings = {
       key: 'myPostKudos',
       dataTestId: 'kudos',
     },
-    {
-      label: 'Someone comments on a post I am subscribed to',
-      key: 'postSubscribedComment',
-      dataTestId: 'post-comments-subscribe',
-    },
   ],
 
   mentions: [
@@ -44,11 +39,6 @@ const settings = {
       label: 'Someone mentions me in a comment',
       key: 'mentionComment',
       dataTestId: 'comment-mentions',
-    },
-    {
-      label: 'Someone comments on a post I am subscribed to',
-      key: 'mentionSubscribedComment',
-      dataTestId: 'mentions-comments-subs',
     },
   ],
 };
