@@ -6,7 +6,7 @@ import useAuth from 'hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { checkLogin } from 'queries/account';
-import { getSubDomain } from 'utils/misc';
+import { getSubDomain, isDark } from 'utils/misc';
 import { useGetSSOFromDomain } from 'queries/organization';
 import { useBrandingStore } from 'stores/branding';
 import clsx from 'clsx';
@@ -165,7 +165,11 @@ const Login: FC<ILoginProps> = () => {
       return (
         <div className="w-[50vw] flex items-center px-14">
           <p
-            className="text-white text-6xl font-extrabold z-10 leading-[72px]"
+            className={`text-white text-6xl font-extrabold z-10 leading-[72px] ${
+              isDark(branding?.loginConfig?.color || '#777777')
+                ? 'text-white'
+                : 'text-neutral-900'
+            }`}
             data-testid={`${getDataTestId()}-message`}
           >
             {branding?.loginConfig?.text}
