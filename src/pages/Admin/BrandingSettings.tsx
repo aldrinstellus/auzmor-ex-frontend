@@ -524,9 +524,6 @@ const BrandingSettings: FC = () => {
       uploadedBGVideo = [branding?.loginConfig?.video];
     }
 
-    console.log(selectedBGVideo);
-    console.log(uploadedBGVideo);
-
     // new branding object
     const newBranding = {
       primaryColor,
