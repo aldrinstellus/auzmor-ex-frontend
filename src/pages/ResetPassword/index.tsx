@@ -12,7 +12,7 @@ import { resetPassword, useTokenValidation } from 'queries/account';
 import PasswordExpiry from 'pages/PasswordExpiry';
 import clsx from 'clsx';
 import PageLoader from 'components/PageLoader';
-import { getSubDomain } from 'utils/misc';
+import { getSubDomain, isDark } from 'utils/misc';
 import { useGetSSOFromDomain } from 'queries/organization';
 import { useBrandingStore } from 'stores/branding';
 import OfficeLogoSvg from 'components/Logo/images/OfficeLogo.svg';
@@ -274,7 +274,13 @@ const ResetPassword = () => {
     ) {
       return (
         <div className="w-[50vw] flex items-center px-14">
-          <p className="text-white text-6xl font-extrabold z-10 leading-[72px]">
+          <p
+            className={`text-white text-6xl font-extrabold z-10 leading-[72px] ${
+              isDark(branding?.loginConfig?.color || '#777777')
+                ? 'text-white'
+                : 'text-neutral-900'
+            }`}
+          >
             {branding?.loginConfig?.text}
           </p>
         </div>

@@ -19,7 +19,7 @@ import { IDepartment } from 'queries/department';
 import { IDesignation } from 'queries/designation';
 import { IPost } from 'queries/post';
 import moment from 'moment';
-import { EMPTY_REGEX } from './constants';
+import { EMPTY_REGEX, HEX_REGEX } from './constants';
 
 export const twConfig: any = resolveConfig(tailwindConfig);
 
@@ -480,4 +480,17 @@ export const getMimeType = (fileName: string): string | undefined => {
   };
 
   return mimeTypes[extension.toLowerCase()];
+};
+
+export const isDark = (hexcode: string) => {
+  if (!(!!hexcode && HEX_REGEX.test(hexcode.toLocaleUpperCase()))) {
+    return false;
+  }
+
+  const hex = hexcode.replace('#', '');
+  const R = parseInt(hex.slice(0, 2), 16);
+  const G = parseInt(hex.slice(2, 4), 16);
+  const B = parseInt(hex.slice(4, 6), 16);
+
+  return 0.2126 * R + 0.7152 * G + 0.0722 * B < 255 / 2;
 };

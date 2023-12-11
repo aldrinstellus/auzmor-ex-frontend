@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Button, { Size, Type as ButtonType } from 'components/Button';
 import { useMutation } from '@tanstack/react-query';
-import { getSubDomain, redirectWithToken } from 'utils/misc';
+import { getSubDomain, isDark, redirectWithToken } from 'utils/misc';
 import { signup } from 'queries/account';
 import { useDebounce } from 'hooks/useDebounce';
 import { useDomainExists, useIsUserExistOpen } from 'queries/users';
@@ -411,7 +411,11 @@ const Signup: FC<ISignupProps> = () => {
       return (
         <div className="w-[50vw] flex items-center px-14">
           <p
-            className="text-white text-6xl font-extrabold z-10 leading-[72px]"
+            className={`text-white text-6xl font-extrabold z-10 leading-[72px] ${
+              isDark(branding?.loginConfig?.color || '#777777')
+                ? 'text-white'
+                : 'text-neutral-900'
+            }`}
             data-testid={`${getDataTestId()}-message`}
           >
             {branding?.loginConfig?.text}

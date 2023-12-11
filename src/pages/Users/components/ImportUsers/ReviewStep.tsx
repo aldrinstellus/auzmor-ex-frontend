@@ -249,7 +249,7 @@ const ReviewStep: React.FC<AppProps> = ({
   return (
     <Modal open={open} className="max-w-[1350px]">
       <Header
-        onBackIconClick={() => null}
+        onBackIconClick={() => setStep(StepEnum.Importing)}
         title="Bulk Add User info"
         onClose={closeModal}
         titleDataTestId="back-arrow"
@@ -270,7 +270,6 @@ const ReviewStep: React.FC<AppProps> = ({
             <div className="px-6">
               <div className="py-4 text-sm text-neutral-900 v-center space-x-2">
                 <SwitchToggle
-                  className="!h-5 !w-10"
                   defaultValue={showOnlyError}
                   onChange={(c) => {
                     setShowOnlyError(c);
@@ -336,7 +335,7 @@ const ReviewStep: React.FC<AppProps> = ({
             dataTestId="review-cta"
             onClick={handleClick}
             loading={inProgress}
-            disabled={isLoading || loading}
+            disabled={isLoading || loading || !flatData?.length}
           />
         </div>
       </div>

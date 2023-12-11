@@ -13,6 +13,7 @@ import {
   getBlobUrl,
   getMediaObj,
   getMimeType,
+  isDark,
   titleCase,
   twConfig,
 } from 'utils/misc';
@@ -35,6 +36,8 @@ import welcomeToOfficeLarge from 'images/welcomeToOfficeLarge.png';
 import { getTintVariantColor } from 'utils/branding';
 import queryClient from 'utils/queryClient';
 import FailureToast from 'components/Toast/variants/FailureToast';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 const PRIMARY_COLOR = '#10B981';
 const SECONDARY_COLOR = '#1D4ED8FF';
@@ -165,7 +168,22 @@ const BrandingSettings: FC = () => {
       dataTestId: 'branding-background-as-image',
     },
   ];
+
+  const schema = yup.object({
+    text: yup
+      .string()
+      .trim()
+      .min(3, 'Atleast 3 characters required')
+      .max(50, 'Less than 50 characters should be used'),
+    pageTitle: yup
+      .string()
+      .trim()
+      .min(3, 'Atleast 3 characters required')
+      .max(50, 'Less than 50 characters should be used'),
+  });
   const { control, setValue, watch, reset, formState } = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(schema),
     defaultValues: {
       primaryColor: branding?.primaryColor || PRIMARY_COLOR,
       secondaryColor: branding?.secondaryColor || SECONDARY_COLOR,
@@ -177,6 +195,7 @@ const BrandingSettings: FC = () => {
       text: branding?.loginConfig?.text,
     },
   });
+  const [tempfile, setTempFile] = useState<File | null>(null);
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
   const [selectedFavicon, setSelectedFavicon] = useState<File | null>(null);
   const [selectedBG, setSelectedBG] = useState<File | null>(null);
@@ -248,7 +267,7 @@ const BrandingSettings: FC = () => {
   } = useDropzone({
     onDrop: (acceptedFiles) => {
       if (acceptedFiles.length > 0) {
-        setSelectedLogo(acceptedFiles[0]);
+        setTempFile(acceptedFiles[0]);
         openEditLogoModal();
         setValidationErrors({ ...validationErrors, logo: null });
       } else {
@@ -296,7 +315,7 @@ const BrandingSettings: FC = () => {
   } = useDropzone({
     onDrop: (acceptedFiles) => {
       if (acceptedFiles.length > 0) {
-        setSelectedFavicon(acceptedFiles[0]);
+        setTempFile(acceptedFiles[0]);
         openEditFaviconModal();
         setValidationErrors({ ...validationErrors, favicon: null });
       } else {
@@ -345,7 +364,7 @@ const BrandingSettings: FC = () => {
   } = useDropzone({
     onDrop: (acceptedFiles) => {
       if (acceptedFiles.length > 0) {
-        setSelectedBG(acceptedFiles[0]);
+        setTempFile(acceptedFiles[0]);
         setSelectedBGVideo(null);
         openEditBGModal();
         setValidationErrors({ ...validationErrors, bg: null });
@@ -776,8 +795,8 @@ const BrandingSettings: FC = () => {
                 <Button
                   label="Cancel"
                   variant={Variant.Secondary}
-                  onClick={handleCancel}
-                  disabled={isSaving}
+                  onClick={(_e) => handleCancel()}
+                  disabled={isSaving || !formState.isValid}
                   dataTestId="branding-cancelcta"
                 />
                 <Button
@@ -785,6 +804,7 @@ const BrandingSettings: FC = () => {
                   loading={isSaving}
                   onClick={handleSaveChanges}
                   dataTestId="branding-savechangescta"
+                  disabled={!formState.isValid}
                 />
               </div>
             )}
@@ -810,13 +830,19 @@ const BrandingSettings: FC = () => {
                 control,
                 className: '',
                 dataTestId: 'branding-pagetitle',
+                error: formState?.errors?.pageTitle?.message,
                 helpText:
                   branding?.pageTitle === 'Auzmor office'
                     ? `Replace 'Auzmor office' name from UI with your own name`
                     : '',
-                maxLenght: 50,
                 customLabelRightElement: (
-                  <span className="text-neutral-500 text-sm">
+                  <span
+                    className={`text-sm ${
+                      formState?.errors?.pageTitle?.message
+                        ? 'text-red-500'
+                        : 'text-neutral-500'
+                    }`}
+                  >
                     {pageTitle?.length || 0} / 50
                   </span>
                 ),
@@ -953,8 +979,7 @@ const BrandingSettings: FC = () => {
                   },
                 ]}
               />
-              {(primaryColor.toLocaleUpperCase() === '#FFF' ||
-                primaryColor.toLocaleUpperCase() === '#FFFFFF') && (
+              {primaryColor?.toUpperCase() === '#FFFFFF' && (
                 <p
                   className="text-xs text-yellow-400 -mt-4"
                   data-testid="readability-warning"
@@ -990,8 +1015,7 @@ const BrandingSettings: FC = () => {
                       },
                     ]}
                   />
-                  {(secondaryColor.toLocaleUpperCase() === '#FFF' ||
-                    secondaryColor.toLocaleUpperCase() === '#FFFFFF') && (
+                  {secondaryColor?.toUpperCase() === '#FFFFFF' && (
                     <p
                       className="text-xs text-yellow-400 -mt-4"
                       data-testid="readability-warning"
@@ -1279,9 +1303,15 @@ const BrandingSettings: FC = () => {
                           className: '',
                           dataTestId: 'input-background-text',
                           placeholder: 'ex. welcome to auzmor',
-                          maxLength: 50,
+                          error: formState?.errors?.text?.message,
                           customLabelRightElement: (
-                            <span className="text-neutral-500 text-sm">
+                            <span
+                              className={`text-sm ${
+                                formState?.errors?.text?.message
+                                  ? 'text-red-500'
+                                  : 'text-neutral-500'
+                              }`}
+                            >
                               {text?.length} / 50
                             </span>
                           ),
@@ -1377,7 +1407,11 @@ const BrandingSettings: FC = () => {
                   backgroundType === 'Color' &&
                   layoutAlignment === 'LEFT' && (
                     <div className="flex h-full w-1/2 items-center pl-2">
-                      <p className="text-xs font-extrabold text-white">
+                      <p
+                        className={`text-xs font-extrabold ${
+                          isDark(color) ? 'text-white' : 'text-neutral-900'
+                        } `}
+                      >
                         {text}
                       </p>
                     </div>
@@ -1392,14 +1426,14 @@ const BrandingSettings: FC = () => {
           title="Reposition"
           openEditImage={isEditLogoModalOpen}
           closeEditImageModal={closeEditLogoModal}
-          image={getBlobUrl(selectedLogo!)}
+          image={getBlobUrl(tempfile!)}
           imageRef={logoInputRef}
           setImageFile={setSelectedLogo}
-          imageFile={selectedLogo}
+          imageFile={tempfile}
           aspectRatio={250 / 150}
           width={250}
           height={150}
-          mimeType={getMimeType(selectedLogo?.name || '')}
+          mimeType={getMimeType(tempfile?.name || '')}
         />
       )}
       {isEditFaviconModalOpen && (
@@ -1407,14 +1441,14 @@ const BrandingSettings: FC = () => {
           title="Reposition"
           openEditImage={isEditFaviconModalOpen}
           closeEditImageModal={closeEditFaviconModal}
-          image={getBlobUrl(selectedFavicon!)}
+          image={getBlobUrl(tempfile!)}
           imageRef={faviconInputRef}
           setImageFile={setSelectedFavicon}
-          imageFile={selectedFavicon}
+          imageFile={tempfile}
           aspectRatio={32 / 32}
           width={32}
           height={32}
-          mimeType={getMimeType(selectedFavicon?.name || '')}
+          mimeType={getMimeType(tempfile?.name || '')}
         />
       )}
       {isEditBGModalOpen && (
@@ -1422,12 +1456,12 @@ const BrandingSettings: FC = () => {
           title="Reposition"
           openEditImage={isEditBGModalOpen}
           closeEditImageModal={closeEditBGModal}
-          image={getBlobUrl(selectedBG!)}
+          image={getBlobUrl(tempfile!)}
           imageRef={bgInputRef}
           setImageFile={setSelectedBG}
-          imageFile={selectedBG}
+          imageFile={tempfile}
           aspectRatio={1920 / 860}
-          mimeType={getMimeType(selectedBG?.name || '')}
+          mimeType={getMimeType(tempfile?.name || '')}
         />
       )}
     </>
