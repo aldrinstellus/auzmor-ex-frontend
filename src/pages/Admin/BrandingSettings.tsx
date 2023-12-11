@@ -461,7 +461,7 @@ const BrandingSettings: FC = () => {
           BlobToFile(
             selectedLogo,
             `id-${Math.random().toString(16).slice(2)}`,
-            getMimeType(selectedLogo.name),
+            selectedLogo.type,
           ),
         ],
         EntityType.OrgLogo,
@@ -478,7 +478,7 @@ const BrandingSettings: FC = () => {
           BlobToFile(
             selectedFavicon,
             `id-${Math.random().toString(16).slice(2)}`,
-            getMimeType(selectedFavicon.name),
+            selectedFavicon.type,
           ),
         ],
         EntityType.OrgFavicon,
@@ -495,7 +495,7 @@ const BrandingSettings: FC = () => {
           BlobToFile(
             selectedBG,
             `id-${Math.random().toString(16).slice(2)}`,
-            getMimeType(selectedBG.name),
+            selectedBG.type,
           ),
         ],
         EntityType.OrgLoginImage,
@@ -508,13 +508,7 @@ const BrandingSettings: FC = () => {
     let uploadedBGVideo = null;
     if (selectedBGVideo) {
       uploadedBGVideo = await uploadMedia(
-        [
-          BlobToFile(
-            selectedBGVideo,
-            `id-${Math.random().toString(16).slice(2)}-${selectedBGVideo.name}`,
-            getMimeType(selectedBGVideo.name),
-          ),
-        ],
+        [selectedBGVideo],
         EntityType.OrgLoginVideo,
       );
     } else if (
