@@ -72,7 +72,7 @@ const ValidateHeaders: React.FC<AppProps> = ({
                 title={
                   <div>
                     {warning.join(': ')}
-                    {!!error?.length && (
+                    {!error?.length && (
                       <div>Press confirm to ignore these columns.</div>
                     )}
                   </div>
