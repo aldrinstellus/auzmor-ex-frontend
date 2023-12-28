@@ -374,9 +374,15 @@ const ReviewStep: React.FC<AppProps> = ({
     <>
       <Modal open={open} className="max-w-[1350px]">
         <Header
-          onBackIconClick={() => setStep(StepEnum.Importing)}
+          onBackIconClick={() => {
+            setStep(StepEnum.Importing);
+            queryClient.removeQueries(['csv-import']);
+          }}
           title="Bulk Add User info"
-          onClose={closeModal}
+          onClose={() => {
+            closeModal();
+            queryClient.removeQueries(['csv-import']);
+          }}
           titleDataTestId="back-arrow"
           closeBtnDataTestId="import-people-close"
         />
@@ -536,7 +542,7 @@ const ReviewStep: React.FC<AppProps> = ({
         <ConfirmationBox
           open={backConfirm}
           onClose={() => {
-            queryClient.invalidateQueries(['csv-import']);
+            queryClient.removeQueries(['csv-import']);
             closeConfirm();
           }}
           title="Confirmation"

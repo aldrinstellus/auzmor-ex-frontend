@@ -4,7 +4,6 @@ import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
 import { find } from 'lodash';
 import React, { FC, useState } from 'react';
-import { StepEnum } from './utils';
 
 type AppProps = {
   isLoading: boolean;
@@ -15,7 +14,7 @@ type AppProps = {
   disableSubmit?: boolean;
   selectedSheet?: number;
   isCsv?: boolean;
-  setStep: (...args: any) => any;
+  onConfirm: (...args: any) => any;
 };
 
 const ValidateHeaders: React.FC<AppProps> = ({
@@ -25,7 +24,7 @@ const ValidateHeaders: React.FC<AppProps> = ({
   disableSubmit = false,
   selectedSheet,
   isCsv = true,
-  setStep,
+  onConfirm,
 }) => {
   if (isLoading) {
     return (
@@ -93,6 +92,7 @@ const ValidateHeaders: React.FC<AppProps> = ({
       </div>
     );
   };
+
   return (
     <div>
       {(isCsv || (!isCsv && selectedSheet)) && (
@@ -151,9 +151,7 @@ const ValidateHeaders: React.FC<AppProps> = ({
             label="Confirm"
             size={Size.Small}
             dataTestId="import-people-next"
-            onClick={() => {
-              setStep(StepEnum.Review);
-            }}
+            onClick={onConfirm}
             disabled={_disableSubmit}
           />
         </div>
