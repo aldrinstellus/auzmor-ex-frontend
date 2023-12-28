@@ -2,6 +2,7 @@ import {
   FC,
   RefObject,
   SetStateAction,
+  memo,
   useEffect,
   useRef,
   useState,
@@ -120,4 +121,4 @@ const ImageResosition: FC<IImageResositionProps> = ({
   );
 };
 
-export default ImageResosition;
+export default memo(ImageResosition);
