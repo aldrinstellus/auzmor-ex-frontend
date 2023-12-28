@@ -8,6 +8,7 @@ import { parseImport, updateParseImport } from 'queries/importUsers';
 import ImportingForExcel from './ImportingForExcel';
 import usePoller from './usePoller';
 import ValidateHeaders from './ValidateHeaders';
+import { StepEnum } from './utils';
 
 type AppProps = {
   open: boolean;
@@ -107,7 +108,7 @@ const ImportingFileStep: React.FC<AppProps> = ({
           isError={parseMutation.isError}
           meta={meta}
           closeModal={closeModal}
-          setStep={setStep}
+          onConfirm={() => setStep(StepEnum.Review)}
         />
       </div>
     );

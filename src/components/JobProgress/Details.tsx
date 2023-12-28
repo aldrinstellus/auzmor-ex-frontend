@@ -165,7 +165,7 @@ const Details: React.FC<AppProps> = ({ open, closeModal, data, importId }) => {
       {status ? (
         <Header
           onBackIconClick={() => {
-            queryClient.invalidateQueries(['csv-import', 'result']);
+            queryClient.removeQueries(['csv-import', 'result']);
             setStatus('');
           }}
           title={mapStatusLabel[status]}
