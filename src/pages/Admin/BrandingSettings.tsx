@@ -787,7 +787,11 @@ const BrandingSettings: FC = () => {
     if (selectedBGVideo) {
       return (
         <video
-          className={`absolute top-0 right-0 object-cover h-full w-full`}
+          className={`absolute top-0 object-cover h-full ${
+            layoutAlignment === 'CENTER' ? 'w-full' : 'w-1/2'
+          } ${layoutAlignment === 'LEFT' && 'right-0'} ${
+            layoutAlignment === 'RIGHT' && 'left-0'
+          }`}
           src={getBlobUrl(selectedBGVideo)}
           loop
           muted
@@ -800,7 +804,11 @@ const BrandingSettings: FC = () => {
     ) {
       return (
         <video
-          className={`absolute top-0 right-0 object-cover h-full w-full`}
+          className={`absolute top-0 right-0 object-cover h-full ${
+            layoutAlignment === 'CENTER' ? 'w-full' : 'w-1/2'
+          } ${layoutAlignment === 'LEFT' && 'right-0'} ${
+            layoutAlignment === 'RIGHT' && 'left-0'
+          }`}
           src={branding?.loginConfig?.video?.original}
           loop
           muted
@@ -1285,7 +1293,7 @@ const BrandingSettings: FC = () => {
                   </p>
                   <div
                     {...getRootPropsBGVideo()}
-                    className="border border-dashed border-neutral-200 rounded-9xl px-5 py-2.5 w-[420px] h-[186px] flex justify-center items-center"
+                    className="border border-dashed border-neutral-200 rounded-9xl px-5 py-2.5 w-[420px] h-[186px] flex justify-center items-center cursor-pointer"
                   >
                     <input
                       {...getInputPropsBGVideo()}
