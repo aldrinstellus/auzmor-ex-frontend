@@ -245,10 +245,10 @@ const Feed: FC<IFeedProps> = () => {
             <img src={NoPosts} data-testid="mybookmark-tab-nopost"></img>
           </div>
           <div data-testid="scheduledpost-tab-nodata">
-            <div className="font-bold text-base text-neutral-900 text-center mt-6">
+            <div className="text-neutral-900 font-semibold text-lg mt-6 text-center">
               Publish your first post!
             </div>
-            <div className="font-bold text-base text-neutral-900 text-center">
+            <div className="text-neutral-500 text-sm font-medium text-center mt-2">
               Post something interesting for your audience, share an update,
               <br /> or just make a little introduction to the teams.
             </div>
