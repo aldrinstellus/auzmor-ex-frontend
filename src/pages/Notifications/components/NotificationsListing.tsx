@@ -131,7 +131,7 @@ const NotificationsListing: FC<NotificationsListing> = ({
             </div>
           </div>
         ) : (
-          <div className="w-full flex flex-col justify-center">
+          <div className="w-full flex flex-col items-center py-12">
             <div className="flex">
               <img
                 src={NoNotification}
@@ -140,6 +140,12 @@ const NotificationsListing: FC<NotificationsListing> = ({
                 width={165}
               />
             </div>
+            <p className="text-neutral-900 font-semibold text-lg mt-2">
+              No Notifications yet
+            </p>
+            <p className="text-neutral-500 text-sm font-medium text-center mt-2.5">
+              We will notify you once we have <br /> something for you
+            </p>
           </div>
         ))}
       {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
