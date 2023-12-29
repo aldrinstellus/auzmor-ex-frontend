@@ -787,7 +787,11 @@ const BrandingSettings: FC = () => {
     if (selectedBGVideo) {
       return (
         <video
-          className={`absolute top-0 right-0 object-cover h-full w-full`}
+          className={`absolute top-0 object-cover h-full ${
+            layoutAlignment === 'CENTER' ? 'w-full' : 'w-1/2'
+          } ${layoutAlignment === 'LEFT' && 'right-0'} ${
+            layoutAlignment === 'RIGHT' && 'left-0'
+          }`}
           src={getBlobUrl(selectedBGVideo)}
           loop
           muted
@@ -800,7 +804,11 @@ const BrandingSettings: FC = () => {
     ) {
       return (
         <video
-          className={`absolute top-0 right-0 object-cover h-full w-full`}
+          className={`absolute top-0 right-0 object-cover h-full ${
+            layoutAlignment === 'CENTER' ? 'w-full' : 'w-1/2'
+          } ${layoutAlignment === 'LEFT' && 'right-0'} ${
+            layoutAlignment === 'RIGHT' && 'left-0'
+          }`}
           src={branding?.loginConfig?.video?.original}
           loop
           muted
@@ -840,9 +848,9 @@ const BrandingSettings: FC = () => {
         <div className="flex justify-between w-full">
           <div className="flex flex-col gap-4">
             <p className="text-neutral-900 text-base font-bold">Branding</p>
-            <p className="text-neutral-500 text-sm" data-testid="branding-note">
+            {/* <p className="text-neutral-500 text-sm" data-testid="branding-note">
               Branding Options for a Personalized Experience
-            </p>
+            </p> */}
           </div>
           <div className="flex flex-col">
             {(formState.isDirty || showSaveChanges) && getSavingButtons}
@@ -852,7 +860,7 @@ const BrandingSettings: FC = () => {
       </Card>
       <Collapse
         defaultOpen
-        label="Page settings"
+        label="Page Settings"
         headerTextClassName="text-base font-bold text-neutral-900"
         dataTestId="brandingsetting-pagesettings"
         height={413}
@@ -889,7 +897,7 @@ const BrandingSettings: FC = () => {
           />
           <div className="flex gap-[100px]">
             <div className="flex flex-col w-1/2 gap-1">
-              <div>Logo</div>
+              <div className="font-bold">Logo</div>
               <div
                 {...getRootPropsLogo()}
                 className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center cursor-pointer"
@@ -907,14 +915,14 @@ const BrandingSettings: FC = () => {
                   <Preview
                     file={selectedLogo}
                     url={branding?.logo?.original}
-                    title="Upload Image"
+                    title="Upload a logo"
                     description={
                       <span>
                         Drag and drop or{' '}
                         <span className="text-primary-500 font-bold">
                           click here
                         </span>{' '}
-                        to upload file. <br /> Ideal image size: 225 x 100 px
+                        to upload a file. <br /> Recommended Size: 225 x 100 px
                       </span>
                     }
                     onCustomRemove={() => {
@@ -931,7 +939,7 @@ const BrandingSettings: FC = () => {
               <p className="text-xxs text-neutral-500">Max file size 5mb</p>
             </div>
             <div className="flex flex-col w-1/2 gap-1">
-              <div>Favicon</div>
+              <div className="font-bold">Favicon</div>
               <div
                 {...getRootPropsFavicon()}
                 className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center cursor-pointer"
@@ -955,14 +963,14 @@ const BrandingSettings: FC = () => {
                   <Preview
                     file={selectedFavicon}
                     url={branding?.favicon?.original}
-                    title="Upload Icon"
+                    title="Upload a favicon"
                     description={
                       <span>
                         Drag and drop or{' '}
                         <span className="text-primary-500 font-bold">
                           click here
                         </span>{' '}
-                        to upload file. <br /> Ideal image size: 32 x 32 px
+                        to upload a file. <br /> Recommended Size: 32 x 32 px
                       </span>
                     }
                     onCustomRemove={() => {
@@ -983,7 +991,7 @@ const BrandingSettings: FC = () => {
       </Collapse>
       <Collapse
         defaultOpen
-        label="Colour theme"
+        label="Colors"
         headerTextClassName="text-base font-bold text-neutral-900"
         dataTestId="brandingsetting-colour-theme"
         height={333}
@@ -996,7 +1004,7 @@ const BrandingSettings: FC = () => {
                 fields={[
                   {
                     name: 'primaryColor',
-                    label: 'Primary/action color',
+                    label: 'Primary Brand Color',
                     type: FieldType.ColorPicker,
                     control,
                     className: '',
@@ -1032,7 +1040,7 @@ const BrandingSettings: FC = () => {
                     fields={[
                       {
                         name: 'secondaryColor',
-                        label: 'Secondary/action color',
+                        label: 'Secondary Brand Color',
                         type: FieldType.ColorPicker,
                         control,
                         className: '',
@@ -1130,7 +1138,7 @@ const BrandingSettings: FC = () => {
       </Collapse>
       <Collapse
         defaultOpen
-        label="Login"
+        label="Login Experience"
         headerTextClassName="text-base font-bold text-neutral-900"
         dataTestId="brandingsetting-login"
         height={511}
@@ -1141,9 +1149,7 @@ const BrandingSettings: FC = () => {
           <div className="flex w-full gap-[120px]">
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3">
-                <p className="text-sm font-bold text-neutral-900">
-                  Layout alignment
-                </p>
+                <p className="text-sm font-bold text-neutral-900">Layout</p>
                 <div className="flex gap-[60px]">
                   <div
                     className="flex flex-col items-center gap-2 cursor-pointer"
@@ -1213,7 +1219,7 @@ const BrandingSettings: FC = () => {
               </div>
               <div className="flex flex-col gap-3">
                 <p className="text-sm font-bold text-neutral-900">
-                  Select Background type
+                  Background Type
                 </p>
                 <Layout
                   fields={[
@@ -1260,7 +1266,7 @@ const BrandingSettings: FC = () => {
                             <span className="text-primary-500 font-bold">
                               click here
                             </span>{' '}
-                            to upload file. <br /> Ideal image size:{' '}
+                            to upload a file. <br /> Recommended Size:{' '}
                             {layoutAlignment === 'CENTER' ? 1440 : 720} x 820 px
                           </span>
                         }
@@ -1285,7 +1291,7 @@ const BrandingSettings: FC = () => {
                   </p>
                   <div
                     {...getRootPropsBGVideo()}
-                    className="border border-dashed border-neutral-200 rounded-9xl px-5 py-2.5 w-[420px] h-[186px] flex justify-center items-center"
+                    className="border border-dashed border-neutral-200 rounded-9xl px-5 py-2.5 w-[420px] h-[186px] flex justify-center items-center cursor-pointer"
                   >
                     <input
                       {...getInputPropsBGVideo()}
@@ -1309,8 +1315,8 @@ const BrandingSettings: FC = () => {
                             <span className="text-primary-500 font-bold">
                               click here
                             </span>{' '}
-                            to upload file. <br /> Ideal video size: 1440 x 820
-                            px
+                            to upload a file. <br /> Recommended Size: 1440 x
+                            820 px
                           </span>
                         }
                         onCustomRemove={() => setSelectedBGVideo(null)}
