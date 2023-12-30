@@ -2,15 +2,16 @@ import {
   FC,
   RefObject,
   SetStateAction,
+  memo,
   useEffect,
   useRef,
   useState,
 } from 'react';
-import { CropperRef } from 'react-advanced-cropper';
+import { CropperRef, CropperState } from 'react-advanced-cropper';
 import 'react-advanced-cropper/dist/style.css';
 import Header from 'components/ModalHeader';
 import Modal from 'components/Modal';
-import ImageCropper from 'components/ImageCropper';
+import ImageCropper, { Shape } from 'components/ImageCropper';
 import PageLoader from 'components/PageLoader';
 import Footer from './Footer';
 
@@ -22,10 +23,15 @@ export interface IImageResositionProps {
   image: string;
   setImageFile: (file: any) => void;
   imageFile?: any;
-}
-
-export enum Shape {
-  Rectangle = 'rectangle',
+  aspectRatio?: number;
+  defaultSize?: (cropperState: CropperState) => {
+    width: number;
+    height: number;
+  };
+  width?: number;
+  height?: number;
+  mimeType?: string;
+  shape?: Shape;
 }
 
 const ImageResosition: FC<IImageResositionProps> = ({
@@ -36,6 +42,10 @@ const ImageResosition: FC<IImageResositionProps> = ({
   setImageFile,
   closeEditImageModal = () => {},
   imageRef,
+  aspectRatio,
+  defaultSize,
+  mimeType = 'image/jpeg',
+  shape = Shape.Rectangle,
 }) => {
   const cropperRef = useRef<CropperRef>(null);
   const [isImageLoading, setIsImageLoading] = useState<boolean>(true);
@@ -64,7 +74,7 @@ const ImageResosition: FC<IImageResositionProps> = ({
         if (blobImage) {
           setImageFile(blobImage);
         }
-      }, 'image/jpeg');
+      }, mimeType);
     closeEditImageModal();
   };
 
@@ -82,7 +92,11 @@ const ImageResosition: FC<IImageResositionProps> = ({
           : undefined
       }
     >
-      <Header title={title} closeBtnDataTestId={'kudos-custombanner-close'} />
+      <Header
+        title={title}
+        closeBtnDataTestId={'kudos-custombanner-close'}
+        onClose={closeEditImageModal}
+      />
       {isImageLoading ? (
         <div className="w-full h-full">
           <PageLoader />
@@ -91,8 +105,9 @@ const ImageResosition: FC<IImageResositionProps> = ({
         <ImageCropper
           src={image}
           cropperRef={cropperRef}
-          shape={Shape.Rectangle}
-          aspectRatio={3}
+          shape={shape}
+          aspectRatio={aspectRatio}
+          defaultSize={defaultSize}
         />
       )}
       <Footer
@@ -106,4 +121,4 @@ const ImageResosition: FC<IImageResositionProps> = ({
   );
 };
 
-export default ImageResosition;
+export default memo(ImageResosition);

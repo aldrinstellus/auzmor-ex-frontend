@@ -21,7 +21,7 @@ import {
   titleCase,
   twConfig,
 } from 'utils/misc';
-import { PRIMARY_COLOR, TOAST_AUTOCLOSE_TIME } from 'utils/constants';
+import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import useModal from 'hooks/useModal';
 import DeletePeople from '../DeleteModals/People';
@@ -53,7 +53,7 @@ const statusColorMap: Record<string, string> = {
   [Status.PENDING]: '#EA580C',
   [Status.OWNER]: '#171717',
   [Status.MEMBER]: '#c6cc8d',
-  [Status.SUPERADMIN]: PRIMARY_COLOR,
+  [Status.SUPERADMIN]: twConfig.theme.colors.primary['500'],
 };
 
 const PeopleCard: FC<IPeopleCardProps> = ({
@@ -340,8 +340,10 @@ const PeopleCard: FC<IPeopleCardProps> = ({
                   hover={false}
                   color="text-neutral-900"
                 />
-                <div className="text-neutral-900 text-xxs font-semibold line-clamp-1">
-                  {department?.name}
+                <div className="text-neutral-900 text-xxs font-semibold truncate">
+                  {department?.name.length <= 22
+                    ? department?.name.substring(0, 22)
+                    : department?.name.substring(0, 22) + '..'}
                 </div>
               </div>
             )}

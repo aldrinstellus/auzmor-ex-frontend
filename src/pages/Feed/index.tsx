@@ -44,7 +44,7 @@ import NoPosts from 'images/NoPostsFound.png';
 import AppLauncher from 'components/AppLauncher';
 import MyTeamWidget from 'components/MyTeamWidget';
 import useRole from 'hooks/useRole';
-import { isRegularPost } from 'utils/misc';
+import { isFiltersEmpty, isRegularPost } from 'utils/misc';
 import useMediaQuery from 'hooks/useMediaQuery';
 
 interface IFeedProps {}
@@ -91,28 +91,31 @@ const Feed: FC<IFeedProps> = () => {
   const currentDate = new Date().toISOString();
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfiniteFeed(pathname, {
-      [PostFilterKeys.PostType]: appliedFeedFilters[PostFilterKeys.PostType],
-      ...(appliedFeedFilters[PostFilterKeys.PostPreference]?.includes(
-        PostFilterPreference.BookmarkedByMe,
-      ) && { [PostFilterPreference.BookmarkedByMe]: true }),
-      ...(appliedFeedFilters[PostFilterKeys.PostPreference]?.includes(
-        PostFilterPreference.MentionedInPost,
-      ) && { [PostFilterPreference.MentionedInPost]: true }),
-      ...(appliedFeedFilters[PostFilterKeys.PostPreference]?.includes(
-        PostFilterPreference.MyPosts,
-      ) && { [PostFilterPreference.MyPosts]: true }),
-      hashtags: [hashtag],
-    });
+    useInfiniteFeed(
+      pathname,
+      isFiltersEmpty({
+        [PostFilterKeys.PostType]: appliedFeedFilters[PostFilterKeys.PostType],
+        ...(appliedFeedFilters[PostFilterKeys.PostPreference]?.includes(
+          PostFilterPreference.BookmarkedByMe,
+        ) && { [PostFilterPreference.BookmarkedByMe]: true }),
+        ...(appliedFeedFilters[PostFilterKeys.PostPreference]?.includes(
+          PostFilterPreference.MentionedInPost,
+        ) && { [PostFilterPreference.MentionedInPost]: true }),
+        ...(appliedFeedFilters[PostFilterKeys.PostPreference]?.includes(
+          PostFilterPreference.MyPosts,
+        ) && { [PostFilterPreference.MyPosts]: true }),
+        [PostFilterKeys.Hashtags]: appliedFeedFilters[PostFilterKeys.Hashtags],
+      }),
+    );
 
   const feedIds = (
     (data?.pages.flatMap((page) =>
       page.data?.result?.data
         .filter((post: { id: string }) => {
           if (bookmarks) {
-            return !!feed[post.id].bookmarked;
+            return !!feed[post.id]?.bookmarked;
           } else if (scheduled) {
-            return !!feed[post.id].schedule;
+            return !!feed[post.id]?.schedule;
           }
           return true;
         })
@@ -202,7 +205,8 @@ const Feed: FC<IFeedProps> = () => {
           </div>
         </div>
       );
-    } else if (scheduled) {
+    }
+    if (scheduled) {
       return (
         <div className="bg-white p-6 flex flex-col rounded-9xl">
           <div className="h-220 bg-blue-50 flex justify-center rounded-9xl">
@@ -218,8 +222,39 @@ const Feed: FC<IFeedProps> = () => {
           </div>
         </div>
       );
-    } else {
-      return <></>;
+    }
+    if (
+      appliedFeedFilters[PostFilterKeys.PostType]?.length ||
+      appliedFeedFilters[PostFilterKeys.PostPreference]?.length
+    ) {
+      return (
+        <div className="bg-white p-6 flex flex-col rounded-9xl">
+          <div className="h-220 bg-blue-50 flex justify-center rounded-9xl">
+            <img src={NoPosts} data-testid="mybookmark-tab-nopost"></img>
+          </div>
+          <div className="font-bold text-2xl/[36px] text-center mt-5">
+            No posts found
+          </div>
+        </div>
+      );
+    }
+    if (feedIds?.length == 0) {
+      return (
+        <div className="bg-white p-6 flex flex-col rounded-9xl">
+          <div className="h-220 bg-blue-50 flex justify-center rounded-9xl">
+            <img src={NoPosts} data-testid="mybookmark-tab-nopost"></img>
+          </div>
+          <div data-testid="scheduledpost-tab-nodata">
+            <div className="text-neutral-900 font-semibold text-lg mt-6 text-center">
+              Publish your first post!
+            </div>
+            <div className="text-neutral-500 text-sm font-medium text-center mt-2">
+              Post something interesting for your audience, share an update,
+              <br /> or just make a little introduction to the teams.
+            </div>
+          </div>
+        </div>
+      );
     }
   };
 
