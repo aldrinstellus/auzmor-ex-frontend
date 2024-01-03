@@ -193,6 +193,8 @@ const CreatableSearch = forwardRef(
                       setSearchValue('');
                     } else {
                       field.onChange(option);
+                      setSearchValue('');
+                      setOpen(false);
                     }
                   }}
                   suffixIcon={<Icon name="arrowDown" size={16} />}
