@@ -4,21 +4,23 @@ import './index.css';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
-import { StrictMode } from 'react';
+// import { StrictMode } from 'react';
 import { getItem } from 'utils/persist';
 
 const root = ReactDOM.createRoot(
   document.getElementById('officeApp') as HTMLElement,
 );
 
-// read favicon from loacal storage and replce it in html
+// read favicon and page title from loacal storage and replce it in DOM
 const favicon = getItem('favicon', '');
+const pageTitle = getItem('pageTitle', 'Auzmor Office');
 document.querySelector('link[rel="icon"]')?.setAttribute('href', favicon);
+document.querySelector('title')!.innerText = pageTitle;
 
 root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+  // <StrictMode>
+  <App />,
+  // </StrictMode>,
 );
 
 // If you want your app to work offline and load faster, you can change

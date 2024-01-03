@@ -11,6 +11,7 @@ import { useMutation } from '@tanstack/react-query';
 import { startImportUser } from 'queries/importUsers';
 import Spinner from 'components/Spinner';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
+import { useJobStore } from 'stores/jobStore';
 
 const IMPORT_FORMAT =
   'Name,Email,Manager Email,Designation,Department,Location,Employee Id,Phone Number,Date of Birth,Date of Joining,Marital Status,Role';
@@ -18,7 +19,6 @@ const IMPORT_FORMAT =
 type AppProps = {
   open: boolean;
   closeModal: () => any;
-  setStep: (...args: any) => any;
   setImportId: (...args: any) => any;
   setMeta: (...args: any) => any;
   importId: string;
@@ -27,7 +27,6 @@ type AppProps = {
 const UploadFileStep: React.FC<AppProps> = ({
   open,
   closeModal,
-  setStep,
   setImportId,
   setMeta,
   importId,
@@ -35,6 +34,7 @@ const UploadFileStep: React.FC<AppProps> = ({
   const { error: uploadError, uploadMedia, uploadStatus } = useUpload();
   const [fileObj, setFileObj] = useState<any>({});
   const [fileError, setFileError] = useState('');
+  const { setStep } = useJobStore();
 
   useEffect(() => {
     if (uploadError) {
@@ -121,8 +121,7 @@ const UploadFileStep: React.FC<AppProps> = ({
         <div className="flex flex-col justify-center items-center space-y-2">
           <Icon name="folderOpen" className="text-primary-600" size={48} />
           <div className="text-sm text-neutral-900">
-            To invite a list of people, add your csv,xls or xlsx file in the
-            given format
+            To invite a list of people, add your file in the given format
           </div>
           <div className="text-xs text-neutral-500">
             File must be in csv, xls or xlsx format and must not exceed 5mb
