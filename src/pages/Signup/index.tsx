@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useContext, useEffect } from 'react';
 import { Variant as InputVariant } from 'components/Input';
 import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
@@ -11,11 +11,12 @@ import { signup } from 'queries/account';
 import { useDebounce } from 'hooks/useDebounce';
 import { useDomainExists, useIsUserExistOpen } from 'queries/users';
 import 'utils/custom-yup-validators/email/validateEmail';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useGetSSOFromDomain } from 'queries/organization';
 import { useBrandingStore } from 'stores/branding';
 import OfficeLogoSvg from 'components/Logo/images/OfficeLogo.svg';
 import clsx from 'clsx';
+import { AuthContext } from 'contexts/AuthContext';
 
 interface IForm {
   fullName: string;
@@ -72,12 +73,16 @@ export interface IValidationErrors {
 }
 
 const Signup: FC<ISignupProps> = () => {
+  const { setupSession } = useContext(AuthContext);
+  const navigate = useNavigate();
   const signupMutation = useMutation(
     (formData: IForm) =>
       signup({ ...formData, domain: formData.domain.toLowerCase() }),
     {
       onSuccess: (data) =>
         redirectWithToken({
+          setupSession,
+          navigate,
           redirectUrl: data.result.data.redirectUrl,
           token: data.result.data.uat,
           showOnboard: true,

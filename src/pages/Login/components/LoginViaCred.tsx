@@ -15,12 +15,13 @@ import {
   readFirstAxiosError,
   redirectWithToken,
 } from 'utils/misc';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
 import { useGetSSOFromDomain } from 'queries/organization';
 import { useLoginViaSSO } from 'queries/auth';
 import 'utils/custom-yup-validators/email/validateEmail';
-import { FC } from 'react';
+import { FC, useContext } from 'react';
+import { AuthContext } from 'contexts/AuthContext';
 
 export interface ILoginViaCredProps {
   setViaSSO: (flag: boolean) => void;
@@ -44,9 +45,13 @@ const schema = yup.object({
 });
 
 const LoginViaCred: FC<ILoginViaCredProps> = ({ setViaSSO }) => {
+  const { setupSession } = useContext(AuthContext);
+  const navigate = useNavigate();
   const loginMutation = useMutation((formData: IForm) => login(formData), {
     onSuccess: (data) =>
       redirectWithToken({
+        setupSession,
+        navigate,
         redirectUrl: data.result.data.redirectUrl,
         token: data.result.data.uat,
       }),

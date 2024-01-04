@@ -14,6 +14,7 @@ import SubscriptionExpired from 'components/SubscriptionExpired';
 import AccountDeactivated from 'components/AccountDeactivated';
 import { useBrandingStore } from 'stores/branding';
 import { INotificationSettings } from 'queries/users';
+import { NavigateFunction } from 'react-router-dom';
 
 type AuthContextProps = {
   children: ReactNode;
@@ -72,6 +73,7 @@ interface IAuthContext {
   accountDeactivated: boolean;
   reset: () => void;
   updateUser: (user: IUser) => void;
+  setupSession: () => Promise<any>;
 }
 
 export const AuthContext = createContext<IAuthContext>({
@@ -81,6 +83,7 @@ export const AuthContext = createContext<IAuthContext>({
   accountDeactivated: false,
   reset: () => {},
   updateUser: () => {},
+  setupSession: () => new Promise((resolve, _reject) => resolve(true)),
 });
 
 const AuthProvider: FC<AuthContextProps> = ({ children }) => {
@@ -94,24 +97,39 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
 
   const setBranding = useBrandingStore((state) => state.setBranding);
 
-  const setupSession = async () => {
+  const setupSession = async (
+    token?: string | null,
+    showOnboard?: boolean,
+    url?: string,
+    navigate?: NavigateFunction,
+  ) => {
     const query = new URLSearchParams(window.location.search.substring(1));
-    let token = query.get('accessToken');
-    const _showOnboard = query.get('showOnboard');
-    setShowOnboard(!!_showOnboard);
+    token = token || query.get('accessToken');
+    showOnboard = showOnboard || !!query.get('showOnboard');
+    setShowOnboard(!!showOnboard);
 
     if (token) {
       setItem(process.env.SESSION_KEY || 'uat', token);
       query.delete('accessToken');
 
-      const queryParams = query.toString();
-
-      let updatedUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
-      if (queryParams) {
-        updatedUrl += `?${queryParams}`;
+      if (navigate && url) {
+        console.log(url);
+        navigate(url);
       }
+      // const queryParams = query.toString();
 
-      window.history.pushState({ path: updatedUrl }, '', updatedUrl);
+      // if (!!url && !!navigate) {
+      //   const updatedUrl = `${window.location.protocol}//${window.location.host}${url}`;
+      //   console.log(updatedUrl);
+      //   window.history.pushState({ path: updatedUrl }, '', updatedUrl);
+      // } else {
+      //   let updatedUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+      //   if (queryParams) {
+      //     updatedUrl += `?${queryParams}`;
+      //   }
+
+      //   window.history.pushState({ path: updatedUrl }, '', updatedUrl);
+      // }
     }
 
     // if token in LS, make /me api call and update setUser
@@ -239,6 +257,7 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
         reset,
         loggedIn,
         updateUser,
+        setupSession,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useContext, useEffect } from 'react';
 import { Variant as InputVariant } from 'components/Input';
 import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
@@ -9,10 +9,11 @@ import { Logo } from 'components/Logo';
 import { useMutation } from '@tanstack/react-query';
 import { redirectWithToken } from 'utils/misc';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { acceptInviteSetPassword, useVerifyInviteLink } from 'queries/users';
 import PageLoader from 'components/PageLoader';
 import InviteLinkExpired from './components/InviteLinkExpired';
+import { AuthContext } from 'contexts/AuthContext';
 
 interface IForm {
   workEmail: string;
@@ -41,6 +42,9 @@ const AcceptInvite: FC<IAcceptInviteProps> = () => {
   const token = searchParams.get('token');
   const orgId = searchParams.get('orgId');
 
+  const { setupSession } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const { data, isLoading, isError, error } = useVerifyInviteLink({
     token,
     orgId,
@@ -51,6 +55,8 @@ const AcceptInvite: FC<IAcceptInviteProps> = () => {
     mutationKey: ['accept-invite-mutation'],
     onSuccess: (data) => {
       redirectWithToken({
+        setupSession,
+        navigate,
         redirectUrl: data.result.data.redirectUrl,
         token: data.result.data.uat,
         showOnboard: true,
