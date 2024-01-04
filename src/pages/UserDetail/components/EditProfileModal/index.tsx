@@ -144,7 +144,7 @@ const EditProfileModal: FC<IEditProfileModal> = ({
     });
 
   const fieldDisabledMap = {
-    fullName: userDetails.freezeEdit?.fullName,
+    fullName: !isAdmin && userDetails.freezeEdit?.fullName,
     designation: !isAdmin && userDetails.freezeEdit?.designation,
     department: !isAdmin && userDetails.freezeEdit?.department,
   };
