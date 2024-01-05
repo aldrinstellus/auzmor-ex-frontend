@@ -265,7 +265,7 @@ const User: FC<UserProps> = ({
               }
             >
               <p
-                className="text-sm font-bold truncate cursor-pointer"
+                className="text-sm font-bold truncate cursor-pointer  "
                 data-testid={`${
                   isBirthday ? 'birthday' : 'anniversaries'
                 }-profile-name`}
@@ -274,7 +274,7 @@ const User: FC<UserProps> = ({
                 }
               >
                 {truncate(getFullName(featuredUser) || featuredUser.email, {
-                  length: isModalView ? 40 : 26,
+                  length: isModalView ? 40 : 18,
                   separator: '',
                 })}
               </p>
@@ -287,9 +287,9 @@ const User: FC<UserProps> = ({
                   featuredUser.designation.length > (isModalView ? 40 : 22)
                 }
               >
-                <p className="text-xs truncate text-neutral-500">
+                <p className="text-xs truncate text-neutral-500 ">
                   {truncate(featuredUser.designation, {
-                    length: isModalView ? 40 : 26,
+                    length: isModalView ? 40 : 24,
                     separator: '',
                   })}
                 </p>
