@@ -330,7 +330,6 @@ export const useCurrentUser = () => {
     queryKey: ['current-user-me'],
     queryFn: () => getCurrentUser(),
     staleTime: 15 * 60 * 1000,
-    cacheTime: 0,
   });
 };
 
