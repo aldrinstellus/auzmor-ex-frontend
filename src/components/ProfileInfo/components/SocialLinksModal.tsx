@@ -144,7 +144,11 @@ const SocialLinksModal: FC<AppProps> = ({ open, closeModal, socialLinks }) => {
   ];
 
   const onSubmit = (links: any) => {
-    updateUserMutation.mutate({ personal: { socialAccounts: links } });
+    updateUserMutation.mutate({
+      personal: {
+        socialAccounts: links,
+      },
+    });
   };
 
   return (

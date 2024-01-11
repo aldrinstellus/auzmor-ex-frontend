@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import Button, { Size, Variant } from 'components/Button';
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { StepEnum } from '../utils';
 import 'react-data-grid/lib/styles.css';
-import DataGrid, { RenderRowProps, Row } from 'react-data-grid';
+import DataGrid from 'react-data-grid';
 import SwitchToggle from 'components/SwitchToggle';
 import { useInfiniteImportData } from 'queries/importUsers';
 import Spinner from 'components/Spinner';
@@ -17,12 +16,11 @@ import ConfirmationBox from 'components/ConfirmationBox';
 import { useQueryClient } from '@tanstack/react-query';
 import WaitForParse from './WaitForParse';
 import WaitForValidate from './WaitForValidate';
-import { find } from 'lodash';
+import { useJobStore } from 'stores/jobStore';
 
 type AppProps = {
   open: boolean;
   closeModal: () => any;
-  setStep: (...args: any) => any;
   importId: string;
   meta: any;
 };
@@ -33,21 +31,15 @@ enum LoaderStep {
   Review = 'review',
 }
 
-const ReviewStep: React.FC<AppProps> = ({
-  open,
-  importId,
-  closeModal,
-  setStep,
-  meta,
-}) => {
+const ReviewStep: React.FC<AppProps> = ({ open, importId, closeModal }) => {
   const queryClient = useQueryClient();
   const [loaderStep, setLoaderStep] = useState(LoaderStep.Parse);
-  // const { ready, loading } = usePoller({ importId, action: 'validate' });
   const [showOnlyError, setShowOnlyError] = useState(false);
   const [inProgress, setInProgress] = useState(false);
   const [errorCount, setErrorCount] = useState(0);
   const [errorConfirm, showConfirm, closeConfirm] = useModal();
   const [backConfirm, showBackConfirm, closeBackConfirm] = useModal();
+  const { setStep } = useJobStore();
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteImportData({
@@ -71,7 +63,7 @@ const ReviewStep: React.FC<AppProps> = ({
       name: 'Name',
       resizable: true,
       width: 200,
-      renderCell: ({ row, tabIndex }: any) => {
+      renderCell: ({ row }: any) => {
         return row.rowData?.fullName?.value;
       },
       cellClass: (row: any) => {
@@ -91,11 +83,11 @@ const ReviewStep: React.FC<AppProps> = ({
       name: 'Email',
       resizable: true,
       width: 220,
-      renderCell: ({ row, tabIndex }: any) => {
-        return row.rowData.email?.value;
+      renderCell: ({ row }: any) => {
+        return row.rowData?.email?.value;
       },
       cellClass: (row: any) => {
-        if (!row.rowData.email?.isValid) {
+        if (!row.rowData?.email?.isValid) {
           return 'text-red-500 bg-red-50';
         }
         return '';
@@ -111,11 +103,11 @@ const ReviewStep: React.FC<AppProps> = ({
       name: 'Manager Email',
       resizable: true,
       width: 220,
-      renderCell: ({ row, tabIndex }: any) => {
-        return row.rowData.managerEmail?.value;
+      renderCell: ({ row }: any) => {
+        return row.rowData?.managerEmail?.value;
       },
       cellClass: (row: any) => {
-        if (!row.rowData.managerEmail?.isValid) {
+        if (!row.rowData?.managerEmail?.isValid) {
           return 'text-red-500 bg-red-50';
         }
         return '';
@@ -131,11 +123,11 @@ const ReviewStep: React.FC<AppProps> = ({
       name: 'Designation',
       resizable: true,
       width: 180,
-      renderCell: ({ row, tabIndex }: any) => {
-        return row.rowData.designation?.value;
+      renderCell: ({ row }: any) => {
+        return row.rowData?.designation?.value;
       },
       cellClass: (row: any) => {
-        if (!row.rowData.designation?.isValid) {
+        if (!row.rowData?.designation?.isValid) {
           return 'text-red-500 bg-red-50';
         }
         return '';
@@ -151,11 +143,11 @@ const ReviewStep: React.FC<AppProps> = ({
       name: 'Department',
       resizable: true,
       width: 220,
-      renderCell: ({ row, tabIndex }: any) => {
-        return row.rowData.department?.value;
+      renderCell: ({ row }: any) => {
+        return row.rowData?.department?.value;
       },
       cellClass: (row: any) => {
-        if (!row.rowData.department?.isValid) {
+        if (!row.rowData?.department?.isValid) {
           return 'text-red-500 bg-red-50';
         }
         return '';
@@ -171,11 +163,11 @@ const ReviewStep: React.FC<AppProps> = ({
       name: 'Location',
       resizable: true,
       width: 220,
-      renderCell: ({ row, tabIndex }: any) => {
-        return row.rowData.workLocation?.value;
+      renderCell: ({ row }: any) => {
+        return row.rowData?.workLocation?.value;
       },
       cellClass: (row: any) => {
-        if (!row.rowData.workLocation?.isValid) {
+        if (!row.rowData?.workLocation?.isValid) {
           return 'text-red-500 bg-red-50';
         }
         return '';
@@ -191,11 +183,11 @@ const ReviewStep: React.FC<AppProps> = ({
       name: 'Employee ID',
       resizable: true,
       width: 120,
-      renderCell: ({ row, tabIndex }: any) => {
-        return row.rowData.employeeId?.value;
+      renderCell: ({ row }: any) => {
+        return row.rowData?.employeeId?.value;
       },
       cellClass: (row: any) => {
-        if (!row.rowData.employeeId?.isValid) {
+        if (!row.rowData?.employeeId?.isValid) {
           return 'text-red-500 bg-red-50';
         }
         return '';
@@ -211,11 +203,11 @@ const ReviewStep: React.FC<AppProps> = ({
       name: 'Phone',
       resizable: true,
       width: 120,
-      renderCell: ({ row, tabIndex }: any) => {
-        return row.rowData.workPhone?.value;
+      renderCell: ({ row }: any) => {
+        return row.rowData?.workPhone?.value;
       },
       cellClass: (row: any) => {
-        if (!row.rowData.workPhone?.isValid) {
+        if (!row.rowData?.workPhone?.isValid) {
           return 'text-red-500 bg-red-50';
         }
         return '';
@@ -231,22 +223,25 @@ const ReviewStep: React.FC<AppProps> = ({
       name: 'Date of Birth',
       resizable: true,
       width: 140,
-      renderCell: ({ row, tabIndex }: any) => {
-        return row.rowData.birthDate?.value;
+      renderCell: ({ row }: any) => {
+        return row.rowData?.birthDate?.value;
       },
       cellClass: (row: any) => {
-        if (!row.rowData.birthDate?.isValid) {
+        if (!row.rowData?.birthDate?.isValid) {
           return 'text-red-500 bg-red-50';
         }
         return '';
       },
-      headerCellClass: flatData.some(
-        (row: any) => !row.rowData.birthDate?.isValid,
-      )
-        ? 'bg-red-50 !overflow-visible'
-        : '',
+      headerCellClass:
+        _sheet?.rowCount &&
+        _sheet?.rowCount === _sheet?.columnMapping?.birthDate?.errorRowsCount
+          ? 'bg-red-50 !overflow-visible'
+          : '',
       renderHeaderCell: () => {
-        if (flatData.some((row: any) => !row.rowData.birthDate?.isValid)) {
+        if (
+          _sheet?.rowCount &&
+          _sheet?.rowCount === _sheet?.columnMapping?.birthDate?.errorRowsCount
+        ) {
           return (
             <div className="w-full flex justify-between items-center text-red-500">
               <p>Date of Birth</p>
@@ -267,22 +262,25 @@ const ReviewStep: React.FC<AppProps> = ({
       name: 'Date of Joining',
       resizable: true,
       width: 140,
-      renderCell: ({ row, tabIndex }: any) => {
-        return row.rowData.joinDate?.value;
+      renderCell: ({ row }: any) => {
+        return row.rowData?.joinDate?.value;
       },
       cellClass: (row: any) => {
-        if (!row.rowData.joinDate?.isValid) {
+        if (!row.rowData?.joinDate?.isValid) {
           return 'text-red-500 bg-red-50';
         }
         return '';
       },
-      headerCellClass: flatData.some(
-        (row: any) => !row.rowData?.joinDate?.isValid,
-      )
-        ? 'bg-red-50 !overflow-visible'
-        : '',
+      headerCellClass:
+        _sheet?.rowCount &&
+        _sheet?.rowCount === _sheet?.columnMapping?.joinDate?.errorRowsCount
+          ? 'bg-red-50 !overflow-visible'
+          : '',
       renderHeaderCell: () => {
-        if (flatData.some((row: any) => !row.rowData.joinDate?.isValid)) {
+        if (
+          _sheet?.rowCount &&
+          _sheet?.rowCount === _sheet?.columnMapping?.joinDate?.errorRowsCount
+        ) {
           return (
             <div className="w-full flex justify-between items-center text-red-500">
               <p>Date of Joining</p>
@@ -303,11 +301,11 @@ const ReviewStep: React.FC<AppProps> = ({
       name: 'Marital Status',
       resizable: true,
       width: 120,
-      renderCell: ({ row, tabIndex }: any) => {
-        return row.rowData.maritalStatus.value;
+      renderCell: ({ row }: any) => {
+        return row.rowData?.maritalStatus?.value;
       },
       cellClass: (row: any) => {
-        if (!row.rowData.maritalStatus?.isValid) {
+        if (!row.rowData?.maritalStatus?.isValid) {
           return 'text-red-500 bg-red-50';
         }
         return '';
@@ -324,11 +322,11 @@ const ReviewStep: React.FC<AppProps> = ({
       name: 'Role',
       resizable: true,
       width: 120,
-      renderCell: ({ row, tabIndex }: any) => {
-        return row.rowData.role.value;
+      renderCell: ({ row }: any) => {
+        return row.rowData?.role?.value;
       },
       cellClass: (row: any) => {
-        if (!row.rowData.role?.isValid) {
+        if (!row.rowData?.role?.isValid) {
           return 'text-red-500 bg-red-50';
         }
         return '';
@@ -376,11 +374,13 @@ const ReviewStep: React.FC<AppProps> = ({
         <Header
           onBackIconClick={() => {
             setStep(StepEnum.Importing);
+            setLoaderStep(LoaderStep.Parse);
             queryClient.removeQueries(['csv-import']);
           }}
           title="Bulk Add User info"
           onClose={() => {
             closeModal();
+            setLoaderStep(LoaderStep.Parse);
             queryClient.removeQueries(['csv-import']);
           }}
           titleDataTestId="back-arrow"
@@ -481,7 +481,10 @@ const ReviewStep: React.FC<AppProps> = ({
               variant={Variant.Secondary}
               size={Size.Small}
               className="mr-4"
-              onClick={closeModal}
+              onClick={() => {
+                setLoaderStep(LoaderStep.Parse);
+                closeModal();
+              }}
               dataTestId="cancel-review-cta"
             />
             <Button
@@ -553,7 +556,10 @@ const ReviewStep: React.FC<AppProps> = ({
           success={{
             label: 'Yes',
             className: '',
-            onSubmit: () => setStep(StepEnum.Importing),
+            onSubmit: () => {
+              setStep(StepEnum.Importing);
+              setLoaderStep(LoaderStep.Parse);
+            },
           }}
           discard={{
             label: 'Cancel',
