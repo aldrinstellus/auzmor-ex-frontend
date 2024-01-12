@@ -937,7 +937,7 @@ const BrandingSettings: FC = () => {
                   />
                 )}
               </div>
-              <p className="text-xxs text-neutral-500">Max file size 5mb</p>
+              <p className="text-xxs text-neutral-500">Max file size 5MB</p>
             </div>
             <div className="flex flex-col w-1/2 gap-1">
               <div className="font-bold">Favicon</div>
@@ -985,7 +985,7 @@ const BrandingSettings: FC = () => {
                   />
                 )}
               </div>
-              <p className="text-xxs text-neutral-500">Max file size 5mb</p>
+              <p className="text-xxs text-neutral-500">Max file size 5MB</p>
             </div>
           </div>
         </div>
@@ -1281,7 +1281,7 @@ const BrandingSettings: FC = () => {
                     )}
                   </div>
                   <p className="text-xxs text-neutral-500">
-                    Max file size 50mb
+                    Max file size 50MB
                   </p>
                 </div>
               )}
