@@ -284,7 +284,7 @@ const EditImageModal: FC<AppProps> = ({
                 }
               : undefined
           }
-          aspectRatio={7.38}
+          aspectRatio={4.426}
         />
       )}
       <Footer
