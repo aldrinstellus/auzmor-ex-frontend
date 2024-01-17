@@ -183,10 +183,10 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
   return (
     <div>
       <Card
-        className="relative bg-white w-full h-[284px]"
+        className="relative bg-white w-full   "
         data-testid="profile-details"
       >
-        <div className="h-[160px] w-full relative">
+        <div className=" w-full relative">
           {canEdit && (
             <PopupMenu
               triggerNode={
@@ -206,7 +206,7 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
           )}
           {!isCoverImageRemoved && (
             <img
-              className="object-cover object-center w-full rounded-t-9xl h-[160px]"
+              className="object-cover  object-center w-full rounded-t-9xl "
               src={getCoverImage(userDetails)}
               alt={'User Cover Picture Profile'}
               data-testid="user-cover-pic"
@@ -238,7 +238,7 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
             </div>
           )}
         </div>
-        <div className="ml-[192px] mr-6 mt-2.5">
+        <div className="ml-[192px] mr-6 mt-2.5  min-h-[124px]">
           <div className="flex justify-between">
             <div
               className="text-2xl font-bold text-neutral-900"
