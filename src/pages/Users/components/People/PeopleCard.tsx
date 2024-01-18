@@ -210,7 +210,7 @@ const PeopleCard: FC<IPeopleCardProps> = ({
     >
       <Card
         shadowOnHover
-        className="relative w-[190px] h-[244px] border-solid border rounded-9xl border-neutral-200 bg-white"
+        className="relative w-[233px] h-[254px] border-solid border rounded-9xl border-neutral-200 bg-white"
       >
         <UserProfileDropdown
           id={id}
@@ -329,9 +329,9 @@ const PeopleCard: FC<IPeopleCardProps> = ({
                 </div>
               )}
             </div>
-            {department?.name && (
+            {department?.name ? (
               <div
-                className="flex justify-center items-center px-3 py-[2px] rounded-[4px] gap-1 bg-orange-100"
+                className="flex justify-center items-center px-3 py-[4px] gap-1"
                 data-testid={`people-card-department-${department?.name}`}
               >
                 <Icon
@@ -340,14 +340,29 @@ const PeopleCard: FC<IPeopleCardProps> = ({
                   hover={false}
                   color="text-neutral-900"
                 />
-                <div className="text-neutral-900 text-xxs font-semibold truncate">
+                <div className="text-neutral-500 text-xs font-normal truncate">
                   {department?.name.length <= 22
                     ? department?.name.substring(0, 22)
                     : department?.name.substring(0, 22) + '..'}
                 </div>
               </div>
+            ) : (
+              <div
+                className="flex justify-center items-center px-3 py-[4px] gap-1"
+                data-testid={`people-card-department-${department?.name}`}
+              >
+                <Icon
+                  name="briefcase"
+                  size={16}
+                  hover={false}
+                  color="text-neutral-300"
+                />
+                <div className="text-neutral-300 text-xs font-normal ">
+                  Not specified
+                </div>
+              </div>
             )}
-            {workLocation?.name && (
+            {workLocation?.name ? (
               <div className="flex gap-1">
                 <Icon
                   name="location"
@@ -360,6 +375,21 @@ const PeopleCard: FC<IPeopleCardProps> = ({
                   data-testid={`people-card-location-${workLocation?.name}`}
                 >
                   {workLocation?.name}
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-1">
+                <Icon
+                  name="location"
+                  size={16}
+                  color="text-neutral-300"
+                  hover={false}
+                />
+                <div
+                  className="text-neutral-300 text-xs font-normal line-clamp-1"
+                  data-testid={`people-card-location-${workLocation?.name}`}
+                >
+                  Not specified
                 </div>
               </div>
             )}
