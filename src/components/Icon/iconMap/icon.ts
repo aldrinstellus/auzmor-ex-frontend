@@ -143,6 +143,8 @@ import SvgInfoIcon from '../components/Info';
 import CloudAddIcon from '../components/CloudAdd';
 import BoldTick from '../components/BoldTick';
 import EditIconV2 from '../components/EditV2';
+import LockIcon from '../components/Lock';
+import StarIcon from '../components/Star';
 
 export const icon = {
   add: Add,
@@ -236,6 +238,7 @@ export const icon = {
   linearLeftArrow: LinearLeftArrow,
   link: Link,
   location: LocationIcon,
+  lock: LockIcon,
   logout: LogoutIcon,
   love: Love,
   loveReaction: LoveReaction,
@@ -276,6 +279,7 @@ export const icon = {
   shareForward: ShareForward,
   slack: SlackIcon,
   speaker: SpeakerIcon,
+  star: StarIcon,
   support: Support,
   supportReaction: SupportReaction,
   tag: Tag,
