@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { EditIcon2 } from 'components/Icon/components/Edit';
+import EditIconV2 from 'components/Icon/components/EditV2';
 import {
   FacebookIcon,
   InstagramIcon,
@@ -22,7 +22,7 @@ const socialIconMap: Record<string, any> = {
   instagram: InstagramIcon,
   facebook: FacebookIcon,
   website: WebIcon,
-  edit: EditIcon2,
+  edit: EditIconV2,
 };
 
 const SocialIcon: React.FC<AppProps> = ({

@@ -1,6 +1,6 @@
 import { SVGProps } from 'react';
 
-const SvgEditOutline2 = (props: SVGProps<SVGSVGElement>) => (
+const SvgEditOutlineV2 = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -20,4 +20,4 @@ const SvgEditOutline2 = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export default SvgEditOutline2;
+export default SvgEditOutlineV2;
