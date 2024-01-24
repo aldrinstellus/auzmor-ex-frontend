@@ -26,6 +26,7 @@ const AppLaunchPage = lazy(() => import('pages/AppLaunchPage'));
 const Discover = lazy(() => import('pages/Discover'));
 const Admin = lazy(() => import('pages/Admin'));
 const AcceptInvite = lazy(() => import('pages/AcceptInvite'));
+const ChannelDetail = lazy(() => import('pages/ChannelDetail'));
 const PageNotFound = lazy(() => import('pages/PageNotFound'));
 const ServerErrorPage = lazy(() => import('pages/ServerErrorPage'));
 const PostPage = lazy(() => import('pages/Post'));
@@ -103,6 +104,13 @@ const routers = createBrowserRouter(
         <Route path="/apps/:id/launch" element={<AppLaunchPage />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/channels" element={<Channels />} />
+        <Route
+          path="/channels/:channelId"
+          element={<ChannelDetail />}
+          loader={() => {
+            return '';
+          }}
+        />
         <Route element={<RequireAdminAuth />}>
           <Route path="/admin" element={<Admin />} />
         </Route>
