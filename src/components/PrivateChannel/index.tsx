@@ -5,12 +5,12 @@ import PrivateChannelImage from 'images/png/PrivateChannelBanner.png';
 import Button, { Variant } from 'components/Button';
 import AvatarChips from 'components/AvatarChips';
 
-interface IChannelCardardProps {
+interface IChannelBannerProps {
   channelAdmin?: IChannel; //
   isChannelRequest?: boolean;
 }
 
-const PrivateChannelBanner: FC<IChannelCardardProps> = ({
+const PrivateChannelBanner: FC<IChannelBannerProps> = ({
   isChannelRequest = true,
 }) => {
   // api call to get the admin of  particular channel .
