@@ -15,6 +15,7 @@ import SubscriptionBanner from './SubscriptionBanner';
 import { useTranslation } from 'react-i18next';
 import Icon from 'components/Icon';
 import PopupMenu from 'components/PopupMenu';
+import useHover from 'hooks/useHover';
 
 const Navbar = () => {
   const { isAdmin } = useRole();
@@ -23,6 +24,7 @@ const Navbar = () => {
     user?.subscription?.type === 'TRIAL' &&
       user?.subscription?.daysRemaining > -1,
   );
+  const [isHovered, eventHandlers] = useHover();
   const navigate = useNavigate();
 
   const { t } = useTranslation('navbar');
@@ -97,8 +99,14 @@ const Navbar = () => {
         return (
           <PopupMenu
             triggerNode={
-              <div className=" flex flex-col items-center cursor-pointer">
-                <Icon name={this.icon} size={this.iconSize} />
+              <div
+                {...eventHandlers}
+                className="  flex flex-col items-center cursor-pointer"
+              >
+                <Icon
+                  name={isHovered ? this.hoverIcon : this.icon}
+                  size={this.iconSize}
+                />
                 <div className="text-sm group-hover:text-primary-500">
                   {this.label}
                 </div>
