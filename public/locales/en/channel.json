@@ -1,0 +1,8 @@
+{
+  "title": "Channels",
+
+  "privateChannel": {
+    "bannerHeader": "This is a private channel. You must be a member to view the channel content",
+    "spaceAdmins": "Space Admins"
+  }
+}

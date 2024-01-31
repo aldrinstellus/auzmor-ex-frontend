@@ -15,7 +15,6 @@ import SubscriptionBanner from './SubscriptionBanner';
 import { useTranslation } from 'react-i18next';
 import Icon from 'components/Icon';
 import PopupMenu from 'components/PopupMenu';
-import useHover from 'hooks/useHover';
 
 const Navbar = () => {
   const { isAdmin } = useRole();
@@ -24,7 +23,6 @@ const Navbar = () => {
     user?.subscription?.type === 'TRIAL' &&
       user?.subscription?.daysRemaining > -1,
   );
-  const [isHovered, eventHandlers] = useHover();
   const navigate = useNavigate();
 
   const { t } = useTranslation('navbar');
@@ -52,15 +50,6 @@ const Navbar = () => {
   ];
 
   const navigations = [
-    // {
-    //   label: 'Home',
-    //   icon: 'homeOutline',
-    //   hoverIcon: 'homeFilled',
-    //   linkTo: '/home',
-    //   dataTestId: 'office-home-page',
-    //   iconSize: 24,
-    //   disabled: true,
-    // },
     {
       label: t('feed'),
       icon: 'feedOutline',
@@ -99,13 +88,16 @@ const Navbar = () => {
         return (
           <PopupMenu
             triggerNode={
-              <div
-                {...eventHandlers}
-                className="  flex flex-col items-center cursor-pointer"
-              >
+              <div className="  flex flex-col items-center group cursor-pointer">
                 <Icon
-                  name={isHovered ? this.hoverIcon : this.icon}
+                  name={this.hoverIcon}
                   size={this.iconSize}
+                  className="group-hover:block hidden"
+                />
+                <Icon
+                  name={this.icon}
+                  size={this.iconSize}
+                  className="group-hover:hidden "
                 />
                 <div className="text-sm group-hover:text-primary-500">
                   {this.label}
