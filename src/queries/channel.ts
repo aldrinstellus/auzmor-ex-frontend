@@ -1,4 +1,6 @@
 import { QueryFunctionContext, useInfiniteQuery } from '@tanstack/react-query';
+import { chain } from 'lodash';
+import { IChannel, useChannelStore } from 'stores/channelStore';
 import apiService from 'utils/apiService';
 
 export interface IChannelPayload {
@@ -7,13 +9,26 @@ export interface IChannelPayload {
   description?: string;
 }
 
-export const getAllChannels = async ({
-  pageParam = null,
-  queryKey,
-}: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
-  if (pageParam === null) {
-    return await apiService.get('/channels', queryKey[1]);
-  } else return await apiService.get(pageParam);
+export const getAllChannels = async (
+  {
+    pageParam = null,
+    queryKey,
+  }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>,
+  setChannels: (channels: { [key: string]: IChannel }) => void,
+) => {
+  let response = null;
+  if (!!!pageParam) {
+    response = await apiService.get('/channels/me', queryKey[1]);
+  } else {
+    response = await apiService.get(pageParam, queryKey[1]);
+  }
+  setChannels({
+    ...chain(response.data.result.data).keyBy('id').value(),
+  });
+  response.data.result.data = response.data.result.data.map(
+    (eachChannel: IChannel) => ({ id: eachChannel.id }),
+  );
+  return response;
 };
 
 export const createChannel = async (payload: IChannelPayload) => {
@@ -24,10 +39,10 @@ export const createChannel = async (payload: IChannelPayload) => {
 };
 
 export const updateChannel = async (id: string, payload: IChannelPayload) => {
-  await apiService.put(`/teams/${id}`, payload);
+  await apiService.put(`/channel/${id}`, payload);
 };
 
-// delete team by id -> teams/:id
+// delete team by id -> channel/:id
 export const deleteChannel = async (id: string) => {
   const data = await apiService.delete(`/channels/${id}`);
   return new Promise((res) => {
@@ -35,7 +50,7 @@ export const deleteChannel = async (id: string) => {
   });
 };
 
-// get team members by team id -> /teams/:id/members
+// get team members by team id -> /channel/:id/members
 export const getChannelMembers = async (
   {
     pageParam = null,
@@ -68,9 +83,10 @@ export const removeChannelMember = async (teamId: string) => {
 // ------------------ React Query -----------------------
 
 export const useInfiniteChannels = (q?: Record<string, any>) => {
+  const { setChannels } = useChannelStore();
   return useInfiniteQuery({
-    queryKey: ['teams', q],
-    queryFn: getAllChannels,
+    queryKey: ['channel', q],
+    queryFn: (context) => getAllChannels(context, setChannels),
     getNextPageParam: (lastPage: any) => {
       const pageDataLen = lastPage?.data?.result?.data?.length;
       const pageLimit = lastPage?.data?.result?.paging?.limit;
