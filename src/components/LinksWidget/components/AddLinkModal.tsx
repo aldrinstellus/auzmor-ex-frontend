@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import Layout, { FieldType } from 'components/Form';
 import { URL_REGEX } from 'utils/constants';
+import { useTranslation } from 'react-i18next';
 
 interface IAddLinksModalProps {
   open: boolean;
@@ -25,15 +26,15 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
   linkDetails,
   setLinkDetails,
 }) => {
+  const { t } = useTranslation('channelLinksWidget', {
+    keyPrefix: 'addLinkModal',
+  });
   const schema = yup.object({
-    title: yup
-      .string()
-      .optional()
-      .max(20, 'Label cannot contain more than 20 characters'),
+    title: yup.string().optional().max(20, t('labelField.maxLengthError')),
     url: yup
       .string()
-      .required('This field cannot be empty')
-      .matches(URL_REGEX, 'Invalid link'),
+      .required(t('urlField.requiredError'))
+      .matches(URL_REGEX, t('urlField.invalidUrlError')),
   });
 
   const {
@@ -57,13 +58,14 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
   const onSubmit = () => {
     const { title, url } = getValues();
     setLinkDetails({ title, url });
+    closeModal();
   };
 
   const fields = [
     {
       name: 'url',
-      label: 'URL',
-      placeholder: 'ex: www.abc.com',
+      label: t('urlField.label'),
+      placeholder: t('urlField.placeholder'),
       type: FieldType.Input,
       control,
       error: errors.url?.message,
@@ -74,8 +76,8 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
     },
     {
       name: 'title',
-      label: 'Label',
-      placeholder: 'ex: New hire checklist',
+      label: t('labelField.label'),
+      placeholder: t('labelField.placeholder'),
       type: FieldType.Input,
       control,
       error: errors.title?.message,
@@ -89,7 +91,7 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
   return (
     <Modal open={open} closeModal={closeModal} className="max-w-[638px]">
       <Header
-        title={isCreateMode ? 'Add Link' : 'Edit Link'}
+        title={isCreateMode ? t('title.createMode') : t('title.updateMode')}
         onClose={() => closeModal()}
         closeBtnDataTestId="add-link-close"
       />
@@ -101,7 +103,7 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
       {/* Footer */}
       <div className="flex justify-end items-center h-16 px-6 py-4 bg-blue-50 rounded-b-9xl">
         <Button
-          label="Cancel"
+          label={t('cancelCTA')}
           size={Size.Small}
           variant={Variant.Secondary}
           onClick={closeModal}
@@ -109,7 +111,9 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
           dataTestId="add-link-back"
         />
         <Button
-          label={isCreateMode ? 'Add Link' : 'Save'}
+          label={
+            isCreateMode ? t('saveCTA.createMode') : t('saveCTA.updateMode')
+          }
           size={Size.Small}
           variant={Variant.Primary}
           onClick={handleSubmit(onSubmit)}

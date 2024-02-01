@@ -117,6 +117,7 @@ import ProfileUser from '../components/ProfileUser';
 import ShareForward from '../components/ShareForward';
 import Cancel from '../components/Cancel';
 import LinearLeftArrow from '../components/LinearLeftArrow';
+import LinearRightArrow from '../components/LinearRightArrow/index';
 import PostBookmarkIcon from '../components/PostBookmark';
 import Repost from '../components/Repost';
 import Calendar from '../components/Calendar';
@@ -237,6 +238,7 @@ export const icon = {
   likeIcon: LikeIcon,
   likeReaction: LikeReaction,
   linearLeftArrow: LinearLeftArrow,
+  linearRightArrow: LinearRightArrow,
   link: Link,
   location: LocationIcon,
   lock: LockIcon,

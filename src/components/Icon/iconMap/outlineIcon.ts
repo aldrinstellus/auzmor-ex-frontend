@@ -80,6 +80,7 @@ import SvgGlobalOutline from '../components/Global/GlobalOutline';
 import SvgProfileUserOutline from '../components/ProfileUser/ProfileUserOutline';
 import SvgShareForwardOutline from '../components/ShareForward/ShareForwardOutline';
 import SvgLinearLeftArrowOutline from '../components/LinearLeftArrow/LinearLeftArrowOutline';
+import SvgLinearRightArrowOutline from '../components/LinearRightArrow/LinearRightArrowOutline';
 import SvgRepostOutline from '../components/Repost/RepostOutline';
 import SvgCalendarOutline from '../components/Calendar/CalendarOutline';
 import SvgSortByAcsOutline from '../components/SortByAcs/SortByAcsOutline';
@@ -161,6 +162,7 @@ export const outlineIcon = {
   likeIconOutline: SvgLikeIconOutline,
   likeOutline: SvgLikeOutline,
   linearLeftArrowOutline: SvgLinearLeftArrowOutline,
+  linearRightArrowOutline: SvgLinearRightArrowOutline,
   linkOutline: SvgLinkOutline,
   lockOutline: SvgLockOutline,
   logoutOutline: SvgLogoutOutline,

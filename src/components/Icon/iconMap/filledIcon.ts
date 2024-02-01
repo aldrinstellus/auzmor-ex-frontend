@@ -71,6 +71,7 @@ import SvgProfileFilled from '../components/Profile/ProfileFilled';
 import SvgGlobalFilled from '../components/Global/GlobalFilled';
 import SvgProfileUserFilled from '../components/ProfileUser/ProfileUserFilled';
 import SvgLinearLeftArrowFilled from '../components/LinearLeftArrow/LinearLeftArrowFilled';
+import SvgLinearRightArrowFilled from '../components/LinearRightArrow/LinearRightArrowFilled';
 import SvgRepostFilled from '../components/Repost/RepostFilled';
 import SvgCalendarFilled from '../components/Calendar/CalendarFilled';
 import SvgMicFilled from '../components/Mic/MicFilled';
@@ -144,6 +145,7 @@ export const filledIcon = {
   likeFilled: SvgLikeFilled,
   likeIconFilled: SvgLikeIconFilled,
   linearLeftArrowFilled: SvgLinearLeftArrowFilled,
+  linearRightArrowFilled: SvgLinearRightArrowFilled,
   lockFilled: SvgLockFilled,
   logoutFilled: SvgLogoutFilled,
   loveFilled: SvgLoveFilled,
