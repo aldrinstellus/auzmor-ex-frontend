@@ -101,6 +101,7 @@ import SvgLockOutline from '../components/Lock/LockOutline';
 import SvgStarOutline from '../components/Star/StarOutline';
 import SvgNewsOutline from '../components/News/NewsOutline';
 import SvgWebsiteOutline from '../components/Website/WebsiteOutline';
+import SvgGalleryOutline from '../components/Gallery/GalleryOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -149,6 +150,7 @@ export const outlineIcon = {
   focusOutline: SvgFocusOutline,
   fullScreenOutline: SvgFullScreenOutline,
   funnyOutline: SvgFunnyOutline,
+  galleryOutline: SvgGalleryOutline,
   gearOutline: SvgGearOutline,
   globalOutline: SvgGlobalOutline,
   groupOutline: SvgGroupOutline,
@@ -174,6 +176,7 @@ export const outlineIcon = {
   maximizeOutline: SvgMaximizeOutline,
   micOutline: SvgMicOutline,
   moreOutline: SvgMoreOutline,
+  newsOutline: SvgNewsOutline,
   noteFavouriteOutline: SvgNoteFavouriteOutline,
   peopleOutline: SvgPeopleOutline,
   playOutline: SvgPlayOutline,
@@ -202,8 +205,7 @@ export const outlineIcon = {
   usersOutline: SvgUsersOutline,
   videoOutline: SvgVideoOutline,
   warningCirlceOutline: SvgWarningCircleOutline,
+  websiteOutline: SvgWebsiteOutline,
   zoomInOutline: SvgZoomInOutline,
   zoomOutOutline: SvgZoomOutOutline,
-  newsOutline: SvgNewsOutline,
-  websiteOutline: SvgWebsiteOutline,
 };

@@ -86,6 +86,7 @@ import PostBookMarkFilled from '../components/PostBookmark/PostBookmarkFilled';
 import SvgCloudAddFilled from '../components/CloudAdd/CloudAddFilled';
 import SvgLockFilled from '../components/Lock/LockFilled';
 import SvgStarFilled from '../components/Star/StarFilled';
+import SvgGalleryFilled from '../components/Gallery/GalleryFilled';
 
 export const filledIcon = {
   addCircleFilled: SvgAddCircleFilled,
@@ -131,6 +132,7 @@ export const filledIcon = {
   focusFilled: SvgFocusFilled,
   fullScreenFilled: SvgFullScreenFilled,
   funnyFilled: SvgFunnyFilled,
+  galleryFilled: SvgGalleryFilled,
   gearFilled: SvgGearFilled,
   globalFilled: SvgGlobalFilled,
   groupFilled: SvgGroupFilled,

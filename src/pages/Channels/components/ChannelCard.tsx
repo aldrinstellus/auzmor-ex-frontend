@@ -9,7 +9,7 @@ import Button, {
   Variant as ButtonVariant,
 } from 'components/Button';
 import Card from 'components/Card';
-import { ChannelPrivacyEnum, IChannel } from 'stores/channelStore';
+import { ChannelVisibilityEnum, IChannel } from 'stores/channelStore';
 import DefaultCoverImage from 'images/png/CoverImage.png';
 
 interface IChannelCardProps {
@@ -28,11 +28,11 @@ const ChannelCard: FC<IChannelCardProps> = ({
   return (
     <Card className="w-full flex flex-col gap-2 relative">
       <div className="w-full h-[80px] bg-slate-500 rounded-t-9xl">
-        {channel.coverImage && channel.coverImage.original ? (
+        {channel.channelBanner && channel.channelBanner.original ? (
           <div className="w-full h-full relative">
             <img
               className="object-cover h-full w-full rounded-t-9xl"
-              src={channel.coverImage.original}
+              src={channel.channelBanner.original}
             />
             <div className="w-full h-full bg-black top-0 left-0 absolute rounded-t-9xl opacity-30"></div>
           </div>
@@ -49,7 +49,8 @@ const ChannelCard: FC<IChannelCardProps> = ({
             text={channel.name}
             className="text-sm font-semibold text-neutral-900 max-w-[208px]"
           />
-          {channel.privacy === ChannelPrivacyEnum.Private && (
+          {channel.channelSettings?.visibility ===
+            ChannelVisibilityEnum.Private && (
             <Icon
               name={'lockFilled'}
               size={14}
@@ -60,7 +61,7 @@ const ChannelCard: FC<IChannelCardProps> = ({
           )}
         </div>
         <p className="text-xs font-semibold text-neutral-500">
-          {channel.membersCount} members
+          {channel.totalMembers} members
         </p>
         <p className="text-xxs text-neutral-500 line-clamp-2">
           {channel.description}
@@ -96,7 +97,9 @@ const ChannelCard: FC<IChannelCardProps> = ({
           </div>
         )}
       </div>
-      <div className="w-10 h-10 rounded-full absolute left-4 top-[52px] bg-black border border-white z-0" />
+      <div className="w-10 h-10 rounded-full absolute left-4 top-[52px] bg-neutral-300 border border-white z-0 flex justify-center items-center">
+        <Icon name="gallery" size={16} color="text-white" hover={false} />
+      </div>
       {channel.isStarred && (
         <IconWrapper
           type={IconWrapperType.Square}
