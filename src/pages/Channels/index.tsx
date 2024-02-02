@@ -7,6 +7,7 @@ import FilterMenu from 'components/FilterMenu';
 import { useAppliedFiltersStore } from 'stores/appliedFiltersStore';
 import { useForm } from 'react-hook-form';
 import useURLParams from 'hooks/useURLParams';
+import { useTranslation } from 'react-i18next';
 
 interface IChannelsProps {}
 
@@ -27,6 +28,7 @@ interface IFilterButton {
 }
 
 export const Channels: FC<IChannelsProps> = () => {
+  const { t } = useTranslation('channels');
   const getChannels = useChannelStore((state) => state.getChannels);
   const { filters, setFilters, clearFilters, updateFilter } =
     useAppliedFiltersStore();
@@ -49,7 +51,7 @@ export const Channels: FC<IChannelsProps> = () => {
   const filterButtons: IFilterButton[] = useMemo(
     () => [
       {
-        label: 'My channels',
+        label: t('filterCTA.myChannels'),
         isActive: filters?.type === ChannelCardEnum.MyChannels,
         onClick: () => updateFilter('type', ChannelCardEnum.MyChannels),
         labelClassName: `text-sm ${
@@ -61,7 +63,7 @@ export const Channels: FC<IChannelsProps> = () => {
           filters?.type === ChannelCardEnum.MyChannels ? 'border-0' : '',
       },
       {
-        label: 'Managed',
+        label: t('filterCTA.managed'),
         isActive: filters?.type === ChannelCardEnum.Managed,
         onClick: () => updateFilter('type', ChannelCardEnum.Managed),
         labelClassName: `text-sm ${
@@ -72,7 +74,7 @@ export const Channels: FC<IChannelsProps> = () => {
         className: filters?.type === ChannelCardEnum.Managed ? 'border-0' : '',
       },
       {
-        label: 'Discover new channels',
+        label: t('filterCTA.discoverNewChannels'),
         isActive: filters?.type === ChannelCardEnum.DiscoverNewChannels,
         onClick: () =>
           updateFilter('type', ChannelCardEnum.DiscoverNewChannels),
@@ -87,7 +89,7 @@ export const Channels: FC<IChannelsProps> = () => {
             : '',
       },
       {
-        label: 'Starred',
+        label: t('filterCTA.starred'),
         isActive: filters?.type === ChannelCardEnum.Starred,
         onClick: () => updateFilter('type', ChannelCardEnum.Starred),
         labelClassName: `text-sm ${
@@ -98,7 +100,7 @@ export const Channels: FC<IChannelsProps> = () => {
         className: filters?.type === ChannelCardEnum.Starred ? 'border-0' : '',
       },
       {
-        label: 'Requested',
+        label: t('filterCTA.requested'),
         isActive: filters?.type === ChannelCardEnum.Requested,
         onClick: () => updateFilter('type', ChannelCardEnum.Requested),
         labelClassName: `text-sm ${
@@ -116,9 +118,9 @@ export const Channels: FC<IChannelsProps> = () => {
   return (
     <Card className="p-8 flex flex-col gap-6">
       <div className="flex justify-between items-center">
-        <p className="text-2xl font-bold text-neutral-900">Channels</p>
+        <p className="text-2xl font-bold text-neutral-900">{t('channels')}</p>
         <Button
-          label="Create channel"
+          label={t('createChannelCTA')}
           leftIcon="add"
           leftIconClassName="text-white pointer-events-none group-hover:text-white"
           onClick={() => setFilters({ managed: true })}
