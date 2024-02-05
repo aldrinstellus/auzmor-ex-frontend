@@ -4,7 +4,12 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import { chain } from 'lodash';
-import { IChannel, IChannelLink, useChannelStore } from 'stores/channelStore';
+import {
+  IChannel,
+  IChannelLink,
+  dummyChannels,
+  useChannelStore,
+} from 'stores/channelStore';
 import { channelLinks } from 'mocks/Channels';
 import apiService from 'utils/apiService';
 
@@ -15,17 +20,44 @@ export interface IChannelPayload {
 }
 
 export const getAllChannels = async (
-  {
-    pageParam = null,
-    queryKey,
-  }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>,
+  context: QueryFunctionContext<
+    (Record<string, any> | undefined | string)[],
+    any
+  >,
   setChannels: (channels: { [key: string]: IChannel }) => void,
 ) => {
   let response = null;
-  if (!!!pageParam) {
-    response = await apiService.get('/channels/me', queryKey[1]);
-  } else {
-    response = await apiService.get(pageParam, queryKey[1]);
+  // response = await new Promise((resolve, _reject) => {
+  //   setTimeout(() => {
+  //     resolve({
+  //       data: {
+  //         result: {
+  //           data: dummyChannels,
+  //         },
+  //       },
+  //     });
+  //   }, 2000);
+  // });
+  // setChannels(chain(dummyChannels).keyBy('id').value());
+  // return response;
+  try {
+    if (!!!context.pageParam) {
+      if ((context.queryKey[2] as { myChannels: boolean })?.myChannels) {
+        response = await apiService.get('/channels/me', context.queryKey[1]);
+      } else {
+        response = await apiService.get('/channels', context.queryKey[1]);
+      }
+    } else {
+      response = await apiService.get(context.pageParam, context.queryKey[1]);
+    }
+  } catch (e) {
+    response = {
+      data: {
+        result: {
+          data: dummyChannels,
+        },
+      },
+    };
   }
   setChannels({
     ...chain(response.data.result.data).keyBy('id').value(),
@@ -108,24 +140,30 @@ export const updateChannelLinks = async (
 
 // ------------------ React Query -----------------------
 
-export const useInfiniteChannels = (q?: Record<string, any>) => {
-  const { setChannels } = useChannelStore();
-  return useInfiniteQuery({
-    queryKey: ['channel', q],
-    queryFn: (context) => getAllChannels(context, setChannels),
-    getNextPageParam: (lastPage: any) => {
-      const pageDataLen = lastPage?.data?.result?.data?.length;
-      const pageLimit = lastPage?.data?.result?.paging?.limit;
-      if (pageDataLen < pageLimit) {
-        return null;
-      }
-      return lastPage?.data?.result?.paging?.next;
-    },
-    getPreviousPageParam: (currentPage: any) => {
-      return currentPage?.data?.result?.paging?.prev;
-    },
-    staleTime: 5 * 60 * 1000,
-  });
+export const useInfiniteChannels = (
+  q?: Record<string, any>,
+  myChannels?: boolean,
+) => {
+  const { channels, setChannels } = useChannelStore();
+  return {
+    ...useInfiniteQuery({
+      queryKey: ['channel', q, { myChannels: !!myChannels }],
+      queryFn: (context) => getAllChannels(context, setChannels),
+      getNextPageParam: (lastPage: any) => {
+        const pageDataLen = lastPage?.data?.result?.data?.length;
+        const pageLimit = lastPage?.data?.result?.paging?.limit;
+        if (pageDataLen < pageLimit) {
+          return null;
+        }
+        return lastPage?.data?.result?.paging?.next;
+      },
+      getPreviousPageParam: (currentPage: any) => {
+        return currentPage?.data?.result?.paging?.prev;
+      },
+      staleTime: 5 * 60 * 1000,
+    }),
+    channels,
+  };
 };
 
 export const useInfiniteChannelMembers = (
