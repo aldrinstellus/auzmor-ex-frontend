@@ -3,10 +3,11 @@ import Icon from 'components/Icon';
 import React from 'react';
 
 type AppProps = {
-  activeTab?: string;
+  activeTab: string;
+  setActiveTab: (...args: any) => any;
 };
 
-const ProfileSection: React.FC<AppProps> = ({ activeTab = 'home' }) => {
+const ProfileSection: React.FC<AppProps> = ({ activeTab, setActiveTab }) => {
   const tabs = [
     {
       label: 'Home',
@@ -85,6 +86,7 @@ const ProfileSection: React.FC<AppProps> = ({ activeTab = 'home' }) => {
                       t.isActive,
                     '!text-neutral-300': !t.isActive,
                   })}
+                  onClick={() => setActiveTab(t.key)}
                 >
                   {t.label}
                 </div>
