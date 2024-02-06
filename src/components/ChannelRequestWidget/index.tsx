@@ -60,14 +60,14 @@ const ChannelRequestWidget: FC<ChannelWidgetProps> = ({
           open ? 'max-h-[1000px]' : 'max-h-[0]'
         }`}
       >
-        <div className=" flex flex-col  ">
+        <div className=" flex flex-col px-4  ">
           {/* add skelton loader here */}
 
-          <div className=" divide-y divide-neutral-200  ">
+          <div className=" divide-y  divide-neutral-200  ">
             <>
               {channelRequests?.map((user: any) => {
                 return (
-                  <div className="py-2 px-4" key={user?.id}>
+                  <div className="py-2 " key={user?.id}>
                     <ChannelWidgetUserRow user={user?.user} />
                   </div>
                 );
@@ -79,7 +79,6 @@ const ChannelRequestWidget: FC<ChannelWidgetProps> = ({
             <Button
               variant={Variant.Secondary}
               size={Size.Small}
-              className="mx-4"
               label={'View all requests'}
               dataTestId={`view-all-requests`}
               onClick={openAllRequestModal}
