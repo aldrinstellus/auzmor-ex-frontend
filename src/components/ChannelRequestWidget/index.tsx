@@ -3,16 +3,20 @@ import Card from 'components/Card';
 import Icon from 'components/Icon';
 import useModal from 'hooks/useModal';
 import clsx from 'clsx';
-import { ChannelUser } from 'mocks/Channels';
 import ChannelRequestModal from './components/ChannelRequestModal';
 import Button, { Size, Variant } from 'components/Button';
 import ChannelWidgetUserRow from './components/ChannelWidgetUser';
+import { useChannelRequests } from 'queries/channel';
 
 type ChannelWidgetProps = {
-  className?: '';
+  className?: string;
+  channelId?: string;
 };
 
-const ChannelRequestWidget: FC<ChannelWidgetProps> = ({ className = '' }) => {
+const ChannelRequestWidget: FC<ChannelWidgetProps> = ({
+  className = '',
+  channelId = '',
+}) => {
   const [open, openCollpase, closeCollapse] = useModal(true, false);
   const [openAllRequest, openAllRequestModal, closeAllRequestModal] =
     useModal();
@@ -20,6 +24,7 @@ const ChannelRequestWidget: FC<ChannelWidgetProps> = ({ className = '' }) => {
   const channelRequestCount = 0;
   const widgetTitle = `Channel requests (${channelRequestCount})`;
   // const buttonLabel = 'View all requests';
+  const { data: channelRequests } = useChannelRequests(channelId);
 
   const toggleModal = () => {
     if (open) closeCollapse();
@@ -29,7 +34,7 @@ const ChannelRequestWidget: FC<ChannelWidgetProps> = ({ className = '' }) => {
   const style = useMemo(
     () =>
       clsx({
-        'py-6 px-4 flex flex-col rounded-9xl': true,
+        'py-6  flex flex-col rounded-9xl': true,
         [className]: true,
       }),
     [className],
@@ -39,7 +44,7 @@ const ChannelRequestWidget: FC<ChannelWidgetProps> = ({ className = '' }) => {
   return (
     <Card className={style}>
       <div
-        className="px-6 flex items-center justify-between cursor-pointer"
+        className=" px-6 flex items-center justify-between cursor-pointer"
         data-testid={`collapse-'channel-request`}
         onClick={toggleModal}
       >
@@ -55,16 +60,25 @@ const ChannelRequestWidget: FC<ChannelWidgetProps> = ({ className = '' }) => {
           open ? 'max-h-[1000px]' : 'max-h-[0]'
         }`}
       >
-        <div className=" flex flex-col  mt-4">
+        <div className=" flex flex-col px-4  ">
           {/* add skelton loader here */}
-          {ChannelUser.map((user: any) => {
-            return <ChannelWidgetUserRow key={user?.id} user={user} />;
-          })}
+
+          <div className=" divide-y  divide-neutral-200  ">
+            <>
+              {channelRequests?.map((user: any) => {
+                return (
+                  <div className="py-2 " key={user?.id}>
+                    <ChannelWidgetUserRow user={user?.user} />
+                  </div>
+                );
+              })}
+            </>
+          </div>
+
           {isAllRequestDisplyed && (
             <Button
               variant={Variant.Secondary}
               size={Size.Small}
-              className="py-[7px]"
               label={'View all requests'}
               dataTestId={`view-all-requests`}
               onClick={openAllRequestModal}

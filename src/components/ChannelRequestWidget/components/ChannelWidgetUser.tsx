@@ -1,13 +1,14 @@
 import clsx from 'clsx';
 import Avatar from 'components/Avatar';
 import Button, { Size, Variant } from 'components/Button';
+import { IUserDetails } from 'queries/users';
 // import { IGetUser } from 'queries/users';
 import { FC, memo, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProfileImage } from 'utils/misc';
 
 interface IUserRowProps {
-  user: any; // change type to IGetUser
+  user: IUserDetails;
   className?: string;
 }
 
@@ -28,25 +29,25 @@ const ChannelWidgetUserRow: FC<IUserRowProps> = ({ user, className = '' }) => {
 
   return (
     <div className={styles}>
-      <div className="flex items-center gap-2 flex-1">
+      <div className="flex items-center gap-2   flex-1">
         <Avatar
           name={user?.fullName || ''}
           size={32}
           image={getProfileImage(user)}
           dataTestId="user-profile-pic"
-          onClick={() => navigate(`/users/${user?.id}`)}
+          onClick={() => navigate(`/users/${user?.userId}`)}
         />
         <div className="flex flex-col  line-clam-2">
           <div data-testid="user-name" className="text-xs font-normal ">
-            <b onClick={() => navigate(`/users/${user?.id}`)}>
+            <b onClick={() => navigate(`/users/${user?.userId}`)}>
               {user?.fullName || ''}
             </b>{' '}
             <span>requested to join </span>
-            <b>{user?.channel?.name || 'Dummy Channel'}</b>
+            <b>{'Dummy Channel'}</b>
           </div>
         </div>
       </div>
-      <div className="flex my-2 justify-end space-x-1">
+      <div className="flex mt-2 justify-end space-x-1">
         <Button
           label="Decline"
           variant={Variant.Tertiary}

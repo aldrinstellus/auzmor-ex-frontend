@@ -1,35 +1,34 @@
 import Button, { Size, Variant } from 'components/Button';
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
-import { ChannelUser } from 'mocks/Channels';
 import { FC } from 'react';
 import ChannelUserRow from './ChannelUser';
+import { useChannelRequests } from 'queries/channel';
 
 type ChannelRequestModalProps = {
   open: boolean;
   closeModal: () => void;
+  channelId?: string;
 };
 const ChannelRequestModal: FC<ChannelRequestModalProps> = ({
+  channelId = '',
   open,
   closeModal,
 }) => {
   const channelRequestCount = 0;
-  // const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } ={} // useChannelRequests({}); api call
+  const { data: ChannelRequest } = useChannelRequests(channelId);
 
   const modalTitle = `Channel request (${channelRequestCount})`;
   return (
-    <Modal open={open} closeModal={closeModal} className="max-w-[648px]">
+    <Modal open={open} closeModal={closeModal} className="max-w-[648px] ">
       <Header title={modalTitle} onClose={closeModal} />
-      <div className="max-h-[390px] min-h-[390px] overflow-y-auto w-full">
-        <div
-          className="divide-x divide-neutral-200"
-          onMouseDown={(e) => e.stopPropagation()}
-        >
-          {ChannelUser.map((user: any) => {
+      <div className="max-h-[390px]  overflow-y-auto w-full">
+        <div className="divide-y divide-neutral-200">
+          {ChannelRequest?.map((user: any) => {
             return (
-              <>
-                <ChannelUserRow key={user?.id} user={user} />
-              </>
+              <div className="py-2" key={user?.id}>
+                <ChannelUserRow user={user?.user} />
+              </div>
             );
           })}
         </div>

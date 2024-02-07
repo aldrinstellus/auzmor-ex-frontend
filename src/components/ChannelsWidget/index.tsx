@@ -21,7 +21,7 @@ const ChannelsWidget: FC<IChannelsProps> = ({}) => {
   const channels = [1, 2, 3];
 
   return (
-    <Card className="py-6 flex flex-col rounded-9xl" shadowOnHover>
+    <Card className="py-6  flex flex-col rounded-9xl" shadowOnHover>
       <div
         className="px-6 flex items-center justify-between cursor-pointer"
         data-testid="channel-launcher"
