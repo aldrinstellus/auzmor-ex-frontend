@@ -77,6 +77,7 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
     false,
   );
   const [socialLink, showSocialLinks, closeSocialLinks] = useModal();
+  const isSelf = !userId;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isHovered, eventHandlers] = useHover();
@@ -182,6 +183,16 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
     },
   });
 
+  const commonSocialLinks = [
+    'linkedIn',
+    'twitter',
+    'instagram',
+    'facebook',
+    'website',
+  ];
+  const socialLinks = isSelf
+    ? [...commonSocialLinks, 'edit']
+    : commonSocialLinks;
   return (
     <div>
       <Card
@@ -416,15 +427,17 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
             onClick={(e) => {
               if (!userId || userId === user?.id) {
                 e.preventDefault();
-                showSocialLinks();
               }
             }}
           >
-            {['linkedIn', 'twitter', 'instagram', 'facebook', 'website'].map(
-              (s) => (
-                <SocialIcon key={s} userDetails={userDetails} socialLink={s} />
-              ),
-            )}
+            {socialLinks.map((s) => (
+              <SocialIcon
+                key={s}
+                openModal={showSocialLinks}
+                userDetails={userDetails}
+                socialLink={s}
+              />
+            ))}
           </div>
         </div>
       </Card>
