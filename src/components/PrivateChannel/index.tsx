@@ -19,7 +19,7 @@ const PrivateChannelBanner: FC<IChannelBannerProps> = ({
   isChannelRequest = true,
   dataTestId = 'channels-widget', // Initialize dataTestId with empty string as default
 }) => {
-  const { t } = useTranslation('channel');
+  const { t } = useTranslation('channels');
   const { data: admins, isLoading } = useChannelAdmins(channelId);
   const navigate = useNavigate();
   return (
