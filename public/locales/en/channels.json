@@ -7,6 +7,20 @@
     "starred": "Starred",
     "requested": "Requested"
   },
+  "members": {
+    "title": "Members",
+    "addMemberCTA": "Add members",
+    "inputSearchMember": "Search members",
+    "filterCTA": {
+      "allMembers": "All members",
+      "department": "Department",
+      "requests": "Requests",
+      "location": "Location",
+      "status": "Status"
+    },
+    "selectAll": "Select all",
+    "showSelectedMembers": "Show selected members"
+  },
   "privateChannel": {
     "bannerHeader": "This is a private channel. You must be a member to view the channel content",
     "bannerFotter": "Space Admins",
