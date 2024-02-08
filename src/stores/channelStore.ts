@@ -34,6 +34,7 @@ export interface IChannel {
   totalMembers: number;
   displayImage?: { id: string; original: string };
   channelBanner?: { id: string; original: string };
+  isRequested?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -79,6 +80,14 @@ export const dummyChannels: IChannel[] = [
         id: '6465d142c62ae5de85d33b81',
       },
     },
+    channelSettings: {
+      visibility: ChannelVisibilityEnum.Public,
+      restriction: {
+        canPost: true,
+        canComment: true,
+        canMakeAnnouncements: true,
+      },
+    },
     totalMembers: 0,
     createdAt: new Date('01-01-2024').toISOString(),
     updatedAt: new Date('01-01-2024').toISOString(),
@@ -95,6 +104,14 @@ export const dummyChannels: IChannel[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+      },
+    },
+    channelSettings: {
+      visibility: ChannelVisibilityEnum.Public,
+      restriction: {
+        canPost: true,
+        canComment: true,
+        canMakeAnnouncements: true,
       },
     },
     totalMembers: 0,
@@ -114,6 +131,14 @@ export const dummyChannels: IChannel[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+      },
+    },
+    channelSettings: {
+      visibility: ChannelVisibilityEnum.Public,
+      restriction: {
+        canPost: true,
+        canComment: true,
+        canMakeAnnouncements: true,
       },
     },
     totalMembers: 0,
@@ -136,6 +161,15 @@ export const dummyChannels: IChannel[] = [
         id: '6465d142c62ae5de85d33b81',
       },
     },
+    channelSettings: {
+      visibility: ChannelVisibilityEnum.Private,
+      restriction: {
+        canPost: true,
+        canComment: true,
+        canMakeAnnouncements: true,
+      },
+    },
+    isRequested: true,
     totalMembers: 100,
     createdAt: new Date('04-01-2024').toISOString(),
     updatedAt: new Date('04-01-2024').toISOString(),
@@ -155,6 +189,15 @@ export const dummyChannels: IChannel[] = [
         id: '6465d142c62ae5de85d33b81',
       },
     },
+    channelSettings: {
+      visibility: ChannelVisibilityEnum.Private,
+      restriction: {
+        canPost: true,
+        canComment: true,
+        canMakeAnnouncements: true,
+      },
+    },
+    isRequested: false,
     totalMembers: 3,
     displayImage: {
       id: '65aa56820cf68601b2ff3817',

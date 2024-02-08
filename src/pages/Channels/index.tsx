@@ -166,7 +166,27 @@ export const Channels: FC<IChannelsProps> = () => {
       </FilterMenu>
       <div className="grid grid-cols-3 gap-6 justify-items-center lg:grid-cols-3 1.5lg:grid-cols-4 1.5xl:grid-cols-5 2xl:grid-cols-5">
         {channelIds.map(({ id }) => (
-          <ChannelCard key={id} channel={channels[id]} />
+          <ChannelCard
+            key={id}
+            channel={channels[id]}
+            showJoinChannelBtn={
+              filters?.type === ChannelCardEnum.DiscoverNewChannels &&
+              channels[id].channelSettings?.visibility ===
+                ChannelVisibilityEnum.Public
+            }
+            showRequestBtn={
+              filters?.type === ChannelCardEnum.DiscoverNewChannels &&
+              channels[id].channelSettings?.visibility ===
+                ChannelVisibilityEnum.Private &&
+              !!!channels[id].isRequested
+            }
+            showWithdrawBtn={
+              filters?.type === ChannelCardEnum.DiscoverNewChannels &&
+              channels[id].channelSettings?.visibility ===
+                ChannelVisibilityEnum.Private &&
+              !!channels[id].isRequested
+            }
+          />
         ))}
       </div>
     </Card>

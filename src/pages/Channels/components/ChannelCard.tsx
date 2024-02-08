@@ -63,7 +63,7 @@ const ChannelCard: FC<IChannelCardProps> = ({
         <p className="text-xs font-semibold text-neutral-500">
           {channel.totalMembers} members
         </p>
-        <p className="text-xxs text-neutral-500 line-clamp-2">
+        <p className="text-xxs text-neutral-500 line-clamp-2 h-7">
           {channel.description}
         </p>
         {showRequestBtn && (
