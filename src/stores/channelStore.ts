@@ -34,8 +34,9 @@ export interface IChannel {
   totalMembers: number;
   displayImage?: { id: string; original: string };
   channelBanner?: { id: string; original: string };
-  createdAt?: '2024-01-17T06:45:04.545Z';
-  updatedAt?: '2024-01-17T06:45:04.545Z';
+  isRequested?: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface IChannelLink {
@@ -64,8 +65,8 @@ type Actions = {
   setChannels: (channels: { [key: string]: IChannel }) => void;
 };
 
-const dummyChannels: { [key: string]: IChannel } = {
-  id_1: {
+export const dummyChannels: IChannel[] = [
+  {
     id: 'id_1',
     name: 'Channel 1',
     category: { categoryId: 'cat1', name: 'marketing' },
@@ -79,9 +80,19 @@ const dummyChannels: { [key: string]: IChannel } = {
         id: '6465d142c62ae5de85d33b81',
       },
     },
+    channelSettings: {
+      visibility: ChannelVisibilityEnum.Public,
+      restriction: {
+        canPost: true,
+        canComment: true,
+        canMakeAnnouncements: true,
+      },
+    },
     totalMembers: 0,
+    createdAt: new Date('01-01-2024').toISOString(),
+    updatedAt: new Date('01-01-2024').toISOString(),
   },
-  id_2: {
+  {
     id: 'id_2',
     name: 'Channel 2',
     category: { categoryId: 'cat1', name: 'marketing' },
@@ -95,9 +106,19 @@ const dummyChannels: { [key: string]: IChannel } = {
         id: '6465d142c62ae5de85d33b81',
       },
     },
+    channelSettings: {
+      visibility: ChannelVisibilityEnum.Public,
+      restriction: {
+        canPost: true,
+        canComment: true,
+        canMakeAnnouncements: true,
+      },
+    },
     totalMembers: 0,
+    createdAt: new Date('02-01-2024').toISOString(),
+    updatedAt: new Date('02-01-2024').toISOString(),
   },
-  id_3: {
+  {
     id: 'id_3',
     name: 'Channel 3',
     category: { categoryId: 'cat1', name: 'marketing' },
@@ -112,9 +133,19 @@ const dummyChannels: { [key: string]: IChannel } = {
         id: '6465d142c62ae5de85d33b81',
       },
     },
+    channelSettings: {
+      visibility: ChannelVisibilityEnum.Public,
+      restriction: {
+        canPost: true,
+        canComment: true,
+        canMakeAnnouncements: true,
+      },
+    },
     totalMembers: 0,
+    createdAt: new Date('03-01-2024').toISOString(),
+    updatedAt: new Date('03-01-2024').toISOString(),
   },
-  id_4: {
+  {
     id: 'id_4',
     name: 'Channel 4',
     category: { categoryId: 'cat1', name: 'marketing' },
@@ -130,9 +161,20 @@ const dummyChannels: { [key: string]: IChannel } = {
         id: '6465d142c62ae5de85d33b81',
       },
     },
+    channelSettings: {
+      visibility: ChannelVisibilityEnum.Private,
+      restriction: {
+        canPost: true,
+        canComment: true,
+        canMakeAnnouncements: true,
+      },
+    },
+    isRequested: true,
     totalMembers: 100,
+    createdAt: new Date('04-01-2024').toISOString(),
+    updatedAt: new Date('04-01-2024').toISOString(),
   },
-  id_5: {
+  {
     id: 'id_5',
     name: 'Channel 5',
     category: { categoryId: 'cat1', name: 'marketing' },
@@ -147,6 +189,15 @@ const dummyChannels: { [key: string]: IChannel } = {
         id: '6465d142c62ae5de85d33b81',
       },
     },
+    channelSettings: {
+      visibility: ChannelVisibilityEnum.Private,
+      restriction: {
+        canPost: true,
+        canComment: true,
+        canMakeAnnouncements: true,
+      },
+    },
+    isRequested: false,
     totalMembers: 3,
     displayImage: {
       id: '65aa56820cf68601b2ff3817',
@@ -159,17 +210,23 @@ const dummyChannels: { [key: string]: IChannel } = {
         'https://office-dev-cdn.auzmor.com/6465d142c62ae5de85d33b81/public/users/6465d142c62ae5de85d33b83/profile/1705662208516-original.png',
     },
     isStarred: true,
+    createdAt: new Date('05-01-2024').toISOString(),
+    updatedAt: new Date('05-01-2024').toISOString(),
   },
-};
+];
 
 export const useChannelStore = create<State & Actions>()(
   immer((set, get) => ({
-    channels: dummyChannels,
+    channels: {},
     getChannel: (id: string) => get().channels[id],
     getChannels: () => _.values(get().channels),
     setChannel: (channel: IChannel) =>
-      set((state) => (state.channels[channel.id] = channel)),
+      set((state) => {
+        state.channels[channel.id] = channel;
+      }),
     setChannels: (channels: { [key: string]: IChannel }) =>
-      set((state) => (state.channels = { ...state.channels, ...channels })),
+      set((state) => {
+        state.channels = { ...get().channels, ...channels };
+      }),
   })),
 );
