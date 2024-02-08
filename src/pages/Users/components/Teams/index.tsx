@@ -340,7 +340,7 @@ const Team: FC<ITeamProps> = ({
 
       <div>
         {showGrid ? (
-          <div className="grid grid-cols-6 gap-6 justify-items-center lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+          <div className="grid grid-cols-3 gap-6 justify-items-center lg:grid-cols-3 xl:grid-cols-4 1.5xl:grid-cols-5">
             {isLoading
               ? [...Array(30)].map((element) => (
                   <div key={element}>

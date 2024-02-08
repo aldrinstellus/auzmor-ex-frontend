@@ -3,10 +3,16 @@ import { Role } from 'utils/enum';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import _ from 'lodash';
+import { IUserDetails } from 'queries/users';
 
 export enum ChannelVisibilityEnum {
   Public = 'PUBLIC',
   Private = 'PRIVATE',
+}
+export enum CHANNEL_MEMBER_STATUS {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
 }
 
 export interface IChannel {
@@ -37,6 +43,14 @@ export interface IChannelLink {
   url: string;
   image?: string;
   favicon?: string;
+}
+export interface IChannelRequest {
+  id: string;
+  user?: IUserDetails;
+  createdBy?: IUser;
+  status: CHANNEL_MEMBER_STATUS;
+  createdAt?: '';
+  updatedAt?: '';
 }
 
 type State = {
