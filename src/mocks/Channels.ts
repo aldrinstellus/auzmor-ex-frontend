@@ -56,6 +56,439 @@ export const userData: IGetUser[] = [
     },
   },
   {
+    id: '6516afa8dc958600e4619cdf',
+    fullName: 'Abby Wolff',
+    firstName: 'Abby',
+    lastName: 'Wolff',
+    primaryEmail: 'Sim_Kris@hotmail.com',
+    department: {
+      departmentId: '6516afa8dc958600e4619c07',
+      name: 'Grocery',
+    },
+    org: {
+      id: '646311ed765368daacc601f7',
+      name: 'Little LLC',
+      domain: 'american-technology',
+    },
+    workLocation: {
+      locationId: '6516afa8dc958600e4619c73',
+      name: 'South Freeman',
+    },
+    designation: {
+      designationId: '65155cf3de64ba075d039879',
+      name: 'Quality Assurance',
+    },
+    workEmail: 'Sim_Kris@hotmail.com',
+    profileImage: {
+      id: '653f87281ef0a90b7d1e7b54',
+      blurHash: '',
+      original:
+        'https://office-qa-cdn.auzmor.com/646311ed765368daacc601f7/public/users/646311ed765368daacc601f9/profile/1698662184834-original.jpg',
+    },
+
+    flags: {
+      isDeactivated: false,
+      isReported: false,
+    },
+    createdAt: '2023-09-29T11:06:16.804Z',
+    status: 'ACTIVE',
+    freezeEdit: {
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      fullName: true,
+      designation: true,
+      department: true,
+      joinDate: true,
+      manager: true,
+    },
+  },
+  {
+    id: '6516afa8dc958600e4619cdf',
+    fullName: 'Abby Wolff',
+    firstName: 'Abby',
+    lastName: 'Wolff',
+    primaryEmail: 'Sim_Kris@hotmail.com',
+    department: {
+      departmentId: '6516afa8dc958600e4619c07',
+      name: 'Grocery',
+    },
+    org: {
+      id: '646311ed765368daacc601f7',
+      name: 'Little LLC',
+      domain: 'american-technology',
+    },
+    workLocation: {
+      locationId: '6516afa8dc958600e4619c73',
+      name: 'South Freeman',
+    },
+    designation: {
+      designationId: '65155cf3de64ba075d039879',
+      name: 'Quality Assurance',
+    },
+    workEmail: 'Sim_Kris@hotmail.com',
+    profileImage: {
+      id: '653f87281ef0a90b7d1e7b54',
+      blurHash: '',
+      original:
+        'https://office-qa-cdn.auzmor.com/646311ed765368daacc601f7/public/users/646311ed765368daacc601f9/profile/1698662184834-original.jpg',
+    },
+
+    flags: {
+      isDeactivated: false,
+      isReported: false,
+    },
+    createdAt: '2023-09-29T11:06:16.804Z',
+    status: 'ACTIVE',
+    freezeEdit: {
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      fullName: true,
+      designation: true,
+      department: true,
+      joinDate: true,
+      manager: true,
+    },
+  },
+
+  {
+    id: '6516afa8dc958600e4619cdf',
+    fullName: 'Abby Wolff',
+    firstName: 'Abby',
+    lastName: 'Wolff',
+    primaryEmail: 'Sim_Kris@hotmail.com',
+    department: {
+      departmentId: '6516afa8dc958600e4619c07',
+      name: 'Grocery',
+    },
+    org: {
+      id: '646311ed765368daacc601f7',
+      name: 'Little LLC',
+      domain: 'american-technology',
+    },
+    workLocation: {
+      locationId: '6516afa8dc958600e4619c73',
+      name: 'South Freeman',
+    },
+    designation: {
+      designationId: '65155cf3de64ba075d039879',
+      name: 'Quality Assurance',
+    },
+    workEmail: 'Sim_Kris@hotmail.com',
+    profileImage: {
+      id: '653f87281ef0a90b7d1e7b54',
+      blurHash: '',
+      original:
+        'https://office-qa-cdn.auzmor.com/646311ed765368daacc601f7/public/users/646311ed765368daacc601f9/profile/1698662184834-original.jpg',
+    },
+
+    flags: {
+      isDeactivated: false,
+      isReported: false,
+    },
+    createdAt: '2023-09-29T11:06:16.804Z',
+    status: 'ACTIVE',
+    freezeEdit: {
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      fullName: true,
+      designation: true,
+      department: true,
+      joinDate: true,
+      manager: true,
+    },
+  },
+  {
+    id: '6516afa8dc958600e4619cdf',
+    fullName: 'Abby Wolff',
+    firstName: 'Abby',
+    lastName: 'Wolff',
+    primaryEmail: 'Sim_Kris@hotmail.com',
+    department: {
+      departmentId: '6516afa8dc958600e4619c07',
+      name: 'Grocery',
+    },
+    org: {
+      id: '646311ed765368daacc601f7',
+      name: 'Little LLC',
+      domain: 'american-technology',
+    },
+    workLocation: {
+      locationId: '6516afa8dc958600e4619c73',
+      name: 'South Freeman',
+    },
+    designation: {
+      designationId: '65155cf3de64ba075d039879',
+      name: 'Quality Assurance',
+    },
+    workEmail: 'Sim_Kris@hotmail.com',
+    profileImage: {
+      id: '653f87281ef0a90b7d1e7b54',
+      blurHash: '',
+      original:
+        'https://office-qa-cdn.auzmor.com/646311ed765368daacc601f7/public/users/646311ed765368daacc601f9/profile/1698662184834-original.jpg',
+    },
+
+    flags: {
+      isDeactivated: false,
+      isReported: false,
+    },
+    createdAt: '2023-09-29T11:06:16.804Z',
+    status: 'ACTIVE',
+    freezeEdit: {
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      fullName: true,
+      designation: true,
+      department: true,
+      joinDate: true,
+      manager: true,
+    },
+  },
+  {
+    id: '6516afa8dc958600e4619cdf',
+    fullName: 'Abby Wolff',
+    firstName: 'Abby',
+    lastName: 'Wolff',
+    primaryEmail: 'Sim_Kris@hotmail.com',
+    department: {
+      departmentId: '6516afa8dc958600e4619c07',
+      name: 'Grocery',
+    },
+    org: {
+      id: '646311ed765368daacc601f7',
+      name: 'Little LLC',
+      domain: 'american-technology',
+    },
+    workLocation: {
+      locationId: '6516afa8dc958600e4619c73',
+      name: 'South Freeman',
+    },
+    designation: {
+      designationId: '65155cf3de64ba075d039879',
+      name: 'Quality Assurance',
+    },
+    workEmail: 'Sim_Kris@hotmail.com',
+    profileImage: {
+      id: '653f87281ef0a90b7d1e7b54',
+      blurHash: '',
+      original:
+        'https://office-qa-cdn.auzmor.com/646311ed765368daacc601f7/public/users/646311ed765368daacc601f9/profile/1698662184834-original.jpg',
+    },
+
+    flags: {
+      isDeactivated: false,
+      isReported: false,
+    },
+    createdAt: '2023-09-29T11:06:16.804Z',
+    status: 'ACTIVE',
+    freezeEdit: {
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      fullName: true,
+      designation: true,
+      department: true,
+      joinDate: true,
+      manager: true,
+    },
+  },
+  {
+    id: '6516afa8dc958600e4619cdf',
+    fullName: 'Abby Wolff',
+    firstName: 'Abby',
+    lastName: 'Wolff',
+    primaryEmail: 'Sim_Kris@hotmail.com',
+    department: {
+      departmentId: '6516afa8dc958600e4619c07',
+      name: 'Grocery',
+    },
+    org: {
+      id: '646311ed765368daacc601f7',
+      name: 'Little LLC',
+      domain: 'american-technology',
+    },
+    workLocation: {
+      locationId: '6516afa8dc958600e4619c73',
+      name: 'South Freeman',
+    },
+    designation: {
+      designationId: '65155cf3de64ba075d039879',
+      name: 'Quality Assurance',
+    },
+    workEmail: 'Sim_Kris@hotmail.com',
+    profileImage: {
+      id: '653f87281ef0a90b7d1e7b54',
+      blurHash: '',
+      original:
+        'https://office-qa-cdn.auzmor.com/646311ed765368daacc601f7/public/users/646311ed765368daacc601f9/profile/1698662184834-original.jpg',
+    },
+
+    flags: {
+      isDeactivated: false,
+      isReported: false,
+    },
+    createdAt: '2023-09-29T11:06:16.804Z',
+    status: 'ACTIVE',
+    freezeEdit: {
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      fullName: true,
+      designation: true,
+      department: true,
+      joinDate: true,
+      manager: true,
+    },
+  },
+  {
+    id: '6516afa8dc958600e4619cdf',
+    fullName: 'Abby Wolff',
+    firstName: 'Abby',
+    lastName: 'Wolff',
+    primaryEmail: 'Sim_Kris@hotmail.com',
+    department: {
+      departmentId: '6516afa8dc958600e4619c07',
+      name: 'Grocery',
+    },
+    org: {
+      id: '646311ed765368daacc601f7',
+      name: 'Little LLC',
+      domain: 'american-technology',
+    },
+    workLocation: {
+      locationId: '6516afa8dc958600e4619c73',
+      name: 'South Freeman',
+    },
+    designation: {
+      designationId: '65155cf3de64ba075d039879',
+      name: 'Quality Assurance',
+    },
+    workEmail: 'Sim_Kris@hotmail.com',
+    profileImage: {
+      id: '653f87281ef0a90b7d1e7b54',
+      blurHash: '',
+      original:
+        'https://office-qa-cdn.auzmor.com/646311ed765368daacc601f7/public/users/646311ed765368daacc601f9/profile/1698662184834-original.jpg',
+    },
+
+    flags: {
+      isDeactivated: false,
+      isReported: false,
+    },
+    createdAt: '2023-09-29T11:06:16.804Z',
+    status: 'ACTIVE',
+    freezeEdit: {
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      fullName: true,
+      designation: true,
+      department: true,
+      joinDate: true,
+      manager: true,
+    },
+  },
+  {
+    id: '6516afa8dc958600e4619cdf',
+    fullName: 'Abby Wolff',
+    firstName: 'Abby',
+    lastName: 'Wolff',
+    primaryEmail: 'Sim_Kris@hotmail.com',
+    department: {
+      departmentId: '6516afa8dc958600e4619c07',
+      name: 'Grocery',
+    },
+    org: {
+      id: '646311ed765368daacc601f7',
+      name: 'Little LLC',
+      domain: 'american-technology',
+    },
+    workLocation: {
+      locationId: '6516afa8dc958600e4619c73',
+      name: 'South Freeman',
+    },
+    designation: {
+      designationId: '65155cf3de64ba075d039879',
+      name: 'Quality Assurance',
+    },
+    workEmail: 'Sim_Kris@hotmail.com',
+    profileImage: {
+      id: '653f87281ef0a90b7d1e7b54',
+      blurHash: '',
+      original:
+        'https://office-qa-cdn.auzmor.com/646311ed765368daacc601f7/public/users/646311ed765368daacc601f9/profile/1698662184834-original.jpg',
+    },
+
+    flags: {
+      isDeactivated: false,
+      isReported: false,
+    },
+    createdAt: '2023-09-29T11:06:16.804Z',
+    status: 'ACTIVE',
+    freezeEdit: {
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      fullName: true,
+      designation: true,
+      department: true,
+      joinDate: true,
+      manager: true,
+    },
+  },
+  {
+    id: '6516afa8dc958600e4619cdf',
+    fullName: 'Abby Wolff',
+    firstName: 'Abby',
+    lastName: 'Wolff',
+    primaryEmail: 'Sim_Kris@hotmail.com',
+    department: {
+      departmentId: '6516afa8dc958600e4619c07',
+      name: 'Grocery',
+    },
+    org: {
+      id: '646311ed765368daacc601f7',
+      name: 'Little LLC',
+      domain: 'american-technology',
+    },
+    workLocation: {
+      locationId: '6516afa8dc958600e4619c73',
+      name: 'South Freeman',
+    },
+    designation: {
+      designationId: '65155cf3de64ba075d039879',
+      name: 'Quality Assurance',
+    },
+    workEmail: 'Sim_Kris@hotmail.com',
+    profileImage: {
+      id: '653f87281ef0a90b7d1e7b54',
+      blurHash: '',
+      original:
+        'https://office-qa-cdn.auzmor.com/646311ed765368daacc601f7/public/users/646311ed765368daacc601f9/profile/1698662184834-original.jpg',
+    },
+
+    flags: {
+      isDeactivated: false,
+      isReported: false,
+    },
+    createdAt: '2023-09-29T11:06:16.804Z',
+    status: 'ACTIVE',
+    freezeEdit: {
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      fullName: true,
+      designation: true,
+      department: true,
+      joinDate: true,
+      manager: true,
+    },
+  },
+  {
     id: '6516afb0dc958600e461ab27',
     fullName: 'Adaline  popo',
     firstName: 'Adaline',
@@ -184,6 +617,7 @@ export const ChannelUserRequests: IChannelRequest[] = [
       status: UserStatus.Created,
       designation: 'Quality Assurance',
       department: 'Grocery',
+      workLocation: 'South Freeman',
       profileImage: {
         id: '653f87281ef0a90b7d1e7b54',
         original:
@@ -214,6 +648,8 @@ export const ChannelUserRequests: IChannelRequest[] = [
       status: UserStatus.Created,
       designation: 'Quality Assurance',
       department: 'Grocery',
+      workLocation: 'South Freeman',
+
       profileImage: {
         id: '653f87281ef0a90b7d1e7b54',
         original:
@@ -245,6 +681,7 @@ export const ChannelUserRequests: IChannelRequest[] = [
       status: UserStatus.Created,
       designation: 'Quality Assurance',
       department: 'Grocery',
+      workLocation: 'South Freeman',
       profileImage: {
         id: '653f87281ef0a90b7d1e7b54',
         original:

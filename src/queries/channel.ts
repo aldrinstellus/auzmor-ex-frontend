@@ -17,6 +17,7 @@ import {
   channelLinks,
 } from 'mocks/Channels';
 import apiService from 'utils/apiService';
+import { channelMemberData } from 'mocks/channelMember';
 
 export interface IChannelPayload {
   name: string;
@@ -70,6 +71,7 @@ export const getAllChannels = async (
   response.data.result.data = response.data.result.data.map(
     (eachChannel: IChannel) => ({ id: eachChannel.id }),
   );
+  console.log('response :', response);
   return response;
 };
 
@@ -94,15 +96,15 @@ export const deleteChannel = async (id: string) => {
 
 // get team members by team id -> /channel/:id/members
 export const getChannelMembers = async (
-  {
-    pageParam = null,
-    queryKey,
-  }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>,
-  id: string,
+  context: QueryFunctionContext<
+    (Record<string, any> | undefined | string)[],
+    any
+  >,
+  channelId: string,
 ) => {
-  if (pageParam === null) {
-    return apiService.get(`/channels/members/${id}`, queryKey[1]);
-  } else return apiService.get(pageParam);
+  console.log(context, channelId);
+
+  return new Promise((res) => res(channelMemberData));
 };
 // get channel request by channel id -> /channels/:channelId/members/?memberStatus=pending
 
@@ -192,12 +194,12 @@ export const useInfiniteChannels = (
 };
 
 export const useInfiniteChannelMembers = (
-  teamId: string,
   q?: Record<string, any>,
+  channelId?: any,
 ) => {
   return useInfiniteQuery({
-    queryKey: ['team-members', q, teamId],
-    queryFn: (context) => getChannelMembers(context, teamId), // need fix
+    queryKey: ['channel-members', q, channelId],
+    queryFn: (context) => getChannelMembers(context, channelId), // need fix
     getNextPageParam: (lastPage: any) => {
       const pageDataLen = lastPage?.data?.result?.data?.length;
       const pageLimit = lastPage?.data?.result?.paging?.limit;
