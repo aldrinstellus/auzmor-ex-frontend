@@ -18,8 +18,7 @@ import { CategoryType } from 'queries/apps';
 import { UserStatus } from 'queries/users';
 import { ChannelVisibilityEnum } from 'stores/channelStore';
 import Visibility from './Visibility';
-import { titleCase } from 'utils/misc';
-import ChannelType, { ChannelTypeEnum, IChannelType } from './ChannelType';
+import ChannelType, { IChannelType, channelTypeOptions } from './ChannelType';
 
 export interface IFilterForm {
   visibilityRadio: ChannelVisibilityEnum;
@@ -84,12 +83,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     categories: [],
     status: [],
     teams: [],
-    channelType: [
-      {
-        id: ChannelTypeEnum.MyChannels,
-        name: titleCase(ChannelTypeEnum.MyChannels),
-      },
-    ],
+    channelType: [channelTypeOptions[0].data],
     visibility: ChannelVisibilityEnum.All,
   },
   onApply,
@@ -163,6 +157,9 @@ const FilterModal: FC<IFilterModalProps> = ({
         (category) => category.data,
       ) as IStatus[],
       visibility: formData.visibilityRadio,
+      channelType: (formData.channelTypeCheckbox.map(
+        (channelType) => channelType.data,
+      ) || [channelTypeOptions[0].data]) as IChannelType[],
     } as unknown as IAppliedFilters);
   };
 
@@ -196,7 +193,7 @@ const FilterModal: FC<IFilterModalProps> = ({
           )}
         </div>
       ),
-      key: 'visibility-filters',
+      key: 'channel-type-filters',
       component: () => (
         <ChannelType control={control} watch={watch} setValue={setValue} />
       ),

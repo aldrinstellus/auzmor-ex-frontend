@@ -26,7 +26,7 @@ export interface IChannelType {
   name: string;
 }
 
-const channelTypeOptions: ICheckboxListOption[] = [
+export const channelTypeOptions: ICheckboxListOption[] = [
   {
     data: {
       id: ChannelTypeEnum.MyChannels,
@@ -50,10 +50,24 @@ const channelTypeOptions: ICheckboxListOption[] = [
   },
   {
     data: {
+      id: ChannelTypeEnum.Starred,
+      name: enumToTitleCase(ChannelTypeEnum.Starred),
+    },
+    datatestId: `channel-type-${ChannelTypeEnum.Starred.toLowerCase()}`,
+  },
+  {
+    data: {
       id: ChannelTypeEnum.Requested,
       name: enumToTitleCase(ChannelTypeEnum.Requested),
     },
     datatestId: `channel-type-${ChannelTypeEnum.Requested.toLowerCase()}`,
+  },
+  {
+    data: {
+      id: ChannelTypeEnum.Archived,
+      name: enumToTitleCase(ChannelTypeEnum.Archived),
+    },
+    datatestId: `channel-type-${ChannelTypeEnum.Archived.toLowerCase()}`,
   },
 ];
 
