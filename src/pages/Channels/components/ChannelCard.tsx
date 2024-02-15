@@ -17,6 +17,7 @@ interface IChannelCardProps {
   showRequestBtn?: boolean;
   showWithdrawBtn?: boolean;
   showJoinChannelBtn?: boolean;
+  onClick?: () => any;
 }
 
 const ChannelCard: FC<IChannelCardProps> = ({
@@ -24,10 +25,14 @@ const ChannelCard: FC<IChannelCardProps> = ({
   showRequestBtn = false,
   showJoinChannelBtn = false,
   showWithdrawBtn = false,
+  onClick,
 }) => {
   return (
     <Card className="w-full flex flex-col gap-2 relative">
-      <div className="w-full h-[80px] bg-slate-500 rounded-t-9xl">
+      <div
+        onClick={onClick}
+        className="w-full h-[80px] bg-slate-500 rounded-t-9xl"
+      >
         {channel.channelBanner && channel.channelBanner.original ? (
           <div className="w-full h-full relative">
             <img
