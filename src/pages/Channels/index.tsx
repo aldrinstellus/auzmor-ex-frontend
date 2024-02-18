@@ -16,7 +16,6 @@ import ChannelRow from './components/ChannelRow';
 import Divider from 'components/Divider';
 import ChannelRowSkeleton from './components/ChannelRowSkeleton';
 import ChannelCardSkeleton from './components/ChannelCardSkeleton';
-import { useNavigate } from 'react-router-dom';
 
 interface IChannelsProps {}
 
@@ -42,7 +41,6 @@ export const Channels: FC<IChannelsProps> = () => {
     defaultValues: { search: '' },
   });
   useEffect(() => () => clearFilters(), []);
-  const navigate = useNavigate();
   const { data, channels, isLoading } = useInfiniteChannels(
     isFiltersEmpty({
       categoryIds: [],
@@ -208,22 +206,24 @@ export const Channels: FC<IChannelsProps> = () => {
                 ))
               : channelIds.map(({ id }) => (
                   <ChannelCard
-                    onClick={() => navigate(`/channels/${channels[id]}`)}
                     key={id}
                     channel={channels[id]}
                     showJoinChannelBtn={
-                      filters?.type === ChannelTypeEnum.DiscoverNewChannels &&
+                      filters?.channelType ===
+                        ChannelTypeEnum.DiscoverNewChannels &&
                       channels[id].channelSettings?.visibility ===
                         ChannelVisibilityEnum.Public
                     }
                     showRequestBtn={
-                      filters?.type === ChannelTypeEnum.DiscoverNewChannels &&
+                      filters?.channelType ===
+                        ChannelTypeEnum.DiscoverNewChannels &&
                       channels[id].channelSettings?.visibility ===
                         ChannelVisibilityEnum.Private &&
                       !!!channels[id].isRequested
                     }
                     showWithdrawBtn={
-                      filters?.type === ChannelTypeEnum.DiscoverNewChannels &&
+                      filters?.channelType ===
+                        ChannelTypeEnum.DiscoverNewChannels &&
                       channels[id].channelSettings?.visibility ===
                         ChannelVisibilityEnum.Private &&
                       !!channels[id].isRequested
