@@ -2,7 +2,7 @@ import React, { FC, ReactNode, createContext, useState } from 'react';
 import { getProductSubdomain } from 'utils/misc';
 
 export enum ProductEnum {
-  Learn = 'lms',
+  Lxp = 'lxp',
   Office = 'office',
 }
 
