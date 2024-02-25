@@ -41,7 +41,6 @@ export const Channels: FC<IChannelsProps> = () => {
     defaultValues: { search: '' },
   });
   useEffect(() => () => clearFilters(), []);
-
   const { data, channels, isLoading } = useInfiniteChannels(
     isFiltersEmpty({
       categoryIds: [],
@@ -210,18 +209,21 @@ export const Channels: FC<IChannelsProps> = () => {
                     key={id}
                     channel={channels[id]}
                     showJoinChannelBtn={
-                      filters?.channelType === ChannelTypeEnum.DiscoverNewChannels &&
+                      filters?.channelType ===
+                        ChannelTypeEnum.DiscoverNewChannels &&
                       channels[id].channelSettings?.visibility ===
                         ChannelVisibilityEnum.Public
                     }
                     showRequestBtn={
-                      filters?.channelType === ChannelTypeEnum.DiscoverNewChannels &&
+                      filters?.channelType ===
+                        ChannelTypeEnum.DiscoverNewChannels &&
                       channels[id].channelSettings?.visibility ===
                         ChannelVisibilityEnum.Private &&
                       !!!channels[id].isRequested
                     }
                     showWithdrawBtn={
-                      filters?.channelType === ChannelTypeEnum.DiscoverNewChannels &&
+                      filters?.channelType ===
+                        ChannelTypeEnum.DiscoverNewChannels &&
                       channels[id].channelSettings?.visibility ===
                         ChannelVisibilityEnum.Private &&
                       !!channels[id].isRequested
