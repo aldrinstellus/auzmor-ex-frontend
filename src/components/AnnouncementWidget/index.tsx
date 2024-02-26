@@ -164,7 +164,7 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
                   {!hasLoggedInUserCreatedAnnouncement && (
                     <div className="w-full flex justify-center">
                       <Button
-                        label={t('readCTA')}
+                        label={t('read-CTA')}
                         variant={Variant.Secondary}
                         size={Size.Small}
                         className="border-2 border-neutral-200 mt-4 w-full"

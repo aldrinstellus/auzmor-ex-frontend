@@ -115,7 +115,7 @@ const AppLauncher = () => {
                   variant={Variant.Secondary}
                   size={Size.Small}
                   className="py-[7px]"
-                  label={t('viewALLCTA')}
+                  label={t('view-All-CTA')}
                   dataTestId="app-launcher-view-all"
                   onClick={() =>
                     navigate(isAdmin ? '/apps?tab=myApps' : '/apps')

@@ -116,7 +116,7 @@ const CelebrationWidget: FC<CelebrationWidgetProps> = ({
 
   const widgetTitle = isBirthday
     ? `${t('birthday')} 🎂`
-    : `${t('work-ann')} 🎉`;
+    : `${t('work-Anniversaries')} 🎉`;
   const buttonLabel = isBirthday
     ? `${t('upcoming-bth')}`
     : `${t('upcoming-ann')}`;

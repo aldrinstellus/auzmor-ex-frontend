@@ -134,14 +134,14 @@ const SelectAppModal: FC<ISelectAppModalProps> = ({
       {/* Footer */}
       <div className="flex justify-end items-center h-16 p-6 bg-blue-50 rounded-b-9xl">
         <Button
-          label={t('backCTA')}
+          label={t('back-CTA')}
           variant={Variant.Secondary}
           onClick={closeModal}
           className="mr-4"
           dataTestId="app-launcher-select-app-back"
         />
         <Button
-          label={t('selectCTA')}
+          label={t('select-CTA')}
           variant={Variant.Primary}
           // onClick={handleSubmit(onSubmit)}
           dataTestId="app-launcher-select-cta"

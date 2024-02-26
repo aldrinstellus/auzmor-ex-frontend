@@ -14,7 +14,9 @@ const EmptyState: FC<EmptyStateProps> = ({ type }) => {
   });
   const image = type === CELEBRATION_TYPE.Birthday ? Birthday : WorkAnniversary;
   const label =
-    type === CELEBRATION_TYPE.Birthday ? `${t('bth')}` : `${t('ann')}`;
+    type === CELEBRATION_TYPE.Birthday
+      ? `${t('birthday')}`
+      : `${t('work-Anniversaries')}`;
   return (
     <div className="flex flex-col items-center gap-2">
       <img src={image} height={150} />

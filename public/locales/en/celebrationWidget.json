@@ -1,6 +1,6 @@
 {
   "birthday": "Birthday",
-  "work-ann": "Work anniversaries",
+  "work-Anniversaries": "Work anniversaries",
   "visit-post": "Visit post",
   "wishes-sent": "Wishes sent",
   "wish-text-bth": "It is your birthday today. Happy birthday! 🎂",
@@ -15,7 +15,7 @@
   "upcoming-bth": "Upcoming Birthdays",
   "upcoming-ann": "Upcoming anniversaries",
   "error-state": {
-    "bth": "Upcoming birthdays will show here",
-    "ann": "Upcoming work anniversaries will show here"
+    "birthday": "Upcoming birthdays will show here",
+    "work-Anniversaries": "Upcoming work anniversaries will show here"
   }
 }

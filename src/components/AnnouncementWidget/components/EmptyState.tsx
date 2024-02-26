@@ -27,7 +27,7 @@ const EmptyState: FC<EmptyStateProps> = ({ openModal }) => {
             variant={Variant.Secondary}
             size={Size.Small}
             className="py-[7px]"
-            label={t('createCTA')}
+            label={t('create-CTA')}
             onClick={() => {
               openModal();
             }}

@@ -3,8 +3,8 @@
   "title": "Announcement",
   "description": "When announcements are created, they appear on this card.",
   "create-header": "Create Announcement",
-  "createCTA": "Create an announcement",
+  "create-CTA": "Create an announcement",
   "admin-header": "Only admin can see this",
   "share-post": "shared a post",
-  "readCTA": "Mark as read"
+  "read-CTA": "Mark as read"
 }

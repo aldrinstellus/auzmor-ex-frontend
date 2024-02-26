@@ -259,7 +259,7 @@ const Apps: FC<IAppsProps> = () => {
           {isAdmin && (
             <Button
               onClick={openModal}
-              label={t('add-appCTA')}
+              label={t('add-app-CTA')}
               leftIcon="add"
               leftIconClassName="!text-white"
               className="flex space-x-1"

@@ -23,7 +23,7 @@ const EmptyState: FC<IEmptyState> = () => {
               variant={Variant.Secondary}
               size={Size.Small}
               className="py-[7px] w-full"
-              label={t('add-appCTA')}
+              label={t('add-app-CTA')}
               leftIcon="addCircle"
               leftIconClassName="text-neutral-900"
               dataTestId="app-add-app-launcher"
