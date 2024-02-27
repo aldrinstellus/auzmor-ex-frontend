@@ -2,6 +2,7 @@
   "birthday": "Birthday",
   "work-Anniversaries": "Work anniversaries",
   "visit-post": "Visit post",
+  "celebration-date": "{{date}}",
   "wishes-sent": "Wishes sent",
   "wish-text-bth": "It is your birthday today. Happy birthday! 🎂",
   "wish-text-ann": "It is your Work Anniversary today! Congrats! 🎉",

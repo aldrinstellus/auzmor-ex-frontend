@@ -306,7 +306,7 @@ const User: FC<UserProps> = ({
             className={`px-[6px] rounded-[4px] text-xs font-semibold whitespace-nowrap ${dateStyles}`}
             data-testid={`${isBirthday ? 'birthday' : 'anniversaries'}-date`}
           >
-            {`${celebrationDate}`.trim()}
+            {t('celebration-date', { date: `${celebrationDate}`.trim() })}
           </div>
         )}
       </div>

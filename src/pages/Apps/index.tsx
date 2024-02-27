@@ -255,7 +255,7 @@ const Apps: FC<IAppsProps> = () => {
     <div>
       <Card className="p-8">
         <div className="flex justify-between">
-          <p className="font-bold text-2xl text-black">App Launcher</p>
+          <p className="font-bold text-2xl text-black">{t('title')}</p>
           {isAdmin && (
             <Button
               onClick={openModal}
@@ -371,8 +371,8 @@ const Apps: FC<IAppsProps> = () => {
         <div className="flex flex-col gap-4">
           {!isLoading ? (
             <div className="text-neutral-500">
-              {t('showing')} {!isLoading && appsCount} {t('result')}
-            </div>
+              {t('numberOfResults', { count: !isLoading && appsCount })}
+            </div> // used for dynamic copy
           ) : (
             <Skeleton
               className="!w-32"
