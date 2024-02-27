@@ -515,7 +515,7 @@ export const getLearnUrl = () => {
 };
 
 export const deleteCookie = (key: string) => {
-  document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  document.cookie = ` ${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.auzmor.com;`;
 };
 
 export const getCookieParam = (key = SESSION_ID) => {
