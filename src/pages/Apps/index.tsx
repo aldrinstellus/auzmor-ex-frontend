@@ -371,7 +371,7 @@ const Apps: FC<IAppsProps> = () => {
         <div className="flex flex-col gap-4">
           {!isLoading ? (
             <div className="text-neutral-500">
-              {t('numberOfResults', { count: !isLoading && appsCount })}
+              {t('show-results', { count: !isLoading && appsCount })}
             </div> // used for dynamic copy
           ) : (
             <Skeleton

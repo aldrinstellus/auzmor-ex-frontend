@@ -5,7 +5,7 @@
   "featured": "Featured",
   "add-app-CTA": "Add apps",
   "view-all": "View all featured",
-  "numberOfResults": "Showing {{count}} results",
+  "show-results": "Showing {{count}} results",
   "filter-by": "Filter By",
   "category": "Category",
   "team": "Team",
