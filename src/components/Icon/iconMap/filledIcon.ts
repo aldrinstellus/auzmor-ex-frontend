@@ -85,6 +85,9 @@ import PostBookMarkFilled from '../components/PostBookmark/PostBookmarkFilled';
 import SvgCloudAddFilled from '../components/CloudAdd/CloudAddFilled';
 import SvgMenuBoardFilled from '../components/MenuBoard/MenuBoardFilled';
 import SvgStarFilled from '../components/Star/StarFilled';
+import SvgLifeBuoyFilled from '../components/LifeBuoy/LifeBuoyFilled';
+import SvgShoppingCartFilled from '../components/ShoppingCart/ShoppingCartFilled';
+import SvgMessageQuestionFilled from '../components/MessageQuestion/MessageQuestionFilled';
 
 export const filledIcon = {
   addCircleFilled: SvgAddCircleFilled,
@@ -174,4 +177,7 @@ export const filledIcon = {
   videoFilled: SvgVideoFilled,
   zoomInFilled: SvgZoomInFilled,
   zoomOutFilled: SvgZoomOutFilled,
+  lifeBuoyFilled: SvgLifeBuoyFilled,
+  shoppingCartFilled: SvgShoppingCartFilled,
+  messageQuestionFilled: SvgMessageQuestionFilled,
 };

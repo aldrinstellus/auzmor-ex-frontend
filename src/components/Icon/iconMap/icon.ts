@@ -145,6 +145,9 @@ import BoldTick from '../components/BoldTick';
 import MenuBoardIcon from '../components/MenuBoard';
 import StarIcon from '../components/Star';
 import StarHalfIcon from '../components/StarHalf';
+import LifeBuoyIcon from '../components/LifeBuoy';
+import ShopingCartIcon from '../components/ShoppingCart';
+import MessageQuestionIcon from '../components/MessageQuestion';
 
 export const icon = {
   add: Add,
@@ -294,4 +297,7 @@ export const icon = {
   warningCircle: WarningCircleIcon,
   zoomIn: ZoomInIcon,
   zoomOut: ZoomOutIcon,
+  lifeBuoy: LifeBuoyIcon,
+  shoppingCart: ShopingCartIcon,
+  messageQuestion: MessageQuestionIcon,
 };
