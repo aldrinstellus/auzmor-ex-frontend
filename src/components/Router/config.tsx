@@ -8,6 +8,7 @@ import RequireAuth from 'components/RequireAuth';
 import Notifications from 'pages/Notifications';
 import { lazy } from 'react';
 import RequireAdminAuth from 'components/RequireAdminAuth';
+import RequireOfficeAuth from 'components/RequireOfficeAuth';
 
 const ErrorBoundary = lazy(() => import('components/ErrorBoundary'));
 const Login = lazy(() => import('pages/Login'));
@@ -55,14 +56,17 @@ const routers = createBrowserRouter(
           // ⬇️ loader fetch data as earlier as possible
           // loader={homeLoader(queryClient)}
         />
-        <Route
-          path="/users"
-          element={<Users />}
-          loader={async () => {
-            // ⬇️ loader fetch data as earlier as possible
-            return '';
-          }}
-        />
+
+        <Route element={<RequireOfficeAuth />}>
+          <Route // users route  is not required in lxp
+            path="/users"
+            element={<Users />}
+            loader={async () => {
+              // ⬇️ loader fetch data as earlier as possible
+              return '';
+            }}
+          />
+        </Route>
         <Route
           path="/teams"
           element={<Users />}
@@ -94,11 +98,17 @@ const routers = createBrowserRouter(
             return '';
           }}
         />
+        <Route element={<RequireOfficeAuth />}>
+          <Route // apps route  is not required in lxp
+            path="/apps"
+            element={<Apps />}
+          />
+        </Route>
         <Route path="/scheduledPosts" element={<Feed />} />
         <Route path="/bookmarks" element={<Feed />} />
         <Route path="/feed" element={<Feed />} />
         <Route path="/settings" element={<UserSettings />} />
-        <Route path="/apps" element={<Apps />} />
+        {/* <Route path="/apps" element={<Apps />} /> */}
         <Route path="/apps/:id/launch" element={<AppLaunchPage />} />
         <Route path="/discover" element={<Discover />} />
         <Route element={<RequireAdminAuth />}>

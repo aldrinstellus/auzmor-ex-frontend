@@ -13,7 +13,7 @@ import useAuth from 'hooks/useAuth';
 import { useState } from 'react';
 import SubscriptionBanner from './SubscriptionBanner';
 import useProduct from 'hooks/useProduct';
-import { getLearnUrl } from 'utils/misc';
+import { getLearnCheckoutUrl, getLearnUrl } from 'utils/misc';
 
 const adminNavigations = [
   {
@@ -22,6 +22,22 @@ const adminNavigations = [
     hoverIcon: 'adminFilled',
     linkTo: '/admin',
     dataTestId: 'office-admin-page',
+    iconSize: 24,
+  },
+];
+const learnNavigations = [
+  {
+    icon: 'messageQuestionOutline',
+    hoverIcon: 'messageQuestionFilled',
+    linkTo: '/learn', // its a modal in lms will fix it
+    dataTestId: 'learn-help-support-page',
+    iconSize: 24,
+  },
+  {
+    icon: 'shoppingCartOutline',
+    hoverIcon: 'shoppingCartFilled',
+    linkTo: getLearnCheckoutUrl(),
+    dataTestId: 'office-admin-page', // need to change
     iconSize: 24,
   },
 ];
@@ -68,16 +84,26 @@ const Navbar = () => {
       hidden: !isLxp,
     },
     {
-      label: isLxp ? 'Learning Hub' : 'People',
-      icon: isLxp ? 'lifeBuoyOutline' : 'peopleOutline',
-      hoverIcon: isLxp ? 'lifeBuoyFilled' : 'peopleFilled',
-      linkTo: isLxp ? getLearnUrl() : '/users',
+      label: 'People',
+      icon: 'peopleOutline',
+      hoverIcon: 'peopleFilled',
+      linkTo: '/users',
       dataTestId: 'office-people-page',
       iconSize: 24,
       isActive:
-        !isLxp &&
-        (location.pathname.includes('/users') ||
-          location.pathname.includes('/teams')),
+        location.pathname.includes('/users') ||
+        location.pathname.includes('/teams'),
+      hidden: isLxp,
+    },
+    {
+      label: 'Learning Hub',
+      icon: 'lifeBuoyOutline',
+      hoverIcon: 'lifeBuoyFilled',
+      linkTo: getLearnUrl(),
+      dataTestId: 'learn-page', // need to change
+      iconSize: 24,
+      isActive: false, // Since this is for Learning Hub, it's not active by default
+      hidden: !isLxp,
     },
     {
       label: 'Apps',
@@ -130,6 +156,10 @@ const Navbar = () => {
             </div>
             <Divider className="h-full" variant={Variant.Vertical} />
             <div className="flex items-center gap-6">
+              {isLxp &&
+                learnNavigations.map((nav) => (
+                  <NavbarMenuItem nav={nav} key={nav.icon} />
+                ))}
               {isAdmin &&
                 adminNavigations.map((nav) => (
                   <NavbarMenuItem nav={nav} key={nav.label} />

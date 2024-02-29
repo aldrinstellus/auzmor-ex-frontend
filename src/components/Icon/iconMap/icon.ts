@@ -143,6 +143,8 @@ import SvgInfoIcon from '../components/Info';
 import CloudAddIcon from '../components/CloudAdd';
 import BoldTick from '../components/BoldTick';
 import LifeBuoyIcon from '../components/LifeBuoy';
+import ShopingCartIcon from '../components/ShoppingCart';
+import MessageQuestionIcon from '../components/MessageQuestion';
 
 export const icon = {
   add: Add,
@@ -290,4 +292,6 @@ export const icon = {
   zoomIn: ZoomInIcon,
   zoomOut: ZoomOutIcon,
   lifeBuoy: LifeBuoyIcon,
+  shoppingCart: ShopingCartIcon,
+  messageQuestion: MessageQuestionIcon,
 };

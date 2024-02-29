@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 
 export interface INavbarMenuItemProps {
   nav: {
-    label: string;
+    label?: string;
     icon: string;
     hoverIcon: string;
     linkTo: string;
@@ -25,7 +25,9 @@ const NavbarMenuItem: FC<INavbarMenuItemProps> = ({ nav }) => {
       data-testid={nav.dataTestId}
     >
       <Icon name={nav.icon} size={nav.iconSize} disabled />
-      <div className="text-sm text-neutral-200 cursor-default">{nav.label}</div>
+      <div className="text-sm text-neutral-200 cursor-default">
+        {nav?.label}
+      </div>
     </div>
   ) : (
     <NavLink
@@ -59,7 +61,7 @@ const NavbarMenuItem: FC<INavbarMenuItemProps> = ({ nav }) => {
             />
 
             <div className="text-sm group-hover:text-primary-500">
-              {nav.label}
+              {nav?.label}
             </div>
           </div>
         );
