@@ -7,6 +7,8 @@ import Rating from 'components/Rating';
 import React, { FC, useMemo } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { titleCase } from 'utils/misc';
+import moment from 'moment';
+import useAuth from 'hooks/useAuth';
 
 export enum LearnCardEnum {
   Course = 'COURSE',
@@ -27,6 +29,7 @@ const LearnCard: FC<ILearnCardProps> = ({
   data,
   isLoading,
 }) => {
+  const { user } = useAuth();
   const style = useMemo(
     () =>
       clsx({
@@ -73,6 +76,18 @@ const LearnCard: FC<ILearnCardProps> = ({
     );
   };
 
+  const getDuration = (sec: number) => {
+    if (sec > 3600) {
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec / 3600 - h) * 60);
+      return `${h}hrs ${m}mins`;
+    } else {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor((sec / 60 - m) * 60);
+      return `${m} mins ${s} secs`;
+    }
+  };
+
   if (isLoading) {
     return (
       <Card className={style}>
@@ -80,6 +95,21 @@ const LearnCard: FC<ILearnCardProps> = ({
       </Card>
     );
   }
+
+  const getEventDate = () => {
+    return `${moment(data.additional_properties.start_date)
+      .tz(user?.timezone || 'UTC')
+      .format('MMM DD, YYYY')}`;
+  };
+
+  const getEventTime = () => {
+    return `${moment(data.additional_properties.start_date)
+      .tz(user?.timezone || 'UTC')
+      .format('hh:mm a')}-${moment(data.additional_properties.end_date)
+      .tz(user?.timezone || 'UTC')
+      .format('hh:mm a')}`;
+  };
+
   return (
     <Card className={style}>
       <img
@@ -148,17 +178,37 @@ const LearnCard: FC<ILearnCardProps> = ({
           data?.dependent_entities?.chapters_count > 0 && (
             <div className="flex gap-2">
               <div className="flex gap-1 items-center">
-                <Icon name="clock" size={16} color="text-white" />
+                <Icon name="clock" size={16} color="text-white" hover={false} />
                 <p className="text-xs text-white">
                   {data?.dependent_entities?.chapters_count} Lessons
                 </p>
               </div>
               <div className="flex gap-1 items-center">
-                <Icon name="clock" size={16} color="text-white" />
-                <p className="text-xs text-white">5 h 53 m</p>
+                <Icon name="clock" size={16} color="text-white" hover={false} />
+                <p className="text-xs text-white">
+                  {getDuration(data?.duration)}
+                </p>
               </div>
             </div>
           )}
+
+        {type === LearnCardEnum.Event && (
+          <div className="flex gap-2">
+            <div className="flex gap-1 items-center">
+              <Icon
+                name="calendar"
+                size={16}
+                color="text-white"
+                hover={false}
+              />
+              <p className="text-xs text-white">{getEventDate()}</p>
+            </div>
+            <div className="flex gap-1 items-center">
+              <Icon name="clock" size={16} color="text-white" hover={false} />
+              <p className="text-xs text-white">{getEventTime()}</p>
+            </div>
+          </div>
+        )}
 
         {data?.my_enrollment?.assigned_by && (
           <div className="flex items-center gap-2">
