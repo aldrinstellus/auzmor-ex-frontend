@@ -15,6 +15,7 @@ import {
 } from 'utils/misc';
 import useRole from 'hooks/useRole';
 import useProduct from 'hooks/useProduct';
+import { learnLogout } from 'queries/learn';
 
 const AccountCard = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const AccountCard = () => {
   const { isAdmin } = useRole();
   const { isLxp, isOffice } = useProduct();
 
-  const logoutMutation = useMutation(logout, {
+  const logoutMutation = useMutation(isLxp ? learnLogout : logout, {
     onSuccess: async () => {
       reset();
       userChannel.postMessage({
@@ -31,20 +32,20 @@ const AccountCard = () => {
           type: 'SIGN_OUT',
         },
       });
-      navigate('/logout');
+      if (isLxp) {
+        deleteCookie('region_url');
+        deleteCookie(getCookieParam());
+        window.location.replace(`${getLearnUrl()}`);
+      }
+      if (isOffice) {
+        navigate('/logout');
+      }
     },
   });
 
   const handleSignout = () => {
-    if (isLxp) {
-      deleteCookie('region_url');
-      deleteCookie(getCookieParam());
-      reset();
-      window.location.replace(`${getLearnUrl()}`);
-    } else {
-      logoutMutation.mutate();
-      close();
-    }
+    logoutMutation.mutate();
+    close();
   };
 
   const menuItemStyle = clsx({
@@ -96,7 +97,7 @@ const AccountCard = () => {
                 onClick={() => {
                   if (isLxp) {
                     window.location.replace(
-                      `${getLearnUrl()}/settings/profile`,
+                      `${getLearnUrl()}/user/settings/profile`,
                     );
                   } else {
                     navigate('/profile', { state: { userId: user?.id } });
@@ -108,9 +109,7 @@ const AccountCard = () => {
               />
             </div>
             <div className="w-full pt-4">
-              <Link
-                to={isLxp ? `${getLearnUrl()}/settings/profile` : '/settings'}
-              >
+              <Link to={isLxp ? `${getLearnUrl()}/user/settings` : '/settings'}>
                 <div
                   className={`flex ${menuItemStyle} text-neutral-900 text-sm hover:text-primary-500 hover:font-bold group`}
                   data-testid="user-menu-user-settings"
