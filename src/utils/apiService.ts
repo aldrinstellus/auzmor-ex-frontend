@@ -12,6 +12,9 @@ export enum ProductEnum {
 }
 
 export const getProduct: () => ProductEnum = () => {
+  if (process.env.NODE_ENV === 'development') {
+    return ProductEnum.Lxp;
+  }
   const host = window.location.host;
   if (
     host.includes(
