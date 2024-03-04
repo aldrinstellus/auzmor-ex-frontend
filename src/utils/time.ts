@@ -11,7 +11,7 @@ export const parseDate = (timestring: string, format = 'YYYY-MM-DD') => {
   return moment(timestring, format).toDate();
 };
 
-export const calculateTimeDifference = (
+export const getTimeDifference = (
   startDateTimestamp: number,
   endDateTimestamp: number,
   timezone: string,

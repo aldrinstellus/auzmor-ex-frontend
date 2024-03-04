@@ -9,7 +9,7 @@ import { useShouldRender } from 'hooks/useShouldRender';
 import { useInfiniteLearnEvents } from 'queries/learn';
 import React, { FC, useMemo } from 'react';
 import { getLearnUrl } from 'utils/misc';
-import { calculateTimeDifference, getTimeFromNow } from 'utils/time';
+import { getTimeDifference, getTimeFromNow } from 'utils/time';
 
 interface IEventWidgetProps {
   className?: string;
@@ -141,11 +141,7 @@ const EventWidget: FC<IEventWidgetProps> = ({
                     <div className="flex gap-1 items-center">
                       <Icon name="clock" size={16} color="text-primary-500" />
                       <p className="text-xs text-neutral-900">
-                        {calculateTimeDifference(
-                          startDate,
-                          endDate,
-                          userTimezone,
-                        )}
+                        {getTimeDifference(startDate, endDate, userTimezone)}
                       </p>
                     </div>
                   </div>
@@ -167,7 +163,7 @@ const EventWidget: FC<IEventWidgetProps> = ({
                       </p>
                     </div>
                   </div>
-                  {/* <div className="flex items-center gap-2"> // need to attendees info in api.
+                  {/* <div className="flex items-center gap-2"> // need  attendees info in api.
                     <AvatarList
                       size={32}
                       users={['asd', 'asdas', 'asdasd', 'asdasd']}
