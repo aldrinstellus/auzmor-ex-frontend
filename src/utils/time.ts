@@ -11,6 +11,24 @@ export const parseDate = (timestring: string, format = 'YYYY-MM-DD') => {
   return moment(timestring, format).toDate();
 };
 
+export const getTimeDifference = (
+  startDateTimestamp: number,
+  endDateTimestamp: number,
+  timezone: string,
+): string => {
+  // Convert timestamps to Moment.js objects
+  const startDate = moment.tz(startDateTimestamp, timezone);
+  const endDate = moment.tz(endDateTimestamp, timezone);
+
+  // Format start and end times in "hh:mm a" format
+  const startTime = startDate.format('hh:mm a');
+  const endTime = endDate.format('hh:mm a');
+
+  // Concatenate formatted start and end times
+  const timeDifference = `${startTime} - ${endTime}`;
+
+  return timeDifference;
+};
 export const formatDate = (dt: Date, format = 'YYYY-MM-DD') => {
   if (!dt) {
     return null;
