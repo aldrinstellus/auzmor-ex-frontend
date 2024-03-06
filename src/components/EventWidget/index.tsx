@@ -10,6 +10,7 @@ import { useInfiniteLearnEvents } from 'queries/learn';
 import React, { FC, useMemo } from 'react';
 import { getLearnUrl } from 'utils/misc';
 import { getTimeDifference, getTimeFromNow } from 'utils/time';
+import EmptyState from './Component/EmptyState';
 
 interface IEventWidgetProps {
   className?: string;
@@ -30,7 +31,7 @@ const EventWidget: FC<IEventWidgetProps> = ({
   if (!shouldRender) {
     return <></>;
   }
-  const { data: upcomingEvents } = useInfiniteLearnEvents({
+  const { data: upcomingEvents, isLoading } = useInfiniteLearnEvents({
     q: { limit: 1, filter: 'UPCOMING' },
   });
   const events = upcomingEvents?.pages?.flatMap((page: any) =>
@@ -42,24 +43,26 @@ const EventWidget: FC<IEventWidgetProps> = ({
   const endDate = event?.end_date;
 
   return (
-    <div>
-      {events?.length ? (
-        <div className={style}>
-          <div className="flex justify-between items-center ">
-            <div className="text-base font-bold">Events</div>
-            <Button
-              label={'View all'}
-              onClick={() => {
-                window.location.replace(
-                  `${getLearnUrl()}/user/trainings?type=events&tab=UPCOMING`,
-                );
-              }}
-              className="bg-transparent !text-primary-500 hover:!text-primary-600 hover:!bg-transparent active:!bg-transparent active:!text-primary-700"
-            />
-          </div>
-          <div className="mt-2">
-            <Card className="w-full relative h-[353px] overflow-hidden group/card">
-              <>
+    <div className={style}>
+      <div className="flex justify-between items-center ">
+        <div className="text-base font-bold">Events</div>
+        <Button
+          label={'View all'}
+          onClick={() => {
+            window.location.replace(
+              `${getLearnUrl()}/user/trainings?type=events&tab=UPCOMING`,
+            );
+          }}
+          className="bg-transparent !text-primary-500 hover:!text-primary-600 hover:!bg-transparent active:!bg-transparent active:!text-primary-700"
+        />
+      </div>
+      <Card className="mt-2 w-full   relative overflow-hidden ">
+        {(() => {
+          if (!event && !isLoading) {
+            return <EmptyState />;
+          } else {
+            return (
+              <div className="w-full h-[350px]  relative overflow-hidden group/card ">
                 <img
                   src={event?.image_url}
                   className="w-full  object-cover group-hover/card:scale-[1.10]"
@@ -70,17 +73,6 @@ const EventWidget: FC<IEventWidgetProps> = ({
                 />
                 {!isLive && (
                   <>
-                    <div
-                      className="cursor-pointer rounded-lg absolute"
-                      style={{
-                        color: 'rgba(0,0,0,.87)',
-                        boxSizing: 'inherit',
-                        background:
-                          'linear-gradient(0deg, rgba(0, 0, 0, 0.50) 0%, rgba(0, 0, 0, 0.50) 100%)',
-                        inset: '0px',
-                        zIndex: 2,
-                      }}
-                    />
                     <div className="absolute z-10 flex top-0 left-4 right-4 bottom-32 justify-center z-100 items-center inset-0">
                       <Button
                         label={'Join event'}
@@ -111,9 +103,9 @@ const EventWidget: FC<IEventWidgetProps> = ({
                   </p>
                 </div>
 
-                <div className="absolute min-h-[160px] bg-white  bottom-0 left-0 flex flex-col p-4 z-10 gap-2 w-full">
+                <div className="absolute  bg-white  bottom-0 left-0 flex flex-col p-4 z-10 gap-2 w-full">
                   <div className="flex gap-1">
-                    {event?.categories.map((d: any) => {
+                    {event?.categories?.slice(0, 2)?.map((d: any) => {
                       return (
                         <div
                           key={d?.id}
@@ -123,6 +115,11 @@ const EventWidget: FC<IEventWidgetProps> = ({
                         </div>
                       );
                     })}
+                    {event?.categories?.length > 2 && (
+                      <div className="px-2 py-1 rounded bg-primary-100  text-center text-primary-500  text-xs font-medium">
+                        +{event?.categories?.length - 2}
+                      </div>
+                    )}
                   </div>
                   <div className="text-neutral-900 font-semibold text-base">
                     {event?.name}
@@ -164,27 +161,27 @@ const EventWidget: FC<IEventWidgetProps> = ({
                     </div>
                   </div>
                   {/* <div className="flex items-center gap-2"> // need  attendees info in api.
-                    <AvatarList
-                      size={32}
-                      users={['asd', 'asdas', 'asdasd', 'asdasd']}
-                      moreCount={20}
-                      className="-space-x-[12px]"
-                      avatarClassName="!b-[1px]"
-                    />
+                  <AvatarList
+                    size={32}
+                    users={['asd', 'asdas', 'asdasd', 'asdasd']}
+                    moreCount={20}
+                    className="-space-x-[12px]"
+                    avatarClassName="!b-[1px]"
+                  />
 
-                    <div className="text-xs  text-neutral-500 underline font-normal">
-                      More attendees
-                    </div>
-                  </div> */}
+                  <div className="text-xs  text-neutral-500 underline font-normal">
+                    More attendees
+                  </div>
+                </div> */}
                   {/* {isLive && (
-                    <Button label={'Join event'} className="w-full " />
-                  )} */}
+                  <Button label={'Join event'} className="w-full " />
+                )} */}
                 </div>
-              </>
-            </Card>
-          </div>
-        </div>
-      ) : null}
+              </div>
+            );
+          }
+        })()}
+      </Card>
     </div>
   );
 };
