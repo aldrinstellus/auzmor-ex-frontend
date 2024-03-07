@@ -34,7 +34,6 @@ const Recommendation: FC<IRecommendationProps> = ({
           size={Size.ExtraSmall}
           onClick={() => window.location.replace(`${getLearnUrl()}/user`)}
           className="!bg-transparent !text-primary-500 hover:text-primary-600 active:text-primary-700 text-xs font-normal"
-          onClick={() => window.location.replace(`${getLearnUrl()}/user`)}
         />
       </div>
       <div className="flex top-8 gap-4 w-full overflow-hidden hover:overflow-x-scroll pb-4">
