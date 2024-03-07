@@ -212,60 +212,64 @@ const PeopleCard: FC<IPeopleCardProps> = ({
     >
       <Card
         shadowOnHover
-        className="relative w-[190px] h-[244px] border-solid border rounded-9xl border-neutral-200 bg-white"
+        className={`relative w-[190px] ${
+          isLxp ? 'h-[190px]' : 'h-[244px]'
+        } border-solid border rounded-9xl border-neutral-200 bg-white`}
       >
-        <UserProfileDropdown
-          id={id}
-          loggedInUserId={user?.id}
-          role={role || ''}
-          status={status}
-          isHovered={isHovered}
-          onDeleteClick={openDeleteModal}
-          isTeamPeople={isTeamPeople}
-          onEditClick={() =>
-            navigate(
-              `/users/${id}?edit=${getEditSection(id, user?.id, isAdmin)}`,
-            )
-          }
-          onReactivateClick={openReactivateModal}
-          onPromoteClick={() => updateUserRoleMutation.mutate({ id })}
-          onDeactivateClick={openDeactivateModal}
-          onResendInviteClick={() => {
-            toast(<SuccessToast content="Invitation has been sent" />, {
-              closeButton: (
+        {!isLxp ? (
+          <UserProfileDropdown
+            id={id}
+            loggedInUserId={user?.id}
+            role={role || ''}
+            status={status}
+            isHovered={isHovered}
+            onDeleteClick={openDeleteModal}
+            isTeamPeople={isTeamPeople}
+            onEditClick={() =>
+              navigate(
+                `/users/${id}?edit=${getEditSection(id, user?.id, isAdmin)}`,
+              )
+            }
+            onReactivateClick={openReactivateModal}
+            onPromoteClick={() => updateUserRoleMutation.mutate({ id })}
+            onDeactivateClick={openDeactivateModal}
+            onResendInviteClick={() => {
+              toast(<SuccessToast content="Invitation has been sent" />, {
+                closeButton: (
+                  <Icon
+                    name="closeCircleOutline"
+                    color="text-primary-500"
+                    size={20}
+                  />
+                ),
+                style: {
+                  border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+                  borderRadius: '6px',
+                  display: 'flex',
+                  alignItems: 'center',
+                },
+                autoClose: TOAST_AUTOCLOSE_TIME,
+                transition: slideInAndOutTop,
+                theme: 'dark',
+              });
+              resendInviteMutation.mutate(id);
+            }}
+            onRemoveTeamMember={openRemoveTeamMemberModal}
+            triggerNode={
+              <div className="cursor-pointer">
                 <Icon
-                  name="closeCircleOutline"
-                  color="text-primary-500"
-                  size={20}
+                  name="moreOutline"
+                  className={`absolute z-10 top-${
+                    status === UserStatus.Inactive ? 6 : 2
+                  } right-2`}
+                  dataTestId="people-card-ellipsis"
                 />
-              ),
-              style: {
-                border: `1px solid ${twConfig.theme.colors.primary['300']}`,
-                borderRadius: '6px',
-                display: 'flex',
-                alignItems: 'center',
-              },
-              autoClose: TOAST_AUTOCLOSE_TIME,
-              transition: slideInAndOutTop,
-              theme: 'dark',
-            });
-            resendInviteMutation.mutate(id);
-          }}
-          onRemoveTeamMember={openRemoveTeamMemberModal}
-          triggerNode={
-            <div className="cursor-pointer">
-              <Icon
-                name="moreOutline"
-                className={`absolute z-10 top-${
-                  status === UserStatus.Inactive ? 6 : 2
-                } right-2`}
-                dataTestId="people-card-ellipsis"
-              />
-            </div>
-          }
-          showOnHover={true}
-          className="right-0 top-8 border border-[#e5e5e5]"
-        />
+              </div>
+            }
+            showOnHover={true}
+            className="right-0 top-8 border border-[#e5e5e5]"
+          />
+        ) : null}
 
         {status === UserStatus.Inactive ? (
           <div
