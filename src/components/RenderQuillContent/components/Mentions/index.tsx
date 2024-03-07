@@ -8,6 +8,7 @@ import { ILocation } from 'queries/location';
 import { UserStatus } from 'queries/users';
 import { getUserCardTooltipProps } from 'utils/misc';
 import useProduct from 'hooks/useProduct';
+import { IDesignation } from 'queries/designation';
 
 type MentionProps = {
   value: string;
@@ -17,6 +18,7 @@ type MentionProps = {
   email?: string;
   userId?: string;
   workLocation?: ILocation;
+  designation?: IDesignation;
   status?: UserStatus;
 };
 
@@ -27,6 +29,7 @@ const Mention: FC<MentionProps> = ({
   email,
   userId,
   workLocation,
+  designation,
   status,
 }): ReactElement => {
   const { user } = useAuth();
@@ -43,6 +46,7 @@ const Mention: FC<MentionProps> = ({
             fullName,
             email,
             workLocation,
+            designation,
             profileImage,
             status,
           })}
