@@ -398,6 +398,12 @@ const Feed: FC<IFeedProps> = () => {
   }, [hashtag, feedIds, bookmarks, scheduled]);
 
   useEffect(() => {
+    if (!searchParams.has('hashtag')) {
+      setAppliedFeedFilters({ hashtags: [''] });
+    }
+  });
+
+  useEffect(() => {
     if (hashtag) {
       setAppliedFeedFilters({ hashtags: [hashtag] });
     }
