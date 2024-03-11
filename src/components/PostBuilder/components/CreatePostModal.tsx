@@ -96,6 +96,7 @@ const CreatePostModal: FC<ICreatePostModal> = ({
     setShoutoutUserIds,
     postType,
     inputImgRef,
+    isEmpty,
   } = useContext(CreatePostContext);
 
   const [confirm, showConfirm, closeConfirm] = useModal();
@@ -524,7 +525,9 @@ const CreatePostModal: FC<ICreatePostModal> = ({
       <Modal
         open={open}
         closeModal={
-          mode === PostBuilderMode.Create ? showConfirm : handleOnClose
+          mode === PostBuilderMode.Create && !isEmpty
+            ? showConfirm
+            : handleOnClose
         }
         dataTestId={
           activeFlow === CreatePostFlow.SchedulePost
@@ -541,7 +544,7 @@ const CreatePostModal: FC<ICreatePostModal> = ({
                 return null;
               }
               hideEmojiPalette();
-              return mode === PostBuilderMode.Create
+              return mode === PostBuilderMode.Create && !isEmpty
                 ? showConfirm()
                 : handleOnClose();
             }}
@@ -575,7 +578,9 @@ const CreatePostModal: FC<ICreatePostModal> = ({
           <div data-testid="createpost-createpoll-modal">
             <CreatePoll
               closeModal={
-                mode === PostBuilderMode.Create ? showConfirm : handleOnClose
+                mode === PostBuilderMode.Create && !isEmpty
+                  ? showConfirm
+                  : handleOnClose
               }
             />
           </div>
@@ -583,21 +588,27 @@ const CreatePostModal: FC<ICreatePostModal> = ({
         {activeFlow === CreatePostFlow.CreateShoutout && (
           <CreateShoutout
             closeModal={
-              mode === PostBuilderMode.Create ? showConfirm : handleOnClose
+              mode === PostBuilderMode.Create && !isEmpty
+                ? showConfirm
+                : handleOnClose
             }
           />
         )}
         {activeFlow === CreatePostFlow.SchedulePost && (
           <SchedulePost
             closeModal={
-              mode === PostBuilderMode.Create ? showConfirm : handleOnClose
+              mode === PostBuilderMode.Create && !isEmpty
+                ? showConfirm
+                : handleOnClose
             }
           />
         )}
         {activeFlow === CreatePostFlow.Audience && (
           <Audience
             closeModal={
-              mode === PostBuilderMode.Create ? showConfirm : handleOnClose
+              mode === PostBuilderMode.Create && !isEmpty
+                ? showConfirm
+                : handleOnClose
             }
             dataTestId="audience-selection"
           />

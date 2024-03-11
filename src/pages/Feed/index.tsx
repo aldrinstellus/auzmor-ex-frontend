@@ -46,6 +46,10 @@ import MyTeamWidget from 'components/MyTeamWidget';
 import useRole from 'hooks/useRole';
 import { isFiltersEmpty, isRegularPost } from 'utils/misc';
 import useMediaQuery from 'hooks/useMediaQuery';
+import ProgressTrackerWidget from 'components/ProgressTrackerWidget';
+import EventWidget from 'components/EventWidget';
+import { useGetRecommendation } from 'queries/learn';
+import Recommendation from 'components/Recommendation';
 
 interface IFeedProps {}
 
@@ -76,19 +80,25 @@ const Feed: FC<IFeedProps> = () => {
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
   const hashtag = searchParams.get('hashtag') || '';
-
   const bookmarks = pathname === '/bookmarks';
   const scheduled = pathname === '/scheduledPosts';
-
-  const { ref, inView } = useInView();
   const [open, openModal, closeModal] = useModal(undefined, false);
   const [appliedFeedFilters, setAppliedFeedFilters] = useState<IPostFilters>({
     [PostFilterKeys.PostType]: [],
     [PostFilterKeys.PostPreference]: [],
   });
-  const { feed } = useFeedStore();
   const { isAdmin } = useRole();
+  const { feed } = useFeedStore();
+  const { ref, inView } = useInView();
   const currentDate = new Date().toISOString();
+
+  // Learn data
+  const { data: recommendationData, isLoading: recommendationLoading } =
+    useGetRecommendation();
+  const trendingCards =
+    recommendationData?.data?.result?.data?.trending?.trainings || [];
+  const recentlyPublishedCards =
+    recommendationData?.data?.result?.data?.recently_published?.trainings || [];
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteFeed(
@@ -388,6 +398,9 @@ const Feed: FC<IFeedProps> = () => {
   }, [hashtag, feedIds, bookmarks, scheduled]);
 
   useEffect(() => {
+    if (!searchParams.has('hashtag')) {
+      setAppliedFeedFilters({ hashtags: [''] });
+    }
     if (hashtag) {
       setAppliedFeedFilters({ hashtags: [hashtag] });
     }
@@ -401,11 +414,42 @@ const Feed: FC<IFeedProps> = () => {
 
   const getRightWidgets = () => (
     <>
+      <ProgressTrackerWidget />
+      <EventWidget className="sticky top-24" />
       <CelebrationWidget type={CELEBRATION_TYPE.Birthday} />
       <CelebrationWidget type={CELEBRATION_TYPE.WorkAnniversary} />
       <AnnouncementCard openModal={openModal} className="sticky top-24" />
     </>
   );
+
+  const recommendationIndex = useMemo(() => {
+    const totalPosts = announcementFeedIds.length + regularFeedIds.length;
+    if (totalPosts >= 5) {
+      if (trendingCards.length > 1) {
+        if (recentlyPublishedCards.length > 1) {
+          return { tIndex: 4, rIndex: 9 };
+        } else {
+          return { tIndex: 4, rIndex: -1 };
+        }
+      } else {
+        if (recentlyPublishedCards.length > 1) {
+          return { tIndex: -1, rIndex: 4 };
+        } else {
+          return { tIndex: -1, rIndex: -1 };
+        }
+      }
+    } else if (totalPosts >= 3 && totalPosts < 5) {
+      if (trendingCards.length > 1) {
+        return { tIndex: 2, rIndex: -1 };
+      } else {
+        if (recentlyPublishedCards.length > 1) {
+          return { tIndex: -1, rIndex: 2 };
+        } else {
+          return { tIndex: -1, rIndex: -1 };
+        }
+      }
+    } else return { tIndex: -1, rIndex: -1 };
+  }, [announcementFeedIds, regularFeedIds]);
 
   return (
     <div className="pb-6 flex justify-between">
@@ -424,24 +468,33 @@ const Feed: FC<IFeedProps> = () => {
           getEmptyFeedComponent()
         ) : (
           <div className="flex flex-col gap-6">
-            {announcementFeedIds?.map((feedId, index) => (
-              <div
-                data-testid={`feed-post-${index}`}
-                className="flex flex-col gap-6"
-                key={feedId.id}
-              >
-                <VirtualisedPost post={feed[feedId.id!]} />
-              </div>
-            ))}
-            {regularFeedIds?.map((feedId, index) => (
-              <div
-                data-testid={`feed-post-${index}`}
-                className="flex flex-col gap-6"
-                key={feedId.id}
-              >
-                <VirtualisedPost post={feed[feedId.id!]} />
-              </div>
-            ))}
+            {[...announcementFeedIds, ...regularFeedIds]?.map(
+              ({ id }, index) => (
+                <>
+                  <div
+                    data-testid={`feed-post-${index}`}
+                    className="flex flex-col gap-6"
+                    key={id}
+                  >
+                    <VirtualisedPost post={feed[id!]} />
+                  </div>
+                  {index === recommendationIndex.tIndex && (
+                    <Recommendation
+                      cards={trendingCards}
+                      title="Trending Content"
+                      isLoading={recommendationLoading}
+                    />
+                  )}
+                  {index === recommendationIndex.rIndex && (
+                    <Recommendation
+                      cards={recentlyPublishedCards}
+                      title="Recently Published"
+                      isLoading={recommendationLoading}
+                    />
+                  )}
+                </>
+              ),
+            )}
           </div>
         )}
 

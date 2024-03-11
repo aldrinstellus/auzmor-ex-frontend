@@ -11,6 +11,7 @@ import { Role } from 'utils/enum';
 import Team from './components/Teams';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PopupMenu from 'components/PopupMenu';
+import useProduct from 'hooks/useProduct';
 
 interface IUsersProps {}
 
@@ -51,7 +52,7 @@ const Users: FC<IUsersProps> = () => {
         'bg-opacity-50 text-gray-400': disabled,
       },
     );
-
+  const { isLxp } = useProduct();
   const tabs = [
     {
       id: 1,
@@ -128,7 +129,7 @@ const Users: FC<IUsersProps> = () => {
         />
       ),
       tabAction:
-        user?.role !== Role.Member ? (
+        user?.role !== Role.Member && !isLxp ? (
           <div className="flex space-x-2">
             <Button
               className="flex space-x-1 px-6 py-[10px] rounded-[24px]"
@@ -152,8 +153,10 @@ const Users: FC<IUsersProps> = () => {
     <Card className="p-8 px-7 w-full h-full">
       <Tabs
         tabs={tabs}
-        title={'People Hub'}
-        className="w-fit flex justify-start bg-neutral-50 rounded-6xl border-solid border-1 border-neutral-200"
+        title={isLxp ? 'Teams' : 'People Hub'}
+        className={`w-fit   ${
+          isLxp ? 'hidden' : 'flex'
+        } justify-start bg-neutral-50 rounded-6xl border-solid border-1 border-neutral-200`}
         tabSwitcherClassName="!p-1"
         showUnderline={false}
         itemSpacing={1}

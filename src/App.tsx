@@ -8,18 +8,28 @@ import queryClient from 'utils/queryClient';
 import Toast from 'components/Toast';
 import useMediaQuery from 'hooks/useMediaQuery';
 import Unsupported from 'pages/Unsupported';
+import ProductProvider from 'contexts/ProductProvider';
+import { ProductEnum, getProduct } from 'utils/apiService';
+import { getLearnUrl } from 'utils/misc';
 
 function App() {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
+
+  if (getProduct() === ProductEnum.Lxp && !isDesktop && isDesktop !== null) {
+    window.location.replace(getLearnUrl());
+  }
+
   return isDesktop ? (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        {process.env.NODE_ENV === 'development' ? (
-          <ReactQueryDevtools initialIsOpen={false} />
-        ) : null}
-        <Router />
-        <Toast />
-      </AuthProvider>
+      <ProductProvider>
+        <AuthProvider>
+          {process.env.NODE_ENV === 'development' ? (
+            <ReactQueryDevtools initialIsOpen={false} />
+          ) : null}
+          <Router />
+          <Toast />
+        </AuthProvider>
+      </ProductProvider>
     </QueryClientProvider>
   ) : (
     <Unsupported />

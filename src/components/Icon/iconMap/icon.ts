@@ -142,6 +142,17 @@ import VideoSlash from '../components/VideoSlash';
 import SvgInfoIcon from '../components/Info';
 import CloudAddIcon from '../components/CloudAdd';
 import BoldTick from '../components/BoldTick';
+import MenuBoardIcon from '../components/MenuBoard';
+import StarIcon from '../components/Star';
+import StarHalfIcon from '../components/StarHalf';
+import LifeBuoyIcon from '../components/LifeBuoy';
+import ShopingCartIcon from '../components/ShoppingCart';
+import MessageQuestionIcon from '../components/MessageQuestion';
+import VideoPlayIcon from '../components/VideoPlay';
+import RadarIcon from '../components/Radar';
+import TeacherIcon from '../components/Teacher';
+import MedalStarIcon from '../components/MedalStar';
+import VideoSquareIcon from '../components/VideoSquare';
 
 export const icon = {
   add: Add,
@@ -243,6 +254,7 @@ export const icon = {
   marketplace: Marketplace,
   marriedIcon: MarriedIcon,
   maximize: MaximizeIcon,
+  menuBoard: MenuBoardIcon,
   mic: MicIcon,
   minus: Minus,
   more: MoreIcon,
@@ -274,6 +286,8 @@ export const icon = {
   shareForward: ShareForward,
   slack: SlackIcon,
   speaker: SpeakerIcon,
+  star: StarIcon,
+  starHalf: StarHalfIcon,
   support: Support,
   supportReaction: SupportReaction,
   tag: Tag,
@@ -284,8 +298,16 @@ export const icon = {
   userRemove: UserRemove,
   users: UsersIcon,
   video: VideoIcon,
+  radar: RadarIcon,
   videoSlash: VideoSlash,
   warningCircle: WarningCircleIcon,
   zoomIn: ZoomInIcon,
   zoomOut: ZoomOutIcon,
+  lifeBuoy: LifeBuoyIcon,
+  shoppingCart: ShopingCartIcon,
+  videoPlay: VideoPlayIcon,
+  messageQuestion: MessageQuestionIcon,
+  teacher: TeacherIcon,
+  medalStar: MedalStarIcon,
+  videoSquare: VideoSquareIcon,
 };

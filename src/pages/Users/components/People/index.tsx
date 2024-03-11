@@ -31,6 +31,7 @@ import Icon from 'components/Icon';
 import { IDepartmentAPI } from 'queries/department';
 import { ILocationAPI } from 'queries/location';
 import ImportUsers from '../ImportUsers';
+import useProduct from 'hooks/useProduct';
 
 export interface IPeopleProps {
   showModal: boolean;
@@ -94,6 +95,7 @@ const People: FC<IPeopleProps> = ({
   const [filterSortBy, setFilterSortBy] = useState<string>('');
   const { ref, inView } = useInView();
   const { isAdmin } = useRole();
+  const { isLxp } = useProduct();
 
   const parsedRole = parseParams('role');
 
@@ -364,18 +366,20 @@ const People: FC<IPeopleProps> = ({
                 />
               </>
             )}
-            <Layout fields={roleFields} />
+            {!isLxp ? <Layout fields={roleFields} /> : null}
           </div>
           <div className="flex space-x-2 justify-center items-center">
-            <IconButton
-              onClick={openFilterModal}
-              icon="filterLinear"
-              variant={IconVariant.Secondary}
-              size={IconSize.Medium}
-              borderAround
-              className="bg-white !p-[10px]"
-              dataTestId="people-filter"
-            />
+            {!isLxp ? (
+              <IconButton
+                onClick={openFilterModal}
+                icon="filterLinear"
+                variant={IconVariant.Secondary}
+                size={IconSize.Medium}
+                borderAround
+                className="bg-white !p-[10px]"
+                dataTestId="people-filter"
+              />
+            ) : null}
             <Sort
               setFilter={handleSetSortFilter}
               filterKey={{ createdAt: 'createdAt', aToZ: 'name' }}
@@ -575,14 +579,14 @@ const People: FC<IPeopleProps> = ({
                   >
                     No members yet
                   </div>
-                  {isAdmin ? (
+                  {isAdmin && !isLxp ? (
                     <div className="text-base font-medium text-neutral-500">
                       {"Let's get started by adding some members!"}
                     </div>
                   ) : null}
                 </div>
               </div>
-              {isAdmin ? (
+              {isAdmin && !isLxp ? (
                 <Button
                   label={'Add members'}
                   variant={Variant.Secondary}
