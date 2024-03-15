@@ -170,7 +170,7 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
             ),
           },
         });
-        setBranding(data.branding);
+        setBranding(data.branding, isLxp);
       } catch (e: any) {
         if (e?.response?.status === 401) {
           removeAllItems();
