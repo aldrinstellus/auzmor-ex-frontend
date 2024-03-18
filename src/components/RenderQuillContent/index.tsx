@@ -176,8 +176,9 @@ const RenderQuillContent: FC<RenderQuillContent> = ({
           options={poll.options}
           myVote={myVote}
           postId={data.id}
-          mode={PollMode.VIEW}
+          mode={!!(data as IPost)?.ctaButton?.text ? PollMode.LEARN :PollMode.VIEW}
           isAnnouncementWidgetPreview={isAnnouncementWidgetPreview}
+          ctaButton={(data as IPost)?.ctaButton}
         />
       )}
       {data?.shoutoutRecipients &&

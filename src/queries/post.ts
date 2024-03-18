@@ -63,6 +63,14 @@ export type PostTitle = {
   };
 };
 
+export type LinkAttachment = {
+  url: string;
+  title: string;
+  description: string;
+  image: string;
+  favicon: string;
+}
+
 export interface IPost {
   content: {
     text: string;
@@ -124,16 +132,10 @@ export interface IPost {
   acknowledged: boolean;
   shoutoutRecipients?: IShoutoutRecipient[];
   title: PostTitle;
-  linkAttachments: Array<{
-    url: string;
-    title: string;
-    description: string;
-    image: string;
-    favicon: string;
-  }>;
+  linkAttachments: Array<LinkAttachment>;
   cardContext: {
     resource: string;
-    categories: any[];
+    categories: string[];
     title: string;
     avatar: {
       url: string;
