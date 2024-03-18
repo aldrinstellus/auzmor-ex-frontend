@@ -37,6 +37,7 @@ import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 
 import { useFeedStore } from 'stores/feedStore';
 import Avatar from 'components/Avatar';
+import LinkAttachments from './components/LinkAttachments';
 
 export const iconsStyle = (key: string) => {
   const iconStyle = clsx(
@@ -210,13 +211,13 @@ const Post: FC<PostProps> = ({ post, customNode = null, setHasChanges }) => {
             <div className="flex gap-2">
               {post?.cardContext?.categories
                 ?.slice(0, 2)
-                ?.map((category: Record<string, any>) => (
+                ?.map((category: string) => (
                   <div
-                    key={category?.id}
+                    key={category}
                     className="flex px-2 py-1 rounded bg-white border border-white bg-opacity-10 border-opacity-20 max-w-[90px]"
                   >
                     <p className="text-xs font-medium truncate text-white">
-                      {category?.title}
+                      {category}
                     </p>
                   </div>
                 ))}
@@ -293,6 +294,7 @@ const Post: FC<PostProps> = ({ post, customNode = null, setHasChanges }) => {
               dataTestId="feedpage-activity-username"
               entityId={post.id}
               postType={post?.occasionContext?.type}
+              title={post?.title}
             />
             <Tooltip
               tooltipContent={
@@ -343,6 +345,9 @@ const Post: FC<PostProps> = ({ post, customNode = null, setHasChanges }) => {
           )}
           <RenderQuillContent data={post} />
           {post?.cardContext && <CustomCard />}
+          {post?.linkAttachments && (
+            <LinkAttachments attachments={post?.linkAttachments} />
+          )}
           {/* Reaction Count */}
           {(totalCount > 0 || post?.commentsCount > 0) && !!!post.schedule && (
             <div className="flex flex-row justify-between py-3 border-y-1 border-y-neutral-100">
