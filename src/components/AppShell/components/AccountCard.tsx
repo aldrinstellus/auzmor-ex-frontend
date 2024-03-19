@@ -33,7 +33,7 @@ const AccountCard = () => {
         },
       });
       if (isLxp) {
-        deleteCookie('regionUrl');
+        deleteCookie(getCookieParam('region_url'));
         deleteCookie(getCookieParam());
         window.location.replace(`${getLearnUrl()}`);
       }
