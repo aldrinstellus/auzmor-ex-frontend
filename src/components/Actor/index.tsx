@@ -15,6 +15,8 @@ import Tooltip, { Variant } from 'components/Tooltip';
 import UserCard from 'components/UserCard';
 import Icon from 'components/Icon';
 import useProduct from 'hooks/useProduct';
+import LxpLogoPng from '../Logo/images/lxpLogo.png';
+import OfficeLogoSvg from '../Logo/images/OfficeLogo.svg';
 
 type ActorProps = {
   contentMode?: string;
@@ -76,14 +78,24 @@ const Actor: FC<ActorProps> = ({
   return (
     <div className="flex items-center gap-4 flex-1">
       <div>
-        <Link to={profileUrl}>
-          <Avatar
-            name={getFullName(createdBy) || 'U'}
-            size={32}
-            image={getProfileImage(createdBy)}
-            bgColor={getAvatarColor(createdBy)}
-          />
-        </Link>
+        {title ? (
+          <div className="relative flex justify-center items-center rounded-full w-8 h-8 bg-primary-100">
+            <img
+              src={isLxp ? LxpLogoPng : OfficeLogoSvg}
+              alt="Office Logo"
+              className="w-4 h-4"
+            />
+          </div>
+        ) : (
+          <Link to={profileUrl}>
+            <Avatar
+              name={getFullName(createdBy) || 'U'}
+              size={32}
+              image={getProfileImage(createdBy)}
+              bgColor={getAvatarColor(createdBy)}
+            />
+          </Link>
+        )}
       </div>
       <div className="flex flex-col flex-1">
         {title ? (
