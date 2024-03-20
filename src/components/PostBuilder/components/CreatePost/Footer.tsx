@@ -65,7 +65,8 @@ const Footer: FC<IFooterProps> = ({
     operatorXOR(isPreviewRemoved, !!previewUrl) || postType !== PostType.Update;
   const isShoutoutDisabled =
     operatorXOR(isPreviewRemoved, !!previewUrl) ||
-    (postType !== PostType.Shoutout && postType !== PostType.Update);
+    (postType !== PostType.Shoutout && postType !== PostType.Update) ||
+    media.length != 0;
   const isPollDisabled =
     operatorXOR(isPreviewRemoved, !!previewUrl) ||
     (postType !== PostType.Poll && postType !== PostType.Update) ||
