@@ -32,7 +32,7 @@ const ProgressTrackerWidget: FC<IProgressTrackerWidgetProps> = ({
   return (
     <div className={style}>
       <div className="flex justify-between items-center ">
-        <div className="text-base font-bold">Progress tracker</div>
+        <div className="text-base font-bold">Progress Tracker</div>
         <Button
           label={'View all'}
           className="bg-transparent !text-primary-500 hover:!text-primary-600 hover:!bg-transparent active:!bg-transparent active:!text-primary-700"

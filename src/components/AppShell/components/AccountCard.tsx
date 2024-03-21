@@ -33,7 +33,7 @@ const AccountCard = () => {
         },
       });
       if (isLxp) {
-        deleteCookie('region_url');
+        deleteCookie(getCookieParam('region_url'));
         deleteCookie(getCookieParam());
         window.location.replace(`${getLearnUrl()}`);
       }
@@ -89,26 +89,22 @@ const AccountCard = () => {
                 {user?.email}
               </div>
             </div>
-            <div className="px-4 w-full">
-              <Button
-                dataTestId="user-menu-profile"
-                variant={Variant.Secondary}
-                label="Go to my profile"
-                onClick={() => {
-                  if (isLxp) {
-                    window.location.replace(
-                      `${getLearnUrl()}/user/settings/profile`,
-                    );
-                  } else {
+            {isOffice && (
+              <div className="px-4 pb-4 w-full">
+                <Button
+                  dataTestId="user-menu-profile"
+                  variant={Variant.Secondary}
+                  label="Go to my profile"
+                  onClick={() => {
                     navigate('/profile', { state: { userId: user?.id } });
                     close();
-                  }
-                }}
-                size={Size.Small}
-                className="w-full"
-              />
-            </div>
-            <div className="w-full pt-4">
+                  }}
+                  size={Size.Small}
+                  className="w-full"
+                />
+              </div>
+            )}
+            <div className="w-full">
               <Link to={isLxp ? `${getLearnUrl()}/user/settings` : '/settings'}>
                 <div
                   className={`flex ${menuItemStyle} text-neutral-900 text-sm hover:text-primary-500 hover:font-bold group`}
@@ -141,6 +137,23 @@ const AccountCard = () => {
                   </div>
                 </Link>
               )}
+              {isLxp && isAdmin && (
+                <Link to={getLearnUrl()}>
+                  <div
+                    className={`flex ${menuItemStyle} text-neutral-900 text-sm hover:text-primary-500 hover:font-bold group`}
+                    data-testid="user-menu-adminview"
+                    onClick={close}
+                  >
+                    <Icon
+                      name="userAdmin"
+                      size={20}
+                      className="mr-2.5"
+                      color="text-neutral-900"
+                    />
+                    <div>Switch to Admin&apos;s View</div>
+                  </div>
+                </Link>
+              )}
               <Link to="/bookmarks">
                 <div
                   className={`flex ${menuItemStyle} text-neutral-900 text-sm hover:text-primary-500 hover:font-bold group`}
@@ -153,7 +166,7 @@ const AccountCard = () => {
                     className="mr-2.5"
                     color="text-neutral-900"
                   />
-                  <div>My bookmarks</div>
+                  <div>My Bookmarks</div>
                 </div>
               </Link>
               <div
@@ -167,7 +180,7 @@ const AccountCard = () => {
                   className="mr-2.5"
                   color="text-neutral-900"
                 />
-                <div>Sign out</div>
+                <div>Sign Out</div>
               </div>
             </div>
           </div>
