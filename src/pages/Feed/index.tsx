@@ -44,7 +44,7 @@ import NoPosts from 'images/NoPostsFound.png';
 import AppLauncher from 'components/AppLauncher';
 import MyTeamWidget from 'components/MyTeamWidget';
 import useRole from 'hooks/useRole';
-import { isFiltersEmpty, isRegularPost } from 'utils/misc';
+import { getLearnUrl, isFiltersEmpty, isRegularPost } from 'utils/misc';
 import useMediaQuery from 'hooks/useMediaQuery';
 import ProgressTrackerWidget from 'components/ProgressTrackerWidget';
 import EventWidget from 'components/EventWidget';
@@ -526,6 +526,11 @@ const Feed: FC<IFeedProps> = () => {
                       cards={trendingCards}
                       title="Trending Content"
                       isLoading={recommendationLoading}
+                      onCLick={() =>
+                        window.location.replace(
+                          `${getLearnUrl()}/user/trainings`,
+                        )
+                      }
                     />
                   )}
                   {index === recommendationIndex.rIndex && (
@@ -533,6 +538,11 @@ const Feed: FC<IFeedProps> = () => {
                       cards={recentlyPublishedCards}
                       title="Recently Published"
                       isLoading={recommendationLoading}
+                      onCLick={() =>
+                        window.location.replace(
+                          `${getLearnUrl()}/user/trainings`,
+                        )
+                      }
                     />
                   )}
                 </>
