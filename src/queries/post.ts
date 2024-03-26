@@ -157,6 +157,7 @@ export interface IPost {
       url: string;
       isOverlay: boolean;
     };
+    cardBadgeIcon?: boolean;
   };
   ctaButton: {
     text: string;
