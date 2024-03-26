@@ -3,7 +3,6 @@ import Card from 'components/Card';
 import LearnCard from 'components/LearnCard';
 import { useShouldRender } from 'hooks/useShouldRender';
 import React, { FC } from 'react';
-import { getLearnUrl } from 'utils/misc';
 
 const ID = 'Recommendation';
 
@@ -11,12 +10,14 @@ interface IRecommendationProps {
   title: string;
   cards: Record<string, any>[];
   isLoading?: boolean;
+  onCLick: () => void;
 }
 
 const Recommendation: FC<IRecommendationProps> = ({
   title,
   cards,
   isLoading,
+  onCLick,
 }) => {
   const shouldRender = useShouldRender(ID);
   if (!shouldRender) {
@@ -32,7 +33,7 @@ const Recommendation: FC<IRecommendationProps> = ({
           rightIconSize={12}
           rightIconClassName="text-primary-500"
           size={Size.ExtraSmall}
-          onClick={() => window.location.replace(`${getLearnUrl()}/user`)}
+          onClick={onCLick}
           className="!bg-transparent !text-primary-500 hover:text-primary-600 active:text-primary-700 text-xs font-normal"
         />
       </div>

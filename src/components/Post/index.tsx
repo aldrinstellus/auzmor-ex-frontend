@@ -235,10 +235,20 @@ const Post: FC<PostProps> = ({ post, comments = [], setHasChanges }) => {
             </div>
           )}
           {post?.cardContext?.title && (
-            <div className="flex-col gap-0.5">
-              <div className="text-white font-bold text-base line-clamp-2">
+            <div className="flex gap-3 items-center">
+              <div className="text-white font-bold text-base line-clamp-2 flex">
                 {post?.cardContext?.title}
               </div>
+              {post?.cardContext?.cardBadgeIcon && (
+                <div className="flex items-center justify-center h-5 w-5 bg-primary-500 z-10 rounded">
+                  <Icon
+                    name="medalStar"
+                    size={14}
+                    color="text-white"
+                    hover={false}
+                  />
+                </div>
+              )}
             </div>
           )}
           {post?.cardContext?.avatar && (
