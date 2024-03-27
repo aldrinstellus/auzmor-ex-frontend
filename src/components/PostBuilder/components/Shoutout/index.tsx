@@ -71,14 +71,13 @@ const CreateShoutout: FC<ICreateShoutoutProps> = ({ closeModal }) => {
       shoutoutTemplate?.file?.label,
       'kudos',
     );
-    const previousOps = editorValue?.editor?.ops || [];
-    // Combine ops from previous editor value and current editor value
-    const mergedOps = [...previousOps, ...editor.ops];
+
     const newContent = {
       text: text,
       html: html,
-      editor: { ops: mergedOps },
+      editor,
     };
+
     setEditorValue(newContent);
   };
   const handleNext = () => {
@@ -96,7 +95,9 @@ const CreateShoutout: FC<ICreateShoutoutProps> = ({ closeModal }) => {
       setShoutoutUsers(users);
       setStep(SHOUTOUT_STEPS.ImageSelect);
     } else {
-      updateContext();
+      if (editorValue?.text == '\n') {
+        updateContext();
+      } // only update context if text editor  empty
       setIsLoading(true);
       setTriggerSubmit(true);
     }

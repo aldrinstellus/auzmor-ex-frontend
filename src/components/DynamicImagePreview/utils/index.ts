@@ -4,23 +4,27 @@ export const updateEditorValue = (users: any, label: any, hashtag: string) => {
     value: user.fullName,
     denotationChar: '@',
   }));
+  const result: any =
+    userMentions.length === 0
+      ? []
+      : [
+          {
+            insert: {
+              mention: {
+                testid: 'createpost-at-item',
+                denotationChar: userMentions[0].denotationChar,
+                id: userMentions[0].id,
+                value: `${userMentions[0].value}`,
+              },
+            },
+          },
+        ];
 
-  const text =
-    userMentions
-      .map((mention: any) => ` ${label} @${mention.value}`)
-      .join(' ') + ` #${hashtag} `;
-  const mentionSpans = userMentions
-    .map(
-      (mention: any) =>
-        `<span class="mention" data-testid="createpost-at-item" "data-denotation-char="${mention.denotationChar}" data-id="${mention.id}" data-value="${mention.value}"><span contenteditable="false"><span class="ql-mention-denotation-char">${mention.denotationChar}</span>${mention.value}</span></span>`,
-    )
-    .join(' ');
-
-  const html = `<p>${mentionSpans} <span class="mention" data-testid="createpost-hashtag-item"  data-denotation-char="#" data-value="${hashtag}"><span contenteditable="false"><span class="ql-mention-denotation-char">#</span>${hashtag}</span></span> ${label}</p>`;
-  const result = [];
-  for (let i = 0; i < userMentions.length; i++) {
+  for (let i = 1; i < userMentions.length; i++) {
     if (i == userMentions.length - 1) {
       result.push({ insert: ' and ' });
+    } else {
+      result.push({ insert: ', ' });
     }
     result.push({
       insert: {
@@ -32,9 +36,6 @@ export const updateEditorValue = (users: any, label: any, hashtag: string) => {
         },
       },
     });
-    if (i < userMentions.length - 1 && i != userMentions.length - 2) {
-      result.push({ insert: ' , ' });
-    }
   }
 
   const ops = [
@@ -54,5 +55,5 @@ export const updateEditorValue = (users: any, label: any, hashtag: string) => {
     },
   ];
 
-  return { text, html, editor: { ops } };
+  return { text: '', html: '', editor: { ops } };
 };
