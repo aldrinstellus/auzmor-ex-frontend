@@ -1,8 +1,10 @@
-import { FC, useRef } from 'react';
+import { FC, useContext, useRef } from 'react';
 import clsx from 'clsx';
 import Icon from 'components/Icon';
 import { lxpTemplateImages, officeTemplateImages } from './ImageTemplate';
 import useProduct from 'hooks/useProduct';
+import { CreatePostContext } from 'contexts/CreatePostContext';
+import { updateEditorValue } from '../utils';
 
 export interface IImagePickerProps {
   onSelect: (file: any) => void;
@@ -10,13 +12,29 @@ export interface IImagePickerProps {
 }
 
 const ImagePicker: FC<IImagePickerProps> = ({ selectedTemplate, onSelect }) => {
-  // const _imageRef = useRef<HTMLInputElement>(null);
   const _imageRef = useRef<HTMLInputElement>(null);
+  const { shoutoutUsers, setEditorValue, editorValue, setActiveFlow } =
+    useContext(CreatePostContext);
+
+  const _users: any = Object.values(shoutoutUsers).filter((user) => user);
+
+  const updateContext = (label: string) => {
+    const { text, html, editor } = updateEditorValue(_users, label);
+    //@ts-ignore
+    const mergedOps = [...editorValue?.editor?.ops, ...editor.ops]; // collate the previous editor value into the new one
+    const newContent = {
+      text: text,
+      html: html,
+      editor: { ops: mergedOps },
+    };
+    setEditorValue(newContent);
+  };
   const handleSelectTemplate = (item: any) => {
     if (selectedTemplate?.id === item.id) {
       onSelect(null);
     } else {
       onSelect(item);
+      updateContext(item.label);
     }
   };
   const { isOffice } = useProduct();
