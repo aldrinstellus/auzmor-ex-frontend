@@ -33,7 +33,7 @@ export const updateEditorValue = (users: any, label: any, hashtag: string) => {
       },
     });
     if (i < userMentions.length - 1 && i != userMentions.length - 2) {
-      result.push({ insert: ',' });
+      result.push({ insert: ' , ' });
     }
   }
 
