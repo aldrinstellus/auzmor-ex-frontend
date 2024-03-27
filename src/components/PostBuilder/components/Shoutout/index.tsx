@@ -8,6 +8,7 @@ import { Variant as ButtonVariant } from 'components/Button';
 import { IAudienceForm } from 'components/EntitySearchModal';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
 import { PostType } from 'queries/post';
+import { updateEditorValue } from 'components/DynamicImagePreview/utils';
 
 interface ICreateShoutoutProps {
   closeModal: () => void;
@@ -26,8 +27,11 @@ const CreateShoutout: FC<ICreateShoutoutProps> = ({ closeModal }) => {
     setPostType,
     removeAllMedia,
     shoutoutUsers,
+    editorValue,
     setShoutoutUsers,
+
     setShoutoutTemplate,
+    setEditorValue,
     shoutoutTemplate,
   } = useContext(CreatePostContext);
   const { form, setForm } = useEntitySearchFormStore();
@@ -58,7 +62,25 @@ const CreateShoutout: FC<ICreateShoutoutProps> = ({ closeModal }) => {
     setPostType(PostType.Shoutout);
     setActiveFlow(CreatePostFlow.CreatePost);
   };
+  const updateContext = () => {
+    const _shoutoutUsers: any = Object.values(shoutoutUsers).filter(
+      (user) => user,
+    );
+    const { text, html, editor } = updateEditorValue(
+      _shoutoutUsers,
+      shoutoutTemplate?.file?.label,
+    );
+    const previousOps = editorValue?.editor?.ops || [];
+    // Combine ops from previous editor value and current editor value
+    const mergedOps = [...previousOps, ...editor.ops];
 
+    const newContent = {
+      text: text,
+      html: html,
+      editor: { ops: mergedOps },
+    };
+    setEditorValue(newContent);
+  };
   const handleNext = () => {
     if (step === SHOUTOUT_STEPS.UserSelect) {
       const _users: any[] = [];
@@ -74,6 +96,7 @@ const CreateShoutout: FC<ICreateShoutoutProps> = ({ closeModal }) => {
       setShoutoutUsers(users);
       setStep(SHOUTOUT_STEPS.ImageSelect);
     } else {
+      updateContext();
       setIsLoading(true);
       setTriggerSubmit(true);
     }
