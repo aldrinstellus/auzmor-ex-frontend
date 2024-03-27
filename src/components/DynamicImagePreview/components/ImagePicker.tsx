@@ -13,7 +13,7 @@ export interface IImagePickerProps {
 
 const ImagePicker: FC<IImagePickerProps> = ({ selectedTemplate, onSelect }) => {
   const _imageRef = useRef<HTMLInputElement>(null);
-  const { shoutoutUsers, setEditorValue, editorValue, setActiveFlow } =
+  const { shoutoutUsers, setEditorValue, editorValue } =
     useContext(CreatePostContext);
 
   const _users: any = Object.values(shoutoutUsers).filter((user) => user);
