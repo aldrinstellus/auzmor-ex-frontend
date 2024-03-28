@@ -135,7 +135,6 @@ const EventWidget: FC<IEventWidgetProps> = ({ className = '' }) => {
                       'Live'
                     ) : (
                       <TimeChip
-                        isLive={isLive}
                         startDate={startDate}
                         userTimeZone={userTimezone}
                       />
