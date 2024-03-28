@@ -17,9 +17,11 @@ const getAudience = async ({
   pageParam = null,
   queryKey,
 }: QueryFunctionContext<any>) => {
+  const [_queryKey, entity, entityId, params] = queryKey;
   if (pageParam === null) {
-    return await apiService.get(`/${queryKey[1]}/${queryKey[2]}/audience`, {
+    return await apiService.get(`/${entity}/${entityId}/audience`, {
       limit: 10,
+      ...(params || {}),
     });
   } else return await apiService.get(pageParam);
 };
@@ -28,9 +30,10 @@ export const useAudience = (
   entity: string,
   entityId: string,
   rest?: Record<string, any>,
+  params?: Record<string, string>,
 ) => {
   return useInfiniteQuery({
-    queryKey: ['audience', entity, entityId],
+    queryKey: ['audience', entity, entityId, params],
     queryFn: getAudience,
     getNextPageParam: (lastPage: any) => {
       const pageDataLen = lastPage?.data?.result?.data?.length;
