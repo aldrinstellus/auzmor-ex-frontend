@@ -9,18 +9,20 @@ type AppProps = {
 };
 
 const TimeChip: FC<AppProps> = ({ startDate, userTimeZone }) => {
-  const [timeLeft, setTimeLeft] = useState<any>(''); // State to store the time left
+  const [timeLeft, setTimeLeft] = useState<any>(
+    getTimeFromNow(startDate, userTimeZone),
+  );
   let interval: any;
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    // Calculate the difference between finalDate and currentDate
+    // Calculate the difference between start date and current date
     const timeDiff = moment(startDate).diff(moment());
     if (timeDiff <= 0) {
       queryClient.invalidateQueries(['learnEvent']);
       return;
     }
-    // Check if time left is less than a minute
+    // Check if time left is less than 5 minutes
     if (timeDiff < 5 * 60 * 1000) {
       interval = setInterval(() => {
         if (moment(startDate).diff(moment()) <= 0) {
