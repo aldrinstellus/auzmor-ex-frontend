@@ -13,6 +13,7 @@ import { useFeedStore } from 'stores/feedStore';
 import { ITeam } from './teams';
 import { IGetUser } from './users';
 import { ILocation } from './location';
+import { useCommentStore } from 'stores/commentStore';
 
 export interface IReactionsCount {
   [key: string]: number;
@@ -31,6 +32,7 @@ export enum AudienceEntityType {
   User = 'USER',
   Team = 'TEAM',
   Channel = 'CHANNEL',
+  All = 'ALL',
 }
 
 export interface IAudience {
@@ -455,37 +457,54 @@ export const myProfileFeed = async (
     [key: string]: IPost;
   },
   setFeed: (feed: { [key: string]: IPost }) => void,
+  appendComments: (comments: IComment[]) => void,
 ) => {
   let response = null;
+  const comments: IComment[] = [];
+
+  // Fetching data
   if (!!!context.pageParam) {
     response = await apiService.get('/posts/my-profile', context.queryKey[1]);
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
-    return response;
   } else {
     response = await apiService.get(context.pageParam, context.queryKey[1]);
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
-    return response;
   }
+
+  // Collecting all comments
+  response.data.result.data.forEach((eachPost: IPost) =>
+    comments.push(...(eachPost?.relevantComments || [])),
+  );
+
+  // appending post to comment store
+  appendComments(comments);
+
+  // Updating feed store
+  setFeed({
+    ...feed,
+    ...chain(response.data.result.data).keyBy('id').value(),
+  });
+
+  // Updating response
+  response.data.result.data = response.data.result.data.map(
+    (eachPost: IPost) => ({ id: eachPost.id }),
+  );
+
+  // Setting next next param
+  if (!!context.pageParam) {
+    if (context.pageParam == response.data.result.paging.next) {
+      response.data.result.paging.next = null;
+    }
+  }
+  return response;
 };
 
 export const useInfiniteMyProfileFeed = (q?: Record<string, any>) => {
   const { feed, setFeed } = useFeedStore();
+  const { appendComments } = useCommentStore();
   return {
     ...useInfiniteQuery({
       queryKey: ['my-profile-feed', q],
-      queryFn: (context) => myProfileFeed(context, feed, setFeed),
+      queryFn: (context) =>
+        myProfileFeed(context, feed, setFeed, appendComments),
       getNextPageParam: (lastPage: any) => {
         const pageDataLen = lastPage?.data?.result?.data?.length;
         const pageLimit = lastPage?.data?.result?.paging?.limit;
@@ -513,32 +532,47 @@ export const peopleProfileFeed = async (
   },
   setFeed: (feed: { [key: string]: IPost }) => void,
   userId: string,
+  appendComments: (comments: IComment[]) => void,
 ) => {
   let response = null;
+  const comments: IComment[] = [];
+
+  // Fetching data
   if (!!!context.pageParam) {
     response = await apiService.get(
       `/posts/people-profile?memberId=${userId}`,
       context.queryKey[1],
     );
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
-    return response;
   } else {
     response = await apiService.get(context.pageParam, context.queryKey[1]);
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
-    return response;
   }
+
+  // Collecting all comments
+  response.data.result.data.forEach((eachPost: IPost) =>
+    comments.push(...(eachPost?.relevantComments || [])),
+  );
+
+  // appending post to comment store
+  appendComments(comments);
+
+  // Updating feed store
+  setFeed({
+    ...feed,
+    ...chain(response.data.result.data).keyBy('id').value(),
+  });
+
+  // Updating response
+  response.data.result.data = response.data.result.data.map(
+    (eachPost: IPost) => ({ id: eachPost.id }),
+  );
+
+  // Setting next next param
+  if (!!context.pageParam) {
+    if (context.pageParam == response.data.result.paging.next) {
+      response.data.result.paging.next = null;
+    }
+  }
+  return response;
 };
 
 export const useInfinitePeopleProfileFeed = (
@@ -546,10 +580,12 @@ export const useInfinitePeopleProfileFeed = (
   q?: Record<string, any>,
 ) => {
   const { feed, setFeed } = useFeedStore();
+  const { appendComments } = useCommentStore();
   return {
     ...useInfiniteQuery({
       queryKey: ['people-profile-feed', q, userId],
-      queryFn: (context) => peopleProfileFeed(context, feed, setFeed, userId),
+      queryFn: (context) =>
+        peopleProfileFeed(context, feed, setFeed, userId, appendComments),
       getNextPageParam: (lastPage: any) => {
         const pageDataLen = lastPage?.data?.result?.data?.length;
         const pageLimit = lastPage?.data?.result?.paging?.limit;
@@ -576,32 +612,44 @@ export const fetchFeed = async (
     [key: string]: IPost;
   },
   setFeed: (feed: { [key: string]: IPost }) => void,
+  appendComments: (comments: IComment[]) => void,
 ) => {
   let response = null;
+  const comments: IComment[] = [];
+
+  // Fetching data
   if (!!!context.pageParam) {
     response = await apiService.get('/posts', context.queryKey[1]);
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
-    return response;
   } else {
     response = await apiService.get(context.pageParam);
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
+  }
+
+  // Collecting all comments
+  response.data.result.data.forEach((eachPost: IPost) =>
+    comments.push(...(eachPost?.relevantComments || [])),
+  );
+
+  // appending post to comment store
+  appendComments(comments);
+
+  // Updating feed store
+  setFeed({
+    ...feed,
+    ...chain(response.data.result.data).keyBy('id').value(),
+  });
+
+  // Updating response
+  response.data.result.data = response.data.result.data.map(
+    (eachPost: IPost) => ({ id: eachPost.id }),
+  );
+
+  // Setting next next param
+  if (!!context.pageParam) {
     if (context.pageParam == response.data.result.paging.next) {
       response.data.result.paging.next = null;
     }
-    return response;
   }
+  return response;
 };
 
 export const fetchScheduledPosts = async (
@@ -615,30 +663,32 @@ export const fetchScheduledPosts = async (
   setFeed: (feed: { [key: string]: IPost }) => void,
 ) => {
   let response = null;
+
+  // Fetching data
   if (!!!context.pageParam) {
     response = await apiService.get('/posts/scheduled');
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
-    return response;
   } else {
     response = await apiService.get(context.pageParam);
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
+  }
+
+  // Updating feed store
+  setFeed({
+    ...feed,
+    ...chain(response.data.result.data).keyBy('id').value(),
+  });
+
+  // Updating response
+  response.data.result.data = response.data.result.data.map(
+    (eachPost: IPost) => ({ id: eachPost.id }),
+  );
+
+  // Setting next next param
+  if (!!context.pageParam) {
     if (context.pageParam == response.data.result.paging.next) {
       response.data.result.paging.next = null;
     }
-    return response;
   }
+  return response;
 };
 
 export const fetchBookmarks = async (
@@ -650,32 +700,44 @@ export const fetchBookmarks = async (
     [key: string]: IPost;
   },
   setFeed: (feed: { [key: string]: IPost }) => void,
+  appendComments: (comments: IComment[]) => void,
 ) => {
   let response = null;
+  const comments: IComment[] = [];
+
+  // Fetching data
   if (!!!context.pageParam) {
     response = await apiService.get('/posts/my-bookmarks');
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
-    return response;
   } else {
     response = await apiService.get(context.pageParam);
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
+  }
+
+  // Collecting all comments
+  response.data.result.data.forEach((eachPost: IPost) =>
+    comments.push(...(eachPost?.relevantComments || [])),
+  );
+
+  // appending post to comment store
+  appendComments(comments);
+
+  // Updating feed store
+  setFeed({
+    ...feed,
+    ...chain(response.data.result.data).keyBy('id').value(),
+  });
+
+  // Updating response
+  response.data.result.data = response.data.result.data.map(
+    (eachPost: IPost) => ({ id: eachPost.id }),
+  );
+
+  // Setting next next param
+  if (!!context.pageParam) {
     if (context.pageParam == response.data.result.paging.next) {
       response.data.result.paging.next = null;
     }
-    return response;
   }
+  return response;
 };
 
 const feedFunction: Record<string, any> = {
@@ -686,12 +748,14 @@ const feedFunction: Record<string, any> = {
 
 export const useInfiniteFeed = (pathname: string, q?: Record<string, any>) => {
   const { feed, setFeed } = useFeedStore();
+  const { appendComments } = useCommentStore();
   const queryKey = pathname.replaceAll('/', '') || 'feed';
   const queryFunction = queryKey === '' ? fetchFeed : feedFunction[queryKey];
   return {
     ...useInfiniteQuery({
       queryKey: [queryKey, q],
-      queryFn: (context) => queryFunction(context, feed, setFeed),
+      queryFn: (context) =>
+        queryFunction(context, feed, setFeed, appendComments),
       getNextPageParam: (lastPage: any) => {
         const pageDataLen = lastPage?.data?.result?.data?.length;
         const pageLimit = lastPage?.data?.result?.paging?.limit;
@@ -804,40 +868,57 @@ export const myRecognitionFeed = async (
     [key: string]: IPost;
   },
   setFeed: (feed: { [key: string]: IPost }) => void,
+  appendComments: (comments: IComment[]) => void,
 ) => {
   let response = null;
+  const comments: IComment[] = [];
+
+  // Fetching data
   if (!!!context.pageParam) {
     response = await apiService.get(
       'posts/recognitions/me',
       context.queryKey[1],
     );
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
-    return response;
   } else {
     response = await apiService.get(context.pageParam, context.queryKey[1]);
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
-    return response;
   }
+
+  // Collecting all comments
+  response.data.result.data.forEach((eachPost: IPost) =>
+    comments.push(...(eachPost?.relevantComments || [])),
+  );
+
+  // appending post to comment store
+  appendComments(comments);
+
+  // Updating feed store
+  setFeed({
+    ...feed,
+    ...chain(response.data.result.data).keyBy('id').value(),
+  });
+
+  // Updating response
+  response.data.result.data = response.data.result.data.map(
+    (eachPost: IPost) => ({ id: eachPost.id }),
+  );
+
+  // Setting next next param
+  if (!!context.pageParam) {
+    if (context.pageParam == response.data.result.paging.next) {
+      response.data.result.paging.next = null;
+    }
+  }
+  return response;
 };
 
 export const useInfiniteMyRecognitionFeed = (q?: Record<string, any>) => {
   const { feed, setFeed } = useFeedStore();
+  const { appendComments } = useCommentStore();
   return {
     ...useInfiniteQuery({
       queryKey: ['my-recognition-feed', q],
-      queryFn: (context) => myRecognitionFeed(context, feed, setFeed),
+      queryFn: (context) =>
+        myRecognitionFeed(context, feed, setFeed, appendComments),
       getNextPageParam: (lastPage: any) => {
         const pageDataLen = lastPage?.data?.result?.data?.length;
         const pageLimit = lastPage?.data?.result?.paging?.limit;
@@ -865,32 +946,47 @@ export const peopleProfileRecognitionFeed = async (
   },
   setFeed: (feed: { [key: string]: IPost }) => void,
   userId: string,
+  appendComments: (comments: IComment[]) => void,
 ) => {
   let response = null;
+  const comments: IComment[] = [];
+
+  // Fetching data
   if (!!!context.pageParam) {
     response = await apiService.get(
       `/posts/recognitions/${userId}`,
       context.queryKey[1],
     );
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
-    return response;
   } else {
     response = await apiService.get(context.pageParam, context.queryKey[1]);
-    setFeed({
-      ...feed,
-      ...chain(response.data.result.data).keyBy('id').value(),
-    });
-    response.data.result.data = response.data.result.data.map(
-      (eachPost: IPost) => ({ id: eachPost.id }),
-    );
-    return response;
   }
+
+  // Collecting all comments
+  response.data.result.data.forEach((eachPost: IPost) =>
+    comments.push(...(eachPost?.relevantComments || [])),
+  );
+
+  // appending post to comment store
+  appendComments(comments);
+
+  // Updating feed store
+  setFeed({
+    ...feed,
+    ...chain(response.data.result.data).keyBy('id').value(),
+  });
+
+  // Updating response
+  response.data.result.data = response.data.result.data.map(
+    (eachPost: IPost) => ({ id: eachPost.id }),
+  );
+
+  // Setting next next param
+  if (!!context.pageParam) {
+    if (context.pageParam == response.data.result.paging.next) {
+      response.data.result.paging.next = null;
+    }
+  }
+  return response;
 };
 
 export const useInfinitePeopleProfileRecognitionFeed = (
@@ -898,11 +994,18 @@ export const useInfinitePeopleProfileRecognitionFeed = (
   q?: Record<string, any>,
 ) => {
   const { feed, setFeed } = useFeedStore();
+  const { appendComments } = useCommentStore();
   return {
     ...useInfiniteQuery({
       queryKey: ['people-profile-recognition-feed', q, userId],
       queryFn: (context) =>
-        peopleProfileRecognitionFeed(context, feed, setFeed, userId),
+        peopleProfileRecognitionFeed(
+          context,
+          feed,
+          setFeed,
+          userId,
+          appendComments,
+        ),
       getNextPageParam: (lastPage: any) => {
         const pageDataLen = lastPage?.data?.result?.data?.length;
         const pageLimit = lastPage?.data?.result?.paging?.limit;
