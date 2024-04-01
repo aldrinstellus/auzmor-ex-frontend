@@ -113,21 +113,21 @@ const LearnCard: FC<ILearnCardProps> = ({
   const handleCardClick = () => {
     switch (type) {
       case LearnCardEnum.Course:
-        window.location.replace(
+        window.location.assign(
           `${getLearnUrl()}/user/courses/${data.id}/detail`,
         );
         break;
       case LearnCardEnum.Path:
-        window.location.replace(
-          `${getLearnUrl()}/user/paths/${data.id}/detail`,
-        );
+        window.location.assign(`${getLearnUrl()}/user/paths/${data.id}/detail`);
         break;
       case LearnCardEnum.Event:
-        window.location.replace(`${getLearnUrl()}/events/${data.id}`);
+        window.location.assign(`${getLearnUrl()}/events/${data.id}`);
         break;
     }
   };
 
+  const chaptersCount = data?.dependent_entities?.chapters_count;
+  const coursesCount = data?.dependent_entities?.courses_count;
   return (
     <Card className={style} onClick={handleCardClick}>
       <img
@@ -165,7 +165,7 @@ const LearnCard: FC<ILearnCardProps> = ({
           </p>
         </div>
       )}
-      <div className="absolute bottom-0 left-0 flex flex-col p-4 z-10 gap-2 w-full">
+      <div className="absolute bottom-0 left-0 flex flex-col py-4 pl-4 z-10 gap-2 w-full">
         <Categories />
         {data?.average_rating && <Rating rating={data?.average_rating} />}
         <div className="flex-col gap-0.5">
@@ -187,36 +187,37 @@ const LearnCard: FC<ILearnCardProps> = ({
             />
           )}
         </div>
-        {type === LearnCardEnum.Course &&
-          data?.dependent_entities?.chapters_count > 0 && (
-            <div className="flex gap-2">
-              <div className="flex gap-1 items-center">
-                <Icon
-                  name="videoSquare"
-                  size={16}
-                  color="text-white"
-                  hover={false}
-                />
-                <p className="text-xs text-white">
-                  {data?.dependent_entities?.chapters_count} Lessons
-                </p>
-              </div>
-              <div className="flex gap-1 items-center">
-                <Icon name="clock" size={16} color="text-white" hover={false} />
-                <p className="text-xs text-white">
-                  {getDuration(data?.duration)}
-                </p>
-              </div>
+        {type === LearnCardEnum.Course && chaptersCount > 0 && (
+          <div className="flex gap-2">
+            <div className="flex gap-1 items-center">
+              <Icon
+                name="videoSquare"
+                size={16}
+                color="text-white"
+                hover={false}
+              />
+              <p className="text-xs text-white">
+                {`${chaptersCount} ${
+                  chaptersCount === 1 ? 'Lesson' : 'Lessons'
+                }`}
+              </p>
             </div>
-          )}
+            <div className="flex gap-1 items-center">
+              <Icon name="clock" size={16} color="text-white" hover={false} />
+              <p className="text-xs text-white">
+                {getDuration(data?.duration)}
+              </p>
+            </div>
+          </div>
+        )}
 
         {type === LearnCardEnum.Path && (
           <div className="flex gap-2">
             <div className="flex gap-1 items-center">
               <Icon name="teacher" size={16} color="text-white" hover={false} />
-              <p className="text-xs text-white">
-                {data?.dependent_entities?.courses_count} Course
-              </p>
+              <p className="text-xs text-white">{`${coursesCount} ${
+                coursesCount === 1 ? 'Course' : 'Courses'
+              }`}</p>
             </div>
             <div className="flex gap-1 items-center">
               <Icon name="clock" size={16} color="text-white" hover={false} />
@@ -260,18 +261,22 @@ const LearnCard: FC<ILearnCardProps> = ({
             />
             <div className="flex-col gap-0.2">
               <div className="text-white text-sm font-medium">
-                {data?.my_enrollment?.assigned_by?.display_name ||
-                  data?.my_enrollment?.assigned_by?.full_name ||
-                  data?.my_enrollment?.assigned_by?.first_name ||
-                  'User'}
+                {data?.my_enrollment?.assigned_by?.display_name == user?.name
+                  ? 'Self Enrolled'
+                  : data?.my_enrollment?.assigned_by?.full_name ||
+                    data?.my_enrollment?.assigned_by?.first_name ||
+                    'User'}
               </div>
-              <div className="text-xs text-white font-light">Assigned by</div>
+              {data?.my_enrollment?.assigned_by?.display_name ==
+              user?.name ? null : (
+                <div className="text-xs text-white font-light">Assigned by</div>
+              )}
             </div>
           </div>
         )}
       </div>
       {data?.certificate && (
-        <div className="flex items-center justify-center h-5 w-5 absolute bottom-4 right-4 bg-primary-500 z-10 rounded">
+        <div className="flex items-center justify-center h-5 w-5 absolute top-4 right-4 bg-primary-500 z-10 rounded">
           <Icon name="medalStar" size={14} color="text-white" hover={false} />
         </div>
       )}

@@ -1,12 +1,11 @@
 import { clsx } from 'clsx';
 import Button from 'components/Button';
-import Card from 'components/Card';
 import LearnCard from 'components/LearnCard';
 import { useShouldRender } from 'hooks/useShouldRender';
 import { useProgressTracker } from 'queries/learn';
 import React, { FC, useMemo } from 'react';
 import { getLearnUrl } from 'utils/misc';
-import Tracker from 'images/tracker.svg';
+import EmptyState from './EmptyState';
 
 interface IProgressTrackerWidgetProps {
   className?: string;
@@ -33,12 +32,12 @@ const ProgressTrackerWidget: FC<IProgressTrackerWidgetProps> = ({
   return (
     <div className={style}>
       <div className="flex justify-between items-center ">
-        <div className="text-base font-bold">Progress tracker</div>
+        <div className="text-base font-bold">Progress Tracker</div>
         <Button
           label={'View all'}
           className="bg-transparent !text-primary-500 hover:!text-primary-600 hover:!bg-transparent active:!bg-transparent active:!text-primary-700"
           onClick={() =>
-            window.location.replace(
+            window.location.assign(
               `${getLearnUrl()}/user/trainings?type=elearning&tab=IN_PROGRESS`,
             )
           }
@@ -46,17 +45,7 @@ const ProgressTrackerWidget: FC<IProgressTrackerWidgetProps> = ({
       </div>
       <div className="mt-2">
         {!isLoading && !!!trackerData.length ? (
-          <Card className="flex flex-col w-full h-[264px] py-6 items-center gap-4">
-            <p className="text-base font-bold text-neutral-900">
-              Progress tracking
-            </p>
-            <div className="flex flex-col items-center gap-5">
-              <img src={Tracker} />
-              <p className="text-neutral-500 text-xs">
-                Your can track your course, path success here
-              </p>
-            </div>
-          </Card>
+          <EmptyState />
         ) : (
           <LearnCard
             showProgressInfo

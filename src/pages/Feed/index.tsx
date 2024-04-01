@@ -33,6 +33,7 @@ import {
   PostFilterKeys,
   PostFilterPreference,
   PostType,
+  PostTypeMapping,
   useInfiniteFeed,
 } from 'queries/post';
 
@@ -44,12 +45,13 @@ import NoPosts from 'images/NoPostsFound.png';
 import AppLauncher from 'components/AppLauncher';
 import MyTeamWidget from 'components/MyTeamWidget';
 import useRole from 'hooks/useRole';
-import { isFiltersEmpty, isRegularPost } from 'utils/misc';
+import { getLearnUrl, isFiltersEmpty, isRegularPost } from 'utils/misc';
 import useMediaQuery from 'hooks/useMediaQuery';
 import ProgressTrackerWidget from 'components/ProgressTrackerWidget';
 import EventWidget from 'components/EventWidget';
 import { useGetRecommendation } from 'queries/learn';
 import Recommendation from 'components/Recommendation';
+import useAuth from 'hooks/useAuth';
 
 interface IFeedProps {}
 
@@ -76,7 +78,6 @@ export interface IMyReactions {
 
 const Feed: FC<IFeedProps> = () => {
   const isLargeScreen = useMediaQuery('(min-width: 1300px)');
-  useScrollTop();
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
   const hashtag = searchParams.get('hashtag') || '';
@@ -91,6 +92,34 @@ const Feed: FC<IFeedProps> = () => {
   const { feed } = useFeedStore();
   const { ref, inView } = useInView();
   const currentDate = new Date().toISOString();
+  const { getScrollTop, pauseRecordingScrollTop, resumeRecordingScrollTop } =
+    useScrollTop('app-shell-container');
+  const { user } = useAuth();
+
+  //handle scroll
+  useEffect(() => {
+    if (hashtag) {
+      pauseRecordingScrollTop();
+      const ele = document.getElementById('app-shell-container');
+      if (ele) {
+        ele.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'smooth',
+        });
+      }
+    } else {
+      resumeRecordingScrollTop();
+      const ele = document.getElementById('app-shell-container');
+      if (ele) {
+        ele.scrollTo({
+          top: getScrollTop(),
+          left: 0,
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [hashtag]);
 
   // Learn data
   const { data: recommendationData, isLoading: recommendationLoading } =
@@ -104,7 +133,9 @@ const Feed: FC<IFeedProps> = () => {
     useInfiniteFeed(
       pathname,
       isFiltersEmpty({
-        [PostFilterKeys.PostType]: appliedFeedFilters[PostFilterKeys.PostType],
+        [PostFilterKeys.PostType]: appliedFeedFilters[PostFilterKeys.PostType]
+          ?.map((postType) => (PostTypeMapping as any)[postType] || postType)
+          .flat(),
         ...(appliedFeedFilters[PostFilterKeys.PostPreference]?.includes(
           PostFilterPreference.BookmarkedByMe,
         ) && { [PostFilterPreference.BookmarkedByMe]: true }),
@@ -424,7 +455,7 @@ const Feed: FC<IFeedProps> = () => {
 
   const recommendationIndex = useMemo(() => {
     const totalPosts = announcementFeedIds.length + regularFeedIds.length;
-    if (totalPosts >= 5) {
+    if (totalPosts > 10) {
       if (trendingCards.length > 1) {
         if (recentlyPublishedCards.length > 1) {
           return { tIndex: 4, rIndex: 9 };
@@ -434,6 +465,20 @@ const Feed: FC<IFeedProps> = () => {
       } else {
         if (recentlyPublishedCards.length > 1) {
           return { tIndex: -1, rIndex: 4 };
+        } else {
+          return { tIndex: -1, rIndex: -1 };
+        }
+      }
+    } else if (totalPosts <= 10 && totalPosts > 3) {
+      if (trendingCards.length > 1) {
+        if (recentlyPublishedCards.length > 1) {
+          return { tIndex: 2, rIndex: 5 };
+        } else {
+          return { tIndex: 2, rIndex: -1 };
+        }
+      } else {
+        if (recentlyPublishedCards.length > 1) {
+          return { tIndex: -1, rIndex: 2 };
         } else {
           return { tIndex: -1, rIndex: -1 };
         }
@@ -450,6 +495,26 @@ const Feed: FC<IFeedProps> = () => {
       }
     } else return { tIndex: -1, rIndex: -1 };
   }, [announcementFeedIds, regularFeedIds]);
+
+  const handleTrendingContent = () => {
+    if (user?.preferences?.learnerViewType === 'MODERN') {
+      window.location.assign(`${getLearnUrl()}/user/trainings`);
+    } else {
+      window.location.assign(`${getLearnUrl()}/user/courses`);
+    }
+  };
+
+  const handleRecentlyPublishContent = () => {
+    if (user?.preferences?.learnerViewType === 'MODERN') {
+      window.location.assign(
+        `${getLearnUrl()}/user/trainings?type=elearning&tab=PUBLIC&sort=created_at`,
+      );
+    } else {
+      window.location.assign(
+        `${getLearnUrl()}/user/courses/shared?sort=created_at&viewAs=Grid`,
+      );
+    }
+  };
 
   return (
     <div className="pb-6 flex justify-between">
@@ -476,13 +541,17 @@ const Feed: FC<IFeedProps> = () => {
                     className="flex flex-col gap-6"
                     key={id}
                   >
-                    <VirtualisedPost post={feed[id!]} />
+                    <VirtualisedPost
+                      post={feed[id!]}
+                      comments={feed[id]?.relevantComments || []}
+                    />
                   </div>
                   {index === recommendationIndex.tIndex && (
                     <Recommendation
                       cards={trendingCards}
                       title="Trending Content"
                       isLoading={recommendationLoading}
+                      onCLick={handleTrendingContent}
                     />
                   )}
                   {index === recommendationIndex.rIndex && (
@@ -490,6 +559,7 @@ const Feed: FC<IFeedProps> = () => {
                       cards={recentlyPublishedCards}
                       title="Recently Published"
                       isLoading={recommendationLoading}
+                      onCLick={handleRecentlyPublishContent}
                     />
                   )}
                 </>
