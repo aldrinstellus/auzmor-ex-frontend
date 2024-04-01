@@ -276,7 +276,7 @@ const LearnCard: FC<ILearnCardProps> = ({
         )}
       </div>
       {data?.certificate && (
-        <div className="flex items-center justify-center h-5 w-5 absolute bottom-4 right-4 bg-primary-500 z-10 rounded">
+        <div className="flex items-center justify-center h-5 w-5 absolute top-4 right-4 bg-primary-500 z-10 rounded">
           <Icon name="medalStar" size={14} color="text-white" hover={false} />
         </div>
       )}
