@@ -281,7 +281,7 @@ export enum PostType {
 export const PostTypeMapping = {
   [PostType.Training]: ['PUBLISH_COURSE', 'PUBLISH_PATH'],
   [PostType.Event]: ['PUBLISH_EVENT', 'ASSIGN_EVENT'],
-  [PostType.Forum]: ['FORUM_UPDATE', 'FORUM_POLL'],
+  [PostType.Forum]: ['FORUM_POST', 'FORUM_POLL'],
   [PostType.TrainingAssignment]: ['ASSIGN_COURSE', 'ASSIGN_PATH'],
 };
 
