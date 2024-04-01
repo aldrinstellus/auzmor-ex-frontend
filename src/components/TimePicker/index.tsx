@@ -236,7 +236,6 @@ const TimePicker: FC<TimePickerProps> = ({
             onFocus={() => setOptions(getOptions())}
             onBlur={() => {
               field.onBlur();
-              setTimeout(() => setShowDropdown(false), 800);
             }}
             onClick={() => setShowDropdown(true)}
             maxLength={8}
