@@ -18,14 +18,12 @@ import { useAppStore } from 'stores/appStore';
 
 import { isFiltersEmpty } from 'utils/misc';
 import { useTranslation } from 'react-i18next';
-
-const AppLauncher = () => {
-  const { t } = useTranslation('appLauncher');
 import { useShouldRender } from 'hooks/useShouldRender';
 
 const ID = 'AppLauncher';
 
 const AppLauncher = () => {
+  const { t } = useTranslation('appLauncher');
   const shouldRender = useShouldRender(ID);
   if (!shouldRender) {
     return <></>;
@@ -148,4 +146,4 @@ const AppLauncher = () => {
   );
 };
 
-export default memo(AppLauncher)
+export default memo(AppLauncher);

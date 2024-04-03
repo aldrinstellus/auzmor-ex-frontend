@@ -19,7 +19,6 @@ import { IDepartment } from 'queries/department';
 import { IDesignation } from 'queries/designation';
 import { IPost } from 'queries/post';
 import moment from 'moment';
-import { ProductEnum } from 'contexts/ProductProvider';
 import { EMPTY_REGEX, HEX_REGEX, SESSION_ID } from './constants';
 
 export const twConfig: any = resolveConfig(tailwindConfig);
@@ -171,26 +170,6 @@ export const getSubDomain = (host: string) => {
   } else {
     return '';
   }
-};
-
-export const getProduct: () => ProductEnum = () => {
-  const host = window.location.host;
-  if (
-    host.includes(
-      process.env.REACT_APP_OFFICE_BASE_URL?.replace('https://', '') ||
-        'office.auzmor.com',
-    )
-  ) {
-    return ProductEnum.Office;
-  } else if (
-    host.includes(
-      process.env.REACT_APP_LXP_BASE_URL?.replace('https://', '') ||
-        'lxp.auzmor.com',
-    )
-  ) {
-    return ProductEnum.Lxp;
-  }
-  return ProductEnum.Office;
 };
 
 export const removeElementsByClass = (className: string) => {

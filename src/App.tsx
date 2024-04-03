@@ -13,7 +13,6 @@ import { ProductEnum, getProduct } from 'utils/apiService';
 import { getLearnUrl } from 'utils/misc';
 
 import './i18n/config';
-import ProductProvider from 'contexts/ProductProvider';
 
 function App() {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
