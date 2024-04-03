@@ -91,7 +91,7 @@ const AccountCard = () => {
                 <Button
                   dataTestId="user-menu-profile"
                   variant={Variant.Secondary}
-                  label="Go to my profile"
+                  label={t('account.goToProfile')}
                   onClick={() => {
                     navigate('/profile', { state: { userId: user?.id } });
                     close();
