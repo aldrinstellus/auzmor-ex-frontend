@@ -71,6 +71,7 @@ export type LinkAttachment = {
   description: string;
   image: string;
   favicon: string;
+  _id: string;
 };
 
 export interface IPost {
