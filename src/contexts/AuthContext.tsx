@@ -15,7 +15,8 @@ import AccountDeactivated from 'components/AccountDeactivated';
 import { useBrandingStore } from 'stores/branding';
 import { INotificationSettings } from 'queries/users';
 import useProduct from 'hooks/useProduct';
-import { ProductEnum, getProduct } from 'utils/apiService';
+import apiService, { ProductEnum, getProduct } from 'utils/apiService';
+import learnApiService from 'utils/learnApiService';
 
 type AuthContextProps = {
   children: ReactNode;
@@ -126,6 +127,18 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
         ) || '',
       );
       query.delete('regionUrl');
+    }
+
+    const lxpBaseUrl = getItem(`${ProductEnum.Lxp}RegionUrl`);
+    const learnBaseUrl = getItem(`${ProductEnum.Learn}RegionUrl`);
+    console.log({ lxpBaseUrl, learnBaseUrl, isLxp });
+    if (
+      (process.env.REACT_APP_ENV === 'PRODUCTION' ||
+        process.env.REACT_APP_ENV === 'STAGING') &&
+      isLxp
+    ) {
+      if (lxpBaseUrl) apiService.updateBaseUrl(lxpBaseUrl);
+      if (learnBaseUrl) learnApiService.updateBaseUrl(learnBaseUrl);
     }
 
     const visitToken = query.get('visitToken');

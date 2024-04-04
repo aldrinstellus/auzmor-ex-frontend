@@ -109,6 +109,10 @@ export class ApiService {
     );
   }
 
+  updateBaseUrl = (baseURL: string) => {
+    this.instance.defaults.baseURL = baseURL;
+  };
+
   updateContentType = (contentType: string) => {
     this.instance.defaults.headers.common['Content-Type'] = contentType;
   };
