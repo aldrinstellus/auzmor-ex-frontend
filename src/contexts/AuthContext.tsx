@@ -109,7 +109,22 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
 
     const regionUrl = query.get('regionUrl');
     if (regionUrl) {
-      setItem('regionUrl', regionUrl);
+      setItem(`${ProductEnum.Learn}RegionUrl`, regionUrl);
+      const learnSubDomain = getSubDomain(regionUrl);
+      const lxpSubDomain = learnSubDomain.replace(
+        ProductEnum.Learn,
+        ProductEnum.Office,
+      ); //Replace with office instead of lxp because currently lxp backend is on office
+      const currentSubDomain = getSubDomain(
+        process.env.REACT_APP_LXP_BACKEND_BASE_URL || '',
+      );
+      setItem(
+        `${ProductEnum.Lxp}RegionUrl`,
+        process.env.REACT_APP_LXP_BACKEND_BASE_URL?.replace(
+          currentSubDomain,
+          lxpSubDomain,
+        ) || '',
+      );
       query.delete('regionUrl');
     }
 
