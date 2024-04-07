@@ -54,7 +54,7 @@ const MyTeamWidget: FC<IMyTeamWidgetProps> = ({ className = '' }) => {
         className="px-6 flex items-center justify-between cursor-pointer"
         onClick={toggleModal}
       >
-        <div className="font-bold">My Teams</div>
+        <div className="font-bold">Teams</div>
         <Icon
           name={open ? 'arrowUp' : 'arrowDown'}
           size={20}
@@ -105,9 +105,9 @@ const MyTeamWidget: FC<IMyTeamWidgetProps> = ({ className = '' }) => {
             }
             return (
               <div className="flex justify-center flex-col items-center gap-4">
-                <img src={TeamNotFound} alt="Team Not Found" width={100} />
+                <img src={TeamNotFound} alt="Team Not Found" width={148} />
                 <p className="text-sm font-semibold text-neutral-500 text-center px-2">
-                  No teams found
+                  You’re not part of any team yet
                 </p>
               </div>
             );

@@ -166,7 +166,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
       stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-edit-post',
       permissions: ['UPDATE_MY_POSTS'],
-      enabled: data.createdBy?.userId === user?.id,
+      enabled: !data?.isAutomatedPost && data.createdBy?.userId === user?.id, // editing of automated post is not allow.
     },
     {
       icon: 'closeCircle',
@@ -179,16 +179,6 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
         data.type === PostType.Poll &&
         data.pollContext?.closedAt > currentDate &&
         (isAdmin || data.createdBy?.userId === user?.id),
-    },
-    {
-      icon: 'delete',
-      label: 'Delete post',
-      onClick: () => showConfirm(),
-      iconClassName: '!text-red-500',
-      labelClassName: '!text-red-500',
-      dataTestId: 'post-ellipsis-delete-post',
-      permissions: ['DELETE_MY_POSTS', 'DELETE_POSTS'],
-      enabled: isAdmin || data.createdBy?.userId === user?.id,
     },
     {
       icon: 'chartOutline',
@@ -209,6 +199,16 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
       dataTestId: 'post-ellipsis-view-acknowledgement-report',
       permissions: ['CREATE_ANNOUNCEMENTS', 'UPDATE_ANNOUNCEMENTS'],
       enabled: !isRegularPost(data, currentDate, isAdmin),
+    },
+    {
+      icon: 'delete',
+      label: 'Delete post',
+      onClick: () => showConfirm(),
+      iconClassName: '!text-red-500',
+      labelClassName: '!text-red-500',
+      dataTestId: 'post-ellipsis-delete-post',
+      permissions: ['DELETE_MY_POSTS', 'DELETE_POSTS'],
+      enabled: isAdmin || data.createdBy?.userId === user?.id,
     },
   ];
 
