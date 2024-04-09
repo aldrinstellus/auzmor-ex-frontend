@@ -2,7 +2,6 @@ import { ReactNode, createContext, useState, useEffect, FC } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { getItem, removeAllItems, setItem } from 'utils/persist';
 import { fetchMe } from 'queries/account';
-import UserOnboard from 'components/UserOnboard';
 import { Role } from 'utils/enum';
 import PageLoader from 'components/PageLoader';
 import { getLearnUrl, getSubDomain, userChannel } from 'utils/misc';
@@ -73,6 +72,7 @@ interface IAuthContext {
   loggedIn: boolean;
   sessionExpired: boolean;
   accountDeactivated: boolean;
+  showOnboard: boolean;
   reset: () => void;
   updateUser: (user: IUser) => void;
   setUser: (user: IUser | null) => void;
@@ -84,6 +84,7 @@ export const AuthContext = createContext<IAuthContext>({
   loggedIn: false,
   sessionExpired: false,
   accountDeactivated: false,
+  showOnboard: false,
   reset: () => {},
   updateUser: () => {},
   setUser: () => {},
@@ -283,15 +284,15 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
         user,
         sessionExpired,
         accountDeactivated,
-        reset,
         loggedIn,
+        showOnboard,
+        reset,
         updateUser,
         setUser,
         setShowOnboard,
       }}
     >
       {children}
-      {showOnboard && <UserOnboard />}
       {sessionExpired && user?.id && <SubscriptionExpired />}
       {accountDeactivated && user?.id && <AccountDeactivated />}
     </AuthContext.Provider>
