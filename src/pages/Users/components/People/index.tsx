@@ -389,6 +389,7 @@ const People: FC<IPeopleProps> = ({
               />
             ) : null}
             <Sort
+              controlled={true}
               setFilter={handleSetSortFilter}
               filterKey={{ createdAt: 'createdAt', aToZ: 'name' }}
               selectedValue={filterSortBy}

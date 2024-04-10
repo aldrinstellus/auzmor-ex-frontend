@@ -33,6 +33,7 @@ export interface IPopupMenuProps {
   title?: ReactNode;
   footer?: ReactNode;
   disabled?: boolean;
+  controlled?: boolean;
   isOpen?: boolean;
 }
 
@@ -43,6 +44,7 @@ const PopupMenu: FC<IPopupMenuProps> = ({
   title,
   footer,
   disabled = false,
+  controlled,
   isOpen,
 }) => {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -51,9 +53,9 @@ const PopupMenu: FC<IPopupMenuProps> = ({
       <Menu.Button as="div" ref={menuButtonRef} disabled={disabled}>
         {triggerNode}
       </Menu.Button>
-      {isOpen && (
+      {(controlled ? isOpen : true) && (
         <Menu.Items
-          static={isOpen}
+          static={controlled}
           className={`bg-white rounded-9xl shadow-lg absolute z-[99999] overflow-hidden focus-visible:outline-none ${className}`}
         >
           {title && title}

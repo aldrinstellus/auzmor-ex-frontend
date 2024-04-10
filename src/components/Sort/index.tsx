@@ -17,6 +17,7 @@ export interface ISortProps {
   entity: string;
   permission?: string[];
   selectedValue?: string;
+  controlled?: boolean;
   dataTestId?: string;
 }
 
@@ -30,6 +31,7 @@ const Sort: FC<ISortProps> = ({
   permission,
   selectedValue,
   dataTestId,
+  controlled,
 }) => {
   const [open, openMenu, closeMenu] = useModal();
   const sortRef = useRef<HTMLDivElement>(null);
@@ -49,6 +51,7 @@ const Sort: FC<ISortProps> = ({
   return (
     <div ref={sortRef}>
       <PopupMenu
+        controlled={controlled}
         triggerNode={
           <div className="relative" onClick={open ? closeMenu : openMenu}>
             <IconButton
