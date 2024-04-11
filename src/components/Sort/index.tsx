@@ -8,6 +8,15 @@ interface ISortByOption {
   desc: string;
 }
 
+interface MenuItem {
+  icon: string;
+  label: string;
+  onClick: () => void;
+  isActive: boolean;
+  dataTestId: string;
+  permissions: string[];
+}
+
 export interface ISortProps {
   setFilter: (filter: string) => void;
   filterKey: Record<string, any>;
@@ -28,17 +37,17 @@ const Sort: FC<ISortProps> = ({
   title,
   footer,
   entity,
-  permission,
-  selectedValue,
-  dataTestId,
+  permission = [],
+  selectedValue = '',
   controlled,
+  dataTestId,
 }) => {
   const [open, openMenu, closeMenu] = useModal();
   const sortRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-      if (sortRef.current && !sortRef.current?.contains(event.target as any)) {
+      if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
         closeMenu();
       }
     };
@@ -48,6 +57,56 @@ const Sort: FC<ISortProps> = ({
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, [closeMenu]);
+
+  const handleClick = (filterValue: string) => {
+    closeMenu();
+    setFilter(filterValue);
+  };
+
+  const menuItems: MenuItem[] = [
+    {
+      icon: 'sortByAcs',
+      label: 'A to Z',
+      onClick: () => handleClick(`${filterKey.aToZ}:${filterValue.asc}`),
+      isActive: selectedValue === `${filterKey.aToZ}:${filterValue.asc}`,
+      dataTestId: `${entity}-sortBy-asc`,
+      permissions: [''],
+    },
+    {
+      icon: 'sortByDesc',
+      label: 'Z to A',
+      onClick: () => handleClick(`${filterKey.aToZ}:${filterValue.desc}`),
+      isActive: selectedValue === `${filterKey.aToZ}:${filterValue.desc}`,
+      dataTestId: `${entity}-sortBy-desc`,
+      permissions: permission,
+    },
+    {
+      icon: 'calendar',
+      label: 'Date added',
+      onClick: () => handleClick(`${filterKey.createdAt}:${filterValue.desc}`),
+      dataTestId: `${entity}-sortby-dateadded`,
+      isActive: selectedValue === `${filterKey.createdAt}:${filterValue.desc}`,
+      permissions: permission,
+    },
+  ];
+
+  const renderTitle = () =>
+    title || (
+      <div className="flex justify-between items-center px-6 py-2 font-sm font-medium text-neutral-900 border-b-1 border-b-neutral-200">
+        <div>Sort by</div>
+      </div>
+    );
+
+  const renderFooter = () =>
+    footer || (
+      <div
+        className="w-full px-6 py-2 font-sm font-bold text-neutral-500 hover:text-primary-500 text-center border-t-1 border-t-neutral-200 cursor-pointer"
+        onClick={() => handleClick('')}
+      >
+        Clear sort
+      </div>
+    );
+
   return (
     <div ref={sortRef}>
       <PopupMenu
@@ -68,66 +127,9 @@ const Sort: FC<ISortProps> = ({
           </div>
         }
         isOpen={open}
-        title={
-          title || (
-            <div
-              className="flex justify-between items-center px-6 py-2 font-sm font-medium text-neutral-900 border-b-1
-                border-b-neutral-200"
-            >
-              <div>Sort by</div>
-            </div>
-          )
-        }
-        footer={
-          footer || (
-            <div
-              className="w-full px-6 py-2 font-sm font-bold text-neutral-500 hover:text-primary-500 text-center border-t-1
-                border-t-neutral-200 cursor-pointer"
-              onClick={() => {
-                closeMenu();
-                setFilter('');
-              }}
-            >
-              Clear sort
-            </div>
-          )
-        }
-        menuItems={[
-          {
-            icon: 'sortByAcs',
-            label: 'A to Z',
-            onClick: () => {
-              closeMenu();
-              setFilter(`${filterKey.aToZ}:${filterValue.asc}`);
-            },
-            isActive: selectedValue === `${filterKey.aToZ}:${filterValue.asc}`,
-            dataTestId: `${entity}-sortBy-asc`,
-            permissions: [''],
-          },
-          {
-            icon: 'sortByDesc',
-            label: 'Z to A',
-            onClick: () => {
-              closeMenu();
-              setFilter(`${filterKey.aToZ}:${filterValue.desc}`);
-            },
-            dataTestId: `${entity}-sortBy-desc`,
-            isActive: selectedValue === `${filterKey.aToZ}:${filterValue.desc}`,
-            permissions: permission,
-          },
-          {
-            icon: 'calendar',
-            label: 'Date added',
-            onClick: () => {
-              closeMenu();
-              setFilter(`${filterKey.createdAt}:${filterValue.desc}`);
-            },
-            dataTestId: `${entity}-sortby-dateadded`,
-            isActive:
-              selectedValue === `${filterKey.createdAt}:${filterValue.desc}`,
-            permissions: permission,
-          },
-        ]}
+        title={renderTitle()}
+        footer={renderFooter()}
+        menuItems={menuItems}
         className="right-60 w-[204px] top-12 border border-neutral-200"
       />
     </div>
