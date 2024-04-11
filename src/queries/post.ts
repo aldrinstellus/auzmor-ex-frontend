@@ -363,6 +363,13 @@ export const updatePost = async (id: string, payload: IPostPayload) => {
   const fileIds = payload.files
     ? payload.files.map((file) => (typeof file === 'string' ? file : file.id))
     : payload.files;
+  const mentionIds = payload.mentions
+    ? payload.mentions.map((mention: any) =>
+        typeof mention === 'string'
+          ? mention
+          : mention?.userId ?? mention?.entityId,
+      )
+    : payload.mentions;
   const shoutoutRecipentIds = payload.shoutoutRecipients
     ? payload.shoutoutRecipients.map((recipient) =>
         typeof recipient === 'string' ? recipient : recipient.userId,
@@ -375,6 +382,7 @@ export const updatePost = async (id: string, payload: IPostPayload) => {
   const data = await apiService.put(`/posts/${id}`, {
     ...payload,
     files: fileIds,
+    mentions: mentionIds,
     shoutoutRecipients: shoutoutRecipentIds,
     link: link,
   });
@@ -633,9 +641,13 @@ export const fetchFeed = async (
 
   // Fetching data
   if (!!!context.pageParam) {
-    response = await apiService.get('/posts', context.queryKey[1]);
+    response = await apiService.get(
+      '/posts',
+      context.queryKey[1],
+      context.signal,
+    );
   } else {
-    response = await apiService.get(context.pageParam);
+    response = await apiService.get(context.pageParam, context.signal);
   }
 
   // Collecting all comments
@@ -791,11 +803,13 @@ export const useInfiniteFeed = (pathname: string, q?: Record<string, any>) => {
 const getPost = async (
   id: string,
   updateFeed: (id: string, post: IPost) => void,
+  appendComments: (comments: IComment[]) => void,
   commentId?: string,
 ) => {
   const response = await apiService.get(
     `/posts/${id}${commentId ? '?commentId=' + commentId : ''}`,
   );
+  appendComments([response.data.result.data.comment as IComment]);
   updateFeed(id, response.data.result.data);
   response.data.result.data = { id: response.data.result.data.id };
   return response;
@@ -803,9 +817,10 @@ const getPost = async (
 
 export const useGetPost = (id: string, commentId?: string) => {
   const updateFeed = useFeedStore((state) => state.updateFeed);
+  const { appendComments } = useCommentStore();
   return useQuery({
     queryKey: ['posts', id, commentId],
-    queryFn: () => getPost(id, updateFeed, commentId),
+    queryFn: () => getPost(id, updateFeed, appendComments, commentId),
   });
 };
 
