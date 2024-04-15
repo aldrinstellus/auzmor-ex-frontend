@@ -1,4 +1,4 @@
-import { DocType } from 'pages/ChannelDetail/components/Documents/components/Doc';
+import { DocType } from 'queries/files';
 
 export const FILES: DocType[] = [
   {
