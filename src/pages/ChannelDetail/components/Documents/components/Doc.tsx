@@ -16,8 +16,8 @@ export const getIconName = (mimeType: string) => {
     'application/msword': 'doc',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
       'doc',
-    'image/jpeg': 'jpg',
-    'image/png': 'png',
+    'image/jpeg': 'img',
+    'image/png': 'img',
     'application/pdf': 'pdf',
     'application/vnd.ms-powerpoint': 'ppt',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation':
@@ -25,6 +25,8 @@ export const getIconName = (mimeType: string) => {
     'application/vnd.ms-excel': 'xls',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
     'application/zip': 'zip',
+    'image/gif': 'img',
+    'application/vnd.google-apps.document': 'doc',
   };
   return MIME_TO_ICON[mimeType];
 };
@@ -36,7 +38,7 @@ const Doc: FC<IDocProps> = ({ file }) => {
   );
 
   const [imgSrc, setImgSrc] = useState<string | undefined>(
-    file.file_thumbnail_url,
+    file.fileThumbnailUrl,
   );
   const onError = () => setImgSrc('');
 
@@ -48,13 +50,13 @@ const Doc: FC<IDocProps> = ({ file }) => {
     [],
   );
 
-  const iconName = getIconName(file.mime_type);
+  const iconName = getIconName(file.mimeType);
   return (
     <>
       <Card
         className={style}
         onClick={() =>
-          imgSrc ? openFilePreview() : window.open(file.file_url, '_blank')
+          imgSrc ? openFilePreview() : window.open(file.fileUrl, '_blank')
         }
       >
         <div className="border border-neutral-300 overflow-hidden rounded-7xl w-full h-28">

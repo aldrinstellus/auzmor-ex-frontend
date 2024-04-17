@@ -158,6 +158,7 @@ import PdfIcon from '../components/Pdf';
 import XlsIcon from '../components/Xls';
 import DocIcon from '../components/Doc';
 import GoogleIcon from '../socialIcons/Google';
+import RefreshIcon from '../components/Refresh';
 
 export const icon = {
   add: Add,
@@ -320,5 +321,7 @@ export const icon = {
   medalStar: MedalStarIcon,
   videoSquare: VideoSquareIcon,
   xls: XlsIcon,
+  xlsx: XlsIcon,
   google: GoogleIcon,
+  refresh: RefreshIcon,
 };
