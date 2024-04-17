@@ -11,7 +11,7 @@ interface IDocProps {
   file: DocType;
 }
 
-const getIconName = (mimeType: string) => {
+export const getIconName = (mimeType: string) => {
   const MIME_TO_ICON: Record<string, string> = {
     'application/msword': 'doc',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
