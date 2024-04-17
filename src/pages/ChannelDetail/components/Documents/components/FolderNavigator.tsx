@@ -2,11 +2,12 @@ import React, { FC, Fragment, useCallback } from 'react';
 import Header from './Header';
 import { useDocumentPath } from 'hooks/useDocumentPath';
 import Folder, { FolderType } from './Folder';
-import Doc, { DocType } from './Doc';
+import Doc from './Doc';
 import { useFiles, useFolders } from 'queries/storage';
 import Skeleton from 'react-loading-skeleton';
 import Card from 'components/Card';
 import Button, { Variant } from 'components/Button';
+import { DocType } from 'queries/files';
 
 interface IFolderNavigatorProps {}
 

@@ -101,15 +101,11 @@ const Document: FC<IDocumentProps> = ({}) => {
     );
   };
 
-  if (isLoading) {
-    return <Spinner />;
-  }
-
   return (
     <Card className="flex flex-col gap-6 p-8 w-full justify-center bg-white">
       <div className="flex justify-between">
         <p className="font-bold text-2xl text-neutral-900">Documents</p>
-        {isSynced && (
+        {isSynced && !isLoading && (
           <Button
             label="Add documents"
             leftIcon="add"
@@ -121,7 +117,11 @@ const Document: FC<IDocumentProps> = ({}) => {
           />
         )}
       </div>
-      {!isSynced ? (
+      {isLoading ? (
+        <div className="flex justify-center items-center w-full p-16">
+          <Spinner />
+        </div>
+      ) : !isSynced ? (
         <ConnectionCard />
       ) : (
         <Fragment>
