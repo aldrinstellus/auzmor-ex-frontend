@@ -38,22 +38,22 @@ const MembersWidget = () => {
                 {
                   id: 1,
                   name: 'John Doe',
-                  image: 'https://i.pravatar.cc/300',
+                  image: 'https://i.pravatar.cc/150?img=30',
                 },
                 {
                   id: 2,
                   name: 'John Doe',
-                  image: 'https://i.pravatar.cc/300',
+                  image: 'https://i.pravatar.cc/150?img=30',
                 },
                 {
                   id: 3,
                   name: 'John Doe',
-                  image: 'https://i.pravatar.cc/300',
+                  image: 'https://i.pravatar.cc/150?img=30',
                 },
                 {
                   id: 4,
                   name: 'John Doe',
-                  image: 'https://i.pravatar.cc/300',
+                  image: 'https://i.pravatar.cc/150?img=30',
                 },
               ]}
               moreCount={23}
