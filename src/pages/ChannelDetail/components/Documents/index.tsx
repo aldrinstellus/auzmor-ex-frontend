@@ -9,6 +9,7 @@ import Divider from 'components/Divider';
 import FilterMenu from 'components/FilterMenu';
 import {
   IntegrationOptionsEnum,
+  createFolder,
   getLinkToken,
   patchConfig,
   resync,
@@ -20,6 +21,16 @@ import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
 import queryClient from 'utils/queryClient';
 import { humanizeTime } from 'utils/time';
+import useModal from 'hooks/useModal';
+import Modal from 'components/Modal';
+import Header from 'components/ModalHeader';
+import { useDocumentPath } from 'hooks/useDocumentPath';
+import FailureToast from 'components/Toast/variants/FailureToast';
+import { toast } from 'react-toastify';
+import { twConfig } from 'utils/misc';
+import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
+import { slideInAndOutTop } from 'utils/react-toastify';
+import SuccessToast from 'components/Toast/variants/SuccessToast';
 
 export enum FilePickerObjectType {
   FILE = 'FILE',
@@ -32,20 +43,14 @@ interface IDocumentProps {}
 const Document: FC<IDocumentProps> = ({}) => {
   const { t } = useTranslation('common');
   const [storageConfig, setStorageConfig] = useState<Record<string, string>>();
+  const [isOpen, openModal, closeModal] = useModal(false, true);
+  const { getCurrentFolder } = useDocumentPath();
+
+  // Mutations
   const resyncMutation = useMutation({
     mutationKey: ['resync'],
     mutationFn: resync,
   });
-  const {
-    data: syncStatus,
-    isLoading,
-    isRefetching,
-    refetch,
-  } = useSyncStatus();
-
-  const isSynced = !!syncStatus?.data?.result?.data?.length;
-  const lastSynced = syncStatus?.data?.result?.data[0]?.lastSyncStart;
-
   const configStorageMutation = useMutation({
     mutationKey: ['configure-storage'],
     mutationFn: getLinkToken,
@@ -53,21 +58,39 @@ const Document: FC<IDocumentProps> = ({}) => {
       setStorageConfig(data.result.data);
     },
   });
+  const createFolderMutation = useMutation({
+    mutationKey: ['create-folder'],
+    mutationFn: createFolder,
+  });
 
-  const onSuccess = useCallback(
-    (public_token: string) => {
+  //Queries
+  const {
+    data: syncStatus,
+    isLoading,
+    isRefetching,
+    refetch,
+  } = useSyncStatus();
+  const onSuccess = (public_token: string) => {
+    setStorageConfig({ ...storageConfig, public_token });
+  };
+  const onSubmit = useCallback(
+    (output_objects: any) => {
       patchConfig(
-        { id: storageConfig?.id || '', publicToken: public_token },
+        {
+          id: storageConfig?.id || '',
+          publicToken: storageConfig?.public_token,
+          allowedFolders: [
+            {
+              remoteId: output_objects[0]?.id,
+              integrationId: output_objects[0]?.id,
+            },
+          ],
+        },
         refetch,
       );
     },
     [storageConfig],
   );
-
-  const onSubmit = useCallback((output_objects: any) => {
-    patchConfig({ folderId: output_objects[0]?.id }, handleSync);
-  }, []);
-
   const { open, isReady } = useMergeLink({
     linkToken: storageConfig?.linkToken,
     onSuccess,
@@ -76,6 +99,9 @@ const Document: FC<IDocumentProps> = ({}) => {
       types: [FilePickerObjectType.FOLDER],
     },
   });
+
+  const isSynced = !!syncStatus?.data?.result?.data?.length;
+  const lastSynced = syncStatus?.data?.result?.data[0]?.lastSyncStart;
 
   useEffect(() => {
     if (isReady) {
@@ -90,12 +116,75 @@ const Document: FC<IDocumentProps> = ({}) => {
       value: string;
       dataTestId: string;
     };
+    folderName?: string;
   }>({
     mode: 'onChange',
-    defaultValues: { search: '' },
+    defaultValues: { search: '', folderName: 'Untitled folder' },
   });
 
-  const ConnectionCard = () => {
+  const handleSync = async () => {
+    await resyncMutation.mutateAsync();
+    await refetch();
+    queryClient.invalidateQueries(['get-storage-files'], {
+      exact: false,
+    });
+    queryClient.invalidateQueries(['get-storage-folders'], {
+      exact: false,
+    });
+  };
+
+  const handleCreateFolder = () =>
+    createFolderMutation.mutate(
+      {
+        folderId: getCurrentFolder().id,
+        name: filterForm.getValues('folderName') || 'Undifined folder',
+      },
+      {
+        onError: () => {
+          toast(<FailureToast content={'Opps... Somthing went wrong.'} />, {
+            closeButton: (
+              <Icon name="closeCircleOutline" color="text-red-500" size={20} />
+            ),
+            style: {
+              border: `1px solid ${twConfig.theme.colors.red['300']}`,
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+            },
+            autoClose: TOAST_AUTOCLOSE_TIME,
+            transition: slideInAndOutTop,
+            theme: 'dark',
+          });
+        },
+        onSuccess: () => {
+          toast(<SuccessToast content={'Folder created successfully'} />, {
+            closeButton: (
+              <Icon
+                name="closeCircleOutline"
+                color="text-primary-500"
+                size={20}
+              />
+            ),
+            style: {
+              border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+            },
+            autoClose: TOAST_AUTOCLOSE_TIME,
+            transition: slideInAndOutTop,
+            theme: 'dark',
+          });
+        },
+        onSettled: () => {
+          closeModal();
+          handleSync();
+        },
+      },
+    );
+
+  //Components
+  const ConnectionCard: FC = () => {
     const Integrations = [
       {
         icon: 'google',
@@ -131,17 +220,6 @@ const Document: FC<IDocumentProps> = ({}) => {
     );
   };
 
-  const handleSync = async () => {
-    await resyncMutation.mutateAsync();
-    await refetch();
-    queryClient.invalidateQueries(['get-storage-files'], {
-      exact: false,
-    });
-    queryClient.invalidateQueries(['get-storage-folders'], {
-      exact: false,
-    });
-  };
-
   const SyncStatus: FC<{ lastSynced: string }> = ({ lastSynced }) => {
     const [syncedAt, setSyncedAt] = useState(
       `Synced ${humanizeTime(lastSynced)}`,
@@ -169,85 +247,120 @@ const Document: FC<IDocumentProps> = ({}) => {
   };
 
   return (
-    <Card className="flex flex-col gap-6 p-8 w-full justify-center bg-white">
-      <div className="flex justify-between">
-        <p className="font-bold text-2xl text-neutral-900">Documents</p>
-        {isSynced && !isLoading && (
-          <Button
-            label="Add documents"
-            leftIcon="add"
-            leftIconClassName="text-white hover:!text-white"
-            iconColor="text-white"
-            leftIconHover={false}
-            leftIconHoverColor="text-white"
-            loading={configStorageMutation.isLoading}
-          />
-        )}
-      </div>
-      {isLoading ? (
-        <div className="flex justify-center items-center w-full p-16">
-          <Spinner />
+    <Fragment>
+      <Card className="flex flex-col gap-6 p-8 w-full justify-center bg-white">
+        <div className="flex justify-between">
+          <p className="font-bold text-2xl text-neutral-900">Documents</p>
+          {isSynced && !isLoading && (
+            <Button
+              label="New folder"
+              leftIcon="add"
+              leftIconClassName="text-white hover:!text-white"
+              iconColor="text-white"
+              leftIconHover={false}
+              leftIconHoverColor="text-white"
+              loading={configStorageMutation.isLoading}
+              onClick={openModal}
+            />
+          )}
         </div>
-      ) : !isSynced ? (
-        <ConnectionCard />
-      ) : (
-        <Fragment>
-          <FilterMenu
-            filterForm={filterForm}
-            searchPlaceholder={t('Search documents')}
-            dataTestIdFilter="document-filter-icon"
-            dataTestIdSort="document-sort-icon"
-            dataTestIdSearch="document-search"
-          >
-            <div className="flex items-center gap-8">
-              <Layout
-                fields={[
-                  {
-                    type: FieldType.SingleSelect,
-                    name: 'documentType',
-                    control: filterForm.control,
-                    options: [
-                      {
-                        label: 'PDF',
-                        value: 'pdf',
-                        dataTestId: 'doc-type-pdf',
-                      },
-                      {
-                        label: 'Excel',
-                        value: 'excel',
-                        dataTestId: 'doc-type-excel',
-                      },
-                      {
-                        label: 'PPT',
-                        value: 'ppt',
-                        dataTestId: 'doc-type-ppt',
-                      },
-                      {
-                        label: 'Word',
-                        value: 'word',
-                        dataTestId: 'doc-type-word',
-                      },
-                      {
-                        label: 'Other',
-                        value: 'other',
-                        dataTestId: 'doc-type-other',
-                      },
-                    ],
-                    placeholder: 'Document Type',
-                    dataTestId: 'doc-type-dropdown',
-                    height: 32,
-                    showSearch: false,
-                    className: 'w-44',
-                  },
-                ]}
-              />
-              <SyncStatus lastSynced={lastSynced} />
-            </div>
-          </FilterMenu>
-          <FolderNavigator />
-        </Fragment>
+        {isLoading ? (
+          <div className="flex justify-center items-center w-full p-16">
+            <Spinner />
+          </div>
+        ) : !isSynced ? (
+          <ConnectionCard />
+        ) : (
+          <Fragment>
+            <FilterMenu
+              filterForm={filterForm}
+              searchPlaceholder={t('Search documents')}
+              dataTestIdFilter="document-filter-icon"
+              dataTestIdSort="document-sort-icon"
+              dataTestIdSearch="document-search"
+            >
+              <div className="flex items-center gap-8">
+                <Layout
+                  fields={[
+                    {
+                      type: FieldType.SingleSelect,
+                      name: 'documentType',
+                      control: filterForm.control,
+                      options: [
+                        {
+                          label: 'PDF',
+                          value: 'pdf',
+                          dataTestId: 'doc-type-pdf',
+                        },
+                        {
+                          label: 'Excel',
+                          value: 'excel',
+                          dataTestId: 'doc-type-excel',
+                        },
+                        {
+                          label: 'PPT',
+                          value: 'ppt',
+                          dataTestId: 'doc-type-ppt',
+                        },
+                        {
+                          label: 'Word',
+                          value: 'word',
+                          dataTestId: 'doc-type-word',
+                        },
+                        {
+                          label: 'Other',
+                          value: 'other',
+                          dataTestId: 'doc-type-other',
+                        },
+                      ],
+                      placeholder: 'Document Type',
+                      dataTestId: 'doc-type-dropdown',
+                      height: 32,
+                      showSearch: false,
+                      className: 'w-44',
+                    },
+                  ]}
+                />
+                <SyncStatus lastSynced={lastSynced} />
+              </div>
+            </FilterMenu>
+            <FolderNavigator />
+          </Fragment>
+        )}
+      </Card>
+      {isOpen && (
+        <Modal open={isOpen}>
+          <Header title="New folder" onClose={closeModal} />
+          <Layout
+            fields={[
+              {
+                type: FieldType.Input,
+                control: filterForm.control,
+                name: 'folderName',
+                className: 'px-5 py-3',
+                placeholder: 'Enter folder name',
+                dataTestId: 'new-folder-name',
+                disabled: false,
+                cleareable: true,
+              },
+            ]}
+          />
+          <div className="flex gap-4 justify-end items-center h-16 p-6 bg-blue-50 rounded-b-9xl">
+            <Button
+              label="Cancel"
+              variant={ButtonVariant.Secondary}
+              onClick={closeModal}
+            />
+            <Button
+              label="Create"
+              variant={ButtonVariant.Primary}
+              onClick={handleCreateFolder}
+              loading={createFolderMutation.isLoading}
+            />
+          </div>
+        </Modal>
       )}
-    </Card>
+    </Fragment>
   );
 };
 

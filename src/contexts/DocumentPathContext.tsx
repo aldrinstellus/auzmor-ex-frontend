@@ -12,6 +12,7 @@ interface IDocumentPathContextAction {
   setPath: (path: FolderNameType[]) => void;
   appendFolder: (folder: FolderNameType) => void;
   slicePath: (folderId: string) => void;
+  getCurrentFolder: () => FolderNameType;
 }
 export const DocumentPathContext = createContext<
   IDocumentPathContextState & IDocumentPathContextAction
@@ -20,6 +21,7 @@ export const DocumentPathContext = createContext<
   setPath: () => {},
   appendFolder: () => {},
   slicePath: () => {},
+  getCurrentFolder: () => ({ id: 'root', label: 'Documents' }),
 });
 
 interface IDocumentPathProviderProps {
@@ -42,6 +44,13 @@ const DocumentPathProvider: FC<IDocumentPathProviderProps> = ({ children }) => {
       setPath([...path.slice(0, sliceIndex)]);
     }
   };
+
+  const getCurrentFolder = () => {
+    if (path.length === 1 && path[0].id === 'root') {
+      return { id: 'null', label: 'Documents' };
+    }
+    return path[path.length - 1];
+  };
   return (
     <DocumentPathContext.Provider
       value={{
@@ -49,6 +58,7 @@ const DocumentPathProvider: FC<IDocumentPathProviderProps> = ({ children }) => {
         setPath,
         appendFolder,
         slicePath,
+        getCurrentFolder,
       }}
     >
       {children}
