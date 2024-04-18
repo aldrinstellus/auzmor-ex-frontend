@@ -117,10 +117,21 @@ const Document: FC<IDocumentProps> = ({}) => {
       dataTestId: string;
     };
     folderName?: string;
+    showFiles?: boolean;
+    showFolders?: boolean;
   }>({
     mode: 'onChange',
-    defaultValues: { search: '', folderName: 'Untitled folder' },
+    defaultValues: {
+      search: '',
+      folderName: 'Untitled folder',
+      showFiles: false,
+      showFolders: true,
+    },
   });
+  const [showFiles, showFolders] = filterForm.watch([
+    'showFiles',
+    'showFolders',
+  ]);
 
   const handleSync = async () => {
     await resyncMutation.mutateAsync();
@@ -194,11 +205,11 @@ const Document: FC<IDocumentProps> = ({}) => {
     ];
     return (
       <div className="flex flex-col w-full items-center justify-center gap-4">
-        <p className="text-2xl text-neutral-900 font-semibold">
+        <p className="text-xl text-neutral-900 font-semibold">
           Enable integrations to view your files
         </p>
         <Divider />
-        <p className="text-xl text-neutral-900">
+        <p className="text-base text-neutral-900">
           To view your files here, you need to enable google drive integration.
         </p>
         <div className="flex px-2 py-3 border border-dashed rounded-9xl border-primary-400 w-full justify-center">
@@ -321,10 +332,37 @@ const Document: FC<IDocumentProps> = ({}) => {
                     },
                   ]}
                 />
+                <div className="flex overflow-hidden rounded-14xl border border-neutral-300 bg-neutral-100 h-8 items-center">
+                  <p
+                    className="flex w-24 text-center border-r border-neutral-300 justify-center cursor-pointer items-center gap-2"
+                    onClick={() =>
+                      filterForm.setValue('showFiles', !!!showFiles)
+                    }
+                  >
+                    Files
+                    {showFiles && (
+                      <Icon name="tickCircle" size={16} hover={false} />
+                    )}
+                  </p>
+                  <p
+                    className="flex w-24 text-center justify-center cursor-pointer items-center gap-2"
+                    onClick={() =>
+                      filterForm.setValue('showFolders', !!!showFolders)
+                    }
+                  >
+                    Folders
+                    {showFolders && (
+                      <Icon name="tickCircle" size={16} hover={false} />
+                    )}
+                  </p>
+                </div>
                 <SyncStatus lastSynced={lastSynced} />
               </div>
             </FilterMenuDocument>
-            <FolderNavigator />
+            <FolderNavigator
+              showFiles={!!showFiles}
+              showFolders={!!showFolders}
+            />
           </Fragment>
         )}
       </Card>
