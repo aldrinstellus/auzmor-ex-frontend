@@ -21,14 +21,18 @@ export const getLinkToken = async (
 };
 
 export const patchConfig = async (
-  patchData: { id?: string; publicToken?: string; folderId?: string },
+  patchData: {
+    id?: string;
+    publicToken?: string;
+    allowedFolders?: Record<string, string>[];
+  },
   onSuccess?: () => void,
 ) => {
   const response = await apiService.patch(
     `/storage/${patchData.id}`,
     isFiltersEmpty({
       publicToken: patchData?.publicToken,
-      folderId: patchData?.folderId,
+      allowedFolders: patchData?.allowedFolders,
     }),
   );
   onSuccess && onSuccess();
@@ -56,6 +60,13 @@ export const resync = async () => {
 
 export const download = (id: string) => {
   apiService.get(`/storage/files/${id}/download`);
+};
+
+export const createFolder: (variables: {
+  folderId: string;
+  name: string;
+}) => Promise<any> = async ({ folderId, name }) => {
+  return await apiService.post('/storage/folders', { name, folderId });
 };
 
 export const useFiles = (q: Record<string, string | null>) => {
