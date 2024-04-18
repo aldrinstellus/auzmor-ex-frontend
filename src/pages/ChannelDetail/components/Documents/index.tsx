@@ -124,7 +124,7 @@ const Document: FC<IDocumentProps> = ({}) => {
     defaultValues: {
       search: '',
       folderName: 'Untitled folder',
-      showFiles: false,
+      showFiles: true,
       showFolders: true,
     },
   });
