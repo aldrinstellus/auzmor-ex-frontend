@@ -13,19 +13,12 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-    department: {
-      departmentId: '6516afa8dc958600e4619c07',
-      name: 'Grocery',
-    },
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c73',
-      name: 'South Freeman',
-    },
+
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -61,19 +54,13 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-    department: {
-      departmentId: '6516afa8dc958600e4619c07',
-      name: 'Grocery',
-    },
+
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c73',
-      name: 'South Freeman',
-    },
+
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -109,19 +96,13 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-    department: {
-      departmentId: '6516afa8dc958600e4619c07',
-      name: 'Grocery',
-    },
+
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c73',
-      name: 'South Freeman',
-    },
+
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -158,19 +139,13 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-    department: {
-      departmentId: '6516afa8dc958600e4619c07',
-      name: 'Grocery',
-    },
+
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c73',
-      name: 'South Freeman',
-    },
+
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -206,19 +181,13 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-    department: {
-      departmentId: '6516afa8dc958600e4619c07',
-      name: 'Grocery',
-    },
+
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c73',
-      name: 'South Freeman',
-    },
+
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -254,19 +223,13 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-    department: {
-      departmentId: '6516afa8dc958600e4619c07',
-      name: 'Grocery',
-    },
+
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c73',
-      name: 'South Freeman',
-    },
+
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -302,19 +265,13 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-    department: {
-      departmentId: '6516afa8dc958600e4619c07',
-      name: 'Grocery',
-    },
+
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c73',
-      name: 'South Freeman',
-    },
+
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -350,19 +307,13 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-    department: {
-      departmentId: '6516afa8dc958600e4619c07',
-      name: 'Grocery',
-    },
+
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c73',
-      name: 'South Freeman',
-    },
+
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -398,19 +349,13 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-    department: {
-      departmentId: '6516afa8dc958600e4619c07',
-      name: 'Grocery',
-    },
+
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c73',
-      name: 'South Freeman',
-    },
+
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -446,19 +391,13 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-    department: {
-      departmentId: '6516afa8dc958600e4619c07',
-      name: 'Grocery',
-    },
+
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c73',
-      name: 'South Freeman',
-    },
+
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -485,124 +424,6 @@ export const userData: IGetUser[] = [
       designation: true,
       department: true,
       joinDate: true,
-      manager: true,
-    },
-  },
-  {
-    id: '6516afb0dc958600e461ab27',
-    fullName: 'Adaline  popo',
-    firstName: 'Adaline',
-    lastName: 'Mills',
-    primaryEmail: 'Isom_Mills@hotmail.com',
-    department: {
-      departmentId: '658af7f506b573a7ebc9f728',
-      name: 'test department',
-    },
-    org: {
-      id: '646311ed765368daacc601f7',
-      name: 'Stokes, Dickens and Emmerich',
-      domain: 'american-technology',
-    },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c1b',
-      name: 'Concord',
-    },
-    designation: {
-      designationId: '65801415713f71214c69604b',
-      name: 'Performance Enginneer',
-    },
-    workEmail: 'Isom_Mills@hotmail.com',
-
-    flags: {
-      isDeactivated: false,
-      isReported: false,
-    },
-    createdAt: '2023-09-29T11:06:24.308Z',
-    status: 'ACTIVE',
-    freezeEdit: {
-      firstName: true,
-      middleName: true,
-      lastName: true,
-      fullName: true,
-      designation: true,
-      department: true,
-      joinDate: false,
-      manager: true,
-    },
-  },
-  {
-    id: '6516afabdc958600e461a1af',
-    fullName: "Alex D'Amore",
-    firstName: 'Alex',
-    lastName: "D'Amore",
-    primaryEmail: 'Aurelie83@hotmail.com',
-    department: {
-      departmentId: '6516afa8dc958600e4619c17',
-      name: 'Books',
-    },
-    org: {
-      id: '646311ed765368daacc601f7',
-      name: 'Herman - Zieme',
-      domain: 'american-technology',
-    },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c29',
-      name: 'Larsonville',
-    },
-    workEmail: 'Aurelie83@hotmail.com',
-
-    flags: {
-      isDeactivated: false,
-      isReported: false,
-    },
-    createdAt: '2023-09-29T11:06:19.561Z',
-    status: 'ACTIVE',
-    freezeEdit: {
-      firstName: false,
-      middleName: false,
-      lastName: false,
-      fullName: false,
-      designation: false,
-      department: false,
-      joinDate: true,
-      manager: true,
-    },
-  },
-  {
-    id: '6516afabdc958600e461a21f',
-    fullName: 'Alfonso Bosco',
-    firstName: 'Alfonso',
-    lastName: 'Bosco',
-    primaryEmail: 'Frederic98@hotmail.com',
-    department: {
-      departmentId: '6516afa8dc958600e4619c03',
-      name: 'Movies',
-    },
-    org: {
-      id: '646311ed765368daacc601f7',
-      name: 'Turcotte, Casper and Runte',
-      domain: 'american-technology',
-    },
-    workLocation: {
-      locationId: '6516afa8dc958600e4619c57',
-      name: 'Port Cierramouth',
-    },
-    workEmail: 'Frederic98@hotmail.com',
-
-    flags: {
-      isDeactivated: false,
-      isReported: false,
-    },
-    createdAt: '2023-09-29T11:06:19.754Z',
-    status: 'ACTIVE',
-    freezeEdit: {
-      firstName: false,
-      middleName: false,
-      lastName: false,
-      fullName: false,
-      designation: false,
-      department: false,
-      joinDate: false,
       manager: true,
     },
   },

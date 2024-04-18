@@ -109,9 +109,9 @@ const MemberTable: FC<AppProps> = ({
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>{user?.workLocation?.name}</TableCell>
-                <TableCell>dummy designation</TableCell>
-                <TableCell>dumy title</TableCell>
+                <TableCell>{user?.workLocation?.name || 'Canada'}</TableCell>
+                <TableCell>QA</TableCell>
+                <TableCell>title</TableCell>
                 <TableCell>{user?.workEmail}</TableCell>
               </TableRow>
             ))}
