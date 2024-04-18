@@ -5,6 +5,7 @@ import { IFilterForm } from '.';
 import { titleCase } from 'utils/misc';
 import { ICheckboxListOption } from 'components/CheckboxList';
 import { IDocType } from 'queries/storage';
+import Icon from 'components/Icon';
 
 interface IVisibilityProps {
   control: Control<IFilterForm, any>;
@@ -14,16 +15,45 @@ interface IVisibilityProps {
 
 export const documentOptions: ICheckboxListOption[] = [
   {
-    data: { value: IDocType.DOCUMENT },
+    data: {
+      id: 'document',
+      value:
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      label: 'Document',
+      icon: 'doc',
+    },
     datatestId: `document-${IDocType.DOCUMENT}`,
   },
   {
-    data: { value: IDocType.FOLDER },
-    datatestId: `document-${IDocType.FOLDER}`,
+    data: { id: 'pdf', value: 'application/pdf', label: 'PDF', icon: 'pdf' },
+    datatestId: `document-${IDocType.PDF}`,
   },
   {
-    data: { value: IDocType.FORM },
+    data: {
+      id: 'xlsx',
+      value: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`,
+      label: 'XLSX',
+      icon: 'xls',
+    },
+    datatestId: `document-${IDocType.XLS}`,
+  },
+  {
+    data: {
+      id: 'form',
+      value: 'application/vnd.google-apps.form',
+      label: 'Form',
+      icon: 'pdf',
+    },
     datatestId: `document-${IDocType.FORM}`,
+  },
+  {
+    data: {
+      id: 'folder',
+      value: 'application/vnd.google-apps.folder',
+      label: 'Folder',
+      icon: 'folder',
+    },
+    datatestId: `document-${IDocType.FOLDER}`,
   },
 ];
 
@@ -35,8 +65,9 @@ const DocumentType: FC<IVisibilityProps> = ({ control }) => {
       control,
       options: documentOptions,
       labelRenderer: (option: ICheckboxListOption) => (
-        <div className="ml-2.5 cursor-pointer text-xs">
-          {titleCase(option.data.value)}
+        <div className="flex items-center ml-2.5 cursor-pointer text-xs gap-2">
+          <Icon name={option?.data?.icon} />
+          {titleCase(option.data.label)}
         </div>
       ),
       rowClassName: 'px-6 py-3 border-b border-neutral-200',

@@ -208,7 +208,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     {
       label: () => (
         <div className="flex items-center">
-          <div>people</div>
+          <div>People</div>
           {!!documentPeopleCheckbox.length && (
             <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
               {documentPeopleCheckbox.length}
@@ -240,7 +240,7 @@ const FilterModal: FC<IFilterModalProps> = ({
           )}
         </div>
       ),
-      key: 'doc-people-filters',
+      key: 'doc-type-filters',
       component: () => (
         <DocumentType control={control} watch={watch} setValue={setValue} />
       ),
@@ -264,7 +264,7 @@ const FilterModal: FC<IFilterModalProps> = ({
           )}
         </div>
       ),
-      key: 'doc-people-filters',
+      key: 'doc-modified-filters',
       component: () => (
         <DocumentModified control={control} watch={watch} setValue={setValue} />
       ),

@@ -12,22 +12,17 @@ interface IVisibilityProps {
   setValue: UseFormSetValue<IFilterForm>;
 }
 
-// call get document user api.
-
 const DocumentPeople: FC<IVisibilityProps> = ({ control }) => {
   const { data: documentUser } = useGetStorageUser({
     q: '',
   });
-  console.log('documentUser :', documentUser);
   const Docusers = documentUser?.data?.result?.data || [];
-  console.log('Docusers :', Docusers);
 
   const documentFields = [
     {
       type: FieldType.CheckboxList,
-      name: 'documentTypeCheckbox',
+      name: 'documentPeopleCheckbox',
       control,
-
       options: Docusers?.map((user: any) => ({
         data: user,
         datatestId: `department-`,

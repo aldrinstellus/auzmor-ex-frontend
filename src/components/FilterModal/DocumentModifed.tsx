@@ -13,22 +13,24 @@ interface IVisibilityProps {
 
 export const documentOptions: ICheckboxListOption[] = [
   {
-    data: { value: 'Today', label: 'Today' },
-    datatestId: `document-`,
+    data: { id: 'today', value: 'Today', label: 'Today' },
+    datatestId: `document-modified-today`,
   },
   {
-    data: {
-      value: 'Last 7 days',
-      label: 'Last 7 days',
-    },
-    datatestId: `document-`,
+    data: { id: 'last7days', value: 'Today', label: 'Last 7 days' },
+    datatestId: `document-modified-last7days`,
   },
   {
-    data: {
-      value: 'Last-30-days',
-      label: 'Last 30 days',
-    },
-    datatestId: `document`,
+    data: { id: 'last30days', value: 'Today', label: 'Last 30 days' },
+    datatestId: `document-modified-last30days`,
+  },
+  {
+    data: { id: 'thisyear', value: 'Today', label: 'This year (2024)' },
+    datatestId: `document-modified-thisyear`,
+  },
+  {
+    data: { id: 'lastyear', value: 'Today', label: 'Last year (2023)' },
+    datatestId: `document-modified-lastyear`,
   },
 ];
 
