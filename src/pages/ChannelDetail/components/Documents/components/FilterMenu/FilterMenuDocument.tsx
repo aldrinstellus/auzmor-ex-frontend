@@ -1,7 +1,4 @@
-import FilterModal, {
-  FilterModalVariant,
-  IStatus,
-} from 'components/FilterModal';
+import FilterModal, { FilterModalVariant } from 'components/FilterModal';
 import Layout, { FieldType } from 'components/Form';
 import IconButton, {
   Variant as IconVariant,
@@ -10,18 +7,16 @@ import IconButton, {
 // import Sort from 'components/Sort';
 import useModal from 'hooks/useModal';
 import { FC, ReactNode, useEffect, useState } from 'react';
-import { useAppliedFiltersStore } from 'stores/appliedFiltersStore';
 import { UseFormReturn } from 'react-hook-form';
 import useURLParams from 'hooks/useURLParams';
 import Icon from 'components/Icon';
-import { IDepartmentAPI } from 'queries/department';
-import { ILocationAPI } from 'queries/location';
 import { ChannelVisibilityEnum } from 'stores/channelStore';
 import { ChannelTypeEnum } from 'components/FilterModal/ChannelType';
 import { useDebounce } from 'hooks/useDebounce';
 import { useDocument } from 'queries/storage';
 import NoDataFound from 'components/NoDataFound';
 import DocSearchRow from 'pages/ChannelDetail/components/Documents/components/DocSearchRow';
+import { useAppliedFiltersForDoc } from 'stores/appliedFiltersForDoc';
 
 export enum FilterKey {
   departments = 'departments',
@@ -51,20 +46,20 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
   dataTestIdFilter,
 }) => {
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
-  const { filters, setFilters } = useAppliedFiltersStore();
+  const { filters, setFilters } = useAppliedFiltersForDoc();
   const { control } = filterForm;
-
   const [documentSearch, setDocument] = useState('');
-
   const debouncedDocumentSearch = useDebounce(documentSearch || '', 300);
-
   const { data: documentData, isFetching } = useDocument({
     q: debouncedDocumentSearch,
+    mimeType: '',
+    ownerEmail: '',
+    modifiedBefor: '',
+    modifiedAfter: '',
     limit: 4,
   });
   const documents = documentData?.data?.result?.data || [];
-  const { parseParams, updateParam, serializeFilter, deleteParam } =
-    useURLParams();
+  const { updateParam, serializeFilter, deleteParam } = useURLParams();
 
   useEffect(() => {
     if (filters) {
@@ -83,49 +78,30 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
     }
   }, [filters]);
 
-  useEffect(() => {
-    setFilters({
-      categories: parseParams('categories') || [],
-      departments: parseParams('departments') || [],
-      locations: parseParams('locations') || [],
-      status: parseParams('status') || [],
-      teams: parseParams('teams') || [],
-      visibility: parseParams('visibility') || ChannelVisibilityEnum.All,
-      channelType: parseParams('channelType') || ChannelTypeEnum.MyChannels,
-    });
-  }, []);
+  // const handleRemoveFilters = (key: FilterKey, id: any) => {
+  //   if (filters) {
+  //     const updatedFilter = filters[key]!.filter((item: any) => item.id !== id);
+  //     const serializedFilters = serializeFilter(updatedFilter);
+  //     if (updatedFilter.length === 0) {
+  //       deleteParam(key);
+  //     } else {
+  //       updateParam(key, serializedFilters);
+  //     }
+  //     setFilters({ ...filters, [key]: updatedFilter });
+  //   }
+  // };
 
-  const handleRemoveFilters = (key: FilterKey, id: any) => {
-    if (filters) {
-      const updatedFilter = filters[key]!.filter((item: any) => item.id !== id);
-      const serializedFilters = serializeFilter(updatedFilter);
-      if (updatedFilter.length === 0) {
-        deleteParam(key);
-      } else {
-        updateParam(key, serializedFilters);
-      }
-      setFilters({ ...filters, [key]: updatedFilter });
-    }
-  };
-
-  const clearFilters = () => {
-    deleteParam('status');
-    deleteParam('departments');
-    deleteParam('locations');
-    deleteParam('teams');
-    deleteParam('categories');
-    deleteParam('channelType');
-    setFilters({
-      ...filters,
-      categories: [],
-      status: [],
-      departments: [],
-      locations: [],
-      teams: [],
-      visibility: ChannelVisibilityEnum.All,
-      channeType: ChannelTypeEnum.MyChannels,
-    });
-  };
+  // const clearFilters = () => {
+  //   deleteParam('documentTypeCheckbox');
+  //   deleteParam('documentPeopleCheckbox');
+  //   deleteParam('documentModifiedCheckbox');
+  //   setFilters({
+  //     ...filters,
+  //     documentTypeCheckbox: [],
+  //     documentPeopleCheckbox: [],
+  //     documentModifiedCheckbox: [],
+  //   });
+  // };
 
   const memberSearchfields = [
     {
@@ -203,112 +179,15 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
             </div>
           </div>
         </div>
-        {filters?.status?.length ||
-        filters?.departments?.length ||
-        filters?.locations?.length ? (
-          <div className="flex justify-between items-start">
-            <div className="flex items-center space-x-2 flex-wrap gap-y-2">
-              <div className="text-base text-neutral-500 whitespace-nowrap">
-                Filter By
-              </div>
-              {filters?.status?.map((status: IStatus) => (
-                <div
-                  key={status.id}
-                  className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1 hover:text-primary-600 hover:border-primary-600 cursor-pointer group"
-                  data-testid={`status-filterby-${status.name}`}
-                  onClick={() =>
-                    handleRemoveFilters(FilterKey.status, status.id)
-                  }
-                >
-                  <div className="mr-1 text-neutral-500 whitespace-nowrap">
-                    Status{' '}
-                    <span className="text-primary-500">{status.name}</span>
-                  </div>
-                  <Icon
-                    name="close"
-                    size={16}
-                    color="text-neutral-900"
-                    className="cursor-pointer"
-                    onClick={() =>
-                      handleRemoveFilters(FilterKey.status, status.id)
-                    }
-                    dataTestId={`applied-filter-close`}
-                  />
-                </div>
-              ))}
-              {filters?.departments?.map((department: IDepartmentAPI) => (
-                <div
-                  key={department.id}
-                  className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1 hover:text-primary-600 hover:border-primary-600 cursor-pointer group"
-                  data-testid={`department-filterby-${department.name}`}
-                  onClick={() =>
-                    handleRemoveFilters(FilterKey.departments, department.id)
-                  }
-                >
-                  <div className="mr-1 text-neutral-500 whitespace-nowrap">
-                    Department{' '}
-                    <span className="text-primary-500">{department.name}</span>
-                  </div>
-                  <Icon
-                    name="close"
-                    size={16}
-                    color="text-neutral-900"
-                    className="cursor-pointer"
-                    onClick={() =>
-                      handleRemoveFilters(FilterKey.departments, department.id)
-                    }
-                    dataTestId={`applied-filter-close`}
-                  />
-                </div>
-              ))}
-              {filters?.locations?.map((location: ILocationAPI) => (
-                <div
-                  key={location.id}
-                  className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1 hover:text-primary-600 hover:border-primary-600 cursor-pointer group"
-                  data-testid={`location-filterby-${location.name}`}
-                  onClick={() =>
-                    handleRemoveFilters(FilterKey.locations, location.id)
-                  }
-                >
-                  <div className="mr-1 text-neutral-500 whitespace-nowrap">
-                    Location{' '}
-                    <span className="text-primary-500">{location.name}</span>
-                  </div>
-                  <Icon
-                    name="close"
-                    size={16}
-                    color="text-neutral-900"
-                    className="cursor-pointer"
-                    onClick={() =>
-                      handleRemoveFilters(FilterKey.locations, location.id)
-                    }
-                    dataTestId={`applied-filter-close`}
-                  />
-                </div>
-              ))}
-            </div>
-            <div
-              className="text-neutral-500 border px-3 py-[3px] whitespace-nowrap rounded-7xl hover:text-primary-600 hover:border-primary-600 cursor-pointer"
-              onClick={clearFilters}
-              data-testid={`people-clear-filters`}
-            >
-              Clear Filters
-            </div>
-          </div>
-        ) : null}
       </div>
       {showFilterModal && (
         <FilterModal
           open={showFilterModal}
           closeModal={closeFilterModal}
           appliedFilters={{
-            categories: filters?.categories || [],
-            departments: filters?.departments || [],
-            locations: filters?.locations || [],
-            status: filters?.status || [],
-            teams: filters?.teams || [],
-            visibility: filters?.visibility || ChannelVisibilityEnum.All,
-            channelType: filters?.channelType || ChannelTypeEnum.MyChannels,
+            docTypeCheckbox: filters?.docTypeCheckbox || [],
+            docPeopleCheckbox: filters?.docPeopleCheckbox || [],
+            docModifiedCheckbox: filters?.docModifiedCheckbox || [],
           }}
           onApply={(appliedFilters) => {
             setFilters(appliedFilters);
@@ -321,12 +200,15 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
               locations: [],
               status: [],
               teams: [],
+              docTypeCheckbox: [],
+              docModifiedCheckbox: [],
+              docPeopleCheckbox: [],
               visibility: ChannelVisibilityEnum.All,
               channelType: ChannelTypeEnum.MyChannels,
             });
             closeFilterModal();
           }}
-          variant={FilterModalVariant.ChannelsListing}
+          variant={FilterModalVariant.Document}
         />
       )}
     </>
