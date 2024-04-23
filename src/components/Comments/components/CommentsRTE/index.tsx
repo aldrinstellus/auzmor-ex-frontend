@@ -104,7 +104,8 @@ export const CommentsRTE: FC<CommentFormProps> = ({
   const createCommentMutation = useMutation({
     mutationKey: ['create-comment'],
     mutationFn: createComment,
-    onError: () => {
+    onError: (error) => {
+      console.log(error);
       toast(
         <FailureToast
           content={`Error adding ${
@@ -154,13 +155,23 @@ export const CommentsRTE: FC<CommentFormProps> = ({
       }
       await queryClient.setQueryData(
         ['comments', { entityId, entityType, limit: 4 }],
-        (oldData) =>
-          produce(oldData, (draft: any) => {
-            draft.pages[0].data.result.data = [
-              { id: data.id },
-              ...draft.pages[0].data.result.data,
-            ];
-          }),
+        (oldData) => {
+          if (oldData) {
+            return produce(oldData, (draft: any) => {
+              draft.pages[0].data.result.data = [
+                { id: data.id },
+                ...draft.pages[0].data.result.data,
+              ];
+            });
+          } else {
+            queryClient.invalidateQueries(
+              ['comments', { entityId, entityType, limit: 4 }],
+              {
+                exact: false,
+              },
+            );
+          }
+        },
       );
       if (entityType === 'post' && entityId) {
         setComment({ ...comment, [data.id]: { ...data } });
