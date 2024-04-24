@@ -51,7 +51,7 @@ const LinkAttachments: FC<ILinkAttachmentsProps> = ({ attachments }) => {
 
     if (isExcelRegex.test(each.title)) {
       downloadAttachment(
-        each.url.split('/attachments/')[1].split('/')[0],
+        attachmentId,
         each.title.substring(0, each.title.lastIndexOf('.')),
       );
     } else {
