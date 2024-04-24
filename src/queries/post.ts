@@ -95,7 +95,7 @@ export interface IPost {
     actor?: Record<string, any>;
     end: string;
   };
-  id?: string;
+  id: string;
   acknowledgementStats?: Record<string, any>;
   myAcknowledgement?: {
     // createdBy: {
@@ -123,12 +123,11 @@ export interface IPost {
     type?: string;
     id?: string;
   };
-  relevantComments: IComment[];
+  relevantComments: string[];
   reactionsCount: IReactionsCount;
   commentsCount: number;
   createdAt: string;
   updatedAt: string;
-  comment: IComment;
   schedule: {
     dateTime: string;
     timeZone: string;
@@ -481,7 +480,7 @@ export const myProfileFeed = async (
   setFeed: (feed: { [key: string]: IPost }) => void,
   appendComments: (comments: IComment[]) => void,
 ) => {
-  let response = null;
+  let response: any = null;
   const comments: IComment[] = [];
 
   // Fetching data
@@ -492,12 +491,26 @@ export const myProfileFeed = async (
   }
 
   // Collecting all comments
-  response.data.result.data.forEach((eachPost: IPost) =>
-    comments.push(...(eachPost?.relevantComments || [])),
-  );
+  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
+    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
+    comments.forEach((comment, index) => {
+      if (comment?.relevantComments) {
+        comments[index].relevantComments = (comment?.relevantComments || [])
+          .filter((relevantComment) => !!relevantComment)
+          .map((relevantComment: any) => relevantComment.id);
+      }
+    });
+
+    // Update response
+    response.data.result.data[index].relevantComments = [
+      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
+        (comment) => comment.id,
+      ),
+    ];
+  });
 
   // appending post to comment store
-  appendComments(comments);
+  appendComments(comments.flat());
 
   // Updating feed store
   setFeed({
@@ -556,7 +569,7 @@ export const peopleProfileFeed = async (
   userId: string,
   appendComments: (comments: IComment[]) => void,
 ) => {
-  let response = null;
+  let response: any = null;
   const comments: IComment[] = [];
 
   // Fetching data
@@ -570,12 +583,26 @@ export const peopleProfileFeed = async (
   }
 
   // Collecting all comments
-  response.data.result.data.forEach((eachPost: IPost) =>
-    comments.push(...(eachPost?.relevantComments || [])),
-  );
+  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
+    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
+    comments.forEach((comment, index) => {
+      if (comment?.relevantComments) {
+        comments[index].relevantComments = (comment?.relevantComments || [])
+          .filter((relevantComment) => !!relevantComment)
+          .map((relevantComment: any) => relevantComment.id);
+      }
+    });
+
+    // Update response
+    response.data.result.data[index].relevantComments = [
+      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
+        (comment) => comment.id,
+      ),
+    ];
+  });
 
   // appending post to comment store
-  appendComments(comments);
+  appendComments(comments.flat());
 
   // Updating feed store
   setFeed({
@@ -636,7 +663,7 @@ export const fetchFeed = async (
   setFeed: (feed: { [key: string]: IPost }) => void,
   appendComments: (comments: IComment[]) => void,
 ) => {
-  let response = null;
+  let response: any = null;
   const comments: IComment[] = [];
 
   // Fetching data
@@ -651,12 +678,26 @@ export const fetchFeed = async (
   }
 
   // Collecting all comments
-  response.data.result.data.forEach((eachPost: IPost) =>
-    comments.push(...(eachPost?.relevantComments || [])),
-  );
+  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
+    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
+    comments.forEach((comment, index) => {
+      if (comment?.relevantComments) {
+        comments[index].relevantComments = (comment?.relevantComments || [])
+          .filter((relevantComment) => !!relevantComment)
+          .map((relevantComment: any) => relevantComment.id);
+      }
+    });
+
+    // Update response
+    response.data.result.data[index].relevantComments = [
+      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
+        (comment) => comment.id,
+      ),
+    ];
+  });
 
   // appending post to comment store
-  appendComments(comments);
+  appendComments(comments.flat());
 
   // Updating feed store
   setFeed({
@@ -728,7 +769,7 @@ export const fetchBookmarks = async (
   setFeed: (feed: { [key: string]: IPost }) => void,
   appendComments: (comments: IComment[]) => void,
 ) => {
-  let response = null;
+  let response: any = null;
   const comments: IComment[] = [];
 
   // Fetching data
@@ -739,12 +780,26 @@ export const fetchBookmarks = async (
   }
 
   // Collecting all comments
-  response.data.result.data.forEach((eachPost: IPost) =>
-    comments.push(...(eachPost?.relevantComments || [])),
-  );
+  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
+    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
+    comments.forEach((comment, index) => {
+      if (comment?.relevantComments) {
+        comments[index].relevantComments = (comment?.relevantComments || [])
+          .filter((relevantComment) => !!relevantComment)
+          .map((relevantComment: any) => relevantComment.id);
+      }
+    });
+
+    // Update response
+    response.data.result.data[index].relevantComments = [
+      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
+        (comment) => comment.id,
+      ),
+    ];
+  });
 
   // appending post to comment store
-  appendComments(comments);
+  appendComments(comments.flat());
 
   // Updating feed store
   setFeed({
@@ -806,10 +861,39 @@ const getPost = async (
   appendComments: (comments: IComment[]) => void,
   commentId?: string,
 ) => {
+  const comments: IComment[] = [];
   const response = await apiService.get(
     `/posts/${id}${commentId ? '?commentId=' + commentId : ''}`,
   );
-  appendComments([response.data.result.data.comment as IComment]);
+
+  // Collecting all comments
+  const post = response.data.result.data;
+  if ((post as any)?.comment) {
+    if ((post as any)?.comment?.comment) {
+      comments.push((post as any)?.comment?.comment);
+    }
+    comments.push((post as any)?.comment);
+  }
+  comments.push(...((post?.relevantComments as any as IComment[]) || []));
+  comments.forEach((comment, index) => {
+    comments[index].relevantComments = (comment?.relevantComments || []).map(
+      (relevantComment: any) => relevantComment.id,
+    );
+    if ((comment as any).comment) {
+      comments[index].relevantComments.push((comment as any).comment.id);
+    }
+  });
+
+  // Update response
+  response.data.result.data.relevantComments = [
+    ...((post?.relevantComments as any as IComment[]) || []).map(
+      (comment) => comment.id,
+    ),
+  ];
+
+  // appending post to comment store
+  appendComments(comments.flat());
+
   updateFeed(id, response.data.result.data);
   response.data.result.data = { id: response.data.result.data.id };
   return response;
@@ -821,6 +905,7 @@ export const useGetPost = (id: string, commentId?: string) => {
   return useQuery({
     queryKey: ['posts', id, commentId],
     queryFn: () => getPost(id, updateFeed, appendComments, commentId),
+    refetchOnMount: 'always',
   });
 };
 
@@ -899,7 +984,7 @@ export const myRecognitionFeed = async (
   setFeed: (feed: { [key: string]: IPost }) => void,
   appendComments: (comments: IComment[]) => void,
 ) => {
-  let response = null;
+  let response: any = null;
   const comments: IComment[] = [];
 
   // Fetching data
@@ -913,12 +998,26 @@ export const myRecognitionFeed = async (
   }
 
   // Collecting all comments
-  response.data.result.data.forEach((eachPost: IPost) =>
-    comments.push(...(eachPost?.relevantComments || [])),
-  );
+  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
+    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
+    comments.forEach((comment, index) => {
+      if (comment?.relevantComments) {
+        comments[index].relevantComments = (comment?.relevantComments || [])
+          .filter((relevantComment) => !!relevantComment)
+          .map((relevantComment: any) => relevantComment.id);
+      }
+    });
+
+    // Update response
+    response.data.result.data[index].relevantComments = [
+      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
+        (comment) => comment.id,
+      ),
+    ];
+  });
 
   // appending post to comment store
-  appendComments(comments);
+  appendComments(comments.flat());
 
   // Updating feed store
   setFeed({
@@ -977,7 +1076,7 @@ export const peopleProfileRecognitionFeed = async (
   userId: string,
   appendComments: (comments: IComment[]) => void,
 ) => {
-  let response = null;
+  let response: any = null;
   const comments: IComment[] = [];
 
   // Fetching data
@@ -991,12 +1090,26 @@ export const peopleProfileRecognitionFeed = async (
   }
 
   // Collecting all comments
-  response.data.result.data.forEach((eachPost: IPost) =>
-    comments.push(...(eachPost?.relevantComments || [])),
-  );
+  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
+    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
+    comments.forEach((comment, index) => {
+      if (comment?.relevantComments) {
+        comments[index].relevantComments = (comment?.relevantComments || [])
+          .filter((relevantComment) => !!relevantComment)
+          .map((relevantComment: any) => relevantComment.id);
+      }
+    });
+
+    // Update response
+    response.data.result.data[index].relevantComments = [
+      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
+        (comment) => comment.id,
+      ),
+    ];
+  });
 
   // appending post to comment store
-  appendComments(comments);
+  appendComments(comments.flat());
 
   // Updating feed store
   setFeed({
