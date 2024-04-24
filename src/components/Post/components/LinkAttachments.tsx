@@ -85,7 +85,12 @@ const LinkAttachments: FC<ILinkAttachmentsProps> = ({ attachments }) => {
               <video src={getAuthLearnUrl(each._id)} controls={false} />
             </div>
           )}
-          <Icon name={each.title.substring(each.title.lastIndexOf('.') + 1)} />
+          <Icon
+            name={
+              each.title.substring(each.title.lastIndexOf('.') + 1) ||
+              'defaultDoc'
+            }
+          />
           <p className="text-xs font-medium max-w-[124px] truncate">
             {each.title.substring(0, each.title.lastIndexOf('.'))}
           </p>
