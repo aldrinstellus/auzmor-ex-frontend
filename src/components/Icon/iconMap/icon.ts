@@ -161,7 +161,6 @@ import PptIcon from '../components/Ppt';
 import FileIcon from '../components/File';
 import ImageFileIcon from '../components/ImageFile';
 import VideoFileIcon from '../components/VideoFile';
-import DefaultDocIcon from '../components/DefaultDoc';
 
 export const icon = {
   add: Add,
@@ -282,7 +281,6 @@ export const icon = {
   plus: Plus,
   postBookmark: PostBookmarkIcon,
   ppt: PptIcon,
-  pptx: PptIcon,
   profile: ProfileIcon,
   profileUser: ProfileUser,
   promoteUser: PromoteUserIcon,
@@ -330,5 +328,4 @@ export const icon = {
   videoSquare: VideoSquareIcon,
   xls: XlsIcon,
   xlsx: XlsIcon,
-  defaultDoc: DefaultDocIcon,
 };

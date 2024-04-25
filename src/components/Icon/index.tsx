@@ -14,7 +14,6 @@ export type IconProps = {
   dataTestId?: string;
   isActive?: boolean;
   hoverColor?: string;
-  defaultIcon?: string;
 };
 
 const Icon: FC<IconProps> = ({
@@ -29,13 +28,8 @@ const Icon: FC<IconProps> = ({
   color,
   hoverColor,
   dataTestId,
-  defaultIcon = '',
 }) => {
-  let Component = iconMap[name];
-
-  if (!Component && defaultIcon) {
-    Component = iconMap[defaultIcon]; // Use default icon if desired icon not found
-  }
+  const Component = iconMap[name] || null;
   if (!Component) {
     return null;
   }

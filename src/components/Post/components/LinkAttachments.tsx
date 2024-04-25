@@ -41,9 +41,32 @@ const getAuthLearnUrl = (attachmentId: string) =>
 const isImageRegex = /\.(jpg|png|gif|jpeg)$/i;
 const isVideoRegex = /\.(avi|mp4|mov|wmv|mpg|m4v)$/i;
 const isExcelRegex = /\.(xlsx|xlsb|xlsm|xls)$/i;
-// Regular expression for file documents like ppt, pdf, etc.
 const isDocumentRegex = /\.(pdf|doc|docx|ppt|pptx)$/i;
 
+const getIconName = (title: string): string => {
+  if (isExcelRegex.test(title)) {
+    return 'xls';
+  } else if (isImageRegex.test(title)) {
+    return 'imageFile';
+  } else if (isVideoRegex.test(title)) {
+    return 'videoFile';
+  } else if (isDocumentRegex.test(title)) {
+    if (title.toLowerCase().endsWith('.pdf')) {
+      return 'pdf';
+    } else if (
+      title.toLowerCase().endsWith('.doc') ||
+      title.toLowerCase().endsWith('.docx')
+    ) {
+      return 'doc';
+    } else if (
+      title.toLowerCase().endsWith('.ppt') ||
+      title.toLowerCase().endsWith('.pptx')
+    ) {
+      return 'ppt';
+    }
+  }
+  return 'doc';
+};
 const LinkAttachments: FC<ILinkAttachmentsProps> = ({ attachments }) => {
   const handleAttachmentClick = (each: LinkAttachment) => {
     const attachmentId = each.url.split('/attachments/')[1].split('/')[0];
@@ -70,31 +93,13 @@ const LinkAttachments: FC<ILinkAttachmentsProps> = ({ attachments }) => {
   return (
     <div className="flex gap-2">
       {attachments.map((each) => {
-        const attachmentId = each.url.split('/attachments/')[1].split('/')[0];
-        const previewUrl = getAuthLearnUrl(attachmentId);
         return (
           <div
             key={each._id}
             onClick={() => handleAttachmentClick(each)}
             className="flex p-2 rounded-9xl border border-neutral-200 w-[173px] items-center gap-2 cursor-pointer hover:shadow-lg transition"
           >
-            {isImageRegex.test(each.title) && (
-              <div className="flex w-6 h-6">
-                <img src={previewUrl} alt="attachment preview" />
-              </div>
-            )}
-            {isVideoRegex.test(each.title) && (
-              <div className="flex w-6 h-6">
-                <video src={previewUrl} controls={false} />
-              </div>
-            )}
-            {!isImageRegex.test(each.title) &&
-              !isVideoRegex.test(each.title) && (
-                <Icon
-                  defaultIcon="defaultDoc"
-                  name={each.title.substring(each.title.lastIndexOf('.') + 1)}
-                />
-              )}
+            <Icon name={getIconName(each.title)} />
             <p className="text-xs font-medium max-w-[124px] truncate">
               {each.title.substring(0, each.title.lastIndexOf('.'))}
             </p>
