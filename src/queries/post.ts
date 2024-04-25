@@ -414,6 +414,27 @@ export const useAnnouncementsWidget = (
     staleTime: 15 * 60 * 1000,
   });
 
+const collectComments = (response: any, comments: IComment[]) => {
+  // Collecting all comments
+  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
+    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
+    comments.forEach((comment, index) => {
+      if (comment?.relevantComments) {
+        comments[index].relevantComments = (comment?.relevantComments || [])
+          .filter((relevantComment) => !!relevantComment)
+          .map((relevantComment: any) => relevantComment.id);
+      }
+    });
+
+    // Update response
+    response.data.result.data[index].relevantComments = [
+      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
+        (comment) => comment.id,
+      ),
+    ];
+  });
+};
+
 const fetchCelebrations = async ({
   pageParam = null,
   queryKey,
@@ -491,23 +512,7 @@ export const myProfileFeed = async (
   }
 
   // Collecting all comments
-  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
-    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
-    comments.forEach((comment, index) => {
-      if (comment?.relevantComments) {
-        comments[index].relevantComments = (comment?.relevantComments || [])
-          .filter((relevantComment) => !!relevantComment)
-          .map((relevantComment: any) => relevantComment.id);
-      }
-    });
-
-    // Update response
-    response.data.result.data[index].relevantComments = [
-      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
-        (comment) => comment.id,
-      ),
-    ];
-  });
+  collectComments(response, comments);
 
   // appending post to comment store
   appendComments(comments.flat());
@@ -583,23 +588,7 @@ export const peopleProfileFeed = async (
   }
 
   // Collecting all comments
-  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
-    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
-    comments.forEach((comment, index) => {
-      if (comment?.relevantComments) {
-        comments[index].relevantComments = (comment?.relevantComments || [])
-          .filter((relevantComment) => !!relevantComment)
-          .map((relevantComment: any) => relevantComment.id);
-      }
-    });
-
-    // Update response
-    response.data.result.data[index].relevantComments = [
-      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
-        (comment) => comment.id,
-      ),
-    ];
-  });
+  collectComments(response, comments);
 
   // appending post to comment store
   appendComments(comments.flat());
@@ -678,23 +667,7 @@ export const fetchFeed = async (
   }
 
   // Collecting all comments
-  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
-    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
-    comments.forEach((comment, index) => {
-      if (comment?.relevantComments) {
-        comments[index].relevantComments = (comment?.relevantComments || [])
-          .filter((relevantComment) => !!relevantComment)
-          .map((relevantComment: any) => relevantComment.id);
-      }
-    });
-
-    // Update response
-    response.data.result.data[index].relevantComments = [
-      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
-        (comment) => comment.id,
-      ),
-    ];
-  });
+  collectComments(response, comments);
 
   // appending post to comment store
   appendComments(comments.flat());
@@ -780,23 +753,7 @@ export const fetchBookmarks = async (
   }
 
   // Collecting all comments
-  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
-    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
-    comments.forEach((comment, index) => {
-      if (comment?.relevantComments) {
-        comments[index].relevantComments = (comment?.relevantComments || [])
-          .filter((relevantComment) => !!relevantComment)
-          .map((relevantComment: any) => relevantComment.id);
-      }
-    });
-
-    // Update response
-    response.data.result.data[index].relevantComments = [
-      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
-        (comment) => comment.id,
-      ),
-    ];
-  });
+  collectComments(response, comments);
 
   // appending post to comment store
   appendComments(comments.flat());
@@ -998,23 +955,7 @@ export const myRecognitionFeed = async (
   }
 
   // Collecting all comments
-  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
-    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
-    comments.forEach((comment, index) => {
-      if (comment?.relevantComments) {
-        comments[index].relevantComments = (comment?.relevantComments || [])
-          .filter((relevantComment) => !!relevantComment)
-          .map((relevantComment: any) => relevantComment.id);
-      }
-    });
-
-    // Update response
-    response.data.result.data[index].relevantComments = [
-      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
-        (comment) => comment.id,
-      ),
-    ];
-  });
+  collectComments(response, comments);
 
   // appending post to comment store
   appendComments(comments.flat());
@@ -1090,23 +1031,7 @@ export const peopleProfileRecognitionFeed = async (
   }
 
   // Collecting all comments
-  response?.data.result.data.forEach((eachPost: IPost, index: number) => {
-    comments.push(...((eachPost?.relevantComments as any as IComment[]) || []));
-    comments.forEach((comment, index) => {
-      if (comment?.relevantComments) {
-        comments[index].relevantComments = (comment?.relevantComments || [])
-          .filter((relevantComment) => !!relevantComment)
-          .map((relevantComment: any) => relevantComment.id);
-      }
-    });
-
-    // Update response
-    response.data.result.data[index].relevantComments = [
-      ...((eachPost?.relevantComments as any as IComment[]) || []).map(
-        (comment) => comment.id,
-      ),
-    ];
-  });
+  collectComments(response, comments);
 
   // appending post to comment store
   appendComments(comments.flat());
