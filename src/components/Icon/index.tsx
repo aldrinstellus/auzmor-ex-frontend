@@ -34,7 +34,7 @@ const Icon: FC<IconProps> = ({
   let Component = iconMap[name];
 
   if (!Component && defaultIcon) {
-    Component = iconMap[defaultIcon]; // Use default icon if desired icon not found and useDefault is true
+    Component = iconMap[defaultIcon]; // Use default icon if desired icon not found
   }
   if (!Component) {
     return null;
