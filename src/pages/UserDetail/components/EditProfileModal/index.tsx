@@ -345,7 +345,6 @@ const EditProfileModal: FC<IEditProfileModal> = ({
       closeEditProfileModal();
       await queryClient.invalidateQueries({ queryKey: ['departments'] });
       if (userId) {
-        console.log('hi');
         await queryClient.invalidateQueries(['user', userId]); // single user by id
         await queryClient.invalidateQueries(['users']); // invalidate the all user queries
       } else {
