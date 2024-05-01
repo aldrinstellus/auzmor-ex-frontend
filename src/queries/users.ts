@@ -107,6 +107,7 @@ export interface IGetUser {
   lastName?: string;
   userName?: string;
   primaryEmail?: string;
+  preferredName?: string;
   org?: {
     id: string;
     name?: string;
