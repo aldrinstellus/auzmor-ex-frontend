@@ -81,6 +81,7 @@ export const dummyChannels: IChannel[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+        name: 'incendia',
       },
     },
     channelSettings: {
@@ -117,6 +118,7 @@ export const dummyChannels: IChannel[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+        name: 'incendia',
       },
     },
     channelSettings: {
@@ -153,6 +155,7 @@ export const dummyChannels: IChannel[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+        name: 'incendia',
       },
     },
     channelSettings: {
@@ -190,6 +193,7 @@ export const dummyChannels: IChannel[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+        name: 'incendia',
       },
     },
     channelSettings: {
@@ -227,6 +231,7 @@ export const dummyChannels: IChannel[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+        name: 'incendia',
       },
     },
     channelSettings: {
@@ -266,6 +271,7 @@ export const dummyChannels: IChannel[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+        name: 'incendia',
       },
     },
     channelSettings: {
@@ -305,6 +311,7 @@ export const dummyChannels: IChannel[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+        name: 'incendia',
       },
     },
     channelSettings: {
@@ -344,6 +351,7 @@ export const dummyChannels: IChannel[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+        name: 'incendia',
       },
     },
     channelSettings: {

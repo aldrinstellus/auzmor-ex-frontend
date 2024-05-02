@@ -451,6 +451,7 @@ export const ChannelUserRequests: IChannelRequest[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+        name: 'incendia',
       },
     },
     status: CHANNEL_MEMBER_STATUS.PENDING,
@@ -482,6 +483,7 @@ export const ChannelUserRequests: IChannelRequest[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+        name: 'incendia',
       },
     },
     status: CHANNEL_MEMBER_STATUS.PENDING,
@@ -514,6 +516,7 @@ export const ChannelUserRequests: IChannelRequest[] = [
       organization: {
         domain: 'incendia',
         id: '6465d142c62ae5de85d33b81',
+        name: 'incendia',
       },
     },
     status: CHANNEL_MEMBER_STATUS.PENDING,
