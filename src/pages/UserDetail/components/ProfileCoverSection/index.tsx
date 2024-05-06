@@ -427,9 +427,6 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
           title={getBlobFile ? 'Apply Changes' : 'Reposition'}
           openEditImage={openEditImage}
           closeEditImageModal={closeEditImageModal}
-          openEditProfileModal={
-            showEditProfile.current ? openEditProfileModal : undefined
-          }
           image={getBlobFile || userDetails?.coverImage?.original}
           userCoverImageRef={userCoverImageRef}
           setImageFile={setFile}

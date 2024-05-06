@@ -28,7 +28,7 @@ export type IScreen = {
 const UserOnboard: FC = (): ReactNode => {
   const { showOnboard } = useAuth();
   const [file, setFile] = useState<File>();
-  const [open, openModal, closeModal] = useModal(true);
+  const [open, closeModal] = useModal(true);
   const [currentScreen, _, next] = useCarousel(0, 5);
   const [disableClose, setDisableClose] = useState<boolean>(false);
   const [openEditImage, openEditImageModal, closeEditImageModal] =
@@ -118,7 +118,6 @@ const UserOnboard: FC = (): ReactNode => {
         <EditImageModal
           title="Apply Change"
           openEditImage={openEditImage}
-          openEditProfileModal={openModal}
           closeEditImageModal={closeEditImageModal}
           userProfileImageRef={profilePictureRef}
           image={getBlobUrl(file)}
