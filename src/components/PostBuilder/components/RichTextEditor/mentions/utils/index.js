@@ -53,10 +53,9 @@ function createMentionsList(mentionsList, character) {
   // eslint-disable-next-line array-callback-return
   mentionsList &&
     mentionsList.map((mention) => {
-      const val =
-        mention?.preferredName && mention?.preferredName.trim() != ''
-          ? mention.preferredName
-          : mention?.fullName;
+      const val = mention?.preferredName?.trim()
+        ? mention.preferredName
+        : mention?.fullName;
 
       atValues.push({
         ...mention,
