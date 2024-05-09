@@ -20,6 +20,8 @@ import { slideInAndOutTop } from 'utils/react-toastify';
 import FailureToast from 'components/Toast/variants/FailureToast';
 import Audience from './Audience';
 import Header from 'components/ModalHeader';
+import { uploadImage } from 'queries/learn';
+import useProduct from 'hooks/useProduct';
 
 export enum APP_MODE {
   Create = 'CREATE',
@@ -44,6 +46,7 @@ export interface IAddAppForm {
   category?: any;
   audience?: IAudience[];
   icon?: AppIcon & { file: File };
+  fileObj?: any;
   acsUrl?: string;
   entityId?: string;
   relayState?: string;
@@ -68,6 +71,7 @@ const AddAppFormSchema = yup.object({
   acsUrl: yup.string(),
   entityId: yup.string(),
   relayState: yup.string(),
+  fileObj: yup.mixed(),
 });
 
 const AddApp: FC<AddAppProps> = ({
@@ -104,6 +108,7 @@ const AddApp: FC<AddAppProps> = ({
       relayState: data?.credentials?.relayState || '',
     },
   });
+  const { isLxp } = useProduct();
   const [activeFlow, setActiveFlow] = useState(ADD_APP_FLOW.AddApp);
   const [audience, setAudience] = useState<any>(data?.audience || []);
   // const [activeTab, setActiveTab] = useState(0);
@@ -256,15 +261,21 @@ const AddApp: FC<AddAppProps> = ({
     if (!errors.url && !errors.label && !errors.description) {
       const formData = getValues();
       let uploadedFile;
-      if (formData?.icon?.id) {
-        uploadedFile = [{ id: formData?.icon.id }];
-      } else if (formData.icon?.file) {
-        uploadedFile = await uploadMedia(
-          [formData.icon?.file],
-          EntityType.AppIcon,
-        );
+      if (isLxp && formData.fileObj) {
+        const formPayload: any = new FormData();
+        const learnFileObj = formData?.fileObj;
+        formPayload.append('url', learnFileObj);
+        uploadedFile = await uploadImage(formPayload); // for lxp
+      } else {
+        if (formData?.icon?.id) {
+          uploadedFile = [{ id: formData?.icon.id }];
+        } else if (formData.icon?.file) {
+          uploadedFile = await uploadMedia(
+            [formData.icon?.file],
+            EntityType.AppIcon,
+          );
+        }
       }
-
       // Construct request body
       const req = {
         url: formData.url,
@@ -274,6 +285,17 @@ const AddApp: FC<AddAppProps> = ({
         ...(formData.category &&
           formData.category.label && { category: formData.category.label }),
         ...(uploadedFile && uploadedFile[0] && { icon: uploadedFile[0].id }),
+        audience: audience || [],
+      };
+
+      const lxpReq = {
+        url: formData.url,
+        label: formData.label,
+        featured: mode === APP_MODE.Edit ? !!data?.featured : false,
+        ...(formData.description && { description: formData.description }),
+        ...(formData.category &&
+          formData.category.label && { category: formData.category.label }),
+        icon: uploadedFile?.data?.url,
         audience: audience || [],
       };
       const credentials: any = {};
@@ -287,10 +309,11 @@ const AddApp: FC<AddAppProps> = ({
         credentials.relayState = formData.relayState;
       }
       req.credentials = credentials;
+      lxpReq.credentials = credentials;
       if (mode === APP_MODE.Create) {
-        addAppMutation.mutate(req);
+        addAppMutation.mutate(isLxp ? lxpReq : req);
       } else if (mode === APP_MODE.Edit) {
-        updateAppMutation.mutate(req);
+        updateAppMutation.mutate(isLxp ? lxpReq : req);
       }
     }
   };

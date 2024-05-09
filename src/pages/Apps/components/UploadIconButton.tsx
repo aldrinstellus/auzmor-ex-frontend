@@ -12,6 +12,7 @@ import { IAddAppForm } from './AddApp';
 import useModal from 'hooks/useModal';
 import ImageReposition from 'components/DynamicImagePreview/components/ImageReposition';
 import { Shape } from 'components/ImageCropper';
+import useProduct from 'hooks/useProduct';
 
 type UploadIconButtonProps = {
   setValue: UseFormSetValue<IAddAppForm>;
@@ -19,6 +20,7 @@ type UploadIconButtonProps = {
 };
 
 const UploadIconButton: FC<UploadIconButtonProps> = ({ setValue, icon }) => {
+  const { isLxp } = useProduct();
   const [isEditIconModalOpen, openEditIconModal, closeEditIconModal] =
     useModal();
   const [tempFile, setTempFile] = useState<File | null>(null);
@@ -41,6 +43,7 @@ const UploadIconButton: FC<UploadIconButtonProps> = ({ setValue, icon }) => {
     // Do something with the files
     if (acceptedFiles.length) {
       openEditIconModal();
+      setValue('fileObj', acceptedFiles[0]);
       setTempFile(acceptedFiles[0]);
     }
   }, []);
@@ -66,7 +69,7 @@ const UploadIconButton: FC<UploadIconButtonProps> = ({ setValue, icon }) => {
       accept: {
         'image/jpeg': ['.jpg', '.jpeg'],
         'image/png': ['.png'],
-        'image/svg': ['.svg'],
+        ...(isLxp ? {} : { 'image/svg': ['.svg'] }),
       },
       validator: (file) => {
         // size validation
