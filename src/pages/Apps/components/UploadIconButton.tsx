@@ -56,7 +56,9 @@ const UploadIconButton: FC<UploadIconButtonProps> = ({ setValue, icon }) => {
         // extension validation
         const error = rejection[0].errors[0];
         if (error.code === 'file-invalid-type') {
-          showErrorToast('Only JPEG/PNG/SVG filetypes are supported!');
+          showErrorToast(
+            `Only JPEG/PNG${isLxp ? '' : '/SVG'} filetypes are supported!`,
+          );
           setError('Unsupported filetypes.');
           return;
         }
