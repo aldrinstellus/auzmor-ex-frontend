@@ -261,14 +261,24 @@ const AddApp: FC<AddAppProps> = ({
     if (!errors.url && !errors.label && !errors.description) {
       const formData = getValues();
       let uploadedFile;
+      let lxpCategoryId;
       if (isLxp && formData.fileObj) {
         const formPayload: any = new FormData();
         const learnFileObj = formData?.fileObj;
         formPayload.append('url', learnFileObj);
         uploadedFile = await uploadImage(formPayload); // for lxp
         // upload category to learn
-        if (formData?.category) {
-          await createCatergory({ title: formData?.category?.label });
+        if (
+          formData?.category &&
+          typeof formData?.category?.value != 'number'
+        ) {
+          // already have category on learn db don't call this
+          lxpCategoryId = await createCatergory({
+            title: formData?.category?.label,
+          });
+          lxpCategoryId = lxpCategoryId?.result?.data?.id;
+        } else {
+          lxpCategoryId = formData?.category?.value;
         }
       } else {
         if (formData?.icon?.id) {
@@ -280,7 +290,6 @@ const AddApp: FC<AddAppProps> = ({
           );
         }
       }
-
       // Construct request body
       const req = {
         url: formData.url,
@@ -299,7 +308,9 @@ const AddApp: FC<AddAppProps> = ({
         featured: mode === APP_MODE.Edit ? !!data?.featured : false,
         ...(formData.description && { description: formData.description }),
         ...(formData.category &&
-          formData.category.label && { category: formData.category.label }),
+          lxpCategoryId && {
+            category: lxpCategoryId.toString(),
+          }),
         icon: uploadedFile?.result?.data?.url,
         audience: audience || [],
       };

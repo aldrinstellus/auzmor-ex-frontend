@@ -15,8 +15,10 @@ import {
   IAudience,
   useInfiniteCategories,
 } from 'queries/apps';
-import { ICategoryDetail } from 'queries/category';
+import { ICategoryDetail, ILearnCategoryDetail } from 'queries/category';
 import { FC } from 'react';
+import useProduct from 'hooks/useProduct';
+import { useInfiniteLearnCategory } from 'queries/learn';
 
 type AppDetailsFormProps = {
   control: Control<IAddAppForm, any>;
@@ -37,6 +39,7 @@ const AppDetailsForm: FC<AppDetailsFormProps> = ({
   icon,
   audience,
 }) => {
+  const { isLxp } = useProduct();
   const urlField = [
     {
       type: FieldType.Input,
@@ -77,7 +80,16 @@ const AppDetailsForm: FC<AppDetailsFormProps> = ({
         }`,
       }),
     );
-    return transformedOption;
+    const LxpTransformedOption = categoriesData?.map(
+      (category: ILearnCategoryDetail) => ({
+        value: category?.id,
+        label: category?.title,
+        id: category?.id,
+        title: category?.title,
+        dataTestId: `category-option-${category?.id}`,
+      }),
+    );
+    return isLxp ? LxpTransformedOption : transformedOption;
   };
 
   const appFields = [
@@ -121,8 +133,8 @@ const AppDetailsForm: FC<AppDetailsFormProps> = ({
       menuPlacement: 'topLeft',
       dataTestId: 'add-app-category',
       addItemDataTestId: 'add-app-add-category',
-      fetchQuery: useInfiniteCategories,
-      queryParams: { type: CategoryType.APP },
+      fetchQuery: isLxp ? useInfiniteLearnCategory : useInfiniteCategories,
+      queryParams: isLxp ? '' : { type: CategoryType.APP },
       getFormattedData: formatCategories,
     },
   ];
