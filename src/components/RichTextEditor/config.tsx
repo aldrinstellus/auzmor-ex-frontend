@@ -122,9 +122,13 @@ export const mention = {
 
             <div>
               <div class="user-details">
-                <div>${item.fullName}</div>
+              <span> ${
+                item?.preferredName?.trim()
+                  ? `${item?.preferredName} (${item?.fullName})`
+                  : item?.fullName
+              }</span>
               <div>
-                <div class="user-email">${item.workEmail}</div>
+                <div class="user-email">${item?.workEmail}</div>
             </div>
 
 </div>

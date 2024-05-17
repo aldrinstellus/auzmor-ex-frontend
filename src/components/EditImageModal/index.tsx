@@ -57,12 +57,10 @@ const EditImageModal: FC<AppProps> = ({
   imageName,
   imageFile,
   setImageFile,
-  openEditProfileModal = () => {},
   closeEditImageModal = () => {},
   userProfileImageRef,
   userCoverImageRef,
   fileEntityType,
-  openOnBoardModal = () => {},
   userId,
 }) => {
   const { updateUser } = useAuth();
@@ -156,7 +154,6 @@ const EditImageModal: FC<AppProps> = ({
       }
 
       closeEditImageModal();
-      openEditProfileModal();
       setBlob(null);
       if (userId) {
         await queryClient.invalidateQueries({ queryKey: ['user', userId] });
@@ -230,8 +227,6 @@ const EditImageModal: FC<AppProps> = ({
     } else {
       closeEditImageModal();
       setImageFile && setImageFile({});
-      openEditProfileModal();
-      openOnBoardModal();
     }
   };
 

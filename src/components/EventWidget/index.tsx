@@ -103,13 +103,13 @@ const EventWidget: FC<IEventWidgetProps> = ({ className = '' }) => {
                     animation: '0.15s ease-in 0s 1 normal both running fadeIn',
                   }}
                 />
-                {!isLive && (
+                {!isLive && event?.conference_url && (
                   <>
                     <div className="absolute z-10 flex top-0 left-4 right-4 bottom-40 justify-center z-100 items-center inset-0">
                       <Button
                         label={'Join event'}
                         onClick={() => {
-                          window.open(event?.conference_url, '_blank');
+                          window.open(event.conference_url, '_blank');
                         }}
                         className="w-full bg-white text-white bg-opacity-20 border-white"
                       />
@@ -215,12 +215,12 @@ const EventWidget: FC<IEventWidgetProps> = ({ className = '' }) => {
                       More attendees
                     </div>
                   </div>
-                  {isLive && (
+                  {isLive && event.conference_url && (
                     <Button
                       label={'Join event'}
                       className="w-full "
                       onClick={() => {
-                        window.open(event?.conference_url, '_blank');
+                        window.open(event.conference_url, '_blank');
                       }}
                     />
                   )}
