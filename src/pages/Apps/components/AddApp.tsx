@@ -136,7 +136,9 @@ const AddApp: FC<AddAppProps> = ({
         theme: 'dark',
       });
       closeModal();
-      queryClient.invalidateQueries(['categories']);
+      isLxp
+        ? queryClient.invalidateQueries(['learnCategory'])
+        : queryClient.invalidateQueries(['categories']);
     },
     onError: async () => {
       toast(
@@ -195,7 +197,9 @@ const AddApp: FC<AddAppProps> = ({
         },
       );
       closeModal();
-      queryClient.invalidateQueries(['categories']);
+      isLxp
+        ? queryClient.invalidateQueries(['learnCategory'])
+        : queryClient.invalidateQueries(['categories']);
     },
     onError: (_error: any) => {
       toast(
