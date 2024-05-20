@@ -32,6 +32,7 @@ export const patchConfig = async (
     publicToken?: string;
     allowedFolders?: Record<string, string>[];
     isAuthorized?: boolean;
+    allowedDrives?: Record<string, string>[];
   },
   onSuccess?: () => void,
 ) => {
@@ -41,6 +42,7 @@ export const patchConfig = async (
       publicToken: patchData?.publicToken,
       allowedFolders: patchData?.allowedFolders,
       isAuthorized: patchData?.isAuthorized,
+      allowedDrives: patchData?.allowedDrives,
     }),
   );
   onSuccess && onSuccess();

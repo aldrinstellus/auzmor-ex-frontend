@@ -66,11 +66,11 @@ const Document: FC<IDocumentProps> = ({}) => {
   const configStorageMutation = useMutation({
     mutationKey: ['configure-storage'],
     mutationFn: getLinkToken,
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       open({
         token: data.result.data.linkToken,
         unifiedApi: 'file-storage',
-        serviceId: 'google-drive',
+        serviceId: variables,
         onReady: () => console.log('ready'),
         onClose: () => console.log('onClose'),
         onConnectionChange: () => {
@@ -169,8 +169,13 @@ const Document: FC<IDocumentProps> = ({}) => {
     const Integrations = [
       {
         icon: 'google',
-        label: 'Google drive',
+        label: 'Google Drive',
         integrationValue: IntegrationOptionsEnum.GoogleDrive,
+      },
+      {
+        icon: 'sharePoint',
+        label: 'Share Point',
+        integrationValue: IntegrationOptionsEnum.Sharepoint,
       },
     ];
     return (
@@ -182,14 +187,15 @@ const Document: FC<IDocumentProps> = ({}) => {
         <p className="text-base text-neutral-900">
           To view your files here, you need to enable google drive integration.
         </p>
-        <div className="flex px-2 py-3 border border-dashed rounded-9xl border-primary-400 w-full justify-center">
+        <div className="flex px-2 py-3 border border-dashed rounded-9xl border-primary-400 w-full justify-center items-center flex-col gap-2">
           {Integrations.map((each) => {
             return (
               <Button
                 variant={ButtonVariant.Secondary}
                 leftIcon={each.icon}
-                key={each.integrationValue}
                 label={each.label}
+                key={each.integrationValue}
+                className="w-64"
                 onClick={() =>
                   configStorageMutation.mutate(each.integrationValue)
                 }
