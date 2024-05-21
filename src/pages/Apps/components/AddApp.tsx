@@ -71,7 +71,6 @@ const AddAppFormSchema = yup.object({
   acsUrl: yup.string(),
   entityId: yup.string(),
   relayState: yup.string(),
-  isNewCategory: yup.boolean(),
 });
 
 const AddApp: FC<AddAppProps> = ({
