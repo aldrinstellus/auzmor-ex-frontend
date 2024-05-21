@@ -266,11 +266,12 @@ const AddApp: FC<AddAppProps> = ({
       const formData = getValues();
       let uploadedFile;
       let lxpCategoryId;
-      if (isLxp && formData.fileObj) {
+      if (isLxp) {
         const formPayload: any = new FormData();
-        const learnFileObj = formData?.fileObj;
-        formPayload.append('url', learnFileObj);
-        uploadedFile = await uploadImage(formPayload); // for lxp
+        if (formData.fileObj) {
+          formPayload.append('url', formData?.fileObj);
+          uploadedFile = await uploadImage(formPayload); // for lxp
+        }
         // upload category to learn
         if (
           formData?.category &&
@@ -305,7 +306,6 @@ const AddApp: FC<AddAppProps> = ({
         ...(uploadedFile && uploadedFile[0] && { icon: uploadedFile[0].id }),
         audience: audience || [],
       };
-
       const lxpReq = {
         url: formData.url,
         label: formData.label,
