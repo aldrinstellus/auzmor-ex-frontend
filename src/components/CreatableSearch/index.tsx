@@ -34,7 +34,6 @@ export interface ICreatableSearch {
   fontSize?: number;
   getPopupContainer?: any;
   multi?: boolean;
-  setValue?: any;
 }
 
 const CreatableSearch = forwardRef(
@@ -60,7 +59,6 @@ const CreatableSearch = forwardRef(
       fontSize = 14,
       getPopupContainer = null,
       multi = false,
-      setValue,
     }: ICreatableSearch,
     ref?: any,
   ) => {
@@ -188,18 +186,20 @@ const CreatableSearch = forwardRef(
                   }}
                   optionLabelProp="label"
                   onChange={(values, option: any) => {
-                    if (option.key === option.value) {
-                      setValue?.('isNewCategory', true);
-                    } else {
-                      setValue?.('isNewCategory', false);
-                    }
                     if (multi) {
                       field.onChange(
-                        values?.map((v: string) => ({ value: v, label: v })),
+                        values?.map((v: string) => ({
+                          value: v,
+                          label: v,
+                          isNew: option?.key == option?.value,
+                        })),
                       );
                       setSearchValue('');
                     } else {
-                      field.onChange(option);
+                      field.onChange({
+                        ...option,
+                        isNew: option?.key == option?.value,
+                      });
                       setSearchValue('');
                       setOpen(false);
                     }
