@@ -50,6 +50,7 @@ export interface IAddAppForm {
   acsUrl?: string;
   entityId?: string;
   relayState?: string;
+  isNewCategory?: boolean;
 }
 
 const AddAppFormSchema = yup.object({
@@ -72,6 +73,7 @@ const AddAppFormSchema = yup.object({
   entityId: yup.string(),
   relayState: yup.string(),
   fileObj: yup.mixed(),
+  isNewCategory: yup.boolean(),
 });
 
 const AddApp: FC<AddAppProps> = ({
@@ -273,10 +275,7 @@ const AddApp: FC<AddAppProps> = ({
           uploadedFile = await uploadImage(formPayload); // for lxp
         }
         // upload category to learn
-        if (
-          formData?.category &&
-          typeof formData?.category?.value != 'number'
-        ) {
+        if (formData?.category && formData?.isNewCategory) {
           // already have category on learn db don't call this
           lxpCategoryId = await createCatergory({
             title: formData?.category?.label,
