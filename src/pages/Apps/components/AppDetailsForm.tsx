@@ -15,7 +15,7 @@ import {
   IAudience,
   useInfiniteCategories,
 } from 'queries/apps';
-import { ICategoryDetail, ILearnCategoryDetail } from 'queries/category';
+import { ICategoryDetail } from 'queries/category';
 import { FC } from 'react';
 import useProduct from 'hooks/useProduct';
 import { useInfiniteLearnCategory } from 'queries/learn';
@@ -80,16 +80,8 @@ const AppDetailsForm: FC<AppDetailsFormProps> = ({
         }`,
       }),
     );
-    const LxpTransformedOption = categoriesData?.map(
-      (category: ILearnCategoryDetail) => ({
-        value: category?.id,
-        label: category?.title,
-        id: category?.id,
-        title: category?.title,
-        dataTestId: `category-option-${category?.id}`,
-      }),
-    );
-    return isLxp ? LxpTransformedOption : transformedOption;
+
+    return transformedOption;
   };
 
   const appFields = [

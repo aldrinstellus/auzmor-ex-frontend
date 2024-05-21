@@ -11,13 +11,6 @@ export interface ICategoryDetail {
   type: string;
   id: string;
 }
-export interface ILearnCategoryDetail {
-  name?: string;
-  type?: string;
-  id?: number | string;
-  title?: string;
-  event_count?: number;
-}
 
 const getAllCategories = async ({
   pageParam = null,
