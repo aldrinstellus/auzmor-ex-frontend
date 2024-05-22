@@ -36,14 +36,18 @@ const UploadIconButton: FC<UploadIconButtonProps> = ({ setValue, icon }) => {
       file.type,
     );
     iconElement.src = getBlobUrl(blobFile);
-    setValue('icon', { id: '', original: '', file: blobFile });
+    setValue('icon', {
+      id: '',
+      original: '',
+      file: blobFile,
+      tempFile: tempFile,
+    });
   };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     // Do something with the files
     if (acceptedFiles.length) {
       openEditIconModal();
-      setValue('fileObj', acceptedFiles[0]);
       setTempFile(acceptedFiles[0]);
     }
   }, []);

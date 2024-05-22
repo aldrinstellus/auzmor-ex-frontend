@@ -45,11 +45,11 @@ export interface IAddAppForm {
   description?: string;
   category?: any;
   audience?: IAudience[];
-  icon?: AppIcon & { file: File };
-  fileObj?: any;
+  icon?: AppIcon & { file: File; tempFile: File | null };
   acsUrl?: string;
   entityId?: string;
   relayState?: string;
+  isNewCategory?: boolean;
 }
 
 const AddAppFormSchema = yup.object({
@@ -71,7 +71,6 @@ const AddAppFormSchema = yup.object({
   acsUrl: yup.string(),
   entityId: yup.string(),
   relayState: yup.string(),
-  fileObj: yup.mixed(),
 });
 
 const AddApp: FC<AddAppProps> = ({
@@ -266,16 +265,14 @@ const AddApp: FC<AddAppProps> = ({
       const formData = getValues();
       let uploadedFile;
       let lxpCategoryId;
-      if (isLxp && formData.fileObj) {
+      if (isLxp) {
         const formPayload: any = new FormData();
-        const learnFileObj = formData?.fileObj;
-        formPayload.append('url', learnFileObj);
-        uploadedFile = await uploadImage(formPayload); // for lxp
+        if (formData.icon?.tempFile) {
+          formPayload.append('url', formData?.icon?.tempFile);
+          uploadedFile = await uploadImage(formPayload); // for lxp
+        }
         // upload category to learn
-        if (
-          formData?.category &&
-          typeof formData?.category?.value != 'number'
-        ) {
+        if (formData?.category && formData?.category?.isNew) {
           // already have category on learn db don't call this
           lxpCategoryId = await createCatergory({
             title: formData?.category?.label,
@@ -305,7 +302,6 @@ const AddApp: FC<AddAppProps> = ({
         ...(uploadedFile && uploadedFile[0] && { icon: uploadedFile[0].id }),
         audience: audience || [],
       };
-
       const lxpReq = {
         url: formData.url,
         label: formData.label,
