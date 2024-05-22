@@ -19,6 +19,8 @@ import OfficeLogoSvg from '../Logo/images/OfficeLogo.svg';
 import useModal from 'hooks/useModal';
 import AudienceModal, { getAudienceCount } from 'components/AudienceModal';
 import ReactMarkdown from 'react-markdown';
+import remarkDirective from 'remark-directive';
+import remarkDirectiveRehype from 'remark-directive-rehype';
 import LxpUserCard from 'components/UserCard/lxpUserCard';
 
 type ActorProps = {
@@ -31,6 +33,20 @@ type ActorProps = {
   entityId?: string;
   postType?: string;
   title?: PostTitle;
+};
+
+const MarkdownTooltip = (props: any) => {
+  return (
+    <Tooltip
+      tooltipContent={<LxpUserCard userId={props.node.properties.userId} />}
+      variant={Variant.Light}
+      className="!p-4 !shadow-md !rounded-9xl !z-[999]"
+    >
+      <span className="font-bold text-sm text-neutral-900 cursor-pointer">
+        {props.node.properties.name}
+      </span>
+    </Tooltip>
+  );
 };
 
 const Actor: FC<ActorProps> = ({
@@ -74,10 +90,10 @@ const Actor: FC<ActorProps> = ({
           ? '/users/' + createdBy.userId
           : '/profile'
       }`;
+
   // const markdownParseTitle =
   //   '{Userid:7336|Shoeb khan} and {Userid:7463|Mandeep} posted an update on [General Forum](https://hire.auzmor.com/general)';
-  const markdownParseTitle =
-    '  `Userid:7336|Shoeb khan` and `Userid:7463|Mandeep`  posted an update    on [General Forum](https://hire.auzmor.com/general)';
+  const markdownParseTitle = `:user{userId="7336" name="Shoeb khan"} and :user{userId="7463" name="Mandeep"} posted an update on [General Forum](https://hire.auzmor.com/general)`;
 
   const CustomStrong = ({ children, className, ...props }: any) => {
     return (
@@ -103,26 +119,7 @@ const Actor: FC<ActorProps> = ({
   };
 
   const components = {
-    code: ({ ...props }) => {
-      const text = props.children;
-      const pattern = /Userid:(\d+)\|([^\|]+)/;
-      const match = text.match(pattern);
-      const name = match[2];
-      const userId = match[1];
-      return (
-        <>
-          <Tooltip
-            tooltipContent={<LxpUserCard userId={userId} />}
-            variant={Variant.Light}
-            className="!p-4 !shadow-md !rounded-9xl !z-[999]"
-          >
-            <span className="font-bold text-sm text-neutral-900 cursor-pointer">
-              {name}
-            </span>
-          </Tooltip>
-        </>
-      );
-    },
+    user: MarkdownTooltip,
     Strong: CustomStrong,
     a: CustomLink,
   };
@@ -152,7 +149,10 @@ const Actor: FC<ActorProps> = ({
         </div>
         <div className="flex flex-col flex-1">
           {title ? (
-            <ReactMarkdown components={components}>
+            <ReactMarkdown
+              components={components}
+              remarkPlugins={[remarkDirective, remarkDirectiveRehype]}
+            >
               {markdownParseTitle}
             </ReactMarkdown>
           ) : (
