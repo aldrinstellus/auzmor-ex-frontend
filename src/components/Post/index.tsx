@@ -1,4 +1,4 @@
-import { FC, Fragment, memo, useEffect, useRef } from 'react';
+import { FC, memo, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router';
@@ -39,8 +39,7 @@ import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 import { useFeedStore } from 'stores/feedStore';
 import Avatar from 'components/Avatar';
 import LinkAttachments from './components/LinkAttachments';
-// import Markdown from 'react-markdown';
-// import remarkGfm from 'remark-gfm';
+import Markdown from 'react-markdown';
 export const iconsStyle = (key: string) => {
   const iconStyle = clsx(
     {
@@ -183,27 +182,25 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
   };
 
   const CustomCard: FC = () => {
-    const iconMap: Record<string, string> = {
-      clock: 'clock',
-      play: 'play',
-      calendar: 'calendar',
-      camera: 'video',
-      location: 'location',
-    };
+    // const iconMap: Record<string, string> = {
+    //   clock: 'clock',
+    //   play: 'play',
+    //   calendar: 'calendar',
+    //   camera: 'video',
+    //   location: 'location',
+    // };
 
     const CustomImg = ({ alt, src, ...props }: any) => {
       return (
         <img alt={alt} src={src} className="w-4 h-4 object-cover" {...props} />
       );
     };
-
     const components = {
       img: CustomImg,
       p: ({ ...props }: any) => (
         <p className="flex gap-2 items-center" {...props} />
       ),
     };
-    console.log('components :', components);
 
     return (
       <Card className="w-full h-[266px] relative overflow-hidden group/card">
@@ -281,12 +278,14 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
               </div>
             </div>
           )}
-          {/* <div className="text-sm text-white">
-            <Markdown remarkPlugins={[remarkGfm]} components={components}>
-              {markdownContent}
-            </Markdown>
-          </div> */}
-          {post?.cardContext?.blockStrings?.length && (
+          {post?.cardContext?.description && (
+            <div className="text-sm text-white">
+              <Markdown components={components}>
+                {post?.cardContext?.description}
+              </Markdown>
+            </div>
+          )}
+          {/* {post?.cardContext?.blockStrings?.length && (
             <div className="flex gap-2 items-center">
               {post?.cardContext?.blockStrings?.map((blockString, index) => (
                 <Fragment key={blockString?.text}>
@@ -305,7 +304,7 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
                 </Fragment>
               ))}
             </div>
-          )}
+          )} */}
           {post?.ctaButton?.text && (
             <div className="flex font">
               <Button

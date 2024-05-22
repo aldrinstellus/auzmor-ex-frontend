@@ -22,6 +22,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkDirective from 'remark-directive';
 import remarkDirectiveRehype from 'remark-directive-rehype';
 import LxpUserCard from 'components/UserCard/lxpUserCard';
+import { CustomLink, CustomStrong, convertUserTags } from './utils';
 
 type ActorProps = {
   contentMode?: string;
@@ -91,33 +92,6 @@ const Actor: FC<ActorProps> = ({
           : '/profile'
       }`;
 
-  // const markdownParseTitle =
-  //   '{Userid:7336|Shoeb khan} and {Userid:7463|Mandeep} posted an update on [General Forum](https://hire.auzmor.com/general)';
-  const markdownParseTitle = `:user{userId="7336" name="Shoeb khan"} and :user{userId="7463" name="Mandeep"} posted an update on [General Forum](https://hire.auzmor.com/general)`;
-
-  const CustomStrong = ({ children, className, ...props }: any) => {
-    return (
-      <strong
-        className={`${className} font-bold text-sm text-neutral-900  hover:cursor-pointer`}
-        {...props}
-      >
-        {children}
-      </strong>
-    );
-  };
-
-  const CustomLink = ({ children, className, ...props }: any) => {
-    return (
-      <a
-        className={`${className} font-bold text-sm text-primary-500 hover:text-primary-700 hover:cursor-pointer`}
-        target="_blank"
-        {...props}
-      >
-        {children}
-      </a>
-    );
-  };
-
   const components = {
     user: MarkdownTooltip,
     Strong: CustomStrong,
@@ -152,7 +126,7 @@ const Actor: FC<ActorProps> = ({
               components={components}
               remarkPlugins={[remarkDirective, remarkDirectiveRehype]}
             >
-              {markdownParseTitle}
+              {convertUserTags(title?.content)}
             </ReactMarkdown>
           ) : (
             <div

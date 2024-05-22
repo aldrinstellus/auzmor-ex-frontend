@@ -145,6 +145,7 @@ export interface IPost {
       url: string;
       text: string;
     };
+    description: string;
     blockStrings: [
       {
         icon: string;

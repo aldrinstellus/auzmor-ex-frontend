@@ -19,7 +19,9 @@ interface IProductProviderProps {
   children: ReactNode;
 }
 const ProductProvider: FC<IProductProviderProps> = ({ children }) => {
-  const [product, setProduct] = useState<ProductEnum | null>(getProduct());
+  const [product, setProduct] = useState<ProductEnum | null>(
+    ProductEnum.Lxp || getProduct(),
+  );
 
   // Redirect to learn if user lands on lxp generic page.
   if (
