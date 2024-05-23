@@ -39,7 +39,10 @@ import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 import { useFeedStore } from 'stores/feedStore';
 import Avatar from 'components/Avatar';
 import LinkAttachments from './components/LinkAttachments';
-
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkDirective from 'remark-directive';
+import remarkDirectiveRehype from 'remark-directive-rehype';
 export const iconsStyle = (key: string) => {
   const iconStyle = clsx(
     {
@@ -180,7 +183,6 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
       createBookmarkMutation.mutate(post.id as string);
     }
   };
-
   const CustomCard: FC = () => {
     const iconMap: Record<string, string> = {
       clock: 'clock',
@@ -188,6 +190,24 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
       calendar: 'calendar',
       camera: 'video',
       location: 'location',
+    };
+
+    const CustomImg = ({ alt, src, ...props }: any) => {
+      return (
+        <img alt={alt} src={src} className="w-4 h-4 object-cover" {...props} />
+      );
+    };
+    const CustomDate = (props: any) => {
+      const dateString = moment.unix(props.unix).format(props.format);
+      return <span>{dateString}</span>;
+    };
+
+    const components = {
+      date: CustomDate,
+      img: CustomImg,
+      p: ({ ...props }: any) => (
+        <p className="flex gap-2 items-center" {...props} />
+      ),
     };
 
     return (
@@ -264,6 +284,20 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
               <div className="text-white text-sm font-medium">
                 {post?.cardContext?.avatar?.text || 'User'}
               </div>
+            </div>
+          )}
+          {post?.cardContext?.description && (
+            <div className="text-sm text-white">
+              <Markdown
+                components={components}
+                remarkPlugins={[
+                  remarkDirective,
+                  remarkDirectiveRehype,
+                  remarkGfm,
+                ]}
+              >
+                {post?.cardContext?.description}
+              </Markdown>
             </div>
           )}
           {post?.cardContext?.blockStrings?.length && (
