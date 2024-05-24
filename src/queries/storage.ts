@@ -105,12 +105,16 @@ export const useFolders = (q: Record<string, string | null>) => {
     queryFn: () => getFolders(q),
   });
 };
-export const useDocument = (params: Record<any, any | null>) => {
+export const useDocument = (
+  params: Record<any, any | null>,
+  enabled?: boolean,
+) => {
   return useQuery({
     queryKey: ['get-storage-document', params],
     queryFn: () => getDocument(params),
     cacheTime: 0,
     staleTime: 0,
+    enabled: !!enabled,
   });
 };
 export const useGetStorageUser = (q: Record<any, any | null>) => {
