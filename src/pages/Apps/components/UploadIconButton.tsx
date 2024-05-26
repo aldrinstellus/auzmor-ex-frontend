@@ -23,24 +23,19 @@ const UploadIconButton: FC<UploadIconButtonProps> = ({ setValue, icon }) => {
   const { isLxp } = useProduct();
   const [isEditIconModalOpen, openEditIconModal, closeEditIconModal] =
     useModal();
-  const [tempFile, setTempFile] = useState<File | null>(null);
+  const [tempFile, setTempFile] = useState<any>(null);
   const [error, setError] = useState('');
   // Callback function to handle file upload
   const handleIconUpload = (file: File) => {
     const iconElement = document.getElementById(
       'add-app-icon',
     ) as HTMLImageElement;
-    const blobFile = BlobToFile(
-      file,
-      `id-${Math.random().toString(16).slice(2)}`,
-      file.type,
-    );
+    const blobFile = BlobToFile(file, tempFile?.name, file.type);
     iconElement.src = getBlobUrl(blobFile);
     setValue('icon', {
       id: '',
       original: '',
       file: blobFile,
-      tempFile: tempFile,
     });
   };
 
