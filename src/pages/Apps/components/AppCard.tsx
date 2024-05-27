@@ -259,9 +259,9 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
               className="text-sm font-bold text-neutral-900 line-clamp-1 truncate"
               data-testid="app-name"
             >
-              {app.label?.length <= 19
-                ? app.label?.substring(0, 19)
-                : app.label?.substring(0, 19) + '...'}
+              {app.label?.length <= 18
+                ? app.label?.substring(0, 18)
+                : app.label?.substring(0, 18) + '..'}
             </div>
             {/* App category */}
             {app.category && !isEmpty(app.category) && (
@@ -294,7 +294,7 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
                 </div>
               }
               menuItems={appCardMenu.filter((item) => !item.hidden)}
-              className="-right-36 w-fit top-6"
+              className="-right-3 w-fit top-6"
             />
           )}
         </div>
