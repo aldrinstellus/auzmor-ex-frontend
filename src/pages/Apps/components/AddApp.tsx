@@ -45,7 +45,7 @@ export interface IAddAppForm {
   description?: string;
   category?: any;
   audience?: IAudience[];
-  icon?: AppIcon & { file: File; tempFile: File | null };
+  icon?: AppIcon & { file: File };
   acsUrl?: string;
   entityId?: string;
   relayState?: string;
@@ -267,8 +267,8 @@ const AddApp: FC<AddAppProps> = ({
       let lxpCategoryId;
       if (isLxp) {
         const formPayload: any = new FormData();
-        if (formData.icon?.tempFile) {
-          formPayload.append('url', formData?.icon?.tempFile);
+        if (formData.icon?.file) {
+          formPayload.append('url', formData?.icon?.file);
           uploadedFile = await uploadImage(formPayload); // for lxp
         }
         // upload category to learn

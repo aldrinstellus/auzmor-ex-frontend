@@ -259,16 +259,16 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
               className="text-sm font-bold text-neutral-900 line-clamp-1 truncate"
               data-testid="app-name"
             >
-              {app.label?.length <= 22
-                ? app.label?.substring(0, 22)
-                : app.label?.substring(0, 22) + '...'}
+              {app.label?.length <= 18
+                ? app.label?.substring(0, 18)
+                : app.label?.substring(0, 18) + '..'}
             </div>
             {/* App category */}
             {app.category && !isEmpty(app.category) && (
               <div className="flex">
                 <Badge
-                  text={app.category.name}
-                  textClassName="text-blue-500 text-xxs py-0 leading-2"
+                  text={app.category.name?.substring(0, 24)}
+                  textClassName="text-blue-500 text-xxs py-0 leading-2  line-clamp-1 truncate"
                   bgClassName="bg-blue-100 border-1 border-blue-300"
                   dataTestId="app-category"
                 />
@@ -294,7 +294,7 @@ const AppCard: FC<AppCardProps> = ({ app }) => {
                 </div>
               }
               menuItems={appCardMenu.filter((item) => !item.hidden)}
-              className="-right-36 w-fit top-6"
+              className="-right-3 w-fit top-6"
             />
           )}
         </div>
