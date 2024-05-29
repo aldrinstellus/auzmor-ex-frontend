@@ -110,6 +110,7 @@ const CreatableSearch = forwardRef(
     const addOptionObject =
       !disableCreate &&
       searchValue &&
+      searchValue.length <= 60 &&
       !isOptionContains(searchValue) &&
       !isLoading
         ? {

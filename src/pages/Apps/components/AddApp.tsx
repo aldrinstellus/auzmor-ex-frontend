@@ -58,7 +58,10 @@ const AddAppFormSchema = yup.object({
     .required('This field cannot be empty')
     .matches(URL_REGEX, 'Enter a valid URL'),
 
-  label: yup.string().required('This field cannot be empty'),
+  label: yup
+    .string()
+    .required('This field cannot be empty')
+    .max(60, 'Label cannot exceed 60 characters'),
   description: yup
     .string()
     .test(
