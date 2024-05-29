@@ -22,6 +22,8 @@ import Audience from './Audience';
 import Header from 'components/ModalHeader';
 import { createCatergory, uploadImage } from 'queries/learn';
 import useProduct from 'hooks/useProduct';
+import { produce } from 'immer';
+import { useAppStore } from 'stores/appStore';
 
 export enum APP_MODE {
   Create = 'CREATE',
@@ -114,15 +116,48 @@ const AddApp: FC<AddAppProps> = ({
   const [activeFlow, setActiveFlow] = useState(ADD_APP_FLOW.AddApp);
   const [audience, setAudience] = useState<any>(data?.audience || []);
   // const [activeTab, setActiveTab] = useState(0);
-
+  const { setApp, apps } = useAppStore();
   const queryClient = useQueryClient();
 
   const addAppMutation = useMutation({
     mutationKey: ['add-app-mutation'],
     mutationFn: createApp,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(['apps']);
-      queryClient.invalidateQueries(['my-apps']);
+    onSuccess: async (data) => {
+      const newApp = data?.result?.data;
+      setApp({ ...apps, [newApp.id!]: { ...newApp } });
+      if (newApp) {
+        queryClient.setQueriesData(
+          {
+            queryKey: ['apps'],
+            exact: false,
+          },
+          (oldData: any) =>
+            produce(oldData, (draft: any) => {
+              if (draft?.pages?.length) {
+                draft.pages[0].data.result.data = [
+                  { id: newApp.id },
+                  ...draft.pages[0].data.result.data,
+                ];
+              }
+            }),
+        );
+        queryClient.setQueriesData(
+          {
+            queryKey: ['my-apps'],
+            exact: false,
+          },
+          (oldData: any) =>
+            produce(oldData, (draft: any) => {
+              if (draft?.pages?.length) {
+                draft.pages[0].data.result.data = [
+                  { id: newApp.id },
+                  ...draft.pages[0].data.result.data,
+                ];
+              }
+            }),
+        );
+      }
+
       toast(<SuccessToast content={'App added successfully'} />, {
         closeButton: (
           <Icon name="closeCircleOutline" color="text-primary-500" size={20} />

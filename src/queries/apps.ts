@@ -371,7 +371,7 @@ export const useInfiniteWidgetApps = (q?: Record<string, any>) => {
 };
 
 export const createApp = async (payload: IAddApp) => {
-  const { data } = await apiService.post('apps', payload);
+  const data = await apiService.post('apps', payload);
   return data;
 };
 
