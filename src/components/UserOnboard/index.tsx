@@ -16,7 +16,7 @@ import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import useCarousel from 'hooks/useCarousel';
 import EditImageModal from 'components/EditImageModal';
-import { getBlobUrl } from 'utils/misc';
+import { clearInputValue, getBlobUrl } from 'utils/misc';
 import { EntityType } from 'queries/files';
 import useAuth from 'hooks/useAuth';
 
@@ -106,11 +106,12 @@ const UserOnboard: FC = (): ReactNode => {
         ref={profilePictureRef}
         accept="image/*"
         data-testid="profilepic-upload"
+        multiple={false}
+        onClick={clearInputValue}
         onChange={(e) => {
           if (e.target.files?.length) {
             setFile(Array.prototype.slice.call(e.target.files)[0]);
             openEditImageModal();
-            closeModal();
           }
         }}
       />
