@@ -10,6 +10,7 @@ import { lazy } from 'react';
 import RequireAdminAuth from 'components/RequireAdminAuth';
 import RequireOfficeAuth from 'components/RequireOfficeAuth';
 import { Channels } from 'pages/Channels';
+import RequireNonProdAuth from 'components/RequireNonProdAuth';
 
 const ErrorBoundary = lazy(() => import('components/ErrorBoundary'));
 const Login = lazy(() => import('pages/Login'));
@@ -117,15 +118,18 @@ const routers = createBrowserRouter(
         </Route>
         <Route path="/posts/:id" element={<PostPage />} />
         <Route path="/notifications" element={<Notifications />} />
-        <Route path="/channels" element={<Channels />} />
-        <Route
-          path="/channels/:channelId"
-          element={<ChannelDetail />}
-          loader={() => {
-            return '';
-          }}
-        />
-        <Route path="/search" element={<SearchResults />}></Route>
+        {/* retricted routes for prod  */}
+        <Route element={<RequireNonProdAuth />}>
+          <Route path="/channels" element={<Channels />} />
+          <Route
+            path="/channels/:channelId"
+            element={<ChannelDetail />}
+            loader={() => {
+              return '';
+            }}
+          />
+          <Route path="/search" element={<SearchResults />} />
+        </Route>
       </Route>
       <Route
         path="/404"

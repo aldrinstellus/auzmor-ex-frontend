@@ -141,9 +141,11 @@ const Navbar = () => {
             <Logo />
           </Link>
 
-          <div className="flex-1">
-            <GlobalSearch />
-          </div>
+          {process.env.REACT_APP_ENV != 'PRODUCTION' && (
+            <div className="flex-1">
+              <GlobalSearch />
+            </div>
+          )}
           <div className="flex items-center gap-8 h-full">
             <div className="flex items-center gap-6">
               {navigations.map((nav) => (
