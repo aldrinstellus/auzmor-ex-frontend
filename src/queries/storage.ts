@@ -49,12 +49,12 @@ export const patchConfig = async (
   return response;
 };
 
-export const getFiles = async (params: Record<string, string | null>) => {
-  return await apiService.get('/storage/files', { ...params });
+export const getFiles = async (_params: Record<string, string | null>) => {
+  return await apiService.get('/storage/files');
 };
 
-export const getFolders = async (params: Record<string, string | null>) => {
-  return await apiService.get('/storage/folder', { ...params });
+export const getFolders = async (_params: Record<string, string | null>) => {
+  return await apiService.get('/storage/folder');
 };
 export const getDocument = async (params: Record<string, string | null>) => {
   return await apiService.get('/storage/search', { ...params });
