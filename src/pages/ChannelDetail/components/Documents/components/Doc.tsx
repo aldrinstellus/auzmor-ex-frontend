@@ -22,6 +22,7 @@ export const getIconName = (mimeType?: string) => {
     ['avi', 'mp4', 'mov', 'wmv', 'mpg', 'm4v'].includes(mimeType ?? '')
   )
     return 'videoFile';
+
   const MIME_TO_ICON: Record<string, string> = {
     doc: 'doc',
     docx: 'doc',
