@@ -225,7 +225,13 @@ const AddApp: FC<AddAppProps> = ({
       );
     },
   });
-
+  const { mutateAsync: uploadImageMutation, isLoading: isUploading } =
+    useMutation(uploadImage, {
+      onSuccess: () => {},
+      onError: (error) => {
+        console.error('Error uploading image:', error);
+      },
+    });
   const { uploadMedia, uploadStatus } = useUpload();
 
   // const tabStyles = (_active: boolean) =>
@@ -271,7 +277,7 @@ const AddApp: FC<AddAppProps> = ({
         const formPayload: any = new FormData();
         if (formData.icon?.file) {
           formPayload.append('url', formData?.icon?.file);
-          uploadedFile = await uploadImage(formPayload); // for lxp
+          uploadedFile = await uploadImageMutation(formPayload);
         }
         // upload category to learn
         if (formData?.category && formData?.category?.isNew) {
@@ -403,6 +409,7 @@ const AddApp: FC<AddAppProps> = ({
                 type={Type.Submit}
                 dataTestId="add-app-save"
                 loading={
+                  isUploading ||
                   addAppMutation?.isLoading ||
                   updateAppMutation.isLoading ||
                   uploadStatus === UploadStatus.Uploading
