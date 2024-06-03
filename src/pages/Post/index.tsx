@@ -37,7 +37,7 @@ const PostPage: FC = () => {
           <UserCard />
           {!isLargeScreen && getRightWidgets()}
         </div>
-        <div className="flex-grow flex flex-col w-[758px] ">
+        <div className="flex-grow flex flex-col w-6/12">
           <Post
             postId={id}
             commentIds={[(post as any)?.comment?.id].filter(Boolean)}
