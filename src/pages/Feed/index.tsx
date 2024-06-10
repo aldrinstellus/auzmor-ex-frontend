@@ -435,7 +435,7 @@ const Feed: FC<IFeedProps> = () => {
 
   useEffect(() => {
     if (!searchParams.has('hashtag')) {
-      setAppliedFeedFilters({ hashtags: [''] });
+      setAppliedFeedFilters({ hashtags: [] });
     }
     if (hashtag) {
       setAppliedFeedFilters({ hashtags: [hashtag] });
@@ -547,8 +547,8 @@ const Feed: FC<IFeedProps> = () => {
                     key={id}
                   >
                     <VirtualisedPost
-                      post={feed[id!]}
-                      comments={feed[id]?.relevantComments || []}
+                      postId={id!}
+                      commentIds={feed[id]?.relevantComments || []}
                     />
                   </div>
                   {index === recommendationIndex.tIndex && (

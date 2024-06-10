@@ -16,6 +16,9 @@ import { useTranslation } from 'react-i18next';
 import useProduct from 'hooks/useProduct';
 import { getLearnUrl } from 'utils/misc';
 import Icon from 'components/Icon';
+import GlobalSearch from './GlobalSearch';
+// import PopupMenu from 'components/PopupMenu';
+// import NavbarMenuButton from './NavbarMenuButton';
 
 const learnNavigations = [
   {
@@ -111,26 +114,26 @@ const Navbar = () => {
       linkTo: '/apps',
       dataTestId: 'office-apps-page',
       iconSize: 24,
-      hidden: isLxp,
     },
-    // {
-    //   label: t('discover.title'),
-    //   icon: 'exploreOutline',
-    //   hoverIcon: 'exploreFilled',
-    //   linkTo: '',
-    //   dataTestId: 'discover-page',
-    //   iconSize: 24,
-    //   isActive: location.pathname.includes('/channels'),
-    //   render: function () {
-    //     return (
-    //       <PopupMenu
-    //         triggerNode={<NavbarMenuButton nav={this} />}
-    //         menuItems={discoverOptions}
-    //         className="mt-16 w-[202px] "
-    //       />
-    //     );
-    //   },
-    // },
+    {
+      label: 'Channels',
+      icon: 'exploreOutline',
+      hoverIcon: 'exploreFilled',
+      linkTo: '/channels',
+      dataTestId: 'discover-page',
+      iconSize: 24,
+      isActive: location.pathname.includes('/channels'),
+      hidden: process.env.REACT_APP_ENV === 'PRODUCTION',
+      // render: function () {
+      //   return (
+      //     <PopupMenu
+      //       triggerNode={<NavbarMenuButton nav={this} />}
+      //       menuItems={discoverOptions}
+      //       className="mt-16 w-[202px] "
+      //     />
+      //   );
+      // },
+    },
   ].filter((each) => !!!each?.hidden);
 
   return (
@@ -140,22 +143,12 @@ const Navbar = () => {
           <Link to="/feed" data-testid="office-logo">
             <Logo />
           </Link>
-          <div className="flex-1" />
-          {/* <div className="flex-1">
-          <Layout
-            fields={[
-              {
-                type: FieldType.Input,
-                control,
-                name: 'globalSearch',
-                className: 'px-5 py-3',
-                placeholder: 'Search name, channel, page, document etc.,',
-                dataTestId: 'global-search',
-                disabled: false,
-              },
-            ]}
-          />
-        </div> */}
+
+          {process.env.REACT_APP_ENV != 'PRODUCTION' && (
+            <div className="flex-1">
+              <GlobalSearch />
+            </div>
+          )}
           <div className="flex items-center gap-8 h-full">
             <div className="flex items-center gap-6">
               {navigations.map((nav) => (

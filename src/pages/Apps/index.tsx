@@ -29,6 +29,8 @@ import useURLParams from 'hooks/useURLParams';
 import FilterModal, { FilterModalVariant } from 'components/FilterModal';
 import { ICategory } from 'queries/category';
 import { ITeam } from 'queries/teams';
+import useProduct from 'hooks/useProduct';
+import { useInfiniteLearnCategory } from 'queries/learn';
 import { useTranslation } from 'react-i18next';
 
 interface IAppsProps {}
@@ -82,7 +84,7 @@ const Apps: FC<IAppsProps> = () => {
       search: searchParams.get('search'),
     },
   });
-
+  const { isLxp } = useProduct();
   const { apps, featuredApps } = useAppStore();
   const { isAdmin } = useRole();
   const [selectedQuickCategory, setSelectedQuickCategory] =
@@ -108,11 +110,17 @@ const Apps: FC<IAppsProps> = () => {
   const searchValue = watch('search');
   const debouncedSearchValue = useDebounce(searchValue || '', 500);
 
-  const { data: categories } = useInfiniteCategories(
-    isFiltersEmpty({
-      limit: 3,
-    }),
-  );
+  const { data: categories } = isLxp
+    ? useInfiniteLearnCategory(
+        isFiltersEmpty({
+          limit: 3,
+        }),
+      )
+    : useInfiniteCategories(
+        isFiltersEmpty({
+          limit: 3,
+        }),
+      );
 
   const flattenCategories = categories?.pages.flatMap((page: any) => {
     return page?.data?.result?.data.map((category: any) => {
@@ -321,11 +329,11 @@ const Apps: FC<IAppsProps> = () => {
                   <Button
                     variant={ButtonVariant.Secondary}
                     label={category.name}
-                    className={
+                    className={`capitalize ${
                       selectedTab === category.id
                         ? selectedButtonClassName
                         : regularButtonClassName
-                    }
+                    }`}
                     onClick={() => handleQuickCategorySelect(category)}
                   />
                 </div>
@@ -342,6 +350,7 @@ const Apps: FC<IAppsProps> = () => {
               dataTestId="app-filters"
             />
             <Sort
+              controlled
               setFilter={handleSetSortFilter}
               filterKey={{ createdAt: 'createdAt', aToZ: 'name' }}
               selectedValue={sortByFilter}

@@ -13,7 +13,6 @@ const Feed = () => {
       </div>
       <Welcome />
       <FinishSetup />
-      <div>Feed</div>
     </div>
   );
 };

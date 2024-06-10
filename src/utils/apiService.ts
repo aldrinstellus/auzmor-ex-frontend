@@ -1,6 +1,7 @@
 import qs from 'qs';
 import axios, {
   AxiosInstance,
+  GenericAbortSignal,
   // InternalAxiosRequestConfig
 } from 'axios';
 
@@ -45,8 +46,9 @@ export class ApiService {
   instance: AxiosInstance;
 
   constructor(product?: ProductEnum) {
+    const currentProduct = product || getProduct();
     this.instance = axios.create({
-      baseURL: productBaseUrlMap[product || getProduct()],
+      baseURL: productBaseUrlMap[currentProduct],
       withCredentials: true,
     });
 
@@ -97,8 +99,9 @@ export class ApiService {
                 err?.code,
             ) || [];
 
-          // Redirecting to login when error response does not contain INVALID_CREDENTIALS error code. " If " condition will prevent reload on incorrect password.
-          if (!codes.includes('INVALID_CREDENTIALS')) {
+          // Redirecting to login when error response does not contain INVALID_CREDENTIALS error code.
+          // " If " condition will prevent reload on incorrect password and 401 of document search.
+          if (!codes.includes('INVALID_CREDENTIALS') && !codes.includes(401)) {
             window.location.href = '/login';
           }
         }
@@ -107,17 +110,21 @@ export class ApiService {
     );
   }
 
+  updateBaseUrl = (baseURL: string) => {
+    this.instance.defaults.baseURL = baseURL;
+  };
+
   updateContentType = (contentType: string) => {
     this.instance.defaults.headers.common['Content-Type'] = contentType;
   };
 
-  async get(url: string, params = {}) {
+  async get(url: string, params = {}, signal?: GenericAbortSignal) {
     const _params = qs.stringify(params, { arrayFormat: 'comma' });
     let _url = url;
     if (_params) {
       _url += `?${_params}`;
     }
-    return await this.instance.get(_url);
+    return await this.instance.get(_url, { signal });
   }
 
   async put(url: string, data = {}, headers = {}) {

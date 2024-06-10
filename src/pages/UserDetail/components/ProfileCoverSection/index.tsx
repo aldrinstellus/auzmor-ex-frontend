@@ -464,9 +464,6 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
           title={getBlobFile ? 'Apply Changes' : 'Reposition'}
           openEditImage={openEditImage}
           closeEditImageModal={closeEditImageModal}
-          openEditProfileModal={
-            showEditProfile.current ? openEditProfileModal : undefined
-          }
           image={getBlobFile || userDetails?.coverImage?.original}
           userCoverImageRef={userCoverImageRef}
           setImageFile={setFile}
@@ -499,7 +496,6 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
                 });
                 setProfileImageName(e?.target?.files[0]?.name);
                 openEditImageModal();
-                closeEditProfileModal();
               }
             }}
           />
@@ -520,7 +516,6 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
                 });
                 setCoverImageName(e?.target?.files[0]?.name);
                 openEditImageModal();
-                closeEditProfileModal();
               }
             }}
           />

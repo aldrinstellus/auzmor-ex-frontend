@@ -37,23 +37,23 @@ const MembersWidget = () => {
               users={[
                 {
                   id: 1,
-                  name: 'John Doe',
-                  image: 'https://i.pravatar.cc/300',
+                  name: 'Yuki Tanaka                  ',
+                  image: 'https://i.pravatar.cc/150?img=30',
                 },
                 {
                   id: 2,
-                  name: 'John Doe',
-                  image: 'https://i.pravatar.cc/300',
+                  name: 'Alex kim',
+                  image: 'https://i.pravatar.cc/150?img=31',
                 },
                 {
                   id: 3,
-                  name: 'John Doe',
-                  image: 'https://i.pravatar.cc/300',
+                  name: 'winston Smith',
+                  image: 'https://i.pravatar.cc/150?img=32',
                 },
                 {
                   id: 4,
-                  name: 'John Doe',
-                  image: 'https://i.pravatar.cc/300',
+                  name: 'david cummins',
+                  image: 'https://i.pravatar.cc/150?img=33',
                 },
               ]}
               moreCount={23}

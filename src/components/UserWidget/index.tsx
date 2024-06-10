@@ -40,7 +40,7 @@ const UserCard: FC<IUserCardProps> = ({ className = '' }) => {
 
   return (
     <div className={style} onClick={handleRedirect}>
-      <Card className="pb-3 pt-0 rounded-9xl min-h-[216px]">
+      <Card className="pb-3 pt-0 rounded-9xl min-h-[216px]" shadowOnHover>
         <div className="flex flex-col items-center gap-2 relative px-12">
           <div className="bg-secondary-500 w-full h-[89px] absolute top-0 rounded-t-9xl"></div>
           <Avatar
@@ -58,11 +58,26 @@ const UserCard: FC<IUserCardProps> = ({ className = '' }) => {
               {userDetails?.fullName}
             </div>
 
-            {userDetails?.designation?.name && (
+            {!isLxp && userDetails?.designation?.name && (
               <div
                 className="text-sm font-normal truncate w-full text-center text-neutral-500"
                 data-testid="profilecard-designation"
               >
+                {userDetails?.designation?.name}
+              </div>
+            )}
+
+            {isLxp && userDetails?.designation?.name && (
+              <div
+                className="text-sm font-normal truncate w-full text-center text-neutral-500 leading-[16px] flex gap-1 justify-center items-center"
+                data-testid="profilecard-designation"
+              >
+                <Icon
+                  name="briefcase"
+                  size={16}
+                  color="text-neutral-500"
+                  hover={false}
+                />
                 {userDetails?.designation?.name}
               </div>
             )}

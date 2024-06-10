@@ -2,7 +2,6 @@ import { ReactNode, createContext, useState, useEffect, FC } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { getItem, removeAllItems, setItem } from 'utils/persist';
 import { fetchMe } from 'queries/account';
-import UserOnboard from 'components/UserOnboard';
 import { Role } from 'utils/enum';
 import PageLoader from 'components/PageLoader';
 import { getLearnUrl, getSubDomain, userChannel } from 'utils/misc';
@@ -15,7 +14,8 @@ import AccountDeactivated from 'components/AccountDeactivated';
 import { useBrandingStore } from 'stores/branding';
 import { INotificationSettings } from 'queries/users';
 import useProduct from 'hooks/useProduct';
-import { ProductEnum, getProduct } from 'utils/apiService';
+import apiService, { ProductEnum, getProduct } from 'utils/apiService';
+import learnApiService from 'utils/learnApiService';
 
 type AuthContextProps = {
   children: ReactNode;
@@ -24,6 +24,7 @@ type AuthContextProps = {
 interface IOrganization {
   id: string;
   domain: string;
+  name: string;
 }
 
 interface ISubscription {
@@ -73,6 +74,7 @@ interface IAuthContext {
   loggedIn: boolean;
   sessionExpired: boolean;
   accountDeactivated: boolean;
+  showOnboard: boolean;
   reset: () => void;
   updateUser: (user: IUser) => void;
   setUser: (user: IUser | null) => void;
@@ -84,6 +86,7 @@ export const AuthContext = createContext<IAuthContext>({
   loggedIn: false,
   sessionExpired: false,
   accountDeactivated: false,
+  showOnboard: false,
   reset: () => {},
   updateUser: () => {},
   setUser: () => {},
@@ -109,8 +112,35 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
 
     const regionUrl = query.get('regionUrl');
     if (regionUrl) {
-      setItem('regionUrl', regionUrl);
+      setItem(`${ProductEnum.Learn}RegionUrl`, regionUrl);
+      const learnSubDomain = getSubDomain(regionUrl);
+      const lxpSubDomain = learnSubDomain.replace(
+        ProductEnum.Learn,
+        ProductEnum.Office,
+      ); //Replace with office instead of lxp because currently lxp backend is on office
+      const currentSubDomain = getSubDomain(
+        process.env.REACT_APP_LXP_BACKEND_BASE_URL || '',
+      );
+      setItem(
+        `${ProductEnum.Lxp}RegionUrl`,
+        process.env.REACT_APP_LXP_BACKEND_BASE_URL?.replace(
+          currentSubDomain,
+          lxpSubDomain,
+        ) || '',
+      );
       query.delete('regionUrl');
+    }
+
+    const lxpBaseUrl = getItem(`${ProductEnum.Lxp}RegionUrl`);
+    const learnBaseUrl = getItem(`${ProductEnum.Learn}RegionUrl`);
+    console.log({ lxpBaseUrl, learnBaseUrl, isLxp });
+    if (
+      (process.env.REACT_APP_ENV === 'PRODUCTION' ||
+        process.env.REACT_APP_ENV === 'STAGING') &&
+      isLxp
+    ) {
+      if (lxpBaseUrl) apiService.updateBaseUrl(lxpBaseUrl);
+      if (learnBaseUrl) learnApiService.updateBaseUrl(learnBaseUrl);
     }
 
     const visitToken = query.get('visitToken');
@@ -158,6 +188,7 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
             organization: {
               id: data?.org.id,
               domain: data?.org.domain,
+              name: data?.org.name,
             },
             profileImage:
               data?.profileImage?.small || data?.profileImage?.original,
@@ -178,7 +209,7 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
             },
             preferences: data?.preferences,
           });
-          setBranding(data.branding, isLxp);
+          setBranding(data.branding);
         } else {
           window.location.host = `${data.org.domain}.${window.location.host}`;
         }
@@ -200,9 +231,36 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
     }
   };
 
+  const replaceSensitiveData = (apiUrl: string) => {
+    const keysToReplace = [
+      'auth_token',
+      'token',
+      'generic_access_token',
+      'public_token',
+      'accessToken',
+      'visitToken',
+    ];
+    const replacement = '[OBSCURED]';
+    const pattern = new RegExp(`(${keysToReplace.join('|')})=([^&]+)`, 'gi');
+    const obscuredUrl = apiUrl.replace(pattern, `$1=${replacement}`);
+
+    return obscuredUrl;
+  };
+
   const initSmartlook = () => {
-    if (process.env.REACT_APP_SMARTLOOK_KEY) {
-      Smartlook.init(process.env.REACT_APP_SMARTLOOK_KEY);
+    if (!isLxp && process.env.REACT_APP_OFFICE_SMARTLOOK_KEY) {
+      Smartlook.init(process.env.REACT_APP_OFFICE_SMARTLOOK_KEY);
+    } else if (isLxp && process.env.REACT_APP_LXP_SMARTLOOK_KEY) {
+      Smartlook.init(process.env.REACT_APP_LXP_SMARTLOOK_KEY, {
+        interceptors: {
+          network: (data) => {
+            data.url = replaceSensitiveData(data.url);
+          },
+          url: (data) => {
+            data.url = replaceSensitiveData(data.url);
+          },
+        },
+      });
     }
   };
 
@@ -213,6 +271,10 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        organisationId: user.organization?.id || '',
+        organisation:
+          user.organization?.name || user.organization?.domain || '',
+        environment: process.env.REACT_APP_ENV || '',
       });
     }
   };
@@ -283,15 +345,15 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
         user,
         sessionExpired,
         accountDeactivated,
-        reset,
         loggedIn,
+        showOnboard,
+        reset,
         updateUser,
         setUser,
         setShowOnboard,
       }}
     >
       {children}
-      {showOnboard && <UserOnboard />}
       {sessionExpired && user?.id && <SubscriptionExpired />}
       {accountDeactivated && user?.id && <AccountDeactivated />}
     </AuthContext.Provider>

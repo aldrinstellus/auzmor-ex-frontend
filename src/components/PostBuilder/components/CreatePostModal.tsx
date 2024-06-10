@@ -226,10 +226,12 @@ const CreatePostModal: FC<ICreatePostModal> = ({
               },
               (oldData: any) =>
                 produce(oldData, (draft: any) => {
-                  draft.pages[0].data.result.data = [
-                    { id: newPost.id },
-                    ...draft.pages[0].data.result.data,
-                  ];
+                  if (draft?.pages?.length) {
+                    draft.pages[0].data.result.data = [
+                      { id: newPost.id },
+                      ...draft.pages[0].data.result.data,
+                    ];
+                  }
                 }),
             );
             queryClient.setQueriesData(
@@ -239,14 +241,16 @@ const CreatePostModal: FC<ICreatePostModal> = ({
               },
               (oldData: any) =>
                 produce(oldData, (draft: any) => {
-                  draft.pages[0].data.result.data = [
-                    { id: newPost.id },
-                    ...draft.pages[0].data.result.data,
-                  ];
+                  if (draft?.pages?.length) {
+                    draft.pages[0].data.result.data = [
+                      { id: newPost.id },
+                      ...draft.pages[0].data.result.data,
+                    ];
+                  }
                 }),
             );
           } else {
-            // insert normal post to correct page, Skip insert if all posts are announcement
+            // insert normal post to correct page or first page if first page is not full till limit, Skip insert if all posts are announcement
             queryClient.setQueriesData(
               {
                 queryKey: ['feed'],
@@ -256,11 +260,16 @@ const CreatePostModal: FC<ICreatePostModal> = ({
                 produce(oldData, (draft: any) => {
                   let pageIndex = 0;
                   while (draft?.pages && pageIndex < draft?.pages.length) {
-                    if (
-                      draft.pages[pageIndex].data.result.data.some(
-                        ({ id }: { id: string }) => !feed[id].isAnnouncement,
-                      )
-                    ) {
+                    const shouldInsert = draft.pages[
+                      pageIndex
+                    ].data.result.data.some(
+                      ({ id }: { id: string }) =>
+                        !feed[id].isAnnouncement ||
+                        (draft?.pages.length === 1 &&
+                          draft?.pages[0].length <
+                            draft.pages[pageIndex].data.result.limit),
+                    );
+                    if (shouldInsert) {
                       draft.pages[pageIndex].data.result.data = [
                         { id: newPost.id },
                         ...draft.pages[pageIndex].data.result.data,
@@ -280,11 +289,16 @@ const CreatePostModal: FC<ICreatePostModal> = ({
                 produce(oldData, (draft: any) => {
                   let pageIndex = 0;
                   while (draft?.pages && draft?.pages[pageIndex]) {
-                    if (
-                      draft.pages[pageIndex].data.result.data.some(
-                        ({ id }: { id: string }) => !feed[id].isAnnouncement,
-                      )
-                    ) {
+                    const shouldInsert = draft.pages[
+                      pageIndex
+                    ].data.result.data.some(
+                      ({ id }: { id: string }) =>
+                        !feed[id].isAnnouncement ||
+                        (draft?.pages.length === 1 &&
+                          draft?.pages[0].length <
+                            draft.pages[pageIndex].data.result.limit),
+                    );
+                    if (shouldInsert) {
                       draft.pages[pageIndex].data.result.data = [
                         { id: newPost.id },
                         ...draft.pages[pageIndex].data.result.data,
@@ -301,7 +315,7 @@ const CreatePostModal: FC<ICreatePostModal> = ({
            * Update cached query data for members
            * Members can't create announcement so skipping check for `newPost` is announcement or not. Its normal post only.
            * Acknowleged announcement behave as normal post for members.
-           * Insert normal post to correct page, Skip insert if posts are announcement and not acknowledged.
+           * Insert normal post to correct page or first page if first page is not full till limit, Skip insert if posts are announcement and not acknowledged.
            */
           queryClient.setQueriesData(
             {
@@ -312,13 +326,17 @@ const CreatePostModal: FC<ICreatePostModal> = ({
               produce(oldData, (draft: any) => {
                 let pageIndex = 0;
                 while (draft?.pages && draft?.pages[pageIndex]) {
-                  if (
-                    draft.pages[pageIndex].data.result.data.some(
-                      ({ id }: { id: string }) =>
-                        !feed[id].isAnnouncement ||
-                        (feed[id].isAnnouncement && feed[id].acknowledged),
-                    )
-                  ) {
+                  const shouldInsert = draft.pages[
+                    pageIndex
+                  ].data.result.data.some(
+                    ({ id }: { id: string }) =>
+                      !feed[id].isAnnouncement ||
+                      (feed[id].isAnnouncement && feed[id].acknowledged) ||
+                      (draft?.pages.length === 1 &&
+                        draft?.pages[0].length <
+                          draft.pages[pageIndex].data.result.limit),
+                  );
+                  if (shouldInsert) {
                     draft.pages[pageIndex].data.result.data = [
                       { id: newPost.id },
                       ...draft.pages[pageIndex].data.result.data,
@@ -338,13 +356,17 @@ const CreatePostModal: FC<ICreatePostModal> = ({
               produce(oldData, (draft: any) => {
                 let pageIndex = 0;
                 while (draft?.pages && draft?.pages[pageIndex]) {
-                  if (
-                    draft.pages[pageIndex].data.result.data.some(
-                      ({ id }: { id: string }) =>
-                        !feed[id].isAnnouncement ||
-                        (feed[id].isAnnouncement && feed[id].acknowledged),
-                    )
-                  ) {
+                  const shouldInsert = draft.pages[
+                    pageIndex
+                  ].data.result.data.some(
+                    ({ id }: { id: string }) =>
+                      !feed[id].isAnnouncement ||
+                      (feed[id].isAnnouncement && feed[id].acknowledged) ||
+                      (draft?.pages.length === 1 &&
+                        draft?.pages[0].length <
+                          draft.pages[pageIndex].data.result.limit),
+                  );
+                  if (shouldInsert) {
                     draft.pages[pageIndex].data.result.data = [
                       { id: newPost.id },
                       ...draft.pages[pageIndex].data.result.data,

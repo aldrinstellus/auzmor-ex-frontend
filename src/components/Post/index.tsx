@@ -10,7 +10,7 @@ import Card from 'components/Card';
 import Actor from 'components/Actor';
 import Tooltip from 'components/Tooltip';
 import { VIEW_POST } from 'components/Actor/constant';
-import CommentCard, { IComment } from 'components/Comments/index';
+import CommentCard from 'components/Comments/index';
 import { Comment } from 'components/Comments/components/Comment';
 import Likes, { ReactionType } from 'components/Reactions';
 import Icon from 'components/Icon';
@@ -39,7 +39,10 @@ import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 import { useFeedStore } from 'stores/feedStore';
 import Avatar from 'components/Avatar';
 import LinkAttachments from './components/LinkAttachments';
-
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkDirective from 'remark-directive';
+import remarkDirectiveRehype from 'remark-directive-rehype';
 export const iconsStyle = (key: string) => {
   const iconStyle = clsx(
     {
@@ -66,25 +69,23 @@ export const iconsStyle = (key: string) => {
 };
 
 type PostProps = {
-  post: IPost;
-  comments?: IComment[];
+  postId: string;
+  commentIds?: string[];
   setHasChanges?: (flag: boolean) => any;
 };
 
-const Post: FC<PostProps> = ({ post, comments = [], setHasChanges }) => {
+const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
+  const [feed, getPost, updateFeed] = useFeedStore((state) => [
+    state.feed,
+    state.getPost,
+    state.updateFeed,
+  ]);
   const [showComments, openComments, closeComments] = useModal(false);
   const [showPublishModal, openPublishModal, closePublishModal] = useModal();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [showReactionModal, openReactionModal, closeReactionModal] =
     useModal(false);
-  const reaction = post?.myReaction?.reaction;
-  const totalCount = Object.values(post.reactionsCount || {}).reduce(
-    (total, count) => total + count,
-    0,
-  );
-  const getPost = useFeedStore((state) => state.getPost);
-  const updateFeed = useFeedStore((state) => state.updateFeed);
   const previousShowComment = useRef<boolean>(false);
   const { currentTimezone } = useCurrentTimezone();
   const [
@@ -93,10 +94,18 @@ const Post: FC<PostProps> = ({ post, comments = [], setHasChanges }) => {
     closeEditSchedulePostModal,
   ] = useModal();
 
+  const post = feed[postId];
+  const reaction = post?.myReaction?.reaction;
+  const totalCount = Object.values(post.reactionsCount || {}).reduce(
+    (total, count) => total + count,
+    0,
+  );
+
   // Effects
   useEffect(() => {
     if (showComments) {
       previousShowComment.current = true;
+      updateFeed(postId, { ...feed[postId], relevantComments: [] });
     }
     setHasChanges?.(showComments);
   }, [showComments]);
@@ -178,7 +187,6 @@ const Post: FC<PostProps> = ({ post, comments = [], setHasChanges }) => {
       createBookmarkMutation.mutate(post.id as string);
     }
   };
-
   const CustomCard: FC = () => {
     const iconMap: Record<string, string> = {
       clock: 'clock',
@@ -188,8 +196,29 @@ const Post: FC<PostProps> = ({ post, comments = [], setHasChanges }) => {
       location: 'location',
     };
 
+    const CustomImg = ({ alt, src, ...props }: any) => {
+      return (
+        <img alt={alt} src={src} className="w-4 h-4 object-cover" {...props} />
+      );
+    };
+    const CustomDate = (props: any) => {
+      const dateString = moment
+        .unix(props.unix)
+        .tz(currentTimezone)
+        .format(props.format);
+      return <span>{dateString}</span>;
+    };
+
+    const components = {
+      date: CustomDate,
+      img: CustomImg,
+      p: ({ ...props }: any) => (
+        <p className="flex gap-2 items-center" {...props} />
+      ),
+    };
+
     return (
-      <Card className="w-full h-[350px] relative overflow-hidden group/card">
+      <Card className="w-full h-[266px] relative overflow-hidden group/card">
         <img
           src={post?.cardContext?.image?.url}
           className="w-full h-full object-cover group-hover/card:scale-[1.10]"
@@ -262,6 +291,20 @@ const Post: FC<PostProps> = ({ post, comments = [], setHasChanges }) => {
               <div className="text-white text-sm font-medium">
                 {post?.cardContext?.avatar?.text || 'User'}
               </div>
+            </div>
+          )}
+          {post?.cardContext?.description && (
+            <div className="text-sm text-white">
+              <Markdown
+                components={components}
+                remarkPlugins={[
+                  remarkDirective,
+                  remarkDirectiveRehype,
+                  remarkGfm,
+                ]}
+              >
+                {post?.cardContext?.description}
+              </Markdown>
             </div>
           )}
           {post?.cardContext?.blockStrings?.length && (
@@ -442,6 +485,7 @@ const Post: FC<PostProps> = ({ post, comments = [], setHasChanges }) => {
                   size={Size.Small}
                   labelClassName="text-xs font-normal text-neutral-500 hover:text-primary-500"
                   leftIcon="comment"
+                  leftIconHover={false}
                   className="space-x-1 !p-0"
                   onClick={() => {
                     if (showComments) {
@@ -461,13 +505,10 @@ const Post: FC<PostProps> = ({ post, comments = [], setHasChanges }) => {
           <div className="pb-3 px-6">
             <CommentCard entityId={post?.id || ''} />
           </div>
-        ) : !previousShowComment.current && comments?.length ? (
-          comments.map((comment) => (
-            <div className="mx-6 mb-3" key={comment.id}>
-              <Comment
-                comment={comment}
-                replies={comment?.relevantComments || []}
-              />
+        ) : !previousShowComment.current && commentIds?.length ? (
+          commentIds.map((id) => (
+            <div className="mx-6 mb-3" key={id}>
+              <Comment commentId={id} />
             </div>
           ))
         ) : null}

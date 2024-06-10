@@ -11,6 +11,8 @@ import Unsupported from 'pages/Unsupported';
 import ProductProvider from 'contexts/ProductProvider';
 import { ProductEnum, getProduct } from 'utils/apiService';
 import { getLearnUrl } from 'utils/misc';
+import UserOnboard from 'components/UserOnboard';
+import './i18n/config';
 
 import './i18n/config';
 
@@ -28,6 +30,7 @@ function App() {
           {process.env.NODE_ENV === 'development' ? (
             <ReactQueryDevtools initialIsOpen={false} />
           ) : null}
+          <UserOnboard />
           <Router />
           <Toast />
         </AuthProvider>

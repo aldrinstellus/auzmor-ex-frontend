@@ -158,6 +158,7 @@ export const Channels: FC<IChannelsProps> = () => {
             leftIconClassName="text-white pointer-events-none group-hover:text-white"
             onClick={openModal}
             dataTestId="createchannel-cta"
+            className="hidden"
           />
         </div>
         <FilterMenu

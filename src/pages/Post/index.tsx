@@ -18,10 +18,10 @@ const PostPage: FC = () => {
     return <div>Error</div>;
   }
 
-  const { isLoading, isError } = useGetPost(id, commentId);
+  const { isLoading, isError, isFetching } = useGetPost(id, commentId);
   const { getPost } = useFeedStore();
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <PageLoader />;
   } else if (isError) {
     return <PageNotFound statusCode={404} message={'Post not Found'} />;
@@ -37,21 +37,10 @@ const PostPage: FC = () => {
           <UserCard />
           {!isLargeScreen && getRightWidgets()}
         </div>
-        <div className="flex-grow flex flex-col">
+        <div className="flex-grow flex flex-col w-6/12">
           <Post
-            post={post}
-            comments={
-              post.comment
-                ? [
-                    {
-                      ...post.comment,
-                      relevantComments: post.comment.comment
-                        ? [post.comment.comment]
-                        : [],
-                    },
-                  ]
-                : []
-            }
+            postId={id}
+            commentIds={[(post as any)?.comment?.id].filter(Boolean)}
           />
         </div>
         {isLargeScreen && (

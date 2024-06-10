@@ -16,8 +16,9 @@ import Divider from 'components/Divider';
 import Icon from 'components/Icon';
 import useCarousel from 'hooks/useCarousel';
 import EditImageModal from 'components/EditImageModal';
-import { getBlobUrl } from 'utils/misc';
+import { clearInputValue, getBlobUrl } from 'utils/misc';
 import { EntityType } from 'queries/files';
+import useAuth from 'hooks/useAuth';
 
 export type IScreen = {
   screen: ReactNode;
@@ -25,6 +26,7 @@ export type IScreen = {
 };
 
 const UserOnboard: FC = (): ReactNode => {
+  const { showOnboard } = useAuth();
   const [file, setFile] = useState<File>();
   const [open, openModal, closeModal] = useModal(true);
   const [currentScreen, _, next] = useCarousel(0, 5);
@@ -68,6 +70,7 @@ const UserOnboard: FC = (): ReactNode => {
     url.searchParams.delete('showOnboard');
     history.replaceState({}, '', url);
   }, []);
+  if (!showOnboard) return <></>;
 
   return (
     <div>
@@ -102,11 +105,12 @@ const UserOnboard: FC = (): ReactNode => {
         ref={profilePictureRef}
         accept="image/*"
         data-testid="profilepic-upload"
+        multiple={false}
+        onClick={clearInputValue}
         onChange={(e) => {
           if (e.target.files?.length) {
             setFile(Array.prototype.slice.call(e.target.files)[0]);
             openEditImageModal();
-            closeModal();
           }
         }}
       />
