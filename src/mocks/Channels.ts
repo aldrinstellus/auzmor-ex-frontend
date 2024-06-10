@@ -18,7 +18,6 @@ export const userData: IGetUser[] = [
       name: 'Little LLC',
       domain: 'american-technology',
     },
-
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -92,13 +91,11 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -134,13 +131,11 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -175,13 +170,11 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -216,13 +209,11 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -257,13 +248,11 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -298,13 +287,11 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -339,13 +326,11 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',
@@ -380,13 +365,11 @@ export const userData: IGetUser[] = [
     firstName: 'Abby',
     lastName: 'Wolff',
     primaryEmail: 'Sim_Kris@hotmail.com',
-
     org: {
       id: '646311ed765368daacc601f7',
       name: 'Little LLC',
       domain: 'american-technology',
     },
-
     designation: {
       designationId: '65155cf3de64ba075d039879',
       name: 'Quality Assurance',

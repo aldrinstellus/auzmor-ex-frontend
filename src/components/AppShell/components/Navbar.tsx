@@ -12,6 +12,7 @@ import useRole from 'hooks/useRole';
 import useAuth from 'hooks/useAuth';
 import { useState } from 'react';
 import SubscriptionBanner from './SubscriptionBanner';
+import { useTranslation } from 'react-i18next';
 import useProduct from 'hooks/useProduct';
 import { getLearnUrl } from 'utils/misc';
 import Icon from 'components/Icon';
@@ -39,9 +40,11 @@ const Navbar = () => {
   );
   // const navigate = useNavigate();
 
+  const { t } = useTranslation('navbar');
+
   const adminNavigations = [
     {
-      label: 'Admin',
+      label: t('admin'),
       icon: 'adminOutline',
       hoverIcon: 'adminFilled',
       linkTo: '/admin',
@@ -53,7 +56,7 @@ const Navbar = () => {
   // const discoverOptions = [
   //   {
   //     icon: 'news',
-  //     label: 'Channels',
+  //     label: t('discover.channels'),
   //     labelClassName: 'text-xs font-medium',
   //     stroke: 'text-neutral-900',
   //     dataTestId: 'channel-page',
@@ -65,7 +68,7 @@ const Navbar = () => {
 
   const navigations = [
     {
-      label: 'Feed',
+      label: t('feed'),
       icon: 'feedOutline',
       hoverIcon: 'feedFilled',
       linkTo: '/feed',
@@ -73,7 +76,7 @@ const Navbar = () => {
       iconSize: 24,
     },
     {
-      label: 'Teams',
+      label: t('teams'),
       icon: 'usersOutline',
       hoverIcon: 'usersFilled',
       linkTo: '/teams',
@@ -83,7 +86,7 @@ const Navbar = () => {
       hidden: !isLxp,
     },
     {
-      label: 'People',
+      label: t('people'),
       icon: 'peopleOutline',
       hoverIcon: 'peopleFilled',
       linkTo: '/users',
@@ -95,7 +98,7 @@ const Navbar = () => {
       hidden: isLxp,
     },
     {
-      label: 'Learning Hub',
+      label: t('learningHub'),
       icon: 'lifeBuoyOutline',
       hoverIcon: 'lifeBuoyFilled',
       linkTo: `${getLearnUrl()}/user`,
@@ -105,7 +108,7 @@ const Navbar = () => {
       hidden: !isLxp,
     },
     {
-      label: 'Apps',
+      label: t('apps'),
       icon: 'launcherOutline',
       hoverIcon: 'launcherFilled',
       linkTo: '/apps',

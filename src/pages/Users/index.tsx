@@ -11,6 +11,7 @@ import { Role } from 'utils/enum';
 import Team from './components/Teams';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PopupMenu from 'components/PopupMenu';
+import { useTranslation } from 'react-i18next';
 import useProduct from 'hooks/useProduct';
 
 interface IUsersProps {}
@@ -20,6 +21,7 @@ const Users: FC<IUsersProps> = () => {
   const navigate = useNavigate();
   const currentPathname = location.pathname;
   const isUserTab = currentPathname.includes('users');
+  const { t } = useTranslation('peoplehub');
 
   const [showOrgChart, setShowOrgChart] = useState<boolean>(false);
   const [showAddUserModal, openAddUserModal, closeAddUserModal] = useModal(
@@ -57,7 +59,7 @@ const Users: FC<IUsersProps> = () => {
     {
       id: 1,
       tabLabel: (isActive: boolean) => (
-        <div className={tabStyles(isActive)}>People</div>
+        <div className={tabStyles(isActive)}>{t('people.title')}</div>
       ),
       dataTestId: 'people-tab',
       tabContent: (
@@ -75,7 +77,7 @@ const Users: FC<IUsersProps> = () => {
         <div className="flex space-x-2 relative">
           <Button
             className="flex space-x-[6px] group px-6 py-[10px] rounded-[24px]"
-            label="View Organization Chart"
+            label={t('people.viewOrgChart')}
             variant={Variant.Secondary}
             leftIcon="groupOutline"
             leftIconSize={16}
@@ -88,7 +90,7 @@ const Users: FC<IUsersProps> = () => {
               triggerNode={
                 <Button
                   className="flex space-x-1 px-6 py-[10px] rounded-[24px]"
-                  label="Add Members"
+                  label={t('people.addMembers')}
                   leftIcon="add"
                   leftIconClassName="!text-white"
                   leftIconSize={20}
@@ -99,13 +101,13 @@ const Users: FC<IUsersProps> = () => {
               menuItems={[
                 {
                   icon: 'addCircle',
-                  label: 'Quick Add',
+                  label: t('people.quickAdd'),
                   onClick: openAddUserModal,
                   dataTestId: 'people-quick-add',
                 },
                 {
                   icon: 'import',
-                  label: 'Import',
+                  label: t('people.import'),
                   onClick: openImportUserModal,
                   dataTestId: 'people-bulk-import',
                 },
@@ -118,7 +120,7 @@ const Users: FC<IUsersProps> = () => {
     {
       id: 2,
       tabLabel: (isActive: boolean) => (
-        <div className={tabStyles(isActive)}>Teams</div>
+        <div className={tabStyles(isActive)}>{t('teams.title')}</div>
       ),
       dataTestId: 'teams-tab',
       tabContent: (

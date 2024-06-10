@@ -118,6 +118,7 @@ import ProfileUser from '../components/ProfileUser';
 import ShareForward from '../components/ShareForward';
 import Cancel from '../components/Cancel';
 import LinearLeftArrow from '../components/LinearLeftArrow';
+import LinearRightArrow from '../components/LinearRightArrow/index';
 import PostBookmarkIcon from '../components/PostBookmark';
 import Repost from '../components/Repost';
 import Calendar from '../components/Calendar';
@@ -143,8 +144,13 @@ import VideoSlash from '../components/VideoSlash';
 import SvgInfoIcon from '../components/Info';
 import CloudAddIcon from '../components/CloudAdd';
 import BoldTick from '../components/BoldTick';
-import MenuBoardIcon from '../components/MenuBoard';
+import EditIconGreenOutline from '../components/EditGreenOutline';
+import LockIcon from '../components/Lock';
 import StarIcon from '../components/Star';
+import NewsIcon from '../components/News';
+import WebsiteIcon from '../components/Website';
+import GalleryIcon from '../components/Gallery';
+import MenuBoardIcon from '../components/MenuBoard';
 import StarHalfIcon from '../components/StarHalf';
 import LifeBuoyIcon from '../components/LifeBuoy';
 import ShopingCartIcon from '../components/ShoppingCart';
@@ -219,6 +225,7 @@ export const icon = {
   doc: DocIcon,
   docx: DocIcon,
   edit: EditIcon,
+  editGreenOutline: EditIconGreenOutline,
   editReceipt: EditReceipt,
   email: EmailIcon,
   emojiHappy: EmojiHappy,
@@ -242,6 +249,7 @@ export const icon = {
   fullScreen: FullScreenIcon,
   funny: Funny,
   funnyReaction: FunnyReaction,
+  gallery: GalleryIcon,
   galleryExport: GalleryExport,
   gear: Gear,
   global: Global,
@@ -261,8 +269,10 @@ export const icon = {
   likeIcon: LikeIcon,
   likeReaction: LikeReaction,
   linearLeftArrow: LinearLeftArrow,
+  linearRightArrow: LinearRightArrow,
   link: Link,
   location: LocationIcon,
+  lock: LockIcon,
   logout: LogoutIcon,
   love: Love,
   loveReaction: LoveReaction,
@@ -277,6 +287,7 @@ export const icon = {
   minus: Minus,
   more: MoreIcon,
   mute: MuteIcon,
+  news: NewsIcon,
   noteFavourite: NoteFavouriteIcon,
   notification: NotificationIcon,
   orangeHashtag: OrangeHashtagIcon,
@@ -323,6 +334,7 @@ export const icon = {
   radar: RadarIcon,
   videoSlash: VideoSlash,
   warningCircle: WarningCircleIcon,
+  website: WebsiteIcon,
   zoomIn: ZoomInIcon,
   zoomOut: ZoomOutIcon,
   lifeBuoy: LifeBuoyIcon,

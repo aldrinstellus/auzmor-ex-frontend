@@ -80,6 +80,7 @@ import SvgGlobalOutline from '../components/Global/GlobalOutline';
 import SvgProfileUserOutline from '../components/ProfileUser/ProfileUserOutline';
 import SvgShareForwardOutline from '../components/ShareForward/ShareForwardOutline';
 import SvgLinearLeftArrowOutline from '../components/LinearLeftArrow/LinearLeftArrowOutline';
+import SvgLinearRightArrowOutline from '../components/LinearRightArrow/LinearRightArrowOutline';
 import SvgRepostOutline from '../components/Repost/RepostOutline';
 import SvgCalendarOutline from '../components/Calendar/CalendarOutline';
 import SvgSortByAcsOutline from '../components/SortByAcs/SortByAcsOutline';
@@ -96,6 +97,11 @@ import SvgUserRoleOutline from '../components/UserRole/UserRole';
 import SvgWarningCircleOutline from '../components/WarningCircle/WarningCircleOutline';
 import SvgCheckboxOutline from '../components/Checkbox/CheckboxOutline';
 import SvgCloudAddOutline from '../components/CloudAdd/CloudAddOutline';
+import SvgLockOutline from '../components/Lock/LockOutline';
+import SvgStarOutline from '../components/Star/StarOutline';
+import SvgNewsOutline from '../components/News/NewsOutline';
+import SvgWebsiteOutline from '../components/Website/WebsiteOutline';
+import SvgGalleryOutline from '../components/Gallery/GalleryOutline';
 import SvgLifeBuoyOutline from '../components/LifeBuoy/LifeBuoyoutline';
 import SvgShoppingCartOutline from '../components/ShoppingCart/ShoppingCartOutline';
 import SvgMessageQuestionOutline from '../components/MessageQuestion/MessageQuestionOutline';
@@ -149,6 +155,7 @@ export const outlineIcon = {
   focusOutline: SvgFocusOutline,
   fullScreenOutline: SvgFullScreenOutline,
   funnyOutline: SvgFunnyOutline,
+  galleryOutline: SvgGalleryOutline,
   gearOutline: SvgGearOutline,
   globalOutline: SvgGlobalOutline,
   groupOutline: SvgGroupOutline,
@@ -162,7 +169,9 @@ export const outlineIcon = {
   likeIconOutline: SvgLikeIconOutline,
   likeOutline: SvgLikeOutline,
   linearLeftArrowOutline: SvgLinearLeftArrowOutline,
+  linearRightArrowOutline: SvgLinearRightArrowOutline,
   linkOutline: SvgLinkOutline,
+  lockOutline: SvgLockOutline,
   logoutOutline: SvgLogoutOutline,
   loveOutline: SvgLoveOutline,
   magicStarOutline: SvgMagicStarOutline,
@@ -172,6 +181,7 @@ export const outlineIcon = {
   maximizeOutline: SvgMaximizeOutline,
   micOutline: SvgMicOutline,
   moreOutline: SvgMoreOutline,
+  newsOutline: SvgNewsOutline,
   noteFavouriteOutline: SvgNoteFavouriteOutline,
   peopleOutline: SvgPeopleOutline,
   playOutline: SvgPlayOutline,
@@ -189,6 +199,7 @@ export const outlineIcon = {
   sortByAcs: SvgSortByAcsOutline,
   sortByDesc: SvgSortByDescOutline,
   speakerOutline: SvgSpeakerOutline,
+  starOutline: SvgStarOutline,
   supportOutline: SvgSupportOutline,
   threeDotsOutline: SvgThreeDotsOutline,
   tickCircleOutline: SvgTickCircleOutline,
@@ -199,6 +210,7 @@ export const outlineIcon = {
   usersOutline: SvgUsersOutline,
   videoOutline: SvgVideoOutline,
   warningCirlceOutline: SvgWarningCircleOutline,
+  websiteOutline: SvgWebsiteOutline,
   zoomInOutline: SvgZoomInOutline,
   zoomOutOutline: SvgZoomOutOutline,
   lifeBuoyOutline: SvgLifeBuoyOutline,

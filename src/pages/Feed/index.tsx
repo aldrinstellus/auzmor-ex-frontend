@@ -47,6 +47,7 @@ import MyTeamWidget from 'components/MyTeamWidget';
 import useRole from 'hooks/useRole';
 import { getLearnUrl, isFiltersEmpty, isRegularPost } from 'utils/misc';
 import useMediaQuery from 'hooks/useMediaQuery';
+import { useTranslation } from 'react-i18next';
 import ProgressTrackerWidget from 'components/ProgressTrackerWidget';
 import EventWidget from 'components/EventWidget';
 import { useGetRecommendation } from 'queries/learn';
@@ -77,6 +78,7 @@ export interface IMyReactions {
 }
 
 const Feed: FC<IFeedProps> = () => {
+  const { t } = useTranslation('feed');
   const isLargeScreen = useMediaQuery('(min-width: 1300px)');
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
@@ -239,10 +241,10 @@ const Feed: FC<IFeedProps> = () => {
             <img src={NoPosts} data-testid="mybookmark-tab-nopost"></img>
           </div>
           <div className="font-bold text-2xl/[36px] text-center mt-5">
-            No posts found
+            {t('bookmark.noPostFound')}
           </div>
           <div className="text-center mt-1" style={{ color: '#737373' }}>
-            Your bookmarked posts will show here
+            {t('bookmark.emptyMessage')}
           </div>
         </div>
       );
@@ -255,10 +257,10 @@ const Feed: FC<IFeedProps> = () => {
           </div>
           <div data-testid="scheduledpost-tab-nodata">
             <div className="font-bold text-base text-neutral-900 text-center mt-6">
-              Not ready to share your post right now?
+              {t('scheduledPosts.emptyMessage1')}
             </div>
             <div className="font-bold text-base text-neutral-900 text-center">
-              Try scheduling for later.
+              {t('scheduledPosts.emptyMessage2')}
             </div>
           </div>
         </div>
@@ -349,7 +351,7 @@ const Feed: FC<IFeedProps> = () => {
               <div className="flex items-center gap-4">
                 <div className="z-20">
                   <Tooltip
-                    tooltipContent="My Scheduled Posts"
+                    tooltipContent={t('scheduledPosts.tooltip')}
                     tooltipPosition="top"
                   >
                     <Link to="/scheduledPosts">
@@ -358,7 +360,10 @@ const Feed: FC<IFeedProps> = () => {
                   </Tooltip>
                 </div>
                 <div className="">
-                  <Tooltip tooltipContent="My Bookmarks" tooltipPosition="top">
+                  <Tooltip
+                    tooltipContent={t('bookmark.tooltip')}
+                    tooltipPosition="top"
+                  >
                     <Link to="/bookmarks" data-testid="feed-page-mybookmarks">
                       <Icon name="postBookmark" size={24} />
                     </Link>

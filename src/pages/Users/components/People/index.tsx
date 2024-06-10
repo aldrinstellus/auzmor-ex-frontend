@@ -31,6 +31,7 @@ import Icon from 'components/Icon';
 import { IDepartmentAPI } from 'queries/department';
 import { ILocationAPI } from 'queries/location';
 import ImportUsers from '../ImportUsers';
+import { FilterKey } from 'components/FilterMenu';
 import useProduct from 'hooks/useProduct';
 
 export interface IPeopleProps {
@@ -52,12 +53,6 @@ interface IPeopleFilters {
   departments?: IDepartmentAPI[];
   locations?: ILocationAPI[];
   status?: IStatus[];
-}
-
-enum PeopleFilterKey {
-  departments = 'departments',
-  locations = 'locations',
-  status = 'status',
 }
 
 interface IForm {
@@ -237,7 +232,7 @@ const People: FC<IPeopleProps> = ({
     });
   };
 
-  const handleRemoveFilters = (key: PeopleFilterKey, id: any) => {
+  const handleRemoveFilters = (key: FilterKey, id: any) => {
     const updatedFilter = appliedFilters[key]!.filter(
       (item: any) => item.id !== id,
     );
@@ -436,7 +431,7 @@ const People: FC<IPeopleProps> = ({
                   className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1 hover:text-primary-600 hover:border-primary-600 cursor-pointer group"
                   data-testid={`teams-filterby`}
                   onClick={() =>
-                    handleRemoveFilters(PeopleFilterKey.status, status.id)
+                    handleRemoveFilters(FilterKey.status, status.id)
                   }
                 >
                   <div className="mr-1 text-neutral-500 whitespace-nowrap">
@@ -449,7 +444,7 @@ const People: FC<IPeopleProps> = ({
                     color="text-neutral-900"
                     className="cursor-pointer"
                     onClick={() =>
-                      handleRemoveFilters(PeopleFilterKey.status, status.id)
+                      handleRemoveFilters(FilterKey.status, status.id)
                     }
                     dataTestId={`applied-filter-close`}
                   />
@@ -462,10 +457,7 @@ const People: FC<IPeopleProps> = ({
                     className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1 hover:text-primary-600 hover:border-primary-600 cursor-pointer group"
                     data-testid={`teams-filterby`}
                     onClick={() =>
-                      handleRemoveFilters(
-                        PeopleFilterKey.departments,
-                        department.id,
-                      )
+                      handleRemoveFilters(FilterKey.departments, department.id)
                     }
                   >
                     <div className="mr-1 text-neutral-500 whitespace-nowrap">
@@ -481,7 +473,7 @@ const People: FC<IPeopleProps> = ({
                       className="cursor-pointer"
                       onClick={() =>
                         handleRemoveFilters(
-                          PeopleFilterKey.departments,
+                          FilterKey.departments,
                           department.id,
                         )
                       }
@@ -496,7 +488,7 @@ const People: FC<IPeopleProps> = ({
                   className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1 hover:text-primary-600 hover:border-primary-600 cursor-pointer group"
                   data-testid={`teams-filterby`}
                   onClick={() =>
-                    handleRemoveFilters(PeopleFilterKey.locations, location.id)
+                    handleRemoveFilters(FilterKey.locations, location.id)
                   }
                 >
                   <div className="mr-1 text-neutral-500 whitespace-nowrap">
@@ -509,10 +501,7 @@ const People: FC<IPeopleProps> = ({
                     color="text-neutral-900"
                     className="cursor-pointer"
                     onClick={() =>
-                      handleRemoveFilters(
-                        PeopleFilterKey.locations,
-                        location.id,
-                      )
+                      handleRemoveFilters(FilterKey.locations, location.id)
                     }
                     dataTestId={`applied-filter-close`}
                   />
@@ -531,7 +520,7 @@ const People: FC<IPeopleProps> = ({
 
         <div>
           {showGrid ? (
-            <div className="grid grid-cols-3 gap-6 justify-items-center lg:grid-cols-4 xl:grid-cols-5 1.5xl:grid-cols-6 2xl:grid-cols-6">
+            <div className="grid grid-cols-3 gap-6 justify-items-center lg:grid-cols-3 xl:grid-cols-4 1.5xl:grid-cols-5  ">
               {isLoading
                 ? [...Array(30)].map((element) => (
                     <div key={element}>

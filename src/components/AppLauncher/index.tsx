@@ -17,8 +17,17 @@ import { useInfiniteWidgetApps } from 'queries/apps';
 import { useAppStore } from 'stores/appStore';
 
 import { isFiltersEmpty } from 'utils/misc';
+import { useTranslation } from 'react-i18next';
+import { useShouldRender } from 'hooks/useShouldRender';
+
+const ID = 'AppLauncher';
 
 const AppLauncher = () => {
+  const { t } = useTranslation('appLauncher');
+  const shouldRender = useShouldRender(ID);
+  if (!shouldRender) {
+    return <></>;
+  }
   const navigate = useNavigate();
   const { isAdmin } = useRole();
   const widgetApps = useAppStore((state) => state.widgetApps);
@@ -56,7 +65,7 @@ const AppLauncher = () => {
         data-testid="app-launcher"
         onClick={toggleModal}
       >
-        <div className="font-bold">App Launcher</div>
+        <div className="font-bold">{t('title')}</div>
         <div className="flex items-center gap-2">
           {/* {(appIds || []).length > 0 && isAdmin && (
             <Icon
@@ -113,7 +122,7 @@ const AppLauncher = () => {
                   variant={Variant.Secondary}
                   size={Size.Small}
                   className="py-[7px]"
-                  label="View all"
+                  label={t('view-All-CTA')}
                   dataTestId="app-launcher-view-all"
                   onClick={() =>
                     navigate(isAdmin ? '/apps?myApp=true' : '/apps')

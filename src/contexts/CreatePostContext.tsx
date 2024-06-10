@@ -32,7 +32,7 @@ export interface IAnnouncement {
   value: string;
 }
 
-export const IMG_FILE_SIZE_LIMIT = 5; //MB
+export const IMG_FILE_SIZE_LIMIT = 50; //MB
 export const VIDEO_FILE_SIZE_LIMIT = 2; //GB
 export const MEDIA_LIMIT = 10; // number of media can be uploaded
 
