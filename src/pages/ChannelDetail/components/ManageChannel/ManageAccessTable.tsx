@@ -1,6 +1,11 @@
 import Avatar from 'components/Avatar';
 
-import { getFullName, getProfileImage } from 'utils/misc';
+import {
+  getFullName,
+  getProfileImage,
+  isNewEntity,
+  twConfig,
+} from 'utils/misc';
 import { FC } from 'react';
 import Spinner from 'components/Spinner';
 import {
@@ -16,32 +21,58 @@ import Button, { Variant } from 'components/Button';
 import { Role } from 'utils/enum';
 import { UserRole } from 'queries/users';
 import { useTranslation } from 'react-i18next';
+import { useMutation } from '@tanstack/react-query';
+import { updateMemberRole } from 'queries/channel';
+import { toast } from 'react-toastify';
+import SuccessToast from 'components/Toast/variants/SuccessToast';
+import Icon from 'components/Icon';
+import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
+import { slideInAndOutTop } from 'utils/react-toastify';
+import { useParams } from 'react-router-dom';
 
 type AppProps = {
   isLoading?: boolean;
-  data?: any; // IGetUser[]
+  data?: any;
   selectAllEntity?: () => void;
   deselectAll?: () => void;
 };
 const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
   const { t } = useTranslation('channels');
-  const rolesOptions = [
-    {
-      value: UserRole.Admin,
-      label: 'Admin',
-      onclick: () => {},
-    },
+  const { channelId } = useParams();
 
-    {
-      value: UserRole.Member,
-      label: 'Member',
-      onclick: () => {},
+  const updateMemberRoleMutation = useMutation({
+    mutationFn: updateMemberRole,
+    mutationKey: ['update-channel-member-role'],
+    onSuccess: () => {
+      // queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast(
+        <SuccessToast content={`Member role has been updated successfully`} />,
+        {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              color="text-primary-500"
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+          theme: 'dark',
+        },
+      );
     },
-  ];
+  });
+
   return (
     <>
       <Table>
-        <TableHeader className="  sticky top-0 z-10 text-neutral-500 text-base font-bold bg-neutral-200 ">
+        <TableHeader className=" sticky top-0 z-10 text-neutral-500 text-base font-bold bg-neutral-100 ">
           <TableRow>
             <TableHead className=" pl-[44px] ">
               <div className="flex ">
@@ -62,9 +93,12 @@ const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
         {!isLoading && (
           <TableBody>
             {data.map((user: any) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium ">
-                  <div className=" flex items-center   space-x-4">
+              <TableRow
+                className=" hover:bg-primary-50 font-normal text-base "
+                key={user.id}
+              >
+                <TableCell>
+                  <div className=" flex items-center  space-x-4">
                     <Avatar
                       name={getFullName(user?.fullName) || 'U'}
                       size={32}
@@ -72,34 +106,61 @@ const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
                       dataTestId="member-profile-pic"
                     />
                     <div
-                      className="text-sm font-bold text-neutral-900 whitespace-nowrap line-clamp-1"
+                      className="text-base font-bold text-neutral-900 whitespace-nowrap line-clamp-1  "
                       data-testid="member-name"
                     >
                       {user?.fullName}
                     </div>
-                    <div
-                      className={`  rounded-lg  px-3 py-1 text-xxs font-medium bg-primary-100 text-primary-600`}
-                    >
-                      New joinee
-                    </div>
+                    {isNewEntity(user?.createdAt) && (
+                      <div
+                        className={`rounded-lg  px-3 py-1 text-xxs font-medium bg-primary-100 text-primary-600`}
+                      >
+                        New joinee
+                      </div>
+                    )}
                   </div>
                 </TableCell>
-                <TableCell>{user?.workLocation?.name}</TableCell>
-                <TableCell>dumy email</TableCell>
-                <TableCell>dummy department</TableCell>
-
+                <TableCell>{user?.location || 'dummy location'}</TableCell>
+                <TableCell>{user?.primaryEmail}</TableCell>
+                <TableCell>{user?.designation?.name}</TableCell>
                 <TableCell>
                   <div className="rleative">
                     <PopupMenu
                       triggerNode={
                         <Button
                           variant={Variant.Tertiary}
-                          className="text-sm font-medium"
+                          className="!text-sm !font-medium"
                           label={Role.Admin} // it should come from user data
                           rightIcon={'arrowDown'}
                         />
                       }
-                      menuItems={rolesOptions} // pass the role options
+                      menuItems={
+                        [
+                          {
+                            value: UserRole.Admin,
+                            label: 'Admin',
+                            onClick: () => {
+                              updateMemberRoleMutation.mutate({
+                                id: user?.id,
+                                channelId: channelId,
+                                role: Role.Admin,
+                              });
+                            },
+                          },
+
+                          {
+                            value: UserRole.Member,
+                            label: 'Member',
+                            onClick: () => {
+                              updateMemberRoleMutation.mutate({
+                                id: user?.id,
+                                channelId: channelId,
+                                role: Role.Member,
+                              });
+                            },
+                          },
+                        ] as any
+                      } // pass the role options
                       className=" w-fit "
                     />
                   </div>
@@ -114,20 +175,6 @@ const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
           <Spinner />
         </div>
       )}
-      {/* //loader */}
-      {/* <NoDataFound
-              className="py-4 w-full"
-              searchString={memberSearch}
-              message={
-                <p>
-                  Sorry we can&apos;t find the member you are looking for.
-                  <br /> Please check the spelling or try again.
-                </p>
-              }
-              hideClearBtn
-              dataTestId={`${dataTestId}-noresult`}
-            /> */}{' '}
-      {/* // empty state */}
     </>
   );
 };

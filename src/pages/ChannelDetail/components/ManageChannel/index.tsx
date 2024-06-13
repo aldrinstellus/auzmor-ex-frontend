@@ -1,4 +1,3 @@
-import React from 'react';
 import ManageAccessTable from './ManageAccessTable';
 import InfiniteSearch from 'components/InfiniteSearch';
 import Card from 'components/Card';
@@ -12,13 +11,16 @@ import Button from 'components/Button';
 import FilterMenu from 'components/FilterMenu';
 import { IDepartmentAPI, useInfiniteDepartments } from 'queries/department';
 import { useDebounce } from 'hooks/useDebounce';
-import { userData } from 'mocks/Channels';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
 import Avatar from 'components/Avatar';
 import EntitySearchModal, {
   EntitySearchModalType,
 } from 'components/EntitySearchModal';
+import { useParams } from 'react-router-dom';
+import { UserRole } from 'queries/users';
+import Layout, { FieldType } from 'components/Form';
+import { Size as InputSize } from 'components/Input';
 
 const ManageAccess = () => {
   const { t } = useTranslation('channels');
@@ -30,18 +32,54 @@ const ManageAccess = () => {
     defaultValues: { search: '' },
   });
   const { control } = filterForm;
+  const { channelId } = useParams();
+
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
   const { data, isLoading } = useInfiniteChannelMembers({
-    channelId: '2',
+    channelId: channelId,
     q: isFiltersEmpty({
       role: filters?.type,
       departments: 'departmentDebounced',
-      locations: 'locationDebounced',
       // rest payload
     }),
   });
-  const channelMembers = data?.pages; // need to fix this  data
+  const channelMembers = data?.pages.flatMap((page) => {
+    return page?.data?.result?.data.map((user: any) => {
+      try {
+        return user;
+      } catch (e) {
+        console.log('Error', { user });
+      }
+    });
+  });
+
+  const roleFields = [
+    {
+      type: FieldType.SingleSelect,
+      control,
+      height: 36,
+      name: 'role',
+      placeholder: 'Role',
+      size: InputSize.Small,
+      dataTestId: 'filterby-role',
+      selectClassName: 'single-select-bold',
+      // ref: roleSelectRef,
+      showSearch: false,
+      options: [
+        {
+          value: UserRole.Admin,
+          label: 'Admin',
+          dataTestId: 'filterby-role-admin',
+        },
+        {
+          value: UserRole.Member,
+          label: 'Member',
+          dataTestId: 'filterby-role-member',
+        },
+      ],
+    },
+  ];
 
   const departmentSearch = ''; // add the same debounced value of filters .
   const debouncedDepartmentSearchValue = useDebounce(
@@ -91,8 +129,7 @@ const ManageAccess = () => {
         >
           <div className="flex items-center gap-2">
             <div className="text-neutral-500">
-              Showing {channelMembers?.length} results
-              {/*  {!isLoading && data?.pages[0]?.data?.result?.totalCount}{' '} */}
+              {!isLoading && <> Showing {channelMembers?.length} results </>}
             </div>
             <div className="relative">
               <InfiniteSearch
@@ -117,9 +154,16 @@ const ManageAccess = () => {
                 // selectionCount={selectedDepartments.length}
               />
             </div>
+            <Layout fields={roleFields} />
           </div>
         </FilterMenu>
-        {isLoading ? <Spinner /> : <ManageAccessTable data={userData} />}
+        {isLoading ? (
+          <div className="flex justify-center items-center">
+            <Spinner />
+          </div>
+        ) : (
+          <ManageAccessTable data={channelMembers} />
+        )}
       </Card>
       {showAddMemberModal && (
         <EntitySearchModal
