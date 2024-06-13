@@ -20,8 +20,6 @@ import {
 } from 'mocks/Channels';
 import apiService from 'utils/apiService';
 import { Role } from 'utils/enum';
-// import { channelMemberData } from 'mocks/channelMember';
-// import { channelMemberData } from 'mocks/channelMember';
 
 export interface IChannelPayload {
   name: string;
@@ -76,6 +74,21 @@ export const getAllChannels = async (
     (eachChannel: IChannel) => ({ id: eachChannel.id }),
   );
   return response;
+};
+
+// patch req. to update the channel members roles.
+export const updateMemberRole = async (payload: {
+  id: string;
+  channelId?: string;
+  role: Role;
+}) => {
+  const { data } = await apiService.patch(
+    `channels/${payload?.channelId}/members/${payload?.id}`,
+    {
+      role: payload?.role,
+    },
+  );
+  return data;
 };
 
 export const createChannel = async (payload: IChannelPayload) => {

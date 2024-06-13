@@ -1,21 +1,28 @@
 import clsx from 'clsx';
-import Button, { Size } from 'components/Button';
 import Icon from 'components/Icon';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { IChannel } from '../../../stores/channelStore';
 import useURLParams from 'hooks/useURLParams';
-
+import PopupMenu from 'components/PopupMenu';
+import IconButton, {
+  Size,
+  Variant as IconVariant,
+} from 'components/IconButton';
+import Button, { Size as ButtonSize } from 'components/Button';
+import { twConfig } from 'utils/misc';
 type ProfileSectionProps = {
   channelData: IChannel;
   activeTab: string;
   setActiveTab: (...args: any) => any;
+  setManageAccessTab: (...args: any) => any;
 };
 
 const ProfileSection: React.FC<ProfileSectionProps> = ({
   channelData,
   activeTab,
   setActiveTab,
+  setManageAccessTab,
 }) => {
   const { t } = useTranslation('channelDetail');
   const { updateParam } = useURLParams();
@@ -37,49 +44,71 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     },
   ];
 
+  const editMenueOptions = [
+    {
+      icon: 'adminOutline',
+      label: 'Manage access',
+      stroke: twConfig.theme.colors.neutral['900'],
+      onClick: () => {
+        setManageAccessTab(true);
+        setActiveTab('');
+      },
+      dataTestId: 'edit-coverpic-upload',
+    },
+  ];
   return (
-    <div className="h-[330px] rounded-9xl relative mb-4">
-      <div className="absolute top-4 left-4">
-        <div className="bg-white rounded-7xl px-3 py-1.5 text-xxs text-primary-500 font-medium">
-          {t('cover.you_own_this_space')}
+    <div className="h-[330px]  rounded-9xl relative mb-4">
+      <div className="relative z-50">
+        <div className="absolute top-4 left-4">
+          <div className="bg-white rounded-7xl px-3 py-1.5 text-xxs text-primary-500 font-medium">
+            {t('cover.you_own_this_space')}
+          </div>
         </div>
-      </div>
-      <div className="absolute top-4 right-4 flex items-center space-x-2">
-        <div className="bg-white rounded-full p-2 cursor-pointer">
-          <Icon
-            name="notification"
-            size={16}
-            className="text-neutral-400"
-            // onClick={() => userProfileImageRef?.current?.click()}
-            dataTestId="edit-profilepic"
-          />
-        </div>
-        <div className="bg-white rounded-full p-2 cursor-pointer">
-          <Icon
-            name="star"
-            size={16}
-            className="text-neutral-400"
-            // onClick={() => userProfileImageRef?.current?.click()}
-            dataTestId="edit-profilepic"
-          />
-        </div>
-        <div className="bg-white rounded-full p-2 cursor-pointer">
-          <Icon
-            name="more"
-            size={16}
-            className="text-neutral-400"
-            // onClick={() => userProfileImageRef?.current?.click()}
-            dataTestId="edit-profilepic"
-          />
-        </div>
-        <div className="bg-white rounded-full p-2 cursor-pointer">
-          <Icon
-            name="edit"
-            size={16}
-            className="text-neutral-400"
-            // onClick={() => userProfileImageRef?.current?.click()}
-            dataTestId="channel-editcoverpic-icon"
-          />
+        <div className="absolute top-4 right-4 flex items-center space-x-2">
+          <div className="bg-white rounded-full p-2 cursor-pointer">
+            <Icon
+              name="notification"
+              size={16}
+              className="text-neutral-400"
+              // onClick={() => userProfileImageRef?.current?.click()}
+              dataTestId="edit-profilepic"
+            />
+          </div>
+          <div className="bg-white rounded-full p-2 cursor-pointer">
+            <Icon
+              name="star"
+              size={16}
+              className="text-neutral-400"
+              // onClick={() => userProfileImageRef?.current?.click()}
+              dataTestId="edit-profilepic"
+            />
+          </div>
+          <div className="   cursor-pointer">
+            <PopupMenu
+              triggerNode={
+                <div className="bg-white rounded-full  text-black">
+                  <IconButton
+                    icon="more"
+                    variant={IconVariant.Secondary}
+                    size={Size.Medium}
+                    dataTestId="edit-cover-pic"
+                    // onClick={() => (showEditProfile.current = false)}
+                  />
+                </div>
+              }
+              className="absolute top-12 right-4"
+              menuItems={editMenueOptions}
+            />
+          </div>
+          <div className="bg-white rounded-full  p-2 cursor-pointer">
+            <Icon
+              name="edit"
+              size={16}
+              className="text-neutral-400"
+              // onClick={() => userProfileImageRef?.current?.click()}
+              dataTestId="edit-profilepic"
+            />
+          </div>
         </div>
       </div>
 
@@ -120,7 +149,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
           </div>
           <Button
             label={t('join')}
-            size={Size.Small}
+            size={ButtonSize.Small}
             dataTestId="join-channel-cta"
             className="min-w-max"
           />
@@ -140,6 +169,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                   onClick={() => {
                     updateParam(`search`, '');
                     setActiveTab(t.key);
+                    setManageAccessTab(false);
                   }}
                 >
                   {t.label}

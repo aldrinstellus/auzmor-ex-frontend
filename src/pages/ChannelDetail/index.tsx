@@ -7,11 +7,13 @@ import DocumentPathProvider from 'contexts/DocumentPathContext';
 import { useChannelStore } from 'stores/channelStore';
 import { useParams } from 'react-router-dom';
 import useScrollTop from 'hooks/useScrollTop';
+import ManageAccess from './components/ManageChannel';
 
 const ChannelDetail = () => {
   const { channelId } = useParams();
   const [activeTab, setActiveTab] = useState('home');
   const { getChannel } = useChannelStore();
+  const [isManageAccessTab, setManageAccessTab] = useState(false);
 
   if (!channelId) {
     return <div>Error</div>;
@@ -38,7 +40,9 @@ const ChannelDetail = () => {
         channelData={channelData}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        setManageAccessTab={setManageAccessTab}
       />
+      {isManageAccessTab && <ManageAccess />}
       {activeTab === 'home' && <Home />}
       {activeTab === 'document' && (
         <DocumentPathProvider>
