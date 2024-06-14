@@ -127,7 +127,7 @@ const ChannelModal: FC<IChannelModalProps> = ({ isOpen, closeModal }) => {
     const payload = {
       name: formData?.channelName,
       description: formData?.channelDescription,
-      accessibility: formData?.channelPrivacy?.value,
+      visibility: formData?.channelPrivacy?.value,
       category: formData?.channelCategory?.value,
     };
     addChannelMutation.mutate(payload);

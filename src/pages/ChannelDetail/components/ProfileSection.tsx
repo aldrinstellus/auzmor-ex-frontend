@@ -46,6 +46,13 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
 
   const editMenueOptions = [
     {
+      icon: 'edit',
+      label: 'Edit',
+      stroke: twConfig.theme.colors.neutral['900'],
+      onClick: () => {},
+      dataTestId: '',
+    },
+    {
       icon: 'adminOutline',
       label: 'Manage access',
       stroke: twConfig.theme.colors.neutral['900'],
@@ -53,12 +60,12 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         setManageAccessTab(true);
         setActiveTab('');
       },
-      dataTestId: 'edit-coverpic-upload',
+      dataTestId: '',
     },
   ];
   return (
     <div className="h-[330px]  rounded-9xl relative mb-4">
-      <div className="relative z-50">
+      <div className="relative z-30">
         <div className="absolute top-4 left-4">
           <div className="bg-white rounded-7xl px-3 py-1.5 text-xxs text-primary-500 font-medium">
             {t('cover.you_own_this_space')}
@@ -96,8 +103,18 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                   />
                 </div>
               }
-              className="absolute top-12 right-4"
+              className="absolute top-12 right-4 w-48"
               menuItems={editMenueOptions}
+              title={
+                <div className="text-xs  bg-blue-50 py-2 px-6 font-Medium flex items-center justify-center ">
+                  CHANNEL MANAGEMENT
+                </div>
+              }
+              footer={
+                <div className="text-xs  bg-blue-50 py-2 px-6 font-Medium flex items-center justify-center ">
+                  SECURITY & ANALYTICS
+                </div>
+              }
             />
           </div>
           <div className="bg-white rounded-full  p-2 cursor-pointer">
