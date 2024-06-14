@@ -20,7 +20,6 @@ import { slideInAndOutTop } from 'utils/react-toastify';
 import FailureToast from 'components/Toast/variants/FailureToast';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import Visibility from 'components/FilterModal/Visibility';
 
 interface IChannelModalProps {
   isOpen: boolean;
