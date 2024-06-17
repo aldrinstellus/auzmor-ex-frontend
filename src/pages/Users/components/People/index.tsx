@@ -53,6 +53,7 @@ interface IPeopleFilters {
   departments?: IDepartmentAPI[];
   locations?: ILocationAPI[];
   status?: IStatus[];
+  roles?: any;
 }
 
 interface IForm {

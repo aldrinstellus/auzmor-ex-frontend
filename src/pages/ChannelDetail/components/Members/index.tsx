@@ -43,17 +43,18 @@ const Members = () => {
   const parsedTab = searchParams.get('type');
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
+  useEffect(() => () => clearFilters(), []);
   const { channelId } = useParams();
   const { isLxp } = useProduct();
   const { data, isLoading } = useInfiniteChannelMembers({
     channelId: channelId,
     q: isFiltersEmpty({
-      role: filters?.type,
-      departments: 'departmentDebounced',
-      locations: 'locationDebounced',
-      // rest payload
+      status: filters?.status?.length
+        ? filters?.status?.map((eachStatus: any) => eachStatus.id).join(',')
+        : undefined,
     }),
   });
+
   const users = data?.pages.flatMap((page) => {
     return page?.data?.result?.data.map((user: any) => {
       try {

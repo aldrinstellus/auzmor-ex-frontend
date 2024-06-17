@@ -29,9 +29,9 @@ import { Role } from 'utils/enum';
 
 export interface IFilterForm {
   visibilityRadio: ChannelVisibilityEnum;
-  channelRoles: Role;
   channelTypeRadio: ChannelTypeEnum;
   statusCheckbox: ICheckboxListOption[];
+  roleCheckbox: ICheckboxListOption[];
   locationCheckbox: ICheckboxListOption[];
   departmentCheckbox: ICheckboxListOption[];
   categoryCheckbox: ICheckboxListOption[];
@@ -44,11 +44,16 @@ export interface IFilterForm {
   categorySearch: string;
   teamSearch: string;
   statusSearch: string;
+  roleSearch: string;
   docUserSearch: string;
 }
 
 export interface IStatus {
   id: UserStatus;
+  name: string;
+}
+export interface IRole {
+  id: Role;
   name: string;
 }
 
@@ -67,6 +72,7 @@ export interface IAppliedFilters {
   locations?: ILocationAPI[];
   departments?: IDepartmentAPI[];
   status?: IStatus[];
+  roles?: IRole[];
   categories?: ICategory[];
   teams?: ITeam[];
   visibility?: ChannelVisibilityEnum;
@@ -74,7 +80,6 @@ export interface IAppliedFilters {
   docTypeCheckbox?: IDocType[];
   docPeopleCheckbox?: any;
   docModifiedRadio?: any;
-  channelRoles?: Role;
 }
 
 interface IFilterModalProps {
@@ -107,7 +112,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     docTypeCheckbox: [],
     docPeopleCheckbox: [],
     docModifiedRadio: '',
-    channelRoles: Role.Member,
+    roles: [],
   },
   onApply,
   onClear,
@@ -120,10 +125,13 @@ const FilterModal: FC<IFilterModalProps> = ({
       channelTypeRadio:
         appliedFilters.channelType || ChannelTypeEnum.MyChannels,
       visibilityRadio: appliedFilters.visibility || ChannelVisibilityEnum.All,
-      channelRoles: appliedFilters.channelRoles || Role.Member,
       statusCheckbox: (appliedFilters.status || []).map((status) => ({
         data: status,
         dataTestId: `status-${status.name}`,
+      })),
+      roleCheckbox: (appliedFilters.roles || []).map((role) => ({
+        data: role,
+        dataTestId: `status-${role.name}`,
       })),
       locationCheckbox: (appliedFilters.locations || []).map((location) => ({
         data: location,
@@ -166,6 +174,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     teamCheckbox,
     statusCheckbox,
     documentTypeCheckbox,
+    roleCheckbox,
     documentPeopleCheckbox,
   ] = watch([
     'locationCheckbox',
@@ -173,6 +182,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     'categoryCheckbox',
     'teamCheckbox',
     'statusCheckbox',
+    'roleCheckbox',
     'documentTypeCheckbox',
     'documentPeopleCheckbox',
   ]);
@@ -192,6 +202,7 @@ const FilterModal: FC<IFilterModalProps> = ({
       status: formData.statusCheckbox.map(
         (category) => category.data,
       ) as IStatus[],
+      roles: formData.roleCheckbox.map((role) => role.data) as IRole[],
       docTypeCheckbox: formData.documentTypeCheckbox.map(
         (docType: any) => docType.data,
       ),
@@ -200,7 +211,7 @@ const FilterModal: FC<IFilterModalProps> = ({
       ),
       docModifiedRadio: formData.documentModifiedRadio,
       visibility: formData.visibilityRadio,
-      channelRoles: formData.channelRoles,
+
       channelType: formData.channelTypeRadio,
     } as unknown as IAppliedFilters);
   };
@@ -367,19 +378,6 @@ const FilterModal: FC<IFilterModalProps> = ({
     {
       label: () => (
         <div className="flex items-center">
-          <div>Roles</div>
-        </div>
-      ),
-      key: 'role-filters',
-      component: () => (
-        <Roles control={control} watch={watch} setValue={setValue} />
-      ),
-      isHidden: filterOptionMappings['channel-roles-filters'].includes(variant), // change to roles
-      dataTestId: 'channel-role-visibility',
-    },
-    {
-      label: () => (
-        <div className="flex items-center">
           <div>{t('type')}</div>
         </div>
       ),
@@ -488,6 +486,24 @@ const FilterModal: FC<IFilterModalProps> = ({
       ),
       isHidden: filterOptionMappings['status-filters'].includes(variant),
       dataTestId: 'filterby-status',
+    },
+    {
+      label: () => (
+        <div className="flex items-center">
+          <div>Roles</div>
+          {!!roleCheckbox.length && (
+            <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
+              {roleCheckbox.length}
+            </div>
+          )}
+        </div>
+      ),
+      key: 'roles-filters',
+      component: () => (
+        <Roles control={control} watch={watch} setValue={setValue} />
+      ),
+      isHidden: filterOptionMappings['channel-roles-filters'].includes(variant),
+      dataTestId: 'filterby-roles',
     },
   ].filter((filter) => !filter.isHidden);
   const [activeFilter, setActiveFilter] = useState<IFilters>(

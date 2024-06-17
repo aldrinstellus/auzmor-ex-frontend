@@ -23,10 +23,11 @@ import Layout, { FieldType } from 'components/Form';
 import { Size as InputSize } from 'components/Input';
 import { FilterModalVariant } from 'components/FilterModal';
 import useProduct from 'hooks/useProduct';
+import { useEffect } from 'react';
 
 const ManageAccess = () => {
   const { t } = useTranslation('channels');
-  const { filters } = useAppliedFiltersStore();
+  const { filters, clearFilters } = useAppliedFiltersStore();
   const filterForm = useForm<{
     search: string;
   }>({
@@ -38,12 +39,14 @@ const ManageAccess = () => {
   const { isLxp } = useProduct();
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
+  useEffect(() => () => clearFilters(), []);
+
   const { data, isLoading } = useInfiniteChannelMembers({
     channelId: channelId,
     q: isFiltersEmpty({
-      role: filters?.type,
-      departments: 'departmentDebounced',
-      // rest payload
+      role: filters?.roles?.length
+        ? filters?.roles?.map((role: any) => role.id).join(',')
+        : undefined,
     }),
   });
   const channelMembers = data?.pages.flatMap((page) => {
