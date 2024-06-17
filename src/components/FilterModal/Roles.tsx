@@ -37,14 +37,14 @@ const Roles: FC<IStatusProps> = ({ control, watch, setValue }) => {
     value.name.toLowerCase().includes(debouncedRoleSearchValue.toLowerCase()),
   );
 
-  const statusFields = [
+  const rolesFields = [
     {
       type: FieldType.CheckboxList,
       name: 'roleCheckbox',
       control,
       options: roleData?.map((role: IRole) => ({
         data: role,
-        datatestId: `status-${role.name.toLowerCase()}`,
+        datatestId: `role-${role.name.toLowerCase()}`,
       })),
       labelRenderer: (option: ICheckboxListOption) => (
         <div className="ml-2.5 cursor-pointer text-xs">{option.data.name}</div>
@@ -59,14 +59,14 @@ const Roles: FC<IStatusProps> = ({ control, watch, setValue }) => {
       <div className="max-h-[330px] min-h-[330px] overflow-y-auto">
         {!!roleCheckbox?.length && (
           <div className="flex mt-2 mb-3 flex-wrap">
-            {roleCheckbox.map((status: ICheckboxListOption) => (
+            {roleCheckbox.map((role: ICheckboxListOption) => (
               <div
-                key={status.data.id}
+                key={role.data.id}
                 data-testid="filter-options"
                 className="flex items-center px-3 py-2 bg-neutral-100 rounded-17xl border border-neutral-200 mr-2 my-1"
               >
                 <div className="text-primary-500 text-sm font-medium whitespace-nowrap">
-                  {status.data.name}
+                  {role.data.name}
                 </div>
                 <div className="ml-1">
                   <Icon
@@ -75,10 +75,10 @@ const Roles: FC<IStatusProps> = ({ control, watch, setValue }) => {
                     color="text-neutral-900"
                     onClick={() =>
                       setValue(
-                        'statusCheckbox',
+                        'roleCheckbox',
                         roleCheckbox.filter(
-                          (selectedStatus: ICheckboxListOption) =>
-                            selectedStatus.data.id !== status.data.id,
+                          (selectedRoles: ICheckboxListOption) =>
+                            selectedRoles.data.id !== role.data.id,
                         ),
                       )
                     }
@@ -92,7 +92,7 @@ const Roles: FC<IStatusProps> = ({ control, watch, setValue }) => {
           if ((roleData || []).length > 0) {
             return (
               <div>
-                <Layout fields={statusFields} />
+                <Layout fields={rolesFields} />
               </div>
             );
           }

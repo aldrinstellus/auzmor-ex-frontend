@@ -31,7 +31,6 @@ export interface IFilterForm {
   visibilityRadio: ChannelVisibilityEnum;
   channelTypeRadio: ChannelTypeEnum;
   statusCheckbox: ICheckboxListOption[];
-  roleCheckbox: ICheckboxListOption[];
   locationCheckbox: ICheckboxListOption[];
   departmentCheckbox: ICheckboxListOption[];
   categoryCheckbox: ICheckboxListOption[];
@@ -39,6 +38,7 @@ export interface IFilterForm {
   documentPeopleCheckbox: any;
   documentModifiedRadio: any;
   teamCheckbox: ICheckboxListOption[];
+  roleCheckbox: ICheckboxListOption[];
   locationSearch: string;
   departmentSearch: string;
   categorySearch: string;
@@ -131,7 +131,7 @@ const FilterModal: FC<IFilterModalProps> = ({
       })),
       roleCheckbox: (appliedFilters.roles || []).map((role) => ({
         data: role,
-        dataTestId: `status-${role.name}`,
+        dataTestId: `role-${role.name}`,
       })),
       locationCheckbox: (appliedFilters.locations || []).map((location) => ({
         data: location,
@@ -173,8 +173,8 @@ const FilterModal: FC<IFilterModalProps> = ({
     categoryCheckbox,
     teamCheckbox,
     statusCheckbox,
-    documentTypeCheckbox,
     roleCheckbox,
+    documentTypeCheckbox,
     documentPeopleCheckbox,
   ] = watch([
     'locationCheckbox',
@@ -490,7 +490,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     {
       label: () => (
         <div className="flex items-center">
-          <div>Roles</div>
+          <div>Roles </div>
           {!!roleCheckbox.length && (
             <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
               {roleCheckbox.length}
@@ -506,6 +506,7 @@ const FilterModal: FC<IFilterModalProps> = ({
       dataTestId: 'filterby-roles',
     },
   ].filter((filter) => !filter.isHidden);
+
   const [activeFilter, setActiveFilter] = useState<IFilters>(
     filterNavigation[0],
   );
