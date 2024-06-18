@@ -91,6 +91,8 @@ const GlobalSearch: FC<IGlobalSearchProps> = () => {
         }
       },
       onSelect: (value: any, option: any) => {
+        reset();
+        setSearchQuery('');
         const fileUrl = option?.children?.props?.data?.raw?.fileUrl || '';
         if (fileUrl) window.open(fileUrl, '_blank');
       },
