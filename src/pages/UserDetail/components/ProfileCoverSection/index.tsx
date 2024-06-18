@@ -410,7 +410,7 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
       {canEdit && (
         <div>
           <input
-            id="file-input"
+            id="file-input-user-profile"
             type="file"
             ref={userProfileImageRef}
             data-testid="edit-profile-profilepic"
@@ -428,9 +428,10 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
                 openEditImageModal();
               }
             }}
+            aria-label="upload profile picture"
           />
           <input
-            id="file-input"
+            id="file-input-cover-image"
             type="file"
             ref={userCoverImageRef}
             className="hidden"
@@ -448,6 +449,7 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
                 openEditImageModal();
               }
             }}
+            aria-label="upload cover picture"
           />
         </div>
       )}

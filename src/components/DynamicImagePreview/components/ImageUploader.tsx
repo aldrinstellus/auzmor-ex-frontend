@@ -92,6 +92,7 @@ const ImageUploader: FC<IImageUploaderProps> = ({
             handleImageUpload(file);
           }
         }}
+        aria-label="image upload"
       />
     </>
   );
