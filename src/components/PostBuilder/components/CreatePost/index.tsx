@@ -162,6 +162,8 @@ const CreatePost: FC<ICreatePostProps> = ({
         }}
         multiple
         data-testid="feed-createpost-uploadphoto"
+        aria-multiselectable
+        aria-label="upload photo"
       />
       <input
         type="file"
@@ -243,6 +245,8 @@ const CreatePost: FC<ICreatePostProps> = ({
         }}
         multiple
         data-testid="feed-createpost-uploadvideo"
+        aria-multiselectable
+        aria-label="upload video"
       />
     </div>
   );

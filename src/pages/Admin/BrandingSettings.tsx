@@ -870,7 +870,9 @@ const BrandingSettings: FC = () => {
           />
           <div className="flex gap-[100px]">
             <div className="flex flex-col w-1/2 gap-1">
-              <div className="font-bold">Logo</div>
+              <label className="font-bold" htmlFor={getInputPropsLogo().id}>
+                Logo
+              </label>
               <div
                 {...getRootPropsLogo()}
                 className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center cursor-pointer"
@@ -912,7 +914,9 @@ const BrandingSettings: FC = () => {
               <p className="text-xxs text-neutral-500">Max file size 5mb</p>
             </div>
             <div className="flex flex-col w-1/2 gap-1">
-              <div className="font-bold">Favicon</div>
+              <label className="font-bold" htmlFor={getInputPropsFavicon().id}>
+                Favicon
+              </label>
               <div
                 {...getRootPropsFavicon()}
                 className="border border-dashed border-neutral-200 rounded-9xl p-6 w-full h-[186px] flex justify-center items-center cursor-pointer"
@@ -1217,9 +1221,12 @@ const BrandingSettings: FC = () => {
               </div>
               {backgroundType === 'Image' && (
                 <div className="flex flex-col gap-3">
-                  <p className="text-sm font-bold text-neutral-900">
+                  <label
+                    className="text-sm font-bold text-neutral-900"
+                    htmlFor={getInputPropsBG().id}
+                  >
                     Upload Image
-                  </p>
+                  </label>
                   <div
                     {...getRootPropsBG()}
                     className="border border-dashed border-neutral-200 rounded-9xl px-5 py-2.5 w-[420px] h-[186px] flex justify-center items-center cursor-pointer"
@@ -1263,9 +1270,12 @@ const BrandingSettings: FC = () => {
               )}
               {backgroundType === 'Video' && (
                 <div className="flex flex-col gap-3">
-                  <p className="text-sm font-bold text-neutral-900">
+                  <label
+                    className="text-sm font-bold text-neutral-900"
+                    htmlFor={getInputPropsBGVideo().id}
+                  >
                     Upload Video
-                  </p>
+                  </label>
                   <div
                     {...getRootPropsBGVideo()}
                     className="border border-dashed border-neutral-200 rounded-9xl px-5 py-2.5 w-[420px] h-[186px] flex justify-center items-center cursor-pointer"

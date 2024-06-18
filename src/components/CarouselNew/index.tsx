@@ -212,6 +212,7 @@ const Carousel: FC<ICarouselProps> = ({
                 ref={progressbarRef}
                 key={media[currentIndex].original}
                 className="accent-white"
+                aria-label="video slider"
               />
               <div className="text-sm text-white ml-2 w-10 text-center">
                 {getFormatedTime(progress?.duration)}

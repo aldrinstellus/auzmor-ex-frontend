@@ -359,6 +359,7 @@ const FeedFilter: FC<FeedFilterProps> = ({
                         className={getCheckboxStyle(option)}
                         disabled={option.isDisabled}
                         checked={isOptionSelected(option)}
+                        aria-label={option?.label}
                       ></input>
                       {option?.label}
                     </li>
