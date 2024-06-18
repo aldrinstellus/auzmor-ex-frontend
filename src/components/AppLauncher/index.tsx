@@ -58,18 +58,6 @@ const AppLauncher = () => {
       >
         <div className="font-bold">App Launcher</div>
         <div className="flex items-center gap-2">
-          {/* {(appIds || []).length > 0 && isAdmin && (
-            <Icon
-              name="edit"
-              size={20}
-              color="text-neutral-900"
-              dataTestId="app-launcher-collapse"
-              onClick={(e) => {
-                e.stopPropagation();
-                openAddAppModal();
-              }}
-            />
-          )} */}
           <Icon
             name={open ? 'arrowUp' : 'arrowDown'}
             size={20}

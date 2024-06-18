@@ -51,9 +51,9 @@ const Notifications: FC = (): ReactElement => {
         <div className="flex-grow w-0">
           <Card className="p-6">
             <div className="flex flex-col">
-              <p className="text-2xl text-neutral-900 font-bold">
+              <h1 className="text-2xl text-neutral-900 font-bold">
                 Notifications
-              </p>
+              </h1>
               <div className="flex gap-x-3 pt-6">
                 {buttonGroup.map((button, index) => (
                   <Button

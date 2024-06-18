@@ -262,7 +262,7 @@ const Apps: FC<IAppsProps> = () => {
     <div>
       <Card className="p-8">
         <div className="flex justify-between">
-          <p className="font-bold text-2xl text-black">App Launcher</p>
+          <h1 className="font-bold text-2xl text-black">App Launcher</h1>
           {isAdmin && (
             <Button
               onClick={openModal}
