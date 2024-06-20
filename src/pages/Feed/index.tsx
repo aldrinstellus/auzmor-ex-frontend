@@ -544,6 +544,7 @@ const Feed: FC<IFeedProps> = () => {
 
   return (
     <div className="pb-6 flex justify-between">
+      <h1 className="hidden">Your feed page</h1>
       <div className="z-10 w-[293px] flex flex-col gap-6">
         <UserCard />
         <AppLauncher />

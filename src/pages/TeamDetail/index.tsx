@@ -158,12 +158,12 @@ const TeamDetail: FC<ITeamMemberProps> = () => {
             </div>
             <div className="w-full bg-purple-50 border-1 border-purple-200 py-4 pl-8 pr-16 flex justify-between">
               <div className="flex flex-col text-neutral-900 space-y-4">
-                <div
+                <h1
                   className="text-2xl font-bold"
                   data-testid="team-details-name"
                 >
                   {data.name}
-                </div>
+                </h1>
                 {!!data?.description && (
                   <div
                     className="text-xs font-normal"

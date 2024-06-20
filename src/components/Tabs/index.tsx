@@ -62,12 +62,12 @@ const Tabs: FC<ITabsProps> = ({
       <div className="flex">
         <div className="w-full flex items-center justify-between">
           {title && (
-            <div
+            <h1
               className="text-2xl font-bold"
               data-testid="people-hub-page-title"
             >
               {title}
-            </div>
+            </h1>
           )}
           <div className={className}>
             {tabs.map((tab, index) => (
