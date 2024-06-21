@@ -3,26 +3,22 @@ import Card from 'components/Card';
 import { useAppliedFiltersStore } from 'stores/appliedFiltersStore';
 import { useTranslation } from 'react-i18next';
 import { useInfiniteChannelMembers } from 'queries/channel';
-import { getFullName, getProfileImage, isFiltersEmpty } from 'utils/misc';
+import { isFiltersEmpty } from 'utils/misc';
 import { useForm } from 'react-hook-form';
 import useModal from 'hooks/useModal';
 import Button from 'components/Button';
 import FilterMenu from 'components/FilterMenu';
 import Spinner from 'components/Spinner';
-import Icon from 'components/Icon';
-import Avatar from 'components/Avatar';
-import EntitySearchModal, {
-  EntitySearchModalType,
-} from 'components/EntitySearchModal';
-import { useParams } from 'react-router-dom';
 import { UserRole } from 'queries/users';
 import Layout, { FieldType } from 'components/Form';
 import { Size as InputSize } from 'components/Input';
 import { FilterModalVariant } from 'components/FilterModal';
 import { useEffect } from 'react';
 import { ShowingCount } from 'pages/Users/components/Teams';
+import AddChannelMembersModal from '../AddChannelMembersModal';
+import { IChannel } from 'stores/channelStore';
 
-const ManageAccess = () => {
+const ManageAccess: React.FC<{ channelData: IChannel }> = ({ channelData }) => {
   const { t } = useTranslation('channels');
   const { filters, clearFilters } = useAppliedFiltersStore();
   const filterForm = useForm<{
@@ -31,7 +27,7 @@ const ManageAccess = () => {
     mode: 'onChange',
     defaultValues: { search: '' },
   });
-  const { channelId } = useParams();
+
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
   useEffect(() => () => clearFilters(), []);
@@ -39,7 +35,7 @@ const ManageAccess = () => {
   const { watch, control } = filterForm;
   const searchValue = watch('search');
   const { data, isLoading } = useInfiniteChannelMembers({
-    channelId: channelId,
+    channelId: channelData.id,
     q: isFiltersEmpty({
       q: searchValue,
       sort: filters?.sort,
@@ -125,70 +121,14 @@ const ManageAccess = () => {
         )}
       </Card>
       {showAddMemberModal && (
-        <EntitySearchModal
+        <AddChannelMembersModal
           open={showAddMemberModal}
           openModal={openAddMemberModal}
           closeModal={closeAddMemberModal}
-          entityType={EntitySearchModalType.Channel}
           dataTestId="add-members"
-          entityRenderer={(data: any) => {
-            return (
-              <div className="flex items-center space-x-4 w-full">
-                <Avatar
-                  name={getFullName(data) || 'U'}
-                  size={32}
-                  image={getProfileImage(data)}
-                  dataTestId="member-profile-pic"
-                />
-                <div className="flex space-x-6 w-full">
-                  <div className="flex flex-col w-full">
-                    <div className="flex justify-between items-center">
-                      <div
-                        className="text-sm font-bold text-neutral-900 whitespace-nowrap line-clamp-1"
-                        data-testid="member-name"
-                      >
-                        {getFullName(data)}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="text-xs font-normal text-neutral-500"
-                        data-testid="member-email"
-                      >
-                        {data?.primaryEmail}
-                      </div>
-                      {data?.department && data?.workLocation?.name && (
-                        <div className="w-1 h-1 bg-neutral-500 rounded-full" />
-                      )}
-                      {data?.department?.name && (
-                        <div className="flex space-x-1 items-start">
-                          <Icon name="briefcase" size={16} />
-                          <div
-                            className="text-xs  font-normal text-neutral-500"
-                            data-testid="member-department"
-                          >
-                            {data?.department.name?.substring(0, 22)}
-                          </div>
-                        </div>
-                      )}
-
-                      {data?.isPresent && (
-                        <div className="text-xs font-semibold text-neutral-500">
-                          Already a member
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          }}
           onSubmit={() => {}}
-          disableKey="isPresent"
-          title="Add  members @DummyChannel"
-          submitButtonText="Enroll members"
+          title={`Add members @${channelData.name}`}
           onCancel={closeAddMemberModal}
-          cancelButtonText="Cancel"
         />
       )}
     </div>

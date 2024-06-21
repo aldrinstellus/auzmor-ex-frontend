@@ -1,17 +1,13 @@
-import Avatar from 'components/Avatar';
 import Button, { Variant } from 'components/Button';
 import Card from 'components/Card';
-import EntitySearchModal, {
-  EntitySearchModalType,
-} from 'components/EntitySearchModal';
+import AddChannelMembersModal from '../AddChannelMembersModal';
 import FilterMenu from 'components/FilterMenu';
-import Icon from 'components/Icon';
 import useModal from 'hooks/useModal';
 import PeopleCard from 'pages/Users/components/People/PeopleCard';
 import UsersSkeleton from 'pages/Users/components/Skeletons/UsersSkeleton';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { getFullName, getProfileImage, isFiltersEmpty } from 'utils/misc';
+import { isFiltersEmpty } from 'utils/misc';
 import { useEffect, useState } from 'react';
 import { useInfiniteChannelMembers } from 'queries/channel';
 
@@ -20,10 +16,10 @@ import PopupMenu from 'components/PopupMenu';
 import { useAppliedFiltersStore } from 'stores/appliedFiltersStore';
 import MemberTable from './MemberTable';
 import useRole from 'hooks/useRole';
-import { useParams } from 'react-router-dom';
 import { FilterModalVariant } from 'components/FilterModal';
+import { IChannel } from '../../../../stores/channelStore';
 
-const Members = () => {
+const Members: React.FC<{ channelData: IChannel }> = ({ channelData }) => {
   const { t } = useTranslation('channels');
   const { filters, setFilters, clearFilters, updateFilter } =
     useAppliedFiltersStore();
@@ -42,9 +38,8 @@ const Members = () => {
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
   useEffect(() => () => clearFilters(), []);
-  const { channelId } = useParams();
   const { data, isLoading } = useInfiniteChannelMembers({
-    channelId: channelId,
+    channelId: channelData.id,
     q: isFiltersEmpty({
       q: searchValue,
       status: filters?.status?.length
@@ -185,70 +180,14 @@ const Members = () => {
         )}
       </Card>
       {showAddMemberModal && (
-        <EntitySearchModal
+        <AddChannelMembersModal
           open={showAddMemberModal}
           openModal={openAddMemberModal}
           closeModal={closeAddMemberModal}
-          entityType={EntitySearchModalType.Channel}
+          title={`Add members @${channelData.name}`}
           dataTestId="add-members"
-          entityRenderer={(data: any) => {
-            return (
-              <div className="flex items-center space-x-4 w-full">
-                <Avatar
-                  name={getFullName(data) || 'U'}
-                  size={32}
-                  image={getProfileImage(data)}
-                  dataTestId="member-profile-pic"
-                />
-                <div className="flex space-x-6 w-full">
-                  <div className="flex flex-col w-full">
-                    <div className="flex justify-between items-center">
-                      <div
-                        className="text-sm font-bold text-neutral-900 whitespace-nowrap line-clamp-1"
-                        data-testid="member-name"
-                      >
-                        {getFullName(data)}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="text-xs font-normal text-neutral-500"
-                        data-testid="member-email"
-                      >
-                        {data?.primaryEmail}
-                      </div>
-                      {data?.department && data?.workLocation?.name && (
-                        <div className="w-1 h-1 bg-neutral-500 rounded-full" />
-                      )}
-                      {data?.department?.name && (
-                        <div className="flex space-x-1 items-start">
-                          <Icon name="briefcase" size={16} />
-                          <div
-                            className="text-xs  font-normal text-neutral-500"
-                            data-testid="member-department"
-                          >
-                            {data?.department.name?.substring(0, 22)}
-                          </div>
-                        </div>
-                      )}
-
-                      {data?.isPresent && (
-                        <div className="text-xs font-semibold text-neutral-500">
-                          Already a member
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          }}
           onSubmit={() => {}}
-          disableKey="isPresent"
-          title="Add  members @DummyChannel"
-          submitButtonText="Enroll members"
           onCancel={closeAddMemberModal}
-          cancelButtonText="Cancel"
         />
       )}
     </>

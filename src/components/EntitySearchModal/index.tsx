@@ -11,6 +11,7 @@ export enum EntitySearchModalType {
   User = 'USER',
   Team = 'TEAM',
   Channel = 'CHANNEL',
+  ChannelMembers = 'CHANNEL_MEMBERS',
 }
 
 type ApiCallFunction = (queryParams: any) => any;

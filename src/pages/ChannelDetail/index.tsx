@@ -4,7 +4,7 @@ import Home from './components/Home';
 import ProfileSection from './components/ProfileSection';
 import Members from './components/Members';
 import DocumentPathProvider from 'contexts/DocumentPathContext';
-import { useChannelStore } from 'stores/channelStore';
+import { IChannel, useChannelStore } from 'stores/channelStore';
 import { useParams } from 'react-router-dom';
 import useScrollTop from 'hooks/useScrollTop';
 import ManageAccess from './components/ManageChannel';
@@ -35,9 +35,9 @@ const ChannelDetail = () => {
       });
     }
   }, [channelId]);
-  const renderActiveTab = () => {
+  const renderActiveTab = (channelData: IChannel) => {
     if (activeMenu.accessTab) {
-      return <ManageAccess />;
+      return <ManageAccess channelData={channelData} />;
     }
     if (activeMenu.settingTab) {
       return <>setting tab</>;
@@ -52,7 +52,7 @@ const ChannelDetail = () => {
           </DocumentPathProvider>
         );
       case 'members':
-        return <Members />;
+        return <Members channelData={channelData} />;
       default:
         return null;
     }
@@ -67,7 +67,7 @@ const ChannelDetail = () => {
         setActiveTab={setActiveTab}
         setActiveMenu={setActiveMenu}
       />
-      {renderActiveTab()}
+      {renderActiveTab(channelData)}
     </div>
   );
 };
