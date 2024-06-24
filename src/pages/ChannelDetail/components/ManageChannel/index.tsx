@@ -18,7 +18,9 @@ import { ShowingCount } from 'pages/Users/components/Teams';
 import AddChannelMembersModal from '../AddChannelMembersModal';
 import { IChannel } from 'stores/channelStore';
 
-const ManageAccess: React.FC<{ channelData: IChannel }> = ({ channelData }) => {
+const ManageAccess: React.FC<{ channelData?: IChannel }> = ({
+  channelData,
+}) => {
   const { t } = useTranslation('channels');
   const { filters, clearFilters } = useAppliedFiltersStore();
   const filterForm = useForm<{
@@ -83,7 +85,7 @@ const ManageAccess: React.FC<{ channelData: IChannel }> = ({ channelData }) => {
 
   return (
     <div>
-      <Card className="p-8 flex flex-col gap-6  ">
+      <Card className="p-8 flex flex-col gap-6 pb-40  ">
         <div className="flex justify-between items-center">
           <p className="text-2xl font-bold text-neutral-900">
             {t('manageAccess.title')}
@@ -127,7 +129,7 @@ const ManageAccess: React.FC<{ channelData: IChannel }> = ({ channelData }) => {
           closeModal={closeAddMemberModal}
           dataTestId="add-members"
           onSubmit={() => {}}
-          title={`Add members @${channelData.name}`}
+          title={`Add members @${channelData?.name}`}
           onCancel={closeAddMemberModal}
         />
       )}

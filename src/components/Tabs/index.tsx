@@ -1,7 +1,8 @@
 import { FC, ReactNode, useEffect, useState } from 'react';
 import './styles.css';
+import { useLocation } from 'react-router-dom';
 
-interface ITab {
+export interface ITab {
   tabLabel: (isActive: boolean) => string | ReactNode;
   tabContent: ReactNode;
   tabAction?: ReactNode;
@@ -25,7 +26,6 @@ export interface ITabsProps {
 const Tabs: FC<ITabsProps> = ({
   tabs,
   title,
-  activeTabIndex = 0,
   tabContentClassName = 'px-6',
   className = 'w-full flex justify-start border-b-1 border border-neutral-200 px-8',
   itemSpacing = 4,
@@ -34,8 +34,24 @@ const Tabs: FC<ITabsProps> = ({
   disableAnimation = false,
   onTabChange,
 }) => {
-  const [activeTab, setActiveTab] = useState(activeTabIndex);
+  const location = useLocation();
+  const currentPathname = location.pathname;
+
+  // Determine the active tab index based on the current pathname
+  const determineActiveTabIndex = () => {
+    if (currentPathname.includes('channels')) return 0;
+    if (currentPathname.includes('teams')) return 1;
+    if (currentPathname.includes('documents')) return 1;
+    if (currentPathname.includes('members')) return 2;
+    return 0; // Default to the first tab
+  };
+
+  const [activeTab, setActiveTab] = useState(determineActiveTabIndex());
   const [previousTab, setPreviousTab] = useState(activeTab);
+
+  useEffect(() => {
+    setActiveTab(determineActiveTabIndex());
+  }, [currentPathname]);
 
   useEffect(() => {
     if (!disableAnimation) {

@@ -34,7 +34,7 @@ const MemberTable: FC<AppProps> = ({
       <Table>
         <TableHeader className=" sticky top-0 z-10 text-neutral-500 text-base font-bold bg-neutral-200 ">
           <TableRow>
-            <TableHead className="w-[362px ] ">
+            <TableHead>
               <div className="flex space-x-4">
                 <Layout
                   fields={[
@@ -63,11 +63,7 @@ const MemberTable: FC<AppProps> = ({
                 <div>{t('members.table.fullName')}</div>
               </div>
             </TableHead>
-            <TableHead className="w-[200px]">
-              {t('members.table.location')}
-            </TableHead>
             <TableHead>{t('members.table.title')}</TableHead>
-            <TableHead>{t('members.table.department')}</TableHead>
             <TableHead>{t('members.table.email')}</TableHead>
           </TableRow>
         </TableHeader>
@@ -109,10 +105,8 @@ const MemberTable: FC<AppProps> = ({
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>{user?.workLocation?.name || 'Canada'}</TableCell>
-                <TableCell>QA</TableCell>
                 <TableCell>title</TableCell>
-                <TableCell>{user?.workEmail}</TableCell>
+                <TableCell>{user?.email}</TableCell>
               </TableRow>
             ))}
           </TableBody>

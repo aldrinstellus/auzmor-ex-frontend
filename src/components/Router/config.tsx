@@ -9,7 +9,6 @@ import Notifications from 'pages/Notifications';
 import { lazy } from 'react';
 import RequireAdminAuth from 'components/RequireAdminAuth';
 import RequireOfficeAuth from 'components/RequireOfficeAuth';
-import { Channels } from 'pages/Channels';
 import RequireNonProdAuth from 'components/RequireNonProdAuth';
 
 const ErrorBoundary = lazy(() => import('components/ErrorBoundary'));
@@ -32,6 +31,7 @@ const PageNotFound = lazy(() => import('pages/PageNotFound'));
 const ServerErrorPage = lazy(() => import('pages/ServerErrorPage'));
 const PostPage = lazy(() => import('pages/Post'));
 const Logout = lazy(() => import('pages/Logout'));
+const Channels = lazy(() => import('pages/Channels'));
 const SearchResults = lazy(() => import('pages/SearchResults'));
 
 const routers = createBrowserRouter(
@@ -121,6 +121,8 @@ const routers = createBrowserRouter(
         {/* retricted routes for prod  */}
         <Route element={<RequireNonProdAuth />}>
           <Route path="/channels" element={<Channels />} />
+          <Route path="/documents/:channelId" element={<ChannelDetail />} />
+          <Route path="/members/:channelId" element={<ChannelDetail />} />
           <Route
             path="/channels/:channelId"
             element={<ChannelDetail />}

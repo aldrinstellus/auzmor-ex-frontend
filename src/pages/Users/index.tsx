@@ -162,7 +162,6 @@ const Users: FC<IUsersProps> = () => {
         tabSwitcherClassName="!p-1"
         showUnderline={false}
         itemSpacing={1}
-        activeTabIndex={!isUserTab ? 1 : 0} //need to handle the behaviour
         tabContentClassName="mt-4"
         onTabChange={() => {
           navigate(isUserTab ? '/teams' : '/users');
