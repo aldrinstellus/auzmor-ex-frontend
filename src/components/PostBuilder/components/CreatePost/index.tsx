@@ -34,6 +34,13 @@ const CreatePost: FC<ICreatePostProps> = ({
   mode,
 }) => {
   const quillRef = useRef<ReactQuill>(null);
+
+  useEffect(() => {
+    if (quillRef.current) {
+      quillRef.current.focus();
+    }
+  }, []);
+
   const {
     inputImgRef,
     inputVideoRef,

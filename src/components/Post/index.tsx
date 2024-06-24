@@ -152,6 +152,15 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
       createBookmarkMutation.mutate(post.id as string);
     }
   };
+
+  const handleCommentCta = () => {
+    if (showComments) {
+      closeComments();
+    } else {
+      openComments();
+    }
+  };
+
   const CustomCard: FC = () => {
     const iconMap: Record<string, string> = {
       clock: 'clock',
@@ -182,16 +191,23 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
       ),
     };
 
+    const handleViewCourse = () => {
+      window.location.assign(post?.ctaButton?.url);
+    };
+
     return (
       <Card className="w-full h-[266px] relative overflow-hidden group/card">
         <img
           src={post?.cardContext?.image?.url}
-          className="w-full h-full object-cover group-hover/card:scale-[1.10]"
+          className="w-full h-full object-cover group-hover/card:scale-[1.10] focus:scale-[1.10]"
           style={{
             transition: 'all 0.25s ease-in 0s',
             animation: '0.15s ease-in 0s 1 normal both running fadeIn',
           }}
           alt="Image"
+          tabIndex={0}
+          aria-label={post?.cardContext?.title}
+          onKeyUp={(e) => (e.code === 'Enter' ? handleViewCourse() : '')}
         />
         <div
           className="rounded-lg absolute"
@@ -297,7 +313,7 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
             <div className="flex font">
               <Button
                 label={post?.ctaButton?.text}
-                onClick={() => window.location.assign(post?.ctaButton?.url)}
+                onClick={handleViewCourse}
                 labelClassName="px-4 font-normal"
                 size={Size.Small}
               />
@@ -336,6 +352,8 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
                 dataTestId="feed-post-bookmark"
                 onClick={() => handleBookmarkClick(post)}
                 isActive={post.bookmarked}
+                title="bookmark this post"
+                tabIndex={0}
               />
             </Tooltip>
             <div className="relative">
@@ -380,9 +398,12 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
           {(totalCount > 0 || post?.commentsCount > 0) && !!!post.schedule && (
             <div className="flex flex-row justify-between py-3 border-y-1 border-y-neutral-100">
               <div
-                className={`flex flex-row items-center space-x-1 group`}
+                className={`flex flex-row items-center space-x-1 group outline-none`}
                 data-testid="feed-post-reactioncount"
-                onClick={() => openReactionModal()}
+                onClick={openReactionModal}
+                onKeyUp={(e) => (e.code === 'Enter' ? openReactionModal() : '')}
+                tabIndex={0}
+                aria-label={`${totalCount} reacted`}
               >
                 {totalCount > 0 && (
                   <div className="flex">
@@ -407,7 +428,7 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
                 )}
                 {totalCount > 0 && (
                   <div
-                    className={`flex text-xs font-normal text-neutral-500 cursor-pointer group-hover:text-primary-500`}
+                    className={`flex text-xs font-normal text-neutral-500 cursor-pointer group-hover:text-primary-500 group-focus:text-primary-500`}
                   >
                     {totalCount} reacted
                   </div>
@@ -416,14 +437,14 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
               {post?.commentsCount > 0 && (
                 <div className="flex flex-row text-xs font-normal text-neutral-500 space-x-7 items-center cursor-pointer hover:text-primary-500">
                   <div
-                    onClick={() => {
-                      if (showComments) {
-                        closeComments();
-                      } else {
-                        openComments();
-                      }
-                    }}
+                    onClick={handleCommentCta}
+                    onKeyUp={(e) =>
+                      e.code === 'Enter' ? handleCommentCta() : ''
+                    }
+                    className="focus:text-primary-500 outline-none"
                     data-testid="feed-post-commentscount"
+                    tabIndex={0}
+                    role="button"
                   >
                     {post.commentsCount || 0}{' '}
                     {getNouns('comment', post?.commentsCount || 0)}
@@ -449,17 +470,11 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
                   label="Comment"
                   variant={Variant.Tertiary}
                   size={Size.Small}
-                  labelClassName="text-xs font-normal text-neutral-500 hover:text-primary-500"
+                  labelClassName="text-xs font-normal text-neutral-500 hover:text-primary-500 group-hover:text-primary-500 group-focus:text-primary-500"
                   leftIcon="comment"
                   leftIconHover={false}
-                  className="space-x-1 !p-0"
-                  onClick={() => {
-                    if (showComments) {
-                      closeComments();
-                    } else {
-                      openComments();
-                    }
-                  }}
+                  className="space-x-1 !p-0 group"
+                  onClick={handleCommentCta}
                   data-testid="feed-post-comment"
                 />
               </div>

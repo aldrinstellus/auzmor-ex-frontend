@@ -1,13 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import Likes from 'components/Reactions';
-import IconButton, {
-  Variant as IconVariant,
-  Size,
-} from 'components/IconButton';
 import Avatar from 'components/Avatar';
 import { useMutation } from '@tanstack/react-query';
-import Popover from 'components/Popover';
-import clsx from 'clsx';
 import { humanizeTime } from 'utils/time';
 import useAuth from 'hooks/useAuth';
 import ReplyCard from 'components/Reply';
@@ -36,6 +30,7 @@ import Divider, { Variant } from 'components/Divider';
 import Tooltip, { Variant as TooltipVariant } from 'components/Tooltip';
 import UserCard from 'components/UserCard';
 import useProduct from 'hooks/useProduct';
+import PopupMenu from 'components/PopupMenu';
 
 interface CommentProps {
   commentId: string;
@@ -57,16 +52,15 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
   const [showReplies, setShowReplies] = useState(false);
   const { user } = useAuth();
   const { isLxp } = useProduct();
-  const closePopOver = useRef<HTMLButtonElement>(null);
   const previousShowReply = useRef<boolean>(false);
 
   const comment = storedcomments[commentId];
   const replies = getComments(comment?.relevantComments || []);
 
-  const menuItemStyle = clsx({
-    'flex flex-row items-center py-3 px-6 gap-2.5 border-b text-sm hover:bg-primary-50 cursor-pointer rounded-b-9xl':
-      true,
-  });
+  // const menuItemStyle = clsx({
+  //   'flex flex-row items-center py-3 px-6 gap-2.5 border-b text-sm hover:bg-primary-50 cursor-pointer rounded-b-9xl':
+  //     true,
+  // });
 
   const totalCount = Object.values(comment?.reactionsCount || {}).reduce(
     (total, count) => total + count,
@@ -150,62 +144,37 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
           <div className="text-neutral-500 font-normal text-xs mt-1">
             {humanizeTime(comment.updatedAt)}
           </div>
-          <div>
+          <div className="relative">
             {user?.id === comment?.createdBy?.userId && (
-              <Popover
+              <PopupMenu
                 triggerNode={
-                  <IconButton
-                    icon={'more'}
-                    className="!p-0 !bg-inherit"
-                    variant={IconVariant.Primary}
-                    size={Size.Large}
-                    dataTestId="comment-ellipsis"
-                  />
+                  <div
+                    className="cursor-pointer"
+                    data-testid="comment-ellipsis"
+                  >
+                    <Icon name="more" title="more" tabIndex={0} />
+                  </div>
                 }
-                ref={closePopOver}
-                className="left-0 rounded-9xl"
-              >
-                <div>
-                  {!editComment && (
-                    <div className="w-48">
-                      <div
-                        className={`${menuItemStyle} rounded-t-9xl`}
-                        onClick={() => {
-                          setEditComment(true);
-                          closePopOver?.current?.click();
-                        }}
-                        data-testid="post-ellipsis-edit-comment"
-                      >
-                        <Icon
-                          name={'edit'}
-                          size={16}
-                          color="text-neutral-200"
-                        />
-                        <div className="text-sm font-medium text-neutral-900">
-                          Edit comment
-                        </div>
-                      </div>
-                      <div
-                        className={`${menuItemStyle} rounded-b-9xl`}
-                        onClick={() => {
-                          showConfirm();
-                        }}
-                      >
-                        <Icon
-                          name={'delete'}
-                          size={16}
-                          color="text-neutral-200"
-                        />
-                        <div
-                          className={`text-sm font-medium text-neutral-900 `}
-                        >
-                          Delete comment
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </Popover>
+                menuItems={[
+                  {
+                    icon: 'edit',
+                    label: 'Edit comment',
+                    onClick: () => {
+                      setEditComment(true);
+                    },
+                    stroke: 'text-neutral-900',
+                    dataTestId: 'post-ellipsis-edit-comment',
+                  },
+                  {
+                    icon: 'delete',
+                    label: 'Delete comment',
+                    onClick: showConfirm,
+                    stroke: 'text-neutral-900',
+                    dataTestId: 'post-ellipsis-edit-comment',
+                  },
+                ]}
+                className="mt-1 right-0 border-1 border-neutral-200 focus-visible:outline-none"
+              />
             )}
           </div>
         </div>
@@ -288,14 +257,17 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
 
         <div className="flex items-center space-x-2">
           <div
-            className="flex space-x-1 cursor-pointer group"
-            onClick={() => {
-              setShowReplies(!showReplies);
-            }}
+            className="flex space-x-1 cursor-pointer group outline-none"
+            onClick={() => setShowReplies(!showReplies)}
+            onKeyUp={(e) =>
+              e.code === 'Enter' ? setShowReplies(!showReplies) : ''
+            }
+            tabIndex={0}
+            role="button"
           >
             <Icon name="comment" size={16} />
             <div
-              className="text-xs font-normal text-neutral-500 ml-1.5 group-hover:text-primary-500"
+              className="text-xs font-normal text-neutral-500 ml-1.5 group-hover:text-primary-500 group-focus:text-primary-500"
               data-testid="comment-replies-count"
             >
               Reply

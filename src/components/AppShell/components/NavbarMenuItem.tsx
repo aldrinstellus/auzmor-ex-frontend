@@ -69,7 +69,7 @@ const NavbarMenuItem: FC<INavbarMenuItemProps> = ({ nav }) => {
               className={isActive ? 'hidden' : 'group-hover:hidden'}
             />
 
-            <div className="text-sm group-hover:text-primary-500">
+            <div className="text-sm group-hover:text-primary-500 group-focus:text-primary-500">
               {nav.label}
             </div>
           </div>

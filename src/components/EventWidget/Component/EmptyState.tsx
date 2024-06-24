@@ -11,7 +11,11 @@ const EmptyState = () => {
         className="opacity-75"
         alt="No Events"
       />
-      <div className="text-base font-bold line-clamp-2 text-neutral-900">
+      <div
+        className="text-base font-bold line-clamp-2 text-neutral-900"
+        tabIndex={0}
+        aria-details={header}
+      >
         {header}
       </div>
     </div>
