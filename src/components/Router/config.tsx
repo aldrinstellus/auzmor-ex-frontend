@@ -123,23 +123,23 @@ const routers = createBrowserRouter(
           <Route path="/channels" element={<Channels />} />
           <Route
             path="/channels/:channelId/documents"
-            element={<ChannelDetail />}
+            element={<ChannelDetail activeTabIndex={1} />}
           />
           <Route
             path="/channels/:channelId/members"
-            element={<ChannelDetail />}
+            element={<ChannelDetail activeTabIndex={2} />}
           />
           <Route
             path="/channels/:channelId/settings"
-            element={<ChannelDetail />}
+            element={<ChannelDetail isSettingTab={true} activeTabIndex={0} />}
           />
           <Route
             path="/channels/:channelId/members/manage"
-            element={<ChannelDetail />}
+            element={<ChannelDetail isManagedTab={true} activeTabIndex={2} />}
           />
           <Route
             path="/channels/:channelId"
-            element={<ChannelDetail />}
+            element={<ChannelDetail activeTabIndex={0} />}
             loader={() => {
               return '';
             }}

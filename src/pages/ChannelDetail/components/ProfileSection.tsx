@@ -14,11 +14,12 @@ import ChannelModal from 'pages/Channels/components/ChannelModal';
 import useModal from 'hooks/useModal';
 import ChannelArchiveModal from 'pages/Channels/components/ChannelArchiveModal';
 import Tabs, { ITab } from 'components/Tabs';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 type ProfileSectionProps = {
   channelData: IChannel;
   tabs?: ITab[];
+  activeTabIndex?: number;
 };
 
 export enum TabStatus {
@@ -29,21 +30,13 @@ export enum TabStatus {
 const ProfileSection: React.FC<ProfileSectionProps> = ({
   channelData,
   tabs = [],
+  activeTabIndex,
 }) => {
   const { t } = useTranslation('channelDetail');
   const { user } = useAuth();
   const [isEditModalOpen, openEditModal, closeEditModal] = useModal();
   const [isArchiveModalOpen, openArchiveModal, closeArchiveModal] = useModal();
   const navigate = useNavigate();
-  const location = useLocation();
-  const currentPathname = location.pathname;
-
-  const determineActiveTabIndex = () => {
-    if (currentPathname.match(/\/channels\/\d+$/)) return 0;
-    if (currentPathname.match(/\/channels\/\d+\/documents/)) return 1; // Matches /channels/17/documents
-    if (currentPathname.match(/\/channels\/\d+\/members/)) return 2;
-    return 0; // Default to the first tab
-  };
 
   const handleTabChange = (index: any) => {
     if (index === 0) {
@@ -215,7 +208,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               tabContentClassName="mt-8 mb-32"
               className="w-full flex px-6   "
               onTabChange={handleTabChange}
-              activeTabIndex={determineActiveTabIndex()}
+              activeTabIndex={activeTabIndex}
             />
           </div>
           <div className=" justify-end pr-8 flex items-center">

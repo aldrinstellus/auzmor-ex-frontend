@@ -1,23 +1,29 @@
-import { useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import Documents from './components/Documents';
 import Home from './components/Home';
 import ProfileSection from './components/ProfileSection';
 import Members from './components/Members';
 import { IChannel, useChannelStore } from 'stores/channelStore';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import useScrollTop from 'hooks/useScrollTop';
 import { useChannelDetails } from 'queries/channel';
 import PageLoader from 'components/PageLoader';
 import clsx from 'clsx';
 import DocumentPathProvider from 'contexts/DocumentPathContext';
 
-const ChannelDetail = () => {
-  const { channelId } = useParams();
-  const location = useLocation();
-  const currentPathname = location.pathname;
+type AppProps = {
+  activeTabIndex?: number;
+  isSettingTab?: boolean;
+  isManagedTab?: boolean;
+};
 
-  const isSettingTab = currentPathname.includes('settings');
-  const isManagedTab = currentPathname.includes('manage');
+const ChannelDetail: FC<AppProps> = ({
+  activeTabIndex = 0,
+  isSettingTab,
+  isManagedTab,
+}) => {
+  const { channelId } = useParams();
+
   const { getChannel } = useChannelStore();
 
   const { getScrollTop, resumeRecordingScrollTop } = useScrollTop(
@@ -103,7 +109,11 @@ const ChannelDetail = () => {
 
   return (
     <div className="flex flex-col  w-full ">
-      <ProfileSection tabs={tabs} channelData={channelData} />
+      <ProfileSection
+        activeTabIndex={activeTabIndex}
+        tabs={tabs}
+        channelData={channelData}
+      />
     </div>
   );
 };
