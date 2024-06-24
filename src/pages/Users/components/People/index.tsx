@@ -342,7 +342,14 @@ const People: FC<IPeopleProps> = ({
 
   const ShowResultCount = () => {
     return (
-      <div className="text-neutral-500">
+      <div
+        className="text-neutral-500"
+        role="contentinfo"
+        tabIndex={0}
+        aria-details={`Showing ${
+          !isLoading && data?.pages[0]?.data?.result?.totalCount
+        } results`}
+      >
         Showing {!isLoading && data?.pages[0]?.data?.result?.totalCount} results
       </div>
     );

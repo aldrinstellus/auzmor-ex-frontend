@@ -118,6 +118,12 @@ const TeamDetail: FC<ITeamMemberProps> = () => {
               <div
                 className="flex space-x-2"
                 onClick={handleGoBack}
+                onKeyUp={(e) => (e.code === 'Enter' ? handleGoBack() : '')}
+                role="button"
+                aria-label={`go back to ${
+                  prevRoute === TeamTab.MyTeams ? 'My Teams' : 'All Teams'
+                }`}
+                tabIndex={0}
                 data-testid="my-team-back"
               >
                 <Icon name="linearLeftArrowOutline" size={20} />
@@ -161,6 +167,9 @@ const TeamDetail: FC<ITeamMemberProps> = () => {
                 <h1
                   className="text-2xl font-bold"
                   data-testid="team-details-name"
+                  tabIndex={0}
+                  role="contentinfo"
+                  aria-details={data.name}
                 >
                   {data.name}
                 </h1>
@@ -168,6 +177,8 @@ const TeamDetail: FC<ITeamMemberProps> = () => {
                   <div
                     className="text-xs font-normal"
                     data-testid="team-details-description"
+                    tabIndex={0}
+                    aria-details={data.description}
                   >
                     {data.description}
                   </div>
@@ -176,7 +187,14 @@ const TeamDetail: FC<ITeamMemberProps> = () => {
 
               <div className="flex items-center space-x-20 ">
                 {!isLxp ? (
-                  <div className="flex flex-col space-y-2">
+                  <div
+                    className="flex flex-col space-y-2"
+                    role="contentinfo"
+                    aria-label={`team type is ${
+                      data.category?.name || 'category'
+                    }`}
+                    tabIndex={0}
+                  >
                     <div className="text-sm font-semibold text-purple-700">
                       Team type
                     </div>
@@ -189,7 +207,12 @@ const TeamDetail: FC<ITeamMemberProps> = () => {
                   </div>
                 ) : null}
                 {isLxp ? (
-                  <div className="flex flex-col space-y-2">
+                  <div
+                    className="flex flex-col space-y-2"
+                    tabIndex={0}
+                    role="contentinfo"
+                    aria-details={`${data.totalMembers || 0} members`}
+                  >
                     <div className="flex items-center text-sm font-semibold text-purple-700">
                       <span
                         className="text-xl font-semibold text-neutral-900"
@@ -201,7 +224,12 @@ const TeamDetail: FC<ITeamMemberProps> = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col space-y-2">
+                  <div
+                    className="flex flex-col space-y-2"
+                    tabIndex={0}
+                    role="contentinfo"
+                    aria-details={`No. of people ${data.totalMembers || 0}`}
+                  >
                     <div className="text-sm font-semibold text-purple-700">
                       No. of people
                     </div>

@@ -71,6 +71,8 @@ const Tabs: FC<ITabsProps> = ({
             <h1
               className="text-2xl font-bold"
               data-testid="people-hub-page-title"
+              tabIndex={0}
+              aria-label={title}
             >
               {title}
             </h1>
