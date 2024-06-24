@@ -39,14 +39,15 @@ const Icon: FC<IconProps> = ({
   }
 
   const colorClass = `${color}`;
-  const hoverColorClass = `hover:${hoverColor} group-hover:${hoverColor}`;
+  const hoverColorClass = `hover:${hoverColor} group-hover:${hoverColor} focus:${hoverColor} group-focus:${hoverColor}`;
   const isActiveClass = `text-primary-500 cursor-pointer`;
   const isActiveHoverColorClass = `${hoverColor}`;
   const disabledClass = `text-neutral-200 cursor-not-allowed pointer-events-none`;
 
   const styles = clsx({
+    'outline-none': true,
     [className]: true,
-    'text-neutral-500 hover:text-primary-500 group-hover:text-primary-500 cursor-pointer transition-colors ease-out duration-default':
+    'text-neutral-500 hover:text-primary-500 group-hover:text-primary-500 focus:text-primary-500 group-focus:text-primary-500 cursor-pointer transition-colors ease-out duration-default':
       !disabled,
     'cursor-pointer': !!onClick && !disabled,
     [colorClass]: color && !disabled,

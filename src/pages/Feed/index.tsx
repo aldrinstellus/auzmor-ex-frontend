@@ -334,17 +334,19 @@ const Feed: FC<IFeedProps> = () => {
   }) => (
     <div
       key={name}
-      className="border border-neutral-200 rounded-[24px] px-3 py-1 bg-white items-center flex gap-2"
+      className="border border-neutral-200 rounded-[24px] px-3 py-1 bg-white items-center flex gap-2 cursor-pointer outline-none group"
+      onClick={onClick}
+      onKeyUp={(e) => (e.code === 'Enter' ? onClick() : '')}
+      tabIndex={0}
     >
-      <div className="text-sm font-medium whitespace-nowrap text-neutral-900">
+      <p className="text-sm font-medium whitespace-nowrap text-neutral-900 group-hover:text-primary-600">
         {name}
-      </div>
+      </p>
       <Icon
         name="closeCircleOutline"
         color="text-neutral-900"
         className="cursor-pointer"
         size={16}
-        onClick={onClick}
       />
     </div>
   );
@@ -370,26 +372,32 @@ const Feed: FC<IFeedProps> = () => {
       return (
         <div className="flex flex-col gap-6">
           <CreatePostCard openModal={openModal} />
-          <div className=" flex flex-col">
-            <div className="flex flex-row items-center gap-6 mb-2">
-              <div className="flex items-center gap-4">
-                <div className="z-20">
-                  <Tooltip
-                    tooltipContent="My Scheduled Posts"
-                    tooltipPosition="top"
+          <div className=" flex flex-col gap-6">
+            <div className="flex flex-row items-center gap-6">
+              <div className="flex items-center gap-4 z-20">
+                <Tooltip
+                  tooltipContent="My Scheduled Posts"
+                  tooltipPosition="top"
+                >
+                  <Link
+                    to="/scheduledPosts"
+                    aria-label="scheduled posts"
+                    tabIndex={0}
+                    className="outline-none"
                   >
-                    <Link to="/scheduledPosts">
-                      <Icon name="clock" size={24} />
-                    </Link>
-                  </Tooltip>
-                </div>
-                <div className="">
-                  <Tooltip tooltipContent="My Bookmarks" tooltipPosition="top">
-                    <Link to="/bookmarks" data-testid="feed-page-mybookmarks">
-                      <Icon name="postBookmark" size={24} />
-                    </Link>
-                  </Tooltip>
-                </div>
+                    <Icon name="clock" size={24} />
+                  </Link>
+                </Tooltip>
+                <Tooltip tooltipContent="My Bookmarks" tooltipPosition="top">
+                  <Link
+                    to="/bookmarks"
+                    data-testid="feed-page-mybookmarks"
+                    aria-label="bookmarked posts"
+                    className="outline-none"
+                  >
+                    <Icon name="postBookmark" size={24} />
+                  </Link>
+                </Tooltip>
               </div>
               <Divider className="bg-neutral-200 flex-1" />
               <div className="flex items-center gap-3">
@@ -397,6 +405,11 @@ const Feed: FC<IFeedProps> = () => {
                   <div
                     className="flex items-center gap-1 cursor-pointer text-sm font-bold text-primary-600 bg-transparent"
                     onClick={clearAppliedFilters}
+                    onKeyUp={(e) =>
+                      e.code === 'Enter' ? clearAppliedFilters() : ''
+                    }
+                    tabIndex={0}
+                    role="button"
                   >
                     <Icon
                       name="deleteOutline"
@@ -412,15 +425,11 @@ const Feed: FC<IFeedProps> = () => {
                   onApplyFilters={handleApplyFilter}
                   dataTestId="filters-dropdown"
                 />
-                {/* <SortByDropdown /> */}
               </div>
             </div>
 
             {getAppliedFiltersCount() > 0 && (
               <div className="flex w-full flex-wrap items-center gap-1">
-                {/* <div className="text-base font-medium text-neutral-500 whitespace-nowrap">
-                  Filter By
-                </div> */}
                 {appliedFeedFilters[PostFilterKeys.PostType]?.map(
                   (filter: PostType) => (
                     <FilterPill
@@ -552,7 +561,7 @@ const Feed: FC<IFeedProps> = () => {
         {!isLargeScreen && <MyTeamWidget />}
         {!isLargeScreen && getRightWidgets()}
       </div>
-      <div className="flex-grow w-0 flex flex-col gap-[26px] px-12">
+      <div className="flex-grow w-0 flex flex-col gap-6 px-12">
         {FeedHeader}
         {isLoading ? (
           <SkeletonLoader />
@@ -567,6 +576,8 @@ const Feed: FC<IFeedProps> = () => {
                     data-testid={`feed-post-${index}`}
                     className="flex flex-col gap-6"
                     key={id}
+                    tabIndex={0}
+                    aria-label={`post ${index + 1}`}
                   >
                     <VirtualisedPost
                       postId={id!}
@@ -574,7 +585,11 @@ const Feed: FC<IFeedProps> = () => {
                     />
                   </li>
                   {index === recommendationIndex.tIndex && (
-                    <li data-testid={`trending-content-post`}>
+                    <li
+                      data-testid={`trending-content-post`}
+                      tabIndex={0}
+                      aria-label="trending content"
+                    >
                       <Recommendation
                         cards={trendingCards}
                         title="Trending Content"
@@ -584,7 +599,11 @@ const Feed: FC<IFeedProps> = () => {
                     </li>
                   )}
                   {index === recommendationIndex.rIndex && (
-                    <li data-testid={`recently-published-content-post`}>
+                    <li
+                      data-testid={`recently-published-content-post`}
+                      tabIndex={0}
+                      aria-label="recently published"
+                    >
                       <Recommendation
                         cards={recentlyPublishedCards}
                         title="Recently Published"

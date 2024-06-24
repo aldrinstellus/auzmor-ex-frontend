@@ -267,7 +267,7 @@ const FeedFilter: FC<FeedFilterProps> = ({
     clsx({
       'bg-blue-50 font-medium text-xs pl-6 py-1 min-w-full text-neutral-500 cursor-default':
         option?.type === FeedFilterContentType.Section,
-      'bg-white font-medium text-xs px-6 py-2 min-w-full text-neutral-900 overflow hover:bg-primary-50 flex items-center gap-[10px] border-b cursor-pointer':
+      'bg-white font-medium text-xs px-6 py-2 min-w-full text-neutral-900 overflow hover:bg-primary-50 focus:bg-primary-50 focus-within:bg-primary-50 flex items-center gap-[10px] border-b cursor-pointer':
         option?.type !== FeedFilterContentType.Section,
       'bg-green-50':
         option?.type !== FeedFilterContentType.Section &&
@@ -279,6 +279,7 @@ const FeedFilter: FC<FeedFilterProps> = ({
       hidden: option?.type === FeedFilterContentType.Section,
       'block accent-primary-600':
         option?.type !== FeedFilterContentType.Section,
+      'outline-none': true,
     });
 
   const clearFilterButtonStyle = useCallback(
@@ -305,16 +306,18 @@ const FeedFilter: FC<FeedFilterProps> = ({
     <Popover className="z-40">
       <Tooltip tooltipContent="Filters" tooltipPosition="top">
         <Popover.Button
-          className="box-border font-bold flex flex-row justify-center items-center border-none relative"
+          className="box-border font-bold flex flex-row justify-center items-center border-none relative outline-none"
           onClick={handleFilterButtonClick}
+          onKeyUp={(e) => (e.code === 'Enter' ? handleFilterButtonClick() : '')}
           data-testid={dataTestId}
+          aria-label="filters"
         >
           {getFeedFilterCount() > 0 && (
             <div className="absolute rounded-full bg-red-600 text-white text-xxs -top-1 -right-1.5 flex w-4 h-4 items-center justify-center">
               {getFeedFilterCount()}
             </div>
           )}
-          <Icon name="filter" size={24} className="" />
+          <Icon name="filter" size={24} />
         </Popover.Button>
       </Tooltip>
       <Transition
@@ -331,13 +334,15 @@ const FeedFilter: FC<FeedFilterProps> = ({
             <div
               className="flex justify-between items-center py-3 px-6"
               onClick={handleFilterByClick}
+              onKeyUp={(e) => (e.code === 'Enter' ? handleFilterByClick() : '')}
             >
               <p className="text-base font-bold">Filter by</p>
               <Icon
                 name="close"
                 size={16}
-                className="cursor-pointer"
+                className="cursor-pointer outline-none"
                 dataTestId="filter-closeicon"
+                tabIndex={0}
               />
             </div>
             <div>
