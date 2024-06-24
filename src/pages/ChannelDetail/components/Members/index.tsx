@@ -18,8 +18,18 @@ import MemberTable from './MemberTable';
 import useRole from 'hooks/useRole';
 import { FilterModalVariant } from 'components/FilterModal';
 import { IChannel } from '../../../../stores/channelStore';
+import ManageAccess from '../ManageChannel';
 
-const Members: React.FC<{ channelData?: IChannel }> = ({ channelData }) => {
+type AppProps = {
+  channelData?: IChannel;
+  isManagedTab?: boolean;
+};
+
+const Members: React.FC<AppProps> = ({ channelData, isManagedTab = false }) => {
+  if (isManagedTab) {
+    return <ManageAccess channelData={channelData} />;
+  }
+
   const { t } = useTranslation('channels');
   const { filters, clearFilters, updateFilter } = useAppliedFiltersStore();
   const [isGrid, setGrid] = useState(true);

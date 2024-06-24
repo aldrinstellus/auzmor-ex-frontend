@@ -18,9 +18,11 @@ import { ShowingCount } from 'pages/Users/components/Teams';
 import AddChannelMembersModal from '../AddChannelMembersModal';
 import { IChannel } from 'stores/channelStore';
 
-const ManageAccess: React.FC<{ channelData?: IChannel }> = ({
-  channelData,
-}) => {
+type AppProps = {
+  channelData?: IChannel;
+};
+
+const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
   const { t } = useTranslation('channels');
   const { filters, clearFilters } = useAppliedFiltersStore();
   const filterForm = useForm<{

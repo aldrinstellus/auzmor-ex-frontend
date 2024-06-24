@@ -160,6 +160,7 @@ const Users: FC<IUsersProps> = () => {
           isLxp ? 'hidden' : 'flex'
         } justify-start bg-neutral-50 rounded-6xl border-solid border-1 border-neutral-200`}
         tabSwitcherClassName="!p-1"
+        activeTabIndex={!isUserTab ? 1 : 0}
         showUnderline={false}
         itemSpacing={1}
         tabContentClassName="mt-4"

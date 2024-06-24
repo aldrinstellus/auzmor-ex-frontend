@@ -4,20 +4,20 @@ import Home from './components/Home';
 import ProfileSection from './components/ProfileSection';
 import Members from './components/Members';
 import { IChannel, useChannelStore } from 'stores/channelStore';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import useScrollTop from 'hooks/useScrollTop';
 import { useChannelDetails } from 'queries/channel';
 import PageLoader from 'components/PageLoader';
 import clsx from 'clsx';
 import DocumentPathProvider from 'contexts/DocumentPathContext';
-import useURLParams from 'hooks/useURLParams';
 
 const ChannelDetail = () => {
   const { channelId } = useParams();
-  const { searchParams } = useURLParams();
-  const parsedTab = searchParams.get('settings');
-  const isSettingTab = parsedTab;
-  const isManagedTab = searchParams.get('manage-access');
+  const location = useLocation();
+  const currentPathname = location.pathname;
+
+  const isSettingTab = currentPathname.includes('settings');
+  const isManagedTab = currentPathname.includes('manage');
   const { getChannel } = useChannelStore();
 
   const { getScrollTop, resumeRecordingScrollTop } = useScrollTop(
@@ -73,11 +73,7 @@ const ChannelDetail = () => {
       dataTestId: 'channel-home-tab',
       tabContent: (
         <>
-          <Home
-            isSettingTab={isSettingTab}
-            isManagedTab={isManagedTab}
-            channelData={channelData}
-          />
+          <Home isSettingTab={isSettingTab} />
         </>
       ),
     },
@@ -99,7 +95,9 @@ const ChannelDetail = () => {
         <div className={tabStyles(isActive)}>Members</div>
       ),
       dataTestId: 'channel-member-tab',
-      tabContent: <Members channelData={channelData} />,
+      tabContent: (
+        <Members isManagedTab={isManagedTab} channelData={channelData} />
+      ),
     },
   ];
 

@@ -14,7 +14,7 @@ import ChannelModal from 'pages/Channels/components/ChannelModal';
 import useModal from 'hooks/useModal';
 import ChannelArchiveModal from 'pages/Channels/components/ChannelArchiveModal';
 import Tabs, { ITab } from 'components/Tabs';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type ProfileSectionProps = {
   channelData: IChannel;
@@ -35,14 +35,23 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   const [isEditModalOpen, openEditModal, closeEditModal] = useModal();
   const [isArchiveModalOpen, openArchiveModal, closeArchiveModal] = useModal();
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPathname = location.pathname;
+
+  const determineActiveTabIndex = () => {
+    if (currentPathname.match(/\/channels\/\d+$/)) return 0;
+    if (currentPathname.match(/\/channels\/\d+\/documents/)) return 1; // Matches /channels/17/documents
+    if (currentPathname.match(/\/channels\/\d+\/members/)) return 2;
+    return 0; // Default to the first tab
+  };
 
   const handleTabChange = (index: any) => {
     if (index === 0) {
       navigate(`/channels/${channelData?.id}`);
     } else if (index === 1) {
-      navigate(`/documents/${channelData?.id}`);
+      navigate(`/channels/${channelData?.id}/documents`);
     } else if (index === 2) {
-      navigate(`/members/${channelData?.id}?type=${'All_Members'}`);
+      navigate(`/channels/${channelData?.id}/members?type=${'All_Members'}`);
     }
   };
   const editMenuOptions = [
@@ -58,7 +67,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       label: 'Manage Access',
       stroke: twConfig.theme.colors.neutral['900'],
       onClick: () => {
-        navigate(`/channels/${channelData?.id}?manage-access=${true}`);
+        navigate(`/channels/${channelData?.id}/members/manage`);
       },
       dataTestId: '',
     },
@@ -88,7 +97,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       label: 'Settings',
       stroke: twConfig.theme.colors.neutral['900'],
       onClick: () => {
-        navigate(`/channels/${channelData?.id}?settings=${true}`);
+        navigate(`/channels/${channelData?.id}/settings`);
       },
       dataTestId: '',
     },
@@ -206,6 +215,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               tabContentClassName="mt-8 mb-32"
               className="w-full flex px-6   "
               onTabChange={handleTabChange}
+              activeTabIndex={determineActiveTabIndex()}
             />
           </div>
           <div className=" justify-end pr-8 flex items-center">

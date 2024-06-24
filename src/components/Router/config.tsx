@@ -121,8 +121,22 @@ const routers = createBrowserRouter(
         {/* retricted routes for prod  */}
         <Route element={<RequireNonProdAuth />}>
           <Route path="/channels" element={<Channels />} />
-          <Route path="/documents/:channelId" element={<ChannelDetail />} />
-          <Route path="/members/:channelId" element={<ChannelDetail />} />
+          <Route
+            path="/channels/:channelId/documents"
+            element={<ChannelDetail />}
+          />
+          <Route
+            path="/channels/:channelId/members"
+            element={<ChannelDetail />}
+          />
+          <Route
+            path="/channels/:channelId/settings"
+            element={<ChannelDetail />}
+          />
+          <Route
+            path="/channels/:channelId/members/manage"
+            element={<ChannelDetail />}
+          />
           <Route
             path="/channels/:channelId"
             element={<ChannelDetail />}
