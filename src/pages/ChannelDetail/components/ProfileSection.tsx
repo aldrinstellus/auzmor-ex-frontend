@@ -1,9 +1,7 @@
-import clsx from 'clsx';
 import Icon from 'components/Icon';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChannelVisibilityEnum, IChannel } from '../../../stores/channelStore';
-import useURLParams from 'hooks/useURLParams';
 import PopupMenu from 'components/PopupMenu';
 import IconButton, {
   Size,
@@ -15,44 +13,40 @@ import useAuth from 'hooks/useAuth';
 import ChannelModal from 'pages/Channels/components/ChannelModal';
 import useModal from 'hooks/useModal';
 import ChannelArchiveModal from 'pages/Channels/components/ChannelArchiveModal';
+import Tabs, { ITab } from 'components/Tabs';
+import { useNavigate } from 'react-router-dom';
 
 type ProfileSectionProps = {
   channelData: IChannel;
-  activeTab: string;
-  setActiveTab: (...args: any) => any;
-  setActiveMenu: (...args: any) => any;
+  tabs?: ITab[];
+  activeTabIndex?: number;
 };
+
+export enum TabStatus {
+  Active = 'active',
+  InActive = 'inactive',
+}
 
 const ProfileSection: React.FC<ProfileSectionProps> = ({
   channelData,
-  activeTab,
-  setActiveTab,
-  setActiveMenu,
+  tabs = [],
+  activeTabIndex,
 }) => {
   const { t } = useTranslation('channelDetail');
   const { user } = useAuth();
-  const { updateParam } = useURLParams();
   const [isEditModalOpen, openEditModal, closeEditModal] = useModal();
   const [isArchiveModalOpen, openArchiveModal, closeArchiveModal] = useModal();
+  const navigate = useNavigate();
 
-  const tabs = [
-    {
-      label: t('cover.tab_home'),
-      key: 'home',
-      isActive: activeTab === 'home',
-    },
-    {
-      label: t('cover.tab_document'),
-      key: 'document',
-      isActive: activeTab === 'document',
-    },
-    {
-      label: t('cover.tab_members'),
-      key: 'members',
-      isActive: activeTab === 'members',
-    },
-  ];
-
+  const handleTabChange = (index: any) => {
+    if (index === 0) {
+      navigate(`/channels/${channelData?.id}`);
+    } else if (index === 1) {
+      navigate(`/channels/${channelData?.id}/documents`);
+    } else if (index === 2) {
+      navigate(`/channels/${channelData?.id}/members?type=${'All_Members'}`);
+    }
+  };
   const editMenuOptions = [
     {
       icon: 'edit',
@@ -66,8 +60,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       label: 'Manage Access',
       stroke: twConfig.theme.colors.neutral['900'],
       onClick: () => {
-        setActiveMenu({ accessTab: true, settingTab: false });
-        setActiveTab('');
+        navigate(`/channels/${channelData?.id}/members/manage`);
       },
       dataTestId: '',
     },
@@ -89,10 +82,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       icon: 'profileAdd',
       label: 'Add Members',
       stroke: twConfig.theme.colors.neutral['900'],
-      onClick: () => {
-        setActiveMenu(true);
-        setActiveTab('');
-      },
+      onClick: () => {},
       dataTestId: '',
     },
     {
@@ -100,13 +90,11 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       label: 'Settings',
       stroke: twConfig.theme.colors.neutral['900'],
       onClick: () => {
-        setActiveMenu({ accessTab: false, settingTab: true });
-        setActiveTab('');
+        navigate(`/channels/${channelData?.id}/settings`);
       },
       dataTestId: '',
     },
   ];
-  console.log({ channelData, user });
   return (
     <div className="h-[330px]  rounded-9xl relative mb-4">
       <div className="relative z-30">
@@ -180,8 +168,8 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         <div className="w-full h-full bg-gradient-to-b from-transparent to-black top-0 left-0 absolute rounded-t-9xl"></div>
       </div>
 
-      <div className="absolute left-0 right-0 bottom-4 text-white px-6">
-        <div className="flex justify-between items-center">
+      <div className="absolute left-0 right-0 bottom-4 text-white ">
+        <div className="px-6 flex justify-between items-center">
           <div className="mb-2 flex items-start space-x-6">
             <div className="h-14 w-14 rounded-full border-2 border-white bg-blue-300 center">
               <Icon
@@ -209,30 +197,21 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
             className="min-w-max"
           />
         </div>
-        <div className="w-full flex justify-between items-center relative mt-3">
-          <div>
-            <div className="flex items-center text-sm space-x-4">
-              {tabs.map((t) => (
-                <div
-                  key={t.key}
-                  className={clsx({
-                    'text-sm px-1 cursor-pointer': true,
-                    'font-bold text-white border-b-2 border-primary-400 pb-2 relative mt-1':
-                      t.isActive,
-                    '!text-neutral-300 hover:!text-white': !t.isActive,
-                  })}
-                  onClick={() => {
-                    updateParam(`search`, '');
-                    setActiveTab(t.key);
-                    setActiveMenu({ accessTab: false, settingTab: false });
-                  }}
-                >
-                  {t.label}
-                </div>
-              ))}
-            </div>
+
+        <div className="relative mt-3">
+          <div className="absolute  text-neutral-900 w-full top-0">
+            <Tabs
+              tabs={tabs}
+              tabSwitcherClassName="!p-1 "
+              showUnderline={false}
+              itemSpacing={1}
+              tabContentClassName="mt-8 mb-32"
+              className="w-full flex px-6   "
+              onTabChange={handleTabChange}
+              activeTabIndex={activeTabIndex}
+            />
           </div>
-          <div className="flex items-center">
+          <div className=" justify-end pr-8 flex items-center">
             <div className="flex items-center space-x-1 border-r pr-4 border-neutral-500">
               <div className="border border-neutral-600 rounded-7xl p-1">
                 <Icon name="lock" size={16} className="text-white" />

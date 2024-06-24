@@ -79,11 +79,8 @@ const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
                 <div>{t('manageAccess.table.fullName')}</div>
               </div>
             </TableHead>
-            <TableHead className="">
-              {t('manageAccess.table.location')}
-            </TableHead>
+            <TableHead className="">Designation</TableHead>
             <TableHead>{t('manageAccess.table.email')}</TableHead>
-            <TableHead>{t('manageAccess.table.department')}</TableHead>
             <TableHead className="pl-8">
               {t('manageAccess.table.role')}
             </TableHead>
@@ -120,11 +117,10 @@ const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
                     )}
                   </div>
                 </TableCell>
-                <TableCell>{user?.location || 'Not specified'}</TableCell>
-                <TableCell>{user?.email}</TableCell>
                 <TableCell>
                   {user?.designation?.name || 'Not specified'}
                 </TableCell>
+                <TableCell>{user?.email}</TableCell>
                 <TableCell>
                   <div className="rleative">
                     <PopupMenu

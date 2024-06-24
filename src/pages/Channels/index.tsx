@@ -30,7 +30,7 @@ interface IFilterButton {
   dataTestId: string;
 }
 
-export const Channels: FC<IChannelsProps> = () => {
+const Channels: FC<IChannelsProps> = () => {
   const { t } = useTranslation('channels');
   const { filters, clearFilters, updateFilter } = useAppliedFiltersStore();
   const [isModalOpen, openModal, closeModal] = useModal();
@@ -264,3 +264,5 @@ export const Channels: FC<IChannelsProps> = () => {
     </>
   );
 };
+
+export default Channels;

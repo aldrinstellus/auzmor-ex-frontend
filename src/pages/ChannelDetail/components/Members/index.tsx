@@ -18,11 +18,20 @@ import MemberTable from './MemberTable';
 import useRole from 'hooks/useRole';
 import { FilterModalVariant } from 'components/FilterModal';
 import { IChannel } from '../../../../stores/channelStore';
+import ManageAccess from '../ManageChannel';
 
-const Members: React.FC<{ channelData: IChannel }> = ({ channelData }) => {
+type AppProps = {
+  channelData?: IChannel;
+  isManagedTab?: boolean;
+};
+
+const Members: React.FC<AppProps> = ({ channelData, isManagedTab = false }) => {
+  if (isManagedTab) {
+    return <ManageAccess channelData={channelData} />;
+  }
+
   const { t } = useTranslation('channels');
-  const { filters, setFilters, clearFilters, updateFilter } =
-    useAppliedFiltersStore();
+  const { filters, clearFilters, updateFilter } = useAppliedFiltersStore();
   const [isGrid, setGrid] = useState(true);
   const filterForm = useForm<{
     search: string;
@@ -92,9 +101,6 @@ const Members: React.FC<{ channelData: IChannel }> = ({ channelData }) => {
   };
 
   useEffect(() => {
-    setFilters({
-      type: searchParams.get('type') || 'All_Members',
-    });
     if (parsedTab !== 'All_Members') {
       setGrid(false);
     } else {
@@ -128,16 +134,16 @@ const Members: React.FC<{ channelData: IChannel }> = ({ channelData }) => {
           <div className="flex items-center gap-2">
             <div className="text-neutral-500">
               Showing {users?.length} results
-              {/*  {!isLoading && data?.pages[0]?.data?.result?.totalCount}{' '} */}
             </div>
             <div className="relative">
               {isAdmin ? (
                 <PopupMenu
                   triggerNode={
                     <Button
-                      active={filters?.type}
+                      active={parsedTab == 'All_Members' || filters?.type}
                       variant={Variant.Secondary}
                       label={
+                        parsedTab == 'All_Members' ||
                         filters?.type == 'All_Members'
                           ? 'All members'
                           : 'Requests'
@@ -184,7 +190,7 @@ const Members: React.FC<{ channelData: IChannel }> = ({ channelData }) => {
           open={showAddMemberModal}
           openModal={openAddMemberModal}
           closeModal={closeAddMemberModal}
-          title={`Add members @${channelData.name}`}
+          title={`Add members @${channelData?.name}`}
           dataTestId="add-members"
           onSubmit={() => {}}
           onCancel={closeAddMemberModal}
