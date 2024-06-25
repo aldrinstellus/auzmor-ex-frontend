@@ -21,7 +21,7 @@ const AdminsWidget = () => {
   const admins = data?.pages.flatMap((page) => {
     return page?.data?.result?.data.map((admin: any) => {
       try {
-        return admin;
+        return { id: admin.id, role: admin.role, ...admin.user };
       } catch (e) {
         console.log('Error', { admin });
       }
@@ -51,10 +51,10 @@ const AdminsWidget = () => {
             {admins?.slice(0, 3).map((admin) => (
               <div key={admin.id} className="flex justify-between items-start">
                 <div className="flex items-center space-x-2">
-                  <Avatar name={admin.name} size={32} image={admin.image} />
+                  <Avatar name={admin.fullName} size={32} image={admin.image} />
                   <div>
                     <div className="text-neutral-900 font-bold text-sm">
-                      {admin.name}
+                      {admin.fullName}
                     </div>
                     <div className="text-neutral-500 text-xs">
                       {admin.designation}
