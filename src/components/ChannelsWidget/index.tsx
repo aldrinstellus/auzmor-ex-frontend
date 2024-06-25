@@ -30,8 +30,10 @@ const ChannelsWidget: FC<IChannelsProps> = ({}) => {
   );
 
   const channelIds =
-    (data?.pages.flatMap((page) =>
-      page?.data?.result?.data.map((channel: { id: string }) => channel),
+    (data?.pages.flatMap(
+      (page) =>
+        page?.data?.result?.data.map((channel: { id: string }) => channel) ||
+        [],
     ) as { id: string }[]) || [];
 
   if (channelIds?.length == 0) {
