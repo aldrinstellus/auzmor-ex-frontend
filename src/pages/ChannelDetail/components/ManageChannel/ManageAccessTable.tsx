@@ -117,9 +117,7 @@ const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
                     )}
                   </div>
                 </TableCell>
-                <TableCell>
-                  {user?.designation?.name || 'Not specified'}
-                </TableCell>
+                <TableCell>{user?.designation || 'Not specified'}</TableCell>
                 <TableCell>{user?.email}</TableCell>
                 <TableCell>
                   <div className="rleative">
