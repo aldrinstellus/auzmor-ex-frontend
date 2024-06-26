@@ -37,7 +37,7 @@ const CategoryRow: FC<AppProps> = ({ channelData }) => {
     mutationFn: ({ id, payload }: { id: string; payload: any }) =>
       updateChannel(id, payload),
     onSuccess: async () => {
-      successToastConfig();
+      successToastConfig({});
       queryClient.invalidateQueries(['channel']);
     },
     onError: async () => {

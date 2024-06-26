@@ -34,7 +34,7 @@ const DescriptionRow: FC<AppProps> = ({ channelData }) => {
     mutationKey: ['update-channel-name-mutation'],
     onError: (_error: any) => {},
     onSuccess: async (_response: any) => {
-      successToastConfig();
+      successToastConfig({});
       ref?.current?.setEditMode(false);
       if (channelId) {
         await queryClient.invalidateQueries(['channel']);
