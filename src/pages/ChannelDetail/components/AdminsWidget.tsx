@@ -57,7 +57,7 @@ const AdminsWidget = () => {
                       {admin.fullName}
                     </div>
                     <div className="text-neutral-500 text-xs">
-                      {admin?.user?.designation}
+                      {admin.designation}
                     </div>
                   </div>
                 </div>
