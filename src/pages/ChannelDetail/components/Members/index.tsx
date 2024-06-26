@@ -57,7 +57,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
   const users = data?.pages.flatMap((page) => {
     return page?.data?.result?.data.map((user: any) => {
       try {
-        return user;
+        return { id: user.id, role: user.role, ...user.user };
       } catch (e) {
         console.log('Error', { user });
       }

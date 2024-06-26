@@ -29,6 +29,7 @@ import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import { useParams } from 'react-router-dom';
 import { CHANNEL_ROLE } from 'stores/channelStore';
+import queryClient from 'utils/queryClient';
 
 type AppProps = {
   isLoading?: boolean;
@@ -44,7 +45,7 @@ const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
     mutationFn: updateMemberRole,
     mutationKey: ['update-channel-member-role'],
     onSuccess: () => {
-      // queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['channel-members'] });
       toast(
         <SuccessToast content={`Member role has been updated successfully`} />,
         {
@@ -117,18 +118,16 @@ const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
                     )}
                   </div>
                 </TableCell>
-                <TableCell>
-                  {user?.designation?.name || 'Not specified'}
-                </TableCell>
+                <TableCell>{user?.designation || 'Not specified'}</TableCell>
                 <TableCell>{user?.email}</TableCell>
                 <TableCell>
-                  <div className="rleative">
+                  <div className="relative">
                     <PopupMenu
                       triggerNode={
                         <Button
                           variant={Variant.Tertiary}
                           className="!text-sm !font-medium capitalize"
-                          label={user?.role || 'Admin'}
+                          label={user?.role?.toLowerCase() || 'Admin'}
                           rightIcon={'arrowDown'}
                         />
                       }
