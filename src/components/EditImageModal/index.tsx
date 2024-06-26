@@ -26,6 +26,8 @@ import ImageCropper from 'components/ImageCropper';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import PageLoader from 'components/PageLoader';
+import useProduct from 'hooks/useProduct';
+import { updateChannel } from 'queries/channel';
 
 export interface AppProps {
   title: string;
@@ -42,6 +44,7 @@ export interface AppProps {
   onBoardImageFile?: File;
   openOnBoardModal?: () => void;
   userId?: string;
+  channelId?: string;
 }
 
 export enum Shape {
@@ -62,7 +65,9 @@ const EditImageModal: FC<AppProps> = ({
   userCoverImageRef,
   fileEntityType,
   userId,
+  channelId = '',
 }) => {
+  const { isLxp } = useProduct();
   const { updateUser } = useAuth();
 
   const { uploadMedia, uploadStatus } = useUpload();
@@ -99,6 +104,49 @@ const EditImageModal: FC<AppProps> = ({
     img.src = image;
   }, []);
 
+  const updateChannelMutation = useMutation({
+    mutationFn: (data: any) => updateChannel(channelId, data),
+    mutationKey: ['update-channel-name-mutation'],
+    onError: (error: any) => {
+      console.log('API call resulted in error: ', error);
+    },
+    onSuccess: async (_response: any) => {
+      setImageFile && setImageFile({});
+      toast(
+        <SuccessToast
+          content={`${
+            fileEntityType === EntityType.UserCoverImage
+              ? 'Cover Picture'
+              : 'Logo Picture'
+          } Updated Successfully`}
+        />,
+        {
+          closeButton: (
+            <Icon
+              name="closeCircleOutline"
+              color="text-primary-500"
+              size={20}
+            />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+          theme: 'dark',
+        },
+      );
+      closeEditImageModal();
+      setBlob(null);
+      if (channelId) {
+        await queryClient.invalidateQueries(['channel']);
+      }
+    },
+  });
+
   const updateUsersPictureMutation = useMutation({
     mutationFn: userId
       ? (data: any) => updateUserById(userId, data)
@@ -108,7 +156,7 @@ const EditImageModal: FC<AppProps> = ({
       console.log('API call resulted in error: ', error);
     },
     onSuccess: async (response: Record<string, any>) => {
-      if (!userId) {
+      if (!userId && !isLxp) {
         const userUpdateResponse = response?.result?.data;
         updateUser({
           name: userUpdateResponse?.fullName,
@@ -164,6 +212,7 @@ const EditImageModal: FC<AppProps> = ({
   });
 
   const { isLoading } = updateUsersPictureMutation;
+  const { isLoading: isLoadingChannel } = updateChannelMutation;
 
   const uploadMediaFn = async () => {
     if (blob) {
@@ -177,26 +226,43 @@ const EditImageModal: FC<AppProps> = ({
           [newFile],
           fileEntityType,
         );
+
         if (fileEntityType === EntityType.UserProfileImage) {
-          updateUsersPictureMutation.mutate({
-            profileImage: {
-              fileId:
-                profileImageUploadResponse && profileImageUploadResponse[0]?.id,
-              original:
+          if (isLxp) {
+            updateChannelMutation.mutate({
+              displayImageUrl:
                 profileImageUploadResponse &&
                 profileImageUploadResponse[0].original,
-            },
-          });
+            });
+          } else
+            updateUsersPictureMutation.mutate({
+              profileImage: {
+                fileId:
+                  profileImageUploadResponse &&
+                  profileImageUploadResponse[0]?.id,
+                original:
+                  profileImageUploadResponse &&
+                  profileImageUploadResponse[0].original,
+              },
+            });
         } else {
-          updateUsersPictureMutation.mutate({
-            coverImage: {
-              fileId:
-                profileImageUploadResponse && profileImageUploadResponse[0]?.id,
-              original:
+          if (isLxp) {
+            updateChannelMutation.mutate({
+              bannerUrl:
                 profileImageUploadResponse &&
                 profileImageUploadResponse[0].original,
-            },
-          });
+            });
+          } else
+            updateUsersPictureMutation.mutate({
+              coverImage: {
+                fileId:
+                  profileImageUploadResponse &&
+                  profileImageUploadResponse[0]?.id,
+                original:
+                  profileImageUploadResponse &&
+                  profileImageUploadResponse[0].original,
+              },
+            });
         }
       }
     }
@@ -221,7 +287,8 @@ const EditImageModal: FC<AppProps> = ({
   const disableClosed = () => {
     if (
       updateUsersPictureMutation.isLoading ||
-      uploadStatus === UploadStatus.Uploading
+      uploadStatus === UploadStatus.Uploading ||
+      updateChannelMutation.isLoading
     ) {
       return null;
     } else {
@@ -289,7 +356,7 @@ const EditImageModal: FC<AppProps> = ({
         userCoverImageRef={userCoverImageRef}
         imageFile={imageFile}
         uploadStatus={uploadStatus}
-        isLoading={isLoading}
+        isLoading={isLoading || isLoadingChannel}
         onSubmit={onSubmit}
         dataTestId={
           imageFile?.profileImage || onBoardImageFile

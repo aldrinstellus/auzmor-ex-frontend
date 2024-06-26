@@ -34,7 +34,9 @@ const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
 
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
-  useEffect(() => () => clearFilters(), []);
+  useEffect(() => {
+    clearFilters();
+  }, []);
 
   const { watch, control } = filterForm;
   const searchValue = watch('search');

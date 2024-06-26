@@ -39,7 +39,7 @@ const ChannelCard: FC<IChannelCardProps> = ({
             <div className="w-full h-full relative">
               <img
                 className="object-cover h-full w-full rounded-t-9xl"
-                src={channel.banner}
+                src={channel.banner?.original}
               />
               <div className="w-full h-full bg-black top-0 left-0 absolute rounded-t-9xl opacity-30"></div>
             </div>
@@ -113,12 +113,7 @@ const ChannelCard: FC<IChannelCardProps> = ({
           )}
         </div>
         <div className="w-10 h-10 rounded-full absolute left-4 top-[52px] bg-blue-300 border border-white z-0 flex justify-center items-center">
-          <Icon
-            name={channel.displayImage || 'chart'}
-            size={16}
-            color="text-white"
-            hover={false}
-          />
+          <Icon name={'chart'} size={16} color="text-white" hover={false} />
         </div>
         {channel.isStarred && (
           <IconWrapper

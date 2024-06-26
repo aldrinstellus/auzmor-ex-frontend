@@ -1,0 +1,169 @@
+import { FC, useRef } from 'react';
+import 'moment-timezone';
+import useRole from 'hooks/useRole';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+// import { convertUpperCaseToPascalCase } from 'utils/misc';
+
+import { useForm } from 'react-hook-form';
+import Layout, { FieldType } from 'components/Form';
+import useAuth from 'hooks/useAuth';
+import { successToastConfig } from 'components/Toast/variants/SuccessToast';
+import InfoRow from 'components/ProfileInfo/components/InfoRow';
+import { ICategoryDetail, useInfiniteCategories } from 'queries/category';
+import { Variant as InputVariant } from 'components/Input';
+import useProduct from 'hooks/useProduct';
+import { createCatergory, useInfiniteLearnCategory } from 'queries/learn';
+import { updateChannel } from 'queries/channel';
+import { toast } from 'react-toastify';
+import FailureToast from 'components/Toast/variants/FailureToast';
+import Icon from 'components/Icon';
+import { twConfig } from 'utils/misc';
+import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
+import { slideInAndOutTop } from 'utils/react-toastify';
+
+type AppProps = {
+  channelData: any;
+};
+
+const CategoryRow: FC<AppProps> = ({ channelData }) => {
+  const queryClient = useQueryClient();
+  const ref = useRef<any>(null);
+  const { user } = useAuth();
+  const { isOwnerOrAdmin } = useRole({ userId: user?.id });
+  const { isLxp } = useProduct();
+  const updateChannelMutation = useMutation({
+    mutationKey: ['update-channel-mutation'],
+    mutationFn: ({ id, payload }: { id: string; payload: any }) =>
+      updateChannel(id, payload),
+    onSuccess: async () => {
+      successToastConfig();
+      queryClient.invalidateQueries(['channel']);
+    },
+    onError: async () => {
+      toast(
+        <FailureToast
+          content={`Error updating channel`}
+          dataTestId="channel-update-error-toaster"
+        />,
+        {
+          closeButton: (
+            <Icon name="closeCircleOutline" color="text-red-500" size={20} />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.red['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+          theme: 'dark',
+        },
+      );
+    },
+  });
+
+  const formatCategory = (data: any) => {
+    const categoriesData = data?.pages.flatMap((page: any) => {
+      return page?.data?.result?.data.map((category: any) => {
+        try {
+          return { ...category, label: category.name };
+        } catch (e) {
+          console.log('Error', { category });
+        }
+      });
+    });
+
+    const transformedOption = categoriesData?.map(
+      (category: ICategoryDetail) => ({
+        value: category?.id,
+        label: category?.name,
+        type: category?.type,
+        id: category?.id,
+        dataTestId: `category-option-${category?.type?.toLowerCase()}-${
+          category?.name
+        }`,
+      }),
+    );
+    return transformedOption;
+  };
+
+  const { handleSubmit, control, reset, getValues } = useForm<any>({
+    mode: 'onSubmit',
+    defaultValues: {
+      channelCategory:
+        channelData?.categories && channelData?.categories?.length > 0
+          ? channelData.categories
+              .map((category: any) => ({
+                value: category?.id,
+                label: category?.name,
+                id: category?.id,
+              }))
+              .pop()
+          : undefined,
+    },
+  });
+
+  const onSubmit = async () => {
+    const formData = getValues();
+    console.log('formData :', formData);
+    let lxpCategoryId;
+    if (
+      formData?.channelCategory?.isNew &&
+      formData?.channelCategory &&
+      isLxp
+    ) {
+      lxpCategoryId = await createCatergory({
+        title: formData?.channelCategory?.label,
+      });
+      lxpCategoryId = lxpCategoryId?.result?.data?.id;
+    }
+
+    const payload = {
+      categoryIds: [lxpCategoryId || formData?.channelCategory?.value || '']
+        .filter(Boolean)
+        .map((id) => id.toString()),
+    };
+    updateChannelMutation.mutate({ id: channelData?.id || '', payload });
+  };
+  const fields = [
+    {
+      type: FieldType.CreatableSearch,
+      variant: InputVariant.Text,
+      placeholder: 'Start typing for suggestions',
+      name: 'channelCategory',
+      control,
+      fetchQuery: isLxp ? useInfiniteLearnCategory : useInfiniteCategories,
+      getFormattedData: formatCategory,
+      dataTestId: `channel-category-dropdown`,
+      getPopupContainer: document.body,
+    },
+  ];
+
+  return (
+    <InfoRow
+      ref={ref}
+      icon={{
+        name: 'lock',
+        color: 'text-red-500',
+        bgColor: 'text-red-50',
+      }}
+      canEdit={isOwnerOrAdmin}
+      label="Category"
+      value={channelData?.categories[0]?.name}
+      dataTestId="user-marital-status"
+      editNode={
+        <div>
+          <form>
+            <Layout fields={fields} />
+          </form>
+        </div>
+      }
+      onCancel={reset}
+      onSave={handleSubmit(onSubmit)}
+    />
+  );
+};
+
+export default CategoryRow;

@@ -1,5 +1,5 @@
 import Icon from 'components/Icon';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChannelVisibilityEnum, IChannel } from '../../../stores/channelStore';
 import PopupMenu from 'components/PopupMenu';
@@ -8,13 +8,23 @@ import IconButton, {
   Variant as IconVariant,
 } from 'components/IconButton';
 import Button, { Size as ButtonSize } from 'components/Button';
-import { twConfig } from 'utils/misc';
+import {
+  clearInputValue,
+  getBlobUrl,
+  getChannelCoverImage,
+  twConfig,
+} from 'utils/misc';
 import useAuth from 'hooks/useAuth';
 import ChannelModal from 'pages/Channels/components/ChannelModal';
 import useModal from 'hooks/useModal';
 import ChannelArchiveModal from 'pages/Channels/components/ChannelArchiveModal';
 import Tabs, { ITab } from 'components/Tabs';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
+import { IUpdateProfileImage } from 'pages/UserDetail';
+import { updateChannel } from 'queries/channel';
+import EditImageModal from 'components/EditImageModal';
+import { EntityType } from 'queries/files';
 
 type ProfileSectionProps = {
   channelData: IChannel;
@@ -32,11 +42,87 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   tabs = [],
   activeTabIndex,
 }) => {
+  const { channelId = '' } = useParams();
   const { t } = useTranslation('channelDetail');
   const { user } = useAuth();
   const [isEditModalOpen, openEditModal, closeEditModal] = useModal();
   const [isArchiveModalOpen, openArchiveModal, closeArchiveModal] = useModal();
   const navigate = useNavigate();
+  const isOwnerOrAdmin = channelData?.createdBy?.userId === user?.id; //channel Admin
+  const canEdit = isOwnerOrAdmin;
+  const channelCoverImageRef = useRef<HTMLInputElement>(null);
+  const showEditProfile = useRef<boolean>(true);
+  const [channelLogoName, setchannelLogoName] = useState<string>('');
+  const [coverImageName, setCoverImageName] = useState<string>('');
+  const channelLogoImageRef = useRef<HTMLInputElement>(null);
+
+  const [openEditImage, openEditImageModal, closeEditImageModal] = useModal(
+    undefined,
+    false,
+  );
+  const [isCoverImageRemoved, setIsCoverImageRemoved] = useState(false);
+  const [file, setFile] = useState<IUpdateProfileImage | Record<string, any>>(
+    {},
+  );
+
+  const getBlobFile = file?.profileImage
+    ? getBlobUrl(file?.profileImage)
+    : file?.coverImage && getBlobUrl(file?.coverImage);
+
+  const deleteCoverImageMutation = useMutation({
+    mutationFn: (data: any) => updateChannel(channelId, data),
+    mutationKey: ['update-users-mutation'],
+    onError: (error: any) => {
+      console.log('API call resulted in error: ', error);
+    },
+    onSuccess: (data) => {
+      console.log('Successfully deleted user cover image', data);
+    },
+  });
+
+  const coverImageOption = [
+    {
+      icon: 'exportOutline',
+      label: 'Upload a photo',
+      stroke: twConfig.theme.colors.neutral['900'],
+      onClick: () => {
+        channelCoverImageRef?.current?.click();
+      },
+      dataTestId: 'edit-coverpic-upload',
+    },
+    {
+      icon: 'maximizeOutline',
+      label: 'Reposition',
+      stroke: twConfig.theme.colors.neutral['900'],
+      onClick: () => {
+        openEditImageModal();
+      },
+      dataTestId: 'edit-coverpic-reposition',
+    },
+    {
+      icon: 'trashOutline',
+      label: 'Delete photo',
+      stroke: twConfig.theme.colors.neutral['900'],
+      onClick: () => {
+        if (file?.coverImage) {
+          if (file?.profileImage) {
+            setFile({
+              profileImage: file?.profileImage,
+            });
+          } else {
+            setFile({});
+          }
+        }
+        setIsCoverImageRemoved(true);
+        deleteCoverImageMutation.mutate({
+          coverImage: {
+            fileId: '',
+          },
+        });
+      },
+      dataTestId: 'edit-coverpic-deletepost',
+    },
+  ];
 
   const handleTabChange = (index: any) => {
     if (index === 0) {
@@ -45,6 +131,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       navigate(`/channels/${channelData?.id}/documents`);
     } else if (index === 2) {
       navigate(`/channels/${channelData?.id}/members?type=${'All_Members'}`);
+    } else if (index === 3) {
+      navigate(`/channels/${channelData?.id}/settings`);
+    } else if (index === 4) {
+      navigate(`/channels/${channelData?.id}/members/manage`);
     }
   };
   const editMenuOptions = [
@@ -111,7 +201,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               name="notification"
               size={16}
               className="text-neutral-400"
-              // onClick={() => userProfileImageRef?.current?.click()}
               dataTestId="edit-profilepic"
             />
           </div>
@@ -120,7 +209,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               name="star"
               size={16}
               className="text-neutral-400"
-              // onClick={() => userProfileImageRef?.current?.click()}
               dataTestId="edit-profilepic"
             />
           </div>
@@ -133,7 +221,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                     variant={IconVariant.Secondary}
                     size={Size.Medium}
                     dataTestId="edit-cover-pic"
-                    // onClick={() => (showEditProfile.current = false)}
                   />
                 </div>
               }
@@ -146,37 +233,44 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               }
             />
           </div>
-          <div className="bg-white rounded-full  p-2 cursor-pointer">
-            <Icon
-              name="edit"
-              size={16}
-              className="text-neutral-400"
-              // onClick={() => userProfileImageRef?.current?.click()}
-              dataTestId="edit-profilepic"
-            />
+          <div className="   cursor-pointer">
+            {canEdit && (
+              <PopupMenu
+                triggerNode={
+                  <div className="bg-white  rounded-full  text-black">
+                    <IconButton
+                      icon="edit"
+                      variant={IconVariant.Secondary}
+                      size={Size.Medium}
+                      dataTestId="edit-cover-pic"
+                      onClick={() => (showEditProfile.current = false)}
+                    />
+                  </div>
+                }
+                className="absolute top-12 right-4"
+                menuItems={coverImageOption}
+              />
+            )}
           </div>
         </div>
       </div>
 
       <div className="w-full h-full relative">
-        <img
-          id="channel-uploadcoverphoto"
-          data-testid="channel-uploadedcoverphoto"
-          src={channelData?.banner || require('images/channelDefaultHero.png')}
-          className="rounded-9xl w-full h-full object-cover"
-        />
+        {!isCoverImageRemoved && (
+          <img
+            className="object-cover  object-center w-full rounded-t-9xl "
+            src={getChannelCoverImage(channelData)}
+            alt={'Channel Cover Picture Profile'}
+            data-testid="channel-cover-pic"
+          />
+        )}
         <div className="w-full h-full bg-gradient-to-b from-transparent to-black top-0 left-0 absolute rounded-t-9xl"></div>
       </div>
-
       <div className="absolute left-0 right-0 bottom-4 text-white ">
         <div className="px-6 flex justify-between items-center">
           <div className="mb-2 flex items-start space-x-6">
             <div className="h-14 w-14 rounded-full border-2 border-white bg-blue-300 center">
-              <Icon
-                name={channelData?.displayImage || 'chart'}
-                className="text-white"
-                size={24}
-              />
+              <Icon name={'chart'} className="text-white" size={24} />
             </div>
             <div className="space-y-2 text-white">
               <div className="text-2xl font-bold" data-testid="channel-name">
@@ -197,7 +291,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
             className="min-w-max"
           />
         </div>
-
         <div className="relative mt-3">
           <div className="absolute  text-neutral-900 w-full top-0">
             <Tabs
@@ -245,7 +338,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                 data-testid="channel-category"
               >
                 {channelData?.categories
-                  ?.map((category) => category.name)
+                  ?.map((category: any) => category.name)
                   ?.join(', ') || ''}
               </div>
             </div>
@@ -253,6 +346,70 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         </div>
       </div>
 
+      {openEditImage && (
+        <EditImageModal
+          channelId={channelId}
+          title={getBlobFile ? 'Apply Changes' : 'Reposition'}
+          openEditImage={openEditImage}
+          closeEditImageModal={closeEditImageModal}
+          image={getBlobFile || channelData?.banner?.original}
+          userCoverImageRef={channelCoverImageRef}
+          setImageFile={setFile}
+          imageFile={file}
+          imageName={channelLogoName || coverImageName}
+          fileEntityType={
+            file?.profileImage
+              ? EntityType?.UserProfileImage
+              : EntityType?.UserCoverImage
+          }
+          userProfileImageRef={channelLogoImageRef}
+        />
+      )}
+
+      {canEdit && (
+        <div>
+          <input
+            id="file-input"
+            type="file"
+            ref={channelLogoImageRef}
+            data-testid="edit-profile-profilepic"
+            className="hidden"
+            accept="image/*"
+            multiple={false}
+            onClick={clearInputValue}
+            onChange={(e) => {
+              if (e.target.files?.length) {
+                setFile({
+                  ...file,
+                  profileImage: Array.prototype.slice.call(e.target.files)[0],
+                });
+                setchannelLogoName(e?.target?.files[0]?.name);
+                openEditImageModal();
+              }
+            }}
+          />
+          <input
+            id="file-input"
+            type="file"
+            ref={channelCoverImageRef}
+            className="hidden"
+            accept="image/*"
+            multiple={false}
+            data-testid="edit-profile-coverpic"
+            onClick={clearInputValue}
+            onChange={(e) => {
+              if (e.target.files?.length) {
+                setFile({
+                  ...file,
+                  coverImage: Array.prototype.slice.call(e.target.files)[0],
+                });
+                setCoverImageName(e?.target?.files[0]?.name);
+                openEditImageModal();
+              }
+            }}
+          />
+        </div>
+      )}
       {isEditModalOpen && (
         <ChannelModal
           isOpen={isEditModalOpen}

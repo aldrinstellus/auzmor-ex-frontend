@@ -43,8 +43,8 @@ export interface IChannel {
   joinRequest: { status: CHANNEL_MEMBER_STATUS };
   isStarred?: boolean;
   totalMembers: number;
-  displayImage?: string;
-  banner?: string;
+  displayImage?: { original?: string; large?: string; medium?: string };
+  banner?: { original?: string; large?: string; medium?: string };
   isRequested?: boolean;
   createdAt: string;
   updatedAt: string;

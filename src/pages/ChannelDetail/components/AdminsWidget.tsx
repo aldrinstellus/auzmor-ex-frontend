@@ -51,17 +51,21 @@ const AdminsWidget = () => {
             {admins?.slice(0, 3).map((admin) => (
               <div key={admin.id} className="flex justify-between items-start">
                 <div className="flex items-center space-x-2">
-                  <Avatar name={admin.name} size={32} image={admin.image} />
+                  <Avatar
+                    name={admin?.user?.fullName}
+                    size={32}
+                    image={admin.image}
+                  />
                   <div>
                     <div className="text-neutral-900 font-bold text-sm">
-                      {admin.name}
+                      {admin?.user?.fullName}
                     </div>
                     <div className="text-neutral-500 text-xs">
-                      {admin.designation}
+                      {admin?.user?.designation}
                     </div>
                   </div>
                 </div>
-                {admin.isOwner && (
+                {admin?.isOwner && (
                   <div className="bg-black px-2 py-[2px] rounded-xl text-white font-medium text-xxs">
                     {t('adminsWidget.owner')}
                   </div>
