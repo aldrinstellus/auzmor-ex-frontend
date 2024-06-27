@@ -1,7 +1,11 @@
 import Icon from 'components/Icon';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChannelVisibilityEnum, IChannel } from '../../../stores/channelStore';
+import {
+  ChannelVisibilityEnum,
+  IChannel,
+  useChannelStore,
+} from '../../../stores/channelStore';
 import PopupMenu from 'components/PopupMenu';
 import IconButton, {
   Size,
@@ -15,6 +19,11 @@ import useModal from 'hooks/useModal';
 import ChannelArchiveModal from 'pages/Channels/components/ChannelArchiveModal';
 import Tabs, { ITab } from 'components/Tabs';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
+import { joinPublicChannelRequest } from 'queries/channel';
+import { failureToastConfig } from 'components/Toast/variants/FailureToast';
+import { successToastConfig } from 'components/Toast/variants/SuccessToast';
+import queryClient from 'utils/queryClient';
 
 type ProfileSectionProps = {
   channelData: IChannel;
@@ -33,10 +42,30 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   activeTabIndex,
 }) => {
   const { t } = useTranslation('channelDetail');
+  const { t: tc } = useTranslation('channels');
   const { user } = useAuth();
   const [isEditModalOpen, openEditModal, closeEditModal] = useModal();
   const [isArchiveModalOpen, openArchiveModal, closeArchiveModal] = useModal();
+  const updateChannel = useChannelStore((state) => state.updateChannel);
   const navigate = useNavigate();
+
+  // Public channel join request
+  const joinPublicChannelMutation = useMutation({
+    mutationKey: ['join-request-channel'],
+    mutationFn: (channelId: string) => joinPublicChannelRequest(channelId),
+    onError: () =>
+      failureToastConfig({
+        content: tc('joinRequestError'),
+      }),
+    onSuccess: async (data) => {
+      successToastConfig({ content: tc('joinPublicChannelRequestSuccess') });
+      await queryClient.invalidateQueries(['channel'], { exact: false });
+      updateChannel(channelData.id, {
+        ...channelData,
+        joinRequest: { ...channelData.joinRequest, id: data.id },
+      });
+    },
+  });
 
   const handleTabChange = (index: any) => {
     if (index === 0) {
@@ -196,6 +225,8 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
             size={ButtonSize.Small}
             dataTestId="join-channel-cta"
             className="min-w-max"
+            loading={joinPublicChannelMutation.isLoading}
+            onClick={() => joinPublicChannelMutation.mutate(channelData.id)}
           />
         </div>
 

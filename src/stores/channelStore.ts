@@ -40,7 +40,7 @@ export interface IChannel {
     };
   };
   member: { role: CHANNEL_ROLE };
-  joinRequest: { status: CHANNEL_MEMBER_STATUS };
+  joinRequest: { status: CHANNEL_MEMBER_STATUS; id?: string };
   isStarred?: boolean;
   totalMembers: number;
   displayImage?: string;
@@ -74,6 +74,7 @@ type Actions = {
   getChannels: () => IChannel[];
   setChannel: (channel: IChannel) => void;
   setChannels: (channels: { [key: string]: IChannel }) => void;
+  updateChannel: (id: string, channel: IChannel) => void;
 };
 
 export const useChannelStore = create<State & Actions>()(
@@ -88,6 +89,10 @@ export const useChannelStore = create<State & Actions>()(
     setChannels: (channels: { [key: string]: IChannel }) =>
       set((state) => {
         state.channels = { ...get().channels, ...channels };
+      }),
+    updateChannel: (id: string, channel: IChannel) =>
+      set((state) => {
+        state.channels[id] = channel;
       }),
   })),
 );

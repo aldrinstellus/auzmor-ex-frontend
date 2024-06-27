@@ -9,10 +9,24 @@ import Button, {
   Variant as ButtonVariant,
 } from 'components/Button';
 import Card from 'components/Card';
-import { ChannelVisibilityEnum, IChannel } from 'stores/channelStore';
+import {
+  ChannelVisibilityEnum,
+  IChannel,
+  useChannelStore,
+} from 'stores/channelStore';
 import DefaultCoverImage from 'images/png/CoverImage.png';
 import { useNavigate } from 'react-router-dom';
 import { Variant } from 'components/IconButton';
+import { useMutation } from '@tanstack/react-query';
+import {
+  deleteJoinChannelRequest,
+  joinPrivateChannelRequest,
+  joinPublicChannelRequest,
+} from 'queries/channel';
+import { failureToastConfig } from 'components/Toast/variants/FailureToast';
+import { successToastConfig } from 'components/Toast/variants/SuccessToast';
+import { useTranslation } from 'react-i18next';
+import queryClient from 'utils/queryClient';
 
 interface IChannelCardProps {
   channel: IChannel;
@@ -27,7 +41,64 @@ const ChannelCard: FC<IChannelCardProps> = ({
   showJoinChannelBtn = false,
   showWithdrawBtn = false,
 }) => {
+  const { t } = useTranslation('channels');
+  const updateChannel = useChannelStore((state) => state.updateChannel);
   const navigate = useNavigate();
+
+  // Join public channel mutation
+  const joinPublicChannelMutation = useMutation({
+    mutationKey: ['join-public-channel-request'],
+    mutationFn: (channelId: string) => joinPublicChannelRequest(channelId),
+    onError: () =>
+      failureToastConfig({
+        content: t('joinRequestError'),
+      }),
+    onSuccess: async (data) => {
+      successToastConfig({ content: t('joinPublicChannelRequestSuccess') });
+      await queryClient.invalidateQueries(['channel'], { exact: false });
+      updateChannel(channel.id, {
+        ...channel,
+        joinRequest: { ...channel.joinRequest, id: data.id },
+      });
+    },
+  });
+
+  // Join private channel mutation
+  const joinPrivateChannelMutation = useMutation({
+    mutationKey: ['join-private-channel-request'],
+    mutationFn: (channelId: string) => joinPrivateChannelRequest(channelId),
+    onError: () =>
+      failureToastConfig({
+        content: t('joinRequestError'),
+      }),
+    onSuccess: async (data) => {
+      successToastConfig({ content: t('joinPrivateChannelRequestSuccess') });
+      await queryClient.invalidateQueries(['channel'], { exact: false });
+      updateChannel(channel.id, {
+        ...channel,
+        joinRequest: { ...channel.joinRequest, id: data.id },
+      });
+    },
+  });
+
+  // Withdraw join request
+  const withdrawJoinChannelRequest = useMutation({
+    mutationKey: ['withdraw-join-request'],
+    mutationFn: (joinId: string) =>
+      deleteJoinChannelRequest(channel.id, joinId),
+    onError: () =>
+      failureToastConfig({
+        content: t('withdrawRequestError'),
+      }),
+    onSuccess: async () => {
+      successToastConfig({ content: t('withdrawRequestSuccess') });
+      await queryClient.invalidateQueries(['channel'], { exact: false });
+      updateChannel(channel.id, {
+        ...channel,
+        joinRequest: { ...channel.joinRequest, id: undefined },
+      });
+    },
+  });
   return (
     <div
       className="w-full cursor-pointer"
@@ -76,7 +147,7 @@ const ChannelCard: FC<IChannelCardProps> = ({
           </p>
           {showRequestBtn && (
             <Button
-              label={'Request to join'}
+              label={t('privateChannel.joinRequestCTA')}
               size={ButtonSize.ExtraSmall}
               variant={ButtonVariant.Secondary}
               className="mt-2"
@@ -86,29 +157,33 @@ const ChannelCard: FC<IChannelCardProps> = ({
               leftIconHover={false}
               onClick={(e) => {
                 e.stopPropagation();
+                joinPrivateChannelMutation.mutate(channel.id);
               }}
             />
           )}
           {showWithdrawBtn && (
             <Button
-              label={'Withdraw request'}
+              label={t('privateChannel.withdrawRequestCTA')}
               size={ButtonSize.ExtraSmall}
               variant={ButtonVariant.Secondary}
               className="mt-2"
               onClick={(e) => {
                 e.stopPropagation();
+                withdrawJoinChannelRequest.mutate(channel.joinRequest.id!);
               }}
             />
           )}
           {showJoinChannelBtn && (
             <div className="flex  w-full mt-2">
               <Button
-                label="Join channel"
+                label={t('publicChannel.joinRequestCTA')}
                 size={ButtonSize.ExtraSmall}
                 variant={Variant.Secondary}
-                className="w-full  "
+                className="w-full"
+                loading={joinPublicChannelMutation.isLoading}
                 onClick={(e) => {
                   e.stopPropagation();
+                  joinPublicChannelMutation.mutate(channel.id);
                 }}
               />
             </div>
