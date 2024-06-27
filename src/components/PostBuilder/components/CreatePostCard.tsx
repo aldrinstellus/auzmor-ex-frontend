@@ -70,7 +70,6 @@ const CreatePostCard: FC<ICreatePostCardProps> = ({ openModal }) => {
           onClick={openModal}
           placeholder="What's on your mind?"
           data-testid="activityfeed-whatsonurmind"
-          aria-label="create post"
           autoComplete="off"
         />
       </div>
