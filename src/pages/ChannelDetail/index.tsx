@@ -10,22 +10,19 @@ import { useChannelDetails } from 'queries/channel';
 import PageLoader from 'components/PageLoader';
 import clsx from 'clsx';
 import DocumentPathProvider from 'contexts/DocumentPathContext';
+import Setting from './components/Settings';
+import ManageAccess from './components/ManageChannel';
+import useAuth from 'hooks/useAuth';
 import { usePageTitle } from 'hooks/usePageTitle';
 
 type AppProps = {
   activeTabIndex?: number;
-  isSettingTab?: boolean;
-  isManagedTab?: boolean;
 };
 
-const ChannelDetail: FC<AppProps> = ({
-  activeTabIndex = 0,
-  isSettingTab,
-  isManagedTab,
-}) => {
+const ChannelDetail: FC<AppProps> = ({ activeTabIndex = 0 }) => {
   usePageTitle('channelDetails');
   const { channelId } = useParams();
-
+  const { user } = useAuth();
   const { getChannel } = useChannelStore();
 
   const { getScrollTop, resumeRecordingScrollTop } = useScrollTop(
@@ -56,6 +53,8 @@ const ChannelDetail: FC<AppProps> = ({
   if (isLoading && !channelData) {
     return <PageLoader />;
   }
+  const isAdmin = channelData?.createdBy?.userId === user?.id;
+
   const tabStyles = (active: boolean, disabled = false) =>
     clsx(
       {
@@ -78,10 +77,11 @@ const ChannelDetail: FC<AppProps> = ({
       tabLabel: (isActive: boolean) => (
         <div className={tabStyles(isActive)}>Home</div>
       ),
+      hidden: false,
       dataTestId: 'channel-home-tab',
       tabContent: (
         <>
-          <Home isSettingTab={isSettingTab} />
+          <Home />
         </>
       ),
     },
@@ -90,6 +90,7 @@ const ChannelDetail: FC<AppProps> = ({
       tabLabel: (isActive: boolean) => (
         <div className={tabStyles(isActive)}>Documents</div>
       ),
+      hidden: false,
       dataTestId: 'channel-document-tab',
       tabContent: (
         <DocumentPathProvider>
@@ -102,12 +103,29 @@ const ChannelDetail: FC<AppProps> = ({
       tabLabel: (isActive: boolean) => (
         <div className={tabStyles(isActive)}>Members</div>
       ),
+      hidden: false,
       dataTestId: 'channel-member-tab',
-      tabContent: (
-        <Members isManagedTab={isManagedTab} channelData={channelData} />
-      ),
+      tabContent: <Members channelData={channelData} />,
     },
-  ];
+    {
+      id: 4,
+      tabLabel: (isActive: boolean) => (
+        <div className={tabStyles(isActive)}>Setting</div>
+      ),
+      hidden: false,
+      dataTestId: 'channel-member-tab',
+      tabContent: <Setting isLoading={isLoading} channelData={channelData} />,
+    },
+    {
+      id: 5,
+      tabLabel: (isActive: boolean) => (
+        <div className={tabStyles(isActive)}>Manage access</div>
+      ),
+      hidden: !isAdmin, //false
+      dataTestId: 'channel-member-tab',
+      tabContent: <ManageAccess channelData={channelData} />,
+    },
+  ].filter((item) => !item.hidden);
 
   return (
     <div className="flex flex-col  w-full ">

@@ -111,7 +111,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     visibility: ChannelVisibilityEnum.All,
     docTypeCheckbox: [],
     docPeopleCheckbox: [],
-    docModifiedRadio: '',
+    docModifiedRadio: [],
     roles: [],
   },
   onApply,
@@ -163,7 +163,7 @@ const FilterModal: FC<IFilterModalProps> = ({
           dataTestId: `doc-${docs.name}`,
         }),
       ),
-      documentModifiedRadio: appliedFilters.docModifiedRadio || '',
+      documentModifiedRadio: appliedFilters.docModifiedRadio || [],
     },
   });
 

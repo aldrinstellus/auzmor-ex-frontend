@@ -174,6 +174,10 @@ import FormIcon from '../components/form';
 import SharePoint from '../components/SharePoint';
 import ProfileAddIcon from '../components/ProfileAdd';
 import ArchiveIcon from '../components/Archive';
+import UserTagIcon from '../components/User-tag';
+import MessageTagIcon from '../components/message-tag';
+import LockOpenIcon from '../components/LockOpen';
+import GlobalEditIcon from '../components/GlobalEdit';
 
 export const icon = {
   add: Add,
@@ -354,4 +358,8 @@ export const icon = {
   google: GoogleIcon,
   refresh: RefreshIcon,
   form: FormIcon,
+  'global-edit': GlobalEditIcon,
+  'lock-open': LockOpenIcon,
+  'user-tag': UserTagIcon,
+  'message-tag': MessageTagIcon,
 };

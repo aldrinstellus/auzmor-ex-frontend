@@ -18,20 +18,17 @@ import MemberTable from './MemberTable';
 import useRole from 'hooks/useRole';
 import { FilterModalVariant } from 'components/FilterModal';
 import { IChannel } from '../../../../stores/channelStore';
-import ManageAccess from '../ManageChannel';
 
 type AppProps = {
   channelData?: IChannel;
-  isManagedTab?: boolean;
 };
 
-const Members: React.FC<AppProps> = ({ channelData, isManagedTab = false }) => {
-  if (isManagedTab) {
-    return <ManageAccess channelData={channelData} />;
-  }
-
+const Members: React.FC<AppProps> = ({ channelData }) => {
   const { t } = useTranslation('channels');
   const { filters, clearFilters, updateFilter } = useAppliedFiltersStore();
+  useEffect(() => {
+    clearFilters();
+  }, []);
   const [isGrid, setGrid] = useState(true);
   const filterForm = useForm<{
     search: string;
@@ -46,7 +43,7 @@ const Members: React.FC<AppProps> = ({ channelData, isManagedTab = false }) => {
   const parsedTab = searchParams.get('type');
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
-  useEffect(() => () => clearFilters(), []);
+
   const { data, isLoading } = useInfiniteChannelMembers({
     channelId: channelData?.id,
     q: isFiltersEmpty({

@@ -131,11 +131,11 @@ const routers = createBrowserRouter(
           />
           <Route
             path="/channels/:channelId/settings"
-            element={<ChannelDetail isSettingTab={true} activeTabIndex={0} />}
+            element={<ChannelDetail activeTabIndex={3} />}
           />
           <Route
-            path="/channels/:channelId/members/manage"
-            element={<ChannelDetail isManagedTab={true} activeTabIndex={2} />}
+            path="/channels/:channelId/manage-access"
+            element={<ChannelDetail activeTabIndex={4} />}
           />
           <Route
             path="/channels/:channelId"

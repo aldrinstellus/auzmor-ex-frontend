@@ -23,8 +23,20 @@ export const useAppliedFiltersStore = create<State & Actions>()(
       return undefined;
     },
     setFilters: (filters: { [key: string]: any } | null) =>
-      set({ filters: { ...get().filters, ...filters } }),
-    updateFilter: (key, value) => set({ filters: { [key]: value } }),
-    clearFilters: () => set({ filters: null }),
+      set((state) => {
+        state.filters = { ...state.filters, ...filters };
+      }),
+    updateFilter: (key, value) =>
+      set((state) => {
+        if (state.filters) {
+          state.filters[key] = value;
+        } else {
+          state.filters = { [key]: value };
+        }
+      }),
+    clearFilters: () =>
+      set((state) => {
+        state.filters = null;
+      }),
   })),
 );

@@ -61,7 +61,7 @@ const AdminsWidget = () => {
                     </div>
                   </div>
                 </div>
-                {admin.isOwner && (
+                {admin?.isOwner && (
                   <div className="bg-black px-2 py-[2px] rounded-xl text-white font-medium text-xxs">
                     {t('adminsWidget.owner')}
                   </div>
