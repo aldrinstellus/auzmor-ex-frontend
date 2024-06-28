@@ -291,6 +291,7 @@ const ChannelModal: FC<IChannelModalProps> = ({
                   label: t('channelModal.channelCategoryLabel'),
                   required: true,
                   control,
+                  maxLength: 60,
                   fetchQuery: isLxp
                     ? useInfiniteLearnCategory
                     : useInfiniteCategories,
