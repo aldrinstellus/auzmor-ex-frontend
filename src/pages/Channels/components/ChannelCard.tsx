@@ -26,20 +26,25 @@ import queryClient from 'utils/queryClient';
 
 interface IChannelCardProps {
   channel: IChannel;
-  showRequestBtn?: boolean;
-  showWithdrawBtn?: boolean;
-  showJoinChannelBtn?: boolean;
 }
 
-const ChannelCard: FC<IChannelCardProps> = ({
-  channel,
-  showRequestBtn = false,
-  showJoinChannelBtn = false,
-  showWithdrawBtn = false,
-}) => {
+const ChannelCard: FC<IChannelCardProps> = ({ channel }) => {
   const { t } = useTranslation('channels');
   const updateChannel = useChannelStore((state) => state.updateChannel);
   const navigate = useNavigate();
+
+  const showRequestBtn =
+    channel.settings?.visibility === ChannelVisibilityEnum.Public &&
+    !!!channel.member &&
+    !!!channel.joinRequest;
+  const showJoinChannelBtn =
+    channel.settings?.visibility === ChannelVisibilityEnum.Private &&
+    !!!channel.member &&
+    !!!channel.joinRequest;
+  const showWithdrawBtn =
+    channel.settings?.visibility === ChannelVisibilityEnum.Private &&
+    !!!channel.member &&
+    !!channel.joinRequest;
 
   // Join public/private channel request mutation
   const joinChannelMutation = useMutation({
@@ -185,7 +190,7 @@ const ChannelCard: FC<IChannelCardProps> = ({
             hover={false}
           />
         </div>
-        {channel.isStarred && (
+        {channel?.member?.bookmarked && (
           <IconWrapper
             type={IconWrapperType.Square}
             className="cursor-pointer h-[24px] w-[24px] absolute top-2 right-2"

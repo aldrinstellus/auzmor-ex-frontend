@@ -241,30 +241,7 @@ export const Channels: FC<IChannelsProps> = () => {
             ) : (
               <>
                 {channelIds.map(({ id }) => (
-                  <ChannelCard
-                    key={id}
-                    channel={channels[id]}
-                    showJoinChannelBtn={
-                      filters?.channelType ===
-                        ChannelTypeEnum.DiscoverNewChannels &&
-                      channels[id].settings?.visibility ===
-                        ChannelVisibilityEnum.Public
-                    }
-                    showRequestBtn={
-                      filters?.channelType ===
-                        ChannelTypeEnum.DiscoverNewChannels &&
-                      channels[id].settings?.visibility ===
-                        ChannelVisibilityEnum.Private &&
-                      !!!channels[id].isRequested
-                    }
-                    showWithdrawBtn={
-                      filters?.channelType ===
-                        ChannelTypeEnum.DiscoverNewChannels &&
-                      channels[id].settings?.visibility ===
-                        ChannelVisibilityEnum.Private &&
-                      !!channels[id].isRequested
-                    }
-                  />
+                  <ChannelCard key={id} channel={channels[id]} />
                 ))}
               </>
             )}

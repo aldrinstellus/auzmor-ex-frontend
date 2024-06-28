@@ -26,11 +26,13 @@ export enum CHANNEL_STATUS {
 export interface IChannel {
   id: string;
   name: string;
-  categories: { name: string; id: string }[];
   description?: string;
+  categories: { name: string; id: string }[];
+  createdAt: string;
+  updatedAt: string;
   organizationId?: string;
-  createdBy?: IUser;
-  updatedBy?: IUser;
+  totalMembers: number;
+  status?: CHANNEL_STATUS;
   settings?: {
     visibility: ChannelVisibilityEnum;
     restriction: {
@@ -39,15 +41,12 @@ export interface IChannel {
       canMakeAnnouncements: boolean;
     };
   };
-  member: { role: CHANNEL_ROLE };
-  joinRequest: { status: CHANNEL_MEMBER_STATUS; id?: string };
-  isStarred?: boolean;
-  totalMembers: number;
   displayImage?: string;
   banner?: string;
-  isRequested?: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdBy?: IUser;
+  updatedBy?: IUser;
+  member: { role: CHANNEL_ROLE; bookmarked: boolean };
+  joinRequest: { status: CHANNEL_MEMBER_STATUS; id?: string };
 }
 
 export interface IChannelLink {
