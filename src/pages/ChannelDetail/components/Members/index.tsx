@@ -199,15 +199,11 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
           />
         )}
       </Card>
-      {showAddMemberModal && (
+      {showAddMemberModal && channelData && (
         <AddChannelMembersModal
           open={showAddMemberModal}
-          openModal={openAddMemberModal}
           closeModal={closeAddMemberModal}
-          title={`Add members @${channelData?.name}`}
-          dataTestId="add-members"
-          onSubmit={() => {}}
-          onCancel={closeAddMemberModal}
+          channelData={channelData}
         />
       )}
     </>

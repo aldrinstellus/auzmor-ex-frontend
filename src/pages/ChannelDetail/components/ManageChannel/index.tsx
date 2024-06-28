@@ -147,15 +147,11 @@ const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
           <ManageAccessTable data={channelMembers} />
         )}
       </Card>
-      {showAddMemberModal && (
+      {showAddMemberModal && channelData && (
         <AddChannelMembersModal
           open={showAddMemberModal}
-          openModal={openAddMemberModal}
           closeModal={closeAddMemberModal}
-          dataTestId="add-members"
-          onSubmit={() => {}}
-          title={`Add members @${channelData?.name}`}
-          onCancel={closeAddMemberModal}
+          channelData={channelData}
         />
       )}
     </div>

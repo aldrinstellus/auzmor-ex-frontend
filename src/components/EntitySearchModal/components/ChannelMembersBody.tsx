@@ -3,47 +3,24 @@ import Layout, { FieldType } from 'components/Form';
 import Spinner from 'components/Spinner';
 import { useDebounce } from 'hooks/useDebounce';
 import { IGetUser, useInfiniteUsers } from 'queries/users';
-import { ChangeEvent, FC, ReactNode, useEffect, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import UserRow from './UserRow';
 import InfiniteSearch from 'components/InfiniteSearch';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
-import useAuth from 'hooks/useAuth';
 import { IDesignationAPI, useInfiniteDesignations } from 'queries/designation';
 import NoDataFound from 'components/NoDataFound';
 import { ICategory, useInfiniteCategories } from 'queries/category';
 import { ITeam, useInfiniteTeams } from 'queries/teams';
-import { isFiltersEmpty } from 'utils/misc';
+import { getFullName, getProfileImage, isFiltersEmpty } from 'utils/misc';
 import { CategoryType } from 'queries/apps';
 import TeamRow from './TeamRow';
-
-type ApiCallFunction = (queryParams: any) => any;
+import Avatar from 'components/Avatar';
+import Icon from 'components/Icon';
 interface IMembersBodyProps {
-  entityRenderer?: (data: IGetUser) => ReactNode;
-  selectedMemberIds?: string[];
-  selectedTeamIds?: string[];
   dataTestId?: string;
-  entitySearchLabel?: string;
-  hideCurrentUser?: boolean;
-  showJobTitleFilter?: boolean;
-  disableKey?: string;
-  fetchUsers?: ApiCallFunction;
-  usersQueryParams?: Record<string, any>;
 }
 
-const ChannelMembersBody: FC<IMembersBodyProps> = ({
-  entityRenderer,
-  selectedMemberIds = [],
-  selectedTeamIds = [],
-  dataTestId,
-  entitySearchLabel,
-  hideCurrentUser,
-  showJobTitleFilter,
-  disableKey,
-  fetchUsers = useInfiniteUsers,
-  usersQueryParams = {},
-}) => {
-  const { user: currentUser } = useAuth();
+const ChannelMembersBody: FC<IMembersBodyProps> = ({ dataTestId }) => {
   const [selectedDesignations, setSelectedDesignations] = useState<string[]>(
     [],
   );
@@ -72,8 +49,6 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
     'designations',
   ]);
 
-  console.log({ selectedTeamIds });
-
   // fetch users from search input
   const debouncedUserSearchValue = useDebounce(memberSearch || '', 500);
   const {
@@ -82,14 +57,13 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
     isFetchingNextPage: isFetchingNextUserPage,
     fetchNextPage: fetchNextUserPage,
     hasNextPage: hasNextUserPage,
-  } = fetchUsers({
+  } = useInfiniteUsers({
     q: {
       q: debouncedUserSearchValue,
       designations:
         selectedDesignations.length > 0
           ? selectedDesignations.join(',')
           : undefined,
-      ...usersQueryParams,
     },
   });
 
@@ -104,9 +78,6 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
       });
     })
     .filter((user: IGetUser) => {
-      if (hideCurrentUser && user.id === currentUser!.id) {
-        return false;
-      }
       if (showSelectedMembers) {
         return !!users?.[user.id];
       }
@@ -184,7 +155,7 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
     q: {
       q: debouncedDesignationSearchValue,
     },
-    startFetching: !!showJobTitleFilter,
+    startFetching: true,
   });
   const designationData = fetchedDesignations?.pages.flatMap((page) => {
     return page.data.result.data.map((designation: IDesignationAPI) => {
@@ -271,7 +242,7 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
               type: FieldType.Input,
               control,
               name: 'memberSearch',
-              label: entitySearchLabel || 'Select member',
+              label: 'Select member',
               placeholder: 'Add via name or email address',
               isClearable: true,
               dataTestId: `${dataTestId}-search`,
@@ -288,44 +259,42 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
             }`}
           >
             Quick filters:
-            {showJobTitleFilter && (
-              <div className="relative">
-                <InfiniteSearch
-                  title="Job Title"
-                  control={control}
-                  options={
-                    designationData?.map((designation: IDesignationAPI) => ({
-                      label: designation.name,
-                      value: designation,
-                      id: designation.id,
-                    })) || []
+            <div className="relative">
+              <InfiniteSearch
+                title="Job Title"
+                control={control}
+                options={
+                  designationData?.map((designation: IDesignationAPI) => ({
+                    label: designation.name,
+                    value: designation,
+                    id: designation.id,
+                  })) || []
+                }
+                searchName={'designationSearch'}
+                optionsName={'designations'}
+                isLoading={designationLoading}
+                isFetchingNextPage={isFetchingNextDesignationPage}
+                fetchNextPage={fetchNextDesignationPage}
+                hasNextPage={hasNextDesignationPage}
+                onApply={() =>
+                  setSelectedDesignations([
+                    ...Object.keys(designations).filter(
+                      (key: string) => !!designations[key],
+                    ),
+                  ])
+                }
+                onReset={() => {
+                  setSelectedDesignations([]);
+                  if (designations) {
+                    Object.keys(designations).forEach((key: string) =>
+                      setValue(`designations.${key}`, false),
+                    );
                   }
-                  searchName={'designationSearch'}
-                  optionsName={'designations'}
-                  isLoading={designationLoading}
-                  isFetchingNextPage={isFetchingNextDesignationPage}
-                  fetchNextPage={fetchNextDesignationPage}
-                  hasNextPage={hasNextDesignationPage}
-                  onApply={() =>
-                    setSelectedDesignations([
-                      ...Object.keys(designations).filter(
-                        (key: string) => !!designations[key],
-                      ),
-                    ])
-                  }
-                  onReset={() => {
-                    setSelectedDesignations([]);
-                    if (designations) {
-                      Object.keys(designations).forEach((key: string) =>
-                        setValue(`designations.${key}`, false),
-                      );
-                    }
-                  }}
-                  selectionCount={selectedDesignations.length}
-                  dataTestId={`${dataTestId}-filter-jobtitle`}
-                />
-              </div>
-            )}
+                }}
+                selectionCount={selectedDesignations.length}
+                dataTestId={`${dataTestId}-filter-jobtitle`}
+              />
+            </div>
             <div className="relative">
               <InfiniteSearch
                 title="Category"
@@ -458,9 +427,7 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
               <div
                 key={`user-${user.id}`}
                 className={
-                  user[disableKey || '']
-                    ? 'opacity-50 pointer-events-none'
-                    : undefined
+                  user.isPresent ? 'opacity-50 pointer-events-none' : undefined
                 }
               >
                 <div className="py-2 flex items-center">
@@ -481,7 +448,7 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
                             return false;
                           },
                         },
-                        defaultChecked: selectedMemberIds.includes(user.id),
+                        defaultChecked: false,
                         dataTestId: `${dataTestId}-select-${user.id}`,
                       },
                     ]}
@@ -496,16 +463,62 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
                       );
                     }}
                   >
-                    {(entityRenderer && entityRenderer(user)) || (
-                      <UserRow user={user} />
-                    )}
+                    <div className="flex items-center space-x-4 w-full">
+                      <Avatar
+                        name={getFullName(user) || 'U'}
+                        size={32}
+                        image={getProfileImage(user)}
+                        dataTestId="member-profile-pic"
+                      />
+                      <div className="flex space-x-6 w-full">
+                        <div className="flex flex-col w-full">
+                          <div className="flex justify-between items-center">
+                            <div
+                              className="text-sm font-bold text-neutral-900 whitespace-nowrap line-clamp-1"
+                              data-testid="member-name"
+                            >
+                              {getFullName(user)}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="text-xs font-normal text-neutral-500"
+                              data-testid="member-email"
+                            >
+                              {user?.primaryEmail}
+                            </div>
+                            {user?.designation && (
+                              <div className="w-1 h-1 bg-neutral-500 rounded-full" />
+                            )}
+                            {user.designation && (
+                              <div className="flex space-x-1 items-start">
+                                <Icon name="briefcase" size={16} />
+                                <div
+                                  className="text-xs  font-normal text-neutral-500"
+                                  data-testid="member-designation"
+                                >
+                                  {user?.designation?.substring(0, 22)}
+                                </div>
+                              </div>
+                            )}
+
+                            {user?.isPresent && (
+                              <div className="text-xs font-semibold text-neutral-500">
+                                Already a member
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div>Member Role</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                {index !== usersData.length - 1 && <Divider />}
+                {index + 1 !== usersData?.length && <Divider />}
               </div>
             ))
           ) : null}
-          {!userLoading && !usersData.length && teamLoading ? (
+          {!userLoading && !usersData?.length && teamLoading ? (
             <div className="flex items-center w-full justify-center p-12">
               <Spinner />
             </div>
@@ -515,7 +528,7 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
                 <div
                   key={`team-${team.id}`}
                   className={
-                    team[disableKey || '']
+                    team.isPresent
                       ? 'opacity-50 pointer-events-none'
                       : undefined
                   }
@@ -538,7 +551,7 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
                               return false;
                             },
                           },
-                          defaultChecked: selectedTeamIds.includes(team.id),
+                          defaultChecked: false,
                           dataTestId: `${dataTestId}-select-${team.id}`,
                         },
                       ]}
