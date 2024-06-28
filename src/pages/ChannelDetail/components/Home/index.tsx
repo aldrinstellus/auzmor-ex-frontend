@@ -5,13 +5,8 @@ import LinksWidget from 'components/LinksWidget';
 import Feed from './Feed';
 import ChannelRequestWidget from 'components/ChannelRequestWidget';
 import useRole from 'hooks/useRole';
-import { FC } from 'react';
 
-type Appprops = {
-  isSettingTab?: boolean;
-};
-
-const Home: FC<Appprops> = ({ isSettingTab = false }) => {
+const Home = () => {
   const { isAdmin } = useRole();
 
   return (
@@ -21,7 +16,7 @@ const Home: FC<Appprops> = ({ isSettingTab = false }) => {
         <LinksWidget />
       </div>
       <div className="w-1/2 px-3">
-        {!isSettingTab ? <Feed /> : <>setting page </>}
+        <Feed />
       </div>
       <div className="w-1/4 pl-10 space-y-6">
         <MembersWidget />

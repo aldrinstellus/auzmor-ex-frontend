@@ -42,7 +42,7 @@ export interface IChannel {
     };
   };
   displayImage?: string;
-  banner?: string;
+  banner?: { original: string };
   createdBy?: IUser;
   updatedBy?: IUser;
   member: { role: CHANNEL_ROLE; bookmarked: boolean };

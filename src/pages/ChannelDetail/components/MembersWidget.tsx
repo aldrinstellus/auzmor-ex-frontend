@@ -37,7 +37,9 @@ const MembersWidget = () => {
           className="flex items-center justify-between cursor-pointer"
           onClick={() => setShow((t) => !t)}
         >
-          <div className="font-bold">23 {t('membersWidget.title')}</div>
+          <div className="font-bold">
+            {users?.length} {t('membersWidget.title')}
+          </div>
           <Icon
             name={show ? 'arrowUp' : 'arrowDown'}
             size={20}
