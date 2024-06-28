@@ -265,7 +265,8 @@ export const useChannelLinksWidget = (
   useQuery({
     queryKey: [queryKey],
     queryFn: () => getChannelLinks(channelId),
-    staleTime: 15 * 60 * 1000,
+    // staleTime: 15 * 60 * 1000,
+    cacheTime: 0,
   });
 
 export const useChannelAdmins = (
