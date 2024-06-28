@@ -16,7 +16,7 @@ import {
 import {
   ChannelUserRequests,
   channelAdmins,
-  channelLinks,
+  // channelLinks,
 } from 'mocks/Channels';
 import apiService from 'utils/apiService';
 
@@ -91,7 +91,18 @@ export const updateChannel = async (id: string, payload: IChannelPayload) => {
 
 // delete team by id -> channel/:id
 export const deleteChannel = async (id: string) => {
-  const data = await apiService.delete(`/channels/${id}`);
+  const data = await apiService.delete(`/channels/${id}/link`);
+  return new Promise((res) => {
+    res(data);
+  });
+};
+export const deleteChannelLinks = async (payload: {
+  id: string;
+  linkId: string;
+}) => {
+  const data = await apiService.delete(
+    `/channels/${payload.id}/link/${payload.linkId}`,
+  );
   return new Promise((res) => {
     res(data);
   });
@@ -146,27 +157,52 @@ export const removeChannelMember = async (teamId: string) => {
 export const getChannelLinks = async (
   channelId: string,
 ): Promise<IChannelLink[]> => {
-  console.log(channelId);
-  return new Promise((res) => res(channelLinks));
-  // const data = await apiService.get(`/channels/${channelId}/links`);
-  // return new Promise((res) => {
-  //   res(data?.data?.result?.data);
-  // });
+  const data = await apiService.get(`/channels/${channelId}/links`);
+  return new Promise((res) => {
+    res(data?.data?.result?.data);
+  });
 };
 export const getChannelAdmins = async (channelId: string): Promise<any> => {
   console.log(channelId);
   return new Promise((res) => res(channelAdmins));
-  // const data = await apiService.get(`/channels/${channelId}/admins`);
-  // return new Promise((res) => {
-  //   res(data?.data?.result?.data);
-  // });
 };
 
-export const updateChannelLinks = async (
+export const createLinks = async (
+  channelId: string,
+  payload: { links: IChannelLink[] },
+) => {
+  console.log('payload :', payload);
+  const response = await apiService.post(
+    `/channels/${channelId}/links`,
+    payload,
+  );
+  return response;
+};
+
+export const updateChannelLink = async (payload: {
+  channelId: string;
+  linkId: string;
+  title?: string;
+  url?: string;
+}) => {
+  console.log('payload :', payload);
+  const data = await apiService.patch(
+    `/channels/${payload.channelId}/links/${payload.linkId}`,
+    {
+      title: payload?.title,
+      url: payload?.url,
+    },
+  );
+  return new Promise((res) => {
+    res(data);
+  });
+};
+
+export const updateChannelLinksIndex = async (
   channelId: string,
   payload: { links: IChannelLink[] },
 ): Promise<IChannelLink[]> => {
-  const data = await apiService.put(`/channels/${channelId}/links`, payload);
+  const data = await apiService.patch(`/channels/${channelId}/links`, payload);
   return new Promise((res) => {
     res(data?.data?.result?.data);
   });

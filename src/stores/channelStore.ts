@@ -51,6 +51,9 @@ export interface IChannel {
 }
 
 export interface IChannelLink {
+  id?: string;
+  sequence?: number;
+  sourceType?: string;
   title: string;
   url: string;
   image?: string;
