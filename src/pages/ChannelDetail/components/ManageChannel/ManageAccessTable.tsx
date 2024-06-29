@@ -140,7 +140,7 @@ const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
                               updateMemberRoleMutation.mutate({
                                 id: user?.id,
                                 channelId: channelId,
-                                role: CHANNEL_ROLE.Admin,
+                                userRole: CHANNEL_ROLE.Admin,
                               });
                             },
                           },
@@ -152,7 +152,7 @@ const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
                               updateMemberRoleMutation.mutate({
                                 id: user?.id,
                                 channelId: channelId,
-                                role: CHANNEL_ROLE.Member,
+                                userRole: CHANNEL_ROLE.Member,
                               });
                             },
                           },

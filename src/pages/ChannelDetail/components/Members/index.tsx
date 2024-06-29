@@ -18,6 +18,7 @@ import MemberTable from './MemberTable';
 import useRole from 'hooks/useRole';
 import { FilterModalVariant } from 'components/FilterModal';
 import { IChannel } from '../../../../stores/channelStore';
+import NoDataFound from 'components/NoDataFound';
 
 type AppProps = {
   channelData?: IChannel;
@@ -51,7 +52,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
       status: filters?.status?.length
         ? filters?.status?.map((eachStatus: any) => eachStatus.id).join(',')
         : undefined,
-      role: filters?.roles?.length
+      userRole: filters?.roles?.length
         ? filters?.roles?.map((role: any) => role.id).join(',')
         : undefined,
     }),
@@ -164,6 +165,18 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
             </div>
           </div>
         </FilterMenu>
+
+        <div className="flex items-center gap-2">
+          {users?.length == 0 && (
+            <NoDataFound
+              illustration="noChannelFound"
+              className="py-4 w-full"
+              onClearSearch={() => {}}
+              hideClearBtn
+              dataTestId={`$channel-noresult`}
+            />
+          )}
+        </div>
         {isGrid ? (
           <div className="grid grid-cols-3 gap-6 justify-items-center lg:grid-cols-3 xl:grid-cols-4 1.5xl:grid-cols-5">
             {isLoading
@@ -173,6 +186,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
                   </div>
                 ))
               : null}
+
             {users?.map((user) => (
               <PeopleCard key={user.id} userData={user} />
             ))}

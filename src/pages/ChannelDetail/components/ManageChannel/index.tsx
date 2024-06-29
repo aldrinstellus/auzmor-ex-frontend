@@ -41,7 +41,6 @@ const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
   const { watch, control } = filterForm;
 
   const roles = watch('roles');
-  console.log('roles :', roles);
 
   const roleSelectRef = useRef<any>();
 
@@ -67,7 +66,10 @@ const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
     q: isFiltersEmpty({
       q: searchValue,
       sort: filters?.sort,
-      role: roles?.value,
+      userRole: roles?.value,
+      status: filters?.status?.length
+        ? filters?.status?.map((eachStatus: any) => eachStatus.id).join(',')
+        : undefined,
     }),
   });
   const channelMembers = data?.pages.flatMap((page) => {

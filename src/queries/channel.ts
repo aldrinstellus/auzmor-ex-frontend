@@ -20,6 +20,11 @@ import {
 } from 'mocks/Channels';
 import apiService from 'utils/apiService';
 
+export enum CHANNEL_MEMBER_STATUS {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
 export interface IChannelPayload {
   name?: string;
   categoryIds?: string[];
@@ -63,12 +68,12 @@ export const getAllChannels = async (
 export const updateMemberRole = async (payload: {
   id: string;
   channelId?: string;
-  role: CHANNEL_ROLE;
+  userRole: CHANNEL_ROLE;
 }) => {
   const { data } = await apiService.patch(
     `channels/${payload?.channelId}/members/${payload?.id}`,
     {
-      role: payload?.role,
+      userRole: payload?.userRole,
     },
   );
   return data;
