@@ -17,7 +17,7 @@ const MembersWidget = () => {
   const { data } = useInfiniteChannelMembers({
     channelId: channelId,
     q: {
-      role: Role.Member,
+      userRole: Role.Member,
     },
   });
   const users = data?.pages.flatMap((page) => {
