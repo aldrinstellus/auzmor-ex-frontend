@@ -96,7 +96,7 @@ export const updateChannel = async (id: string, payload: IChannelPayload) => {
 
 // delete team by id -> channel/:id
 export const deleteChannel = async (id: string) => {
-  const data = await apiService.delete(`/channels/${id}/link`);
+  const data = await apiService.delete(`/channels/${id}`);
   return new Promise((res) => {
     res(data);
   });
