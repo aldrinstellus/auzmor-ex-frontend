@@ -199,10 +199,19 @@ export const getJoinChannelRequests = async (
   >,
   channelId: string,
 ) => {
-  return await apiService.get(
-    `channels/${channelId}/join-requests`,
-    context.queryKey[1],
-  );
+  let response = null;
+  try {
+    if (!!!context.pageParam) {
+      response = await apiService.get(
+        `channels/${channelId}/join-requests`,
+        context.queryKey[1],
+      );
+    } else {
+      response = await apiService.get(context.pageParam, context.queryKey[1]);
+    }
+  } catch (e) {}
+
+  return response;
 };
 
 // ------------------ React Query -----------------------

@@ -9,7 +9,10 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { isFiltersEmpty } from 'utils/misc';
 import { useEffect, useState } from 'react';
-import { useInfiniteChannelMembers } from 'queries/channel';
+import {
+  useInfiniteChannelMembers,
+  useInfiniteChannelsRequest,
+} from 'queries/channel';
 
 import useURLParams from 'hooks/useURLParams';
 import PopupMenu from 'components/PopupMenu';
@@ -53,7 +56,6 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
         : undefined,
     }),
   });
-
   const users = data?.pages.flatMap((page) => {
     return page?.data?.result?.data.map((user: any) => {
       try {
@@ -63,6 +65,18 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
       }
     });
   });
+
+  const {
+    data: requests,
+    isLoading: _requestLoading,
+    hasNextPage: _requestNextPage,
+    isFetchingNextPage: _isRequestsFetching,
+    fetchNextPage: _requestsFetchNextPage,
+  } = useInfiniteChannelsRequest(channelData!.id, {
+    limit: 30,
+  });
+
+  console.log(requests);
 
   // quick Filters options
   const { isAdmin } = useRole();

@@ -13,7 +13,6 @@ import {
   TableCell,
   TableBody,
 } from 'components/Table';
-import { useTranslation } from 'react-i18next';
 
 type AppProps = {
   isLoading?: boolean;
@@ -27,7 +26,6 @@ const MemberTable: FC<AppProps> = ({
   deselectAll,
   data,
 }) => {
-  const { t } = useTranslation('channels');
   const { control } = useForm({});
   return (
     <>
@@ -35,36 +33,59 @@ const MemberTable: FC<AppProps> = ({
         <TableHeader className=" sticky top-0 z-10 text-neutral-500 text-base font-bold bg-neutral-200 ">
           <TableRow>
             <TableHead>
-              <div className="flex space-x-4">
-                <Layout
-                  fields={[
-                    {
-                      type: FieldType.Checkbox,
-                      name: 'selectAll',
-                      control,
-                      className: 'flex item-center',
-                      transform: {
-                        input: (value: boolean) => {
-                          return value;
-                        },
-                        output: (e: any) => {
-                          if (e.target.checked) {
-                            selectAllEntity?.();
-                          } else {
-                            deselectAll?.();
-                          }
-                          return e.target.checked;
-                        },
+              <Layout
+                fields={[
+                  {
+                    type: FieldType.Checkbox,
+                    name: 'selectAll',
+                    control,
+                    className: 'flex item-center',
+                    transform: {
+                      input: (value: boolean) => {
+                        return value;
                       },
-                      // disabled: showSelectedMembers,
+                      output: (e: any) => {
+                        if (e.target.checked) {
+                          selectAllEntity?.();
+                        } else {
+                          deselectAll?.();
+                        }
+                        return e.target.checked;
+                      },
                     },
-                  ]}
-                />
-                <div>{t('members.table.fullName')}</div>
-              </div>
+                    label: 'Select all',
+                    // disabled: showSelectedMembers,
+                  },
+                ]}
+              />
             </TableHead>
-            <TableHead>{t('members.table.title')}</TableHead>
-            <TableHead>{t('members.table.email')}</TableHead>
+            <TableHead>
+              <Layout
+                fields={[
+                  {
+                    type: FieldType.Checkbox,
+                    name: 'show-selected',
+                    control,
+                    className: 'flex item-center',
+                    transform: {
+                      input: (value: boolean) => {
+                        return value;
+                      },
+                      output: (e: any) => {
+                        if (e.target.checked) {
+                          selectAllEntity?.();
+                        } else {
+                          deselectAll?.();
+                        }
+                        return e.target.checked;
+                      },
+                    },
+                    label: 'Show selected members',
+                    // disabled: showSelectedMembers,
+                  },
+                ]}
+              />
+            </TableHead>
           </TableRow>
         </TableHeader>
 
