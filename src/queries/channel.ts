@@ -28,6 +28,12 @@ export interface IChannelPayload {
   settings?: { visibility?: ChannelVisibilityEnum };
   status?: CHANNEL_STATUS;
 }
+
+export interface IChannelMembersPayload {
+  userIds?: { id: string; role: CHANNEL_ROLE }[];
+  teamIds?: { id: string; role: CHANNEL_ROLE }[];
+}
+
 export interface IChannelSettings {
   settings?: {
     visibility: ChannelVisibilityEnum;
@@ -138,14 +144,25 @@ export const getChannelRequests = async (
   // });
 };
 
-export const addChannelMember = async (
-  teamId: string,
-  payload: { userIds: string[] },
+export const addChannelMembers = async (
+  channelId: string,
+  payload: IChannelMembersPayload,
 ) => {
-  const data = await apiService.post(`/channels/members/${teamId}`, payload);
-  return new Promise((res) => {
-    res(data);
-  });
+  const data = await apiService.post(
+    `/channels/${channelId}/members/bulk`,
+    payload,
+  );
+  return data;
+};
+
+export const getAddChannelMembersStatus = async (
+  channelId: string,
+  jobId: string,
+) => {
+  const data = await apiService.get(
+    `/channels/${channelId}/members/bulk/status/${jobId}`,
+  );
+  return data;
 };
 
 export const removeChannelMember = async (teamId: string) => {
@@ -283,6 +300,28 @@ export const useInfiniteChannelMembers = ({
       return currentPage?.data?.result?.paging?.prev;
     },
     staleTime: 5 * 60 * 1000,
+    enabled: !!channelId,
+  });
+};
+
+export const useChannelMembersStatus = ({
+  channelId,
+  jobId,
+  onSuccess,
+  onError,
+}: {
+  channelId: string;
+  jobId: string;
+  onSuccess?: (data: any) => void;
+  onError?: () => void;
+}) => {
+  return useQuery({
+    queryKey: ['add-channel-members-status', channelId, jobId],
+    queryFn: () => getAddChannelMembersStatus(channelId, jobId),
+    refetchInterval: () => (!!jobId ? 5000 : false),
+    enabled: !!jobId && !!channelId,
+    onSuccess,
+    onError,
   });
 };
 

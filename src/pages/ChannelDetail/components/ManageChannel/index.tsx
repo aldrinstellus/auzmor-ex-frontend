@@ -73,13 +73,15 @@ const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
     }),
   });
   const channelMembers = data?.pages.flatMap((page) => {
-    return page?.data?.result?.data.map((user: any) => {
-      try {
-        return { id: user.id, role: user.role, ...user.user };
-      } catch (e) {
-        console.log('Error', { user });
-      }
-    });
+    return page?.data?.result?.data
+      .map((user: any) => {
+        try {
+          return { id: user.id, role: user.role, ...user.user };
+        } catch (e) {
+          console.log('Error', { user });
+        }
+      })
+      .filter(Boolean);
   });
 
   const roleFields = [

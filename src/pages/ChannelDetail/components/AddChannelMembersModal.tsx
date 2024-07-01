@@ -1,12 +1,26 @@
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import EntitySearchModalBody from 'components/EntitySearchModal/components/EntitySearchModalBody';
 import { useForm } from 'react-hook-form';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
-import { EntitySearchModalType } from 'components/EntitySearchModal';
+import {
+  EntitySearchModalType,
+  IAudienceForm,
+  IChannelMembersField,
+} from 'components/EntitySearchModal';
 import Button, { Variant as ButtonVariant } from 'components/Button';
-import { IChannel } from 'stores/channelStore';
+import { CHANNEL_ROLE, IChannel } from 'stores/channelStore';
+import {
+  IChannelMembersPayload,
+  addChannelMembers,
+  useChannelMembersStatus,
+} from 'queries/channel';
+import { useMutation } from '@tanstack/react-query';
+import { failureToastConfig } from 'components/Toast/variants/FailureToast';
+import { successToastConfig } from 'components/Toast/variants/SuccessToast';
+import queryClient from 'utils/queryClient';
+import { useTranslation } from 'react-i18next';
 
 interface IAddChannelMembersModalProps {
   open: boolean;
@@ -14,29 +28,15 @@ interface IAddChannelMembersModalProps {
   channelData: IChannel;
 }
 
-export interface IAudienceForm {
-  memberSearch: string;
-  teamSearch: string;
-  departmentSearch: string;
-  departments: Record<string, boolean | undefined>;
-  locationSearch: string;
-  locations: Record<string, boolean | undefined>;
-  designationSearch: string;
-  designations: Record<string, boolean | undefined>;
-  selectAll: boolean;
-  showSelectedMembers: boolean;
-  categorySearch: string;
-  categories: Record<string, boolean | undefined>;
-  teams: any;
-  users: any;
-}
-
 const AddChannelMembersModal: FC<IAddChannelMembersModalProps> = ({
   open,
   closeModal,
   channelData,
 }) => {
-  const audienceForm = useForm<any>({
+  const { t } = useTranslation('channelDetail');
+  const [jobId, setJobId] = useState('');
+
+  const audienceForm = useForm<IAudienceForm>({
     defaultValues: {
       showSelectedMembers: false,
       selectAll: false,
@@ -50,11 +50,78 @@ const AddChannelMembersModal: FC<IAddChannelMembersModalProps> = ({
     return () => setForm(null);
   }, []);
 
-  function handleSubmit(data: { users: any; teams: any }): void {
-    console.log(data);
+  const addChannelMembersMutation = useMutation({
+    mutationKey: ['add-channel-members', channelData.id],
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: IChannelMembersPayload;
+    }) => addChannelMembers(id, payload),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onError: (error) => {
+      failureToastConfig({
+        content: t('addChannelMembers.failure'),
+      });
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onSuccess: (data) => {
+      console.log('Successfully started bulk job ', data);
+      const jobId = data?.result?.data?.id || '';
+      if (jobId) setJobId(jobId);
+    },
+  });
+
+  const { isLoading: isStatusLoading } = useChannelMembersStatus({
+    channelId: channelData.id,
+    jobId,
+    onSuccess: (data: any) => {
+      console.log('Successfully fetched bulk job status', data);
+      const status = data?.data?.result?.data?.status;
+      if (status === 'COMPLETED') {
+        setJobId('');
+        queryClient.invalidateQueries({ queryKey: ['channel-member'] });
+        successToastConfig({
+          content: t('addChannelMembers.success'),
+        });
+        closeModal();
+      }
+    },
+    onError: () => {
+      console.log('Failed to fetch status for jobId: ', jobId);
+      failureToastConfig({
+        content: t('addChannelMembersStatus.failure'),
+      });
+      setJobId('');
+    },
+  });
+
+  function handleSubmit(data: IChannelMembersField): void {
+    const selectedUsers = Object.keys(data?.users || {})
+      .map((key) => data.users?.[key])
+      .filter((item) => item && item.user)
+      .map((item) => ({
+        id: item?.user?.id || '',
+        role: item?.role || CHANNEL_ROLE.Member,
+      }));
+    const selectedTeams = Object.keys(data?.teams || {})
+      .map((key) => data.teams?.[key])
+      .filter((item) => item && item.team)
+      .map((item) => ({
+        id: item?.team?.id || '',
+        role: item?.role || CHANNEL_ROLE.Member,
+      }));
+
+    const payload: IChannelMembersPayload = {};
+    if (selectedUsers && selectedUsers.length) payload.userIds = selectedUsers;
+    if (selectedTeams && selectedTeams.length) payload.teamIds = selectedTeams;
+    addChannelMembersMutation.mutate({ id: channelData.id, payload });
   }
 
   const dataTestId = 'add-members';
+  const isLoading =
+    addChannelMembersMutation.isLoading || isStatusLoading || !!jobId;
 
   return form ? (
     <Modal open={open} className="max-w-[638px]">
@@ -80,15 +147,17 @@ const AddChannelMembersModal: FC<IAddChannelMembersModalProps> = ({
             <Button
               variant={ButtonVariant.Secondary}
               label="Cancel"
+              disabled={isLoading}
               className="mr-3"
               onClick={closeModal}
               dataTestId={`${dataTestId}-cancel}`}
             />
             <Button
               label="Enroll Members"
+              loading={isLoading}
               dataTestId={`${dataTestId}-cta`}
               onClick={form.handleSubmit((formData) => {
-                handleSubmit(formData);
+                handleSubmit(formData.channelMembers);
               })}
             />
           </div>

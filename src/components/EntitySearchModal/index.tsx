@@ -37,6 +37,15 @@ interface IEntitySearchModalProps {
   usersQueryParams?: Record<string, any>;
 }
 
+export interface IChannelMembersField {
+  users: {
+    [key: string]: { user?: IGetUser; role?: CHANNEL_ROLE } | undefined;
+  };
+  teams: {
+    [key: string]: { team?: ITeam; role?: CHANNEL_ROLE } | undefined;
+  };
+}
+
 export interface IAudienceForm {
   memberSearch: string;
   teamSearch: string;
@@ -55,14 +64,7 @@ export interface IAudienceForm {
   teams: any;
   channels: any;
   users: Record<string, IGetUser | false>;
-  channelMembers: {
-    users: {
-      [key: string]: { user?: IGetUser; role?: CHANNEL_ROLE } | undefined;
-    };
-    teams: {
-      [key: string]: { team?: ITeam; role?: CHANNEL_ROLE } | undefined;
-    };
-  };
+  channelMembers: IChannelMembersField;
 }
 
 const EntitySearchModal: FC<IEntitySearchModalProps> = ({

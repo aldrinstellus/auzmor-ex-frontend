@@ -92,7 +92,7 @@ const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
             {data?.map((user: any) => (
               <TableRow
                 className=" hover:bg-primary-50 font-normal text-base "
-                key={user.id}
+                key={user?.id}
               >
                 <TableCell>
                   <div className=" flex items-center  space-x-4">
