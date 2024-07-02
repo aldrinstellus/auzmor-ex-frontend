@@ -151,7 +151,10 @@ export const dummyChannels: IChannel[] = [
         canMakeAnnouncements: true,
       },
     },
-    displayImage: '',
+    displayImage: {
+      original:
+        'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=500&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    },
     banner: {
       original:
         'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=500&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -218,7 +221,10 @@ export const dummyChannels: IChannel[] = [
       },
     },
     totalMembers: 24,
-    displayImage: '',
+    displayImage: {
+      original:
+        'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=500&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    },
     banner: {
       original:
         'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=500&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -254,7 +260,10 @@ export const dummyChannels: IChannel[] = [
       },
     },
     totalMembers: 68,
-    displayImage: '',
+    displayImage: {
+      original:
+        'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=500&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    },
     banner: {
       original:
         'https://images.unsplash.com/photo-1491245338813-c6832976196e?q=80&w=500&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -290,7 +299,10 @@ export const dummyChannels: IChannel[] = [
       },
     },
     totalMembers: 35,
-    displayImage: '',
+    displayImage: {
+      original:
+        'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=500&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    },
     banner: {
       original:
         'https://images.unsplash.com/photo-1625123627242-97ef1000c6d1?q=80&w=500&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',

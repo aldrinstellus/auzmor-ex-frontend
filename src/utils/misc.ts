@@ -70,6 +70,12 @@ export const getChannelCoverImage = (channelData: any) => {
     channelData?.banner?.original || require('images/channelDefaultHero.png')
   );
 };
+export const getChannelLogoImage = (channelData: any) => {
+  return (
+    channelData?.displayImage?.original ||
+    require('images/ChannelCover/Logo2.png')
+  );
+};
 
 export const getFullName = (user: any) => {
   if (user?.status === UserStatus.Inactive) {

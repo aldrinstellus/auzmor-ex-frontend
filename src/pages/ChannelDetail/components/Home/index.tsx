@@ -6,8 +6,13 @@ import Feed from './Feed';
 import ChannelRequestWidget from 'components/ChannelRequestWidget';
 import useRole from 'hooks/useRole';
 import { ChannelRequestWidgetModeEnum } from 'components/ChannelRequestWidget/components/ChannelWidgetUser';
+import { IChannel } from 'stores/channelStore';
+import { FC } from 'react';
 
-const Home = () => {
+type AppProps = {
+  channelData: IChannel;
+};
+const Home: FC<AppProps> = ({ channelData }) => {
   const { isAdmin } = useRole();
 
   return (
@@ -17,7 +22,7 @@ const Home = () => {
         <LinksWidget />
       </div>
       <div className="w-1/2 px-3">
-        <Feed />
+        <Feed channelData={channelData} />
       </div>
       <div className="w-1/4 pl-10 space-y-6">
         <MembersWidget />

@@ -16,6 +16,7 @@ import {
   clearInputValue,
   getBlobUrl,
   getChannelCoverImage,
+  getChannelLogoImage,
   twConfig,
 } from 'utils/misc';
 import useAuth from 'hooks/useAuth';
@@ -32,6 +33,8 @@ import queryClient from 'utils/queryClient';
 import { IUpdateProfileImage } from 'pages/UserDetail';
 import EditImageModal from 'components/EditImageModal';
 import { EntityType } from 'queries/files';
+import Avatar from 'components/Avatar';
+import ChannelImageModal from './ChannelImageModal';
 
 type ProfileSectionProps = {
   channelData: IChannel;
@@ -54,13 +57,16 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   const { t: tc } = useTranslation('channels');
   const { user } = useAuth();
   const [isEditModalOpen, openEditModal, closeEditModal] = useModal();
+  const [isChannelImageOpen, openChannelImageModal, closeChannelImageModal] =
+    useModal();
+  const [isCoverImg, setIsCoverImage] = useState(true);
   const [isArchiveModalOpen, openArchiveModal, closeArchiveModal] = useModal();
   const navigate = useNavigate();
   const isOwnerOrAdmin = channelData?.createdBy?.userId === user?.id; //channel Admin
   const canEdit = isOwnerOrAdmin;
   const channelCoverImageRef = useRef<HTMLInputElement>(null);
   const showEditProfile = useRef<boolean>(true);
-  const [channelLogoName, setchannelLogoName] = useState<string>('');
+  // const [channelLogoName, setchannelLogoName] = useState<string>('');
   const [coverImageName, setCoverImageName] = useState<string>('');
   const channelLogoImageRef = useRef<HTMLInputElement>(null);
   const updateChannelStore = useChannelStore((state) => state.updateChannel);
@@ -69,6 +75,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     undefined,
     false,
   );
+
   const [isCoverImageRemoved, setIsCoverImageRemoved] = useState(false);
   const [file, setFile] = useState<IUpdateProfileImage | Record<string, any>>(
     {},
@@ -105,6 +112,16 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       stroke: twConfig.theme.colors.neutral['900'],
       onClick: () => {
         openEditImageModal();
+      },
+      dataTestId: 'edit-coverpic-reposition',
+    },
+    {
+      icon: 'gallery',
+      label: 'Choose from illustration',
+      stroke: twConfig.theme.colors.neutral['900'],
+      onClick: () => {
+        setIsCoverImage(true);
+        openChannelImageModal();
       },
       dataTestId: 'edit-coverpic-reposition',
     },
@@ -211,7 +228,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     },
   ];
   return (
-    <div className="h-[330px]  rounded-9xl relative mb-4">
+    <div className="  rounded-9xl relative mb-4">
       <div className="relative z-30">
         {channelData?.createdBy?.id === user?.id ? (
           <div className="absolute top-4 left-4">
@@ -293,11 +310,30 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       </div>
       <div className="absolute left-0 right-0 bottom-4 text-white ">
         <div className="px-6 flex justify-between items-center">
-          <div className="mb-2 flex items-start space-x-6">
-            <div className="h-14 w-14 rounded-full border-2 border-white bg-blue-300 center">
-              <Icon name={'chart'} className="text-white" size={24} />
-            </div>
-            <div className="space-y-2 text-white">
+          <div className="absolute">
+            <Avatar
+              image={getChannelLogoImage(channelData)}
+              size={48}
+              dataTestId={'edit-profile-pic'}
+            />
+            {isOwnerOrAdmin && (
+              <div className="absolute bg-white rounded-full p-[5px] cursor-pointer -top-2 -right-1">
+                <Icon
+                  name="edit"
+                  size={15}
+                  color="text-black"
+                  onClick={() => {
+                    setIsCoverImage(false);
+                    openChannelImageModal();
+                  }}
+                  dataTestId="edit-profilepic"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="mb-2 ml-16 flex items-start space-x-6">
+            <div className="space-y-2  text-white">
               <div className="text-2xl font-bold" data-testid="channel-name">
                 {channelData?.name}
               </div>
@@ -383,38 +419,19 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
           userCoverImageRef={channelCoverImageRef}
           setImageFile={setFile}
           imageFile={file}
-          imageName={channelLogoName || coverImageName}
+          imageName={coverImageName}
           fileEntityType={
             file?.profileImage
               ? EntityType?.UserProfileImage
               : EntityType?.UserCoverImage
           }
           userProfileImageRef={channelLogoImageRef}
+          aspectRatio={8.3}
         />
       )}
 
       {canEdit && (
         <div>
-          <input
-            id="file-input"
-            type="file"
-            ref={channelLogoImageRef}
-            data-testid="edit-profile-profilepic"
-            className="hidden"
-            accept="image/*"
-            multiple={false}
-            onClick={clearInputValue}
-            onChange={(e) => {
-              if (e.target.files?.length) {
-                setFile({
-                  ...file,
-                  profileImage: Array.prototype.slice.call(e.target.files)[0],
-                });
-                setchannelLogoName(e?.target?.files[0]?.name);
-                openEditImageModal();
-              }
-            }}
-          />
           <input
             id="file-input"
             type="file"
@@ -449,6 +466,15 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
           isOpen={isArchiveModalOpen}
           closeModal={closeArchiveModal}
           channelId={channelData.id}
+        />
+      )}
+      {isChannelImageOpen && (
+        <ChannelImageModal
+          isCoverImg={isCoverImg}
+          channelId={channelId}
+          open={isChannelImageOpen}
+          closeModal={closeChannelImageModal}
+          channelData={channelData}
         />
       )}
     </div>

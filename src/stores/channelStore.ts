@@ -41,7 +41,7 @@ export interface IChannel {
       canMakeAnnouncements: boolean;
     };
   };
-  displayImage?: string;
+  displayImage?: { original: string };
   banner?: { original: string };
   createdBy?: IUser;
   updatedBy?: IUser;

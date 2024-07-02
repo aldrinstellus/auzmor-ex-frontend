@@ -3,8 +3,13 @@ import CreatePostCard from 'components/PostBuilder/components/CreatePostCard';
 import FinishSetup from './FinishSetup';
 import Welcome from './Welcome';
 import useModal from 'hooks/useModal';
+import { IChannel } from 'stores/channelStore';
+import { FC } from 'react';
 
-const Feed = () => {
+type AppProps = {
+  channelData?: IChannel;
+};
+const Feed: FC<AppProps> = ({ channelData }) => {
   const [open, showOpen, closeOpen] = useModal();
   return (
     <div>
@@ -12,7 +17,7 @@ const Feed = () => {
         <CreatePostCard openModal={showOpen} />
       </div>
       <Welcome />
-      <FinishSetup />
+      <FinishSetup channelData={channelData} />
     </div>
   );
 };
