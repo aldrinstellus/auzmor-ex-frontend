@@ -23,6 +23,7 @@ import { failureToastConfig } from 'components/Toast/variants/FailureToast';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import { useTranslation } from 'react-i18next';
 import queryClient from 'utils/queryClient';
+import { getChannelLogoImage } from 'utils/misc';
 
 interface IChannelCardProps {
   channel: IChannel;
@@ -182,7 +183,11 @@ const ChannelCard: FC<IChannelCardProps> = ({ channel }) => {
           )}
         </div>
         <div className="w-10 h-10 rounded-full absolute left-4 top-[52px] bg-blue-300 border border-white z-0 flex justify-center items-center">
-          <Icon name={'chart'} size={16} color="text-white" hover={false} />
+          <img
+            className="object-cover  object-center w-full rounded-t-9xl "
+            src={getChannelLogoImage(channel)}
+            data-testid="channel-cover-pic"
+          />
         </div>
         {channel?.member?.bookmarked && (
           <IconWrapper

@@ -41,6 +41,7 @@ export interface AppProps {
   openOnBoardModal?: () => void;
   userId?: string;
   channelId?: string;
+  aspectRatio?: number;
 }
 
 export enum Shape {
@@ -62,6 +63,7 @@ const EditImageModal: FC<AppProps> = ({
   fileEntityType,
   userId,
   channelId = '',
+  aspectRatio = 4.426,
 }) => {
   const { isLxp } = useProduct();
   const { updateUser } = useAuth();
@@ -294,7 +296,7 @@ const EditImageModal: FC<AppProps> = ({
                 }
               : undefined
           }
-          aspectRatio={4.426}
+          aspectRatio={aspectRatio}
         />
       )}
       <Footer

@@ -22,7 +22,7 @@ const Home: FC<AppProps> = ({ channelData }) => {
         <LinksWidget />
       </div>
       <div className="w-1/2 px-3">
-        <Feed />
+        <Feed channelData={channelData} />
       </div>
       <div className="w-1/4 pl-10 space-y-6">
         {isAdmin && (
