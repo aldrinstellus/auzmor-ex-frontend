@@ -25,10 +25,11 @@ const Home: FC<AppProps> = ({ channelData }) => {
         <Feed channelData={channelData} />
       </div>
       <div className="w-1/4 pl-10 space-y-6">
-        <MembersWidget />
         {isAdmin && (
           <ChannelRequestWidget mode={ChannelRequestWidgetModeEnum.Channel} />
         )}
+        <MembersWidget channelData={channelData} />
+        {isAdmin && <ChannelRequestWidget />}
         <AdminsWidget />
       </div>
     </div>
