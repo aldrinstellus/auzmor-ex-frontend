@@ -171,7 +171,6 @@ export const createLinks = async (
   channelId: string,
   payload: { links: IChannelLink[] },
 ) => {
-  console.log('payload :', payload);
   const response = await apiService.post(
     `/channels/${channelId}/links`,
     payload,
@@ -185,7 +184,6 @@ export const updateChannelLink = async (payload: {
   title?: string;
   url?: string;
 }) => {
-  console.log('payload :', payload);
   const data = await apiService.patch(
     `/channels/${payload.channelId}/links/${payload.linkId}`,
     {
@@ -266,6 +264,37 @@ export const rejectChannelJoinRequest = async (
   return await apiService.post(
     `channels/${channeId}/join-requests/${joinId}/reject`,
   );
+};
+
+export const bulkChannelRequestUpdate = async (
+  channelId: string,
+  payload: { approve?: string[]; reject?: Record<string, any>[] },
+) => {
+  const response = await apiService.post(
+    `/channels/${channelId}/join-requests/bulk`,
+    payload,
+  );
+  const id = response?.result?.data?.id;
+
+  let interval: any = null;
+
+  await new Promise(async (resolve) => {
+    let statusResponse = await apiService.get(
+      `/channels/${channelId}/join-requests/bulk/status/${id}`,
+    );
+
+    const status = statusResponse?.data?.result?.data?.status;
+    interval = setInterval(async () => {
+      if (status !== 'COMPLETED' && status !== 'FAILED') {
+        statusResponse = await apiService.get(
+          `/channels/${channelId}/join-requests/bulk/status/${id}`,
+        );
+      } else {
+        clearInterval(interval);
+        resolve(statusResponse);
+      }
+    }, 500);
+  });
 };
 
 // ------------------ React Query -----------------------

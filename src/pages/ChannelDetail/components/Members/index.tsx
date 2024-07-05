@@ -8,17 +8,27 @@ import UsersSkeleton from 'pages/Users/components/Skeletons/UsersSkeleton';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { isFiltersEmpty } from 'utils/misc';
-import { useEffect, useState } from 'react';
-import { useInfiniteChannelMembers } from 'queries/channel';
+import { ReactNode, useEffect, useState } from 'react';
+import {
+  bulkChannelRequestUpdate,
+  useInfiniteChannelMembers,
+  useInfiniteChannelsRequest,
+} from 'queries/channel';
 
 import useURLParams from 'hooks/useURLParams';
 import PopupMenu from 'components/PopupMenu';
 import { useAppliedFiltersStore } from 'stores/appliedFiltersStore';
-import ChannelJoinRequest from './ChannelJoinRequest';
 import useRole from 'hooks/useRole';
 import { FilterModalVariant } from 'components/FilterModal';
-import { IChannel } from '../../../../stores/channelStore';
+import {
+  CHANNEL_MEMBER_STATUS,
+  IChannel,
+  IChannelRequest,
+} from '../../../../stores/channelStore';
 import NoDataFound from 'components/NoDataFound';
+import EntitySelector from 'components/EntitySelector';
+import RequestRow from './RequestRow';
+import { useMutation } from '@tanstack/react-query';
 
 type AppProps = {
   channelData?: IChannel;
@@ -65,6 +75,32 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
         console.log('Error', { user });
       }
     });
+  });
+
+  // Fetch channel requests
+  const {
+    data: channelRequestData,
+    isLoading: isChannelRequestLoading,
+    hasNextPage: hasChannelRequestNextPage,
+    isFetchingNextPage: isChannelRequestFetchingNextPage,
+    fetchNextPage: fetchChannelRequestNextPage,
+  } = useInfiniteChannelsRequest(channelData?.id, {
+    limit: 30,
+    status: CHANNEL_MEMBER_STATUS.PENDING,
+  });
+
+  // Bulk accept channel request
+  const bulkRequestAcceptMutation = useMutation({
+    mutationKey: ['bulk-channel-request-accept'],
+    mutationFn: (payload: { approve?: string[] }) =>
+      bulkChannelRequestUpdate(channelData!.id, payload),
+  });
+
+  // Bulk reject channel request
+  const bulkRequestRejectMutation = useMutation({
+    mutationKey: ['bulk-channel-request-reject'],
+    mutationFn: (payload: { reject?: Record<string, any>[] }) =>
+      bulkChannelRequestUpdate(channelData!.id, payload),
   });
 
   // quick Filters options
@@ -181,8 +217,87 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
             ))}
           </div>
         ) : (
-          <ChannelJoinRequest
-            channelId={channelData!.id}
+          <EntitySelector
+            isLoading={isChannelRequestLoading}
+            entityHeaderRenderer={() =>
+              (
+                <div className="flex items-center gap-4 py-3">
+                  <p className="text-base font-bold text-neutral-500 flex w-[43%] mr-[48px]">
+                    Member requests
+                  </p>
+
+                  <p className="text-base font-bold text-neutral-500 flex w-[30%]">
+                    Role
+                  </p>
+                  <p className="text-base font-bold text-neutral-500 w-[20%]">
+                    Location
+                  </p>
+                </div>
+              ) as ReactNode
+            }
+            entityRenderer={(entity) =>
+              (<RequestRow request={entity as IChannelRequest} />) as ReactNode
+            }
+            entityData={
+              channelRequestData?.pages?.flatMap((page) => {
+                return page?.data?.result?.data.map(
+                  (request: IChannelRequest) => {
+                    try {
+                      return request;
+                    } catch (e) {
+                      console.log('Error', { request });
+                    }
+                  },
+                );
+              }) || []
+            }
+            menuItems={[
+              {
+                key: 'accept',
+                component: (selectedEntities: IChannelRequest[]) =>
+                  (
+                    <Button
+                      label="Accept"
+                      leftIcon="tickCircle"
+                      leftIconSize={16}
+                      leftIconClassName="!text-neutral-500 group-hover:!text-primary-600"
+                      labelClassName="!font-semibold !text-neutral-700 group-hover:!text-primary-600 group-active:text-primary-700"
+                      variant={Variant.Tertiary}
+                      onClick={() =>
+                        bulkRequestAcceptMutation.mutate({
+                          approve: selectedEntities.map((entity) => entity.id),
+                        })
+                      }
+                      loading={bulkRequestAcceptMutation.isLoading}
+                    />
+                  ) as ReactNode,
+              },
+              {
+                key: 'decline',
+                component: (selectedEntities: IChannelRequest[]) => (
+                  <Button
+                    label="Decline"
+                    leftIcon="delete"
+                    leftIconSize={16}
+                    leftIconClassName="!text-neutral-500 group-hover:!text-primary-600"
+                    labelClassName="!font-semibold !text-neutral-700 group-hover:!text-primary-600 group-active:text-primary-700"
+                    variant={Variant.Tertiary}
+                    onClick={() =>
+                      bulkRequestRejectMutation.mutate({
+                        reject: selectedEntities.map((entity) => ({
+                          id: entity.id,
+                          reason: 'Not eligible',
+                        })),
+                      })
+                    }
+                    loading={bulkRequestRejectMutation.isLoading}
+                  />
+                ),
+              },
+            ]}
+            hasNextPage={hasChannelRequestNextPage}
+            isFetchingNextPage={isChannelRequestFetchingNextPage}
+            fetchNextPage={fetchChannelRequestNextPage}
             dataTestId="join-requests"
           />
         )}

@@ -197,7 +197,7 @@ const ChannelJoinRequest: FC<ChannelJoinRequestProps> = ({
                       dataTestId: `${dataTestId}-select-${request.id}`,
                       label: (
                         <div className="w-full cursor-pointer">
-                          <RequestRow request={request} channelId={channelId} />
+                          <RequestRow request={request} />
                         </div>
                       ),
                       labelContainerClassName: 'w-full',
