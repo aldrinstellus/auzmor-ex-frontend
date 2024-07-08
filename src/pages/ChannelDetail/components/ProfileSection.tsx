@@ -70,7 +70,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   const showEditProfile = useRef<boolean>(true);
   // const [channelLogoName, setchannelLogoName] = useState<string>('');
   const [coverImageName, setCoverImageName] = useState<string>('');
-  const channelLogoImageRef = useRef<HTMLInputElement>(null);
   const updateChannelStore = useChannelStore((state) => state.updateChannel);
 
   const [openEditImage, openEditImageModal, closeEditImageModal] = useModal(
@@ -430,8 +429,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               ? EntityType?.UserProfileImage
               : EntityType?.UserCoverImage
           }
-          userProfileImageRef={channelLogoImageRef}
-          aspectRatio={8.3}
+          aspectRatio={4.024}
         />
       )}
 

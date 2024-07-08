@@ -68,7 +68,7 @@ const ChannelImageModal: FC<AppProps> = ({
         const canvas = document.createElement('canvas');
         // as per banner size
         canvas.width = 1328;
-        canvas.height = 160;
+        canvas.height = 330;
         const ctx = canvas.getContext('2d');
         if (ctx) {
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -172,6 +172,7 @@ const ChannelImageModal: FC<AppProps> = ({
               )}
               <img
                 src={item.image}
+                className={`${isCoverImg ? 'rounded-[12px]' : 'rounded-full'} `}
                 alt={`${item.id} Image`}
                 ref={item.id === selectedImageId ? imageRef : null}
               />
