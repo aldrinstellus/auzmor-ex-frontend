@@ -31,7 +31,6 @@ type AppProps = {
   channelData: IChannel;
 };
 const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
-  console.log('data :', data);
   const { t } = useTranslation('channels');
   const { channelId } = useParams();
 

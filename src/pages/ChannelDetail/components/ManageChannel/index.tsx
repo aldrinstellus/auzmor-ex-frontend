@@ -29,7 +29,6 @@ const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
   const { updateParam, deleteParam, serializeFilter, parseParams } =
     useURLParams();
   const parsedRole = parseParams('roles');
-  console.log('parsedRole :', parsedRole);
 
   const { filters, clearFilters } = useAppliedFiltersStore();
   const filterForm = useForm<{
