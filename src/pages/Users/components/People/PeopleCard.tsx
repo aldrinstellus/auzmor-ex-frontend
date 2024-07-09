@@ -31,12 +31,19 @@ import RemoveTeamMember from '../DeleteModals/TeamMember';
 import { FC } from 'react';
 import useProduct from 'hooks/useProduct';
 import Truncate from 'components/Truncate';
+import { updateMemberRole } from 'queries/channel';
+import { CHANNEL_ROLE, IChannel } from 'stores/channelStore';
 
 export interface IPeopleCardProps {
   userData: IGetUser;
   teamId?: string;
   teamMemberId?: string;
   isTeamPeople?: boolean;
+  isChannelPeople?: boolean;
+  channelId?: string;
+  channelData?: IChannel;
+  isMember?: boolean;
+  isChannelAdmin?: boolean;
 }
 
 export enum Status {
@@ -60,6 +67,9 @@ const PeopleCard: FC<IPeopleCardProps> = ({
   teamId,
   teamMemberId,
   isTeamPeople,
+  isChannelPeople,
+  channelId,
+  isChannelAdmin,
 }) => {
   const {
     id,
@@ -71,7 +81,9 @@ const PeopleCard: FC<IPeopleCardProps> = ({
     workLocation,
     workEmail,
     createdAt,
+    userId,
   } = userData;
+
   const { isLxp } = useProduct();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -96,6 +108,14 @@ const PeopleCard: FC<IPeopleCardProps> = ({
     mutationKey: ['update-user-role'],
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      successToastConfig({ content: `User role has been updated to admin` });
+    },
+  });
+  const updateMemberRoleMutation = useMutation({
+    mutationFn: updateMemberRole,
+    mutationKey: ['update-channel-member-role'],
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['channel-members'] });
       successToastConfig({ content: `User role has been updated to admin` });
     },
   });
@@ -189,22 +209,33 @@ const PeopleCard: FC<IPeopleCardProps> = ({
           isLxp ? 'h-[190px] w-[190px] ' : 'h-[244px] w-[233px]'
         } border-solid border rounded-9xl border-neutral-200 bg-white focus-within:shadow-xl`}
       >
-        {!isLxp ? (
+        {
           <UserProfileDropdown
+            isChannelAdmin={isChannelAdmin}
             id={id}
+            userId={userId}
             loggedInUserId={user?.id}
             role={role || ''}
             status={status}
             isHovered={isHovered}
             onDeleteClick={openDeleteModal}
             isTeamPeople={isTeamPeople}
+            isChannelPeople={isChannelPeople}
             onEditClick={() =>
               navigate(
                 `/users/${id}?edit=${getEditSection(id, user?.id, isAdmin)}`,
               )
             }
             onReactivateClick={openReactivateModal}
-            onPromoteClick={() => updateUserRoleMutation.mutate({ id })}
+            onPromoteClick={() => {
+              isLxp
+                ? updateMemberRoleMutation.mutate({
+                    id: id,
+                    channelId: channelId,
+                    role: CHANNEL_ROLE.Admin,
+                  })
+                : updateUserRoleMutation.mutate({ id });
+            }}
             onDeactivateClick={openDeactivateModal}
             onResendInviteClick={() => {
               successToastConfig({ content: 'Invitation has been sent' });
@@ -225,7 +256,7 @@ const PeopleCard: FC<IPeopleCardProps> = ({
             showOnHover={true}
             className="right-0 top-8 border border-[#e5e5e5]"
           />
-        ) : null}
+        }
 
         {status === UserStatus.Inactive ? (
           <div
@@ -346,6 +377,7 @@ const PeopleCard: FC<IPeopleCardProps> = ({
         </div>
       </Card>
       <DeletePeople
+        channelId={channelId}
         open={openDelete}
         openModal={openDeleteModal}
         closeModal={closeDeleteModal}

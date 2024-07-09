@@ -13,11 +13,14 @@ import queryClient from 'utils/queryClient';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import { failureToastConfig } from 'components/Toast/variants/FailureToast';
 import { FC } from 'react';
+import useProduct from 'hooks/useProduct';
+import { removeChannelMember } from 'queries/channel';
 export interface IDeletePeopleProps {
   open: boolean;
   openModal: () => void;
   closeModal: () => void;
   userId: string;
+  channelId?: string;
 }
 
 const DeletePeople: FC<IDeletePeopleProps> = ({
@@ -25,36 +28,43 @@ const DeletePeople: FC<IDeletePeopleProps> = ({
   // openModal,
   closeModal,
   userId,
+
+  channelId = '',
 }) => {
-  const deleteUserMutation = useMutation({
-    mutationKey: ['delete-user', userId],
-    mutationFn: deleteUser,
-    onError: () =>
-      failureToastConfig({
-        content: 'Error deleting member',
-        dataTestId: 'people-toaster',
-      }),
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSuccess: (data, variables, context) => {
-      closeModal();
-      queryClient.invalidateQueries(['user', userId]);
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      queryClient.invalidateQueries(['feed'], { exact: false });
-      queryClient.invalidateQueries(['feed-announcements-widget']);
-      queryClient.invalidateQueries(['post-announcements-widget']);
-      queryClient.invalidateQueries(['bookmarks']);
-      queryClient.invalidateQueries(['scheduledPosts']);
-      queryClient.invalidateQueries(['posts'], { exact: false });
-      queryClient.invalidateQueries(['comments'], { exact: false });
-      queryClient.invalidateQueries(['team-members']);
-      queryClient.invalidateQueries(['organization-chart'], { exact: false });
-      queryClient.invalidateQueries(['celebrations'], { exact: false });
-      successToastConfig({
-        content: 'Member has been deleted',
-        dataTestId: 'people-toaster',
-      });
+  const { isLxp } = useProduct();
+  const deleteUserMutation = useMutation(
+    async (payload: any) => {
+      isLxp ? removeChannelMember(payload) : deleteUser(payload);
     },
-  });
+    {
+      onError: () =>
+        failureToastConfig({
+          content: 'Error deleting member',
+          dataTestId: 'people-toaster',
+        }),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onSuccess: () => {
+        closeModal();
+        queryClient.invalidateQueries(['channel-members']);
+        queryClient.invalidateQueries(['user', userId]);
+        queryClient.invalidateQueries({ queryKey: ['users'] });
+        queryClient.invalidateQueries(['feed'], { exact: false });
+        queryClient.invalidateQueries(['feed-announcements-widget']);
+        queryClient.invalidateQueries(['post-announcements-widget']);
+        queryClient.invalidateQueries(['bookmarks']);
+        queryClient.invalidateQueries(['scheduledPosts']);
+        queryClient.invalidateQueries(['posts'], { exact: false });
+        queryClient.invalidateQueries(['comments'], { exact: false });
+        queryClient.invalidateQueries(['team-members']);
+        queryClient.invalidateQueries(['organization-chart'], { exact: false });
+        queryClient.invalidateQueries(['celebrations'], { exact: false });
+        successToastConfig({
+          content: 'Member has been deleted',
+          dataTestId: 'people-toaster',
+        });
+      },
+    },
+  );
 
   const Header: FC = () => (
     <div className="flex flex-wrap border-b-1 border-neutral-200 items-center">
@@ -87,7 +97,14 @@ const DeletePeople: FC<IDeletePeopleProps> = ({
         size={Size.Small}
         type={ButtonType.Submit}
         dataTestId="delete-user-delete"
-        onClick={() => deleteUserMutation.mutate(userId)}
+        onClick={() =>
+          isLxp
+            ? deleteUserMutation.mutate({
+                channelId: channelId,
+                memberId: userId,
+              })
+            : deleteUserMutation.mutate(userId)
+        }
       />
     </div>
   );

@@ -3,7 +3,6 @@ import 'moment-timezone';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import Layout, { FieldType } from 'components/Form';
-import useAuth from 'hooks/useAuth';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import InfoRow from 'components/ProfileInfo/components/InfoRow';
 import { ICategoryDetail, useInfiniteCategories } from 'queries/category';
@@ -15,14 +14,12 @@ import { failureToastConfig } from 'components/Toast/variants/FailureToast';
 
 type AppProps = {
   channelData: any;
+  isChannelAdmin: boolean;
 };
 
-const CategoryRow: FC<AppProps> = ({ channelData }) => {
+const CategoryRow: FC<AppProps> = ({ channelData, isChannelAdmin }) => {
   const queryClient = useQueryClient();
   const ref = useRef<any>(null);
-  const { user } = useAuth();
-
-  const isOwnerOrAdmin = channelData?.createdBy?.userId == user?.id;
 
   const { isLxp } = useProduct();
   const updateChannelMutation = useMutation({
@@ -123,7 +120,7 @@ const CategoryRow: FC<AppProps> = ({ channelData }) => {
         color: 'text-red-500',
         bgColor: 'text-red-50',
       }}
-      canEdit={isOwnerOrAdmin}
+      canEdit={isChannelAdmin}
       label="Category"
       value={channelData?.categories[0]?.name}
       dataTestId="user-marital-status"
