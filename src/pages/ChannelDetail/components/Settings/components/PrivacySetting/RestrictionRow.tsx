@@ -12,7 +12,7 @@ import { IChannel } from 'stores/channelStore';
 
 type AppProps = {
   data: IChannel;
-  isChannelAdmin: boolean;
+  isUserAdminOrChannelAdmin: boolean;
 };
 enum ChannelRestriction {
   canPost = 'canPost',
@@ -20,7 +20,7 @@ enum ChannelRestriction {
   canAnnouncement = 'canAnnouncement',
 }
 
-const RestrictionRow: FC<AppProps> = ({ data, isChannelAdmin }) => {
+const RestrictionRow: FC<AppProps> = ({ data, isUserAdminOrChannelAdmin }) => {
   const { channelId = '' } = useParams();
   const queryClient = useQueryClient();
 
@@ -139,7 +139,7 @@ const RestrictionRow: FC<AppProps> = ({ data, isChannelAdmin }) => {
                 type: FieldType.Radio,
                 name: 'restrictionSetting',
                 rowClassName: 'mb-4  ',
-                disabled: !isChannelAdmin,
+                disabled: !isUserAdminOrChannelAdmin,
                 control,
                 defaultValue: getValues()?.privacySetting,
                 radioList: restrictionSettingOption,

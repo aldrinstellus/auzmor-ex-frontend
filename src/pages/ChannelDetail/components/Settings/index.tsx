@@ -11,15 +11,21 @@ type AppProps = {
 };
 
 const Setting: FC<AppProps> = ({ channelData, isLoading }) => {
-  const { isChannelAdmin } = useChannelRole(channelData);
+  const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
   return (
     <>
       {isLoading ? (
         <BasicSettingSkeleton />
       ) : (
-        <BasicSetting canEdit={isChannelAdmin} channelData={channelData} />
+        <BasicSetting
+          canEdit={isUserAdminOrChannelAdmin}
+          channelData={channelData}
+        />
       )}
-      <PrivacySetting canEdit={isChannelAdmin} channelData={channelData} />
+      <PrivacySetting
+        canEdit={isUserAdminOrChannelAdmin}
+        channelData={channelData}
+      />
     </>
   );
 };

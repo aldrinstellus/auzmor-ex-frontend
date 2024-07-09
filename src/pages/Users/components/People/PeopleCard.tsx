@@ -43,7 +43,7 @@ export interface IPeopleCardProps {
   channelId?: string;
   channelData?: IChannel;
   isMember?: boolean;
-  isChannelAdmin?: boolean;
+  isUserAdminOrChannelAdmin?: boolean;
 }
 
 export enum Status {
@@ -69,7 +69,7 @@ const PeopleCard: FC<IPeopleCardProps> = ({
   isTeamPeople,
   isChannelPeople,
   channelId,
-  isChannelAdmin,
+  isUserAdminOrChannelAdmin,
 }) => {
   const {
     id,
@@ -211,7 +211,7 @@ const PeopleCard: FC<IPeopleCardProps> = ({
       >
         {
           <UserProfileDropdown
-            isChannelAdmin={isChannelAdmin}
+            isUserAdminOrChannelAdmin={isUserAdminOrChannelAdmin}
             id={id}
             userId={userId}
             loggedInUserId={user?.id}

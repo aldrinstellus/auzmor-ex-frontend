@@ -15,7 +15,7 @@ type AppProps = {
   channelData: IChannel;
 };
 const MembersWidget: FC<AppProps> = ({ channelData }) => {
-  const { isChannelAdmin } = useChannelRole(channelData);
+  const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
   const [show, setShow] = useState(true);
   const { t } = useTranslation('channelDetail');
   const { channelId } = useParams();
@@ -65,7 +65,7 @@ const MembersWidget: FC<AppProps> = ({ channelData }) => {
               />
             </div>
             <div className="mt-3">
-              {isChannelAdmin ? (
+              {isUserAdminOrChannelAdmin ? (
                 <Button
                   size={Size.Small}
                   className="w-full"

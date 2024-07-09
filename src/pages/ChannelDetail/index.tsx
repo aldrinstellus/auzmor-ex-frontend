@@ -52,7 +52,7 @@ const ChannelDetail: FC<AppProps> = ({ activeTabIndex = 0 }) => {
   if (isLoading && !channelData) {
     return <PageLoader />;
   }
-  const { isChannelAdmin } = useChannelRole(channelData);
+  const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
 
   const tabStyles = (active: boolean, disabled = false) =>
     clsx(
@@ -120,7 +120,7 @@ const ChannelDetail: FC<AppProps> = ({ activeTabIndex = 0 }) => {
       tabLabel: (isActive: boolean) => (
         <div className={tabStyles(isActive)}>Manage access</div>
       ),
-      hidden: !isChannelAdmin, //false
+      hidden: !isUserAdminOrChannelAdmin, //false
       dataTestId: 'channel-member-tab',
       tabContent: <ManageAccess channelData={channelData} />,
     },

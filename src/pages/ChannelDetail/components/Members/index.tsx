@@ -35,7 +35,7 @@ type AppProps = {
 };
 
 const Members: React.FC<AppProps> = ({ channelData }) => {
-  const { isChannelAdmin } = useChannelRole(channelData);
+  const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
 
   const { t } = useTranslation('channels');
   const { filters, clearFilters, updateFilter } = useAppliedFiltersStore();
@@ -116,7 +116,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
         setGrid(true);
       },
     },
-    isChannelAdmin && {
+    isUserAdminOrChannelAdmin && {
       label: 'Requests',
       labelClassName: 'text-xs font-medium',
       stroke: 'text-neutral-900',
@@ -143,7 +143,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
           <p className="text-2xl font-bold text-neutral-900">
             {t('members.title')}
           </p>
-          {isChannelAdmin && (
+          {isUserAdminOrChannelAdmin && (
             <Button
               label={t('members.addMemberCTA')}
               leftIcon="add"
@@ -165,7 +165,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
               Showing {users?.length} results
             </div>
             <div className="relative">
-              {isChannelAdmin ? (
+              {isUserAdminOrChannelAdmin ? (
                 <PopupMenu
                   triggerNode={
                     <Button
@@ -177,7 +177,9 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
                           ? 'All members'
                           : 'Requests'
                       }
-                      rightIcon={`${isChannelAdmin ? 'arrowDown' : ''}`}
+                      rightIcon={`${
+                        isUserAdminOrChannelAdmin ? 'arrowDown' : ''
+                      }`}
                     />
                   }
                   menuItems={requestOptions as any}
@@ -217,7 +219,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
 
             {users?.map((user) => (
               <PeopleCard
-                isChannelAdmin={isChannelAdmin}
+                isUserAdminOrChannelAdmin={isUserAdminOrChannelAdmin}
                 isChannelPeople={true}
                 key={user.id}
                 userData={user}
@@ -311,7 +313,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
           />
         )}
       </Card>
-      {isChannelAdmin && showAddMemberModal && channelData && (
+      {isUserAdminOrChannelAdmin && showAddMemberModal && channelData && (
         <AddChannelMembersModal
           open={showAddMemberModal}
           closeModal={closeAddMemberModal}

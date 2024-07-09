@@ -14,10 +14,13 @@ import { failureToastConfig } from 'components/Toast/variants/FailureToast';
 
 type AppProps = {
   channelData: any;
-  isChannelAdmin: boolean;
+  isUserAdminOrChannelAdmin: boolean;
 };
 
-const CategoryRow: FC<AppProps> = ({ channelData, isChannelAdmin }) => {
+const CategoryRow: FC<AppProps> = ({
+  channelData,
+  isUserAdminOrChannelAdmin,
+}) => {
   const queryClient = useQueryClient();
   const ref = useRef<any>(null);
 
@@ -120,7 +123,7 @@ const CategoryRow: FC<AppProps> = ({ channelData, isChannelAdmin }) => {
         color: 'text-red-500',
         bgColor: 'text-red-50',
       }}
-      canEdit={isChannelAdmin}
+      canEdit={isUserAdminOrChannelAdmin}
       label="Category"
       value={channelData?.categories[0]?.name}
       dataTestId="user-marital-status"

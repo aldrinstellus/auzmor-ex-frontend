@@ -12,10 +12,10 @@ import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 
 type AppProps = {
   data: IChannel;
-  isChannelAdmin: boolean;
+  isUserAdminOrChannelAdmin: boolean;
 };
 
-const PrivacyRow: FC<AppProps> = ({ data, isChannelAdmin }) => {
+const PrivacyRow: FC<AppProps> = ({ data, isUserAdminOrChannelAdmin }) => {
   const { channelId = '' } = useParams();
 
   const queryClient = useQueryClient();
@@ -73,7 +73,7 @@ const PrivacyRow: FC<AppProps> = ({ data, isChannelAdmin }) => {
       name: 'privacySetting',
       rowClassName: 'space-y-4  ',
       control,
-      disabled: !isChannelAdmin,
+      disabled: !isUserAdminOrChannelAdmin,
       radioList: privacySettingOptions,
       labelRenderer: (option: IRadioListOption) => {
         return (

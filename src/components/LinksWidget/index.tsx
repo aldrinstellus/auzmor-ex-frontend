@@ -20,7 +20,7 @@ type AppProps = {
 };
 const LinksWidget: FC<AppProps> = ({ channelData }) => {
   const { channelId = '' } = useParams();
-  const { isChannelAdmin } = useChannelRole(channelData);
+  const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
   const [open, openCollpase, closeCollapse] = useModal(true, false);
   const [openEditLinks, openEditLinksModal, closeEditLinksModal] = useModal(
     false,
@@ -53,7 +53,7 @@ const LinksWidget: FC<AppProps> = ({ channelData }) => {
           {t('title')}
         </div>
         <div className="flex items-center gap-1">
-          {isChannelAdmin && links && links.length > 0 && (
+          {isUserAdminOrChannelAdmin && links && links.length > 0 && (
             <Icon
               name={'edit'}
               size={20}
@@ -125,7 +125,7 @@ const LinksWidget: FC<AppProps> = ({ channelData }) => {
                     />
                   </div>
                 )}
-                {links.length <= maxListSize && isChannelAdmin && (
+                {links.length <= maxListSize && isUserAdminOrChannelAdmin && (
                   <div className="w-full flex justify-center">
                     <Button
                       label={t('addLinksCTA')}
@@ -143,7 +143,7 @@ const LinksWidget: FC<AppProps> = ({ channelData }) => {
             ) : (
               <EmptyState
                 openModal={openAddLinkModal}
-                isAdmin={isChannelAdmin}
+                isAdmin={isUserAdminOrChannelAdmin}
               />
             )}
           </div>
@@ -158,7 +158,7 @@ const LinksWidget: FC<AppProps> = ({ channelData }) => {
           links={links}
         />
       )}
-      {isChannelAdmin && openAddLink && (
+      {isUserAdminOrChannelAdmin && openAddLink && (
         <AddLinkModal
           open={openAddLink}
           closeModal={closeAddLinkModal}

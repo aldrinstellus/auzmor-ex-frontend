@@ -64,8 +64,9 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   const [isArchiveModalOpen, openArchiveModal, closeArchiveModal] = useModal();
   const navigate = useNavigate();
 
-  const { isChannelAdmin, isChannelOwner } = useChannelRole(channelData);
-  const canEdit = isChannelAdmin;
+  const { isUserAdminOrChannelAdmin, isChannelOwner } =
+    useChannelRole(channelData);
+  const canEdit = isUserAdminOrChannelAdmin;
 
   const channelCoverImageRef = useRef<HTMLInputElement>(null);
   const showEditProfile = useRef<boolean>(true);
@@ -261,7 +262,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
             />
           </div>
           <div className="   cursor-pointer">
-            {isChannelAdmin && (
+            {isUserAdminOrChannelAdmin && (
               <PopupMenu
                 triggerNode={
                   <div className="bg-white rounded-full  text-black">
@@ -324,7 +325,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               size={48}
               dataTestId={'edit-profile-pic'}
             />
-            {isChannelAdmin && (
+            {isUserAdminOrChannelAdmin && (
               <div className="absolute bg-white rounded-full p-[5px] cursor-pointer -top-2 -right-1">
                 <Icon
                   name="edit"

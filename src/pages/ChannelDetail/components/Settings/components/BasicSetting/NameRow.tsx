@@ -13,10 +13,10 @@ import { IChannel } from 'stores/channelStore';
 
 type AppProps = {
   data: IChannel;
-  isChannelAdmin: boolean;
+  isUserAdminOrChannelAdmin: boolean;
 };
 
-const NameRow: FC<AppProps> = ({ data, isChannelAdmin }) => {
+const NameRow: FC<AppProps> = ({ data, isUserAdminOrChannelAdmin }) => {
   const { channelId = '' } = useParams();
   const queryClient = useQueryClient();
   const ref = useRef<any>(null);
@@ -72,7 +72,7 @@ const NameRow: FC<AppProps> = ({ data, isChannelAdmin }) => {
       }}
       label="Name"
       value={data?.name}
-      canEdit={isChannelAdmin}
+      canEdit={isUserAdminOrChannelAdmin}
       dataTestId="professional-details-employee-id"
       editNode={
         <div>

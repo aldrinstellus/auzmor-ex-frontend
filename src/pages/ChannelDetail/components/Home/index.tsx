@@ -13,7 +13,7 @@ type AppProps = {
   channelData: IChannel;
 };
 const Home: FC<AppProps> = ({ channelData }) => {
-  const { isChannelAdmin } = useChannelRole(channelData);
+  const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
   return (
     <div className="mb-32  flex w-full">
       <div className="w-1/4 pr-10 space-y-6">
@@ -24,7 +24,7 @@ const Home: FC<AppProps> = ({ channelData }) => {
         <Feed channelData={channelData} />
       </div>
       <div className="w-1/4 pl-10 space-y-6">
-        {isChannelAdmin && (
+        {isUserAdminOrChannelAdmin && (
           <ChannelRequestWidget mode={ChannelRequestWidgetModeEnum.Channel} />
         )}
         <MembersWidget channelData={channelData} />

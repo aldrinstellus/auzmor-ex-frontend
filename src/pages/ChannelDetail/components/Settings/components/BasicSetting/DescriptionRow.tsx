@@ -15,10 +15,13 @@ import { isTrim } from 'pages/ChannelDetail/components/utils';
 
 type AppProps = {
   channelData: IChannel;
-  isChannelAdmin: boolean;
+  isUserAdminOrChannelAdmin: boolean;
 };
 
-const DescriptionRow: FC<AppProps> = ({ channelData, isChannelAdmin }) => {
+const DescriptionRow: FC<AppProps> = ({
+  channelData,
+  isUserAdminOrChannelAdmin,
+}) => {
   const { channelId = '' } = useParams();
   const queryClient = useQueryClient();
   const ref = useRef<any>(null);
@@ -82,7 +85,7 @@ const DescriptionRow: FC<AppProps> = ({ channelData, isChannelAdmin }) => {
       }}
       label="Description"
       value={isTrim(channelData?.description)}
-      canEdit={isChannelAdmin}
+      canEdit={isUserAdminOrChannelAdmin}
       dataTestId="professional-details-employee-id"
       editNode={
         <div>

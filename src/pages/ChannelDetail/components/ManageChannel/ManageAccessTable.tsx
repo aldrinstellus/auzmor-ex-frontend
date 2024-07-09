@@ -21,6 +21,7 @@ import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import { useParams } from 'react-router-dom';
 import { CHANNEL_ROLE, IChannel } from 'stores/channelStore';
 import queryClient from 'utils/queryClient';
+import useAuth from 'hooks/useAuth';
 
 type AppProps = {
   isLoading?: boolean;
@@ -29,14 +30,12 @@ type AppProps = {
   deselectAll?: () => void;
   channelData: IChannel;
 };
-const ManageAccessTable: FC<AppProps> = ({
-  channelData,
-  isLoading = false,
-  data,
-}) => {
+const ManageAccessTable: FC<AppProps> = ({ isLoading = false, data }) => {
+  console.log('data :', data);
   const { t } = useTranslation('channels');
   const { channelId } = useParams();
 
+  const { user: currentUser } = useAuth();
   const updateMemberRoleMutation = useMutation({
     mutationFn: updateMemberRole,
     mutationKey: ['update-channel-member-role'],
@@ -101,14 +100,22 @@ const ManageAccessTable: FC<AppProps> = ({
                 <TableCell>
                   <div className="relative">
                     <PopupMenu
-                      disabled={user?.userId === channelData?.createdBy?.userId}
+                      disabled={user?.userId === currentUser?.id} // disable popup menu for current user
                       triggerNode={
-                        <Button
-                          variant={Variant.Tertiary}
-                          className="!text-sm !font-medium capitalize"
-                          label={user?.role?.toLowerCase() || 'Admin'}
-                          rightIcon={'arrowDown'}
-                        />
+                        <>
+                          {user?.userId === currentUser?.id ? (
+                            <div className=" pl-4 !text-sm !font-medium capitalize">
+                              {user?.role?.toLowerCase()}
+                            </div>
+                          ) : (
+                            <Button
+                              variant={Variant.Tertiary}
+                              className="!text-sm !font-medium capitalize"
+                              label={user?.role?.toLowerCase() || 'Admin'}
+                              rightIcon={'arrowDown'}
+                            />
+                          )}
+                        </>
                       }
                       menuItems={
                         [
