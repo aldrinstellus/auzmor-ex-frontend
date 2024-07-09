@@ -7,48 +7,40 @@ import Button, {
   Type as ButtonType,
 } from 'components/Button';
 import Modal from 'components/Modal';
-import { deleteUser } from 'queries/users';
 import { useMutation } from '@tanstack/react-query';
-import queryClient from 'utils/queryClient';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import { failureToastConfig } from 'components/Toast/variants/FailureToast';
 import { FC } from 'react';
+import { removeChannelMember } from 'queries/channel';
+import queryClient from 'utils/queryClient';
 export interface IDeletePeopleProps {
   open: boolean;
   openModal: () => void;
   closeModal: () => void;
   userId: string;
+  channelId: any;
 }
 
-const DeletePeople: FC<IDeletePeopleProps> = ({
+const RemoveChannelMember: FC<IDeletePeopleProps> = ({
   open,
   // openModal,
+  channelId,
   closeModal,
   userId,
 }) => {
-  const deleteUserMutation = useMutation({
-    mutationKey: ['delete-user', userId],
-    mutationFn: deleteUser,
-    onError: () =>
+  const deleteChannelMemberMutation = useMutation({
+    mutationKey: ['delete-channel-member'],
+    mutationFn: (payload: any) =>
+      removeChannelMember(payload?.channelId, payload?.userId),
+    onError: () => {
       failureToastConfig({
         content: 'Error deleting member',
         dataTestId: 'people-toaster',
-      }),
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSuccess: (data, variables, context) => {
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['channel-members']);
       closeModal();
-      queryClient.invalidateQueries(['user', userId]);
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      queryClient.invalidateQueries(['feed'], { exact: false });
-      queryClient.invalidateQueries(['feed-announcements-widget']);
-      queryClient.invalidateQueries(['post-announcements-widget']);
-      queryClient.invalidateQueries(['bookmarks']);
-      queryClient.invalidateQueries(['scheduledPosts']);
-      queryClient.invalidateQueries(['posts'], { exact: false });
-      queryClient.invalidateQueries(['comments'], { exact: false });
-      queryClient.invalidateQueries(['team-members']);
-      queryClient.invalidateQueries(['organization-chart'], { exact: false });
-      queryClient.invalidateQueries(['celebrations'], { exact: false });
       successToastConfig({
         content: 'Member has been deleted',
         dataTestId: 'people-toaster',
@@ -83,11 +75,13 @@ const DeletePeople: FC<IDeletePeopleProps> = ({
       <Button
         label={'Delete'}
         className="!bg-red-500 !text-white flex"
-        loading={deleteUserMutation.isLoading}
+        loading={deleteChannelMemberMutation.isLoading}
         size={Size.Small}
         type={ButtonType.Submit}
         dataTestId="delete-user-delete"
-        onClick={() => deleteUserMutation.mutate(userId)}
+        onClick={() =>
+          deleteChannelMemberMutation.mutate({ channelId, userId })
+        }
       />
     </div>
   );
@@ -103,4 +97,4 @@ const DeletePeople: FC<IDeletePeopleProps> = ({
   );
 };
 
-export default DeletePeople;
+export default RemoveChannelMember;

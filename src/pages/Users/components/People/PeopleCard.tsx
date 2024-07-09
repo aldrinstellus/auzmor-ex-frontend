@@ -33,6 +33,7 @@ import useProduct from 'hooks/useProduct';
 import Truncate from 'components/Truncate';
 import { updateMemberRole } from 'queries/channel';
 import { CHANNEL_ROLE, IChannel } from 'stores/channelStore';
+import RemoveChannelMember from '../DeleteModals/ChannelMember';
 
 export interface IPeopleCardProps {
   userData: IGetUser;
@@ -95,6 +96,12 @@ const PeopleCard: FC<IPeopleCardProps> = ({
     openRemoveTeamMember,
     openRemoveTeamMemberModal,
     closeRemoveTeamMemberModal,
+  ] = useModal();
+
+  const [
+    openRemoveChannelMember,
+    openRemoveChannelMemberModal,
+    closeRemoveChannelMemberModal,
   ] = useModal();
   const [openReactivate, openReactivateModal, closeReactivateModal] =
     useModal();
@@ -209,7 +216,7 @@ const PeopleCard: FC<IPeopleCardProps> = ({
           isLxp ? 'h-[190px] w-[190px] ' : 'h-[244px] w-[233px]'
         } border-solid border rounded-9xl border-neutral-200 bg-white focus-within:shadow-xl`}
       >
-        {
+        {(!isLxp || isChannelPeople) && (
           <UserProfileDropdown
             isUserAdminOrChannelAdmin={isUserAdminOrChannelAdmin}
             id={id}
@@ -228,7 +235,7 @@ const PeopleCard: FC<IPeopleCardProps> = ({
             }
             onReactivateClick={openReactivateModal}
             onPromoteClick={() => {
-              isLxp
+              isChannelPeople
                 ? updateMemberRoleMutation.mutate({
                     id: id,
                     channelId: channelId,
@@ -241,6 +248,7 @@ const PeopleCard: FC<IPeopleCardProps> = ({
               successToastConfig({ content: 'Invitation has been sent' });
               resendInviteMutation.mutate(id);
             }}
+            onRemoveChannelMember={openRemoveChannelMemberModal}
             onRemoveTeamMember={openRemoveTeamMemberModal}
             triggerNode={
               <div className="cursor-pointer">
@@ -256,7 +264,7 @@ const PeopleCard: FC<IPeopleCardProps> = ({
             showOnHover={true}
             className="right-0 top-8 border border-[#e5e5e5]"
           />
-        }
+        )}
 
         {status === UserStatus.Inactive ? (
           <div
@@ -377,10 +385,16 @@ const PeopleCard: FC<IPeopleCardProps> = ({
         </div>
       </Card>
       <DeletePeople
-        channelId={channelId}
         open={openDelete}
         openModal={openDeleteModal}
         closeModal={closeDeleteModal}
+        userId={id}
+      />
+      <RemoveChannelMember
+        channelId={channelId}
+        open={openRemoveChannelMember}
+        openModal={openRemoveChannelMemberModal}
+        closeModal={closeRemoveChannelMemberModal}
         userId={id}
       />
       <RemoveTeamMember

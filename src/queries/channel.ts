@@ -147,12 +147,9 @@ export const getAddChannelMembersStatus = async (
   return data;
 };
 
-export const removeChannelMember = async (payload: {
-  channelId: string;
-  memberId: string;
-}) => {
+export const removeChannelMember = async (channelId: any, memberId: any) => {
   const data = await apiService.delete(
-    `/channels/${payload?.channelId}/members/${payload?.memberId}`,
+    `/channels/${channelId}/members/${memberId}`,
   );
   return new Promise((res) => {
     res(data);

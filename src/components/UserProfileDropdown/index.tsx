@@ -28,6 +28,7 @@ export interface IUserDropdownProps {
   isChannelPeople?: boolean;
   userId?: string;
   isUserAdminOrChannelAdmin?: boolean;
+  onRemoveChannelMember?: any;
 }
 
 const UserProfileDropdown: FC<IUserDropdownProps> = ({
@@ -50,6 +51,7 @@ const UserProfileDropdown: FC<IUserDropdownProps> = ({
   showDirectOption = false,
   userId,
   isUserAdminOrChannelAdmin,
+  onRemoveChannelMember,
 }) => {
   const { user } = useAuth();
   const { isAdmin } = useRole();
@@ -73,7 +75,7 @@ const UserProfileDropdown: FC<IUserDropdownProps> = ({
       icon: 'deactivateUser',
       label: <div className="text-red-500">Remove from channel</div>,
       dataTestId: 'people-card-ellipsis-remove-member',
-      onClick: onDeleteClick,
+      onClick: onRemoveChannelMember,
       iconClassName: '!text-red-500',
     });
   }
