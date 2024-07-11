@@ -168,6 +168,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         channelCoverImageRef?.current?.click();
       },
       dataTestId: 'edit-coverpic-upload',
+      hidden: false,
     },
     {
       icon: 'maximizeOutline',
@@ -177,6 +178,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         openEditImageModal();
       },
       dataTestId: 'edit-coverpic-reposition',
+      hidden: channelData?.banner == null,
     },
     {
       icon: 'gallery',
@@ -187,6 +189,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         openChannelImageModal();
       },
       dataTestId: 'edit-coverpic-reposition',
+      hidden: false,
     },
     {
       icon: 'trashOutline',
@@ -207,8 +210,9 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         });
       },
       dataTestId: 'edit-coverpic-deletepost',
+      hidden: channelData?.banner == null,
     },
-  ];
+  ].filter((option) => option.hidden !== true);
 
   const handleTabChange = (index: any) => {
     if (index === 0) {
