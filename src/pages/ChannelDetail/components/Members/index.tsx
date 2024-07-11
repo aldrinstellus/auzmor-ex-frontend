@@ -60,6 +60,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
     channelId: channelData?.id,
     q: isFiltersEmpty({
       q: searchValue,
+      sort: filters?.sort,
       userStatus: filters?.status?.length
         ? filters?.status?.map((eachStatus: any) => eachStatus.id).join(',')
         : undefined,
