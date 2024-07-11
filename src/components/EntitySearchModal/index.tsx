@@ -65,6 +65,10 @@ export interface IAudienceForm {
   channels: any;
   users: Record<string, IGetUser | false>;
   channelMembers: IChannelMembersField;
+  userStatus: any;
+  userStatusSearch: string;
+  byPeople: any;
+  byPeopleSearch: string;
 }
 
 const EntitySearchModal: FC<IEntitySearchModalProps> = ({
