@@ -37,7 +37,7 @@ const ByPeople: FC<IByPeopleProps> = ({ control, watch, setValue }) => {
     'byPeopleCheckbox',
   ]);
 
-  const debouncedRoleSearchValue = useDebounce(peopleSearch || '', 300);
+  const debouncedPeopleSearchValue = useDebounce(peopleSearch || '', 300);
   const byPeopleData: IBypeople[] = [
     { id: ByPeopleEnum.OTHERS, name: enumToTitleCase(ByPeopleEnum.OTHERS) },
     {
@@ -45,17 +45,17 @@ const ByPeople: FC<IByPeopleProps> = ({ control, watch, setValue }) => {
       name: enumToTitleCase(ByPeopleEnum.DIRECT_REPORTEES),
     },
   ].filter((value) =>
-    value.name.toLowerCase().includes(debouncedRoleSearchValue.toLowerCase()),
+    value.name.toLowerCase().includes(debouncedPeopleSearchValue.toLowerCase()),
   );
 
-  const rolesFields = [
+  const byPeopleFields = [
     {
       type: FieldType.CheckboxList,
       name: 'byPeopleCheckbox',
       control,
       options: byPeopleData?.map((people: IBypeople) => ({
         data: people,
-        datatestId: `role-${people.name.toLowerCase()}`,
+        datatestId: `by-people-${people.name.toLowerCase()}`,
       })),
       labelRenderer: (option: ICheckboxListOption) => (
         <div className="ml-2.5 cursor-pointer text-xs">{option.data.name}</div>
@@ -103,14 +103,14 @@ const ByPeople: FC<IByPeopleProps> = ({ control, watch, setValue }) => {
           if ((byPeopleData || []).length > 0) {
             return (
               <div>
-                <Layout fields={rolesFields} />
+                <Layout fields={byPeopleFields} />
               </div>
             );
           }
           return (
             <>
-              {(debouncedRoleSearchValue === undefined ||
-                debouncedRoleSearchValue === '') &&
+              {(debouncedPeopleSearchValue === undefined ||
+                debouncedPeopleSearchValue === '') &&
               byPeopleData?.length === 0 ? (
                 <div className="flex items-center w-full text-lg font-bold">
                   Not found
@@ -118,8 +118,8 @@ const ByPeople: FC<IByPeopleProps> = ({ control, watch, setValue }) => {
               ) : (
                 <div className="py-16 w-full text-lg font-bold text-center">
                   {`No result found`}
-                  {debouncedRoleSearchValue &&
-                    ` for '${debouncedRoleSearchValue}'`}
+                  {debouncedPeopleSearchValue &&
+                    ` for '${debouncedPeopleSearchValue}'`}
                 </div>
               )}
             </>

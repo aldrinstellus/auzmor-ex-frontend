@@ -48,7 +48,7 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
     teamSearch,
     teams,
     userStatus,
-    userStausSearch,
+    userStatusSearch,
     byPeople,
     byPeopleSearch,
   ] = watch([
@@ -58,7 +58,7 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
     'teamSearch',
     'teams',
     'userStatus',
-    'userStausSearch',
+    'userStatusSearch',
     'byPeople',
     'byPeopleSearch',
   ]);
@@ -76,7 +76,7 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
       .includes(debouncedByPeopleSearchValue.toLowerCase()),
   );
   const debouncedUserStatusSearchValue = useDebounce(
-    userStausSearch || '',
+    userStatusSearch || '',
     300,
   );
   const statusData: IStatus[] = [
@@ -141,9 +141,10 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
     hasNextPage: hasNextTeamPage,
   } = useInfiniteTeams({
     q: isFiltersEmpty({
-      q: debouncedSearchValue || debouncedTeamSearchValue,
+      q: debouncedSearchValue,
     }),
   });
+
   let teamsData: ITeam[] =
     fetchedTeams?.pages
       .flatMap((page) => {
@@ -162,6 +163,28 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
         }
         return true;
       }) || [];
+  const {
+    data: _fetchedTeams,
+    isLoading: _teamLoading,
+    isFetchingNextPage: _isFetchingNextTeamPage,
+    fetchNextPage: _fetchNextTeamPage,
+    hasNextPage: _hasNextTeamPage,
+  } = useInfiniteTeams({
+    q: isFiltersEmpty({
+      q: debouncedTeamSearchValue,
+    }),
+  });
+
+  const _teamsData: ITeam[] =
+    _fetchedTeams?.pages.flatMap((page) => {
+      return page?.data?.result?.data.map((team: ITeam) => {
+        try {
+          return team;
+        } catch (e) {
+          console.log('Error', { team });
+        }
+      });
+    }) || [];
 
   const { ref, inView } = useInView({
     root: document.getElementById('entity-search-members-body'),
@@ -304,7 +327,7 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
                 title="Teams"
                 control={control}
                 options={
-                  teamsData?.map((team: ITeam) => ({
+                  _teamsData?.map((team: ITeam) => ({
                     label: team.name,
                     value: team,
                     id: team.id,
@@ -312,10 +335,10 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
                 }
                 searchName={'teamSearch'}
                 optionsName={'teams'}
-                isLoading={teamLoading}
-                isFetchingNextPage={isFetchingNextTeamPage}
-                fetchNextPage={fetchNextTeamPage}
-                hasNextPage={hasNextTeamPage}
+                isLoading={_teamLoading}
+                isFetchingNextPage={_isFetchingNextTeamPage}
+                fetchNextPage={_fetchNextTeamPage}
+                hasNextPage={_hasNextTeamPage}
                 onApply={() =>
                   setSelectedTeams([
                     ...Object.keys(teams).filter((key: string) => !!teams[key]),
@@ -344,7 +367,7 @@ const ChannelMembersBody: FC<IMembersBodyProps> = ({
                     id: user.id,
                   })) || []
                 }
-                searchName={'userStausSearch'}
+                searchName={'userStatusSearch'}
                 optionsName={'userStatus'}
                 onApply={() =>
                   setUserSelectedStatus([

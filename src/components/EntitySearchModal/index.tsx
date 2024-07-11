@@ -66,7 +66,7 @@ export interface IAudienceForm {
   users: Record<string, IGetUser | false>;
   channelMembers: IChannelMembersField;
   userStatus: any;
-  userStausSearch: string;
+  userStatusSearch: string;
   byPeople: any;
   byPeopleSearch: string;
 }
