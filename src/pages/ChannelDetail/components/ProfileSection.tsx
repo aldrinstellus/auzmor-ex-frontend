@@ -69,8 +69,12 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   const [isArchiveModalOpen, openArchiveModal, closeArchiveModal] = useModal();
   const navigate = useNavigate();
 
-  const { isUserAdminOrChannelAdmin, isChannelOwner, isChannelMember } =
-    useChannelRole(channelData);
+  const {
+    isUserAdminOrChannelAdmin,
+    isChannelOwner,
+    isChannelMember,
+    isChannelAdmin,
+  } = useChannelRole(channelData);
   const canEdit = isUserAdminOrChannelAdmin;
   console.log('isUserAdminOrChannelAdmin :', isUserAdminOrChannelAdmin);
 
@@ -303,7 +307,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         leaveChannelMutation.mutate(channelId);
       },
       dataTestId: '',
-      hidden: false,
+      hidden: !isChannelAdmin && !isChannelMember,
     },
   ].filter((item) => !item.hidden);
   return (
