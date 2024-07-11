@@ -28,6 +28,7 @@ import { useMutation } from '@tanstack/react-query';
 import {
   deleteJoinChannelRequest,
   joinChannelRequest,
+  leaveChannel,
   updateChannel,
 } from 'queries/channel';
 import { failureToastConfig } from 'components/Toast/variants/FailureToast';
@@ -68,9 +69,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   const [isArchiveModalOpen, openArchiveModal, closeArchiveModal] = useModal();
   const navigate = useNavigate();
 
-  const { isUserAdminOrChannelAdmin, isChannelOwner } =
+  const { isUserAdminOrChannelAdmin, isChannelOwner, isChannelMember } =
     useChannelRole(channelData);
   const canEdit = isUserAdminOrChannelAdmin;
+  console.log('isUserAdminOrChannelAdmin :', isUserAdminOrChannelAdmin);
 
   const channelCoverImageRef = useRef<HTMLInputElement>(null);
   const showEditProfile = useRef<boolean>(true);
@@ -114,6 +116,18 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     onSuccess: (data: any) => {
       queryClient.invalidateQueries(['channel']);
       console.log('Successfully deleted user cover image', data);
+    },
+  });
+
+  const leaveChannelMutation = useMutation({
+    mutationKey: ['leave-channel-member'],
+    mutationFn: (channelId: string) => leaveChannel(channelId),
+    onError: (error: any) => {
+      console.log('API call resulted in error: ', error);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['channel']);
+      navigate('/channels');
     },
   });
 
@@ -234,6 +248,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       stroke: twConfig.theme.colors.neutral['900'],
       onClick: openEditModal,
       dataTestId: '',
+      hidden: !isUserAdminOrChannelAdmin,
     },
     {
       icon: 'adminOutline',
@@ -243,6 +258,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         navigate(`/channels/${channelData?.id}/manage-access`);
       },
       dataTestId: '',
+      hidden: !isUserAdminOrChannelAdmin,
     },
     {
       icon: 'archive',
@@ -250,6 +266,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       stroke: twConfig.theme.colors.neutral['900'],
       onClick: openArchiveModal,
       dataTestId: '',
+      hidden: !isUserAdminOrChannelAdmin,
     },
     {
       renderNode: (
@@ -266,6 +283,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         openAddMemberModal();
       },
       dataTestId: '',
+      hidden: !isUserAdminOrChannelAdmin,
     },
     {
       icon: 'setting',
@@ -275,8 +293,19 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         navigate(`/channels/${channelData?.id}/settings`);
       },
       dataTestId: '',
+      hidden: !isUserAdminOrChannelAdmin,
     },
-  ];
+    {
+      icon: 'logout',
+      label: 'Leave channel',
+      stroke: twConfig.theme.colors.neutral['900'],
+      onClick: () => {
+        leaveChannelMutation.mutate(channelId);
+      },
+      dataTestId: '',
+      hidden: false,
+    },
+  ].filter((item) => !item.hidden);
   return (
     <div className="  rounded-9xl relative mb-4">
       <div className="relative z-30">
@@ -305,7 +334,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
             />
           </div>
           <div className="   cursor-pointer">
-            {isUserAdminOrChannelAdmin && (
+            {(isChannelMember || isUserAdminOrChannelAdmin) && (
               <PopupMenu
                 triggerNode={
                   <div className="bg-white rounded-full  text-black">
@@ -320,9 +349,13 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                 className="absolute top-12 right-4 w-48"
                 menuItems={editMenuOptions}
                 title={
-                  <div className="text-xs  bg-blue-50 py-2 px-6 font-Medium flex items-center justify-center ">
-                    CHANNEL MANAGEMENT
-                  </div>
+                  <>
+                    {isUserAdminOrChannelAdmin && (
+                      <div className="text-xs  bg-blue-50 py-2 px-6 font-Medium flex items-center justify-center ">
+                        CHANNEL MANAGEMENT
+                      </div>
+                    )}
+                  </>
                 }
               />
             )}
