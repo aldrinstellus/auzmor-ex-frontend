@@ -151,6 +151,7 @@ const FilterMenu: FC<IFilterMenu> = ({
               dataTestId={dataTestIdFilter}
             />
             <Sort
+              controlled
               setFilter={(sortValue) => {
                 setFilters({ sort: sortValue });
               }}
