@@ -9,16 +9,17 @@ import ChannelWidgetUserRow, {
   ChannelRequestWidgetModeEnum,
 } from './components/ChannelWidgetUser';
 import { useInfiniteChannelsRequest } from 'queries/channel';
-import { IChannelRequest } from 'stores/channelStore';
+import { IChannelRequest, useChannelStore } from 'stores/channelStore';
 import { useNavigate, useParams } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
+import { useChannelRole } from 'hooks/useChannelRole';
 
-type ChannelWidgetProps = {
+export type ChannelRequestWidgetProps = {
   className?: string;
   mode?: ChannelRequestWidgetModeEnum;
 };
 
-const ChannelRequestWidget: FC<ChannelWidgetProps> = ({
+const ChannelRequestWidget: FC<ChannelRequestWidgetProps> = ({
   className = '',
   mode = ChannelRequestWidgetModeEnum.Feed,
 }) => {
@@ -27,6 +28,11 @@ const ChannelRequestWidget: FC<ChannelWidgetProps> = ({
   const [openAllRequest, openAllRequestModal, closeAllRequestModal] =
     useModal();
   const { channelId } = useParams();
+
+  const channel = useChannelStore((state) => state.channels)[channelId!];
+  const { isUserAdminOrChannelAdmin } = useChannelRole(channel);
+
+  if (!isUserAdminOrChannelAdmin) return <></>;
 
   const { data, isLoading } = useInfiniteChannelsRequest(channelId, {
     limit: 3,

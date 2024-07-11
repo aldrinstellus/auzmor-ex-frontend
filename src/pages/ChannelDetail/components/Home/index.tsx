@@ -1,36 +1,37 @@
-import AdminsWidget from '../AdminsWidget';
-import AppLauncher from '../AppLauncher';
-import MembersWidget from '../MembersWidget';
-import LinksWidget from 'components/LinksWidget';
-import Feed from './Feed';
-import ChannelRequestWidget from 'components/ChannelRequestWidget';
-import { ChannelRequestWidgetModeEnum } from 'components/ChannelRequestWidget/components/ChannelWidgetUser';
 import { IChannel } from 'stores/channelStore';
 import { FC } from 'react';
-import { useChannelRole } from 'hooks/useChannelRole';
+import Feed, { FeedModeEnum, WidgetEnum } from 'components/Feed';
+import { ChannelRequestWidgetModeEnum } from 'components/ChannelRequestWidget/components/ChannelWidgetUser';
 
-type AppProps = {
+type HomeProps = {
   channelData: IChannel;
 };
-const Home: FC<AppProps> = ({ channelData }) => {
-  const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
+const Home: FC<HomeProps> = ({ channelData }) => {
   return (
-    <div className="mb-32  flex w-full">
-      <div className="w-1/4 pr-10 space-y-6">
-        <AppLauncher />
-        <LinksWidget channelData={channelData} />
-      </div>
-      <div className="w-1/2 px-3">
-        <Feed channelData={channelData} />
-      </div>
-      <div className="w-1/4 pl-10 space-y-6">
-        {isUserAdminOrChannelAdmin && (
-          <ChannelRequestWidget mode={ChannelRequestWidgetModeEnum.Channel} />
-        )}
-        <MembersWidget channelData={channelData} />
-        <AdminsWidget />
-      </div>
-    </div>
+    <Feed
+      mode={FeedModeEnum.Channel}
+      leftWidgets={[WidgetEnum.AppLauncher, WidgetEnum.Links]}
+      rightWidgets={[
+        WidgetEnum.ChannelMember,
+        WidgetEnum.ChannelRequest,
+        WidgetEnum.ChannelAdmin,
+      ]}
+      widgetProps={{
+        [WidgetEnum.Links]: { channelData },
+        [WidgetEnum.ChannelMember]: { channelData },
+        [WidgetEnum.ChannelRequest]: {
+          mode: ChannelRequestWidgetModeEnum.Channel,
+        },
+      }}
+      modeProps={{
+        [FeedModeEnum.Channel]: {
+          params: {
+            entityId: channelData.id,
+            entityType: 'CHANNEL',
+          },
+        },
+      }}
+    />
   );
 };
 

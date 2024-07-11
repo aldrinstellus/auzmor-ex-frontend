@@ -15,10 +15,10 @@ import { useParams } from 'react-router-dom';
 import { useChannelRole } from 'hooks/useChannelRole';
 import { IChannel } from 'stores/channelStore';
 
-type AppProps = {
+export type LinksWidgetProps = {
   channelData: IChannel;
 };
-const LinksWidget: FC<AppProps> = ({ channelData }) => {
+const LinksWidget: FC<LinksWidgetProps> = ({ channelData }) => {
   const { channelId = '' } = useParams();
   const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
   const [open, openCollpase, closeCollapse] = useModal(true, false);

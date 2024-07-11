@@ -11,10 +11,10 @@ import AddChannelMembersModal from './AddChannelMembersModal';
 import { IChannel } from 'stores/channelStore';
 import { useChannelRole } from 'hooks/useChannelRole';
 
-type AppProps = {
+export type MembersWidgetProps = {
   channelData: IChannel;
 };
-const MembersWidget: FC<AppProps> = ({ channelData }) => {
+const MembersWidget: FC<MembersWidgetProps> = ({ channelData }) => {
   const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
   const [show, setShow] = useState(true);
   const { t } = useTranslation('channelDetail');
