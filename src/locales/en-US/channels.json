@@ -33,7 +33,8 @@
       "location": "Location"
     },
     "title": "Members",
-    "addMemberCTA": "Add members"
+    "addMemberCTA": "Add members",
+    "searchMembers": "Search members"
   },
   "privateChannel": {
     "bannerHeader": "This is a private channel. You must be a member to view the channel content",

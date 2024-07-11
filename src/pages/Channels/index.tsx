@@ -22,6 +22,7 @@ import { usePageTitle } from 'hooks/usePageTitle';
 import clsx from 'clsx';
 import { useInView } from 'react-intersection-observer';
 import PageLoader from 'components/PageLoader';
+import useRole from 'hooks/useRole';
 
 interface IChannelsProps {
   isInfinite?: boolean;
@@ -38,6 +39,7 @@ interface IFilterButton {
 
 export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
   usePageTitle('channels');
+  const { isAdmin } = useRole();
   const { t } = useTranslation('channels');
   const { filters, setFilters, updateFilter } = useAppliedFiltersStore();
   const [isModalOpen, openModal, closeModal] = useModal();
@@ -194,13 +196,15 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
           <h1 className="text-2xl font-bold text-neutral-900">
             {t('channels')}
           </h1>
-          <Button
-            label={t('createChannelCTA')}
-            leftIcon="add"
-            leftIconClassName="text-white pointer-events-none group-hover:text-white"
-            onClick={openModal}
-            dataTestId="createchannel-cta"
-          />
+          {isAdmin && (
+            <Button
+              label={t('createChannelCTA')}
+              leftIcon="add"
+              leftIconClassName="text-white pointer-events-none group-hover:text-white"
+              onClick={openModal}
+              dataTestId="createchannel-cta"
+            />
+          )}
         </div>
         <FilterMenu
           filterForm={filterForm}

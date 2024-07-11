@@ -133,7 +133,7 @@ const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
         </div>
         <FilterMenu
           filterForm={filterForm}
-          searchPlaceholder={t('searchChannels')}
+          searchPlaceholder={t('members.searchMembers')}
           dataTestIdFilter="channel-filter-icon"
           dataTestIdSort="channel-sort-icon"
           dataTestIdSearch="channel-search"

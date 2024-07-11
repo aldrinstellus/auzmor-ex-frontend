@@ -69,9 +69,14 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   const [isArchiveModalOpen, openArchiveModal, closeArchiveModal] = useModal();
   const navigate = useNavigate();
 
-  const { isUserAdminOrChannelAdmin, isChannelOwner } =
-    useChannelRole(channelData);
+  const {
+    isUserAdminOrChannelAdmin,
+    isChannelOwner,
+    isChannelMember,
+    isChannelAdmin,
+  } = useChannelRole(channelData);
   const canEdit = isUserAdminOrChannelAdmin;
+  console.log('isUserAdminOrChannelAdmin :', isUserAdminOrChannelAdmin);
 
   const channelCoverImageRef = useRef<HTMLInputElement>(null);
   const showEditProfile = useRef<boolean>(true);
@@ -181,6 +186,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         channelCoverImageRef?.current?.click();
       },
       dataTestId: 'edit-coverpic-upload',
+      hidden: false,
     },
     {
       icon: 'maximizeOutline',
@@ -190,6 +196,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         openEditImageModal();
       },
       dataTestId: 'edit-coverpic-reposition',
+      hidden: channelData?.banner == null,
     },
     {
       icon: 'gallery',
@@ -200,6 +207,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         openChannelImageModal();
       },
       dataTestId: 'edit-coverpic-reposition',
+      hidden: false,
     },
     {
       icon: 'trashOutline',
@@ -220,8 +228,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         });
       },
       dataTestId: 'edit-coverpic-deletepost',
+      hidden: channelData?.banner == null,
     },
-  ];
+  ].filter((option) => option.hidden !== true);
+
   const handleTabChange = (index: any) => {
     if (index === 0) {
       navigate(`/channels/${channelData?.id}`);
@@ -297,6 +307,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         leaveChannelMutation.mutate(channelId);
       },
       dataTestId: '',
+      hidden: !isChannelAdmin && !isChannelMember,
     },
   ].filter((item) => !item.hidden);
   return (
@@ -327,7 +338,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
             />
           </div>
           <div className="   cursor-pointer">
-            {
+            {(isChannelMember || isUserAdminOrChannelAdmin) && (
               <PopupMenu
                 triggerNode={
                   <div className="bg-white rounded-full  text-black">
@@ -351,7 +362,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                   </>
                 }
               />
-            }
+            )}
           </div>
           <div className="   cursor-pointer">
             {canEdit && (
