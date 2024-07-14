@@ -15,7 +15,6 @@ export type MembersWidgetProps = {
   channelData: IChannel;
 };
 const MembersWidget: FC<MembersWidgetProps> = ({ channelData }) => {
-  console.log('channelData :', channelData);
   const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
   const [show, setShow] = useState(true);
   const { t } = useTranslation('channelDetail');
@@ -59,7 +58,6 @@ const MembersWidget: FC<MembersWidgetProps> = ({ channelData }) => {
           >
             <div className="mt-3">
               <AvatarList
-                display={8}
                 className="!-space-x-5"
                 users={users || []}
                 moreCount={users?.length}

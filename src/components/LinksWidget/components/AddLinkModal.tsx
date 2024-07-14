@@ -1,5 +1,4 @@
 import { FC, useEffect } from 'react';
-
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
 import Button, { Size, Variant } from 'components/Button';
@@ -31,18 +30,28 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
   isEditMode = false,
 }) => {
   const queryClient = useQueryClient();
-
   const { t } = useTranslation('channelLinksWidget', {
     keyPrefix: 'addLinkModal',
   });
+
   const schema = yup.object({
-    title: yup.string().optional().max(20, t('labelField.maxLengthError')),
+    title: yup
+      .string()
+      .required(t('labelField.requiredError'))
+      .min(2, 'Label must be at least 2 characters')
+      .max(20, t('labelField.maxLengthError')),
     url: yup
       .string()
       .required(t('urlField.requiredError'))
-      .matches(URL_REGEX, t('urlField.invalidUrlError')),
+      .test('is-valid-url', 'The URL must start with http or https', (value) =>
+        /^(http|https):\/\//.test(value || ''),
+      )
+      .matches(URL_REGEX, {
+        message: t('urlField.invalidUrlError'),
+        excludeEmptyString: true,
+      })
+      .max(256, 'max length 256 characters '),
   });
-
   const updateLinksMutation = useMutation(
     async (payload: any) => {
       if (isCreateMode) {
@@ -64,7 +73,9 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
     handleSubmit,
     control,
     getValues,
+    setValue,
     reset,
+    watch,
     formState: { errors },
   } = useForm<any>({
     resolver: yupResolver(schema),
@@ -78,21 +89,36 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
     });
   }, [linkDetails]);
 
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name === 'url' && value.url) {
+        const titleMatch = value.url.match(/https?:\/\/(?:www\.)?([^.]+)\./);
+        const title = titleMatch ? titleMatch[1] : '';
+        setValue('title', title);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, setValue]);
+
   const onSubmit = () => {
-    const { title, url } = getValues();
-    if (isCreateMode) {
-      updateLinksMutation.mutate({ title, url });
-      return;
+    try {
+      const { title, url } = getValues();
+      if (isCreateMode) {
+        updateLinksMutation.mutate({ title, url });
+        return;
+      }
+      if (isEditMode) {
+        updateLinksMutation.mutate({
+          channelId: channelId,
+          linkId: linkDetails?.id,
+          title,
+          url,
+        });
+      }
+      closeModal();
+    } catch (error) {
+      console.error('Error submitting form:', error);
     }
-    if (isEditMode) {
-      updateLinksMutation.mutate({
-        channelId: channelId,
-        linkId: linkDetails?.id,
-        title,
-        url,
-      });
-    }
-    closeModal();
   };
 
   const fields = [
@@ -105,8 +131,8 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
       error: errors.url?.message,
       className: '',
       dataTestId: 'add-link-url',
-      maxLength: 256,
       required: true,
+      autofocus: true,
     },
     {
       name: 'title',

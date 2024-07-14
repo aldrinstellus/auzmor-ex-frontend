@@ -49,6 +49,8 @@ export interface IFilterForm {
   roleSearch: string;
   byPeopleSearch: string;
   docUserSearch: string;
+  visibilitySearch: string;
+  channelTypeSearch: string;
 }
 
 export interface IStatus {

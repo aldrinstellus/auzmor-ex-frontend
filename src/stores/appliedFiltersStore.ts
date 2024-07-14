@@ -37,6 +37,26 @@ export const useAppliedFiltersStore = create<State & Actions>()(
     clearFilters: () =>
       set((state) => {
         state.filters = null;
+        clearURLParams();
       }),
   })),
 );
+
+const clearURLParams = () => {
+  const searchParams = new URLSearchParams(window.location.search);
+
+  const paramsToDelete = [
+    'status',
+    'roles',
+    'departments',
+    'locations',
+    'teams',
+    'categories',
+    'channelType',
+    'byPeople',
+  ];
+
+  paramsToDelete.forEach((param) => searchParams.delete(param));
+  const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
+  window.history.replaceState({}, '', newUrl);
+};

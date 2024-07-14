@@ -49,7 +49,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
     mode: 'onChange',
     defaultValues: { search: '' },
   });
-  const { watch } = filterForm;
+  const { watch, resetField } = filterForm;
   const searchValue = watch('search');
 
   const { searchParams } = useURLParams();
@@ -96,7 +96,16 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
     limit: 30,
     status: CHANNEL_MEMBER_STATUS.PENDING,
   });
-
+  const channelRequests =
+    channelRequestData?.pages?.flatMap((page) => {
+      return page?.data?.result?.data.map((request: IChannelRequest) => {
+        try {
+          return request;
+        } catch (e) {
+          console.log('Error', { request });
+        }
+      });
+    }) || [];
   // Bulk accept channel request
   const bulkRequestAcceptMutation = useMutation({
     mutationKey: ['bulk-channel-request-accept'],
@@ -207,15 +216,25 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
             </div>
           </div>
         </FilterMenu>
-
         <div className="flex items-center gap-2">
-          {users?.length == 0 && (
+          {isGrid && users?.length == 0 && (
             <NoDataFound
-              illustration="noChannelFound"
               className="py-4 w-full"
-              onClearSearch={() => {}}
-              hideClearBtn
-              dataTestId={`$channel-noresult`}
+              searchString={searchValue}
+              illustration="noResult"
+              message={
+                <p>
+                  Sorry we can&apos;t find the Member you are looking for.
+                  <br /> Please check the spelling or try again.
+                </p>
+              }
+              clearBtnLabel={searchValue ? 'Clear Search' : 'Clear Filters'}
+              onClearSearch={() => {
+                searchValue && resetField
+                  ? resetField('search', { defaultValue: '' })
+                  : clearFilters();
+              }}
+              dataTestId="people"
             />
           )}
         </div>
@@ -261,19 +280,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
             entityRenderer={(entity) =>
               (<RequestRow request={entity as IChannelRequest} />) as ReactNode
             }
-            entityData={
-              channelRequestData?.pages?.flatMap((page) => {
-                return page?.data?.result?.data.map(
-                  (request: IChannelRequest) => {
-                    try {
-                      return request;
-                    } catch (e) {
-                      console.log('Error', { request });
-                    }
-                  },
-                );
-              }) || []
-            }
+            entityData={channelRequests}
             menuItems={[
               {
                 key: 'accept',

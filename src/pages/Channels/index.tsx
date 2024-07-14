@@ -1,4 +1,8 @@
-import Button, { Variant as ButtonVariant } from 'components/Button';
+import Button, {
+  Variant as ButtonVariant,
+  Size,
+  Variant,
+} from 'components/Button';
 import Card from 'components/Card';
 import { FC, useEffect, useMemo } from 'react';
 import ChannelCard from './components/ChannelCard';
@@ -23,6 +27,9 @@ import clsx from 'clsx';
 import { useInView } from 'react-intersection-observer';
 import PageLoader from 'components/PageLoader';
 import useRole from 'hooks/useRole';
+import ChannelNotFound from 'images/notFound.png';
+import { useDebounce } from 'hooks/useDebounce';
+import _ from 'lodash';
 
 interface IChannelsProps {
   isInfinite?: boolean;
@@ -41,7 +48,8 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
   usePageTitle('channels');
   const { isAdmin } = useRole();
   const { t } = useTranslation('channels');
-  const { filters, setFilters, updateFilter } = useAppliedFiltersStore();
+  const { filters, setFilters, updateFilter, clearFilters } =
+    useAppliedFiltersStore();
   const [isModalOpen, openModal, closeModal] = useModal();
   const filterForm = useForm<{
     search: string;
@@ -63,10 +71,11 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
       channelType: ChannelTypeEnum.MyChannels,
     });
   }, []);
-  // useEffect(() => () => clearFilters(), []);
 
-  const { watch } = filterForm;
+  const { watch, resetField } = filterForm;
+
   const searchValue = watch('search');
+  const debouncedSearchValue = useDebounce(searchValue || '', 500);
 
   const {
     data,
@@ -78,7 +87,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
   } = useInfiniteChannels(
     isFiltersEmpty({
       limit: 30,
-      q: searchValue,
+      q: debouncedSearchValue,
       visiblity:
         filters?.visibility == ChannelVisibilityEnum.All
           ? undefined
@@ -103,13 +112,11 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
         page?.data?.result?.data.map((channel: { id: string }) => channel) ||
         [],
     ) as { id: string }[]) || [];
-
   const onFilterButtonClick = (type: ChannelTypeEnum) => {
     return () => {
       updateFilter('channelType', type);
     };
   };
-
   const filterButtons: IFilterButton[] = useMemo(() => {
     const getLableClassName = (flag: boolean) => {
       return clsx({
@@ -189,6 +196,15 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
     ];
   }, [filters]);
 
+  const emptyFilters = _.every(
+    _.omit(filters, ['visibility', 'channelType']),
+    _.isEmpty,
+  ); // remove visibility and channelType from filters and check for empty filters
+  const isDataFiltered =
+    (debouncedSearchValue == undefined || debouncedSearchValue == '') &&
+    emptyFilters;
+  const showNoChannels = channelIds?.length == 0 && isDataFiltered;
+  const showNoDataFound = channelIds?.length == 0 && !showNoChannels;
   return (
     <>
       <Card className="p-8 flex flex-col gap-6">
@@ -234,17 +250,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
             ))}
           </div>
         </FilterMenu>
-        {channelIds?.length == 0 && !isLoading && (
-          <NoDataFound
-            illustration="noChannelFound"
-            className="py-4 w-full"
-            onClearSearch={() => {}}
-            labelHeader="No channels yet"
-            message={<p>Channels created will be visible here</p>}
-            hideClearBtn
-            dataTestId={`$channel-noresult`}
-          />
-        )}
+
         {filters?.channelType === ChannelTypeEnum.Archived ? (
           isLoading ? (
             [...Array(5)].map((_each, index) => (
@@ -274,6 +280,68 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
               </>
             )}
           </div>
+        )}
+        {showNoChannels && !isLoading ? (
+          <div className="flex flex-col w-full items-center space-y-4">
+            <img
+              src={ChannelNotFound}
+              width={220}
+              height={144}
+              alt="No Channel Found"
+            />
+            <div className="w-full flex flex-col items-center">
+              <div className="flex items-center flex-col space-y-1">
+                <div
+                  className="text-lg font-bold text-neutral-900"
+                  data-testid="teams-no-members-yet"
+                >
+                  No channels yet
+                </div>
+                {isAdmin ? (
+                  <div className="text-base font-medium text-neutral-500">
+                    {"Let's get started by adding some channels!"}
+                  </div>
+                ) : (
+                  <div className="text-base font-medium text-neutral-500">
+                    {' Channels created will be visible here'}
+                  </div>
+                )}
+              </div>
+            </div>
+            {isAdmin ? (
+              <Button
+                label={'Add channels'}
+                variant={Variant.Secondary}
+                className="space-x-1 rounded-[24px]"
+                size={Size.Large}
+                dataTestId="team-add-members-cta"
+                leftIcon={'addCircle'}
+                leftIconClassName="text-neutral-900"
+                leftIconSize={20}
+                onClick={openModal}
+              />
+            ) : null}
+          </div>
+        ) : null}
+        {showNoDataFound && !isLoading && (
+          <NoDataFound
+            className="py-4 w-full"
+            searchString={searchValue}
+            illustration="noResult"
+            message={
+              <p>
+                Sorry we can&apos;t find the channel you are looking for.
+                <br /> Please check the spelling or try again.
+              </p>
+            }
+            clearBtnLabel={searchValue ? 'Clear Search' : 'Clear Filters'}
+            onClearSearch={() => {
+              searchValue && resetField
+                ? resetField('search', { defaultValue: '' })
+                : clearFilters();
+            }}
+            dataTestId="people"
+          />
         )}
         {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
         {isFetchingNextPage && (

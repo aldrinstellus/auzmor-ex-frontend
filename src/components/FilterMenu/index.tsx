@@ -20,8 +20,8 @@ import Icon from 'components/Icon';
 import { IDepartmentAPI } from 'queries/department';
 import { ILocationAPI } from 'queries/location';
 import { useTranslation } from 'react-i18next';
-import { ChannelVisibilityEnum } from 'stores/channelStore';
-import { ChannelTypeEnum } from 'components/FilterModal/ChannelType';
+// import { ChannelVisibilityEnum } from 'stores/channelStore';
+// import { ChannelTypeEnum } from 'components/FilterModal/ChannelType';
 import { ICategory } from 'queries/category';
 import { ITeam } from 'queries/teams';
 
@@ -110,7 +110,6 @@ const FilterMenu: FC<IFilterMenu> = ({
       setFilters({ ...filters, [key]: updatedFilter });
     }
   };
-  console.log('filters :', filters);
   const clearFilters = () => {
     deleteParam('status');
     deleteParam('roles');
@@ -129,8 +128,8 @@ const FilterMenu: FC<IFilterMenu> = ({
       locations: [],
       teams: [],
       byPeople: [],
-      visibility: ChannelVisibilityEnum.All,
-      channeType: ChannelTypeEnum.MyChannels,
+      visibility: [],
+      channeType: [],
     });
   };
 
