@@ -76,7 +76,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     isChannelAdmin,
   } = useChannelRole(channelData);
   const canEdit = isUserAdminOrChannelAdmin;
-  console.log('isUserAdminOrChannelAdmin :', isUserAdminOrChannelAdmin);
 
   const channelCoverImageRef = useRef<HTMLInputElement>(null);
   const showEditProfile = useRef<boolean>(true);

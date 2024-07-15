@@ -96,9 +96,9 @@ const LinksWidget: FC<LinksWidgetProps> = ({ channelData }) => {
                       window.open(linkUrl, '_blank');
                     }}
                   >
-                    {link.image || link.favicon ? (
+                    {link.url || link.favicon ? (
                       <img
-                        src={link.image || link.favicon}
+                        src={`https://www.google.com/s2/favicons?domain=${link.url}`}
                         height={16}
                         width={16}
                         alt={`${link.title} Image`}

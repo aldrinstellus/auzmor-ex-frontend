@@ -133,7 +133,9 @@ const EditLinksModal: FC<IEditLinksModalProps> = ({
                     </span>
                     {isEditMode && (
                       <span className="text-sm text-neutral-500 font-medium text-ellipsis underline">
-                        <a href={link.url}>{link.url}</a>
+                        <a href={link.url} target="#">
+                          {link.url}
+                        </a>
                       </span>
                     )}
                   </div>

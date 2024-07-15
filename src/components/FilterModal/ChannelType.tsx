@@ -1,9 +1,10 @@
 import Layout, { FieldType } from 'components/Form';
 import { FC } from 'react';
-import { Control, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { Control, UseFormWatch, UseFormSetValue } from 'react-hook-form';
 import { IFilterForm } from '.';
 import { enumToTitleCase } from 'utils/misc';
 import { IRadioListOption } from 'components/RadioGroup';
+import { useDebounce } from 'hooks/useDebounce';
 
 export enum ChannelTypeEnum {
   MyChannels = 'MY_CHANNELS',
@@ -15,7 +16,7 @@ export enum ChannelTypeEnum {
 }
 
 interface IChannelTypeProps {
-  control: Control<IFilterForm, any>;
+  control: Control<IFilterForm>;
   watch: UseFormWatch<IFilterForm>;
   setValue: UseFormSetValue<IFilterForm>;
 }
@@ -59,13 +60,36 @@ export const channelTypeOptions: IRadioListOption[] = [
   },
 ];
 
-const ChannelType: FC<IChannelTypeProps> = ({ control }) => {
+const ChannelType: FC<IChannelTypeProps> = ({ control, watch }) => {
+  const searchField = [
+    {
+      type: FieldType.Input,
+      control,
+      name: 'channelTypeSearch',
+      placeholder: 'Search',
+      isClearable: true,
+      leftIcon: 'search',
+      dataTestId: `channel-type-search`,
+    },
+  ];
+
+  const debouncedChannelTypeSearchValue = useDebounce(
+    watch('channelTypeSearch') || '',
+    300,
+  );
+
+  const filteredChannelTypeOptions = channelTypeOptions.filter((option) =>
+    enumToTitleCase(option.data.value)
+      .toLowerCase()
+      .includes(debouncedChannelTypeSearchValue.toLowerCase()),
+  );
+
   const channelTypeFields = [
     {
       type: FieldType.Radio,
       name: 'channelTypeRadio',
       control,
-      radioList: channelTypeOptions,
+      radioList: filteredChannelTypeOptions,
       labelRenderer: (option: IRadioListOption) => (
         <div className="ml-2.5 cursor-pointer text-xs">
           {enumToTitleCase(option.data.value)}
@@ -77,6 +101,7 @@ const ChannelType: FC<IChannelTypeProps> = ({ control }) => {
 
   return (
     <div className="px-2 py-4">
+      <Layout fields={searchField} />
       <div className="max-h-[330px] min-h-[330px] overflow-y-auto">
         <Layout fields={channelTypeFields} />
       </div>
