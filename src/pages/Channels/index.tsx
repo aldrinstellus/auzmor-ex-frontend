@@ -258,10 +258,10 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
             ))
           ) : (
             <>
-              {channelIds.map(({ id }) => (
+              {channelIds.map(({ id }, index) => (
                 <div key={id}>
                   <ChannelRow channel={channels[id]} />
-                  <Divider />
+                  {index !== channelIds.length - 1 && <Divider />}
                 </div>
               ))}
             </>
@@ -345,7 +345,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
         )}
         {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
         {isFetchingNextPage && (
-          <div className="h-12 w-12 flex items-center justify-center">
+          <div className="h-12 w-full flex items-center justify-center">
             <PageLoader />
           </div>
         )}

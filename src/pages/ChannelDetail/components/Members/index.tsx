@@ -113,8 +113,10 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
     mutationKey: ['bulk-channel-request-accept'],
     mutationFn: (payload: { approve?: string[] }) =>
       bulkChannelRequestUpdate(channelData!.id, payload),
-    onSettled: () => {
-      queryClient.invalidateQueries(['channel-requests'], { exact: false });
+    onSettled: async () => {
+      await queryClient.invalidateQueries(['channel-requests'], {
+        exact: false,
+      });
     },
   });
 
@@ -123,8 +125,10 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
     mutationKey: ['bulk-channel-request-reject'],
     mutationFn: (payload: { reject?: Record<string, any>[] }) =>
       bulkChannelRequestUpdate(channelData!.id, payload),
-    onSettled: () => {
-      queryClient.invalidateQueries(['channel-requests'], { exact: false });
+    onSettled: async () => {
+      await queryClient.invalidateQueries(['channel-requests'], {
+        exact: false,
+      });
     },
   });
 
@@ -303,13 +307,16 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
                       labelClassName="!font-semibold !text-neutral-700 group-hover:!text-primary-600 group-active:text-primary-700"
                       variant={Variant.Tertiary}
                       onClick={() => {
-                        bulkRequestAcceptMutation
-                          .mutateAsync({
+                        bulkRequestAcceptMutation.mutate(
+                          {
                             approve: selectedEntities.map(
                               (entity) => entity.id,
                             ),
-                          })
-                          .then(() => reset());
+                          },
+                          {
+                            onSettled: () => reset(),
+                          },
+                        );
                       }}
                       loading={bulkRequestAcceptMutation.isLoading}
                     />
@@ -317,7 +324,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
               },
               {
                 key: 'decline',
-                component: (selectedEntities: IChannelRequest[]) => (
+                component: (selectedEntities: IChannelRequest[], reset) => (
                   <Button
                     label="Decline"
                     leftIcon="delete"
@@ -326,12 +333,17 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
                     labelClassName="!font-semibold !text-neutral-700 group-hover:!text-primary-600 group-active:text-primary-700"
                     variant={Variant.Tertiary}
                     onClick={() =>
-                      bulkRequestRejectMutation.mutate({
-                        reject: selectedEntities.map((entity) => ({
-                          id: entity.id,
-                          reason: 'Not eligible',
-                        })),
-                      })
+                      bulkRequestRejectMutation.mutate(
+                        {
+                          reject: selectedEntities.map((entity) => ({
+                            id: entity.id,
+                            reason: 'Not eligible',
+                          })),
+                        },
+                        {
+                          onSettled: () => reset(),
+                        },
+                      )
                     }
                     loading={bulkRequestRejectMutation.isLoading}
                   />
