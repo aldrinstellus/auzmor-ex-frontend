@@ -64,11 +64,13 @@ const ProfileActivityFeed: FC<IProfileActivityFeedProps> = ({
     return (
       <div className="pt-2">
         <CreatePostCard openModal={openModal} />
-        <PostBuilder
-          open={open}
-          openModal={openModal}
-          closeModal={closeModal}
-        />
+        {open && (
+          <PostBuilder
+            open={open}
+            openModal={openModal}
+            closeModal={closeModal}
+          />
+        )}
         <div className="pt-6">
           {myProfileFeedLoading ? (
             <SkeletonLoader />
