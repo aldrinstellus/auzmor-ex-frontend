@@ -88,7 +88,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
     isFiltersEmpty({
       limit: 30,
       q: debouncedSearchValue,
-      visiblity:
+      visibility:
         filters?.visibility == ChannelVisibilityEnum.All
           ? undefined
           : filters?.visibility,
