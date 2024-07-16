@@ -104,7 +104,6 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
     }),
   );
 
-  console.log(filters?.sort);
   const channelRequests =
     channelRequestData?.pages?.flatMap((page) => {
       return page?.data?.result?.data.map((request: IChannelRequest) => {
