@@ -45,7 +45,7 @@ export interface IChannel {
   banner?: { original: string };
   createdBy?: IUser;
   updatedBy?: IUser;
-  member: { role: CHANNEL_ROLE; bookmarked: boolean };
+  member: { id: string; role: CHANNEL_ROLE; bookmarked: boolean };
   joinRequest: { status: CHANNEL_MEMBER_STATUS; id?: string } | null;
 }
 
