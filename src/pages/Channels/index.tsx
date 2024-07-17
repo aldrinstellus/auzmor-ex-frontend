@@ -55,13 +55,13 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
       fetchNextPage();
     }
   }, [inView]);
+
   useEffect(() => {
     setFilters({
       visibility: ChannelVisibilityEnum.All,
       channelType: ChannelTypeEnum.MyChannels,
     });
   }, []);
-  // useEffect(() => () => clearFilters(), []);
 
   const { watch } = filterForm;
   const searchValue = watch('search');
@@ -235,8 +235,8 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
             illustration="noChannelFound"
             className="py-4 w-full"
             onClearSearch={() => {}}
-            labelHeader="No channels yet"
-            message={<p>Channels created will be visible here</p>}
+            labelHeader={t('noChannelsYet.header')}
+            message={<p>{t('noChannelsYet.message')}</p>}
             hideClearBtn
             dataTestId={`$channel-noresult`}
           />

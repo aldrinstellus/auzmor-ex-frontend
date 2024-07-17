@@ -46,27 +46,33 @@ const ChannelRow: FC<IChannelRowProps> = ({ channel }) => {
       updateChannel(id, { status: CHANNEL_STATUS.ACTIVE }),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onError: (error) => {
-      toast(<FailureToast content="Error archiing channel" dataTestId="" />, {
-        closeButton: (
-          <Icon name="closeCircleOutline" color="text-red-500" size={20} />
-        ),
-        style: {
-          border: `1px solid ${twConfig.theme.colors.red['300']}`,
-          borderRadius: '6px',
-          display: 'flex',
-          alignItems: 'center',
+      toast(
+        <FailureToast
+          content={t('channelRow.errorUnarchivingChannel')}
+          dataTestId=""
+        />,
+        {
+          closeButton: (
+            <Icon name="closeCircleOutline" color="text-red-500" size={20} />
+          ),
+          style: {
+            border: `1px solid ${twConfig.theme.colors.red['300']}`,
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          autoClose: TOAST_AUTOCLOSE_TIME,
+          transition: slideInAndOutTop,
+          theme: 'dark',
         },
-        autoClose: TOAST_AUTOCLOSE_TIME,
-        transition: slideInAndOutTop,
-        theme: 'dark',
-      });
+      );
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: ['channel'] });
       toast(
         <SuccessToast
-          content="Channel has been unarchived successfully"
+          content={t('channelRow.successUnarchivingChannel')}
           dataTestId="channel-toaster-message"
         />,
         {
@@ -179,13 +185,13 @@ const ChannelRow: FC<IChannelRowProps> = ({ channel }) => {
         </div>
         <div className="flex items-end flex-col gap-3">
           <p className="text-xs text-neutral-500">
-            Archived{' '}
+            {t('channelRow.archivedOn')}
             {channel.updatedAt
-              ? `on ${formatDate(channel.updatedAt, currentTimezone)}`
+              ? ` ${formatDate(channel.updatedAt, currentTimezone)}`
               : ''}
             {channel.updatedBy ? (
               <span className="text-primary-500 font-bold">
-                {`by ${getFullName(channel.updatedBy)}`}
+                {` ${t('channelRow.by')} ${getFullName(channel.updatedBy)}`}
               </span>
             ) : null}
           </p>
