@@ -150,7 +150,7 @@ const Feed: FC<IFeedProps> = ({
   const [open, openModal, closeModal] = useModal(undefined, false);
   const { user } = useAuth();
   const { isAdmin } = useRole();
-  const { feed } = useFeedStore();
+  const { feed, setActiveFeedPostCount } = useFeedStore();
   const { pathname } = useLocation();
   const { ref, inView } = useInView();
   const [searchParams] = useSearchParams();
@@ -291,6 +291,8 @@ const Feed: FC<IFeedProps> = ({
         isRegularPost(feed[post.id], currentDate, isAdmin),
       )
     : [];
+
+  useEffect(() => setActiveFeedPostCount(feedIds.length), [feedIds]);
 
   const clearAppliedFilters = () => {
     setAppliedFeedFilters({
