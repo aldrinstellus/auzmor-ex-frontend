@@ -7,6 +7,7 @@ import AudienceRowSkeleton from './AudienceRowSkeleton';
 import { AudienceEntityType } from 'queries/post';
 import { useInfiniteAudience } from 'queries/audience';
 import { isFiltersEmpty } from 'utils/misc';
+import useProduct from 'hooks/useProduct';
 export interface IAudienceTabProps {
   entity: 'apps' | 'posts';
   entityId: string;
@@ -18,12 +19,13 @@ const AudienceTab: FC<IAudienceTabProps> = ({
   entityId,
   entityType,
 }) => {
+  const { isLxp } = useProduct();
+  isLxp ? (entityType = AudienceEntityType.Channel) : entityType;
   const rootId = `${entityId}-${entityType}-${entity}`;
   const { ref, inView } = useInView({
     root: document.getElementById(rootId),
     rootMargin: '20%',
   });
-
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useInfiniteAudience(entity, entityId, isFiltersEmpty({ entityType }));
 
