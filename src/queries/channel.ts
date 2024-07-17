@@ -74,6 +74,21 @@ export const updateMemberRole = async (payload: {
   return data;
 };
 
+// patch req. to update the channel members roles.
+export const updateBookmarkChannel = async (payload: {
+  memberId: string;
+  channelId?: string;
+  bookmark: boolean;
+}) => {
+  const { data } = await apiService.patch(
+    `channels/${payload?.channelId}/members/${payload?.memberId}`,
+    {
+      bookmark: payload?.bookmark,
+    },
+  );
+  return data;
+};
+
 // get channel by id -> channels/:id
 export const getChannelDetails = async (
   id: string,

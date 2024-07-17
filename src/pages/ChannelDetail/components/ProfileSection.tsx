@@ -3,7 +3,6 @@ import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ChannelVisibilityEnum,
-  IChannel,
   useChannelStore,
 } from '../../../stores/channelStore';
 import PopupMenu from 'components/PopupMenu';
@@ -29,6 +28,7 @@ import {
   deleteJoinChannelRequest,
   joinChannelRequest,
   leaveChannel,
+  updateBookmarkChannel,
   updateChannel,
 } from 'queries/channel';
 import { failureToastConfig } from 'components/Toast/variants/FailureToast';
@@ -44,7 +44,6 @@ import AddChannelMembersModal from './AddChannelMembersModal';
 import { useChannelRole } from 'hooks/useChannelRole';
 
 type ProfileSectionProps = {
-  channelData: IChannel;
   tabs?: ITab[];
   activeTabIndex?: number;
 };
@@ -55,7 +54,6 @@ export enum TabStatus {
 }
 
 const ProfileSection: React.FC<ProfileSectionProps> = ({
-  channelData,
   tabs = [],
   activeTabIndex,
 }) => {
@@ -74,13 +72,14 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     isChannelOwner,
     isChannelMember,
     isChannelAdmin,
-  } = useChannelRole(channelData.id);
+  } = useChannelRole(channelId);
   const canEdit = isUserAdminOrChannelAdmin;
 
   const channelCoverImageRef = useRef<HTMLInputElement>(null);
   const showEditProfile = useRef<boolean>(true);
   const [coverImageName, setCoverImageName] = useState<string>('');
   const updateChannelStore = useChannelStore((state) => state.updateChannel);
+  const channelData = useChannelStore((state) => state.channels)[channelId];
 
   const [openEditImage, openEditImageModal, closeEditImageModal] = useModal(
     undefined,
@@ -109,6 +108,27 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     channelData?.settings?.visibility === ChannelVisibilityEnum.Private &&
     !!!channelData?.member &&
     !!channelData?.joinRequest;
+
+  const updateBookmarkMutation = useMutation({
+    mutationKey: ['update-channel-bookmark'],
+    mutationFn: updateBookmarkChannel,
+    onMutate: ({ bookmark }) => {
+      updateChannelStore(channelId, {
+        ...channelData,
+        member: { ...channelData.member, bookmarked: bookmark },
+      });
+      return { channelData };
+    },
+    onError: (error, variables, context) => {
+      if (context?.channelData) {
+        updateChannelStore(channelId, context.channelData);
+      }
+      failureToastConfig({
+        content: `Error Updating bookmark`,
+        dataTestId: 'channel-bookmark-toaster',
+      });
+    },
+  });
 
   const deleteCoverImageMutation = useMutation({
     mutationKey: ['update-users-cover-image'],
@@ -328,15 +348,19 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               dataTestId="edit-profilepic"
             />
           </div> */}
-          {channelData?.member?.bookmarked && (
-            <div className="bg-white rounded-full p-2 cursor-pointer">
-              <Icon
-                name="star"
-                size={16}
-                className="text-neutral-400"
-                dataTestId="edit-profilepic"
-              />
-            </div>
+          {channelData?.member && (
+            <IconButton
+              icon={channelData?.member?.bookmarked ? 'star' : 'starOutline'}
+              variant={IconVariant.Secondary}
+              className="bg-white"
+              onClick={() =>
+                updateBookmarkMutation.mutate({
+                  memberId: channelData?.member.id,
+                  channelId,
+                  bookmark: !!!channelData?.member?.bookmarked,
+                })
+              }
+            />
           )}
           <div className="cursor-pointer">
             {(isChannelMember || isUserAdminOrChannelAdmin) && (

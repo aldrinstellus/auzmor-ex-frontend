@@ -129,11 +129,7 @@ const ChannelDetail: FC<AppProps> = ({ activeTabIndex = 0 }) => {
 
   return (
     <div className="flex flex-col  w-full ">
-      <ProfileSection
-        activeTabIndex={activeTabIndex}
-        tabs={tabs}
-        channelData={channelData}
-      />
+      <ProfileSection activeTabIndex={activeTabIndex} tabs={tabs} />
     </div>
   );
 };
