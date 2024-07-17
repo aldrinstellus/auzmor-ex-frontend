@@ -70,20 +70,18 @@ const AdminsWidget = () => {
               )}
             </div>
           ))}
-          {admins?.length > 3 && (
-            <div className="mt-3">
-              <Button
-                variant={Variant.Secondary}
-                size={Size.Small}
-                className="w-full"
-                label="View all admins"
-                dataTestId="my-admin-cta"
-                onClick={() => {
-                  navigate(`/channels/${channelId}/members?type=All_Members`);
-                }}
-              />
-            </div>
-          )}
+          <div className="mt-3">
+            <Button
+              variant={Variant.Secondary}
+              size={Size.Small}
+              className="w-full"
+              label="View all admins"
+              dataTestId="my-admin-cta"
+              onClick={() => {
+                navigate(`/channels/${channelId}/members?type=All_Members`);
+              }}
+            />
+          </div>
         </div>
       </div>
     </Card>
