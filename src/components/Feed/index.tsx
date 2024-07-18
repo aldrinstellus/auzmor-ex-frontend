@@ -15,7 +15,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useInView } from 'react-intersection-observer';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import { useFeedStore } from 'stores/feedStore';
+import { FeedModeEnum, useFeedStore } from 'stores/feedStore';
 import { getLearnUrl, isFiltersEmpty, isRegularPost } from 'utils/misc';
 import NoPosts from 'images/NoPostsFound.png';
 import SkeletonLoader from './components/SkeletonLoader';
@@ -90,12 +90,6 @@ export const widgetMapping = {
   [WidgetEnum.AnnouncementCard]: AnnouncementCard,
 };
 
-export enum FeedModeEnum {
-  Default = 'DEFAULT',
-  Channel = 'CHANNEL',
-  Personal = 'PERSONAL',
-}
-
 interface IFeedProps {
   leftWidgets: WidgetEnum[];
   rightWidgets: WidgetEnum[];
@@ -150,7 +144,7 @@ const Feed: FC<IFeedProps> = ({
   const [open, openModal, closeModal] = useModal(undefined, false);
   const { user } = useAuth();
   const { isAdmin } = useRole();
-  const { feed, setActiveFeedPostCount } = useFeedStore();
+  const { feed, setActiveFeedPostCount, setFeedMode } = useFeedStore();
   const { pathname } = useLocation();
   const { ref, inView } = useInView();
   const [searchParams] = useSearchParams();
@@ -219,6 +213,10 @@ const Feed: FC<IFeedProps> = ({
       fetchNextPage();
     }
   }, [inView]);
+
+  useEffect(() => {
+    setFeedMode(mode);
+  }, [mode]);
 
   useEffect(() => {
     if (!searchParams.has('hashtag')) {
