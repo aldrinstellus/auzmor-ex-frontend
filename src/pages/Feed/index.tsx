@@ -1,9 +1,10 @@
 import { FC } from 'react';
 import { usePageTitle } from 'hooks/usePageTitle';
-import Feed, { FeedModeEnum, WidgetEnum } from 'components/Feed';
+import Feed, { WidgetEnum } from 'components/Feed';
 import { useLocation } from 'react-router-dom';
 import useMediaQuery from 'hooks/useMediaQuery';
 import { CELEBRATION_TYPE } from 'components/CelebrationWidget';
+import { FeedModeEnum } from 'stores/feedStore';
 
 interface IHomeFeedProps {}
 

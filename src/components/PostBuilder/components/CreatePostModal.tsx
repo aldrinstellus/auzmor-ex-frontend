@@ -47,7 +47,6 @@ import { useCreatePostUtilityStore } from 'stores/createPostUtilityStore';
 import useModal from 'hooks/useModal';
 import ConfirmationBox from 'components/ConfirmationBox';
 import WelcomePost from 'images/ChannelCover/WelcomePost.png';
-import * as _ from 'lodash';
 export interface IPostMenu {
   id: number;
   label: string;
@@ -106,7 +105,7 @@ const CreatePostModal: FC<ICreatePostModal> = ({
 
   const mediaRef = useRef<IMedia[]>([]);
 
-  const { feed, updateFeed, setFeed } = useFeedStore();
+  const { feed, activeFeedPostCount, updateFeed, setFeed } = useFeedStore();
 
   const queryClient = useQueryClient();
 
@@ -434,10 +433,8 @@ const CreatePostModal: FC<ICreatePostModal> = ({
           exact: false,
         });
       }
-      // for empty feed need to invalidate feed query for first
-      if (_.isEmpty(feed)) {
+      if (activeFeedPostCount === 0)
         await queryClient.invalidateQueries(['feed']);
-      }
       await queryClient.invalidateQueries(['feed-announcements-widget']);
       await queryClient.invalidateQueries(['post-announcements-widget']);
     },

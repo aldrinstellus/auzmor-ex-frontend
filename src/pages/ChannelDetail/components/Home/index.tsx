@@ -1,7 +1,8 @@
 import { IChannel } from 'stores/channelStore';
 import { FC } from 'react';
-import Feed, { FeedModeEnum, WidgetEnum } from 'components/Feed';
+import Feed, { WidgetEnum } from 'components/Feed';
 import { ChannelRequestWidgetModeEnum } from 'components/ChannelRequestWidget/components/ChannelWidgetUser';
+import { FeedModeEnum } from 'stores/feedStore';
 
 type HomeProps = {
   channelData: IChannel;

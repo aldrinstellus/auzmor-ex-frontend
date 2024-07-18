@@ -1,8 +1,8 @@
-import { FeedModeEnum } from 'components/Feed';
 import Icon from 'components/Icon';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
+import { FeedModeEnum } from 'stores/feedStore';
 
 interface IBookmarkFeedHeaderProps {
   mode?: FeedModeEnum;
