@@ -15,7 +15,7 @@ export type MembersWidgetProps = {
   channelData: IChannel;
 };
 const MembersWidget: FC<MembersWidgetProps> = ({ channelData }) => {
-  const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
+  const { isUserAdminOrChannelAdmin } = useChannelRole(channelData.id);
   const [show, setShow] = useState(true);
   const { t } = useTranslation('channelDetail');
   const { channelId } = useParams();
@@ -58,7 +58,6 @@ const MembersWidget: FC<MembersWidgetProps> = ({ channelData }) => {
           >
             <div className="mt-3">
               <AvatarList
-                display={8}
                 className="!-space-x-5"
                 users={users || []}
                 moreCount={users?.length}
@@ -82,7 +81,9 @@ const MembersWidget: FC<MembersWidgetProps> = ({ channelData }) => {
                   className="w-full"
                   label="View all members"
                   dataTestId="my-teams-cta"
-                  onClick={() => navigate(`/channels/${channelId}/members`)}
+                  onClick={() =>
+                    navigate(`/channels/${channelId}/members?type=All_Members`)
+                  }
                 />
               )}
             </div>

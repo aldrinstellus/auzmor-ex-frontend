@@ -10,7 +10,7 @@
   "category": "Category",
   "team": "Team",
   "clear-filters": "Clear filters",
-  "view-All-CTA": "view ALL",
+  "view-All-CTA": "View All",
   "empty-state": {
     "add-app-CTA": "Add Apps",
     "empty-state-message": "There is no app found in your organization right now.",

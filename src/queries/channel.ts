@@ -74,9 +74,28 @@ export const updateMemberRole = async (payload: {
   return data;
 };
 
+// patch req. to update the channel members roles.
+export const updateBookmarkChannel = async (payload: {
+  memberId: string;
+  channelId?: string;
+  bookmark: boolean;
+}) => {
+  const { data } = await apiService.patch(
+    `channels/${payload?.channelId}/members/${payload?.memberId}`,
+    {
+      bookmark: payload?.bookmark,
+    },
+  );
+  return data;
+};
+
 // get channel by id -> channels/:id
-export const getChannelDetails = async (id: string) => {
+export const getChannelDetails = async (
+  id: string,
+  setChannel: (channel: IChannel) => void,
+) => {
   const data = await apiService.get(`/channels/${id}`);
+  if (data?.data?.result?.data) setChannel(data?.data?.result?.data);
   return data;
 };
 
@@ -88,7 +107,9 @@ export const createChannel = async (payload: IChannelPayload) => {
 export const updateChannel = async (id: string, payload: IChannelPayload) => {
   await apiService.patch(`/channels/${id}`, payload);
 };
-
+export const leaveChannel = async (channelId: string) => {
+  await apiService.delete(`/channels/${channelId}/leave`);
+};
 // delete team by id -> channel/:id
 export const deleteChannel = async (id: string) => {
   const data = await apiService.delete(`/channels/${id}`);
@@ -378,9 +399,10 @@ export const useChannelLinksWidget = (
   });
 
 export const useChannelDetails = (channelId: string) => {
+  const setChannel = useChannelStore((action) => action.setChannel);
   return useQuery({
     queryKey: ['channel', channelId],
-    queryFn: () => getChannelDetails(channelId),
+    queryFn: () => getChannelDetails(channelId, setChannel),
     staleTime: 15 * 60 * 1000,
   });
 };

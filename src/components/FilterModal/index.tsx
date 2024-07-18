@@ -26,6 +26,7 @@ import DocumentType from './DocumentType';
 import DocumentModified from './DocumentModifed';
 import Roles from './Roles';
 import { Role } from 'utils/enum';
+import ByPeople, { ByPeopleEnum } from './ByPeople';
 
 export interface IFilterForm {
   visibilityRadio: ChannelVisibilityEnum;
@@ -39,13 +40,17 @@ export interface IFilterForm {
   documentModifiedRadio: any;
   teamCheckbox: ICheckboxListOption[];
   roleCheckbox: ICheckboxListOption[];
+  byPeopleCheckbox: ICheckboxListOption[];
   locationSearch: string;
   departmentSearch: string;
   categorySearch: string;
   teamSearch: string;
   statusSearch: string;
   roleSearch: string;
+  byPeopleSearch: string;
   docUserSearch: string;
+  visibilitySearch: string;
+  channelTypeSearch: string;
 }
 
 export interface IStatus {
@@ -54,6 +59,10 @@ export interface IStatus {
 }
 export interface IRole {
   id: Role;
+  name: string;
+}
+export interface IBypeople {
+  id: ByPeopleEnum;
   name: string;
 }
 
@@ -80,6 +89,7 @@ export interface IAppliedFilters {
   docTypeCheckbox?: IDocType[];
   docPeopleCheckbox?: any;
   docModifiedRadio?: any;
+  byPeople?: IBypeople[];
 }
 
 interface IFilterModalProps {
@@ -113,6 +123,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     docPeopleCheckbox: [],
     docModifiedRadio: [],
     roles: [],
+    byPeople: [],
   },
   onApply,
   onClear,
@@ -132,6 +143,10 @@ const FilterModal: FC<IFilterModalProps> = ({
       roleCheckbox: (appliedFilters.roles || []).map((role) => ({
         data: role,
         dataTestId: `role-${role.name}`,
+      })),
+      byPeopleCheckbox: (appliedFilters.byPeople || []).map((people: any) => ({
+        data: people,
+        dataTestId: `byPeople-${people.name}`,
       })),
       locationCheckbox: (appliedFilters.locations || []).map((location) => ({
         data: location,
@@ -176,6 +191,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     roleCheckbox,
     documentTypeCheckbox,
     documentPeopleCheckbox,
+    byPeopleCheckbox,
   ] = watch([
     'locationCheckbox',
     'departmentCheckbox',
@@ -185,6 +201,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     'roleCheckbox',
     'documentTypeCheckbox',
     'documentPeopleCheckbox',
+    'byPeopleCheckbox',
   ]);
 
   const onSubmit = (formData: IFilterForm) => {
@@ -211,8 +228,10 @@ const FilterModal: FC<IFilterModalProps> = ({
       ),
       docModifiedRadio: formData.documentModifiedRadio,
       visibility: formData.visibilityRadio,
-
       channelType: formData.channelTypeRadio,
+      byPeople: formData.byPeopleCheckbox.map(
+        (people) => people.data,
+      ) as IBypeople[],
     } as unknown as IAppliedFilters);
   };
 
@@ -300,14 +319,20 @@ const FilterModal: FC<IFilterModalProps> = ({
       FilterModalVariant.Team,
       FilterModalVariant.ChannelsListing,
       FilterModalVariant.Document,
-      FilterModalVariant.ChannelMember,
-      FilterModalVariant.ChannelsMangeAcess,
     ],
     'status-filters': [
       FilterModalVariant.Team,
       FilterModalVariant.App,
       FilterModalVariant.ChannelsListing,
       FilterModalVariant.Document,
+    ],
+    'by-people-filter': [
+      FilterModalVariant.Team,
+      FilterModalVariant.App,
+      FilterModalVariant.ChannelsListing,
+      FilterModalVariant.Document,
+      FilterModalVariant.Orgchart,
+      FilterModalVariant.People,
     ],
   };
 
@@ -387,6 +412,7 @@ const FilterModal: FC<IFilterModalProps> = ({
       isHidden: filterOptionMappings['channel-type-filters'].includes(variant),
       dataTestId: 'filterby-channel-type',
     },
+
     {
       label: () => (
         <div className="flex items-center">
@@ -503,6 +529,24 @@ const FilterModal: FC<IFilterModalProps> = ({
       ),
       isHidden: filterOptionMappings['channel-roles-filters'].includes(variant),
       dataTestId: 'filterby-roles',
+    },
+    {
+      label: () => (
+        <div className="flex items-center">
+          <div>By people </div>
+          {!!byPeopleCheckbox.length && (
+            <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
+              {byPeopleCheckbox.length}
+            </div>
+          )}
+        </div>
+      ),
+      key: 'by-people-filter',
+      component: () => (
+        <ByPeople control={control} watch={watch} setValue={setValue} />
+      ),
+      isHidden: filterOptionMappings['by-people-filter'].includes(variant),
+      dataTestId: 'filterby-Bypeople',
     },
   ].filter((filter) => !filter.isHidden);
 

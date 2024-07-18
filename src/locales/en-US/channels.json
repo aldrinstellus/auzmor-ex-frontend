@@ -52,7 +52,8 @@
       "location": "Location"
     },
     "title": "Members",
-    "addMemberCTA": "Add members"
+    "addMemberCTA": "Add members",
+    "searchMembers": "Search members"
   },
   "privateChannel": {
     "bannerHeader": "This is a private channel. You must be a member to view the channel content",
@@ -106,5 +107,6 @@
     "successUnarchivingChannel": "Channel has been unarchived successfully",
     "archivedOn": "Archived on",
     "by": "by"
-  }
+  },
+  "withdrawRequestSuccess": "Request has been withdrawn successfully"
 }

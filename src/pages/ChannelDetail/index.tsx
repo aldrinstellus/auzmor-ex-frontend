@@ -30,9 +30,9 @@ const ChannelDetail: FC<AppProps> = ({ activeTabIndex = 0 }) => {
   }
 
   // fetch channel data
-  const { data, isLoading } = useChannelDetails(channelId || '');
+  const { data, isLoading } = useChannelDetails(channelId!);
   const channelData: IChannel = data?.data?.result?.data || null;
-  const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
+  const { isUserAdminOrChannelAdmin } = useChannelRole(channelId!);
 
   const showRequestBtn =
     channelData?.settings?.visibility === ChannelVisibilityEnum.Private &&
@@ -129,11 +129,7 @@ const ChannelDetail: FC<AppProps> = ({ activeTabIndex = 0 }) => {
 
   return (
     <div className="flex flex-col  w-full ">
-      <ProfileSection
-        activeTabIndex={activeTabIndex}
-        tabs={tabs}
-        channelData={channelData}
-      />
+      <ProfileSection activeTabIndex={activeTabIndex} tabs={tabs} />
     </div>
   );
 };

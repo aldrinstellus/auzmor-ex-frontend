@@ -38,7 +38,7 @@ const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
     mode: 'onChange',
     defaultValues: { search: '', roles: parsedRole },
   });
-  const { watch, control } = filterForm;
+  const { watch, control, resetField } = filterForm;
 
   const roles = watch('roles');
 
@@ -69,6 +69,12 @@ const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
       userRole: roles?.value,
       userStatus: filters?.status?.length
         ? filters?.status?.map((eachStatus: any) => eachStatus.id).join(',')
+        : undefined,
+      userTeam: filters?.teams?.length
+        ? filters?.teams?.map((eachStatus: any) => eachStatus.id).join(',')
+        : undefined,
+      byPeople: filters?.byPeople?.length
+        ? filters?.byPeople?.map((eachStatus: any) => eachStatus.id).join(',')
         : undefined,
     }),
   });
@@ -127,7 +133,7 @@ const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
         </div>
         <FilterMenu
           filterForm={filterForm}
-          searchPlaceholder={t('searchChannels')}
+          searchPlaceholder={t('members.searchMembers')}
           dataTestIdFilter="channel-filter-icon"
           dataTestIdSort="channel-sort-icon"
           dataTestIdSearch="channel-search"
@@ -147,11 +153,22 @@ const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
           </div>
         ) : channelMembers?.length === 0 ? (
           <NoDataFound
-            illustration="noChannelFound"
             className="py-4 w-full"
-            onClearSearch={() => {}}
-            hideClearBtn
-            dataTestId={`$channel-noresult`}
+            searchString={searchValue}
+            illustration="noResult"
+            message={
+              <p>
+                Sorry we can&apos;t find the profile you are looking for.
+                <br /> Please check the spelling or try again.
+              </p>
+            }
+            clearBtnLabel={searchValue ? 'Clear Search' : 'Clear Filters'}
+            onClearSearch={() => {
+              searchValue && resetField
+                ? resetField('search', { defaultValue: '' })
+                : clearFilters();
+            }}
+            dataTestId="people"
           />
         ) : (
           <ManageAccessTable channelData={channelData} data={channelMembers} />

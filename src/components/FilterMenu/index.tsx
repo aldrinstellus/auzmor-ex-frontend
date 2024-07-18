@@ -1,5 +1,6 @@
 import FilterModal, {
   FilterModalVariant,
+  IBypeople,
   IRole,
   IStatus,
 } from 'components/FilterModal';
@@ -19,9 +20,10 @@ import Icon from 'components/Icon';
 import { IDepartmentAPI } from 'queries/department';
 import { ILocationAPI } from 'queries/location';
 import { useTranslation } from 'react-i18next';
-import { ChannelVisibilityEnum } from 'stores/channelStore';
-import { ChannelTypeEnum } from 'components/FilterModal/ChannelType';
+// import { ChannelVisibilityEnum } from 'stores/channelStore';
+// import { ChannelTypeEnum } from 'components/FilterModal/ChannelType';
 import { ICategory } from 'queries/category';
+import { ITeam } from 'queries/teams';
 
 export enum FilterKey {
   departments = 'departments',
@@ -29,6 +31,8 @@ export enum FilterKey {
   status = 'status',
   roles = 'roles',
   categories = 'categories',
+  teams = 'teams',
+  byPeople = 'byPeople',
 }
 
 interface IFilterMenu {
@@ -57,7 +61,11 @@ const FilterMenu: FC<IFilterMenu> = ({
   variant,
 }) => {
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
-  const { filters, setFilters } = useAppliedFiltersStore();
+  const {
+    filters,
+    setFilters,
+    clearFilters: clearAppliedFilters,
+  } = useAppliedFiltersStore();
   const { control, getValues, formState } = filterForm;
   const { parseParams, updateParam, serializeFilter, deleteParam } =
     useURLParams();
@@ -89,8 +97,10 @@ const FilterMenu: FC<IFilterMenu> = ({
       teams: parseParams('teams') || [],
       visibility: parseParams('visibility') || [],
       channelType: parseParams('channelType') || [],
+      byPeople: parseParams('byPeople') || [],
       roles: parseParams('roles') || [],
     });
+    return () => clearAppliedFilters();
   }, []);
 
   const handleRemoveFilters = (key: FilterKey, id: any) => {
@@ -105,7 +115,6 @@ const FilterMenu: FC<IFilterMenu> = ({
       setFilters({ ...filters, [key]: updatedFilter });
     }
   };
-
   const clearFilters = () => {
     deleteParam('status');
     deleteParam('roles');
@@ -114,6 +123,7 @@ const FilterMenu: FC<IFilterMenu> = ({
     deleteParam('teams');
     deleteParam('categories');
     deleteParam('channelType');
+    deleteParam('byPeople');
     setFilters({
       ...filters,
       categories: [],
@@ -122,8 +132,9 @@ const FilterMenu: FC<IFilterMenu> = ({
       departments: [],
       locations: [],
       teams: [],
-      visibility: ChannelVisibilityEnum.All,
-      channeType: ChannelTypeEnum.MyChannels,
+      byPeople: [],
+      visibility: [],
+      channeType: [],
     });
   };
 
@@ -143,6 +154,7 @@ const FilterMenu: FC<IFilterMenu> = ({
               dataTestId={dataTestIdFilter}
             />
             <Sort
+              controlled
               setFilter={(sortValue) => {
                 setFilters({ sort: sortValue });
               }}
@@ -178,7 +190,9 @@ const FilterMenu: FC<IFilterMenu> = ({
         filters?.roles?.length ||
         filters?.departments?.length ||
         filters?.categories?.length ||
-        filters?.locations?.length ? (
+        filters?.locations?.length ||
+        filters?.byPeople?.length ||
+        filters?.teams?.length ? (
           <div className="flex justify-between items-start">
             <div className="flex items-center space-x-2 flex-wrap gap-y-2">
               <div className="text-base text-neutral-500 whitespace-nowrap">
@@ -204,6 +218,54 @@ const FilterMenu: FC<IFilterMenu> = ({
                     className="cursor-pointer"
                     onClick={() =>
                       handleRemoveFilters(FilterKey.status, status.id)
+                    }
+                    dataTestId={`applied-filter-close`}
+                  />
+                </div>
+              ))}
+              {filters?.byPeople?.map((people: IBypeople) => (
+                <div
+                  key={people.id}
+                  className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1 hover:text-primary-600 hover:border-primary-600 cursor-pointer group"
+                  data-testid={`status-filterby-${people.name}`}
+                  onClick={() =>
+                    handleRemoveFilters(FilterKey.byPeople, people.id)
+                  }
+                >
+                  <div className="mr-1 text-neutral-500 whitespace-nowrap">
+                    By people{' '}
+                    <span className="text-primary-500">{people.name}</span>
+                  </div>
+                  <Icon
+                    name="close"
+                    size={16}
+                    color="text-neutral-900"
+                    className="cursor-pointer"
+                    onClick={() =>
+                      handleRemoveFilters(FilterKey.byPeople, people.id)
+                    }
+                    dataTestId={`applied-filter-close`}
+                  />
+                </div>
+              ))}
+
+              {filters?.teams?.map((team: ITeam) => (
+                <div
+                  key={team.id}
+                  className="border border-neutral-200 rounded-7xl px-3 py-1 flex bg-white capitalize text-sm font-medium items-center mr-1 hover:text-primary-600 hover:border-primary-600 cursor-pointer group"
+                  data-testid={`status-filterby-${team.name}`}
+                  onClick={() => handleRemoveFilters(FilterKey.teams, team.id)}
+                >
+                  <div className="mr-1 text-neutral-500 whitespace-nowrap">
+                    Teams <span className="text-primary-500">{team.name}</span>
+                  </div>
+                  <Icon
+                    name="close"
+                    size={16}
+                    color="text-neutral-900"
+                    className="cursor-pointer"
+                    onClick={() =>
+                      handleRemoveFilters(FilterKey.teams, team.id)
                     }
                     dataTestId={`applied-filter-close`}
                   />
@@ -330,6 +392,7 @@ const FilterMenu: FC<IFilterMenu> = ({
             roles: filters?.roles || [],
             visibility: filters?.visibility || [],
             channelType: filters?.channelType || [],
+            byPeople: filters?.byPeople || [],
           }}
           onApply={(appliedFilters) => {
             setFilters(appliedFilters);
@@ -345,6 +408,7 @@ const FilterMenu: FC<IFilterMenu> = ({
               roles: [],
               visibility: [],
               channelType: [],
+              byPeople: [],
             });
             closeFilterModal();
           }}

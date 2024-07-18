@@ -30,6 +30,9 @@ import RequestRow from './RequestRow';
 import { useMutation } from '@tanstack/react-query';
 import queryClient from 'utils/queryClient';
 import { useChannelRole } from 'hooks/useChannelRole';
+import { ShowingCount } from 'pages/Users/components/Teams';
+import { successToastConfig } from 'components/Toast/variants/SuccessToast';
+import { failureToastConfig } from 'components/Toast/variants/FailureToast';
 
 type AppProps = {
   channelData: IChannel;
@@ -37,7 +40,7 @@ type AppProps = {
 
 const Members: React.FC<AppProps> = ({ channelData }) => {
   const { t } = useTranslation('channels');
-  const { isUserAdminOrChannelAdmin } = useChannelRole(channelData);
+  const { isUserAdminOrChannelAdmin } = useChannelRole(channelData.id);
   const { filters, clearFilters, updateFilter } = useAppliedFiltersStore();
   useEffect(() => {
     clearFilters();
@@ -49,23 +52,29 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
     mode: 'onChange',
     defaultValues: { search: '' },
   });
-  const { watch } = filterForm;
+  const { watch, resetField } = filterForm;
   const searchValue = watch('search');
 
   const { searchParams } = useURLParams();
   const parsedTab = searchParams.get('type');
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
-
   const { data, isLoading } = useInfiniteChannelMembers({
     channelId: channelData?.id,
     q: isFiltersEmpty({
       q: searchValue,
+      sort: filters?.sort,
       userStatus: filters?.status?.length
         ? filters?.status?.map((eachStatus: any) => eachStatus.id).join(',')
         : undefined,
       userRole: filters?.roles?.length
         ? filters?.roles?.map((role: any) => role.id).join(',')
+        : undefined,
+      userTeam: filters?.teams?.length
+        ? filters?.teams?.map((eachStatus: any) => eachStatus.id).join(',')
+        : undefined,
+      byPeople: filters?.byPeople?.length
+        ? filters?.byPeople?.map((eachStatus: any) => eachStatus.id).join(',')
         : undefined,
     }),
   });
@@ -86,18 +95,46 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
     hasNextPage: hasChannelRequestNextPage,
     isFetchingNextPage: isChannelRequestFetchingNextPage,
     fetchNextPage: fetchChannelRequestNextPage,
-  } = useInfiniteChannelsRequest(channelData?.id, {
-    limit: 30,
-    status: CHANNEL_MEMBER_STATUS.PENDING,
-  });
+  } = useInfiniteChannelsRequest(
+    channelData?.id,
+    isFiltersEmpty({
+      limit: 30,
+      status: CHANNEL_MEMBER_STATUS.PENDING,
+      sort: filters?.sort,
+    }),
+  );
+
+  const channelRequests =
+    channelRequestData?.pages?.flatMap((page) => {
+      return page?.data?.result?.data.map((request: IChannelRequest) => {
+        try {
+          return request;
+        } catch (e) {
+          console.log('Error', { request });
+        }
+      });
+    }) || [];
 
   // Bulk accept channel request
   const bulkRequestAcceptMutation = useMutation({
     mutationKey: ['bulk-channel-request-accept'],
     mutationFn: (payload: { approve?: string[] }) =>
       bulkChannelRequestUpdate(channelData!.id, payload),
-    onSettled: () => {
-      queryClient.invalidateQueries(['channel-requests'], { exact: false });
+    onSuccess: () =>
+      successToastConfig({
+        content: 'Successfully accepted all selected requests',
+      }),
+    onError: () =>
+      failureToastConfig({
+        content: 'Something went wrong...! Please try again',
+      }),
+    onSettled: async () => {
+      await queryClient.invalidateQueries(['channel-requests'], {
+        exact: false,
+      });
+      await queryClient.invalidateQueries(['channel-members'], {
+        exact: false,
+      });
     },
   });
 
@@ -106,8 +143,21 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
     mutationKey: ['bulk-channel-request-reject'],
     mutationFn: (payload: { reject?: Record<string, any>[] }) =>
       bulkChannelRequestUpdate(channelData!.id, payload),
-    onSettled: () => {
-      queryClient.invalidateQueries(['channel-requests'], { exact: false });
+    onSuccess: () =>
+      successToastConfig({
+        content: 'Successfully declined all selected requests',
+      }),
+    onError: () =>
+      failureToastConfig({
+        content: 'Something went wrong...! Please try again',
+      }),
+    onSettled: async () => {
+      await queryClient.invalidateQueries(['channel-requests'], {
+        exact: false,
+      });
+      await queryClient.invalidateQueries(['channel-members'], {
+        exact: false,
+      });
     },
   });
 
@@ -160,7 +210,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
         </div>
         <FilterMenu
           filterForm={filterForm}
-          searchPlaceholder={t('searchChannels')}
+          searchPlaceholder={t('members.searchMembers')}
           dataTestIdFilter="channel-filter-icon"
           dataTestIdSort="channel-sort-icon"
           dataTestIdSearch="channel-search"
@@ -168,7 +218,14 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
         >
           <div className="flex items-center gap-2">
             <div className="text-neutral-500">
-              Showing {users?.length} results
+              <ShowingCount
+                isLoading={isLoading}
+                count={
+                  isGrid
+                    ? users?.length
+                    : channelRequestData?.pages[0]?.data?.result?.totalCount
+                }
+              />
             </div>
             <div className="relative">
               {isUserAdminOrChannelAdmin ? (
@@ -201,15 +258,25 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
             </div>
           </div>
         </FilterMenu>
-
         <div className="flex items-center gap-2">
-          {users?.length == 0 && (
+          {isGrid && users?.length == 0 && (
             <NoDataFound
-              illustration="noChannelFound"
               className="py-4 w-full"
-              onClearSearch={() => {}}
-              hideClearBtn
-              dataTestId={`$channel-noresult`}
+              searchString={searchValue}
+              illustration="noResult"
+              message={
+                <p>
+                  Sorry we can&apos;t find the Member you are looking for.
+                  <br /> Please check the spelling or try again.
+                </p>
+              }
+              clearBtnLabel={searchValue ? 'Clear Search' : 'Clear Filters'}
+              onClearSearch={() => {
+                searchValue && resetField
+                  ? resetField('search', { defaultValue: '' })
+                  : clearFilters();
+              }}
+              dataTestId="people"
             />
           )}
         </div>
@@ -255,19 +322,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
             entityRenderer={(entity) =>
               (<RequestRow request={entity as IChannelRequest} />) as ReactNode
             }
-            entityData={
-              channelRequestData?.pages?.flatMap((page) => {
-                return page?.data?.result?.data.map(
-                  (request: IChannelRequest) => {
-                    try {
-                      return request;
-                    } catch (e) {
-                      console.log('Error', { request });
-                    }
-                  },
-                );
-              }) || []
-            }
+            entityData={channelRequests}
             menuItems={[
               {
                 key: 'accept',
@@ -281,13 +336,16 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
                       labelClassName="!font-semibold !text-neutral-700 group-hover:!text-primary-600 group-active:text-primary-700"
                       variant={Variant.Tertiary}
                       onClick={() => {
-                        bulkRequestAcceptMutation
-                          .mutateAsync({
+                        bulkRequestAcceptMutation.mutate(
+                          {
                             approve: selectedEntities.map(
                               (entity) => entity.id,
                             ),
-                          })
-                          .then(() => reset());
+                          },
+                          {
+                            onSettled: () => reset(),
+                          },
+                        );
                       }}
                       loading={bulkRequestAcceptMutation.isLoading}
                     />
@@ -295,7 +353,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
               },
               {
                 key: 'decline',
-                component: (selectedEntities: IChannelRequest[]) => (
+                component: (selectedEntities: IChannelRequest[], reset) => (
                   <Button
                     label="Decline"
                     leftIcon="delete"
@@ -304,12 +362,17 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
                     labelClassName="!font-semibold !text-neutral-700 group-hover:!text-primary-600 group-active:text-primary-700"
                     variant={Variant.Tertiary}
                     onClick={() =>
-                      bulkRequestRejectMutation.mutate({
-                        reject: selectedEntities.map((entity) => ({
-                          id: entity.id,
-                          reason: 'Not eligible',
-                        })),
-                      })
+                      bulkRequestRejectMutation.mutate(
+                        {
+                          reject: selectedEntities.map((entity) => ({
+                            id: entity.id,
+                            reason: 'Not eligible',
+                          })),
+                        },
+                        {
+                          onSettled: () => reset(),
+                        },
+                      )
                     }
                     loading={bulkRequestRejectMutation.isLoading}
                   />

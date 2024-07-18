@@ -20,12 +20,14 @@
     "urlField": {
       "label": "URL",
       "placeholder": "ex: www.abc.com",
-      "invalidUrlError": "Invalid link"
+      "invalidUrlError": "Invalid link",
+      "requiredError": "Link is required"
     },
     "labelField": {
       "label": "Label",
       "placeholder": "ex: New hire checklist",
-      "maxLengthError": "Label cannot contain more than 20 characters"
+      "maxLengthError": "Label cannot contain more than 20 characters",
+      "requiredError": "Label is required"
     },
     "cancelCTA": "Cancel",
     "saveCTA": { "createMode": "Add Link", "updateMode": "Save" }

@@ -115,7 +115,7 @@ const Navbar = () => {
   return (
     <nav className="w-full sticky top-0 z-50">
       <div className="bg-white shadow h-16 w-full py-[2px] px-8">
-        <div className="bg-white h-full w-full max-w-[1440px] flex items-center py-0.5 mx-auto justify-between">
+        <div className="bg-white h-full w-full max-w-[1440px] flex items-center py-0.5 gap-8 mx-auto justify-between">
           <Link
             to="/feed"
             data-testid="office-logo"

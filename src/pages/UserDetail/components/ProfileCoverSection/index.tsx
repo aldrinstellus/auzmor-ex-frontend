@@ -101,6 +101,12 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
       console.log('API call resulted in error: ', error);
     },
     onSuccess: (data) => {
+      if (userId) {
+        queryClient.invalidateQueries(['user', userId]); // single user by id
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['current-user-me'] });
+      }
+
       console.log('Successfully deleted user cover image', data);
     },
   });
@@ -114,6 +120,7 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
         userCoverImageRef?.current?.click();
       },
       dataTestId: 'edit-coverpic-upload',
+      hidden: false,
     },
     {
       icon: 'maximizeOutline',
@@ -124,6 +131,7 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
         closeEditProfileModal();
       },
       dataTestId: 'edit-coverpic-reposition',
+      hidden: userDetails?.coverImage?.original == null,
     },
     {
       icon: 'trashOutline',
@@ -147,8 +155,9 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
         });
       },
       dataTestId: 'edit-coverpic-deletepost',
+      hidden: userDetails?.coverImage?.original == null,
     },
-  ];
+  ].filter((option) => option.hidden !== true);
 
   const [openDelete, openDeleteModal, closeDeleteModal] = useModal();
   const [openReactivate, openReactivateModal, closeReactivateModal] =
@@ -201,14 +210,14 @@ const ProfileCoverSection: FC<IProfileCoverProps> = ({
               menuItems={coverImageOption}
             />
           )}
-          {!isCoverImageRemoved && (
+          {
             <img
               className="object-cover  object-center w-full rounded-t-9xl "
               src={getCoverImage(userDetails)}
               alt={'User Cover Picture Profile'}
               data-testid="user-cover-pic"
             />
-          )}
+          }
         </div>
 
         <div className="absolute left-8 bottom-6">

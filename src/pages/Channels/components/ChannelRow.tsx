@@ -11,12 +11,16 @@ import IconWrapper, {
 } from 'components/Icon/components/IconWrapper';
 import Button, { Variant, Size } from 'components/Button';
 import { updateChannel } from 'queries/channel';
-import FailureToast from 'components/Toast/variants/FailureToast';
+import FailureToast, {
+  failureToastConfig,
+} from 'components/Toast/variants/FailureToast';
 import { toast } from 'react-toastify';
 import { TOAST_AUTOCLOSE_TIME } from 'utils/constants';
 import { slideInAndOutTop } from 'utils/react-toastify';
 import { twConfig } from 'utils/misc';
-import SuccessToast from 'components/Toast/variants/SuccessToast';
+import SuccessToast, {
+  successToastConfig,
+} from 'components/Toast/variants/SuccessToast';
 import { useMutation } from '@tanstack/react-query';
 import queryClient from 'utils/queryClient';
 import useModal from 'hooks/useModal';
@@ -46,55 +50,13 @@ const ChannelRow: FC<IChannelRowProps> = ({ channel }) => {
       updateChannel(id, { status: CHANNEL_STATUS.ACTIVE }),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onError: (error) => {
-      toast(
-        <FailureToast
-          content={t('channelRow.errorUnarchivingChannel')}
-          dataTestId=""
-        />,
-        {
-          closeButton: (
-            <Icon name="closeCircleOutline" color="text-red-500" size={20} />
-          ),
-          style: {
-            border: `1px solid ${twConfig.theme.colors.red['300']}`,
-            borderRadius: '6px',
-            display: 'flex',
-            alignItems: 'center',
-          },
-          autoClose: TOAST_AUTOCLOSE_TIME,
-          transition: slideInAndOutTop,
-          theme: 'dark',
-        },
-      );
+      failureToastConfig({ content: t('channelRow.errorUnarchivingChannel') });
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSuccess: (data, variables, context) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['channel'] });
-      toast(
-        <SuccessToast
-          content={t('channelRow.successUnarchivingChannel')}
-          dataTestId="channel-toaster-message"
-        />,
-        {
-          closeButton: (
-            <Icon
-              name="closeCircleOutline"
-              color="text-primary-500"
-              size={20}
-              dataTestId="channel-toaster-close"
-            />
-          ),
-          style: {
-            border: `1px solid ${twConfig.theme.colors.primary['300']}`,
-            borderRadius: '6px',
-            display: 'flex',
-            alignItems: 'center',
-          },
-          autoClose: TOAST_AUTOCLOSE_TIME,
-          transition: slideInAndOutTop,
-          theme: 'dark',
-        },
-      );
+      successToastConfig({
+        content: t('channelRow.successUnarchivingChannel'),
+      });
     },
   });
 
