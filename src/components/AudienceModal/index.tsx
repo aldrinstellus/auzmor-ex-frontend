@@ -4,7 +4,6 @@ import Tabs from 'components/Tabs';
 import { AudienceEntityType, IAudience } from 'queries/post';
 import { FC } from 'react';
 import AudienceTab from './AudienceTab';
-import useProduct from 'hooks/useProduct';
 
 export type AudienceCount = {
   teams: number;
@@ -52,14 +51,12 @@ const AudienceModal: FC<IAudienceModalProps> = ({
   entity,
   entityId,
 }) => {
-  const { isLxp } = useProduct();
   const getClassName = (isActive: boolean) =>
     `flex font-extrabold ${
       isActive ? 'text-neutral-900' : 'text-neutral-500 hover:text-neutral-900'
     }`;
 
   const tabOrder = ['all', 'teams', 'channels', 'users'];
-  const entityTypeAll = isLxp ? AudienceEntityType.Channel : undefined;
 
   return (
     <Modal open={true} closeModal={closeModal} className="max-w-2xl">
@@ -77,7 +74,7 @@ const AudienceModal: FC<IAudienceModalProps> = ({
               <AudienceTab
                 entity={entity}
                 entityId={entityId}
-                entityType={entityTypeAll}
+                entityType={AudienceEntityType.All}
               />
             ),
           },
