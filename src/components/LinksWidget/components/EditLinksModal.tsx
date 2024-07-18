@@ -11,8 +11,8 @@ import { IChannelLink } from 'stores/channelStore';
 import { deleteChannelLinks, updateChannelLinksIndex } from 'queries/channel';
 import { useTranslation } from 'react-i18next';
 import { Reorder, useDragControls } from 'framer-motion';
-import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import { isTrim } from 'pages/ChannelDetail/components/utils';
+import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 
 interface IEditLinksModalProps {
   open: boolean;
@@ -58,6 +58,7 @@ const EditLinksModal: FC<IEditLinksModalProps> = ({
     onError: (error: any) => console.log(error),
     onSuccess: async () => {
       await queryClient.invalidateQueries(['channel-links-widget']);
+      successToastConfig({});
       closeModal();
     },
   });
@@ -68,7 +69,6 @@ const EditLinksModal: FC<IEditLinksModalProps> = ({
     onError: () => {},
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSuccess: () => {
-      successToastConfig({});
       queryClient.invalidateQueries(['channel-links-widget']);
     },
   });

@@ -23,7 +23,6 @@ const AudienceTab: FC<IAudienceTabProps> = ({
     root: document.getElementById(rootId),
     rootMargin: '20%',
   });
-
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useInfiniteAudience(entity, entityId, isFiltersEmpty({ entityType }));
 

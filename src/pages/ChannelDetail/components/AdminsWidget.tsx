@@ -31,7 +31,6 @@ const AdminsWidget = () => {
       });
     }) || [];
 
-  console.log(data);
   if (admins?.length == 0) return null;
   return (
     <Card className="py-6 rounded-9xl" shadowOnHover>
@@ -70,20 +69,20 @@ const AdminsWidget = () => {
               )}
             </div>
           ))}
-          {admins?.length > 3 && (
-            <div className="mt-3">
-              <Button
-                variant={Variant.Secondary}
-                size={Size.Small}
-                className="w-full"
-                label="View all admins"
-                dataTestId="my-admin-cta"
-                onClick={() => {
-                  navigate(`/channels/${channelId}/members?type=All_Members`);
-                }}
-              />
-            </div>
-          )}
+          <div className="mt-3">
+            <Button
+              variant={Variant.Secondary}
+              size={Size.Small}
+              className="w-full"
+              label="View all admins"
+              dataTestId="my-admin-cta"
+              onClick={() => {
+                navigate(
+                  `/channels/${channelId}/members?type=All_Members&roles=%255B%257B%2522id%2522%253A%2522ADMIN%2522%252C%2522name%2522%253A%2522Admin%2522%257D%255D`,
+                );
+              }}
+            />
+          </div>
         </div>
       </div>
     </Card>

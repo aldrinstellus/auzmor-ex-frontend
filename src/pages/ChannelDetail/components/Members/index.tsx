@@ -42,9 +42,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
   const { t } = useTranslation('channels');
   const { isUserAdminOrChannelAdmin } = useChannelRole(channelData.id);
   const { filters, clearFilters, updateFilter } = useAppliedFiltersStore();
-  useEffect(() => {
-    clearFilters();
-  }, []);
+
   const [isGrid, setGrid] = useState(true);
   const filterForm = useForm<{
     search: string;
@@ -120,10 +118,11 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
     mutationKey: ['bulk-channel-request-accept'],
     mutationFn: (payload: { approve?: string[] }) =>
       bulkChannelRequestUpdate(channelData!.id, payload),
-    onSuccess: () =>
+    onSuccess: () => {
       successToastConfig({
         content: 'Successfully accepted all selected requests',
-      }),
+      });
+    },
     onError: () =>
       failureToastConfig({
         content: 'Something went wrong...! Please try again',
@@ -132,9 +131,8 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
       await queryClient.invalidateQueries(['channel-requests'], {
         exact: false,
       });
-      await queryClient.invalidateQueries(['channel-members'], {
-        exact: false,
-      });
+      queryClient.invalidateQueries({ queryKey: ['channel-members'] });
+      queryClient.invalidateQueries({ queryKey: ['channel'] });
     },
   });
 
@@ -155,9 +153,8 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
       await queryClient.invalidateQueries(['channel-requests'], {
         exact: false,
       });
-      await queryClient.invalidateQueries(['channel-members'], {
-        exact: false,
-      });
+      queryClient.invalidateQueries({ queryKey: ['channel-members'] });
+      queryClient.invalidateQueries({ queryKey: ['channel'] });
     },
   });
 
