@@ -87,7 +87,6 @@ const FilterMenu: FC<IFilterMenu> = ({
       });
     }
   }, [filters]);
-
   useEffect(() => {
     setFilters({
       categories: parseParams('categories') || [],
@@ -100,7 +99,10 @@ const FilterMenu: FC<IFilterMenu> = ({
       byPeople: parseParams('byPeople') || [],
       roles: parseParams('roles') || [],
     });
-    return () => clearAppliedFilters();
+    return () => {
+      // Clear URL parameters on unmount synchronously
+      clearAppliedFilters();
+    };
   }, []);
 
   const handleRemoveFilters = (key: FilterKey, id: any) => {
