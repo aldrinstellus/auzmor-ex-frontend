@@ -291,9 +291,7 @@ const CreatePostProvider: FC<ICreatePostProviderProps> = ({
   );
 
   const setUploads = (uploads: File[], isCoverImage?: boolean) => {
-    console.log('isCoverImage :', isCoverImage);
     if (!isCoverImage) {
-      console.log('isCover');
       setMedia((prevMedia) => [...prevMedia, ...getMediaObj(uploads)]);
     }
     setFiles((prevFiles) => [...prevFiles, ...uploads]);

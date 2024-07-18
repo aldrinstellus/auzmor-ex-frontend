@@ -315,15 +315,34 @@ const RichTextEditor = forwardRef(
     };
 
     const [confirm, showConfirm, closeConfirm] = useModal();
+    useEffect(() => {
+      if (ref && ((ref as any).current as ReactQuill)) {
+        const editor = (ref as any).current.getEditor();
+        if (defaultValue) {
+          editor.setContents(defaultValue);
+        }
+        const refinedContent = removeEmptyLines({
+          editor: editor.getContents(),
+          text: editor.getText(),
+          html: editor.getText(),
+        });
 
+        setIsEmpty(
+          isEmptyEditor(refinedContent.text, refinedContent.editor.ops || []),
+        );
+      }
+    }, [defaultValue, ref]);
     // useEffect(() => {
     //   if (ref && ((ref as any).current as ReactQuill)) {
     //     const editor = ((ref as any).current as ReactQuill).getEditor();
+    //     console.log('editor :', editor);
     //     const refinedContent = removeEmptyLines({
     //       editor: editor.getContents(),
     //       text: editor.getText(),
     //       html: editor.getText(),
     //     });
+    //     console.log('refinedContent :', refinedContent);
+
     //     setIsEmpty(
     //       isEmptyEditor(refinedContent.text, refinedContent.editor.ops || []),
     //     );
@@ -331,11 +350,6 @@ const RichTextEditor = forwardRef(
     // }, []);
 
     useEffect(() => () => hideMentionHashtagPalette(), []);
-    useEffect(() => {
-      if (defaultValue && ref && (ref as any).current) {
-        (ref as any).current.getEditor().setContents(defaultValue);
-      }
-    }, [defaultValue, ref]);
 
     return (
       <div data-testid={`${dataTestId}-content`}>

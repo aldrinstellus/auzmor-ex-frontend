@@ -47,6 +47,8 @@ import { useCreatePostUtilityStore } from 'stores/createPostUtilityStore';
 import useModal from 'hooks/useModal';
 import ConfirmationBox from 'components/ConfirmationBox';
 import WelcomePost from 'images/ChannelCover/WelcomePost.png';
+import { useChannelStore } from 'stores/channelStore';
+import { useParams } from 'react-router-dom';
 export interface IPostMenu {
   id: number;
   label: string;
@@ -62,7 +64,6 @@ interface ICreatePostModal {
   data?: IPost;
   mode: PostBuilderMode;
   customActiveFlow?: CreatePostFlow;
-  channelName?: string;
 }
 
 const CreatePostModal: FC<ICreatePostModal> = ({
@@ -70,7 +71,6 @@ const CreatePostModal: FC<ICreatePostModal> = ({
   closeModal,
   data,
   mode,
-  channelName,
   customActiveFlow = CreatePostFlow.CreatePost,
 }) => {
   const {
@@ -98,6 +98,9 @@ const CreatePostModal: FC<ICreatePostModal> = ({
     setEditorValue,
     setUploads,
   } = useContext(CreatePostContext);
+
+  const { channelId = '' } = useParams();
+  const channelData = useChannelStore((state) => state.channels)[channelId];
 
   const [confirm, showConfirm, closeConfirm] = useModal();
 
@@ -136,16 +139,18 @@ const CreatePostModal: FC<ICreatePostModal> = ({
       editor: {
         ops: [
           {
-            attributes: { color: '#171717' },
-            insert: `Hello everyone! Welcome to the ${channelName} channel 🎉 !`,
+            attributes: {
+              color: '#171717',
+            },
+            insert: `Hello everyone! Welcome to the ${channelData?.name} channel 🎉`,
           },
           {
-            insert: ' \n',
+            insert: '\n',
           },
         ],
       },
     }),
-    [channelName],
+    [channelData],
   );
   useEffect(() => {
     if (customActiveFlow !== CreatePostFlow.WelcomePost) return;

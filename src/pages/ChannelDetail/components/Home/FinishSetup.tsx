@@ -60,7 +60,7 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
     false,
   );
 
-  const { feed } = useFeedStore();
+  const { activeFeedPostCount } = useFeedStore();
   const handlePost = () => {
     openModal();
   };
@@ -96,13 +96,13 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
       {
         key: 'post',
         label: t('setup.post'),
-        completed: !_.isEmpty(feed),
+        completed: activeFeedPostCount > 0,
         icon: 'image',
         dataTestId: 'post',
         onClick: handlePost,
       },
     ],
-    [channelData, openEditModal, openAddMemberModal, feed],
+    [channelData, openEditModal, openAddMemberModal, activeFeedPostCount],
   );
 
   const coverImageOption = [
@@ -289,7 +289,6 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
           openModal={openModal}
           closeModal={closeModal}
           customActiveFlow={CreatePostFlow.WelcomePost}
-          channelName={channelData?.name}
         />
       )}
       {isChannelImageOpen && (

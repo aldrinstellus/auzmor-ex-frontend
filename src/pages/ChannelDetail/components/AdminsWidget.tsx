@@ -31,7 +31,6 @@ const AdminsWidget = () => {
       });
     }) || [];
 
-  console.log(data);
   if (admins?.length == 0) return null;
   return (
     <Card className="py-6 rounded-9xl" shadowOnHover>

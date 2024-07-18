@@ -15,7 +15,6 @@ export interface IPostBuilderProps {
   closeModal: () => void;
   mode?: PostBuilderMode;
   customActiveFlow?: CreatePostFlow;
-  channelName?: string;
 }
 
 const PostBuilder: FC<IPostBuilderProps> = ({
@@ -24,7 +23,6 @@ const PostBuilder: FC<IPostBuilderProps> = ({
   open,
   openModal,
   closeModal,
-  channelName,
   customActiveFlow = CreatePostFlow.CreatePost,
 }) => {
   return (
@@ -36,7 +34,6 @@ const PostBuilder: FC<IPostBuilderProps> = ({
         data={data}
         mode={mode}
         customActiveFlow={customActiveFlow}
-        channelName={channelName}
       />
     </CreatePostProvider>
   );
