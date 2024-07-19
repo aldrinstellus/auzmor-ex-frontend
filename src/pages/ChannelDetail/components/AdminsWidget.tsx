@@ -74,7 +74,7 @@ const AdminsWidget = () => {
               variant={Variant.Secondary}
               size={Size.Small}
               className="w-full"
-              label="View all admins"
+              label={t('adminsWidget.viewCta')}
               dataTestId="my-admin-cta"
               onClick={() => {
                 navigate(
