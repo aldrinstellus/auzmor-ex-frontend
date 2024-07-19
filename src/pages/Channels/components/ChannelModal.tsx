@@ -238,7 +238,7 @@ const ChannelModal: FC<IChannelModalProps> = ({
                 control,
                 name: 'channelName',
                 label: t('channelModal.channelNameLabel'),
-                placeholder: 'ex. Product and design team',
+                placeholder: t('channelModal.channelNamePlaceholder'),
                 dataTestId: `${dataTestId}-name`,
                 showCounter: true,
                 maxLength: 100,
