@@ -1,4 +1,11 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  FC,
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import PageLoader from 'components/PageLoader';
 import PostBuilder from 'components/PostBuilder';
 import useMediaQuery from 'hooks/useMediaQuery';
@@ -674,11 +681,11 @@ const Feed: FC<IFeedProps> = ({
 
   const getListItem = (id: string, index: number) => {
     return (
-      <>
+      <Fragment key={`${id}-post-index-${index}-fragment`}>
         <li
           data-testid={`feed-post-${index}`}
           className="flex flex-col gap-6"
-          key={id}
+          key={`${id}-post-index-${index}`}
           tabIndex={0}
           title={`post ${index + 1}`}
         >
@@ -719,7 +726,7 @@ const Feed: FC<IFeedProps> = ({
             )}
           </>
         )}
-      </>
+      </Fragment>
     );
   };
 

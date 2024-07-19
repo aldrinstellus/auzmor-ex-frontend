@@ -171,7 +171,7 @@ const SingleSelect = forwardRef(
                   onChange={(_, option) => {
                     field.onChange(option);
                   }}
-                  onSearch={() => setOpen(true)}
+                  onSearch={showSearch ? () => setOpen(true) : undefined}
                   className={`single-select ${selectClassName}`}
                   suffixIcon={suffixIcon || <Icon name="arrowDown" size={18} />}
                   clearIcon={clearIcon}
@@ -179,9 +179,9 @@ const SingleSelect = forwardRef(
                   allowClear={isClearable}
                   aria-label="select"
                 >
-                  {(options || []).map((option) => (
+                  {(options || []).map((option, i) => (
                     <Option
-                      key={option.value}
+                      key={`${option.value}-single-select-option-${i}`}
                       value={option.value}
                       label={option.label}
                     >

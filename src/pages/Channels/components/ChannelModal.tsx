@@ -327,6 +327,7 @@ const ChannelModal: FC<IChannelModalProps> = ({
                   placeholder: 'ex. Product and design team',
                   dataTestId: 'channel-name-input',
                   required: true,
+                  showSearch: false,
                   options: [
                     {
                       ...getChannelPrivacyOption(
