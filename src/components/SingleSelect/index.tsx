@@ -168,6 +168,9 @@ const SingleSelect = forwardRef(
                   {...field}
                   notFoundContent={noContentFound()}
                   onBlur={() => setOpen(false)}
+                  onKeyUp={(e) =>
+                    e.code === 'Enter' && !disabled ? setOpen(!open) : ''
+                  }
                   onChange={(_, option) => {
                     field.onChange(option);
                   }}

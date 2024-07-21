@@ -150,7 +150,7 @@ const FilterMenu: FC<IFilterMenu> = ({
               variant={IconVariant.Secondary}
               size={IconSize.Medium}
               borderAround
-              className="bg-white !p-[10px]"
+              className="bg-white !p-[10px] !outline-none"
               dataTestId={dataTestIdFilter}
             />
             <Sort

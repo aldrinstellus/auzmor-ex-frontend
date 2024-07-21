@@ -127,7 +127,7 @@ const ManageAccess: React.FC<AppProps> = ({ channelData }) => {
           <Button
             label={t('members.addMemberCTA')}
             leftIcon="add"
-            leftIconClassName="text-white pointer-events-none group-hover:text-white"
+            leftIconClassName="!text-white pointer-events-none group-hover:text-white"
             onClick={() => openAddMemberModal()}
           />
         </div>

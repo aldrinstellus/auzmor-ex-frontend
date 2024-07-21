@@ -288,7 +288,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     },
     {
       renderNode: (
-        <div className="text-xs  bg-blue-50 py-2 px-6 font-Medium flex items-center justify-center ">
+        <div className="text-xs  bg-blue-50 py-2 px-6 font-Medium flex items-center justify-center">
           SECURITY & ANALYTICS
         </div>
       ),
@@ -427,15 +427,14 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                 dataTestId={'edit-profile-pic'}
               />
               {isUserAdminOrChannelAdmin && !!channelData?.member && (
-                <Icon
-                  name="edit"
-                  size={24}
+                <IconButton
+                  icon="edit"
                   color="text-black"
                   onClick={() => {
                     setIsCoverImage(false);
                     openChannelImageModal();
                   }}
-                  className="absolute bg-white rounded-full p-[5px] cursor-pointer -top-2 -right-1"
+                  className="absolute !bg-white rounded-full p-[5px] cursor-pointer -top-2 -right-1 hover:!bg-white"
                   dataTestId="edit-profilepic"
                 />
               )}

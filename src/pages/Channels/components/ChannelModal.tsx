@@ -289,6 +289,7 @@ const ChannelModal: FC<IChannelModalProps> = ({
                 required: true,
                 clearErrors,
                 error: errors.channelName?.message,
+                autofocus: true,
               },
             ]}
           />
