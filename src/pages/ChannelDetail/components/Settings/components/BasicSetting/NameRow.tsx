@@ -10,6 +10,7 @@ import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import InfoRow from 'components/ProfileInfo/components/InfoRow';
 import { updateChannel } from 'queries/channel';
 import { IChannel } from 'stores/channelStore';
+import { useTranslation } from 'react-i18next';
 
 type AppProps = {
   data: IChannel;
@@ -20,10 +21,17 @@ const NameRow: FC<AppProps> = ({ data, isUserAdminOrChannelAdmin }) => {
   const { channelId = '' } = useParams();
   const queryClient = useQueryClient();
   const ref = useRef<any>(null);
-
+  const { t } = useTranslation('channels');
+  const { t: tc } = useTranslation('channelDetail', {
+    keyPrefix: 'setting.nameRow',
+  });
   //channel Name
   const schema = yup.object({
-    name: yup.string(),
+    name: yup
+      .string()
+      .min(2, t('channelModal.channelNameMinChars'))
+      .matches(/^[a-zA-Z0-9 ]*$/, t('channelModal.channelNameNoSpecialChars'))
+      .required(t('channelModal.channelNameRequired')),
   });
 
   // channel update api call
@@ -40,7 +48,13 @@ const NameRow: FC<AppProps> = ({ data, isUserAdminOrChannelAdmin }) => {
     },
   });
 
-  const { handleSubmit, control, reset, getValues } = useForm<any>({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    getValues,
+    formState: { errors },
+  } = useForm<any>({
     mode: 'onSubmit',
     resolver: yupResolver(schema),
     defaultValues: { name: data?.name },
@@ -55,8 +69,10 @@ const NameRow: FC<AppProps> = ({ data, isUserAdminOrChannelAdmin }) => {
     {
       type: FieldType.Input,
       name: 'name',
-      placeholder: 'Channel name',
+      placeholder: tc('channelNamePlaceholder'),
       control,
+      error: errors?.name?.message,
+      defaultValue: data?.name,
       dataTestId: 'employee-id',
     },
   ];
@@ -65,11 +81,11 @@ const NameRow: FC<AppProps> = ({ data, isUserAdminOrChannelAdmin }) => {
     <InfoRow
       ref={ref}
       icon={{
-        name: 'user-tag', // user-tag
+        name: 'user-tag',
         color: 'text-teal-500',
         bgColor: 'bg-teal-50',
       }}
-      label="Name"
+      label={tc('label')}
       value={data?.name}
       canEdit={isUserAdminOrChannelAdmin}
       dataTestId="professional-details-employee-id"

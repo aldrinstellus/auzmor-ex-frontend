@@ -65,6 +65,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
       fetchNextPage();
     }
   }, [inView]);
+
   useEffect(() => {
     setFilters({
       visibility: ChannelVisibilityEnum.All,

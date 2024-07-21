@@ -13,6 +13,10 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { IUpdateProfileImage } from 'pages/UserDetail';
 import EditImageModal from 'components/EditImageModal';
 import { EntityType } from 'queries/files';
+import PostBuilder from 'components/PostBuilder';
+import { CreatePostFlow } from 'contexts/CreatePostContext';
+import { useFeedStore } from 'stores/feedStore';
+import * as _ from 'lodash';
 
 type AppProps = {
   channelData: IChannel;
@@ -35,7 +39,8 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
     }
   }, [showSettingUp, searchParams, setSearchParams]);
 
-  const { t } = useTranslation('channelDetail');
+  const [open, openModal, closeModal] = useModal(undefined, false);
+  const { t } = useTranslation('channelDetail', { keyPrefix: 'setup' });
   const { channelId = '' } = useParams();
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
@@ -55,14 +60,21 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
     undefined,
     false,
   );
+
+  const { activeFeedPostCount } = useFeedStore();
+  const handlePost = () => {
+    openModal();
+  };
+
   const getBlobFile = file?.profileImage
     ? getBlobUrl(file?.profileImage)
     : file?.coverImage && getBlobUrl(file?.coverImage);
+
   const steps = useMemo(
     () => [
       {
-        key: 'cover_photo',
-        label: t('setup.cover_photo'),
+        key: 'coverPhoto',
+        label: t('coverPhoto'),
         completed: !!channelData?.banner?.original,
         icon: 'image',
         onClick: () => {},
@@ -70,7 +82,7 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
       },
       {
         key: 'description',
-        label: t('setup.description'),
+        label: t('description'),
         completed: !!channelData?.description,
         icon: 'image',
         onClick: openEditModal,
@@ -78,20 +90,28 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
       },
       {
         key: 'invite',
-        label: t('setup.invite'),
+        label: t('invite'),
         completed: channelData?.totalMembers > 1,
         icon: 'image',
         dataTestId: 'invite-member',
         onClick: openAddMemberModal,
       },
+      {
+        key: 'post',
+        label: t('post'),
+        completed: activeFeedPostCount > 0,
+        icon: 'image',
+        dataTestId: 'post',
+        onClick: handlePost,
+      },
     ],
-    [channelData, openEditModal, openAddMemberModal],
+    [channelData, openEditModal, openAddMemberModal, activeFeedPostCount, t],
   );
 
   const coverImageOption = [
     {
       icon: 'exportOutline',
-      label: 'Upload a photo',
+      label: t('coverPhoto.uploadPhoto'),
       onClick: () => {
         channelCoverImageRef?.current?.click();
       },
@@ -99,7 +119,7 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
     },
     {
       icon: 'gallery',
-      label: 'Choose from illustration',
+      label: t('coverPhoto.chooseFromIllustration'),
       stroke: twConfig.theme.colors.neutral['900'],
       onClick: () => {
         openChannelImageModal();
@@ -125,7 +145,7 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
         data-testid="channel-settingup-steps-post"
       >
         <div className="flex justify-between">
-          <div className="font-bold text-neutral-900">{t('setup.title')}</div>
+          <div className="font-bold text-neutral-900">{t('title')}</div>
           <Icon
             onClick={handleClose}
             name="close"
@@ -136,10 +156,9 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
         <div>
           <div className="mt-2 text-sm text-neutral-400">
             <span className="!text-primary-500 font-semibold">
-              {steps.filter((s) => s.completed).length} {t('setup.of')}{' '}
-              {steps.length}
+              {steps.filter((s) => s.completed).length} {t('of')} {steps.length}
             </span>{' '}
-            {t('setup.steps_completed')}
+            {t('stepsCompleted')}
           </div>
           <div className="mt-2 ">
             {steps.map((step: any) => (
@@ -165,7 +184,7 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
                 }}
                 data-testid={`channel-${step.dataTestId}-step`}
               >
-                {step.key === 'cover_photo' ? (
+                {step.key === 'coverPhoto' ? (
                   <div className="relative w-full">
                     <PopupMenu
                       triggerNode={
@@ -215,7 +234,11 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
       {openEditImage && (
         <EditImageModal
           channelId={channelId}
-          title={getBlobFile ? 'Apply Changes' : 'Reposition'}
+          title={
+            getBlobFile
+              ? t('coverPhoto.applyChanges')
+              : t('coverPhoto.reposition')
+          }
           openEditImage={openEditImage}
           closeEditImageModal={closeEditImageModal}
           image={getBlobFile || channelData?.banner?.original}
@@ -267,6 +290,14 @@ const FinishSetup: FC<AppProps> = ({ channelData }) => {
           open={showAddMemberModal}
           closeModal={closeAddMemberModal}
           channelData={channelData}
+        />
+      )}
+      {open && (
+        <PostBuilder
+          open={open}
+          openModal={openModal}
+          closeModal={closeModal}
+          customActiveFlow={CreatePostFlow.WelcomePost}
         />
       )}
       {isChannelImageOpen && (

@@ -34,16 +34,17 @@ export const useAppliedFiltersStore = create<State & Actions>()(
           state.filters = { [key]: value };
         }
       }),
-    clearFilters: () =>
+    clearFilters: () => {
+      clearURLParams();
       set((state) => {
         state.filters = null;
-        clearURLParams();
-      }),
+      });
+    },
   })),
 );
 
 const clearURLParams = () => {
-  const searchParams = new URLSearchParams(window.location.search);
+  const url = new URL(window.location.href);
 
   const paramsToDelete = [
     'status',
@@ -56,7 +57,6 @@ const clearURLParams = () => {
     'byPeople',
   ];
 
-  paramsToDelete.forEach((param) => searchParams.delete(param));
-  const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
-  window.history.replaceState({}, '', newUrl);
+  paramsToDelete.forEach((param) => url.searchParams.delete(param));
+  window.history.replaceState({}, '', url);
 };

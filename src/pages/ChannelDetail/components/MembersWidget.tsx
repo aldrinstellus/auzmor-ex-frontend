@@ -76,7 +76,7 @@ const MembersWidget: FC<MembersWidgetProps> = ({ channelData }) => {
                 <Button
                   size={Size.Small}
                   className="w-full"
-                  label="Add members"
+                  label={t('membersWidget.addMemberCta')}
                   dataTestId="my-teams-cta"
                   leftIcon="addCircle"
                   leftIconClassName="text-white"
@@ -88,7 +88,7 @@ const MembersWidget: FC<MembersWidgetProps> = ({ channelData }) => {
                   variant={Variant.Secondary}
                   size={Size.Small}
                   className="w-full"
-                  label="View all members"
+                  label={t('membersWidget.viewCta')}
                   dataTestId="my-teams-cta"
                   onClick={() =>
                     navigate(`/channels/${channelId}/members?type=All_Members`)
