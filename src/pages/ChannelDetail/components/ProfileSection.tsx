@@ -42,6 +42,7 @@ import ChannelImageModal from './ChannelImageModal';
 import { isTrim } from './utils';
 import AddChannelMembersModal from './AddChannelMembersModal';
 import { useChannelRole } from 'hooks/useChannelRole';
+import Truncate from 'components/Truncate';
 
 type ProfileSectionProps = {
   tabs?: ITab[];
@@ -449,12 +450,11 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               <div className="text-2xl font-bold" data-testid="channel-name">
                 {channelData?.name}
               </div>
-              <div
-                className="text-xs line-clamp-2 "
+              <Truncate
+                text={channelData?.description || ''}
+                className="text-xs max-w-[80%]"
                 data-testid="channel-description"
-              >
-                {channelData?.description}
-              </div>
+              />
             </div>
           </div>
           {showJoinChannelBtn && (
