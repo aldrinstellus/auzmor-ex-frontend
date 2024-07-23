@@ -29,11 +29,9 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
   const { data, isLoading } = useOrganization();
   const { form } = useEntitySearchFormStore();
 
-  const [teams, channels = {}, users] = form!.watch([
-    'teams',
-    'channels',
-    'users',
-  ]);
+  const [teams, channels, users] = form!.watch(['teams', 'channels', 'users']);
+
+  console.log(teams, channels);
 
   useEffect(() => {
     if (
