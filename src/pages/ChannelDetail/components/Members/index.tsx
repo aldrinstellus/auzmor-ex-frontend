@@ -96,10 +96,22 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
   } = useInfiniteChannelsRequest(
     channelData?.id,
     isFiltersEmpty({
+      q: searchValue,
       limit: 30,
-      status: CHANNEL_MEMBER_STATUS.PENDING,
+      status: filters?.channelRequestStatus?.length
+        ? filters?.channelRequestStatus
+            ?.map((eachStatus: any) => eachStatus.id)
+            .join(',')
+        : CHANNEL_MEMBER_STATUS.PENDING,
       sort: filters?.sort,
+      userTeam: filters?.teams?.length
+        ? filters?.teams?.map((eachStatus: any) => eachStatus.id).join(',')
+        : undefined,
+      byPeople: filters?.byPeople?.length
+        ? filters?.byPeople?.map((eachStatus: any) => eachStatus.id).join(',')
+        : undefined,
     }),
+    filters?.type === 'Requests' || parsedTab === 'requests',
   );
 
   const channelRequests =
@@ -209,7 +221,11 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
           dataTestIdFilter="channel-filter-icon"
           dataTestIdSort="channel-sort-icon"
           dataTestIdSearch="channel-search"
-          variant={FilterModalVariant.ChannelMember}
+          variant={
+            filters?.type === 'Requests' || parsedTab === 'requests'
+              ? FilterModalVariant.ChannelRequest
+              : FilterModalVariant.ChannelMember
+          }
         >
           <div className="flex items-center gap-2">
             <div className="text-neutral-500">
