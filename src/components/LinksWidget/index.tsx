@@ -49,7 +49,10 @@ const LinksWidget: FC<LinksWidgetProps> = ({ channelData }) => {
   };
 
   const maxListSize = 4;
-
+  if (!channelData?.member) {
+    // not a member of channel
+    return <></>;
+  }
   return (
     <Card className="py-6 flex flex-col rounded-9xl" shadowOnHover>
       <div

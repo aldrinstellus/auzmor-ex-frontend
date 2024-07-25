@@ -43,7 +43,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
   const { t } = useTranslation('channelDetail', { keyPrefix: 'memberTab' });
   const { isUserAdminOrChannelAdmin } = useChannelRole(channelData.id);
   const { filters, clearFilters, updateFilter } = useAppliedFiltersStore();
-
+  const { currentChannelMember } = useChannelRole(channelData.id);
   const [isGrid, setGrid] = useState(true);
   const filterForm = useForm<{
     search: string;
@@ -208,7 +208,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
       <Card className="p-8 flex flex-col gap-6">
         <div className="flex justify-between items-center">
           <p className="text-2xl font-bold text-neutral-900">{t('title')}</p>
-          {isUserAdminOrChannelAdmin && (
+          {isUserAdminOrChannelAdmin && currentChannelMember && (
             <Button
               label={t('addMemberCTA')}
               leftIcon="add"

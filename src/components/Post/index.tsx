@@ -21,6 +21,7 @@ import ReactionModal from './components/ReactionModal';
 import PublishPostModal from './components/PublishPostModal';
 import EditSchedulePostModal from './components/EditSchedulePostModal';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
+import { useLocation } from 'react-router-dom';
 
 // queries
 import { IPost, createBookmark, deleteBookmark } from 'queries/post';
@@ -32,6 +33,7 @@ import { getNouns } from 'utils/misc';
 // hooks
 import useModal from 'hooks/useModal';
 import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
+import { useParams } from 'react-router-dom';
 
 import { useFeedStore } from 'stores/feedStore';
 import Avatar from 'components/Avatar';
@@ -40,6 +42,7 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkDirective from 'remark-directive';
 import remarkDirectiveRehype from 'remark-directive-rehype';
+import { useChannelRole } from 'hooks/useChannelRole';
 export const iconsStyle = (key: string) => {
   const iconStyle = clsx(
     {
@@ -97,6 +100,11 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
     (total, count) => total + count,
     0,
   );
+  const { channelId = '' } = useParams();
+  const { currentChannelMember } = useChannelRole(channelId);
+  const { pathname } = useLocation();
+  const isFeedOrUserDetailPage =
+    pathname.includes('feed') || pathname.includes('profile');
 
   // Effects
   useEffect(() => {
@@ -340,22 +348,24 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
               postType={post?.occasionContext?.type}
               title={post?.title}
             />
-            <Tooltip
-              tooltipContent={
-                post.bookmarked ? 'Remove from bookmark' : 'Bookmark post'
-              }
-              tooltipPosition="top"
-            >
-              <Icon
-                name={post.bookmarked ? 'postBookmarkFilled' : 'postBookmark'}
-                size={24}
-                dataTestId="feed-post-bookmark"
-                onClick={() => handleBookmarkClick(post)}
-                isActive={post.bookmarked}
-                ariaLabel="bookmark this post"
-                tabIndex={0}
-              />
-            </Tooltip>
+            {(currentChannelMember || isFeedOrUserDetailPage) && (
+              <Tooltip
+                tooltipContent={
+                  post.bookmarked ? 'Remove from bookmark' : 'Bookmark post'
+                }
+                tooltipPosition="top"
+              >
+                <Icon
+                  name={post.bookmarked ? 'postBookmarkFilled' : 'postBookmark'}
+                  size={24}
+                  dataTestId="feed-post-bookmark"
+                  onClick={() => handleBookmarkClick(post)}
+                  isActive={post.bookmarked}
+                  ariaLabel="bookmark this post"
+                  tabIndex={0}
+                />
+              </Tooltip>
+            )}
             <div className="relative">
               <FeedPostMenu data={post as unknown as IPost} />
             </div>
@@ -458,25 +468,30 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
             <div className="flex justify-between">
               <div className="flex space-x-6">
                 {/* this is for post */}
-                <Likes
-                  reaction={reaction || ''}
-                  entityId={post?.id || ''}
-                  entityType="post"
-                  reactionId={post?.myReaction?.id || ''}
-                  queryKey="feed"
-                  dataTestIdPrefix="post-reaction"
-                />
-                <Button
-                  label="Comment"
-                  variant={Variant.Tertiary}
-                  size={Size.Small}
-                  labelClassName="text-xs font-normal text-neutral-500 hover:text-primary-500 group-hover:text-primary-500 group-focus:text-primary-500"
-                  leftIcon="comment"
-                  leftIconHover={false}
-                  className="space-x-1 !p-0 group"
-                  onClick={handleCommentCta}
-                  data-testid="feed-post-comment"
-                />
+                {currentChannelMember ||
+                  (isFeedOrUserDetailPage && (
+                    <>
+                      <Likes
+                        reaction={reaction || ''}
+                        entityId={post?.id || ''}
+                        entityType="post"
+                        reactionId={post?.myReaction?.id || ''}
+                        queryKey="feed"
+                        dataTestIdPrefix="post-reaction"
+                      />
+                      <Button
+                        label="Comment"
+                        variant={Variant.Tertiary}
+                        size={Size.Small}
+                        labelClassName="text-xs font-normal text-neutral-500 hover:text-primary-500 group-hover:text-primary-500 group-focus:text-primary-500"
+                        leftIcon="comment"
+                        leftIconHover={false}
+                        className="space-x-1 !p-0 group"
+                        onClick={handleCommentCta}
+                        data-testid="feed-post-comment"
+                      />
+                    </>
+                  ))}
               </div>
             </div>
           )}

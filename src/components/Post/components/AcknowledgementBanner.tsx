@@ -9,6 +9,8 @@ import ProgressBar from 'components/ProgressBar';
 import { FC } from 'react';
 import { isRegularPost } from 'utils/misc';
 import useRole from 'hooks/useRole';
+import { useChannelRole } from 'hooks/useChannelRole';
+import { useLocation, useParams } from 'react-router-dom';
 
 export interface IAcknowledgementBannerProps {
   data: any;
@@ -51,6 +53,11 @@ const AcknowledgementBanner: FC<IAcknowledgementBannerProps> = ({ data }) => {
       ]);
     },
   });
+  const { channelId } = useParams();
+  const { currentChannelMember } = useChannelRole(channelId);
+  const location = useLocation();
+  const isFeedOrUserDetailPage =
+    location.pathname.includes('feed') || location.pathname.includes('profile');
 
   return !isRegularPost(data, currentDate, isAdmin) ? (
     <div
@@ -69,7 +76,9 @@ const AcknowledgementBanner: FC<IAcknowledgementBannerProps> = ({ data }) => {
         />
       ) : (
         <Button
-          className="text-sm font-bold !py-[3px]"
+          className={`${
+            currentChannelMember || isFeedOrUserDetailPage ? '' : 'hidden'
+          } text-sm font-bold !py-[3px]`}
           label="Mark as read"
           size={Size.Small}
           variant={Variant.Tertiary}

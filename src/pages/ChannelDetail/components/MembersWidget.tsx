@@ -19,6 +19,7 @@ const MembersWidget: FC<MembersWidgetProps> = ({ channelData }) => {
   const [show, setShow] = useState(true);
   const { t } = useTranslation('channelDetail');
   const { channelId } = useParams();
+  const { currentChannelMember } = useChannelRole(channelId);
   const { data } = useInfiniteChannelMembers({
     channelId: channelId,
   });
@@ -72,7 +73,7 @@ const MembersWidget: FC<MembersWidgetProps> = ({ channelData }) => {
               />
             </div>
             <div className="mt-3">
-              {isUserAdminOrChannelAdmin ? (
+              {isUserAdminOrChannelAdmin && currentChannelMember ? (
                 <Button
                   size={Size.Small}
                   className="w-full"
