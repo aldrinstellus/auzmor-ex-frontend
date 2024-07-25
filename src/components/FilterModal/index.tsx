@@ -398,8 +398,6 @@ const FilterModal: FC<IFilterModalProps> = ({
     ],
   };
 
-  console.log(variant);
-
   const filterNavigation = [
     {
       label: () => (
