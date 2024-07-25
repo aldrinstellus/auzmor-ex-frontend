@@ -468,30 +468,29 @@ const Post: FC<PostProps> = ({ postId, commentIds = [], setHasChanges }) => {
             <div className="flex justify-between">
               <div className="flex space-x-6">
                 {/* this is for post */}
-                {currentChannelMember ||
-                  (isFeedOrUserDetailPage && (
-                    <>
-                      <Likes
-                        reaction={reaction || ''}
-                        entityId={post?.id || ''}
-                        entityType="post"
-                        reactionId={post?.myReaction?.id || ''}
-                        queryKey="feed"
-                        dataTestIdPrefix="post-reaction"
-                      />
-                      <Button
-                        label="Comment"
-                        variant={Variant.Tertiary}
-                        size={Size.Small}
-                        labelClassName="text-xs font-normal text-neutral-500 hover:text-primary-500 group-hover:text-primary-500 group-focus:text-primary-500"
-                        leftIcon="comment"
-                        leftIconHover={false}
-                        className="space-x-1 !p-0 group"
-                        onClick={handleCommentCta}
-                        data-testid="feed-post-comment"
-                      />
-                    </>
-                  ))}
+                {(currentChannelMember || isFeedOrUserDetailPage) && (
+                  <>
+                    <Likes
+                      reaction={reaction || ''}
+                      entityId={post?.id || ''}
+                      entityType="post"
+                      reactionId={post?.myReaction?.id || ''}
+                      queryKey="feed"
+                      dataTestIdPrefix="post-reaction"
+                    />
+                    <Button
+                      label="Comment"
+                      variant={Variant.Tertiary}
+                      size={Size.Small}
+                      labelClassName="text-xs font-normal text-neutral-500 hover:text-primary-500 group-hover:text-primary-500 group-focus:text-primary-500"
+                      leftIcon="comment"
+                      leftIconHover={false}
+                      className="space-x-1 !p-0 group"
+                      onClick={handleCommentCta}
+                      data-testid="feed-post-comment"
+                    />
+                  </>
+                )}
               </div>
             </div>
           )}
