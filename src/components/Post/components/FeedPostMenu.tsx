@@ -125,11 +125,6 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
     },
   });
 
-  if (data.type === PostType.Poll) {
-    console.log(isAdmin, data.createdBy?.userId === user?.id);
-    console.log(user?.permissions);
-  }
-
   const allOptions = [
     {
       icon: 'cyclicArrow',
