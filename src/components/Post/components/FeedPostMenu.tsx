@@ -125,6 +125,11 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
     },
   });
 
+  if (data.type === PostType.Poll) {
+    console.log(isAdmin, data.createdBy?.userId === user?.id);
+    console.log(user?.permissions);
+  }
+
   const allOptions = [
     {
       icon: 'cyclicArrow',
@@ -189,7 +194,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data }) => {
       onClick: () => showPollVotes(),
       stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-see-poll-votes',
-      permissions: [],
+      permissions: ['UPDATE_MY_POSTS'],
       enabled:
         data.type === PostType.Poll &&
         (isAdmin || data.createdBy?.userId === user?.id),
