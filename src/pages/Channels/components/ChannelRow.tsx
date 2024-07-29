@@ -23,6 +23,7 @@ import moment from 'moment';
 import { getChannelLogoImage, getFullName } from '../../../utils/misc';
 import Truncate from 'components/Truncate';
 import Avatar from 'components/Avatar';
+import { isTrim } from 'pages/ChannelDetail/components/utils';
 
 export const formatDate = (date: string, timezone: string) => {
   const momentDate = moment.tz(date, timezone);
@@ -72,12 +73,12 @@ const ChannelRow: FC<IChannelRowProps> = ({ channel }) => {
       <div className="flex justify-between w-[calc(100%-80px)] items-center">
         <div className="flex flex-col gap-0.5 max-w-[70%]">
           <p className="font-bold text-xl leading-normal text-neutral-900">
-            {channel.name}
+            {isTrim(channel.name, 40)}
           </p>
           {channel.description && (
             <Truncate
-              text={channel.description}
-              className="text-xs leading-normal text-neutral-500"
+              text={isTrim(channel.description, 40)}
+              className="text-xs leading-normal  text-neutral-500"
             />
           )}
           <p className="text-xs  leading-normal text-neutral-500">
