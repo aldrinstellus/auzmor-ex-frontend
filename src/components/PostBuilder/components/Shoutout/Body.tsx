@@ -12,6 +12,7 @@ import { truncate } from 'lodash';
 import Tooltip from 'components/Tooltip';
 
 import { CreatePostContext } from 'contexts/CreatePostContext';
+import { AudienceEntityType } from 'queries/apps';
 
 interface ShoutoutBodyProps {
   step: SHOUTOUT_STEPS;
@@ -36,21 +37,17 @@ const Body: FC<ShoutoutBodyProps> = ({
 }) => {
   const { audience } = useContext(CreatePostContext);
   const channelIds = audience
-    ?.filter((item) => item.entityType === 'CHANNEL')
+    ?.filter((item) => item.entityType === AudienceEntityType.Channel)
     .map((item) => item.entityId);
 
   const teamIds = audience
-    ?.filter((item) => item.entityType === 'TEAM')
+    ?.filter((item) => item.entityType === AudienceEntityType.Team)
     .map((item) => item.entityId);
 
   const usersQueryParams = isFiltersEmpty({
     status: [UserStatus.Active],
-    channelIds: channelIds?.length
-      ? channelIds?.map((each: any) => each).join(',')
-      : undefined,
-    teamIds: teamIds?.length
-      ? teamIds?.map((each: any) => each).join(',')
-      : undefined,
+    channelIds: channelIds,
+    teamIds: teamIds,
   });
 
   return (
