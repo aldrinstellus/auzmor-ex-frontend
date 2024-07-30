@@ -15,6 +15,7 @@ import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 import Button, { Size, Variant } from 'components/Button';
 import { operatorXOR } from 'utils/misc';
 import { useTranslation } from 'react-i18next';
+import { truncate } from 'lodash';
 
 export interface IBodyProps {
   data?: IPost;
@@ -93,7 +94,12 @@ const Body = forwardRef(
                     leftIconClassName="mr-1"
                     size={Size.Small}
                     variant={Variant.Secondary}
-                    label={audience[0]?.name || 'Audience'}
+                    label={
+                      truncate(audience[0]?.name || '', {
+                        length: 20,
+                        separator: ' ',
+                      }) || 'Audience'
+                    }
                     onClick={() => {
                       updateContext();
                       setActiveFlow(CreatePostFlow.Audience);

@@ -11,6 +11,7 @@ import ChannelLogo from 'pages/Channels/components/ChannelLogo';
 import { isFiltersEmpty } from 'utils/misc';
 import InfiniteSearch from 'components/InfiniteSearch';
 import { ICategory, useInfiniteCategories } from 'queries/category';
+import { truncate } from 'lodash';
 
 interface IChannelsBodyProps {
   entityRenderer?: (data: IChannel) => ReactNode;
@@ -317,7 +318,10 @@ const ChannelsBody: FC<IChannelsBodyProps> = ({
                               />
                               <div className="flex flex-col">
                                 <p className="text-neutral-900 font-bold text-sm">
-                                  {channel.name}
+                                  {truncate(channel?.name || '', {
+                                    length: 20,
+                                    separator: ' ',
+                                  })}
                                 </p>
                                 <p className="text-xs text-neutral-500">
                                   {channel?.totalMembers} members
