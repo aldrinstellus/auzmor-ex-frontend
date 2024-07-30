@@ -7,11 +7,11 @@ import { IGetUser, UserStatus } from 'queries/users';
 import DynamicImagePreview from 'components/DynamicImagePreview';
 import { SHOUTOUT_STEPS } from '.';
 import { getProfileImage, isFiltersEmpty } from 'utils/misc';
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import { truncate } from 'lodash';
 import Tooltip from 'components/Tooltip';
-import { FeedModeEnum, useFeedStore } from 'stores/feedStore';
-import { useParams } from 'react-router-dom';
+
+import { CreatePostContext } from 'contexts/CreatePostContext';
 
 interface ShoutoutBodyProps {
   step: SHOUTOUT_STEPS;
@@ -34,17 +34,24 @@ const Body: FC<ShoutoutBodyProps> = ({
   shoutoutTemplate,
   setShoutoutTemplate,
 }) => {
-  const feedMode = useFeedStore((state) => state.mode);
-  const { channelId } = useParams();
-  let usersQueryParams = isFiltersEmpty({ status: [UserStatus.Active] });
+  const { audience } = useContext(CreatePostContext);
+  const channelIds = audience
+    ?.filter((item) => item.entityType === 'CHANNEL')
+    .map((item) => item.entityId);
 
-  if (feedMode === FeedModeEnum.Channel && channelId) {
-    usersQueryParams = isFiltersEmpty({
-      status: [UserStatus.Active],
-      entityId: channelId,
-      entityType: 'CHANNEL',
-    });
-  }
+  const teamIds = audience
+    ?.filter((item) => item.entityType === 'TEAM')
+    .map((item) => item.entityId);
+
+  const usersQueryParams = isFiltersEmpty({
+    status: [UserStatus.Active],
+    channelIds: channelIds?.length
+      ? channelIds?.map((each: any) => each).join(',')
+      : undefined,
+    teamIds: teamIds?.length
+      ? teamIds?.map((each: any) => each).join(',')
+      : undefined,
+  });
 
   return (
     <div
