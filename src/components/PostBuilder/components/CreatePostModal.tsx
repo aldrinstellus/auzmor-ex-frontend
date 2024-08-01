@@ -3,6 +3,7 @@ import Modal from 'components/Modal';
 import CreatePost from 'components/PostBuilder/components/CreatePost';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
+  AudienceEntityType,
   IMention,
   IPost,
   IPostPayload,
@@ -50,6 +51,7 @@ import WelcomePost from 'images/ChannelCover/WelcomePost.png';
 import { useChannelStore } from 'stores/channelStore';
 import { useParams } from 'react-router-dom';
 import { useChannelRole } from 'hooks/useChannelRole';
+// import { AudienceEntityType } from 'queries/apps';
 export interface IPostMenu {
   id: number;
   label: string;
@@ -91,6 +93,7 @@ const CreatePostModal: FC<ICreatePostModal> = ({
     poll,
     setPoll,
     audience,
+    shoutoutUsers,
     shoutoutUserIds,
     setShoutoutUserIds,
     postType,
@@ -547,6 +550,15 @@ const CreatePostModal: FC<ICreatePostModal> = ({
       : (content?.text.match(previewLinkRegex) as string[]);
 
     if (mode === PostBuilderMode.Create) {
+      const _shoutoutUsers: any = Object.values(shoutoutUsers).filter(
+        (user) => user,
+      );
+      const shoutoutAudience =
+        _shoutoutUsers?.map((users: any) => ({
+          entityId: users?.id,
+          entityType: AudienceEntityType.User,
+          name: users?.fullName,
+        })) || [];
       createPostMutation.mutate({
         content: removeEmptyLines({
           text: content?.text || editorValue.text,
@@ -557,7 +569,7 @@ const CreatePostModal: FC<ICreatePostModal> = ({
         files: fileIds,
         mentions: mentionList || [],
         hashtags: hashtagList || [],
-        audience: audience || [],
+        audience: [...(audience || []), ...shoutoutAudience] || [],
         shoutoutRecipients: shoutoutUserIds || [],
         isAnnouncement: !!announcement,
         announcement: {

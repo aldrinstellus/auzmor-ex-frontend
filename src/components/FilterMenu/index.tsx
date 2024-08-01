@@ -97,7 +97,6 @@ const FilterMenu: FC<IFilterMenu> = ({
     };
   }, []);
 
-  console.log('filters :', filters);
   useEffect(() => {
     if (filters) {
       Object.keys(filters).forEach((key: string) => {
