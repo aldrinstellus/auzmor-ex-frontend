@@ -605,15 +605,18 @@ const CreatePostModal: FC<ICreatePostModal> = ({
       const editShoutoutAudience = _shoutoutUsers.length
         ? mapUsersToAudience(_shoutoutUsers)
         : [];
-      const finalAudience = audience?.length
-        ? Array.from(
-            new Set([
-              ...audience,
-              ...(editShoutoutAudience.length > 0 ? [] : existShoutoutAudience),
-              ...editShoutoutAudience,
-            ]),
-          )
+      const combinedAudience = audience?.length
+        ? [...audience, ...existShoutoutAudience, ...editShoutoutAudience]
         : [];
+
+      const finalAudience = Array.from(
+        new Map(
+          combinedAudience.map((item) => [
+            `${item.entityId}-${item.entityType}`,
+            item,
+          ]),
+        ).values(),
+      );
       mediaRef.current = [...media, ...uploadedMedia];
       const sortedIds = [
         ...fileIds,
