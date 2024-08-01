@@ -7,12 +7,9 @@ import { IGetUser, UserStatus } from 'queries/users';
 import DynamicImagePreview from 'components/DynamicImagePreview';
 import { SHOUTOUT_STEPS } from '.';
 import { getProfileImage, isFiltersEmpty } from 'utils/misc';
-import { FC, useContext } from 'react';
+import { FC } from 'react';
 import { truncate } from 'lodash';
 import Tooltip from 'components/Tooltip';
-
-import { CreatePostContext } from 'contexts/CreatePostContext';
-import { AudienceEntityType } from 'queries/apps';
 
 interface ShoutoutBodyProps {
   step: SHOUTOUT_STEPS;
@@ -35,21 +32,11 @@ const Body: FC<ShoutoutBodyProps> = ({
   shoutoutTemplate,
   setShoutoutTemplate,
 }) => {
-  const { audience } = useContext(CreatePostContext);
-  const channelIds = audience
-    ?.filter((item) => item.entityType === AudienceEntityType.Channel)
-    .map((item) => item.entityId);
-
-  const teamIds = audience
-    ?.filter((item) => item.entityType === AudienceEntityType.Team)
-    .map((item) => item.entityId);
-
   const usersQueryParams = isFiltersEmpty({
     status: [UserStatus.Active],
-    channelIds: channelIds,
-    teamIds: teamIds,
   });
 
+  // console.log('selectedUserIds :', selectedUserIds);
   return (
     <div
       className={clsx({

@@ -281,7 +281,11 @@ const CreatePostProvider: FC<ICreatePostProviderProps> = ({
   const [poll, setPoll] = useState<IPoll | null>(null);
   const [schedule, setSchedule] = useState<ISchedule | null>(null);
   const [audience, setAudience] = useState<IAudience[] | null>(
-    data?.audience || channelAudience || null,
+    data?.audience.filter(
+      (audience: any) => audience?.entityType !== AudienceEntityType.User,
+    ) ||
+      channelAudience ||
+      null,
   );
   const [shoutoutUserIds, setShoutoutUserIds] = useState<string[]>([]);
   const [shoutoutUsers, setShoutoutUsers] = useState<any>({});
