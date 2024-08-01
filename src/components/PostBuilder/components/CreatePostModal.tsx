@@ -501,7 +501,12 @@ const CreatePostModal: FC<ICreatePostModal> = ({
     let uploadedMedia: IMedia[] = [];
     const mentionList: IMention[] = [];
     const hashtagList: string[] = [];
-
+    const mapUsersToAudience = (users: any[]) =>
+      users?.map((user) => ({
+        entityId: user.userId ?? user.id,
+        entityType: AudienceEntityType.User,
+        name: user.fullName,
+      }));
     if (files?.length) {
       uploadedMedia = await uploadMedia(files, EntityType.Post);
       await useUploadCoverImage(
@@ -550,15 +555,11 @@ const CreatePostModal: FC<ICreatePostModal> = ({
       : (content?.text.match(previewLinkRegex) as string[]);
 
     if (mode === PostBuilderMode.Create) {
-      const _shoutoutUsers: any = Object.values(shoutoutUsers).filter(
-        (user) => user,
-      );
+      const _shoutoutUsers = Object.values(shoutoutUsers).filter(Boolean);
+
       const shoutoutAudience =
-        _shoutoutUsers?.map((users: any) => ({
-          entityId: users?.id,
-          entityType: AudienceEntityType.User,
-          name: users?.fullName,
-        })) || [];
+        _shoutoutUsers?.length > 0 ? mapUsersToAudience(_shoutoutUsers) : [];
+
       const finalAudience =
         audience && audience.length > 0
           ? [...audience, ...shoutoutAudience]
@@ -595,16 +596,24 @@ const CreatePostModal: FC<ICreatePostModal> = ({
           : null,
       });
     } else if (PostBuilderMode.Edit) {
-      const shoutoutAudience =
-        data?.shoutoutRecipients?.map((users: any) => ({
-          entityId: users?.userId ?? users?.id,
-          entityType: AudienceEntityType.User,
-          name: users?.fullName,
-        })) || [];
-      const finalAudience =
-        audience && audience.length > 0
-          ? [...audience, ...shoutoutAudience]
-          : [];
+      const existShoutoutAudience = data?.shoutoutRecipients
+        ? mapUsersToAudience(data.shoutoutRecipients)
+        : [];
+
+      const _shoutoutUsers = Object.values(shoutoutUsers).filter(Boolean);
+
+      const editShoutoutAudience = _shoutoutUsers.length
+        ? mapUsersToAudience(_shoutoutUsers)
+        : [];
+      const finalAudience = audience?.length
+        ? Array.from(
+            new Set([
+              ...audience,
+              ...(editShoutoutAudience.length > 0 ? [] : existShoutoutAudience),
+              ...editShoutoutAudience,
+            ]),
+          )
+        : [];
       mediaRef.current = [...media, ...uploadedMedia];
       const sortedIds = [
         ...fileIds,
