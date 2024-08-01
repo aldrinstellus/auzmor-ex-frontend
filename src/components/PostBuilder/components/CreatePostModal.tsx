@@ -559,6 +559,10 @@ const CreatePostModal: FC<ICreatePostModal> = ({
           entityType: AudienceEntityType.User,
           name: users?.fullName,
         })) || [];
+      const finalAudience =
+        audience && audience.length > 0
+          ? [...audience, ...shoutoutAudience]
+          : [];
       createPostMutation.mutate({
         content: removeEmptyLines({
           text: content?.text || editorValue.text,
@@ -569,7 +573,7 @@ const CreatePostModal: FC<ICreatePostModal> = ({
         files: fileIds,
         mentions: mentionList || [],
         hashtags: hashtagList || [],
-        audience: [...(audience || []), ...shoutoutAudience] || [],
+        audience: finalAudience,
         shoutoutRecipients: shoutoutUserIds || [],
         isAnnouncement: !!announcement,
         announcement: {
@@ -591,6 +595,16 @@ const CreatePostModal: FC<ICreatePostModal> = ({
           : null,
       });
     } else if (PostBuilderMode.Edit) {
+      const shoutoutAudience =
+        data?.shoutoutRecipients?.map((users: any) => ({
+          entityId: users?.userId ?? users?.id,
+          entityType: AudienceEntityType.User,
+          name: users?.fullName,
+        })) || [];
+      const finalAudience =
+        audience && audience.length > 0
+          ? [...audience, ...shoutoutAudience]
+          : [];
       mediaRef.current = [...media, ...uploadedMedia];
       const sortedIds = [
         ...fileIds,
@@ -625,7 +639,7 @@ const CreatePostModal: FC<ICreatePostModal> = ({
         files: sortedIds,
         mentions: mentionList || [],
         hashtags: hashtagList || [],
-        audience: audience || [],
+        audience: finalAudience,
         shoutoutRecipients: shoutoutUserIds || [],
         isAnnouncement: !!announcement,
         announcement: {
