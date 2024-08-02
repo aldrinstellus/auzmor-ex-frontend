@@ -34,7 +34,7 @@ const Truncate: FC<ITruncateProps> = ({
     () =>
       clsx({
         'z-10 whitespace-nowrap overflow-hidden text-ellipsis max-w-3xl': true,
-        [className]: true,
+        [toolTipClassName]: true,
       }),
     [toolTipClassName],
   );
