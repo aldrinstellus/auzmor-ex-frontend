@@ -3,6 +3,7 @@ import Modal from 'components/Modal';
 import CreatePost from 'components/PostBuilder/components/CreatePost';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
+  AudienceEntityType,
   IMention,
   IPost,
   IPostPayload,
@@ -50,6 +51,7 @@ import WelcomePost from 'images/ChannelCover/WelcomePost.png';
 import { useChannelStore } from 'stores/channelStore';
 import { useParams } from 'react-router-dom';
 import { useChannelRole } from 'hooks/useChannelRole';
+// import { AudienceEntityType } from 'queries/apps';
 export interface IPostMenu {
   id: number;
   label: string;
@@ -91,15 +93,16 @@ const CreatePostModal: FC<ICreatePostModal> = ({
     poll,
     setPoll,
     audience,
+    shoutoutUsers,
     shoutoutUserIds,
     setShoutoutUserIds,
     postType,
+    setShoutoutUsers,
     inputImgRef,
     isEmpty,
     setEditorValue,
     setUploads,
   } = useContext(CreatePostContext);
-
   const { channelId = '' } = useParams();
   const channelData = useChannelStore((state) => state.channels)[channelId];
 
@@ -231,6 +234,20 @@ const CreatePostModal: FC<ICreatePostModal> = ({
         });
       }
       if (data?.shoutoutRecipients?.length) {
+        const transformedObject: any = {};
+        data?.shoutoutRecipients.forEach((item: any) => {
+          transformedObject[item.userId] = {
+            userId: item.userId,
+            email: item.email,
+            fullName: item.fullName,
+            status: item.status,
+            workLocation: item.workLocation,
+            designation: item.designation,
+            department: item.department,
+            profileImage: item.profileImage,
+          };
+        });
+        setShoutoutUsers(transformedObject);
         const recipientIds = data.shoutoutRecipients.map(
           (recipient) => recipient.userId,
         );
@@ -498,7 +515,12 @@ const CreatePostModal: FC<ICreatePostModal> = ({
     let uploadedMedia: IMedia[] = [];
     const mentionList: IMention[] = [];
     const hashtagList: string[] = [];
-
+    const mapUsersToAudience = (users: any[]) =>
+      users?.map((user) => ({
+        entityId: user.userId ?? user.id,
+        entityType: AudienceEntityType.User,
+        name: user.fullName,
+      }));
     if (files?.length) {
       uploadedMedia = await uploadMedia(files, EntityType.Post);
       await useUploadCoverImage(
@@ -547,6 +569,15 @@ const CreatePostModal: FC<ICreatePostModal> = ({
       : (content?.text.match(previewLinkRegex) as string[]);
 
     if (mode === PostBuilderMode.Create) {
+      const _shoutoutUsers = Object.values(shoutoutUsers).filter(Boolean);
+
+      const shoutoutAudience =
+        _shoutoutUsers?.length > 0 ? mapUsersToAudience(_shoutoutUsers) : [];
+
+      const finalAudience =
+        audience && audience.length > 0
+          ? [...audience, ...shoutoutAudience]
+          : [];
       createPostMutation.mutate({
         content: removeEmptyLines({
           text: content?.text || editorValue.text,
@@ -557,7 +588,7 @@ const CreatePostModal: FC<ICreatePostModal> = ({
         files: fileIds,
         mentions: mentionList || [],
         hashtags: hashtagList || [],
-        audience: audience || [],
+        audience: finalAudience,
         shoutoutRecipients: shoutoutUserIds || [],
         isAnnouncement: !!announcement,
         announcement: {
@@ -579,6 +610,15 @@ const CreatePostModal: FC<ICreatePostModal> = ({
           : null,
       });
     } else if (PostBuilderMode.Edit) {
+      const _shoutoutUsers = Object.values(shoutoutUsers).filter(Boolean);
+      const shoutoutAudience =
+        _shoutoutUsers?.length > 0 ? mapUsersToAudience(_shoutoutUsers) : [];
+
+      const finalAudience =
+        audience && audience.length > 0
+          ? [...audience, ...shoutoutAudience]
+          : [];
+
       mediaRef.current = [...media, ...uploadedMedia];
       const sortedIds = [
         ...fileIds,
@@ -613,7 +653,7 @@ const CreatePostModal: FC<ICreatePostModal> = ({
         files: sortedIds,
         mentions: mentionList || [],
         hashtags: hashtagList || [],
-        audience: audience || [],
+        audience: finalAudience,
         shoutoutRecipients: shoutoutUserIds || [],
         isAnnouncement: !!announcement,
         announcement: {
