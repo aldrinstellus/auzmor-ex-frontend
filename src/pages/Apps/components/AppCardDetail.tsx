@@ -125,13 +125,13 @@ const AppDetailModal: FC<AppDetailModalProps> = ({
                     <Truncate
                       text={app.label}
                       className="text-3xl text-neutral-900 font-semibold max-w-[250px]"
-                      dataTestId="app-name"
+                      dataTestId="app-details-name"
                     />
 
                     <Truncate
                       text={app.description}
                       className="pt-1 text-neutral-900 font-normal max-w-[128px]"
-                      dataTestId="app-name"
+                      dataTestId="app-details-description"
                     />
                   </div>
                 </div>

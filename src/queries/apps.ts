@@ -122,14 +122,10 @@ export const fetchApps = async (
   let response = null;
   if (!!!context.pageParam) {
     response = await apiService.get('/apps', context.queryKey[1]);
-
-    response.data.result.data = response.data.result.data.map(
-      (eachApp: App) => ({ id: eachApp.id }),
-    );
-    return response;
   } else {
     response = await apiService.get(context.pageParam);
   }
+
   setApp({
     ...apps,
     ...chain(response.data.result.data).keyBy('id').value(),
@@ -162,11 +158,6 @@ export const fetchMyApps = async (
   let response = null;
   if (!!!context.pageParam) {
     response = await apiService.get('/apps/me', context.queryKey[1]);
-
-    response.data.result.data = response.data.result.data.map(
-      (eachApp: App) => ({ id: eachApp.id }),
-    );
-    return response;
   } else {
     response = await apiService.get(context.pageParam);
   }
@@ -203,11 +194,6 @@ export const fetchFeaturedApps = async (
   let response = null;
   if (!!!context.pageParam) {
     response = await apiService.get('/apps', context.queryKey[1]);
-
-    response.data.result.data = response.data.result.data.map(
-      (eachApp: App) => ({ id: eachApp.id }),
-    );
-    return response;
   } else {
     response = await apiService.get(context.pageParam);
   }
@@ -241,11 +227,6 @@ export const fetchMyFeaturedApps = async (
   let response = null;
   if (!!!context.pageParam) {
     response = await apiService.get('/apps/me', context.queryKey[1]);
-
-    response.data.result.data = response.data.result.data.map(
-      (eachApp: App) => ({ id: eachApp.id }),
-    );
-    return response;
   } else {
     response = await apiService.get(context.pageParam);
   }
