@@ -1,5 +1,5 @@
 import Badge from 'components/Badge';
-import Button, { Variant } from 'components/Button';
+import Button, { Size, Variant } from 'components/Button';
 import Card from 'components/Card';
 import Divider from 'components/Divider';
 import Icon from 'components/Icon';
@@ -36,10 +36,6 @@ const AppDetailModal: FC<AppDetailModalProps> = ({
   });
   const [isAudienceModalOpen, openAudienceModal, closeAudienceModal] =
     useModal(false);
-  const audienceChipStyle =
-    'py-2 px-3 flex items-center gap-1 border-1 rounded-[24px] border-neutral-200 group cursor-pointer';
-  const audienceLabelStyle =
-    'text-sm font-semibold group-hover:text-primary-500';
 
   return (
     <Modal open={open} className="max-w-[638px]">
@@ -55,9 +51,11 @@ const AppDetailModal: FC<AppDetailModalProps> = ({
                 alt={`${app.label} ${t('imageAlt')}`}
               />
             </div>
-            <p className="text-neutral-900 text-lg font-extrabold line-clamp-1">
-              {app.label}
-            </p>
+
+            <Truncate
+              text={app.label}
+              className="text-neutral-900 text-lg font-extrabold  max-w-[250px]"
+            />
           </div>
           <Icon
             name="close"
@@ -140,35 +138,53 @@ const AppDetailModal: FC<AppDetailModalProps> = ({
                   <p className="text-neutral-900 text-sm font-medium">
                     {t('audience')}:
                   </p>
-                  {app.audience && app.audience.length > 0 ? (
-                    <div className="flex gap-2">
-                      <div
-                        className={audienceChipStyle}
-                        onClick={openAudienceModal}
-                      >
-                        <Icon name="noteFavourite" size={16} />
-                        <span className={audienceLabelStyle}>
-                          {app.audience[0].name || t('teamName')}
-                        </span>
-                      </div>
-                      {app.audience.length > 1 && (
-                        <div
-                          className={`${audienceChipStyle} cursor-pointer`}
+                  <div className="flex items-center cursor-pointer">
+                    {app.audience && app.audience.length > 0 ? (
+                      <div className="flex gap-2">
+                        <Button
+                          key={app.audience[0].entityId}
+                          leftIcon="noteFavourite"
+                          leftIconSize={16}
+                          leftIconClassName="mr-1"
+                          size={Size.Small}
+                          variant={Variant.Secondary}
+                          label={
+                            <Truncate
+                              text={app?.audience[0]?.name || t('teamName')}
+                            />
+                          }
                           onClick={openAudienceModal}
-                        >
-                          <span className={audienceLabelStyle}>
-                            {t('more', { count: app.audience.length - 1 })}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className={audienceChipStyle}>
-                      <span className={audienceLabelStyle}>
-                        {t('everyone')}
-                      </span>
-                    </div>
-                  )}
+                          className="group"
+                          labelClassName="text-xss text-neutral-900 w-24 font-medium group-hover:text-primary-500"
+                        />
+                        {app.audience && app.audience.length > 1 && (
+                          <Button
+                            key={app.audience[0].entityId}
+                            variant={Variant.Secondary}
+                            size={Size.Small}
+                            label={t('more', {
+                              count: app.audience.length - 1,
+                            })}
+                            onClick={openAudienceModal}
+                            className="group"
+                            labelClassName="text-xss text-neutral-900 font-medium group-hover:text-primary-500"
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      app.audience &&
+                      app.audience.length === 0 && (
+                        <Button
+                          variant={Variant.Secondary}
+                          leftIcon={'profileUser'}
+                          label="Everyone"
+                          size={Size.Small}
+                          className="group"
+                          labelClassName="text-xss text-neutral-900 font-medium group-hover:text-primary-500"
+                        />
+                      )
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

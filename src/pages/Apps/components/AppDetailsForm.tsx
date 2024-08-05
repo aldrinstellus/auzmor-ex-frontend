@@ -15,6 +15,7 @@ import { FC } from 'react';
 import useProduct from 'hooks/useProduct';
 import { useInfiniteLearnCategory } from 'queries/learn';
 import { useTranslation } from 'react-i18next';
+import Truncate from 'components/Truncate';
 
 type AppDetailsFormProps = {
   control: Control<IAddAppForm, any>;
@@ -150,8 +151,14 @@ const AppDetailsForm: FC<AppDetailsFormProps> = ({
                   leftIconClassName="mr-1"
                   size={Size.Small}
                   variant={Variant.Secondary}
-                  label={audience[0].name || t('defaultAudienceName')}
+                  label={
+                    <Truncate
+                      text={audience[0]?.name || t('defaultAudienceName')}
+                    />
+                  }
                   onClick={() => setActiveFlow(ADD_APP_FLOW.AudienceSelector)}
+                  className="group"
+                  labelClassName="text-xss text-neutral-900 w-24 font-medium group-hover:text-primary-500"
                   dataTestId="app-audience-name"
                 />
                 {audience.length > 1 && (
