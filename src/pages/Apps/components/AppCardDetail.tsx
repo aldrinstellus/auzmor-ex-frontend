@@ -155,7 +155,7 @@ const AppDetailModal: FC<AppDetailModalProps> = ({
                           }
                           onClick={openAudienceModal}
                           className="group"
-                          labelClassName="text-xss text-neutral-900 w-24 font-medium group-hover:text-primary-500"
+                          labelClassName="text-xss text-neutral-900 max-w-[128px] font-medium group-hover:text-primary-500"
                         />
                         {app.audience && app.audience.length > 1 && (
                           <Button
