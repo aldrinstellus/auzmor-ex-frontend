@@ -44,6 +44,15 @@ const TeamsBody: FC<ITeamsBodyProps> = ({
       'categories',
     ]);
 
+  // Reset state on unmount
+  useEffect(
+    () => () => {
+      setValue('selectAll', false);
+      setValue('showSelectedMembers', false);
+    },
+    [],
+  );
+
   // fetch teams datar
   const debouncedSearchValue = useDebounce(teamSearch || '', 500);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =

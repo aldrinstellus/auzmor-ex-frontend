@@ -38,6 +38,15 @@ const ChannelsBody: FC<IChannelsBodyProps> = ({
       'showSelectedMembers',
     ]);
 
+  // Reset state on unmount
+  useEffect(
+    () => () => {
+      setValue('selectAll', false);
+      setValue('showSelectedMembers', false);
+    },
+    [],
+  );
+
   const debouncedSearchValue = useDebounce(channelSearch || '', 500);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteChannels(
