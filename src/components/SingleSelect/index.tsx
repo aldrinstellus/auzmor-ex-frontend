@@ -13,6 +13,7 @@ interface IOptions {
   label: string;
   disabled: boolean;
   dataTestId?: string;
+  render?: () => ReactNode;
 }
 
 export interface ISingleSelectProps {
@@ -36,6 +37,7 @@ export interface ISingleSelectProps {
   clearIcon?: ReactNode | null;
   isClearable?: boolean;
   showSearch?: boolean;
+  required?: boolean;
 }
 
 const SingleSelect = forwardRef(
@@ -61,6 +63,7 @@ const SingleSelect = forwardRef(
       clearIcon = null,
       isClearable = false,
       showSearch = true,
+      required = false,
     }: ISingleSelectProps,
     ref?: any,
   ) => {
@@ -130,7 +133,10 @@ const SingleSelect = forwardRef(
             { 'cursor-not-allowed': disabled },
           )}
         >
-          <div className={labelStyle}>{label}</div>
+          <div className={labelStyle}>
+            {label}
+            <span className="text-red-500">{required && '*'}</span>
+          </div>
           <div
             data-testid={dataTestId}
             onClick={() => {
@@ -162,10 +168,13 @@ const SingleSelect = forwardRef(
                   {...field}
                   notFoundContent={noContentFound()}
                   onBlur={() => setOpen(false)}
+                  onKeyUp={(e) =>
+                    e.code === 'Enter' && !disabled ? setOpen(!open) : ''
+                  }
                   onChange={(_, option) => {
                     field.onChange(option);
                   }}
-                  onSearch={() => setOpen(true)}
+                  onSearch={showSearch ? () => setOpen(true) : undefined}
                   className={`single-select ${selectClassName}`}
                   suffixIcon={suffixIcon || <Icon name="arrowDown" size={18} />}
                   clearIcon={clearIcon}
@@ -173,9 +182,19 @@ const SingleSelect = forwardRef(
                   allowClear={isClearable}
                   aria-label="select"
                 >
-                  {(options || []).map((option) => (
-                    <Option key={option.value} value={option.value}>
-                      <div data-testid={option.dataTestId}>{option.label}</div>
+                  {(options || []).map((option, i) => (
+                    <Option
+                      key={`${option.value}-single-select-option-${i}`}
+                      value={option.value}
+                      label={option.label}
+                    >
+                      {option?.render ? (
+                        option.render()
+                      ) : (
+                        <div data-testid={option.dataTestId}>
+                          {option.label}
+                        </div>
+                      )}
                     </Option>
                   ))}
                 </Select>

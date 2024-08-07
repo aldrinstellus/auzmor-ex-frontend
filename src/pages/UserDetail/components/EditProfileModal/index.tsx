@@ -149,7 +149,6 @@ const EditProfileModal: FC<IEditProfileModal> = ({
     {
       type: FieldType.Input,
       variant: InputVariant.Text,
-      defaultValue: getValues().fullName,
       error: errors.fullName?.message,
       name: 'fullName',
       label: 'Name',
@@ -165,7 +164,6 @@ const EditProfileModal: FC<IEditProfileModal> = ({
     {
       type: FieldType.Input,
       variant: InputVariant.Text,
-      defaultValue: getValues().preferredName,
       name: 'preferredName',
       label: 'Preferred Name',
       dataTestId: `${dataTestId}-perferred-name`,
@@ -251,6 +249,7 @@ const EditProfileModal: FC<IEditProfileModal> = ({
         userCoverImageRef?.current?.click();
       },
       dataTestId: 'edit-coverpic-upload',
+      hidden: false,
     },
     {
       icon: 'maximizeOutline',
@@ -262,6 +261,7 @@ const EditProfileModal: FC<IEditProfileModal> = ({
         closeEditProfileModal();
       },
       dataTestId: 'edit-coverpic-reposition',
+      hidden: userDetails?.coverImage?.original == null,
     },
     {
       icon: 'trashOutline',
@@ -281,8 +281,9 @@ const EditProfileModal: FC<IEditProfileModal> = ({
         setIsCoverImageRemoved(true);
       },
       dataTestId: 'edit-coverpic-deletepost',
+      hidden: userDetails?.coverImage?.original == null,
     },
-  ];
+  ].filter((option) => option.hidden !== true);
   const { updateUser } = useAuth();
 
   useEffect(

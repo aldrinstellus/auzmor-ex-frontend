@@ -66,7 +66,7 @@ export interface ITeamProps {
   closeTeamModal: () => void;
 }
 
-const ShowingCount: FC<{
+export const ShowingCount: FC<{
   isLoading: boolean;
   count: number;
   className?: string;
@@ -79,7 +79,7 @@ const ShowingCount: FC<{
       title={`Showing ${count} results`}
     >
       {!isLoading ? (
-        <div className="text-neutral-500">Showing {count} results</div>
+        <p className="text-neutral-500">Showing {count} results</p>
       ) : (
         <Skeleton
           className="!w-32"
@@ -133,7 +133,7 @@ const Team: FC<ITeamProps> = ({
   } = useForm<IForm>({
     mode: 'onChange',
     defaultValues: {
-      search: searchParams.get('teamSearch'),
+      search: searchParams.get('teamSearch') || '',
     },
   });
 
@@ -377,8 +377,8 @@ const Team: FC<ITeamProps> = ({
         {showGrid ? (
           <div className="grid grid-cols-6 gap-6 justify-items-center lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
             {isLoading
-              ? [...Array(30)].map((element) => (
-                  <div key={element}>
+              ? [...Array(30)].map((_value, i) => (
+                  <div key={`${i}-teams-skeleton`}>
                     <TeamsSkeleton />
                   </div>
                 ))

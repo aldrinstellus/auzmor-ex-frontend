@@ -16,7 +16,10 @@ import { ITeam } from 'queries/teams';
 import Teams from './Teams';
 import { CategoryType } from 'queries/apps';
 import { UserStatus } from 'queries/users';
-import { ChannelVisibilityEnum } from 'stores/channelStore';
+import {
+  CHANNEL_MEMBER_STATUS,
+  ChannelVisibilityEnum,
+} from 'stores/channelStore';
 import Visibility from './Visibility';
 import ChannelType, { ChannelTypeEnum } from './ChannelType';
 import { useTranslation } from 'react-i18next';
@@ -24,28 +27,61 @@ import { IDocType } from 'queries/storage';
 import DocumentPeople from './DocumentPeople';
 import DocumentType from './DocumentType';
 import DocumentModified from './DocumentModifed';
+import Roles from './Roles';
+import { Role } from 'utils/enum';
+import ByPeople, { ByPeopleEnum } from './ByPeople';
+import ChannelRequestStatus from './ChannelRequestStatus';
+import { titleCase } from 'utils/misc';
+import Channels from './Channels';
 
 export interface IFilterForm {
   visibilityRadio: ChannelVisibilityEnum;
   channelTypeRadio: ChannelTypeEnum;
   statusCheckbox: ICheckboxListOption[];
+  channelRequestStatusCheckbox: ICheckboxListOption[];
   locationCheckbox: ICheckboxListOption[];
   departmentCheckbox: ICheckboxListOption[];
+  channelCheckbox: ICheckboxListOption[];
   categoryCheckbox: ICheckboxListOption[];
   documentTypeCheckbox: any;
   documentPeopleCheckbox: any;
   documentModifiedRadio: any;
   teamCheckbox: ICheckboxListOption[];
+  roleCheckbox: ICheckboxListOption[];
+  byPeopleCheckbox: ICheckboxListOption[];
   locationSearch: string;
+  channelSearch: string;
   departmentSearch: string;
   categorySearch: string;
   teamSearch: string;
   statusSearch: string;
+  roleSearch: string;
+  byPeopleSearch: string;
   docUserSearch: string;
+  visibilitySearch: string;
+  channelTypeSearch: string;
+  channelRequestStatusSearch: string;
 }
 
+export interface IChannelFilter {
+  id: string;
+  name: string;
+}
 export interface IStatus {
   id: UserStatus;
+  name: string;
+}
+
+export interface IChannelRequestStatus {
+  id: CHANNEL_MEMBER_STATUS;
+  name: string;
+}
+export interface IRole {
+  id: Role;
+  name: string;
+}
+export interface IBypeople {
+  id: ByPeopleEnum;
   name: string;
 }
 
@@ -56,12 +92,18 @@ export enum FilterModalVariant {
   App = 'APP',
   ChannelsListing = 'CHANNELS_LISTING',
   Document = 'DOCUMENT',
+  ChannelsMangeAcess = 'CHANNELS_MANAGE_ACCESS',
+  ChannelMember = 'CHANNEL_MEMBER',
+  ChannelRequest = 'CHANNEL_REQUEST',
+  LxpApp = 'LXP_APP',
 }
 
 export interface IAppliedFilters {
   locations?: ILocationAPI[];
   departments?: IDepartmentAPI[];
   status?: IStatus[];
+  channelRequestStatus?: IChannelRequestStatus[];
+  roles?: IRole[];
   categories?: ICategory[];
   teams?: ITeam[];
   visibility?: ChannelVisibilityEnum;
@@ -69,6 +111,8 @@ export interface IAppliedFilters {
   docTypeCheckbox?: IDocType[];
   docPeopleCheckbox?: any;
   docModifiedRadio?: any;
+  byPeople?: IBypeople[];
+  channels?: IChannelFilter[];
 }
 
 interface IFilterModalProps {
@@ -100,13 +144,39 @@ const FilterModal: FC<IFilterModalProps> = ({
     visibility: ChannelVisibilityEnum.All,
     docTypeCheckbox: [],
     docPeopleCheckbox: [],
-    docModifiedRadio: '',
+    docModifiedRadio: [],
+    roles: [],
+    byPeople: [],
+    channelRequestStatus: [],
+    channels: [],
   },
   onApply,
   onClear,
   variant = FilterModalVariant.People,
 }) => {
   const { t } = useTranslation('filterModal');
+
+  const defaultChannelRequestStatus = !!(
+    appliedFilters?.channelRequestStatus || []
+  ).length
+    ? (appliedFilters.channelRequestStatus || [])?.map(
+        (channelRequestStatus: any) => ({
+          data: channelRequestStatus,
+          dataTestId: `channel-request-status-${channelRequestStatus.name}`,
+        }),
+      )
+    : variant === FilterModalVariant.ChannelRequest
+    ? [
+        {
+          data: {
+            id: CHANNEL_MEMBER_STATUS.PENDING,
+            name: titleCase(CHANNEL_MEMBER_STATUS.PENDING),
+          },
+          dataTestId: `channel-request-status-${CHANNEL_MEMBER_STATUS.PENDING}`,
+        },
+      ]
+    : [];
+
   const { control, handleSubmit, watch, setValue } = useForm<IFilterForm>({
     mode: 'onChange',
     defaultValues: {
@@ -116,6 +186,14 @@ const FilterModal: FC<IFilterModalProps> = ({
       statusCheckbox: (appliedFilters.status || []).map((status) => ({
         data: status,
         dataTestId: `status-${status.name}`,
+      })),
+      roleCheckbox: (appliedFilters.roles || []).map((role) => ({
+        data: role,
+        dataTestId: `role-${role.name}`,
+      })),
+      byPeopleCheckbox: (appliedFilters.byPeople || []).map((people: any) => ({
+        data: people,
+        dataTestId: `byPeople-${people.name}`,
       })),
       locationCheckbox: (appliedFilters.locations || []).map((location) => ({
         data: location,
@@ -130,6 +208,10 @@ const FilterModal: FC<IFilterModalProps> = ({
       categoryCheckbox: (appliedFilters.categories || []).map((category) => ({
         data: category,
         dataTestId: `category-${category.name}`,
+      })),
+      channelCheckbox: (appliedFilters.channels || []).map((channel) => ({
+        data: channel,
+        dataTestId: `channel-${channel.name}`,
       })),
       teamCheckbox: (appliedFilters.teams || []).map((team) => ({
         data: team,
@@ -147,7 +229,8 @@ const FilterModal: FC<IFilterModalProps> = ({
           dataTestId: `doc-${docs.name}`,
         }),
       ),
-      documentModifiedRadio: appliedFilters.docModifiedRadio || '',
+      documentModifiedRadio: appliedFilters.docModifiedRadio || [],
+      channelRequestStatusCheckbox: defaultChannelRequestStatus,
     },
   });
 
@@ -155,18 +238,26 @@ const FilterModal: FC<IFilterModalProps> = ({
     locationCheckbox,
     departmentCheckbox,
     categoryCheckbox,
+    channelCheckbox,
     teamCheckbox,
     statusCheckbox,
+    roleCheckbox,
     documentTypeCheckbox,
     documentPeopleCheckbox,
+    byPeopleCheckbox,
+    channelRequestStatusCheckbox,
   ] = watch([
     'locationCheckbox',
     'departmentCheckbox',
     'categoryCheckbox',
+    'channelCheckbox',
     'teamCheckbox',
     'statusCheckbox',
+    'roleCheckbox',
     'documentTypeCheckbox',
     'documentPeopleCheckbox',
+    'byPeopleCheckbox',
+    'channelRequestStatusCheckbox',
   ]);
 
   const onSubmit = (formData: IFilterForm) => {
@@ -180,10 +271,14 @@ const FilterModal: FC<IFilterModalProps> = ({
       categories: formData.categoryCheckbox.map(
         (category) => category.data,
       ) as ICategory[],
+      channels: formData.channelCheckbox.map(
+        (category) => category.data,
+      ) as IChannelFilter[],
       teams: formData.teamCheckbox.map((team) => team.data) as ITeam[],
       status: formData.statusCheckbox.map(
         (category) => category.data,
       ) as IStatus[],
+      roles: formData.roleCheckbox.map((role) => role.data) as IRole[],
       docTypeCheckbox: formData.documentTypeCheckbox.map(
         (docType: any) => docType.data,
       ),
@@ -193,6 +288,12 @@ const FilterModal: FC<IFilterModalProps> = ({
       docModifiedRadio: formData.documentModifiedRadio,
       visibility: formData.visibilityRadio,
       channelType: formData.channelTypeRadio,
+      byPeople: formData.byPeopleCheckbox.map(
+        (people) => people.data,
+      ) as IBypeople[],
+      channelRequestStatus: formData.channelRequestStatusCheckbox.map(
+        (status) => status.data,
+      ) as IChannelRequestStatus[],
     } as unknown as IAppliedFilters);
   };
 
@@ -203,6 +304,10 @@ const FilterModal: FC<IFilterModalProps> = ({
       FilterModalVariant.Orgchart,
       FilterModalVariant.People,
       FilterModalVariant.ChannelsListing,
+      FilterModalVariant.ChannelsMangeAcess,
+      FilterModalVariant.ChannelMember,
+      FilterModalVariant.ChannelRequest,
+      FilterModalVariant.LxpApp,
     ],
     'doc-type-filters': [
       FilterModalVariant.Team,
@@ -210,6 +315,10 @@ const FilterModal: FC<IFilterModalProps> = ({
       FilterModalVariant.Orgchart,
       FilterModalVariant.People,
       FilterModalVariant.ChannelsListing,
+      FilterModalVariant.ChannelMember,
+      FilterModalVariant.ChannelsMangeAcess,
+      FilterModalVariant.ChannelRequest,
+      FilterModalVariant.LxpApp,
     ],
     'doc-modified-filters': [
       FilterModalVariant.Team,
@@ -217,6 +326,10 @@ const FilterModal: FC<IFilterModalProps> = ({
       FilterModalVariant.Orgchart,
       FilterModalVariant.People,
       FilterModalVariant.ChannelsListing,
+      FilterModalVariant.ChannelsMangeAcess,
+      FilterModalVariant.ChannelMember,
+      FilterModalVariant.ChannelRequest,
+      FilterModalVariant.LxpApp,
     ],
     'visibility-filters': [
       FilterModalVariant.Team,
@@ -224,6 +337,10 @@ const FilterModal: FC<IFilterModalProps> = ({
       FilterModalVariant.Orgchart,
       FilterModalVariant.People,
       FilterModalVariant.Document,
+      FilterModalVariant.ChannelsMangeAcess,
+      FilterModalVariant.ChannelMember,
+      FilterModalVariant.ChannelRequest,
+      FilterModalVariant.LxpApp,
     ],
     'channel-type-filters': [
       FilterModalVariant.Team,
@@ -231,23 +348,59 @@ const FilterModal: FC<IFilterModalProps> = ({
       FilterModalVariant.Orgchart,
       FilterModalVariant.People,
       FilterModalVariant.Document,
+      FilterModalVariant.ChannelsMangeAcess,
+      FilterModalVariant.ChannelMember,
+      FilterModalVariant.ChannelRequest,
+      FilterModalVariant.LxpApp,
+    ],
+    'channel-roles-filters': [
+      FilterModalVariant.Team,
+      FilterModalVariant.App,
+      FilterModalVariant.Orgchart,
+      FilterModalVariant.People,
+      FilterModalVariant.Document,
+      FilterModalVariant.ChannelsListing,
+      FilterModalVariant.ChannelsMangeAcess,
+      FilterModalVariant.ChannelRequest,
+      FilterModalVariant.LxpApp,
     ],
     'locations-filters': [
       FilterModalVariant.Team,
       FilterModalVariant.App,
       FilterModalVariant.ChannelsListing,
       FilterModalVariant.Document,
+      FilterModalVariant.ChannelsMangeAcess,
+      FilterModalVariant.ChannelMember,
+      FilterModalVariant.ChannelRequest,
+      FilterModalVariant.LxpApp,
     ],
     'departments-filters': [
       FilterModalVariant.Team,
       FilterModalVariant.App,
       FilterModalVariant.ChannelsListing,
+      FilterModalVariant.ChannelMember,
       FilterModalVariant.Document,
+      FilterModalVariant.ChannelsMangeAcess,
+      FilterModalVariant.ChannelRequest,
+      FilterModalVariant.LxpApp,
     ],
     'categories-filters': [
       FilterModalVariant.Orgchart,
+      FilterModalVariant.ChannelMember,
       FilterModalVariant.People,
       FilterModalVariant.Document,
+      FilterModalVariant.ChannelsMangeAcess,
+      FilterModalVariant.ChannelRequest,
+    ],
+    'channel-filters': [
+      FilterModalVariant.Team,
+      FilterModalVariant.App,
+      FilterModalVariant.ChannelsListing,
+      FilterModalVariant.Document,
+      FilterModalVariant.ChannelsMangeAcess,
+      FilterModalVariant.ChannelMember,
+      FilterModalVariant.ChannelRequest,
+      FilterModalVariant.Orgchart,
     ],
     'team-filters': [
       FilterModalVariant.People,
@@ -261,6 +414,28 @@ const FilterModal: FC<IFilterModalProps> = ({
       FilterModalVariant.App,
       FilterModalVariant.ChannelsListing,
       FilterModalVariant.Document,
+      FilterModalVariant.ChannelRequest,
+      FilterModalVariant.LxpApp,
+    ],
+    'by-people-filter': [
+      FilterModalVariant.Team,
+      FilterModalVariant.App,
+      FilterModalVariant.ChannelsListing,
+      FilterModalVariant.Document,
+      FilterModalVariant.Orgchart,
+      FilterModalVariant.People,
+      FilterModalVariant.LxpApp,
+    ],
+    'channel-request-status': [
+      FilterModalVariant.Team,
+      FilterModalVariant.App,
+      FilterModalVariant.LxpApp,
+      FilterModalVariant.Orgchart,
+      FilterModalVariant.People,
+      FilterModalVariant.ChannelsListing,
+      FilterModalVariant.ChannelMember,
+      FilterModalVariant.ChannelsMangeAcess,
+      FilterModalVariant.ChannelRequest,
     ],
   };
 
@@ -268,7 +443,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     {
       label: () => (
         <div className="flex items-center">
-          <div>People</div>
+          <div>{t('people')}</div>
           {!!documentPeopleCheckbox.length && (
             <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
               {documentPeopleCheckbox.length}
@@ -286,7 +461,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     {
       label: () => (
         <div className="flex items-center">
-          <div>Type</div>
+          <div>{t('type')}</div>
           {!!documentTypeCheckbox.length && (
             <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
               {documentTypeCheckbox.length}
@@ -304,7 +479,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     {
       label: () => (
         <div className="flex items-center">
-          <div>Modified on</div>
+          <div>{t('modified')}</div>
         </div>
       ),
       key: 'doc-modified-filters',
@@ -340,6 +515,7 @@ const FilterModal: FC<IFilterModalProps> = ({
       isHidden: filterOptionMappings['channel-type-filters'].includes(variant),
       dataTestId: 'filterby-channel-type',
     },
+
     {
       label: () => (
         <div className="flex items-center">
@@ -406,6 +582,24 @@ const FilterModal: FC<IFilterModalProps> = ({
     {
       label: () => (
         <div className="flex items-center">
+          <div>{t('channel')}</div>
+          {!!channelCheckbox.length && (
+            <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
+              {channelCheckbox.length}
+            </div>
+          )}
+        </div>
+      ),
+      key: 'channel-filters',
+      component: () => (
+        <Channels control={control} watch={watch} setValue={setValue} />
+      ),
+      isHidden: filterOptionMappings['channel-filters'].includes(variant),
+      dataTestId: 'filterby-channel-filters',
+    },
+    {
+      label: () => (
+        <div className="flex items-center">
           <div>{t('team')}</div>
           {!!teamCheckbox.length && (
             <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
@@ -439,7 +633,67 @@ const FilterModal: FC<IFilterModalProps> = ({
       isHidden: filterOptionMappings['status-filters'].includes(variant),
       dataTestId: 'filterby-status',
     },
+    {
+      label: () => (
+        <div className="flex items-center">
+          <div>{t('status')}</div>
+          {!!channelRequestStatusCheckbox.length && (
+            <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
+              {channelRequestStatusCheckbox.length}
+            </div>
+          )}
+        </div>
+      ),
+      key: 'channel-request-status-filters',
+      component: () => (
+        <ChannelRequestStatus
+          control={control}
+          watch={watch}
+          setValue={setValue}
+        />
+      ),
+      isHidden:
+        filterOptionMappings['channel-request-status'].includes(variant),
+      dataTestId: 'filterby-channel-request-status',
+    },
+    {
+      label: () => (
+        <div className="flex items-center">
+          <div>{t('role')} </div>
+          {!!roleCheckbox.length && (
+            <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
+              {roleCheckbox.length}
+            </div>
+          )}
+        </div>
+      ),
+      key: 'roles-filters',
+      component: () => (
+        <Roles control={control} watch={watch} setValue={setValue} />
+      ),
+      isHidden: filterOptionMappings['channel-roles-filters'].includes(variant),
+      dataTestId: 'filterby-roles',
+    },
+    {
+      label: () => (
+        <div className="flex items-center">
+          <div>{t('byPeople')}</div>
+          {!!byPeopleCheckbox.length && (
+            <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
+              {byPeopleCheckbox.length}
+            </div>
+          )}
+        </div>
+      ),
+      key: 'by-people-filter',
+      component: () => (
+        <ByPeople control={control} watch={watch} setValue={setValue} />
+      ),
+      isHidden: filterOptionMappings['by-people-filter'].includes(variant),
+      dataTestId: 'filterby-Bypeople',
+    },
   ].filter((filter) => !filter.isHidden);
+
   const [activeFilter, setActiveFilter] = useState<IFilters>(
     filterNavigation[0],
   );
