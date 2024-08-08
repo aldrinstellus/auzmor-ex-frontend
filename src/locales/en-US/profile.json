@@ -77,7 +77,8 @@
     "successToast": "User has been reactivated",
     "cancelButton": "Cancel",
     "reactivateButton": "Reactivate",
-    "confirmationText": "Are you sure you want to reactivate this account? All the data associated with this account will be restored."
+    "confirmationText": "Are you sure you want to reactivate this account ?.",
+    "confirmationText2": "All the data associated with this account will be restored."
   },
   "people": {
     "rolePlaceholder": "Role",
@@ -119,7 +120,8 @@
   },
   "removeChannelMember": {
     "title": "Delete User?",
-    "confirmMessage": "Are you sure you want to delete this member?\nThis cannot be undone.",
+    "confirmMessage": "Are you sure you want to delete this member ?.",
+    "undoMessage": "This cannot be undone.",
     "cancelButton": "Cancel",
     "deleteButton": "Delete",
     "errorToast": "Error deleting member",
@@ -127,7 +129,8 @@
   },
   "deletePeople": {
     "title": "Delete User?",
-    "confirmMessage": "Are you sure you want to delete this member?\nThis cannot be undone.",
+    "confirmMessage": "Are you sure you want to delete this member ?.",
+    "undoMessage": "This cannot be undone.",
     "cancelButton": "Cancel",
     "deleteButton": "Delete",
     "errorToast": "Error deleting member",
@@ -135,7 +138,8 @@
   },
   "deleteTeam": {
     "title": "Delete Team?",
-    "confirmMessage": "Are you sure you want to delete this team?\nThis cannot be undone.",
+    "confirmMessage": "Are you sure you want to delete this team ?.",
+    "undoMessage": "This cannot be undone.",
     "cancelButton": "Cancel",
     "deleteButton": "Delete",
     "errorToast": "Error deleting teams",
@@ -143,7 +147,7 @@
   },
   "removeTeamMember": {
     "title": "Remove user?",
-    "confirmMessage": "Are you sure you want to remove this member from the team?",
+    "confirmMessage": "Are you sure you want to remove this member from the team ?.",
     "cancelButton": "Cancel",
     "deleteButton": "Delete",
     "successToast": "Successfully removed one member",

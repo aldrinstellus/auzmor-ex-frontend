@@ -99,7 +99,8 @@ const ReactivatePeople: FC<IReactivatePeopleProps> = ({
     >
       <Header />
       <div className="text-sm font-medium text-[#171717] mx-4 mt-3 mb-4">
-        {t('confirmationText')}
+        {t('confirmationText')} <br />
+        {t('confirmationText2')}
       </div>
       <Footer />
     </Modal>
