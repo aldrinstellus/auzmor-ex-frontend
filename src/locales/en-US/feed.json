@@ -1,7 +1,7 @@
 {
   "whatsInYourMind": {
     "createPost": {
-      "placeholder": "What's on your mind?"
+      "placeholder": "What's on your mind ?"
     },
     "shortcuts": {
       "media": "Media",
@@ -12,7 +12,7 @@
   "scheduledPosts": {
     "title": "My Scheduled Posts",
     "tooltip": "My Scheduled Posts",
-    "emptyMessage1": "Not ready to share your post right now?",
+    "emptyMessage1": "Not ready to share your post right now ?",
     "emptyMessage2": "Try scheduling for later."
   },
   "bookmark": {

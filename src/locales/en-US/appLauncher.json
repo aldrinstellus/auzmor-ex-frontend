@@ -52,8 +52,8 @@
     "repositionTitle": "Reposition"
   },
   "deleteAppModal": {
-    "header": "Delete App?",
-    "confirmationMessage": "Are you sure you want to delete this app?",
+    "header": "Delete App ?",
+    "confirmationMessage": "Are you sure you want to delete this app ?",
     "confirmationMessage2": "This cannot be undone.",
     "errorDeletingApp": "Error deleting the app",
     "appDeletedSuccess": "App has been deleted successfully",

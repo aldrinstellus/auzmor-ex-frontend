@@ -3,7 +3,7 @@
     "create": "Create a post",
     "edit": "Edit a post"
   },
-  "placeholder": "What’s on your mind?",
+  "placeholder": "What’s on your mind ?",
   "postMenuItems": {
     "media": "Media",
     "uploadPhoto": "Upload a photo",
