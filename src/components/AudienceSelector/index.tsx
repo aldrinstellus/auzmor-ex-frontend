@@ -3,7 +3,6 @@ import EntitySearchModalBody from 'components/EntitySearchModal/components/Entit
 import Icon from 'components/Icon';
 import { AudienceFlow } from 'components/PostBuilder/components/Audience';
 import Spinner from 'components/Spinner';
-import useProduct from 'hooks/useProduct';
 import useRole from 'hooks/useRole';
 import { useOrganization } from 'queries/organization';
 import { FC, useEffect } from 'react';
@@ -41,7 +40,6 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
     }
   }, [data, isAdmin]);
 
-  const { isOffice } = useProduct();
   const audienceEntity = [
     {
       key: 'everyone',
@@ -78,7 +76,7 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
       title: 'Channels',
       subTitle: 'Select a channel you are part of',
       onClick: () => setAudienceFlow(AudienceFlow.ChannelSelect),
-      isHidden: isOffice,
+      isHidden: true,
       isSelected:
         channels &&
         Object.keys(channels).some(

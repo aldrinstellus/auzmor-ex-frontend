@@ -67,6 +67,9 @@ import Welcome from 'pages/ChannelDetail/components/Home/Welcome';
 import FinishSetup from 'pages/ChannelDetail/components/Home/FinishSetup';
 import Congrats from 'pages/ChannelDetail/components/Home/Congrats';
 
+const IS_PROD = process.env.REACT_APP_ENV === 'PRODUCTION';
+const EmptyWidget = () => <></>;
+
 export enum WidgetEnum {
   AppLauncher = 'APP_LAUNCHER',
   Links = 'LINKS',
@@ -86,11 +89,11 @@ export enum WidgetEnum {
 export const widgetMapping = {
   [WidgetEnum.AppLauncher]: AppLauncher,
   [WidgetEnum.Links]: LinksWidget,
-  [WidgetEnum.ChannelRequest]: ChannelRequestWidget,
-  [WidgetEnum.ChannelMember]: MembersWidget,
-  [WidgetEnum.ChannelAdmin]: AdminsWidget,
+  [WidgetEnum.ChannelRequest]: IS_PROD ? EmptyWidget : ChannelRequestWidget,
+  [WidgetEnum.ChannelMember]: IS_PROD ? EmptyWidget : MembersWidget,
+  [WidgetEnum.ChannelAdmin]: IS_PROD ? EmptyWidget : AdminsWidget,
   [WidgetEnum.UserCard]: UserCard,
-  [WidgetEnum.Channels]: ChannelsWidget,
+  [WidgetEnum.Channels]: IS_PROD ? EmptyWidget : ChannelsWidget,
   [WidgetEnum.MyTeam]: MyTeamWidget,
   [WidgetEnum.ProgressTracker]: ProgressTrackerWidget,
   [WidgetEnum.CelebrationBirthday]: CelebrationWidget,
