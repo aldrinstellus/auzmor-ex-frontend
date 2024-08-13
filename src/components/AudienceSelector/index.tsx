@@ -7,6 +7,7 @@ import useRole from 'hooks/useRole';
 import { useOrganization } from 'queries/organization';
 import { FC, useEffect } from 'react';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
+import { IS_PROD } from 'utils/constants';
 
 interface IAudienceSelectorProps {
   audienceFlow: AudienceFlow;
@@ -76,7 +77,7 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
       title: 'Channels',
       subTitle: 'Select a channel you are part of',
       onClick: () => setAudienceFlow(AudienceFlow.ChannelSelect),
-      isHidden: true,
+      isHidden: IS_PROD,
       isSelected:
         channels &&
         Object.keys(channels).some(

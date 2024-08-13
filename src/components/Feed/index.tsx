@@ -66,8 +66,8 @@ import UserCard from 'components/UserWidget';
 import Welcome from 'pages/ChannelDetail/components/Home/Welcome';
 import FinishSetup from 'pages/ChannelDetail/components/Home/FinishSetup';
 import Congrats from 'pages/ChannelDetail/components/Home/Congrats';
+import { IS_PROD } from 'utils/constants';
 
-const IS_PROD = process.env.REACT_APP_ENV === 'PRODUCTION';
 const EmptyWidget = () => <></>;
 
 export enum WidgetEnum {
