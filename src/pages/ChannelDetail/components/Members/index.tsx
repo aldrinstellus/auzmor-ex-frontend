@@ -252,7 +252,7 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
                 isLoading={isLoading}
                 count={
                   isGrid
-                    ? users?.length
+                    ? data?.pages[0]?.data?.result?.totalCount
                     : channelRequestData?.pages[0]?.data?.result?.totalCount
                 }
               />
