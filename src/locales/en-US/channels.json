@@ -1,6 +1,7 @@
 {
   "channels": "Channels",
   "channel": "channel",
+  "defaultDescription": "This is a {{visibilty}} channel for {{channelName}}",
   "filterCTA": {
     "myChannels": "My channels",
     "managed": "Managed",
