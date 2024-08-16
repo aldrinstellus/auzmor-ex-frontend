@@ -72,27 +72,27 @@ export const getNotificationElementContent = (
 
   // If the action performed is a SHOUTOUT
   else if (action.type === ActionType.SHOUTOUT) {
-    const shoutOutHeader = t('shoutOutRecived.header');
+    const shoutOutHeader = t('receivedShoutout.content.header');
     cardContent.TopCardContent = `${shoutOutHeader} ${
       actor?.fullName
         ? ` ${t(
-            'shoutOutRecived.from',
+            'receivedShoutout.content.from',
           )} <span class="font-bold text-primary-500">${actor.fullName}</span>`
         : ''
-    }. ${t('shoutOutRecived.body')}`;
+    }. ${t('receivedShoutout.content.body')}`;
     cardContent.type = NOTIFICATION_CARD_TYPE.Content;
 
     redirect = `/posts/${target[0].entityId}`;
   }
   // If the action performed is a ADD NEW TEAM Member
   else if (action.type === ActionType.NEW_MEMBERS_TO_TEAM) {
-    const newTeamMemberAddHeader = t('newTeamMemberAdd.header');
+    const newTeamMemberAddHeader = t('newTeamMemberAdd.content.header');
 
     cardContent.TopCardContent = `${newTeamMemberAddHeader} ${
       target[0].entityName || ''
-    }</span> ${t('newTeamMemberAdd.body')} 
+    }</span> ${t('newTeamMemberAdd.content.body')} 
       <button class="flex items-center mt-3 px-2 py-1 bg-white rounded-9xl border border-neutral-200 font-bold text-xs hover:text-primary-500 active:text-primary-600">
-      ${t('exploreTeam')}
+      ${t('newTeamMemberAdd.content.exploreTeamButton')}
       <svg
         width={16}
         height={16}
@@ -171,7 +171,7 @@ export const getNotificationElementContent = (
     // If target length is 1
     if (target.length === 1) {
       const post = target[0];
-      cardContent.TopCardContent = t('announcement');
+      cardContent.TopCardContent = t('announcementHeadline');
       cardContent.BottomCardContent = post.content;
       cardContent.image = post?.image?.thumbnailUrl || undefined;
 
@@ -200,33 +200,33 @@ export const getNotificationMessage = (
 
   if (targetType === TargetType[TargetType.POST]) {
     if (actionType === ActionType[ActionType.COMMENT]) {
-      message += t('commentedOnPost');
+      message += t('commentedOnPost.header');
     } else if (actionType === ActionType[ActionType.MENTION]) {
-      message += t('mentionedInPost');
+      message += t('mentionedInPost.header');
     } else if (actionType === ActionType[ActionType.REACTION]) {
-      message += t('reactedToPost');
+      message += t('reactedToPost.header');
     } else if (actionType === ActionType.SHOUTOUT) {
-      message = t('receivedShoutout');
+      message = t('receivedShoutout.header');
     } else if (actionType === ActionType.ACKNOWLEDGEMENT_REMINDER) {
-      message = t('sharedAnnouncement');
+      message = t('sharedAnnouncement.header');
     } else if (actionType === ActionType.SCHEDULE_POST) {
-      message = t('postScheduled');
+      message = t('postScheduled.header');
     } else if (actionType === ActionType.SCHEDULE_POST_PUBLISH) {
-      message = t('scheduledPostLive');
+      message = t('scheduledPostLive.header');
     } else if (actionType === ActionType.POST_PRE_PUBLISH) {
-      message = t('postGoingLive');
+      message = t('postGoingLive.header');
     }
   } else if (targetType === TargetType[TargetType.TEAM]) {
     if (actionType === ActionType[ActionType.NEW_MEMBERS_TO_TEAM]) {
-      message = t('welcomeToTeam');
+      message = t('newTeamMemberAdd.header');
     }
   } else if (targetType === TargetType[TargetType.COMMENT]) {
     if (actionType === ActionType[ActionType.COMMENT]) {
-      message += t('repliedToComment');
+      message += t('repliedToComment.header');
     } else if (actionType === ActionType[ActionType.MENTION]) {
-      message += t('mentionedInComment');
+      message += t('mentionedInComment.header');
     } else if (actionType === ActionType[ActionType.REACTION]) {
-      message += t('reactedToComment');
+      message += t('reactedToComment.header');
     }
   }
   return message;

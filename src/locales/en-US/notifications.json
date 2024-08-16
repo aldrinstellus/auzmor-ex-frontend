@@ -1,26 +1,52 @@
 {
-  "shoutOutRecived": {
-    "header": "Congratulations! You have received a shoutout",
-    "from": "from",
-    "body": "Your hard work and contributions are being recognized by your colleagues. Keep up the great work!"
+  "othersInteracted": "and {{count}} others",
+  "announcementHeadline": "Announcement",
+  "receivedShoutout": {
+    "header": "You received a shoutout",
+    "content": {
+      "header": "Congratulations! You have received a shoutout",
+      "from": "from",
+      "body": "Your hard work and contributions are being recognized by your colleagues. Keep up the great work!"
+    }
   },
   "newTeamMemberAdd": {
-    "header": "You've been added to the",
-    "body": "team. Welcome aboard! Get ready to collaborate and achieve great things together."
+    "header": "Welcome to the team! 🎉🥳",
+    "content": {
+      "header": "You've been added to the",
+      "body": "team. Welcome aboard! Get ready to collaborate and achieve great things together.",
+      "exploreTeamButton": "Explore team"
+    }
   },
-  "exploreTeam": "Explore team",
-  "othersInteracted": "and {{count}} others",
-  "commentedOnPost": "commented on your post",
-  "mentionedInPost": "mentioned you in a post",
-  "reactedToPost": "reacted to your post",
-  "receivedShoutout": "You received a shoutout",
-  "sharedAnnouncement": "shared an announcement",
-  "postScheduled": "Your post is scheduled",
-  "scheduledPostLive": "Your scheduled post is live",
-  "postGoingLive": "Your post is about to go live",
-  "welcomeToTeam": "Welcome to the team! 🎉🥳",
-  "repliedToComment": "replied to your comment",
-  "mentionedInComment": "mentioned you in a comment",
-  "reactedToComment": "reacted to your comment",
-  "announcement": "Announcement"
+  "commentedOnPost": {
+    "header": "commented on your post"
+  },
+  "mentionedInPost": {
+    "header": "mentioned you in a post"
+  },
+  "reactedToPost": {
+    "header": "reacted to your post"
+  },
+
+  "sharedAnnouncement": {
+    "header": "shared an announcement"
+  },
+  "postScheduled": {
+    "header": "Your post is scheduled"
+  },
+  "scheduledPostLive": {
+    "header": "Your scheduled post is live"
+  },
+  "postGoingLive": {
+    "header": "Your post is about to go live"
+  },
+
+  "repliedToComment": {
+    "header": "replied to your comment"
+  },
+  "mentionedInComment": {
+    "header": "mentioned you in a comment"
+  },
+  "reactedToComment": {
+    "header": "reacted to your comment"
+  }
 }
