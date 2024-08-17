@@ -112,7 +112,7 @@ const Actor: FC<ActorProps> = ({
   };
 
   if (title?.content) {
-    title = { content: title.content.replaceAll("'", '&#8217;') };
+    title = { content: `${title.content.replaceAll("'", '')}` };
   }
 
   return (
