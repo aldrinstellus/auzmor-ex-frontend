@@ -43,8 +43,10 @@ const Users: FC<IUsersProps> = () => {
     undefined,
     false,
   ); // to context
-  const [isCreatingSession, setIsCreatingSession] = useState(false);
+  //const [isCreatingSession, setIsCreatingSession] = useState(false);
   const [token, setToken] = useState();
+  const { user } = useAuth();
+
   const { open } = useVault();
   const openVault = () => {
     // console.log("hello")
@@ -53,27 +55,77 @@ const Users: FC<IUsersProps> = () => {
   };
   const createSession = async () => {
     //  console.log("print", isCreatingSession)
-    setIsCreatingSession(true);
+   // setIsCreatingSession(true);
     try {
       const response = await axios.post(
         'http://localhost:5000/api/connection/',
         {
-          email: 'hasrhit457@yopmail.com',
-          domain: 'harshityhhttt3',
+          email: `${user?.email}-1`,
+          domain: user?.organization.domain,
         },
       );
       const sessionToken = response?.data?.session?.session_token;
       if (sessionToken) {
         open({ token: sessionToken,unifiedApi: 'hris',
-          serviceId: 'deel'});
+          serviceId: 'deel',  onConnectionChange: async () => {
+            await axios.post(
+              'http://localhost:5000/api/configuration/',
+              {
+                "clientId":  user?.organization.id,
+                "clientName": user?.organization.name,
+                "products": {
+                    "DeelHR": {
+                        "config": {
+                            "consumerId":  response?.data?.consumerId
+                        }
+                    },
+                    "AuzmorEX": {
+                        "config": {
+                            "domain": user?.organization.domain,
+                            "baseUrl": "http://localhost:4000",
+                            "userId": user?.id
+                        }
+                    }
+                },
+                "configuration": {
+                    "DeelHR": {
+                        "name": "DeelHR",
+                        "description": "DeelHR",
+                        "actions": [
+                            {
+                                "name": "SyncUsers",
+                                "source": {
+                                    "name": "DeelHR",
+                                    "action": "GetUsers"
+                                },
+                                "target": {
+                                    "name": "AuzmorEX",
+                                    "action": "CreateUsers"
+                                },
+                                "dataMapping": {
+                                    "id": "employeeId",
+                                    "$.emails[?(@.type == 'primary')].email": "email",
+                                    "display_name": "fullName",
+                                    "$.phone_numbers[?(@.type == 'primary')].number": "workPhone",
+                                    "title": "designation",
+                                    "employment_start_date": "joinDate"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+            );
+            await axios.post(`http://localhost:5000/api/hris/syncusers?clientId=${user?.organization.id}&configName=DeelHR`)
+          },});
         setToken(sessionToken)
       }
       //console.log(response);
     } finally {
-      setIsCreatingSession(false);
+    //  setIsCreatingSession(false);
     }
   };
-  const { user } = useAuth();
+
   const tabStyles = (active: boolean, disabled = false) =>
     clsx(
       {
