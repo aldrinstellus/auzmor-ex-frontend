@@ -11,6 +11,7 @@ import Button, { Variant } from 'components/Button';
 import { useInfiniteAcknowledgements } from 'queries/post';
 import { twConfig } from 'utils/misc';
 import { useTranslation } from 'react-i18next';
+import Skeleton from 'react-loading-skeleton';
 
 type AppProps = {
   post: Record<string, any>;
@@ -66,10 +67,18 @@ const Acknowledged: FC<AppProps> = ({ post, closeModal }) => {
               className="text-2xl text-primary-500 font-semibold"
               data-testid="acknowledged-count"
             >
-              {t('acknowledgedCount', {
-                acknowledged: totalAcknowledged,
-                audience: post?.acknowledgementStats?.audience,
-              })}
+              {!isLoading ? (
+                t('acknowledgedCount', {
+                  acknowledged: totalAcknowledged,
+                  audience: post?.acknowledgementStats?.audience,
+                })
+              ) : (
+                <Skeleton
+                  className="!w-32"
+                  containerClassName="flex-1"
+                  borderRadius={100}
+                />
+              )}
             </div>
             <div className="text-sm text-neutral-900">{t('markedAsRead')}</div>
           </div>

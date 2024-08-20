@@ -12,6 +12,8 @@ import { useInfiniteAcknowledgements } from 'queries/post';
 import { useMutation } from '@tanstack/react-query';
 import { createNewJob } from 'queries/job';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
+import Skeleton from 'react-loading-skeleton';
+import { useTranslation } from 'react-i18next';
 
 type AppProps = {
   post: Record<string, any>;
@@ -20,6 +22,7 @@ type AppProps = {
 
 const Pending: FC<AppProps> = ({ post, closeModal }) => {
   const { ref, inView } = useInView();
+  const { t } = useTranslation('post', { keyPrefix: 'announcementAnalytics' });
 
   const reminderMutation = useMutation(
     () =>
@@ -31,7 +34,7 @@ const Pending: FC<AppProps> = ({ post, closeModal }) => {
       onError: () => {},
       onSuccess: () => {
         successToastConfig({
-          content: 'Reminder has been sent to all unreads',
+          content: t('pendingAcknowledgeSuccessToast'),
           dataTestId: 'acknowledgement-reminder-toast-message',
         });
         closeModal();
@@ -86,11 +89,21 @@ const Pending: FC<AppProps> = ({ post, closeModal }) => {
               className="text-2xl text-yellow-300 font-semibold"
               data-testid="acknowledge-pending-count"
             >
-              {totalPendingAcknowledged} out of{' '}
-              {post?.acknowledgementStats?.audience} people
+              {!isLoading ? (
+                t('acknowledgedCount', {
+                  acknowledged: totalPendingAcknowledged,
+                  audience: post?.acknowledgementStats?.audience,
+                })
+              ) : (
+                <Skeleton
+                  className="!w-32"
+                  containerClassName="flex-1"
+                  borderRadius={100}
+                />
+              )}
             </div>
             <div className="text-sm text-neutral-900">
-              did not acknowledge this post
+              {t('notAcknowledgeText')}
             </div>
           </div>
         </div>
@@ -113,14 +126,14 @@ const Pending: FC<AppProps> = ({ post, closeModal }) => {
       <div className="px-6 py-4 bg-blue-50">
         <div className="flex justify-end space-x-3">
           <Button
-            label="Close"
+            label={t('close')}
             onClick={closeModal}
             variant={Variant.Secondary}
             dataTestId="acknowledgement-report-close"
             disabled={reminderMutation.isLoading}
           />
           <Button
-            label="Send reminder to all unread"
+            label={t('sendRemainderCTA')}
             dataTestId="acknowledgement-send-reminder"
             loading={reminderMutation.isLoading}
             onClick={() => reminderMutation.mutate()}
