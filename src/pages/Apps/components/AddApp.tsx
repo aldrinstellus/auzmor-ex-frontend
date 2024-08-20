@@ -41,7 +41,7 @@ export interface IAddAppForm {
   description?: string;
   category?: any;
   audience?: IAudience[];
-  icon?: AppIcon & { file: File };
+  icon?: AppIcon & { file: File | null } & { clear?: boolean };
   acsUrl?: string;
   entityId?: string;
   relayState?: string;
@@ -184,13 +184,17 @@ const AddApp: FC<AddAppProps> = ({
     trigger();
     if (!errors.url && !errors.label && !errors.description) {
       const formData = getValues();
-      let uploadedFile;
+      let uploadedFile: any;
       let lxpCategoryId;
       if (isLxp) {
         const formPayload: any = new FormData();
         if (formData.icon?.file) {
           formPayload.append('url', formData?.icon?.file);
-          uploadedFile = await uploadImageMutation(formPayload);
+          const res = await uploadImageMutation(formPayload);
+          uploadedFile = res.result?.data?.url;
+        }
+        if (formData?.icon?.clear) {
+          uploadedFile = '';
         }
         // upload category to learn
         if (formData?.category && formData?.category?.isNew) {
@@ -232,7 +236,7 @@ const AddApp: FC<AddAppProps> = ({
           lxpCategoryId && {
             category: lxpCategoryId.toString(),
           }),
-        icon: uploadedFile?.result?.data?.url,
+        icon: uploadedFile,
         audience: audience || [],
       };
 
