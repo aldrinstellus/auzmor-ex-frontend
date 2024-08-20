@@ -62,7 +62,10 @@ const AddApp: FC<AddAppProps> = ({
     url: yup
       .string()
       .required(t('requiredError'))
-      .matches(URL_REGEX, 'Enter a valid URL'),
+      .matches(URL_REGEX, {
+        message: t('validUrlError'),
+        excludeEmptyString: true,
+      }),
     label: yup
       .string()
       .required(t('requiredError'))
