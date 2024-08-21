@@ -90,8 +90,6 @@ const PeopleCard: FC<IPeopleCardProps> = ({
     userId,
   } = userData;
 
-  console.log(userData);
-
   const { isLxp } = useProduct();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
