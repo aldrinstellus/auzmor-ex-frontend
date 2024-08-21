@@ -113,7 +113,7 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
           channelId: channelId,
           linkId: linkDetails?.id,
           title,
-          url,
+          url: getValidURL(url),
         });
       }
       closeModal();
