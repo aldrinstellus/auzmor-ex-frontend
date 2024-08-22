@@ -41,10 +41,10 @@ export const humanFileSize = (size: number) => {
   );
 };
 export const getValidURL = (str: any) => {
-  if (patternHTTP.test(str)) {
+  if (patternHTTP.test(str) && str.endsWith('.com')) {
     return str;
   }
-  if (patternWithoutHTTP.test(str)) {
+  if (patternWithoutHTTP.test(str) && str.endsWith('.com')) {
     return `https://${str}`;
   }
   return null;
