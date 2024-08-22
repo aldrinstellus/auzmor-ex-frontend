@@ -19,14 +19,7 @@ import { IDepartment } from 'queries/department';
 import { IDesignation } from 'queries/designation';
 import { IPost } from 'queries/post';
 import moment from 'moment';
-import {
-  EMPTY_REGEX,
-  HEX_REGEX,
-  patternDomainExtension,
-  patternHTTP,
-  patternWithoutHTTP,
-  SESSION_ID,
-} from './constants';
+import { EMPTY_REGEX, HEX_REGEX, SESSION_ID } from './constants';
 
 export const twConfig: any = resolveConfig(tailwindConfig);
 
@@ -40,15 +33,6 @@ export const humanFileSize = (size: number) => {
     ' ' +
     ['B', 'kB', 'MB', 'GB', 'TB'][i]
   );
-};
-export const getValidURL = (str: any) => {
-  if (patternHTTP.test(str) && patternDomainExtension.test(str)) {
-    return str;
-  }
-  if (patternWithoutHTTP.test(str) && patternDomainExtension.test(str)) {
-    return `https://${str}`;
-  }
-  return null;
 };
 
 export const getInitials = (name: string) => {
@@ -111,7 +95,7 @@ export const getEditSection = (
 export const isValidUrl = (url: string) => {
   const urlPattern =
     /((https?|ftp):\/\/)?([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}|[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5})(:[0-9]{1,5})?(\/.*)?/gi;
-  return urlPattern.test(url);
+  return urlPattern.exec(url)?.[0] === url;
 };
 
 interface IRedirect {
