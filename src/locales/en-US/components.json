@@ -80,6 +80,99 @@
     "cancel": "Cancel",
     "submit": "Submit"
   },
+  "userProfileDropdown": {
+    "promoteToAdmin": "Promote to admin",
+    "removeFromChannel": "Remove from channel",
+    "remove": "Remove",
+    "edit": "Edit",
+    "resendInvite": "Resend Invite",
+    "reactivateUser": "Reactivate user",
+    "deactivateUser": "Deactivate user",
+    "removeAccount": "Remove account"
+  },
+  "userOnboard": {
+    "allSetCardText": "You're all set",
+    "profileSetup": "Profile Setup",
+    "profilePictureAriaLabel": "profile picture",
+    "applyChangeTitle": "Apply Change",
+    "EditProfileScreen": {
+      "setProfilePhotoTitle": "Set your profile photo",
+      "setProfilePhotoInstruction": "Click on the image above to upload your profile photo.",
+      "profilePhotoAdvantage": "Adding a profile photo will make it easier for your colleagues to recognise you.",
+      "uploadErrorMessage": "Failed to upload media. Please try again!",
+      "skipStep": "Skip this step",
+      "next": "Next"
+    },
+    "SelectTimezoneScreen": {
+      "errorUpdatingTimezone": "Error while updating timezone: ",
+      "timezoneUpdatedSuccess": "Updated timezone successfully",
+      "timezoneImageAlt": "Timezone Image",
+      "selectTimezoneTitle": "Select your timezone",
+      "selectTimezoneInstruction": "Please select your timezone from the options given below",
+      "timezoneSetErrorMessage": "Failed to set timezone. Please try again!",
+      "next": "Next"
+    },
+    "AllDoneScreen": {
+      "onboardingSuccessfulAlt": "Onboarding Successful",
+      "allDoneTitle": "All Done!",
+      "allSetMessage": "You are all set to start using Auzmor office",
+      "launchButtonLabel": "Launch Auzmor Office"
+    },
+    "WelcomeScreen": {
+      "welcomeImageAlt": "Welcome Picture",
+      "welcomeTitle": "Welcome to Auzmor Office",
+      "welcomeMessage": "Let's get your profile setup so that you can jump right in and start using Auzmor office.",
+      "next": "Next"
+    }
+  },
+  "teamOptions": {
+    "edit": "Edit",
+    "share": "Share",
+    "remove": "Remove"
+  },
+  "subscriptionExpired": {
+    "trialBannerAlt": "Trial Banner",
+    "trialEndedTitle": "Your 7 day free trial has ended!",
+    "trialEndedMessage": "Hi, we hope you enjoyed our product during the trial. To extend or unlock the full version, please contact our sales team. We're here to help!",
+    "contactSalesButton": "Contact Sales",
+    "logoutButton": "Logout",
+    "contactSalesTitle": "Your free trial has expired. Contact sales team for questions or to upgrade to full subscription"
+  },
+  "Sort": {
+    "aToZ": "A to Z",
+    "zToA": "Z to A",
+    "dateAdded": "Date added",
+    "sortBy": "Sort by",
+    "clearSort": "Clear sort",
+    "sort": "sort"
+  },
+  "Reply": {
+    "editReply": "Edit reply",
+    "deleteReply": " Delete reply",
+    "cancelLabel": "Cancel",
+    "deleteLabel": "Delete",
+    "deleteFailedError": "Are you sure you want to delete this reply?",
+    "deleteFailedUndo": "This cannot be undone."
+  },
+  "Password": {
+    "mustHaveAtLeast6Characters": "Must have at least 6 characters",
+    "oneNumber": "1 Number",
+    "oneSymbol": "1 Symbol",
+    "oneUppercaseLetter": "1 Upper case letter",
+    "oneLowercaseLetter": "1 Lower case letter"
+  },
+  "MediaPreview": {
+    "addPhotosVideos": "Add photos/videos"
+  },
+  "Poll": {
+    "timeLeftSuffix": "left",
+    "pollClosed": "Poll closed",
+    "votes": "votes",
+    "viewResults": "View results",
+    "voteNow": "Vote now",
+    "chooseOneOption": "Choose one option",
+    "undo": "Undo"
+  },
   "colorPicker": {
     "title": "Title"
   }

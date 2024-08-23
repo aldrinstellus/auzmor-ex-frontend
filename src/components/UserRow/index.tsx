@@ -49,7 +49,7 @@ const UserRow: FC<IUserRowProps> = ({
           <Avatar
             size={32}
             image={getProfileImage(user)}
-            name={getFullName(user)}
+            name={getFullName(user) || t('nameNotSpecified')}
             bgColor={getAvatarColor(user)}
           />
         </div>
