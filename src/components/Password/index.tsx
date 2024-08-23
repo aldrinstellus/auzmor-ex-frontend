@@ -8,6 +8,7 @@ import {
 } from 'react-hook-form';
 import Icon from 'components/Icon';
 import PasswordPolicy from 'components/PasswordPolicy';
+import { useTranslation } from 'react-i18next';
 
 export enum Size {
   Small = 'SMALL',
@@ -54,6 +55,7 @@ const Password: FC<PasswordProps> = ({
   onChange,
   showChecks = true,
 }) => {
+  const { t } = useTranslation('components', { keyPrefix: 'Password' });
   const [show, setShow] = useState(false);
   const [validationChecks, setValidationChecks] = useState<
     Record<string, boolean>
@@ -241,27 +243,27 @@ const Password: FC<PasswordProps> = ({
       {!!field.value && isValidationSchemeVisible && showChecks && (
         <div>
           <PasswordPolicy
-            policyName="Must have atleast 6 characters"
+            policyName={t('mustHaveAtLeast6Characters')}
             isChecked={validationChecks.length}
             dataTestId="password-checklist-character"
           />
           <PasswordPolicy
-            policyName="1 Number"
+            policyName={t('oneNumber')}
             isChecked={validationChecks.isNumber}
             dataTestId="password-checklist-number"
           />
           <PasswordPolicy
-            policyName="1 Symbol"
+            policyName={t('oneSymbol')}
             isChecked={validationChecks.isSymbol}
             dataTestId="password-checklist-symbol"
           />
           <PasswordPolicy
-            policyName="1 Upper case letter"
+            policyName={t('oneUppercaseLetter')}
             isChecked={validationChecks.isUppercase}
             dataTestId="password-checklist-uppercase"
           />
           <PasswordPolicy
-            policyName="1 Lower case letter"
+            policyName={t('oneLowercaseLetter')}
             isChecked={validationChecks.isLowercase}
             dataTestId="password-checklist-lowercase"
           />

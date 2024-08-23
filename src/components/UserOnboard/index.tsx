@@ -19,6 +19,7 @@ import EditImageModal from 'components/EditImageModal';
 import { clearInputValue, getBlobUrl } from 'utils/misc';
 import { EntityType } from 'queries/files';
 import useAuth from 'hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 export type IScreen = {
   screen: ReactNode;
@@ -26,6 +27,10 @@ export type IScreen = {
 };
 
 const UserOnboard: FC = (): ReactNode => {
+  const { t } = useTranslation('components', {
+    keyPrefix: 'userOnboard',
+  });
+
   const { showOnboard } = useAuth();
   const [file, setFile] = useState<File>();
   const [open, openModal, closeModal] = useModal(true);
@@ -60,7 +65,7 @@ const UserOnboard: FC = (): ReactNode => {
     },
     {
       screen: <AllDoneScreen closeModal={closeModal} />,
-      cardText: `You're all set`,
+      cardText: t('allSetCardText'),
     },
   ];
 
@@ -78,7 +83,7 @@ const UserOnboard: FC = (): ReactNode => {
         <Card>
           <div className="flex items-center justify-between m-4">
             <span className="font-extrabold text-lg">
-              {screens[currentScreen].cardText || 'Profile Setup'}
+              {screens[currentScreen].cardText || t('profileSetup')}
             </span>
             <div data-testid={`profile-setup-close`}>
               <Icon
@@ -117,7 +122,7 @@ const UserOnboard: FC = (): ReactNode => {
       />
       {openEditImage && file && (
         <EditImageModal
-          title="Apply Change"
+          title={t('applyChangeTitle')}
           openEditImage={openEditImage}
           openEditProfileModal={openModal}
           closeEditImageModal={closeEditImageModal}

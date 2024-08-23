@@ -4,6 +4,7 @@ import useModal from 'hooks/useModal';
 import useRole from 'hooks/useRole';
 import DeleteTeam from 'pages/Users/components/DeleteModals/Team';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 type AppProps = {
   id: string;
@@ -16,6 +17,7 @@ type AppProps = {
   iconColor?: string;
   iconClassName?: string;
 };
+
 const TeamOptions: React.FC<AppProps> = ({
   id,
   onEdit,
@@ -30,23 +32,25 @@ const TeamOptions: React.FC<AppProps> = ({
   const [showDeleteModal, openDeleteModal, closeDeleteModal] = useModal(false);
   const { isAdmin } = useRole();
 
+  const { t } = useTranslation('components', { keyPrefix: 'teamOptions' });
+
   const teamAllOption = [
     {
       icon: 'edit',
-      label: 'Edit',
+      label: t('edit'),
       onClick: onEdit,
       dataTestId: `${dataTestIdPrefix}edit-team`,
       enabled: isAdmin,
     },
     // {
     //   icon: 'shareForwardOutline',
-    //   label: 'Share',
+    //   label: t('share'),
     //   dataTestId: `${dataTestIdPrefix}share-team`,
     //   enabled: isAdmin || isMember,
     // },
     {
       icon: 'cancel',
-      label: 'Remove',
+      label: t('remove'),
       labelClassName: 'text-red-500',
       iconClassName: '!text-red-500',
       onClick: openDeleteModal,
