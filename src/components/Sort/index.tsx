@@ -2,6 +2,7 @@ import { FC, ReactElement, useEffect, useRef } from 'react';
 import IconButton, { Size, Variant } from 'components/IconButton';
 import PopupMenu from 'components/PopupMenu';
 import useModal from 'hooks/useModal';
+import { useTranslation } from 'react-i18next';
 
 interface ISortByOption {
   asc: string;
@@ -44,6 +45,9 @@ const Sort: FC<ISortProps> = ({
 }) => {
   const [open, openMenu, closeMenu] = useModal();
   const sortRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation('components', {
+    keyPrefix: 'Sort',
+  });
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -66,7 +70,7 @@ const Sort: FC<ISortProps> = ({
   const menuItems: MenuItem[] = [
     {
       icon: 'sortByAcs',
-      label: 'A to Z',
+      label: t('aToZ'),
       onClick: () => handleClick(`${filterKey.aToZ}:${filterValue.asc}`),
       isActive: selectedValue === `${filterKey.aToZ}:${filterValue.asc}`,
       dataTestId: `${entity}-sortBy-asc`,
@@ -74,7 +78,7 @@ const Sort: FC<ISortProps> = ({
     },
     {
       icon: 'sortByDesc',
-      label: 'Z to A',
+      label: t('zToA'),
       onClick: () => handleClick(`${filterKey.aToZ}:${filterValue.desc}`),
       isActive: selectedValue === `${filterKey.aToZ}:${filterValue.desc}`,
       dataTestId: `${entity}-sortBy-desc`,
@@ -82,7 +86,7 @@ const Sort: FC<ISortProps> = ({
     },
     {
       icon: 'calendar',
-      label: 'Date added',
+      label: t('dateAdded'),
       onClick: () => handleClick(`${filterKey.createdAt}:${filterValue.desc}`),
       dataTestId: `${entity}-sortby-dateadded`,
       isActive: selectedValue === `${filterKey.createdAt}:${filterValue.desc}`,
@@ -93,7 +97,7 @@ const Sort: FC<ISortProps> = ({
   const renderTitle = () =>
     title || (
       <div className="flex justify-between items-center px-6 py-2 font-sm font-medium text-neutral-900 border-b-1 border-b-neutral-200">
-        <div>Sort by</div>
+        <div>{t('sortBy')}</div>
       </div>
     );
 
@@ -103,7 +107,7 @@ const Sort: FC<ISortProps> = ({
         className="w-full px-6 py-2 font-sm font-bold text-neutral-500 hover:text-primary-500 text-center border-t-1 border-t-neutral-200 cursor-pointer"
         onClick={() => handleClick('')}
       >
-        Clear sort
+        {t('clearSort')}
       </div>
     );
 
@@ -120,7 +124,7 @@ const Sort: FC<ISortProps> = ({
               borderAround
               className="bg-white !p-[10px]"
               dataTestId={dataTestId}
-              ariaLabel="sort"
+              ariaLabel={t('sort')}
             />
             {selectedValue && (
               <div className="h-2 w-2 rounded-full bg-red-500 absolute top-[2px] right-[2px]" />
