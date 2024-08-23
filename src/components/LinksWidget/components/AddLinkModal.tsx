@@ -77,6 +77,7 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
     control,
     setValue,
     watch,
+    getValues,
     formState: { errors },
   } = useForm<InputForm>({
     resolver: yupResolver(schema),
@@ -94,11 +95,9 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
       return;
     }
     getPreviewLink(getUrlWithProtocol(url)).then((response) => {
-      setValue(
-        'title',
-        response?.title ||
-          response?.url.replace(/^https?:\/\//, '').replace(/\/$/, ''),
-      );
+      if (!getValues('title') && response?.title) {
+        setValue('title', response.title);
+      }
     });
   }, [url, setValue]);
 

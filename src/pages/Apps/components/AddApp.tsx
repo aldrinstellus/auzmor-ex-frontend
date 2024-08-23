@@ -124,12 +124,8 @@ const AddApp: FC<AddAppProps> = ({
     }
 
     getPreviewLink(getUrlWithProtocol(url)).then((response) => {
-      if (getValues('label') == '' && response?.title) {
-        setValue(
-          'label',
-          response.title ||
-            response.url.replace(/^https?:\/\//, '').replace(/\/$/, ''),
-        );
+      if (!getValues('label') && response?.title) {
+        setValue('label', response.title);
       }
     });
   }, [url, setValue]);
