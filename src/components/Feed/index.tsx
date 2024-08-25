@@ -415,7 +415,7 @@ const Feed: FC<IFeedProps> = ({
             />
           </div>
           <div className="font-bold text-2xl/[36px] text-center mt-5">
-            No posts found
+            {t('emptyPost.noPostFound')}
           </div>
         </div>
       );
@@ -433,11 +433,11 @@ const Feed: FC<IFeedProps> = ({
           {emptyFeedComponent || (
             <div data-testid="scheduledpost-tab-nodata">
               <div className="text-neutral-900 font-semibold text-lg mt-6 text-center">
-                Publish your first post!
+                {t('emptyPost.title')}
               </div>
               <div className="text-neutral-500 text-sm font-medium text-center mt-2">
-                Post something interesting for your audience, share an update,
-                <br /> or just make a little introduction to the teams.
+                {t('emptyPost.emptyMessage')}
+                <br /> {t('emptyPost.emptyMessage2')}
               </div>
             </div>
           )}
