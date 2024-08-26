@@ -12,7 +12,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createLinks, updateChannelLink } from 'queries/channel';
 import { getPreviewLink } from 'queries/post';
 import { useDebounce } from 'hooks/useDebounce';
-import { URL_REGEX } from 'utils/constants';
+import { isValidUrl } from 'utils/misc';
 import { getUrlWithProtocol } from 'utils/misc';
 
 interface IAddLinksModalProps {
@@ -51,7 +51,7 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
     url: yup
       .string()
       .test('is-valid-url', t('urlField.invalidUrlError'), (value) =>
-        URL_REGEX.test(getUrlWithProtocol(value)),
+        isValidUrl(getUrlWithProtocol(value)),
       )
       .max(256, t('urlField.maxLengthError')),
   });

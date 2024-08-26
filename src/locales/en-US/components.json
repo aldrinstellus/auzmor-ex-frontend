@@ -34,7 +34,6 @@
     "newJoinee": "is a new joinee",
     "sharedPoll": "shared a poll",
     "sharedPost": "shared a post",
-    "fieldNotSpecified": "Not specified",
     "audience": "Audience"
   },
   "GlobalSearch": {
@@ -172,6 +171,66 @@
     "voteNow": "Vote now",
     "chooseOneOption": "Choose one option",
     "undo": "Undo"
+  },
+  "ErrorBoundary": {
+    "forbidden": {
+      "title": "403 Forbidden Request",
+      "message": "You don't have permission for this request"
+    },
+    "generic": {
+      "message": "Something went wrong!"
+    }
+  },
+
+  "jobProgress": {
+    "uploading": "Uploading {{totalUploaded}} out of {{totalRecords}} members...",
+    "allUploadedSuccessfully": "All members uploaded successfully",
+    "partialUploadSuccess": "{{successfullUploads}} out of {{totalRecords}} members uploaded successfully",
+    "viewDetails": "View Details",
+
+    "details": {
+      "statusLabels": {
+        "created": "Successful Invites",
+        "partial": "Partial Invites",
+        "attempted": "Attempted Invites",
+        "failed": "Failed Invites",
+        "skipped": "Ignored Invites"
+      },
+      "exportSuccess": "Report exported successfully",
+      "uploadSuccess": "Members have been successfully uploaded to Auzmor",
+      "memberDetails": "Member details",
+      "numberOfMembers": "Number of members",
+      "membersAttempted": "Members attempted",
+      "membersAddedSuccessfully": "Members added successfully",
+      "membersAddedWithMissingValues": "Members added with missing values",
+      "membersSkippedDueToErrors": "Members skipped due to errors",
+      "viewDetails": "View details",
+      "enrolledUsersDetails": "Enrolled Users-Details",
+      "exportReport": "export report",
+      "back": "Back",
+      "close": "Close"
+    },
+
+    "Report": {
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "managerEmail": "Manager Email",
+        "designation": "Designation",
+        "department": "Department",
+        "location": "Location",
+        "employeeId": "Employee ID",
+        "phone": "Phone",
+        "dateOfBirth": "Date of Birth",
+        "dateOfJoining": "Date of Joining",
+        "maritalStatus": "Marital Status",
+        "role": "Role",
+        "error": "Error"
+      },
+      "noDataAlt": "No Data Picture",
+      "noDataToDisplay": "No data to display",
+      "loading": "Loading..."
+    }
   },
   "colorPicker": {
     "title": "Title"
