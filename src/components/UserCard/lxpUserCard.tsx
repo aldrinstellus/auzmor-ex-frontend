@@ -48,7 +48,7 @@ const LxpUserCard = ({ userId, className }: any) => {
         className="text-white font-medium flex items-center"
         style={{ fontSize: '30px' }}
       >
-        UA
+        {t('nameNotSpecified')}
       </span>
     );
   };

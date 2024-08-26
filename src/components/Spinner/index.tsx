@@ -1,11 +1,13 @@
 import clsx from 'clsx';
 import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type SpinnerProps = {
   className?: string;
 };
 
 const Spinner: FC<SpinnerProps> = ({ className = '' }) => {
+  const { t } = useTranslation('common');
   const style = useMemo(
     () =>
       clsx({
@@ -32,7 +34,7 @@ const Spinner: FC<SpinnerProps> = ({ className = '' }) => {
           fill="currentFill"
         />
       </svg>
-      <span className="sr-only">Loading...</span>
+      <span className="sr-only">{t('loading')}</span>
     </div>
   );
 };
