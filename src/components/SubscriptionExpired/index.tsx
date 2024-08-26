@@ -15,8 +15,12 @@ import useModal from 'hooks/useModal';
 import ContactSales from 'components/ContactSales';
 import useProduct from 'hooks/useProduct';
 import { learnLogout } from 'queries/learn';
+import { useTranslation } from 'react-i18next';
 
 const SubscriptionExpired = () => {
+  const { t } = useTranslation('components', {
+    keyPrefix: 'subscriptionExpired',
+  });
   const { user, reset } = useAuth();
   const { isLxp } = useProduct();
   const [sales, showSales, closeSales] = useModal();
@@ -45,25 +49,25 @@ const SubscriptionExpired = () => {
           <img
             src={require('./trial.png')}
             className="w-[320px] object-contain"
-            alt="Trial Banner"
+            alt={t('trialBannerAlt')}
           />
           <div className="mt-8 text-center">
-            <div className="text-3xl">Your 7 day free trial has ended!</div>
+            <div className="text-3xl">{t('trialEndedTitle')}</div>
             <div className="text-neutral-500 mt-1">
-              Hi, we hope you enjoyed our product during the trial. To extend or
-              unlock the full version, please contact our sales team.
-              We&lsquo;re here to help!
+              {t('trialEndedMessage')}
             </div>
           </div>
           <div className="mt-5">
-            <Button label="Contact Sales" onClick={showSales} />
+            <Button label={t('contactSalesButton')} onClick={showSales} />
           </div>
           <div
             className="mt-2 flex items-center space-x-1 cursor-pointer"
             onClick={() => logoutMutation.mutate()}
           >
             <Icon name="logoutOutline" size={14} color="text-red-500" />
-            <div className="text-xs text-red-500 font-bold">Logout</div>
+            <div className="text-xs text-red-500 font-bold">
+              {t('logoutButton')}
+            </div>
           </div>
         </div>
       </Modal>
@@ -72,7 +76,7 @@ const SubscriptionExpired = () => {
           open={sales}
           closeModal={closeSales}
           variant="expired"
-          title="Your free trial has expired. Contact sales team for questions or to upgrade to full subscription"
+          title={t('contactSalesTitle')}
         />
       )}
     </>
