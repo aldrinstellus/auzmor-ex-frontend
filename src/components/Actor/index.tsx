@@ -127,7 +127,7 @@ const Actor: FC<ActorProps> = ({
           {createdBy ? (
             <Link to={profileUrl}>
               <Avatar
-                name={getFullName(createdBy) || 'U'}
+                name={getFullName(createdBy) || tp('nameNotSpecified')}
                 size={32}
                 image={getProfileImage(createdBy)}
                 bgColor={getAvatarColor(createdBy)}

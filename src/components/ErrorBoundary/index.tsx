@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Navigate,
   isRouteErrorResponse,
@@ -8,13 +9,15 @@ import {
 interface IErrorBoundaryProps {}
 
 const ErrorBoundary: FC<IErrorBoundaryProps> = () => {
+  const { t } = useTranslation('components', { keyPrefix: 'ErrorBoundary' });
   const error = useRouteError() as Error;
+
   if (isRouteErrorResponse(error)) {
     if (error.status === 403) {
       return (
         <div className="flex flex-col items-center">
-          <h2>403 Forbidden Request</h2>
-          <div>You dont have permission to this request</div>
+          <h2>{t('forbidden.title')}</h2>
+          <div>{t('forbidden.message')}</div>
         </div>
       );
     }
@@ -22,7 +25,7 @@ const ErrorBoundary: FC<IErrorBoundaryProps> = () => {
       return <Navigate to="/500" />;
     }
   }
-  return <div>something went wrong !</div>;
+  return <div>{t('generic.message')}</div>;
 };
 
 export default ErrorBoundary;

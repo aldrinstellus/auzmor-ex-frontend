@@ -5,8 +5,10 @@ import usePoller from 'pages/Users/components/ImportUsers/usePoller';
 import React, { useEffect, useState } from 'react';
 import { useJobStore } from 'stores/jobStore';
 import Details from './Details';
+import { useTranslation } from 'react-i18next';
 
 const Processing: React.FC = () => {
+  const { t } = useTranslation('components', { keyPrefix: 'jobProgress' });
   const [open, openModal, closeModal] = useModal(false);
   const { importId, setShowJobProgress, complete, setComplete, total } =
     useJobStore();
@@ -52,8 +54,7 @@ const Processing: React.FC = () => {
                   if (!complete) {
                     return (
                       <div>
-                        Uploading {totalUploaded} out of {totalRecords}{' '}
-                        members...
+                        {t('uploading', { totalUploaded, totalRecords })}
                       </div>
                     );
                   }
@@ -62,7 +63,7 @@ const Processing: React.FC = () => {
                     return (
                       <div className="v-center space-x-1">
                         <Icon name="boldTick" className="text-primary-500" />
-                        <span>All members uploaded successfully</span>
+                        <span>{t('allUploadedSuccessfully')}</span>
                       </div>
                     );
                   }
@@ -70,8 +71,10 @@ const Processing: React.FC = () => {
                     <div className="v-center space-x-1">
                       <Icon name="boldTick" className="text-primary-500" />
                       <span>
-                        {successfullUploads} out of {totalRecords} members
-                        uploaded successfully
+                        {t('partialUploadSuccess', {
+                          successfullUploads,
+                          totalRecords,
+                        })}
                       </span>
                     </div>
                   );
@@ -84,7 +87,7 @@ const Processing: React.FC = () => {
                       onClick={openModal}
                       data-testid="viewdetails-progressbar"
                     >
-                      View Details
+                      {t('viewDetails')}
                     </div>
                   ) : (
                     <Icon
