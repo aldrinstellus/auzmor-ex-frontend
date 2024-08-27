@@ -352,7 +352,7 @@ const Post: FC<PostProps> = ({
               audience={post.audience}
               dataTestId="feedpage-activity-username"
               entityId={post.id}
-              postType={post?.occasionContext?.type}
+              postType={post?.occasionContext?.type ?? post?.type}
               title={post?.title}
             />
             {!readOnly && (
