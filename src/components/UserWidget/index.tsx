@@ -7,7 +7,6 @@ import useAuth from 'hooks/useAuth';
 import useProduct from 'hooks/useProduct';
 import { useCurrentUser } from 'queries/users';
 import { FC, memo, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { getLearnUrl } from 'utils/misc';
 
@@ -17,7 +16,6 @@ export interface IUserCardProps {
 
 const UserCard: FC<IUserCardProps> = ({ className = '' }) => {
   const { user } = useAuth();
-  const { t } = useTranslation('profile');
   const { data } = useCurrentUser();
   const { isLxp } = useProduct();
   const navigate = useNavigate();
@@ -52,7 +50,7 @@ const UserCard: FC<IUserCardProps> = ({ className = '' }) => {
         <div className="flex flex-col items-center gap-2 relative px-12">
           <div className="bg-secondary-500 w-full h-[89px] absolute top-0 rounded-t-9xl"></div>
           <Avatar
-            name={userDetails?.fullName || t('nameNotSpecified')}
+            name={userDetails?.fullName || ''}
             image={user?.profileImage}
             size={80}
             className="border-4 border-white mt-11 overflow-hidden"
@@ -60,16 +58,14 @@ const UserCard: FC<IUserCardProps> = ({ className = '' }) => {
           />
           <div className="flex flex-col gap-2">
             <Truncate
-              text={`${userDetails?.fullName || 't("fieldNotSpecified")'}`}
+              text={`${userDetails?.fullName || ''}`}
               className="text-lg font-bold max-w-[240px] text-center"
               data-testid="profilecard-username"
             />
 
             {!isLxp && userDetails?.designation?.name && (
               <Truncate
-                text={`${
-                  userDetails?.designation?.name || t('fieldNotSpecified')
-                }`}
+                text={`${userDetails?.designation?.name || ''}`}
                 className="text-sm font-normal max-w-[240px] text-center text-neutral-500"
                 data-testid="profilecard-designation"
               />
