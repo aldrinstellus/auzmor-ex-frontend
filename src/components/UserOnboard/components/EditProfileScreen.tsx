@@ -4,6 +4,7 @@ import Banner, { Variant } from 'components/Banner';
 import Avatar from 'components/Avatar';
 import Icon from 'components/Icon';
 import useAuth from 'hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 type AppProps = {
   next: () => void;
@@ -25,6 +26,10 @@ const EditProfileScreen: FC<AppProps> = ({
   const { user } = useAuth();
 
   useEffect(() => setDisableClose(loading), [loading]);
+
+  const { t } = useTranslation('components', {
+    keyPrefix: 'userOnboard.EditProfileScreen',
+  });
 
   return (
     <>
@@ -54,16 +59,15 @@ const EditProfileScreen: FC<AppProps> = ({
           <div className="flex flex-col items-center mt-4 gap-y-6">
             <div className="flex flex-col items-center gap-y-1">
               <p className="font-bold text-neutral-900 text-2xl">
-                Set your profile photo
+                {t('setProfilePhotoTitle')}
               </p>
               <p className="font-normal text-sm text-neutral-500">
-                Click on the image above to upload your profile photo.
+                {t('setProfilePhotoInstruction')}
               </p>
             </div>
             <div className="bg-green-50 px-6 py-3 border rounded-md border-transparent">
               <p className="font-normal text-sm text-neutral-900 whitespace-nowrap">
-                Adding a profile photo will make it easier for your colleagues
-                to recognise you.
+                {t('profilePhotoAdvantage')}
               </p>
             </div>
           </div>
@@ -72,7 +76,7 @@ const EditProfileScreen: FC<AppProps> = ({
         <div className="mt-0">
           <Banner
             variant={Variant.Error}
-            title="Failed to upload media. Please try again!"
+            title={t('uploadErrorMessage')}
             className={`min-w-full ${
               error && !loading ? 'visible' : 'invisible'
             }`}
@@ -86,11 +90,11 @@ const EditProfileScreen: FC<AppProps> = ({
                 } `}
                 onClick={loading ? undefined : next}
               >
-                Skip this step
+                {t('skipStep')}
               </div>
               <Button
                 className="font-bold"
-                label="Next"
+                label={t('next')}
                 disabled={loading}
                 onClick={next}
                 dataTestId={`${dataTestId}`}

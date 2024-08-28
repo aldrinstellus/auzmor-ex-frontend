@@ -1,0 +1,237 @@
+{
+  "AccountDeactivated": {
+    "title": "Account Deactivated",
+    "message": "Your auzmor account is disabled. Please contact the admin for further info."
+  },
+  "FeedFilter": {
+    "filtersTooltip": "Filters",
+    "filterBy": "Filter by",
+    "clearFilters": "Clear filters",
+    "apply": "Apply",
+    "contentTypeSection": "Content (type)",
+    "update": "Update",
+    "training": "Training",
+    "event": "Event",
+    "forum": "Forum",
+    "document": "Document",
+    "shoutout": "Shoutout",
+    "birthday": "Birthday",
+    "workAnniversary": "Work anniversary",
+    "welcomeNewHire": "Welcome new hire",
+    "poll": "Poll",
+    "preferenceSection": "Preference",
+    "myPosts": "My posts",
+    "mentions": "Mentions",
+    "bookmarkedByMe": "Bookmarked by me"
+  },
+  "SortByDropdown": {
+    "sortBy": "Sort by",
+    "latest": "Latest"
+  },
+  "Actor": {
+    "celebratingBirthday": "is celebrating their birthday",
+    "celebratingWorkAnniversary": "is celebrating their work anniversary",
+    "newJoinee": "is a new joinee",
+    "sharedPoll": "shared a poll",
+    "sharedPost": "shared a post",
+    "audience": "Audience"
+  },
+  "GlobalSearch": {
+    "searchAriaLabel": "search",
+    "searchPlaceholder": "Search name, channel, team, document etc.,",
+    "noResultsHint": "We're a little lost. Can you give us a hint?",
+    "connectStorageHint": "Please connect storage documents to search within first."
+  },
+  "SubscriptionBanner": {
+    "productNameLxp": "Auzmor LXP",
+    "productNameOffice": "Auzmor Office",
+    "experience": "Experience",
+    "daysTrial": "days trial",
+    "daysLeft": "days Left",
+    "of": "of",
+    "forYourFree": "for your free",
+    "trial": "trial",
+    "subscriptionExpired": "Your subscription has expired. Please contact sales to continue using {{productName}}",
+    "contactSales": "Contact Sales",
+    "contactSalesTitle": "Your free trial is active. Contact our sales team for questions or to upgrade to full subscription"
+  },
+  "AudienceSelector": {
+    "defaultInfoText": "Your post will appear in Feed, on your profile and in search results. You can change the audience of this specific post.",
+    "everyone": "Everyone",
+    "everyoneSubtitle": "Anyone who is a part of this organisation can see this post.",
+    "teams": "Teams",
+    "teamsSubtitle": "Select a team you are part of",
+    "channels": "Channels",
+    "channelsSubtitle": "Select a channel you are part of",
+    "selected": "{{count}} selected"
+  },
+  "contactSales": {
+    "noSubject": "No Subject Provided",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "Subject (Optional)",
+    "salesSupportEmail": "support@auzmor.com",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Please feel free to send a message to our sales team for any assistance or inquiries",
+    "salesSupportNumber": "515-974-6704",
+    "title": "Contact Sales",
+    "contactUsAt": "Contact us at:",
+    "logout": "Logout",
+    "cancel": "Cancel",
+    "submit": "Submit"
+  },
+  "userProfileDropdown": {
+    "promoteToAdmin": "Promote to admin",
+    "removeFromChannel": "Remove from channel",
+    "remove": "Remove",
+    "edit": "Edit",
+    "resendInvite": "Resend Invite",
+    "reactivateUser": "Reactivate user",
+    "deactivateUser": "Deactivate user",
+    "removeAccount": "Remove account"
+  },
+  "userOnboard": {
+    "allSetCardText": "You're all set",
+    "profileSetup": "Profile Setup",
+    "profilePictureAriaLabel": "profile picture",
+    "applyChangeTitle": "Apply Change",
+    "EditProfileScreen": {
+      "setProfilePhotoTitle": "Set your profile photo",
+      "setProfilePhotoInstruction": "Click on the image above to upload your profile photo.",
+      "profilePhotoAdvantage": "Adding a profile photo will make it easier for your colleagues to recognise you.",
+      "uploadErrorMessage": "Failed to upload media. Please try again!",
+      "skipStep": "Skip this step",
+      "next": "Next"
+    },
+    "SelectTimezoneScreen": {
+      "errorUpdatingTimezone": "Error while updating timezone: ",
+      "timezoneUpdatedSuccess": "Updated timezone successfully",
+      "timezoneImageAlt": "Timezone Image",
+      "selectTimezoneTitle": "Select your timezone",
+      "selectTimezoneInstruction": "Please select your timezone from the options given below",
+      "timezoneSetErrorMessage": "Failed to set timezone. Please try again!",
+      "next": "Next"
+    },
+    "AllDoneScreen": {
+      "onboardingSuccessfulAlt": "Onboarding Successful",
+      "allDoneTitle": "All Done!",
+      "allSetMessage": "You are all set to start using Auzmor office",
+      "launchButtonLabel": "Launch Auzmor Office"
+    },
+    "WelcomeScreen": {
+      "welcomeImageAlt": "Welcome Picture",
+      "welcomeTitle": "Welcome to Auzmor Office",
+      "welcomeMessage": "Let's get your profile setup so that you can jump right in and start using Auzmor office.",
+      "next": "Next"
+    }
+  },
+  "teamOptions": {
+    "edit": "Edit",
+    "share": "Share",
+    "remove": "Remove"
+  },
+  "subscriptionExpired": {
+    "trialBannerAlt": "Trial Banner",
+    "trialEndedTitle": "Your 7 day free trial has ended!",
+    "trialEndedMessage": "Hi, we hope you enjoyed our product during the trial. To extend or unlock the full version, please contact our sales team. We're here to help!",
+    "contactSalesButton": "Contact Sales",
+    "logoutButton": "Logout",
+    "contactSalesTitle": "Your free trial has expired. Contact sales team for questions or to upgrade to full subscription"
+  },
+  "Sort": {
+    "aToZ": "A to Z",
+    "zToA": "Z to A",
+    "dateAdded": "Date added",
+    "sortBy": "Sort by",
+    "clearSort": "Clear sort",
+    "sort": "sort"
+  },
+  "Reply": {
+    "editReply": "Edit reply",
+    "deleteReply": " Delete reply",
+    "cancelLabel": "Cancel",
+    "deleteLabel": "Delete",
+    "deleteFailedError": "Are you sure you want to delete this reply?",
+    "deleteFailedUndo": "This cannot be undone."
+  },
+  "Password": {
+    "mustHaveAtLeast6Characters": "Must have at least 6 characters",
+    "oneNumber": "1 Number",
+    "oneSymbol": "1 Symbol",
+    "oneUppercaseLetter": "1 Upper case letter",
+    "oneLowercaseLetter": "1 Lower case letter"
+  },
+  "MediaPreview": {
+    "addPhotosVideos": "Add photos/videos"
+  },
+  "Poll": {
+    "timeLeftSuffix": "left",
+    "pollClosed": "Poll closed",
+    "votes": "votes",
+    "viewResults": "View results",
+    "voteNow": "Vote Now",
+    "chooseOneOption": "Choose one option",
+    "undo": "Undo"
+  },
+  "ErrorBoundary": {
+    "forbidden": {
+      "title": "403 Forbidden Request",
+      "message": "You don't have permission for this request"
+    },
+    "generic": {
+      "message": "Something went wrong!"
+    }
+  },
+
+  "jobProgress": {
+    "uploading": "Uploading {{totalUploaded}} out of {{totalRecords}} members...",
+    "allUploadedSuccessfully": "All members uploaded successfully",
+    "partialUploadSuccess": "{{successfullUploads}} out of {{totalRecords}} members uploaded successfully",
+    "viewDetails": "View Details",
+
+    "details": {
+      "statusLabels": {
+        "created": "Successful Invites",
+        "partial": "Partial Invites",
+        "attempted": "Attempted Invites",
+        "failed": "Failed Invites",
+        "skipped": "Ignored Invites"
+      },
+      "exportSuccess": "Report exported successfully",
+      "uploadSuccess": "Members have been successfully uploaded to Auzmor",
+      "memberDetails": "Member details",
+      "numberOfMembers": "Number of members",
+      "membersAttempted": "Members attempted",
+      "membersAddedSuccessfully": "Members added successfully",
+      "membersAddedWithMissingValues": "Members added with missing values",
+      "membersSkippedDueToErrors": "Members skipped due to errors",
+      "viewDetails": "View details",
+      "enrolledUsersDetails": "Enrolled Users-Details",
+      "exportReport": "export report",
+      "back": "Back",
+      "close": "Close"
+    },
+    "Report": {
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "managerEmail": "Manager Email",
+        "designation": "Designation",
+        "department": "Department",
+        "location": "Location",
+        "employeeId": "Employee ID",
+        "phone": "Phone",
+        "dateOfBirth": "Date of Birth",
+        "dateOfJoining": "Date of Joining",
+        "maritalStatus": "Marital Status",
+        "role": "Role",
+        "error": "Error"
+      },
+      "noDataAlt": "No Data Picture",
+      "noDataToDisplay": "No data to display",
+      "loading": "Loading..."
+    }
+  },
+  "colorPicker": {
+    "title": "Title"
+  }
+}

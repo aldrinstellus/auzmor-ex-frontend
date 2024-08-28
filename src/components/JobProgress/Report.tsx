@@ -4,6 +4,7 @@ import DataGrid from 'react-data-grid';
 import { useInfiniteImportResultData } from 'queries/importUsers';
 import Spinner from 'components/Spinner';
 import { titleCase } from 'utils/misc';
+import { useTranslation } from 'react-i18next';
 
 type AppProps = {
   importId: string;
@@ -11,6 +12,10 @@ type AppProps = {
 };
 
 const Report: React.FC<AppProps> = ({ importId, status }) => {
+  const { t } = useTranslation('components', {
+    keyPrefix: 'jobProgress.Report',
+  });
+
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteImportResultData({
       importId,
@@ -28,7 +33,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
     { key: 'idx', name: '', width: 40 },
     {
       key: 'name',
-      name: 'Name',
+      name: t('columns.name'),
       resizable: true,
       width: 200,
       renderCell: ({ row }: any) => {
@@ -37,7 +42,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
     },
     {
       key: 'email',
-      name: 'Email',
+      name: t('columns.email'),
       resizable: true,
       width: 220,
       renderCell: ({ row }: any) => {
@@ -46,7 +51,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
     },
     {
       key: 'managerEmail',
-      name: 'Manager Email',
+      name: t('columns.managerEmail'),
       resizable: true,
       width: 220,
       renderCell: ({ row }: any) => {
@@ -55,7 +60,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
     },
     {
       key: 'designation',
-      name: 'Designation',
+      name: t('columns.designation'),
       resizable: true,
       width: 180,
       renderCell: ({ row }: any) => {
@@ -64,7 +69,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
     },
     {
       key: 'department',
-      name: 'Department',
+      name: t('columns.department'),
       resizable: true,
       width: 220,
       renderCell: ({ row }: any) => {
@@ -73,7 +78,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
     },
     {
       key: 'location',
-      name: 'Location',
+      name: t('columns.location'),
       resizable: true,
       width: 220,
       renderCell: ({ row }: any) => {
@@ -82,7 +87,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
     },
     {
       key: 'employeeId',
-      name: 'Employee ID',
+      name: t('columns.employeeId'),
       resizable: true,
       width: 120,
       renderCell: ({ row }: any) => {
@@ -91,7 +96,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
     },
     {
       key: 'phoneNumber',
-      name: 'Phone',
+      name: t('columns.phone'),
       resizable: true,
       width: 120,
       renderCell: ({ row }: any) => {
@@ -100,7 +105,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
     },
     {
       key: 'dateOfBirth',
-      name: 'Date of Birth',
+      name: t('columns.dateOfBirth'),
       resizable: true,
       width: 140,
       renderCell: ({ row }: any) => {
@@ -109,7 +114,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
     },
     {
       key: 'dateOfJoining',
-      name: 'Date of Joining',
+      name: t('columns.dateOfJoining'),
       resizable: true,
       width: 140,
       renderCell: ({ row }: any) => {
@@ -120,7 +125,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
     },
     {
       key: 'maritalStatus',
-      name: 'Marital Status',
+      name: t('columns.maritalStatus'),
       resizable: true,
       width: 120,
       renderCell: ({ row }: any) => {
@@ -129,7 +134,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
     },
     {
       key: 'role',
-      name: 'Role',
+      name: t('columns.role'),
       resizable: true,
       width: 120,
       renderCell: ({ row }: any) => {
@@ -141,7 +146,7 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
   if (['PARTIAL', 'FAILED'].includes(status)) {
     columns.push({
       key: 'error',
-      name: 'Error',
+      name: t('columns.error'),
       resizable: true,
       width: 160,
       renderCell: ({ row }: any) => {
@@ -197,15 +202,15 @@ const Report: React.FC<AppProps> = ({ importId, status }) => {
                 />
               ) : (
                 <div className="flex flex-col justify-center items-center p-4">
-                  <img src={require('./nodata.png')} alt="No Data Picture" />
+                  <img src={require('./nodata.png')} alt={t('noDataAlt')} />
                   <div className="pt-4 text-2xl font-bold">
-                    No data to display
+                    {t('noDataToDisplay')}
                   </div>
                 </div>
               )}
               {isFetchingNextPage && (
                 <div className="text-xs font-bold text-neutral-500 text-center">
-                  Loading...
+                  {t('loading')}
                 </div>
               )}
             </div>

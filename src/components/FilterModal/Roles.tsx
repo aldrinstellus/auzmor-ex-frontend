@@ -71,9 +71,6 @@ const Roles: FC<IStatusProps> = ({ control, watch, setValue }) => {
                 data-testid="filter-options"
                 className="flex items-center px-3 py-2 bg-neutral-100 rounded-17xl border border-neutral-200 mr-2 my-1"
               >
-                <div className="text-primary-500 text-sm font-medium whitespace-nowrap">
-                  {role.data.name}
-                </div>
                 <Truncate
                   text={role.data.name}
                   className="text-primary-500 text-sm font-medium whitespace-nowrap max-w-[128px]"

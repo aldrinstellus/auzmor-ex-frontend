@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import Layout, { FieldType } from 'components/Form';
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
@@ -28,18 +28,13 @@ interface IChannelModalProps {
   isOpen: boolean;
   closeModal: () => void;
   channelData?: IChannel;
+  focusDescription?: boolean;
 }
 
 enum ChannelFlow {
   CreateChannel = 'CREATE_CHANNEL',
   EditChannel = 'EDIT_CHANNEL',
 }
-// interface IChannelForm {
-//   channelName: string;
-//   channelCategory: ICategoryDetail;
-//   channelPrivacy: IOption;
-//   channelDescription: string;
-// }
 
 const getChannelPrivacyOption = (
   visibility: ChannelVisibilityEnum,
@@ -73,34 +68,46 @@ const ChannelModal: FC<IChannelModalProps> = ({
   isOpen,
   closeModal,
   channelData,
+  focusDescription = false,
 }) => {
   const { t } = useTranslation('channels');
-  // const { t:tm } = useTranslation('channels',{keyPrefix:"channelModal"});
   const { t: tc } = useTranslation('common');
   const { isLxp } = useProduct();
   const schema = yup.object({
     channelName: yup
       .string()
       .min(2, t('channelModal.channelNameMinChars'))
+      .test(
+        'len',
+        t('channelModal.channelNameMaxChars'),
+        (val) => (val || '').toString().length <= 100,
+      )
       .matches(/^[a-zA-Z0-9 ]*$/, t('channelModal.channelNameNoSpecialChars'))
       .required(t('channelModal.channelNameRequired')),
     channelCategory: yup.object().required(),
     channelPrivacy: yup.object().required(),
     channelDescription: yup
       .string()
-      .max(200, 'description should not exceed 200 characters'),
+      .test(
+        'len',
+        t('channelModal.channelDescriptionMaxChars'),
+        (val) => (val || '').toString().length <= 200,
+      ),
   });
   const channelFlow = channelData?.id
     ? ChannelFlow.EditChannel
     : ChannelFlow.CreateChannel;
   const navigate = useNavigate();
   const { setChannels } = useChannelStore();
+
   const {
     handleSubmit,
     control,
     formState: { errors, isValid },
     getValues,
     clearErrors,
+    watch,
+    setValue,
   } = useForm<any>({
     defaultValues: {
       channelName: channelData?.name || '',
@@ -118,11 +125,33 @@ const ChannelModal: FC<IChannelModalProps> = ({
               }))
               .pop()
           : undefined,
-      channelDescription: channelData?.description || undefined,
+      channelDescription: channelData?.description,
     },
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
+
+  const [channelName, channelPrivacy, channelDescription] = watch([
+    'channelName',
+    'channelPrivacy',
+    'channelDescription',
+  ]);
+
+  useEffect(() => {
+    if (channelFlow === ChannelFlow.CreateChannel) {
+      if (
+        channelName &&
+        (!channelDescription || isMatchingString(channelDescription))
+      ) {
+        setValue(
+          'channelDescription',
+          `This is a ${channelPrivacy.value.toLowerCase()} channel for ${channelName}.`,
+        );
+      } else if (!channelName && isMatchingString(channelDescription)) {
+        setValue('channelDescription', ``);
+      }
+    }
+  }, [channelPrivacy, channelName]);
 
   const formatCategory = (data: any) => {
     const categoriesData = data?.pages.flatMap((page: any) => {
@@ -220,6 +249,11 @@ const ChannelModal: FC<IChannelModalProps> = ({
       ? 'create-channel'
       : 'edit-channel';
 
+  const isMatchingString = (text: string): boolean => {
+    const pattern = /^This is a \w+ channel for .+\.$/;
+    return pattern.test(text);
+  };
+
   return (
     <Modal open={isOpen} dataTestId={`${dataTestId}-modal`}>
       <Header
@@ -243,12 +277,13 @@ const ChannelModal: FC<IChannelModalProps> = ({
                 label: t('channelModal.channelNameLabel'),
                 placeholder: t('channelModal.channelNamePlaceholder'),
                 dataTestId: `${dataTestId}-name`,
-                showCounter: true,
-                maxLength: 100,
                 required: true,
                 clearErrors,
                 error: errors.channelName?.message,
-                autofocus: true,
+                autofocus: !focusDescription,
+                maxLength: 100,
+                disableMaxLength: true,
+                showCounter: true,
               },
             ]}
           />
@@ -354,14 +389,15 @@ const ChannelModal: FC<IChannelModalProps> = ({
                 name: 'channelDescription',
                 label: t('channelModal.channelDescriptionLabel'),
                 placeholder: t('channelModal.channelDescriptionPlaceholder'),
-                defaultValue: getValues()?.channelDescription || '',
                 dataTestId: `${dataTestId}-description`,
                 rows: 5,
                 maxLength: 200,
+                disableMaxLength: true,
                 showCounter: true,
                 clearErrors,
-                errors: errors?.channelDescription?.message,
+                error: errors?.channelDescription?.message,
                 counterPosition: 'top',
+                autoFocus: focusDescription,
               },
             ]}
           />
@@ -384,7 +420,7 @@ const ChannelModal: FC<IChannelModalProps> = ({
           variant={Variant.Primary}
           onClick={handleSubmit(onSubmit)}
           dataTestId={`${dataTestId}-cta`}
-          disabled={!(isValid && !!!errors.time)}
+          disabled={!isValid}
         />
       </div>
     </Modal>

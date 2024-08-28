@@ -1,4 +1,4 @@
-import { FC, useMemo, useRef } from 'react';
+import { FC, useEffect, useMemo, useRef } from 'react';
 import { Control, useController } from 'react-hook-form';
 import clsx from 'clsx';
 
@@ -23,10 +23,10 @@ export type TextAreaProps = {
   counterPosition?: string;
   disableMaxLength?: boolean;
   autocomplete?: string;
+  autoFocus?: boolean;
 };
 
 const TextArea: FC<TextAreaProps> = ({
-  defaultValue = '',
   label = '',
   disabled = false,
   error,
@@ -46,6 +46,7 @@ const TextArea: FC<TextAreaProps> = ({
   counterPosition = 'bottom',
   disableMaxLength = false,
   autocomplete = 'off',
+  autoFocus = false,
 }) => {
   const { field } = useController({
     name,
@@ -95,10 +96,17 @@ const TextArea: FC<TextAreaProps> = ({
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
+  useEffect(() => {
+    if (autoFocus && textAreaRef.current) {
+      const len = textAreaRef.current.value.length;
+      textAreaRef.current.setSelectionRange(len, len);
+      textAreaRef.current.focus();
+    }
+  }, [autoFocus]);
+
   const counterNode = (
     <div className="flex mt-1 w-full justify-end text-xs text-neutral-500">
-      {textAreaRef.current?.value.length || defaultValue.length || 0}/
-      {maxLength}
+      {field?.value?.length || 0}/{maxLength}
     </div>
   );
 
@@ -122,8 +130,9 @@ const TextArea: FC<TextAreaProps> = ({
         required={required}
         className={textAreaStyle}
         data-testid={dataTestId}
-        defaultValue={defaultValue}
+        value={field.value}
         autoComplete={autocomplete}
+        autoFocus={autoFocus}
       />
       {showCounter && counterPosition === 'bottom' && counterNode}
       <div

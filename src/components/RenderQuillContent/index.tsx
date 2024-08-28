@@ -1,4 +1,4 @@
-import { FC, ReactElement, useEffect, useMemo } from 'react';
+import { FC, ReactElement, useEffect, useMemo, useState } from 'react';
 import { DeltaOperation } from 'quill';
 import clsx from 'clsx';
 
@@ -19,7 +19,7 @@ import { IPost } from 'queries/post';
 
 // utils
 import { getMentionProps } from './utils';
-import { removeElementsByClass, transformContent } from 'utils/misc';
+import { transformContent } from 'utils/misc';
 import Poll, { PollMode } from 'components/Poll';
 import List from './components/List';
 import { useTranslation } from 'react-i18next';
@@ -58,6 +58,8 @@ const RenderQuillContent: FC<RenderQuillContent> = ({
     return data?.content.text === '\n' || data?.content.text === '';
   }, [data]);
 
+  const [showSeeMore, setShowSeeMore] = useState(false);
+
   useEffect(() => {
     const element = document.getElementById(`${data?.id}-content`);
     if (
@@ -65,31 +67,7 @@ const RenderQuillContent: FC<RenderQuillContent> = ({
       element.parentNode &&
       element.scrollHeight > element.clientHeight
     ) {
-      removeElementsByClass(`${data?.id}-expand-collapse-button`);
-      const button = document.createElement('button');
-      button.setAttribute('id', `${data?.id}-expand-collapse-button`);
-      button.setAttribute('data-testid', 'feed-post-seemore');
-      button.type = 'button';
-      button.classList.add(
-        'showMoreLess',
-        'read-more-button',
-        'text-neutral-500',
-        'font-bold',
-        'text-sm',
-        `${data?.id}-expand-collapse-button`,
-      );
-      button.textContent = 'See more';
-      element.parentNode.insertBefore(button, element.nextSibling);
-    }
-    const button = document.getElementById(
-      `${data?.id}-expand-collapse-button`,
-    );
-    if (button) {
-      button.addEventListener('click', () => {
-        const paragraph = button.previousElementSibling;
-        paragraph?.classList.add('line-clamp-none');
-        button.remove();
-      });
+      setShowSeeMore(true);
     }
   }, []);
 
@@ -98,6 +76,10 @@ const RenderQuillContent: FC<RenderQuillContent> = ({
   const postContent = updatedContent?.ops?.map(
     (op: DeltaOperation, i: number) => {
       switch (true) {
+        case !!op.attributes?.list:
+          return (
+            <List op={op} mentions={mentions} intendedUsers={intendedUsers} />
+          );
         case op.insert.hasOwnProperty('mention'):
           return (
             <Mention
@@ -126,8 +108,6 @@ const RenderQuillContent: FC<RenderQuillContent> = ({
               key={`quill-content-${i}-emoji-${data.id}`}
             />
           );
-        case !!op.attributes?.listType:
-          return <List op={op} />;
         default:
           return (
             <Text
@@ -162,14 +142,31 @@ const RenderQuillContent: FC<RenderQuillContent> = ({
   return (
     <div className="w-full text-sm flex flex-col gap-3">
       {!isEmpty && (
-        <span
-          className="line-clamp-3 paragraph pt-px break-normal [overflow-wrap:anywhere]"
-          id={`${data?.id}-content`}
-          data-testid={isComment ? 'comment-content' : 'feed-post-content'}
-          tabIndex={0}
-          title="post content"
-        >
-          <span>{postContent}</span>
+        <span className="relative">
+          <span
+            className="line-clamp-3 paragraph pt-px break-normal [overflow-wrap:anywhere]"
+            id={`${data?.id}-content`}
+            data-testid={isComment ? 'comment-content' : 'feed-post-content'}
+            tabIndex={0}
+            title="post content"
+          >
+            {postContent}
+          </span>
+          {showSeeMore && (
+            <span
+              onClick={() => {
+                const container = document.getElementById(
+                  `${data?.id}-content`,
+                );
+                container?.classList.remove('line-clamp-3');
+                setShowSeeMore(false);
+              }}
+              id={`${data?.id}-see-more-button`}
+              className="absolute bottom-0 right-0 bg-white text-neutral-500 text-sm font-bold cursor-pointer"
+            >
+              ...See more
+            </span>
+          )}
         </span>
       )}
 
@@ -216,7 +213,7 @@ const RenderQuillContent: FC<RenderQuillContent> = ({
       {data?.shoutoutRecipients &&
         data?.shoutoutRecipients.length > 0 &&
         !isAnnouncementWidgetPreview && (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 overflow-hidden">
             <p
               className="text-xs text-neutral-500"
               data-testid="feed-post-shoutoutto-list"

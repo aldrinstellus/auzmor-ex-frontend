@@ -41,7 +41,8 @@ interface ReplyProps {
 }
 
 export const Reply: FC<ReplyProps> = ({ comment }) => {
-  const { t } = useTranslation('profile');
+  const { t: tp } = useTranslation('profile');
+  const { t } = useTranslation('components', { keyPrefix: 'Reply' });
   const { user } = useAuth();
   const { isLxp } = useProduct();
   const [confirm, showConfirm, closeConfirm] = useModal();
@@ -97,7 +98,7 @@ export const Reply: FC<ReplyProps> = ({ comment }) => {
             <div className="flex">
               <div className="mr-4">
                 <Avatar
-                  name={comment?.createdBy?.fullName}
+                  name={comment?.createdBy?.fullName || tp('nameNotSpecified')}
                   size={32}
                   image={getProfileImage(comment?.createdBy)}
                   bgColor={getAvatarColor(comment?.createdBy)}
@@ -109,7 +110,7 @@ export const Reply: FC<ReplyProps> = ({ comment }) => {
                     <UserCard
                       user={getUserCardTooltipProps(
                         comment?.createdBy,
-                        t('fieldNotSpecified'),
+                        tp('fieldNotSpecified'),
                       )}
                     />
                   }
@@ -171,7 +172,7 @@ export const Reply: FC<ReplyProps> = ({ comment }) => {
                               color="text-neutral-200"
                             />
                             <div className="text-sm font-medium text-neutral-900">
-                              Edit reply
+                              {t('editReply')}
                             </div>
                           </div>
                           <div
@@ -186,7 +187,7 @@ export const Reply: FC<ReplyProps> = ({ comment }) => {
                               color="text-neutral-200"
                             />
                             <div className="text-sm font-medium text-neutral-900">
-                              Delete reply
+                              {t('deleteReply')}
                             </div>
                           </div>
                         </div>
@@ -273,19 +274,19 @@ export const Reply: FC<ReplyProps> = ({ comment }) => {
         title="Delete"
         description={
           <span>
-            Are you sure you want to delete this reply?
-            <br /> This cannot be undone.
+            {t('deleteFailedError')}
+            <br /> {t('deleteFailedUndo')}
           </span>
         }
         success={{
-          label: 'Delete',
+          label: t('deleteLabel'),
           className: 'bg-red-500 text-white ',
           onSubmit: () => {
             deleteReplyMutation.mutate(comment.id || '');
           },
         }}
         discard={{
-          label: 'Cancel',
+          label: t('cancelLabel'),
           className: 'text-neutral-900 bg-white ',
           onCancel: closeConfirm,
         }}

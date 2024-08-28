@@ -6,7 +6,6 @@ import clsx from 'clsx';
 import Button, { Variant as ButtonVariant, Type } from 'components/Button';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { URL_REGEX } from 'utils/constants';
 import { UploadStatus, useUpload } from 'hooks/useUpload';
 import { EntityType } from 'queries/files';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -18,6 +17,9 @@ import Header from 'components/ModalHeader';
 import { createCatergory, uploadImage } from 'queries/learn';
 import useProduct from 'hooks/useProduct';
 import { useTranslation } from 'react-i18next';
+import { getUrlWithProtocol, isValidUrl } from 'utils/misc';
+import { useDebounce } from 'hooks/useDebounce';
+import { getPreviewLink } from 'queries/post';
 
 export enum APP_MODE {
   Create = 'CREATE',
@@ -62,10 +64,9 @@ const AddApp: FC<AddAppProps> = ({
     url: yup
       .string()
       .required(t('requiredError'))
-      .test('is-valid-url', t('protocolError'), (value) =>
-        /^(http|https):\/\//.test(value || ''),
-      )
-      .matches(URL_REGEX, 'Enter a valid URL'),
+      .test('is-valid-url', t('validUrlError'), (value) =>
+        isValidUrl(value || ''),
+      ),
     label: yup
       .string()
       .required(t('requiredError'))
@@ -115,16 +116,19 @@ const AddApp: FC<AddAppProps> = ({
   const [activeFlow, setActiveFlow] = useState(ADD_APP_FLOW.AddApp);
   const [audience, setAudience] = useState<any>(data?.audience || []);
 
+  const url = useDebounce(watch('url'), 800);
+
   useEffect(() => {
-    const subscription = watch((value, { name }) => {
-      if (name === 'url' && value.url) {
-        const titleMatch = value.url.match(/https?:\/\/(?:www\.)?([^.]+)\./);
-        const title = titleMatch ? titleMatch[1] : '';
-        setValue('label', title);
+    if (!url) {
+      return;
+    }
+
+    getPreviewLink(getUrlWithProtocol(url)).then((response) => {
+      if (!getValues('label') && response?.title) {
+        setValue('label', response.title);
       }
     });
-    return () => subscription.unsubscribe();
-  }, [watch, setValue]); // auto fill the label on the basis of url same as Channel links
+  }, [url, setValue]);
 
   const queryClient = useQueryClient();
 
@@ -184,13 +188,16 @@ const AddApp: FC<AddAppProps> = ({
     trigger();
     if (!errors.url && !errors.label && !errors.description) {
       const formData = getValues();
-      let uploadedFile;
+      let uploadedFile: any;
       let lxpCategoryId;
       if (isLxp) {
         const formPayload: any = new FormData();
         if (formData.icon?.file) {
           formPayload.append('url', formData?.icon?.file);
-          uploadedFile = await uploadImageMutation(formPayload);
+          const res = await uploadImageMutation(formPayload);
+          uploadedFile = res.result?.data?.url;
+        } else if (mode == APP_MODE.Edit && !formData.icon?.original) {
+          uploadedFile = '';
         }
         // upload category to learn
         if (formData?.category && formData?.category?.isNew) {
@@ -214,7 +221,9 @@ const AddApp: FC<AddAppProps> = ({
       }
       // Construct request body
       const req = {
-        url: formData.url,
+        url: formData.url?.startsWith('http')
+          ? formData.url
+          : `https://${formData.url}`,
         label: formData.label,
         featured: mode === APP_MODE.Edit ? !!data?.featured : false,
         ...(formData.description && { description: formData.description }),
@@ -224,7 +233,9 @@ const AddApp: FC<AddAppProps> = ({
         audience: audience || [],
       };
       const lxpReq = {
-        url: formData.url,
+        url: formData.url?.startsWith('http')
+          ? formData.url
+          : `https://${formData.url}`,
         label: formData.label,
         featured: mode === APP_MODE.Edit ? !!data?.featured : false,
         ...(formData.description && { description: formData.description }),
@@ -232,7 +243,7 @@ const AddApp: FC<AddAppProps> = ({
           lxpCategoryId && {
             category: lxpCategoryId.toString(),
           }),
-        icon: uploadedFile?.result?.data?.url,
+        icon: uploadedFile,
         audience: audience || [],
       };
 

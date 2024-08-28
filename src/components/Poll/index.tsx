@@ -22,6 +22,7 @@ import clsx from 'clsx';
 import useRole from 'hooks/useRole';
 import { useCurrentTimezone } from 'hooks/useCurrentTimezone';
 import { getLearnUrl } from 'utils/misc';
+import { useTranslation } from 'react-i18next';
 
 export enum PollMode {
   VIEW = 'VIEW',
@@ -84,6 +85,7 @@ const Poll: FC<IPoll & PollProps> = ({
   ctaButton,
   readOnly = false,
 }) => {
+  const { t } = useTranslation('components', { keyPrefix: 'Poll' });
   const { currentTimezone } = useCurrentTimezone();
   const userTimezone = currentTimezone || 'Asia/Kolkata';
 
@@ -175,7 +177,7 @@ const Poll: FC<IPoll & PollProps> = ({
             className="text-orange-500  font-bold"
             data-testid="createpost-poll-expiry"
           >
-            {timeLeft ? `${timeLeft} left` : 'Poll closed'}
+            {timeLeft ? `${timeLeft}  ${t('timeLeftSuffix')}` : t('pollClosed')}
           </p>
           {showTotal && (
             <Fragment>
@@ -183,12 +185,14 @@ const Poll: FC<IPoll & PollProps> = ({
               <p
                 className="text-neutral-500 font-normal"
                 data-testid="feed-post-poll-votes"
-              >{`${total} votes`}</p>
+              >
+                {`${total} ${t('votes')}`}
+              </p>
             </Fragment>
           )}
         </div>
         <Button
-          label={voted || !timeLeft ? 'View Results' : 'Vote Now'}
+          label={voted || !timeLeft ? t('viewResults') : t('voteNow')}
           size={ButtonSize.Small}
           className="py-[6px]"
         />
@@ -200,7 +204,7 @@ const Poll: FC<IPoll & PollProps> = ({
     <div className="bg-neutral-100 py-4 px-8 rounded-9xl w-full border border-neutral-200">
       {/* Header */}
       <div className="flex items-start gap-4">
-        <p className="text-neutral-900 font-bold flex-auto pb-4 break-normal [overflow-wrap:anywhere]">
+        <p className="text-neutral-900 font-bold flex-auto mb-2 break-normal [overflow-wrap:anywhere]">
           {question}
         </p>
         {mode === PollMode.EDIT && (
@@ -242,7 +246,7 @@ const Poll: FC<IPoll & PollProps> = ({
       {mode === PollMode.LEARN ? (
         <div className="flex flex-col gap-3">
           <p className="text-sm font-medium text-neutral-900">
-            Choose one option
+            {t('chooseOneOption')}
           </p>
           <ul className="list-disc flex flex-col gap-4">
             {options.map((option) => (
@@ -266,7 +270,7 @@ const Poll: FC<IPoll & PollProps> = ({
           </div>
         </div>
       ) : (
-        <div className="pb-6 flex flex-col gap-2">
+        <div className="mb-2 flex flex-col gap-2">
           {options.map((option, index) => {
             const votedThisOption =
               voted && myVote?.some((vote) => vote.optionId === option._id);
@@ -340,7 +344,7 @@ const Poll: FC<IPoll & PollProps> = ({
           className="text-orange-500  font-bold"
           data-testid="createpost-poll-expiry"
         >
-          {timeLeft ? `${timeLeft} left` : 'Poll closed'}
+          {timeLeft ? `${timeLeft} ${t('timeLeftSuffix')}` : t('pollClosed')}
         </p>
         {showTotal && (
           <Fragment>
@@ -348,7 +352,7 @@ const Poll: FC<IPoll & PollProps> = ({
             <p
               className="text-neutral-500 font-normal"
               data-testid="feed-post-poll-votes"
-            >{`${total} votes`}</p>
+            >{`${total} ${t('votes')} `}</p>
           </Fragment>
         )}
         {showViewResults && (
@@ -358,7 +362,7 @@ const Poll: FC<IPoll & PollProps> = ({
               size={ButtonSize.ExtraSmall}
               variant={ButtonVariant.Tertiary}
               className="!p-0 !bg-transparent"
-              label={showResults ? 'Undo' : 'View results'}
+              label={showResults ? t('undo') : t('viewResults')}
               labelClassName="text-primary-500 font-bold leading-normal"
               onClick={() => setShowResults(!showResults)}
               dataTestId={`feed-post-poll-${

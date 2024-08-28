@@ -7,10 +7,13 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import Layout, { FieldType } from 'components/Form';
-import { URL_REGEX } from 'utils/constants';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createLinks, updateChannelLink } from 'queries/channel';
+import { getPreviewLink } from 'queries/post';
+import { useDebounce } from 'hooks/useDebounce';
+import { isValidUrl } from 'utils/misc';
+import { getUrlWithProtocol } from 'utils/misc';
 
 interface IAddLinksModalProps {
   open: boolean;
@@ -20,6 +23,11 @@ interface IAddLinksModalProps {
   channelId?: string;
   isEditMode?: boolean;
 }
+
+type InputForm = {
+  title: string;
+  url: string;
+};
 
 const AddLinkModal: FC<IAddLinksModalProps> = ({
   open,
@@ -42,14 +50,9 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
       .max(20, t('labelField.maxLengthError')),
     url: yup
       .string()
-      .required(t('urlField.requiredError'))
-      .test('is-valid-url', t('urlField.protocolError'), (value) =>
-        /^(http|https):\/\//.test(value || ''),
+      .test('is-valid-url', t('urlField.invalidUrlError'), (value) =>
+        isValidUrl(getUrlWithProtocol(value)),
       )
-      .matches(URL_REGEX, {
-        message: t('urlField.invalidUrlError'),
-        excludeEmptyString: true,
-      })
       .max(256, t('urlField.maxLengthError')),
   });
   const updateLinksMutation = useMutation(
@@ -72,39 +75,37 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
   const {
     handleSubmit,
     control,
-    getValues,
     setValue,
-    reset,
     watch,
+    getValues,
     formState: { errors },
-  } = useForm<any>({
+  } = useForm<InputForm>({
     resolver: yupResolver(schema),
-    mode: 'onSubmit',
-  });
-
-  useEffect(() => {
-    reset({
+    mode: 'onBlur',
+    defaultValues: {
       title: linkDetails?.title,
       url: linkDetails?.url,
-    });
-  }, [linkDetails]);
+    },
+  });
+
+  const url = useDebounce(watch('url'), 800);
 
   useEffect(() => {
-    const subscription = watch((value, { name }) => {
-      if (name === 'url' && value.url) {
-        const titleMatch = value.url.match(/https?:\/\/(?:www\.)?([^.]+)\./);
-        const title = titleMatch ? titleMatch[1] : '';
-        setValue('title', title);
+    if (!url) {
+      return;
+    }
+    getPreviewLink(getUrlWithProtocol(url)).then((response) => {
+      if (!getValues('title') && response?.title) {
+        setValue('title', response.title);
       }
     });
-    return () => subscription.unsubscribe();
-  }, [watch, setValue]);
+  }, [url, setValue]);
 
-  const onSubmit = () => {
+  const onSubmit = (formData: InputForm) => {
     try {
-      const { title, url } = getValues();
+      const { title, url } = formData;
       if (isCreateMode) {
-        updateLinksMutation.mutate({ title, url });
+        updateLinksMutation.mutate({ title, url: getUrlWithProtocol(url) });
         return;
       }
       if (isEditMode) {
@@ -112,7 +113,7 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
           channelId: channelId,
           linkId: linkDetails?.id,
           title,
-          url,
+          url: url?.startsWith('http') ? url : `https://${url}`,
         });
       }
       closeModal();
@@ -143,8 +144,8 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
       error: errors.title?.message,
       className: '',
       dataTestId: 'add-link-title',
+      required: true,
       maxLength: 20,
-      required: false,
     },
   ];
 
