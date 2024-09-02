@@ -41,7 +41,7 @@ const IntegrationSetting: FC = () => {
             unifiedApi: 'hris',
             serviceId: 'deel',
             onClose: () => {
-              console.log('closed!!!');
+              async()=> await putConfiguration('Deel',true,data.consumerId);
             },
             onReady: () => {
               console.log('ready!!!!');
@@ -60,7 +60,6 @@ const IntegrationSetting: FC = () => {
     } catch (error) {
       console.error('Error creating session:', error);
     }
-    async()=> await putConfiguration();
   };
 
   const handleDropdownClick = () => {

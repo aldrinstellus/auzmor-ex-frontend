@@ -13,13 +13,13 @@ export const createConfiguration = async (name: string) => {
   return result.data;
 };
 
-export const putConfiguration = async () => {
-  const { result } = await apiService.put('/hris/configure', { name });
+export const putConfiguration = async (name:string,enabled:boolean,consumerId:string) => {
+  const { result } = await apiService.put('/hris/configure', { name,enabled,consumerId });
   return result.data;
 };
 
 export const  syncUser= async () => {
-  const { result } = await apiService.post('/hris/sync', { name });
+  const { result } = await apiService.post('/hris/sync',);
   return result.data;
 };
 

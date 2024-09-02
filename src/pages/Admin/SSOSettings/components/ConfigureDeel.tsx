@@ -12,13 +12,14 @@ interface ConfigureDeelProps {
 const ConfigureDeel: FC<ConfigureDeelProps> = ({ show, closeModal }) => {
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const handleSyncNow =  async () => {
     setIsLoading(true);
     try {
-      const response = await syncUser();
+      async()=> await syncUser();
     const currentTime = new Date().toLocaleString();
     setLastSyncTime(currentTime);
-    console.log('Sync successful:', response.data);
+   // console.log('Sync successful:', response.data);
   } catch (error) {
     console.error('Sync failed:', error);
   } finally {
