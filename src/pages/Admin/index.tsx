@@ -8,6 +8,7 @@ import BrandingSettings from './BrandingSettings';
 import useURLParams from 'hooks/useURLParams';
 import useRole from 'hooks/useRole';
 import { usePageTitle } from 'hooks/usePageTitle';
+import IntegrationSetting from './IntegrationSetting';
 
 const Admin: FC = () => {
   usePageTitle('admin');
@@ -58,6 +59,17 @@ const Admin: FC = () => {
       hidden: false,
       hideDefaultLabelCard: false,
       dataTestId: 'settings-sso',
+      allowOnlySuperAdmin: false,
+    },
+    {
+      label: 'Integration',
+      icon: 'integration',
+      key: 'integration-setting',
+      component:<IntegrationSetting/>,
+      disabled: false,
+      hidden: false,
+      hideDefaultLabelCard: false,
+      dataTestId: 'settings-integration',
       allowOnlySuperAdmin: false,
     },
     {

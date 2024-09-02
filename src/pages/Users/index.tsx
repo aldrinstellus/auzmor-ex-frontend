@@ -13,9 +13,120 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PopupMenu from 'components/PopupMenu';
 import useProduct from 'hooks/useProduct';
 import { usePageTitle } from 'hooks/usePageTitle';
-// import { Button as bttn } from '@apideck/components';
 import { useVault } from '@apideck/vault-react';
-import axios from 'axios';
+// import axios from 'axios';
+// import { getItem } from 'utils/persist';
+import { post } from 'pages/Admin/SSOSettings/components/apiserviceDeel';
+import { put } from 'pages/Admin/SSOSettings/components/apiserviceDeel';
+
+interface User {
+  email: string;
+  organization: {
+    domain: string;
+    id: string;
+    name: string;
+  };
+  id: string;
+}
+
+interface CreateSessionProps {
+  user: User | null;
+  setToken: (token: string) => void;
+  open: (args: {
+    token: string;
+    unifiedApi: string;
+    serviceId: string;
+    onConnectionChange: () => Promise<void>;
+    onClose?: () => void;
+  }) => void;
+  onConnectionChange: () => Promise<void>;
+}
+export const createSession = async ({
+  user,
+  setToken,
+  open,
+  onConnectionChange
+}: CreateSessionProps): Promise<void> => {
+  if (!user) return;
+  try {
+    const response = await post(`/hris/configure`, {
+      email: `${user.email}-1`,
+      domain: user.organization.domain,
+    });
+    const sessionToken = response?.data?.session?.session_token;
+    
+
+    if (sessionToken) {
+      open({
+        token: sessionToken,
+        unifiedApi: 'hris',
+        serviceId: 'deel',
+        onClose: () => {
+          
+        },
+        onConnectionChange: async () => {
+          await put(`/hris/configure`, 
+            // {
+          //   clientId: user.organization.id,
+          //   clientName: user.organization.name,
+          //   products: {
+          //     DeelHR: {
+          //       config: {
+          //         domain: user.organization.domain,
+          //         consumerId: response?.data?.consumerId,
+          //       },
+          //     },
+          //     AuzmorEX: {
+          //       config: {
+          //         domain: user.organization.domain,
+          //         baseUrl: 'http://localhost:4000',
+          //         userId: user.id,
+          //       },
+          //     },
+          //   },
+          //   configuration: {
+          //     DeelHR: {
+          //       name: 'DeelHR',
+          //       description: 'DeelHR',
+          //       actions: [
+          //         {
+          //           name: 'SyncUsers',
+          //           source: {
+          //             name: 'DeelHR',
+          //             action: 'GetUsers',
+          //           },
+          //           target: {
+          //             name: 'AuzmorEX',
+          //             action: 'CreateUsers',
+          //           },
+          //           dataMapping: {
+          //             id: 'employeeId',
+          //             '$.emails[?(@.type == "primary")].email': 'email',
+          //             display_name: 'fullName',
+          //             '$.phone_numbers[?(@.type == "primary")].number':
+          //               'workPhone',
+          //             title: 'designation',
+          //             employment_start_date: 'joinDate',
+          //           },
+          //         },
+          //       ],
+          //     },
+          //   },
+          // }
+          {
+            "name":"DEEL"
+          });
+          
+          onConnectionChange();
+        },
+      });
+
+      setToken(sessionToken);
+    }
+  } catch (error) {
+    console.error('Error creating session:', error);
+  }
+};
 
 interface IUsersProps {}
 
@@ -42,89 +153,23 @@ const Users: FC<IUsersProps> = () => {
   const [showTeamModal, openTeamModal, closeTeamModal] = useModal(
     undefined,
     false,
-  ); // to context
-  //const [isCreatingSession, setIsCreatingSession] = useState(false);
-  const [token, setToken] = useState();
+  );
+  const [token, setToken] = useState<string | undefined>();
   const { user } = useAuth();
+
+  const onConnectionChange = async () => {
+    console.log('Connection changed');
+  };
 
   const { open } = useVault();
   const openVault = () => {
-    // console.log("hello")
-    if (token) open({ token });
-    else createSession();
-  };
-  const createSession = async () => {
-    //  console.log("print", isCreatingSession)
-   // setIsCreatingSession(true);
-    try {
-      const response = await axios.post(
-        'http://localhost:5000/api/connection/',
-        {
-          email: `${user?.email}-1`,
-          domain: user?.organization.domain,
-        },
-      );
-      const sessionToken = response?.data?.session?.session_token;
-      if (sessionToken) {
-        open({ token: sessionToken,unifiedApi: 'hris',
-          serviceId: 'deel',  onConnectionChange: async () => {
-            await axios.post(
-              'http://localhost:5000/api/configuration/',
-              {
-                "clientId":  user?.organization.id,
-                "clientName": user?.organization.name,
-                "products": {
-                    "DeelHR": {
-                        "config": {
-                            "consumerId":  response?.data?.consumerId
-                        }
-                    },
-                    "AuzmorEX": {
-                        "config": {
-                            "domain": user?.organization.domain,
-                            "baseUrl": "http://localhost:4000",
-                            "userId": user?.id
-                        }
-                    }
-                },
-                "configuration": {
-                    "DeelHR": {
-                        "name": "DeelHR",
-                        "description": "DeelHR",
-                        "actions": [
-                            {
-                                "name": "SyncUsers",
-                                "source": {
-                                    "name": "DeelHR",
-                                    "action": "GetUsers"
-                                },
-                                "target": {
-                                    "name": "AuzmorEX",
-                                    "action": "CreateUsers"
-                                },
-                                "dataMapping": {
-                                    "id": "employeeId",
-                                    "$.emails[?(@.type == 'primary')].email": "email",
-                                    "display_name": "fullName",
-                                    "$.phone_numbers[?(@.type == 'primary')].number": "workPhone",
-                                    "title": "designation",
-                                    "employment_start_date": "joinDate"
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
-            );
-            await axios.post(`http://localhost:5000/api/hris/syncusers?clientId=${user?.organization.id}&configName=DeelHR`)
-          },});
-        setToken(sessionToken)
-      }
-      //console.log(response);
-    } finally {
-    //  setIsCreatingSession(false);
+    if (token) {
+      open({ token });
+    } else {
+      createSession({ user, setToken, open,onConnectionChange });
     }
   };
+  
 
   const tabStyles = (active: boolean, disabled = false) =>
     clsx(
@@ -250,13 +295,13 @@ const Users: FC<IUsersProps> = () => {
       <Tabs
         tabs={tabs}
         title={isLxp ? 'My Teams' : 'People Hub'}
-        className={`w-fit   ${
+        className={`w-fit ${
           isLxp ? 'hidden' : 'flex'
         } justify-start bg-neutral-50 rounded-6xl border-solid border-1 border-neutral-200`}
         tabSwitcherClassName="!p-1"
         showUnderline={false}
         itemSpacing={1}
-        activeTabIndex={!isUserTab ? 1 : 0} //need to handle the behaviour
+        activeTabIndex={!isUserTab ? 1 : 0}
         tabContentClassName="mt-4"
         onTabChange={() => {
           navigate(isUserTab ? '/teams' : '/users');
