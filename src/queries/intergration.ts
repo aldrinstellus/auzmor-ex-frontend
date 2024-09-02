@@ -23,3 +23,7 @@ export const  syncUser= async () => {
   return result.data;
 };
 
+export const meApi= async()=>{
+  const  {data}  = await apiService.get('/users/me');
+  return data.org.integrations.enabled;
+}
