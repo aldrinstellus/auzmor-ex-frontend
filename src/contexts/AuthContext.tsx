@@ -31,6 +31,10 @@ interface ISubscription {
   type: string;
   daysRemaining: number;
 }
+interface IIntegrations{
+  name: string,
+  enabled: boolean
+}
 
 export interface IUser {
   id: string;
@@ -51,6 +55,7 @@ export interface IUser {
   outOfOffice?: Record<string, any>;
   notificationSettings?: INotificationSettings;
   preferences?: Record<string, any>;
+  integrations?:IIntegrations;
 }
 
 export interface IBranding {
@@ -208,6 +213,10 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
               ),
             },
             // set integration here !
+            integrations: {
+                   name: data?.org.integrations.name,
+                   enabled:data?.org.integrations.enabled,
+          },
             preferences: data?.preferences,
           });
           setBranding(data.branding);

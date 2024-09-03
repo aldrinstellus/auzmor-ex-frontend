@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState } from 'react';
 import Card from 'components/Card';
 import ConfigureDeel from './SSOSettings/components/ConfigureDeel';
 import useAuth from 'hooks/useAuth';
@@ -6,7 +6,6 @@ import { useVault } from '@apideck/vault-react';
 import Icon from 'components/Icon';
 import { createConfiguration, putConfiguration } from 'queries/intergration';
 // import { putConfiguration } from 'queries/intergration';
-import { meApi } from 'queries/intergration';
 
 export const customOnClick = (
   show: boolean,
@@ -18,22 +17,11 @@ const IntegrationSetting: FC = () => {
   const [ShowConfiguration, SetShowConfiguration] = useState(false);
   const [token, setToken] = useState<string | undefined>();
   const { user } = useAuth();
-  // const { open } = useVault();
   const [showDropdown, setShowDropdown] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const { open } = useVault();
-  let isEnabled = false;
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        isEnabled = await meApi();
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+  const isEnabled = user?.integrations?.enabled ?? false;
 
-    fetchData();
-  }, []);
   const openVault = () => {
     if (token) {
       open({ token });
