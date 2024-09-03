@@ -20,7 +20,11 @@ const IntegrationSetting: FC = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const { open } = useVault();
-  const isEnabled = user?.integrations?.enabled ?? false;
+  const configName="DeelHR";
+  const currentConfiguration= user?.integrations?.find(integration => integration.name === configName );
+  const isEnabled = currentConfiguration?.enabled?? false;
+  const lastSync= currentConfiguration?.accountDetails?.lastSync??null;
+  
 
   const openVault = () => {
     if (token) {
@@ -33,7 +37,7 @@ const IntegrationSetting: FC = () => {
     if (!user) return;
     try {
       if (user) {
-        const data = await createConfiguration('Deel'); // use constant from configration do not use string.
+        const data = await createConfiguration(configName); // use constant from configration do not use string.
         setIsConnected(true);
         if (data.token) {
           open({
@@ -77,6 +81,7 @@ const IntegrationSetting: FC = () => {
       {ShowConfiguration && (
         <ConfigureDeel
           show={ShowConfiguration}
+          lastSync={lastSync}
           closeModal={() =>
             customOnClick(ShowConfiguration, SetShowConfiguration)
           }
@@ -110,7 +115,7 @@ const IntegrationSetting: FC = () => {
               }
             }}
           >
-            {!isEnabled ? 'Configure' : 'Re-Configure '}
+            {isEnabled ? 'Re-Configure' : 'Configure '}
           </button>
           {isConnected && (
             <div className="relative">
