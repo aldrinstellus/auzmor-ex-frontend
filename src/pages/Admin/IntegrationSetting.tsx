@@ -20,11 +20,13 @@ const IntegrationSetting: FC = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const { open } = useVault();
-  const configName="DeelHR";
-  const currentConfiguration= user?.integrations?.find(integration => integration.name === configName );
-  const isEnabled = currentConfiguration?.enabled?? false;
-  const lastSync= currentConfiguration?.accountDetails?.lastSync??null;
-  
+  const configName = 'DeelHR';
+  const currentConfiguration = user?.integrations?.find(
+    (integration) => integration.name === configName,
+  );
+  const isEnabled = currentConfiguration?.enabled ?? false;
+  const lastSync = currentConfiguration?.accountDetails?.lastSync ?? null;
+  console.log(currentConfiguration);
 
   const openVault = () => {
     if (token) {

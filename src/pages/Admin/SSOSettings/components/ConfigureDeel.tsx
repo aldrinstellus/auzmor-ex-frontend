@@ -19,7 +19,8 @@ const ConfigureDeel: FC<ConfigureDeelProps> = ({
   const handleSyncNow = async () => {
     setIsLoading(true);
     try {
-      async () => await syncUser();
+      const res = await syncUser();
+      console.log(res);
     } catch (error) {
       console.error('Sync failed:', error);
     } finally {

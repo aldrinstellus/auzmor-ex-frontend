@@ -37,7 +37,6 @@ interface IIntegration {
   accountDetails: Record<string, any>;
 }
 
-
 export interface IUser {
   id: string;
   name: string;
@@ -57,7 +56,7 @@ export interface IUser {
   outOfOffice?: Record<string, any>;
   notificationSettings?: INotificationSettings;
   preferences?: Record<string, any>;
-  integrations?:[IIntegration];
+  integrations?: [IIntegration];
 }
 
 export interface IBranding {
@@ -215,11 +214,7 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
               ),
             },
             // set integration here !
-           
-              integrations:data?.integrations??[],
-            
-           
-           
+            integrations: data?.org?.integrations ?? [],
             preferences: data?.preferences,
           });
           setBranding(data.branding);

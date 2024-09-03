@@ -27,12 +27,7 @@ export const putConfiguration = async (
   return result.data;
 };
 
-export const syncUser = async () => {
-  const { result } = await apiService.post('/hris/sync');
+export const syncUser = async (configName = 'DeelHR') => {
+  const { result } = await apiService.post(`/hris/sync?type=${configName}`);
   return result.data;
-};
-
-export const meApi = async () => {
-  const { data } = await apiService.get('/users/me');
-  return data.org.integrations.enabled;
 };
