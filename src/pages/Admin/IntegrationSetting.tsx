@@ -102,7 +102,13 @@ const IntegrationSetting: FC = () => {
         <div className="flex items-center">
           <button
             className="bg-green-500 text-white text-sm px-4 py-2 rounded-full hover:bg-green-600 font-extrabold"
-            onClick={openVault}
+            onClick={() => {
+              if (isEnabled) {
+                handleReSyncClick(); //trigger resync if reconfigure is shown
+              } else {
+                openVault(); //else open vault  for connection
+              }
+            }}
           >
             {!isEnabled ? 'Configure' : 'Re-Configure '}
           </button>
