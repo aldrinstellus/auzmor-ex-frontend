@@ -1,0 +1,12 @@
+{
+  "submit": "Submit",
+  "showing": "Showing",
+  "result": "Result",
+  "search": "Search",
+  "cancel": "Cancel",
+  "create": "Create",
+  "save": "Save",
+  "loading": "Loading...",
+  "show-results": "Showing {{count}} results",
+  "notSpecified": "Not specified"
+}

@@ -31,12 +31,15 @@ import Tooltip, { Variant as TooltipVariant } from 'components/Tooltip';
 import UserCard from 'components/UserCard';
 import useProduct from 'hooks/useProduct';
 import PopupMenu from 'components/PopupMenu';
+import { useTranslation } from 'react-i18next';
 
 interface CommentProps {
   commentId: string;
 }
 
 export const Comment: FC<CommentProps> = ({ commentId }) => {
+  const { t: tp } = useTranslation('profile');
+  const { t } = useTranslation('post', { keyPrefix: 'commentComponent' });
   const getPost = useFeedStore((state) => state.getPost);
   const [getComments, storedcomments, setComment] = useCommentStore(
     ({ getComments, comment, setComment }) => [
@@ -56,11 +59,6 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
 
   const comment = storedcomments[commentId];
   const replies = getComments(comment?.relevantComments || []);
-
-  // const menuItemStyle = clsx({
-  //   'flex flex-row items-center py-3 px-6 gap-2.5 border-b text-sm hover:bg-primary-50 cursor-pointer rounded-b-9xl':
-  //     true,
-  // });
 
   const totalCount = Object.values(comment?.reactionsCount || {}).reduce(
     (total, count) => total + count,
@@ -91,12 +89,12 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
     },
     onError: () =>
       failureToastConfig({
-        content: 'Error deleting comment',
+        content: t('deleteFailToast'),
         dataTestId: 'comment-toaster',
       }),
     onSuccess: () =>
       successToastConfig({
-        content: 'Comment has been deleted',
+        content: t('deleteSuccessToast'),
         dataTestId: 'comment-toaster',
       }),
   });
@@ -126,7 +124,12 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
           <div className="flex flex-col items-start p-0 flex-grow w-0">
             <Tooltip
               tooltipContent={
-                <UserCard user={getUserCardTooltipProps(comment?.createdBy)} />
+                <UserCard
+                  user={getUserCardTooltipProps(
+                    comment?.createdBy,
+                    tp('fieldNotSpecified'),
+                  )}
+                />
               }
               variant={TooltipVariant.Light}
               className="!p-4 !shadow-md !rounded-9xl !z-[999]"
@@ -158,7 +161,7 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
                 menuItems={[
                   {
                     icon: 'edit',
-                    label: 'Edit comment',
+                    label: t('editComment'),
                     onClick: () => {
                       setEditComment(true);
                     },
@@ -167,7 +170,7 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
                   },
                   {
                     icon: 'delete',
-                    label: 'Delete comment',
+                    label: t('deleteComment'),
                     onClick: showConfirm,
                     stroke: 'text-neutral-900',
                     dataTestId: 'post-ellipsis-edit-comment',
@@ -210,6 +213,7 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
           />
           {/* ellipse */}
           <div className="h-1 w-1 bg-neutral-500 rounded-full"></div>
+
           {/* Show Reaction */}
           {totalCount > 0 ? (
             <div className="flex justify-between cursor-pointer">
@@ -270,7 +274,7 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
               className="text-xs font-normal text-neutral-500 ml-1.5 group-hover:text-primary-500 group-focus:text-primary-500"
               data-testid="comment-replies-count"
             >
-              Reply
+              {t('reply.single')}
             </div>
           </div>
 
@@ -290,7 +294,9 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
                   data-testid="comment-replies-count"
                 >
                   {comment?.repliesCount}
-                  {comment?.repliesCount > 1 ? ' Replies' : ' Reply'}
+                  {comment?.repliesCount > 1
+                    ? ` ${t('reply.multiple')}`
+                    : ` ${t('reply.single')}`}
                 </div>
               </div>
             </>
@@ -325,19 +331,19 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
         title="Delete"
         description={
           <span>
-            Are you sure you want to delete this comment?
-            <br /> This cannot be undone.
+            {t('deleteFailedError')}
+            <br /> {t('deleteFailedUndo')}
           </span>
         }
         success={{
-          label: 'Delete',
+          label: t('deleteLabel'),
           className: 'bg-red-500 text-white ',
           onSubmit: () => {
             deleteCommentMutation.mutate(comment?.id || '');
           },
         }}
         discard={{
-          label: 'Cancel',
+          label: t('cancelLabel'),
           className: 'text-neutral-900 bg-white ',
           onCancel: closeConfirm,
         }}

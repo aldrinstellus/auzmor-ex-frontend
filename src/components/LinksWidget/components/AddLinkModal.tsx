@@ -1,5 +1,4 @@
 import { FC, useEffect } from 'react';
-
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
 import Button, { Size, Variant } from 'components/Button';
@@ -8,57 +7,119 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import Layout, { FieldType } from 'components/Form';
-import { URL_REGEX } from 'utils/constants';
 import { useTranslation } from 'react-i18next';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createLinks, updateChannelLink } from 'queries/channel';
+import { getPreviewLink } from 'queries/post';
+import { useDebounce } from 'hooks/useDebounce';
+import { isValidUrl } from 'utils/misc';
+import { getUrlWithProtocol } from 'utils/misc';
 
 interface IAddLinksModalProps {
   open: boolean;
   closeModal: () => void;
   isCreateMode?: boolean;
   linkDetails?: IChannelLink;
-  setLinkDetails: (link: IChannelLink) => void;
+  channelId?: string;
+  isEditMode?: boolean;
 }
+
+type InputForm = {
+  title: string;
+  url: string;
+};
 
 const AddLinkModal: FC<IAddLinksModalProps> = ({
   open,
   closeModal,
   isCreateMode,
   linkDetails,
-  setLinkDetails,
+  channelId = '',
+  isEditMode = false,
 }) => {
+  const queryClient = useQueryClient();
   const { t } = useTranslation('channelLinksWidget', {
     keyPrefix: 'addLinkModal',
   });
+
   const schema = yup.object({
-    title: yup.string().optional().max(20, t('labelField.maxLengthError')),
+    title: yup
+      .string()
+      .required(t('labelField.requiredError'))
+      .min(2, t('labelField.minLengthError'))
+      .max(20, t('labelField.maxLengthError')),
     url: yup
       .string()
-      .required(t('urlField.requiredError'))
-      .matches(URL_REGEX, t('urlField.invalidUrlError')),
+      .test('is-valid-url', t('urlField.invalidUrlError'), (value) =>
+        isValidUrl(getUrlWithProtocol(value)),
+      )
+      .max(256, t('urlField.maxLengthError')),
   });
+  const updateLinksMutation = useMutation(
+    async (payload: any) => {
+      if (isCreateMode) {
+        return createLinks(channelId, { links: [payload] });
+      } else {
+        return updateChannelLink(payload);
+      }
+    },
+    {
+      onError: (error: any) => console.log(error),
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(['channel-links-widget']);
+        closeModal();
+      },
+    },
+  );
 
   const {
     handleSubmit,
     control,
+    setValue,
+    watch,
     getValues,
-    reset,
     formState: { errors },
-  } = useForm<any>({
+  } = useForm<InputForm>({
     resolver: yupResolver(schema),
-    mode: 'onSubmit',
-  });
-
-  useEffect(() => {
-    reset({
+    mode: 'onBlur',
+    defaultValues: {
       title: linkDetails?.title,
       url: linkDetails?.url,
-    });
-  }, [linkDetails]);
+    },
+  });
 
-  const onSubmit = () => {
-    const { title, url } = getValues();
-    setLinkDetails({ title, url });
-    closeModal();
+  const url = useDebounce(watch('url'), 800);
+
+  useEffect(() => {
+    if (!url) {
+      return;
+    }
+    getPreviewLink(getUrlWithProtocol(url)).then((response) => {
+      if (!getValues('title') && response?.title) {
+        setValue('title', response.title);
+      }
+    });
+  }, [url, setValue]);
+
+  const onSubmit = (formData: InputForm) => {
+    try {
+      const { title, url } = formData;
+      if (isCreateMode) {
+        updateLinksMutation.mutate({ title, url: getUrlWithProtocol(url) });
+        return;
+      }
+      if (isEditMode) {
+        updateLinksMutation.mutate({
+          channelId: channelId,
+          linkId: linkDetails?.id,
+          title,
+          url: url?.startsWith('http') ? url : `https://${url}`,
+        });
+      }
+      closeModal();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
   };
 
   const fields = [
@@ -71,8 +132,8 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
       error: errors.url?.message,
       className: '',
       dataTestId: 'add-link-url',
-      maxLength: 256,
       required: true,
+      autofocus: true,
     },
     {
       name: 'title',
@@ -83,8 +144,8 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
       error: errors.title?.message,
       className: '',
       dataTestId: 'add-link-title',
+      required: true,
       maxLength: 20,
-      required: false,
     },
   ];
 
@@ -117,6 +178,7 @@ const AddLinkModal: FC<IAddLinksModalProps> = ({
           size={Size.Small}
           variant={Variant.Primary}
           onClick={handleSubmit(onSubmit)}
+          loading={updateLinksMutation.isLoading}
           dataTestId="add-link-cta"
         />
       </div>

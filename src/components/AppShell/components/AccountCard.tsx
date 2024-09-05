@@ -14,6 +14,7 @@ import {
   userChannel,
 } from 'utils/misc';
 import useRole from 'hooks/useRole';
+import { useTranslation } from 'react-i18next';
 import useProduct from 'hooks/useProduct';
 import { learnLogout } from 'queries/learn';
 
@@ -21,6 +22,8 @@ const AccountCard = () => {
   const navigate = useNavigate();
   const { user, reset } = useAuth();
   const { isAdmin } = useRole();
+  const { t } = useTranslation('navbar');
+  const { t: tp } = useTranslation('profile');
   const { isLxp, isOffice } = useProduct();
 
   const logoutMutation = useMutation(isLxp ? learnLogout : logout, {
@@ -53,7 +56,7 @@ const AccountCard = () => {
         <div className="flex gap-1 items-center">
           <Avatar
             dataTestId="my-profile-avatar"
-            name={user?.name || 'U'}
+            name={user?.name || tp('nameNotSpecified')}
             size={32}
             image={user?.profileImage}
             ariaLabel="profile image"
@@ -71,7 +74,7 @@ const AccountCard = () => {
           <div className="px-4 py-5 flex flex-col items-center">
             <Avatar
               size={80}
-              name={user?.name || 'U'}
+              name={user?.name || tp('nameNotSpecified')}
               image={user?.profileImage}
               // showActiveIndicator
             />
@@ -93,7 +96,7 @@ const AccountCard = () => {
               <Button
                 dataTestId="user-menu-profile"
                 variant={Variant.Secondary}
-                label="Go to my profile"
+                label={t('account.goToProfile')}
                 onClick={() => {
                   navigate('/profile', { state: { userId: user?.id } });
                   close();
@@ -116,7 +119,7 @@ const AccountCard = () => {
                   className="mr-2.5"
                   color="text-neutral-900"
                 />
-                <div>User Settings</div>
+                <div>{t('userSetting')}</div>
               </div>
             </Link>
             {isOffice && isAdmin && (
@@ -132,7 +135,7 @@ const AccountCard = () => {
                     className="mr-2.5"
                     color="text-neutral-900"
                   />
-                  <div>Admin Settings</div>
+                  <div>{t('adminSetting')}</div>
                 </div>
               </Link>
             )}
@@ -149,7 +152,7 @@ const AccountCard = () => {
                     className="mr-2.5"
                     color="text-neutral-900"
                   />
-                  <div>Switch to Admin&apos;s View</div>
+                  <div>{t('switchToAdminsView')}</div>
                 </div>
               </Link>
             )}
@@ -165,7 +168,7 @@ const AccountCard = () => {
                   className="mr-2.5"
                   color="text-neutral-900"
                 />
-                <div>My Bookmarks</div>
+                <div>{t('myBookmarks')}</div>
               </div>
             </Link>
             <div
@@ -182,7 +185,7 @@ const AccountCard = () => {
                 className="mr-2.5"
                 color="text-neutral-900"
               />
-              <div>Sign Out</div>
+              <div>{t('signOut')}</div>
             </div>
           </div>
         </div>

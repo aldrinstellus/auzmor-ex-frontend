@@ -10,6 +10,7 @@ import IconButton, {
   Variant as IconButtonVariant,
   Size as IconButtonSize,
 } from 'components/IconButton';
+import { useTranslation } from 'react-i18next';
 
 export enum Mode {
   View = 'VIEW',
@@ -51,6 +52,7 @@ const MediaPreview: FC<IMediaPreviewProps> = ({
   showCloseButton = true,
   isAnnouncementWidgetPreview = false,
 }) => {
+  const { t } = useTranslation('components', { keyPrefix: 'MediaPreview' });
   const [mediaIndex, setMediaIndex] = useState<number>(-1);
   const [open, openModal, closeModal] = useModal(true);
 
@@ -451,7 +453,7 @@ const MediaPreview: FC<IMediaPreviewProps> = ({
           <div>
             {showAddMediaButton && (
               <Button
-                label="Add photos/videos"
+                label={t('addPhotosVideos')}
                 leftIcon="imageFilled"
                 className="flex"
                 variant={ButtonVariant.Secondary}

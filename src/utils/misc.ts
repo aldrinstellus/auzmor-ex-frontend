@@ -65,6 +65,17 @@ export const getCoverImage = (user: any) => {
   }
   return user?.coverImage?.original || DefaultCoverImage;
 };
+export const getChannelCoverImage = (channelData: any) => {
+  return (
+    channelData?.banner?.original || require('images/channelDefaultHero.png')
+  );
+};
+export const getChannelLogoImage = (channelData: any) => {
+  return (
+    channelData?.displayImage?.original ||
+    require('images/ChannelCover/Logo1.png')
+  );
+};
 
 export const getFullName = (user: any) => {
   if (user?.status === UserStatus.Inactive) {
@@ -84,9 +95,16 @@ export const getEditSection = (
 export const isValidUrl = (url: string) => {
   const urlPattern =
     /((https?|ftp):\/\/)?([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}|[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5})(:[0-9]{1,5})?(\/.*)?/gi;
-  return urlPattern.test(url);
+  return urlPattern.exec(url)?.[0] === url;
 };
-
+export const getUrlWithProtocol = (url?: string): string => {
+  if (!url) return '';
+  let protocol = 'https://';
+  if (url.startsWith('https://') || url.startsWith('http://')) {
+    protocol = '';
+  }
+  return `${protocol}${url}`;
+};
 interface IRedirect {
   redirectUrl?: string;
   token?: string;
@@ -293,6 +311,83 @@ export const operatorXOR = (...args: boolean[]): boolean => {
   return value;
 };
 
+export const transformContent = (quillDelta?: DeltaStatic) => {
+  const transformedQuillDelta: TransformedQuillDelta = { ops: [] };
+  for (let i = 0; i < (quillDelta?.ops?.length || 0); i += 1) {
+    const op = quillDelta?.ops ? quillDelta?.ops[i] : {};
+    const transformedOp: any = { ...op };
+    if (
+      typeof op.insert === 'object' &&
+      op.insert.mention &&
+      op.insert.mention.denotationChar === '#'
+    ) {
+      transformedOp.insert = { hashtag: { ...op.insert.mention } };
+    }
+    transformedQuillDelta.ops.push(transformedOp);
+  }
+
+  transformedQuillDelta.ops = transformedList(transformedQuillDelta.ops).ops;
+
+  return transformedQuillDelta;
+};
+
+export const transformedList = (ops: any) => {
+  const transformedData: TransformedQuillDelta = { ops: [] };
+  let listItem: Array<any> = [];
+  for (let i = 0; i < (ops?.length || 0); i += 1) {
+    if (ops[i]?.attributes?.list) {
+      const listOp = {
+        attributes: { list: ops[i].attributes.list },
+        insert: [[...listItem]],
+      };
+      listItem = [];
+      let update = false;
+      let j = i + 1;
+      for (; j < ops.length; j += 1) {
+        if (typeof ops[j].insert === 'object') {
+          listItem.push(ops[j]);
+        } else {
+          if (ops[j].insert.includes('\n') && !ops[j]?.attributes?.list) {
+            transformedData.ops = [
+              ...transformedData.ops,
+              listOp,
+              ...listItem,
+              ops[j],
+            ];
+            listItem = [];
+            i = j;
+            update = false;
+            break;
+          } else if (ops[j].insert.includes('\n') && ops[j].attributes.list) {
+            listOp.insert.push([...listItem]);
+            listItem = [];
+            update = true;
+          } else if (!ops[j].insert.includes('\n')) {
+            listItem.push(ops[j]);
+          }
+        }
+      }
+      if (update) {
+        transformedData.ops = [...transformedData.ops, listOp];
+        i = j;
+      }
+    } else {
+      if (typeof ops[i].insert === 'object') {
+        listItem.push(ops[i]);
+      } else if (typeof ops[i].insert === 'string') {
+        if (ops[i].insert.includes('\n')) {
+          transformedData.ops = [...transformedData.ops, ...listItem, ops[i]];
+          listItem = [];
+        } else {
+          listItem.push(ops[i]);
+        }
+      }
+    }
+  }
+  transformedData.ops = [...transformedData.ops, ...listItem];
+  return transformedData;
+};
+
 // Converting mention key to hashtag (if denotation is #)
 export const quillHashtagConversion = (
   quillDelta: DeltaStatic | undefined,
@@ -397,8 +492,8 @@ export const removeEmptyLines = (content: {
   return content;
 };
 
-export const getWorkLocation = (user: any) => {
-  let workLocation: ILocation = { locationId: '', name: 'Field not specified' };
+export const getWorkLocation = (user: any, fallbackValue: string) => {
+  let workLocation: ILocation = { locationId: '', name: fallbackValue };
   if (typeof user?.workLocation === 'string') {
     workLocation.name = user?.workLocation;
   } else if (typeof user?.workLocation === 'object') {
@@ -411,10 +506,10 @@ export const getWorkLocation = (user: any) => {
   return workLocation;
 };
 
-export const getDesignation = (user: any) => {
+export const getDesignation = (user: any, fallbackValue: string) => {
   let designation: IDesignation = {
     designationId: '',
-    name: 'Field not specified',
+    name: fallbackValue,
   };
   if (typeof user?.designation === 'string') {
     designation.name = user?.designation;
@@ -426,10 +521,10 @@ export const getDesignation = (user: any) => {
   return designation;
 };
 
-export const getDepartment = (user: any) => {
+export const getDepartment = (user: any, fallbackValue: string) => {
   let department: IDepartment = {
     departmentId: '',
-    name: 'Field not specified',
+    name: fallbackValue,
   };
   if (typeof user?.department === 'string') {
     department.name = user?.department;
@@ -439,17 +534,16 @@ export const getDepartment = (user: any) => {
   return department;
 };
 
-export const getUserCardTooltipProps = (user: any) => {
-  const workLocation = getWorkLocation(user);
-  const designation = getDesignation(user);
-  const department = getDepartment(user);
+export const getUserCardTooltipProps = (user: any, fallbackValue: string) => {
+  const workLocation = getWorkLocation(user, fallbackValue);
+  const designation = getDesignation(user, fallbackValue);
+  const department = getDepartment(user, fallbackValue);
 
   return {
     id: user?.id || user?.userId || '',
-    fullName:
-      user?.fullName || user?.userName || user?.name || 'Field not specified',
-    workEmail: user?.email || user?.workEmail || 'Field not specified',
-    email: user?.email || user?.workEmail || 'Field not specified',
+    fullName: user?.fullName || user?.userName || user?.name || fallbackValue,
+    workEmail: user?.email || user?.workEmail || fallbackValue,
+    email: user?.email || user?.workEmail || fallbackValue,
     workLocation: workLocation,
     designation: designation,
     department: department,

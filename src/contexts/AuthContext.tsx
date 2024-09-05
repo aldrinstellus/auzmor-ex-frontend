@@ -39,6 +39,7 @@ interface IIntegration {
 
 export interface IUser {
   id: string;
+  userId?: string;
   name: string;
   email: string;
   role: Role;
@@ -139,7 +140,7 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
 
     const lxpBaseUrl = getItem(`${ProductEnum.Lxp}RegionUrl`);
     const learnBaseUrl = getItem(`${ProductEnum.Learn}RegionUrl`);
-    console.log({ lxpBaseUrl, learnBaseUrl, isLxp });
+
     if (
       (process.env.REACT_APP_ENV === 'PRODUCTION' ||
         process.env.REACT_APP_ENV === 'STAGING') &&

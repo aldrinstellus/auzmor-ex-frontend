@@ -7,6 +7,8 @@ import useRole from 'hooks/useRole';
 import { useOrganization } from 'queries/organization';
 import { FC, useEffect } from 'react';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
+import { IS_PROD } from 'utils/constants';
+import { useTranslation } from 'react-i18next';
 
 interface IAudienceSelectorProps {
   audienceFlow: AudienceFlow;
@@ -23,8 +25,9 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
   isEveryoneSelected,
   setIsEveryoneSelected,
   dataTestId,
-  infoText = 'Your post will appear in Feed, on your profile and in search results. You can change the audience of this specific post.',
+  infoText,
 }) => {
+  const { t } = useTranslation('components', { keyPrefix: 'AudienceSelector' });
   const { isAdmin } = useRole();
   const { data, isLoading } = useOrganization();
   const { form } = useEntitySearchFormStore();
@@ -38,14 +41,14 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
     ) {
       setIsEveryoneSelected(false);
     }
-  }, [data]);
+  }, [data, isAdmin]);
 
   const audienceEntity = [
     {
       key: 'everyone',
       icon: 'people',
-      title: 'Everyone',
-      subTitle: 'Anyone who is a part of this organisation can see this post.',
+      title: t('everyone'),
+      subTitle: t('everyoneSubtitle'),
       onClick: () => setIsEveryoneSelected(true),
       isHidden:
         data?.adminSettings?.postingControls?.limitGlobalPosting && !isAdmin,
@@ -53,34 +56,39 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
       selectedCount: 0,
       dataTestId: 'audience-selection-everyone',
     },
-    // {
-    //   key: 'channels',
-    //   icon: 'noteFavouriteOutline',
-    //   title: 'Channels',
-    //   subTitle: 'Select a channel you are part of',
-    //   onClick: () => {},
-    //   isHidden: false,
-    //   isSelected: Object.keys(channels).some(
-    //     (id: string) => !!channels[id] && !isEveryoneSelected,
-    //   ),
-    //   selectedCount: Object.keys(channels).filter(
-    //     (id: string) => !!channels[id],
-    //   ).length,
-    //   dataTestId: 'audience-selection-channel'
-    // },
     {
       key: 'teams',
       icon: 'profileUser',
-      title: 'Teams',
-      subTitle: 'Select a team you are part of',
+      title: t('teams'),
+      subTitle: t('teamsSubtitle'),
       onClick: () => setAudienceFlow(AudienceFlow.TeamSelect),
       isHidden: false,
-      isSelected: Object.keys(teams).some(
-        (id: string) => !!teams[id] && !isEveryoneSelected,
-      ),
-      selectedCount: Object.keys(teams).filter((id: string) => !!teams[id])
-        .length,
+      isSelected:
+        teams &&
+        Object.keys(teams).some(
+          (id: string) => !!teams[id] && !isEveryoneSelected,
+        ),
+      selectedCount: teams
+        ? Object.keys(teams).filter((id: string) => !!teams[id]).length
+        : 0,
       dataTestId: 'audience-selection-teams',
+    },
+    {
+      key: 'channels',
+      icon: 'noteFavouriteOutline',
+      title: t('channels'),
+      subTitle: t('channelsSubtitle'),
+      onClick: () => setAudienceFlow(AudienceFlow.ChannelSelect),
+      isHidden: IS_PROD,
+      isSelected:
+        channels &&
+        Object.keys(channels).some(
+          (id: string) => !!channels[id] && !isEveryoneSelected,
+        ),
+      selectedCount: channels
+        ? Object.keys(channels).filter((id: string) => !!channels[id]).length
+        : 0,
+      dataTestId: 'audience-selection-channel',
     },
   ].filter((entity) => !entity.isHidden);
 
@@ -93,7 +101,7 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
               <Icon name="infoCircleOutline" hover={false} />
             </div>
             <div className="ml-2.5 text-neutral-500 font-medium text-sm">
-              {infoText}
+              {infoText || t('defaultInfoText')}
             </div>
           </div>
           {isLoading ? (
@@ -102,20 +110,20 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
             audienceEntity.map((entity) => (
               <div
                 key={entity.key}
-                className="flex p-4 border border-neutral-200 rounded-22xl mb-4 hover:shadow-xl group cursor-pointer justify-between items-center"
+                className={`flex p-4 border border-neutral-200 rounded-22xl mb-4 hover:shadow-xl group cursor-pointer justify-between items-center`}
                 onClick={entity.onClick}
                 data-testid={entity.dataTestId}
               >
                 <div className="flex items-center">
                   <div
                     className={`rounded-full w-12 h-12 flex items-center justify-center bg-primary-50 group-hover:bg-primary-500 ${
-                      entity.isSelected && 'bg-primary-500'
+                      entity.isSelected ? 'bg-primary-500' : ''
                     }`}
                   >
                     <Icon
                       name={entity.icon}
                       className={`text-neutral-500 group-hover:text-white ${
-                        entity.isSelected && 'text-white'
+                        entity.isSelected ? 'text-white' : ''
                       }`}
                     />
                   </div>
@@ -142,7 +150,7 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
                       />
                     </div>
                     <div className="text-xxs text-primary-500">
-                      {entity.selectedCount} selected
+                      {t('selected', { count: entity.selectedCount })}
                     </div>
                   </div>
                 ) : (
@@ -159,9 +167,9 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
         <EntitySearchModalBody
           entityType={EntitySearchModalType.User}
           dataTestId={`${dataTestId}-user`}
-          selectedMemberIds={Object.keys(users).filter(
-            (key: string) => users[key],
-          )}
+          selectedMemberIds={
+            users ? Object.keys(users).filter((key: string) => users[key]) : []
+          }
         />
       );
     }
@@ -170,9 +178,11 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
         <EntitySearchModalBody
           entityType={EntitySearchModalType.Channel}
           dataTestId={`${dataTestId}-channel`}
-          selectedChannelIds={Object.keys(channels).filter(
-            (key: string) => channels[key],
-          )}
+          selectedChannelIds={
+            channels
+              ? Object.keys(channels).filter((key: string) => channels[key])
+              : []
+          }
         />
       );
     }
@@ -181,9 +191,9 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
         <EntitySearchModalBody
           entityType={EntitySearchModalType.Team}
           dataTestId={`${dataTestId}-team`}
-          selectedTeamIds={Object.keys(teams).filter(
-            (key: string) => teams[key],
-          )}
+          selectedTeamIds={
+            teams ? Object.keys(teams).filter((key: string) => teams[key]) : []
+          }
         />
       );
     }

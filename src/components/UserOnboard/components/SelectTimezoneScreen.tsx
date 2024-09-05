@@ -11,6 +11,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { getDefaultTimezoneOption } from '../utils/';
 import Banner, { Variant } from 'components/Banner';
 import { getTimezoneNameFromIANA } from 'utils/time';
+import { useTranslation } from 'react-i18next';
 
 type SelectTimezoneScreenProps = {
   next: () => void;
@@ -34,6 +35,9 @@ const SelectTimezoneScreen: FC<SelectTimezoneScreenProps> = ({
 }): ReactElement => {
   const defaultTimezone = getDefaultTimezoneOption();
 
+  const { t } = useTranslation('components', {
+    keyPrefix: 'userOnboard.SelectTimezoneScreen',
+  });
   const schema = yup.object({
     timeZone: yup.object(),
   });
@@ -89,12 +93,12 @@ const SelectTimezoneScreen: FC<SelectTimezoneScreenProps> = ({
   return (
     <div className="flex flex-col min-h-full justify-between min-w-full">
       <div className="flex items-center flex-col justify-between gap-y-3 px-10 mt-6">
-        <img src={OnboardTimezone} alt="Timezone Image" />
+        <img src={OnboardTimezone} alt={t('timezoneImageAlt')} />
         <p className="font-bold text-neutral-900 text-2xl">
-          Select your timezone
+          {t('selectTimezoneTitle')}
         </p>
         <p className="font-normal text-sm text-neutral-500">
-          Please select your timezone from the options given below
+          {t('selectTimezoneInstruction')}
         </p>
       </div>
       <form
@@ -106,7 +110,7 @@ const SelectTimezoneScreen: FC<SelectTimezoneScreenProps> = ({
           <div>
             <Banner
               variant={Variant.Error}
-              title="Failed to set timezone. Please try again!"
+              title={t('timezoneSetErrorMessage')}
               className={`min-w-full ${
                 isError && !isLoading ? 'visible' : 'invisible'
               }`}
@@ -117,7 +121,7 @@ const SelectTimezoneScreen: FC<SelectTimezoneScreenProps> = ({
               <div />
               <Button
                 className="font-bold"
-                label="Next"
+                label={t('next')}
                 type={Type.Submit}
                 disabled={isLoading}
                 dataTestId="select-timezone-next"
@@ -130,5 +134,4 @@ const SelectTimezoneScreen: FC<SelectTimezoneScreenProps> = ({
     </div>
   );
 };
-
 export default SelectTimezoneScreen;

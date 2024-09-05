@@ -53,6 +53,7 @@ export type InputProps = {
   maxLength?: number;
   autofocus?: boolean;
   autocomplete?: string;
+  disableMaxLength?: boolean;
 };
 
 const Input: FC<InputProps> = ({
@@ -87,6 +88,7 @@ const Input: FC<InputProps> = ({
   required = false,
   autofocus = false,
   autocomplete = 'off',
+  disableMaxLength = false,
 }) => {
   const { field } = useController({
     name,
@@ -205,10 +207,9 @@ const Input: FC<InputProps> = ({
             disabled={loading || disabled}
             placeholder={placeholder}
             data-testid={dataTestId}
-            defaultValue={defaultValue}
             value={field.value}
             ref={inputRef}
-            maxLength={maxLength}
+            maxLength={disableMaxLength ? undefined : maxLength}
             onChange={field.onChange}
             onKeyDown={onEnter}
             onBlur={field.onBlur}

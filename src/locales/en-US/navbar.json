@@ -1,0 +1,17 @@
+{
+  "feed": "Feed",
+  "people": "People",
+  "apps": "Apps",
+  "admin": "Admin",
+  "teams": "Teams",
+  "learningHub": "Learning Hub",
+  "channels": "Channels",
+  "userSetting": "User Settings",
+  "adminSetting": "Admin Settings",
+  "switchToAdminsView": "Switch to Admin's View",
+  "myBookmarks": "My Bookmarks",
+  "signOut": "Sign Out",
+  "account": {
+    "goToProfile": "Go to My Profile"
+  }
+}

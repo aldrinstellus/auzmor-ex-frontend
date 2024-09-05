@@ -9,6 +9,7 @@ import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { downloadReport } from 'queries/importUsers';
 import Spinner from 'components/Spinner';
+import { useTranslation } from 'react-i18next';
 
 type AppProps = {
   open: boolean;
@@ -17,15 +18,19 @@ type AppProps = {
   importId: string;
 };
 
-const mapStatusLabel: Record<string, string> = {
-  CREATED: 'Successful Invites',
-  PARTIAL: 'Partial Invites',
-  ATTEMPTED: 'Attempted Invites',
-  FAILED: 'Failed Invites',
-  SKIPPED: 'Ignored Invites',
-};
-
 const Details: React.FC<AppProps> = ({ open, closeModal, data, importId }) => {
+  const { t } = useTranslation('components', {
+    keyPrefix: 'jobProgress.details',
+  });
+
+  const mapStatusLabel: Record<string, string> = {
+    CREATED: t('statusLabels.created'),
+    PARTIAL: t('statusLabels.partial'),
+    ATTEMPTED: t('statusLabels.attempted'),
+    FAILED: t('statusLabels.failed'),
+    SKIPPED: t('statusLabels.skipped'),
+  };
+
   const [status, setStatus] = useState('');
   const queryClient = useQueryClient();
 
@@ -43,7 +48,7 @@ const Details: React.FC<AppProps> = ({ open, closeModal, data, importId }) => {
       document.body.appendChild(a);
       a.click();
       successToastConfig({
-        content: 'Report exported successfully',
+        content: t('exportSuccess'),
         dataTestId: 'acknowledgement-report-export-toast-message',
       });
     },
@@ -54,21 +59,21 @@ const Details: React.FC<AppProps> = ({ open, closeModal, data, importId }) => {
       <div className="flex flex-col p-6 w-full gap-4 items-center">
         <Icon name="cloudAdd" size={120} color="text-primary-500" disabled />
         <p className="font-semibold text-xl text-neutral-900">
-          Members have been successfully uploaded to Auzmor
+          {t('uploadSuccess')}
         </p>
         <Divider />
         <div className="flex w-full text-neutral-900 font-bold text-sm">
-          <div className="w-1/2 flex flex-col gap-6">Member details</div>
+          <div className="w-1/2 flex flex-col gap-6">{t('memberDetails')}</div>
           <div className="w-1/2 pl-6 flex flex-col gap-6">
-            Number of members
+            {t('numberOfMembers')}
           </div>
         </div>
         <div className="flex w-full text-sm text-neutral-900">
           <div className="w-1/2 flex flex-col gap-6">
-            <div>Members attempted</div>
-            <div>Members added successfully</div>
-            <div>Members added with missing values</div>
-            <div>Members skipped due to errors</div>
+            <div>{t('membersAttempted')}</div>
+            <div>{t('membersAddedSuccessfully')}</div>
+            <div>{t('membersAddedWithMissingValues')}</div>
+            <div>{t('membersSkippedDueToErrors')}</div>
           </div>
           <div className="w-1/2 pl-6 flex flex-col gap-6">
             <div className="flex w-full items-center gap-2">
@@ -82,7 +87,7 @@ const Details: React.FC<AppProps> = ({ open, closeModal, data, importId }) => {
                 }}
                 data-testid="attempted-viewdetails"
               >
-                View details
+                {t('viewDetails')}
               </span>
             </div>
             <div className="flex w-full items-center gap-2">
@@ -99,7 +104,7 @@ const Details: React.FC<AppProps> = ({ open, closeModal, data, importId }) => {
                 }}
                 data-testid="success-viewdetails"
               >
-                View details
+                {t('viewDetails')}
               </span>
             </div>
             <div className="flex w-full items-center gap-2">
@@ -113,7 +118,7 @@ const Details: React.FC<AppProps> = ({ open, closeModal, data, importId }) => {
                 }}
                 data-testid="missing-viewdetails"
               >
-                View details
+                {t('viewDetails')}
               </span>
             </div>
             <div className="flex w-full items-center gap-2">
@@ -127,7 +132,7 @@ const Details: React.FC<AppProps> = ({ open, closeModal, data, importId }) => {
                 }}
                 data-testid="skipped-viewdetails"
               >
-                View details
+                {t('viewDetails')}
               </span>
             </div>
           </div>
@@ -149,7 +154,7 @@ const Details: React.FC<AppProps> = ({ open, closeModal, data, importId }) => {
           titleDataTestId="modal-header"
         />
       ) : (
-        <Header onClose={closeModal} title="Enrolled Users-Details" />
+        <Header onClose={closeModal} title={t('enrolledUsersDetails')} />
       )}
       {status ? (
         <Report importId={importId} status={status} />
@@ -172,10 +177,10 @@ const Details: React.FC<AppProps> = ({ open, closeModal, data, importId }) => {
             ) : (
               <Icon name="download" size={20} className="text-primary-500" />
             )}
-            <div className="text-xs font-bold">export report</div>
+            <div className="text-xs font-bold">{t('exportReport')}</div>
           </div>
           <Button
-            label="Back"
+            label={t('back')}
             variant={Variant.Secondary}
             size={Size.Small}
             className="mr-4"
@@ -188,7 +193,7 @@ const Details: React.FC<AppProps> = ({ open, closeModal, data, importId }) => {
       ) : (
         <div className="flex justify-end items-center h-16 p-6 bg-blue-50 rounded-b-9xl">
           <Button
-            label="Close"
+            label={t('close')}
             variant={Variant.Secondary}
             onClick={closeModal}
             dataTestId=""

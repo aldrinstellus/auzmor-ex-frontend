@@ -16,6 +16,7 @@ import {
 } from 'contexts/CreatePostContext';
 import { validImageTypesForComments } from 'components/Comments';
 import { useUploadState } from 'hooks/useUploadState';
+import { useTranslation } from 'react-i18next';
 
 interface CommentsProps {
   entityId: string;
@@ -47,7 +48,7 @@ const Comments: FC<CommentsProps> = ({ entityId, className }) => {
       entityType: 'comment',
       limit: 4,
     });
-
+  const { t } = useTranslation('profile');
   const { comment } = useCommentStore();
 
   const replyIds = data?.pages.flatMap((page) => {
@@ -71,7 +72,7 @@ const Comments: FC<CommentsProps> = ({ entityId, className }) => {
           <div className="flex flex-row items-center justify-between mb-4 gap-2">
             <div>
               <Avatar
-                name={user?.name || 'U'}
+                name={user?.name || t('nameNotSpecified')}
                 size={32}
                 image={user?.profileImage}
               />
@@ -146,7 +147,7 @@ const Comments: FC<CommentsProps> = ({ entityId, className }) => {
                     if (eachFile.size > IMG_FILE_SIZE_LIMIT * 1024 * 1024) {
                       mediaErrors.push({
                         errorType: MediaValidationError.ImageSizeExceed,
-                        errorMsg: `The file “${eachFile.name}” you are trying to upload exceeds the 5MB attachment limit. Try uploading a smaller file`,
+                        errorMsg: `The file “${eachFile.name}” you are trying to upload exceeds the 50MB attachment limit. Try uploading a smaller file`,
                         fileName: eachFile.name,
                       });
                       return false;

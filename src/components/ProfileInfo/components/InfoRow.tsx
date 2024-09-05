@@ -9,6 +9,7 @@ import {
   useImperativeHandle,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface IIcon {
   name: string;
@@ -25,9 +26,12 @@ type AppProps = {
   dataTestId?: string;
   bgColor?: string;
   border?: boolean;
-  fallBackValue?: string;
   onCancel?: () => any;
   onSave?: (...args: any) => any;
+  isEditButton?: boolean;
+  isEditMode?: boolean;
+  className?: string;
+  editButtonsClassName?: string;
 };
 
 const InfoRow = forwardRef(
@@ -40,14 +44,18 @@ const InfoRow = forwardRef(
       editNode,
       dataTestId,
       border = true,
-      fallBackValue = 'Field not specified',
       onCancel = () => null,
       onSave = () => null,
+      isEditButton = true,
+      isEditMode = false,
+      className = '',
+      editButtonsClassName = '',
     }: AppProps,
     ref: ForwardedRef<any>,
   ) => {
+    const { t } = useTranslation('profile');
     const [isHovered, eventHandlers] = useHover();
-    const [editMode, setEditMode] = useState(false);
+    const [editMode, setEditMode] = useState(isEditMode);
 
     useImperativeHandle(ref, () => ({
       editMode,
@@ -58,7 +66,11 @@ const InfoRow = forwardRef(
       <div
         {...eventHandlers}
         data-testid={dataTestId}
-        className={clsx({ 'relative py-6': true }, { 'border-b': border })}
+        className={clsx({
+          'relative py-6': true,
+          'border-b': border,
+          [className]: true,
+        })}
       >
         <div className="flex items-center">
           <div className="flex items-center w-[200px]">
@@ -76,31 +88,33 @@ const InfoRow = forwardRef(
           {editMode ? (
             <div className="flex items-center space-x-2 w-full">
               <div className="w-full">{editNode}</div>
-              <div className="flex items-center">
-                <IconWrapper
-                  type={Type.Circle}
-                  className="mr-2 w-8 h-8 rounded-full"
-                  onClick={() => {
-                    setEditMode(false);
-                    onCancel?.();
-                  }}
-                  dataTestId={`cancel-${dataTestId}`}
-                >
-                  <Icon name="close" size={12} color="text-neutral-900" />
-                </IconWrapper>
-                <IconWrapper
-                  type={Type.Circle}
-                  className="w-8 h-8 rounded-full bg-primary-500"
-                  onClick={onSave}
-                  dataTestId={`save-${dataTestId}`}
-                >
-                  <Icon name="check" size={16} color="text-white" />
-                </IconWrapper>
-              </div>
+              {isEditButton && (
+                <div className={`flex items-center ${editButtonsClassName}`}>
+                  <IconWrapper
+                    type={Type.Circle}
+                    className="mr-2 w-8 h-8 rounded-full"
+                    onClick={() => {
+                      setEditMode(false);
+                      onCancel?.();
+                    }}
+                    dataTestId={`cancel-${dataTestId}`}
+                  >
+                    <Icon name="close" size={12} color="text-neutral-900" />
+                  </IconWrapper>
+                  <IconWrapper
+                    type={Type.Circle}
+                    className="w-8 h-8 rounded-full bg-primary-500"
+                    onClick={onSave}
+                    dataTestId={`save-${dataTestId}`}
+                  >
+                    <Icon name="check" size={16} color="text-white" />
+                  </IconWrapper>
+                </div>
+              )}
             </div>
           ) : (
-            <div className="text-neutral-900 font-medium">
-              {value || fallBackValue}
+            <div className="text-neutral-900 font-medium line-clamp-2">
+              {value || t('fieldNotSpecified')}
             </div>
           )}
         </div>

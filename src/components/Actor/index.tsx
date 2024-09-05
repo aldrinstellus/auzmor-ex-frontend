@@ -24,6 +24,8 @@ import remarkDirectiveRehype from 'remark-directive-rehype';
 import LxpUserCard from 'components/UserCard/lxpUserCard';
 import { CustomLink, CustomStrong } from './utils';
 import remarkGfm from 'remark-gfm';
+import { useTranslation } from 'react-i18next';
+
 type ActorProps = {
   contentMode?: string;
   createdTime?: string;
@@ -61,6 +63,9 @@ const Actor: FC<ActorProps> = ({
   audience,
   title,
 }) => {
+  const { t: tp } = useTranslation('profile');
+  const { t } = useTranslation('components', { keyPrefix: 'Actor' });
+
   const { user } = useAuth();
   const { isLxp } = useProduct();
   const navigate = useNavigate();
@@ -68,22 +73,22 @@ const Actor: FC<ActorProps> = ({
     useModal(false);
   const actionLabel = useMemo(() => {
     if (postType === 'BIRTHDAY') {
-      return 'is celebrating their birthday';
+      return t('celebratingBirthday');
     }
     if (postType === 'WORK_ANNIVERSARY') {
-      return 'is celebrating their work anniversary';
+      return t('celebratingWorkAnniversary');
     }
     if (postType === 'NEW_JOINEE') {
-      return 'is a new joinee';
+      return t('newJoinee');
     }
     if (postType === 'POLL') {
-      return 'shared a poll';
+      return t('sharedPoll');
     }
     if (contentMode === VIEW_POST) {
-      return 'shared a post';
+      return t('sharedPost');
     }
     return '';
-  }, [postType]);
+  }, [postType, t]);
 
   const profileUrl = isLxp
     ? ''
@@ -110,6 +115,11 @@ const Actor: FC<ActorProps> = ({
     a: CustomLink,
     team: CustomTeam,
   };
+
+  if (title?.content) {
+    title = { content: `${title.content.replaceAll("'", '')}` };
+  }
+
   return (
     <Fragment>
       <div className="flex items-center gap-4 flex-1">
@@ -117,7 +127,7 @@ const Actor: FC<ActorProps> = ({
           {createdBy ? (
             <Link to={profileUrl}>
               <Avatar
-                name={getFullName(createdBy) || 'U'}
+                name={getFullName(createdBy) || tp('nameNotSpecified')}
                 size={32}
                 image={getProfileImage(createdBy)}
                 bgColor={getAvatarColor(createdBy)}
@@ -154,7 +164,12 @@ const Actor: FC<ActorProps> = ({
             >
               <Tooltip
                 tooltipContent={
-                  <UserCard user={getUserCardTooltipProps(createdBy)} />
+                  <UserCard
+                    user={getUserCardTooltipProps(
+                      createdBy,
+                      tp('fieldNotSpecified'),
+                    )}
+                  />
                 }
                 variant={Variant.Light}
                 className="!p-4 !shadow-md !rounded-9xl !z-[999]"
@@ -186,13 +201,19 @@ const Actor: FC<ActorProps> = ({
                 {createdTime}
               </div>
               <div className="bg-neutral-500 rounded-full w-1 h-1" />
-              <Icon
-                name={audience && audience.length ? 'noteFavourite' : 'global'}
-                size={16}
-                onClick={
-                  audience && audience.length ? openAudienceModal : () => {}
-                }
-              />
+              <div title={t('audience')}>
+                <Icon
+                  name={
+                    audience && audience.length ? 'noteFavourite' : 'global'
+                  }
+                  size={16}
+                  tabIndex={0}
+                  title={t('audience')}
+                  onClick={
+                    audience && audience.length ? openAudienceModal : () => {}
+                  }
+                />
+              </div>
             </div>
           ) : null}
         </div>
