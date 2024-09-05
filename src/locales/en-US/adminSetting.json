@@ -5,6 +5,8 @@
   "general-setting": "General Settings",
   "posting-control": "Posting Controls",
   "limit-posting": "Limit Global Posting",
+  "marketplace": "Marketplace",
+  "notifcations": "Notifications",
   "description": "When Global Posting is ON, end users can't post to everyone, only to their Team(s) or permitted Channels.",
   "branding": {
     "secondary": "Secondary",
@@ -71,6 +73,7 @@
   },
 
   "integration": {
+    "title": "Integration",
     "deelLogoAlt": "Deel Logo",
     "deelTitle": "Deel",
     "deelDescription": "Deel is a global HR platform that helps companies manage their international workforce.",

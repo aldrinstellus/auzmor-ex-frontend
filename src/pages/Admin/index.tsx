@@ -64,7 +64,7 @@ const Admin: FC = () => {
       allowOnlySuperAdmin: false,
     },
     {
-      label: 'Integration',
+      label: t('integration.title'),
       icon: 'integration',
       key: 'integration-setting',
       component: <IntegrationSetting />,
@@ -75,7 +75,7 @@ const Admin: FC = () => {
       allowOnlySuperAdmin: false,
     },
     {
-      label: 'Marketplace',
+      label: t('marketplace'),
       icon: 'marketplace',
       key: 'marketplace-settings',
       component: <div>Marketplace Settings Page</div>,
@@ -86,7 +86,7 @@ const Admin: FC = () => {
       allowOnlySuperAdmin: false,
     },
     {
-      label: 'Notifications',
+      label: t('notifcations'),
       icon: 'notification',
       key: 'notifications-settings',
       component: <div>Notifications Settings Page</div>,
