@@ -5,50 +5,58 @@ import Button, { Variant } from 'components/Button';
 import Icon from 'components/Icon';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
+import { IntegrationConfig } from '..';
 
-interface ConfigureDeelProps {
+interface ConfigurationModalProps {
   open: boolean;
-  lastSync: string;
+  lastSync: string | null;
   closeModal: () => void;
-  title: any;
-  handleResync: any;
+  title: string;
+  handleResync: () => void;
   resyncLoading?: boolean;
   handleRemoveIntegration: () => void;
+  integration: IntegrationConfig;
 }
 
-const ConfigurationModal: FC<ConfigureDeelProps> = ({
+const ConfigurationModal: FC<ConfigurationModalProps> = ({
   open,
   lastSync,
   closeModal,
-  title,
   handleRemoveIntegration,
   handleResync,
   resyncLoading,
+  integration,
 }) => {
   const { t } = useTranslation('adminSetting', { keyPrefix: 'integration' });
-  const formatedDate = moment(lastSync).format('DD MMM YYYY [at] hh:mm A');
+  const formatedDate = lastSync
+    ? moment(lastSync).format('DD MMM YYYY [at] hh:mm A')
+    : t('notSyncedYet');
 
   return (
     <Modal open={open} className="max-w-[600px] max-h-[600px]">
       <Header
         title={
           <div className="flex items-center gap-1">
-            <Icon name="deel" className="w-8 h-8" />
-            {title}
+            <Icon name={integration?.iconName || ''} className="w-8 h-8" />
+            {integration.title}
           </div>
         }
         onClose={closeModal}
       />
       <div className="px-6 pt-4 pb-10">
         <div className="flex flex-col gap-5">
-          <div className="text-lg font-medium">{t('dataSync')}</div>
-          <div className="text-sm font-medium">{t('dataSyncDescription')}</div>
+          <div className="text-lg font-medium">{integration.dataSync}</div>
+          <div className="text-sm font-medium">
+            {integration.configDescription}
+          </div>
           <div className="flex items-center justify-between w-full">
             <div className="flex flex-col gap-1">
               <div className="text-base font-semibold">
                 {t('lastSync', { date: formatedDate })}
               </div>
-              <div className="text-sm font-medium">{t('dataSyncNote')}</div>
+              <div className="text-sm font-medium">
+                {integration.configNote}
+              </div>
             </div>
             <Button
               label={t('syncNow')}

@@ -57,7 +57,7 @@ export interface IUser {
   outOfOffice?: Record<string, any>;
   notificationSettings?: INotificationSettings;
   preferences?: Record<string, any>;
-  integrations?: [IIntegration];
+  integrations?: IIntegration[];
 }
 
 export interface IBranding {
