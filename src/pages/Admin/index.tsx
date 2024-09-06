@@ -72,7 +72,7 @@ const Admin: FC = () => {
       hidden: false,
       hideDefaultLabelCard: false,
       dataTestId: 'settings-integration',
-      allowOnlySuperAdmin: false,
+      allowOnlySuperAdmin: true,
     },
     {
       label: t('marketplace'),

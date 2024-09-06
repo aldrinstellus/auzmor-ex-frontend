@@ -3,9 +3,11 @@ import React, { FC } from 'react';
 import Header from 'components/ModalHeader';
 import Button, { Variant } from 'components/Button';
 import Icon from 'components/Icon';
-import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { IntegrationConfig } from '..';
+import { useCurrentTimezone } from './../../../../hooks/useCurrentTimezone';
+import useAuth from 'hooks/useAuth';
+import momentTz from 'moment-timezone';
 
 interface ConfigurationModalProps {
   open: boolean;
@@ -28,8 +30,11 @@ const ConfigurationModal: FC<ConfigurationModalProps> = ({
   integration,
 }) => {
   const { t } = useTranslation('adminSetting', { keyPrefix: 'integration' });
+  const { user } = useAuth();
+  const { currentTimezone } = useCurrentTimezone();
+  const userTimezone = user?.timezone || currentTimezone || 'Asia/Kolkata';
   const formatedDate = lastSync
-    ? moment(lastSync).format('DD MMM YYYY [at] hh:mm A')
+    ? momentTz().tz(userTimezone).format('DD MMM YYYY [at] hh:mm A')
     : t('notSyncedYet');
 
   return (
