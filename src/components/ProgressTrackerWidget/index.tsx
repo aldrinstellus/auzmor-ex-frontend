@@ -32,6 +32,18 @@ const ProgressTrackerWidget: FC<IProgressTrackerWidgetProps> = ({
     [className],
   );
 
+  const getTab = () => {
+    if (trackerData[0]?.my_enrollment?.status === 'IN_PROGRESS') {
+      if (!!trackerData[0]?.my_enrollment?.overdue) {
+        return 'OVERDUE';
+      } else {
+        return 'IN_PROGRESS';
+      }
+    } else {
+      return trackerData[0]?.my_enrollment?.status;
+    }
+  };
+
   return (
     <div className={style}>
       <div className="flex justify-between items-center ">
@@ -41,7 +53,7 @@ const ProgressTrackerWidget: FC<IProgressTrackerWidgetProps> = ({
           className="bg-transparent !text-primary-500 hover:!text-primary-600 hover:!bg-transparent focus:bg-transparent active:!bg-transparent active:!text-primary-700 outline outline-1 focus:outline-primary-500"
           onClick={() =>
             window.location.assign(
-              `${getLearnUrl()}/user/trainings?type=elearning&tab=IN_PROGRESS`,
+              `${getLearnUrl()}/user/trainings?type=elearning&tab=${getTab()}`,
             )
           }
         />
