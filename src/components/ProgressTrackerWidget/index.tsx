@@ -32,15 +32,18 @@ const ProgressTrackerWidget: FC<IProgressTrackerWidgetProps> = ({
     [className],
   );
 
-  const getTab = () => {
+  const getSlug = () => {
+    if (trackerData.length === 0) {
+      return '/user';
+    }
     if (trackerData[0]?.my_enrollment?.status === 'IN_PROGRESS') {
       if (!!trackerData[0]?.my_enrollment?.overdue) {
-        return 'OVERDUE';
+        return '/user/trainings?type=elearning&tab=OVERDUE';
       } else {
-        return 'IN_PROGRESS';
+        return '/user/trainings?type=elearning&tab=IN_PROGRESS';
       }
     } else {
-      return trackerData[0]?.my_enrollment?.status;
+      return `/user/trainings?type=elearning&tab=${trackerData[0]?.my_enrollment?.status}`;
     }
   };
 
@@ -51,11 +54,7 @@ const ProgressTrackerWidget: FC<IProgressTrackerWidgetProps> = ({
         <Button
           label={t('viewAll')}
           className="bg-transparent !text-primary-500 hover:!text-primary-600 hover:!bg-transparent focus:bg-transparent active:!bg-transparent active:!text-primary-700 outline outline-1 focus:outline-primary-500"
-          onClick={() =>
-            window.location.assign(
-              `${getLearnUrl()}/user/trainings?type=elearning&tab=${getTab()}`,
-            )
-          }
+          onClick={() => window.location.assign(`${getLearnUrl(getSlug())}`)}
         />
       </div>
       <div className="mt-2">

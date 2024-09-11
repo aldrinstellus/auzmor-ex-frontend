@@ -44,9 +44,7 @@ export const useProgressTracker = () => {
   return useQuery({
     queryKey: ['progress-tracker'],
     queryFn: async () =>
-      await learnApiService.get(
-        'learner/lxp/libraries/engagements?page=1&limit=1&q=&sort=created_at',
-      ),
+      await learnApiService.get('learner/trainings/pending?page=1&limit=1'),
     enabled: !!isLxp,
   });
 };
