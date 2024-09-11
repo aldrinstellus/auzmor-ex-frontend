@@ -50,7 +50,7 @@ const Users: FC<IUsersProps> = () => {
   const deelConfiguration = user?.integrations?.find(
     (userIntegration) => userIntegration.name === HrisIntegrationValue.Deel,
   );
-  const isEnabled = deelConfiguration?.enabled ?? false;
+  const isDeelEnabled = deelConfiguration?.enabled ?? false;
 
   const { handleResync } = useHandleResync();
 
@@ -128,11 +128,11 @@ const Users: FC<IUsersProps> = () => {
                   dataTestId: 'people-bulk-import',
                 },
                 {
-                  icon: 'deelIcon2',
+                  icon: 'deel2',
                   label: t('people.syncFromDeel'),
                   onClick: () => handleResync(HrisIntegrationValue.Deel),
                   dataTestId: 'sync-from-deel',
-                  disabled: !isEnabled,
+                  disabled: !isDeelEnabled,
                 },
               ]}
             />
