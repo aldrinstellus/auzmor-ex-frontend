@@ -24,6 +24,7 @@ interface ILearnCardProps {
   data: Record<string, any>;
   isLoading?: boolean;
   medalPosition?: 'top' | 'bottom';
+  showStatus?: boolean;
 }
 
 const LearnCard: FC<ILearnCardProps> = ({
@@ -32,6 +33,7 @@ const LearnCard: FC<ILearnCardProps> = ({
   data,
   isLoading,
   medalPosition = 'top',
+  showStatus = false,
 }) => {
   const { t } = useTranslation('learnWidget', { keyPrefix: 'learnCard' });
 
@@ -56,6 +58,8 @@ const LearnCard: FC<ILearnCardProps> = ({
         LearnCardEnum.Course;
     }
   }, [data]);
+
+  console.log(data);
 
   const Categories: FC = () => {
     if (!data?.categories?.length) {
@@ -132,8 +136,49 @@ const LearnCard: FC<ILearnCardProps> = ({
     }
   };
 
+  const getStatus = () => {
+    const containerStyle =
+      'flex absolute top-4 right-4 bg-white items-center px-[7.5px] py-1 rounded gap-[5px]';
+    if (data?.my_enrollment?.overdue) {
+      return (
+        <div className={containerStyle}>
+          <Icon
+            name="restInPeace"
+            size={16}
+            color="text-neutral-900"
+            className="-mt-1"
+          />
+          <span className="text-xs">Overdue</span>
+        </div>
+      );
+    } else if (data?.my_enrollment?.due_in_x_days) {
+      return (
+        <div className={containerStyle}>
+          <Icon
+            name="restInPeace"
+            size={16}
+            color="text-neutral-900"
+            className="-mt-1"
+          />
+          <span className="text-xs">Due in</span>
+          <span className="text-primary-500">
+            {data?.my_enrollment?.due_in_x_days} days
+          </span>
+        </div>
+      );
+    } else {
+      <div className={containerStyle}>
+        <span className="text-xs capitalize">
+          {data?.my_enrollment?.status}
+        </span>
+      </div>;
+    }
+  };
+
   const chaptersCount = data?.dependent_entities?.chapters_count;
   const coursesCount = data?.dependent_entities?.courses_count;
+
+  console.log(data?.my_enrollment);
 
   return (
     <Card className={style} onClick={handleCardClick}>
@@ -306,6 +351,7 @@ const LearnCard: FC<ILearnCardProps> = ({
           </Tooltip>
         </div>
       )}
+      {showStatus && getStatus()}
     </Card>
   );
 };
