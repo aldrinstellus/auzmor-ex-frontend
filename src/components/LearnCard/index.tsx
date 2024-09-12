@@ -134,7 +134,6 @@ const LearnCard: FC<ILearnCardProps> = ({
   };
 
   const getStatus = () => {
-    console.log(data);
     const containerStyle =
       'flex absolute top-4 right-4 bg-white items-center px-[7.5px] py-1 rounded gap-[5px]';
     if (data?.my_enrollment?.overdue) {
