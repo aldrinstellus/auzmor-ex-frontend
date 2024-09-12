@@ -11,6 +11,7 @@ import useAuth from 'hooks/useAuth';
 import { clsx } from 'clsx';
 import Tooltip, { Variant } from 'components/Tooltip';
 import { useTranslation } from 'react-i18next';
+import { toLower } from 'lodash';
 
 export enum LearnCardEnum {
   Course = 'COURSE',
@@ -161,11 +162,13 @@ const LearnCard: FC<ILearnCardProps> = ({
         </div>
       );
     } else {
-      <div className={containerStyle}>
-        <span className="text-xs capitalize">
-          {data?.my_enrollment?.status}
-        </span>
-      </div>;
+      return (
+        <div className={containerStyle}>
+          <span className="text-xs capitalize">
+            {toLower((data?.my_enrollment?.status).split('_').join(' '))}
+          </span>
+        </div>
+      );
     }
   };
 
