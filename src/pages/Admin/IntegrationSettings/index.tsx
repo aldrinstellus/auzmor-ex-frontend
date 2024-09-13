@@ -49,7 +49,6 @@ const IntegrationSetting: FC = () => {
     },
   ];
   const { user, updateUser } = useAuth();
-  console.log('user :', user);
   const { currentTimezone } = useCurrentTimezone();
   const userTimezone = user?.timezone || currentTimezone || 'Asia/Kolkata';
   const [showConfiguration, openConfigurationModal, closeConfigurationModal] =
