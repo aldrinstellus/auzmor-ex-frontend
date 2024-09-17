@@ -15,15 +15,14 @@ export const useHandleResync = () => {
       successToastConfig({});
       await queryClient.invalidateQueries({ queryKey: ['users'] });
       await queryClient.invalidateQueries(['current-user-me']);
-      const newSyncDate = momentTz().toISOString();
-      if (user && user.integrations) {
+      if (data.lastSync && user && user.integrations) {
         const updatedIntegrations = user.integrations.map((integ: any) => {
           if (integ.name === configName) {
             return {
               ...integ,
               accountDetails: {
                 ...integ.accountDetails,
-                lastSync: newSyncDate,
+                lastSync: data?.lastSync,
               },
             };
           }
