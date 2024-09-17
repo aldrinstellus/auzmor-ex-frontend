@@ -3,7 +3,6 @@ import { failureToastConfig } from 'components/Toast/variants/FailureToast';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import { syncUser } from 'queries/intergration';
 import queryClient from 'utils/queryClient';
-import momentTz from 'moment-timezone';
 import useAuth from './useAuth';
 
 export const useHandleResync = () => {
