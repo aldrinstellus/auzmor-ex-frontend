@@ -104,7 +104,6 @@ const IntegrationSetting: FC = () => {
                 enabled: true,
                 accountDetails: {
                   consumerId: data.consumerId,
-                  lastSync: new Date().toISOString(),
                 },
               },
             ];

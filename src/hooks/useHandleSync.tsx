@@ -3,7 +3,6 @@ import { failureToastConfig } from 'components/Toast/variants/FailureToast';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import { syncUser } from 'queries/intergration';
 import queryClient from 'utils/queryClient';
-import momentTz from 'moment-timezone';
 import useAuth from './useAuth';
 
 export const useHandleResync = () => {
@@ -15,15 +14,14 @@ export const useHandleResync = () => {
       successToastConfig({});
       await queryClient.invalidateQueries({ queryKey: ['users'] });
       await queryClient.invalidateQueries(['current-user-me']);
-      const newSyncDate = momentTz().toISOString();
-      if (user && user.integrations) {
+      if (data.lastSync && user && user.integrations) {
         const updatedIntegrations = user.integrations.map((integ: any) => {
           if (integ.name === configName) {
             return {
               ...integ,
               accountDetails: {
                 ...integ.accountDetails,
-                lastSync: newSyncDate,
+                lastSync: data?.lastSync,
               },
             };
           }
