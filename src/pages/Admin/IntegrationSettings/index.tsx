@@ -81,9 +81,8 @@ const IntegrationSetting: FC = () => {
     mutationKey: ['configure-hris'],
     mutationFn: createConfiguration,
     onSuccess: async (data, variables) => {
-      if (data?.enabeld) {
+      if (data?.enabled) {
         //  if configuation is enabled
-        await putConfiguration(variables, true, data.consumerId);
         const updatedIntegrations = [
           ...(user?.integrations?.filter((i) => i.name !== variables) || []),
           {
