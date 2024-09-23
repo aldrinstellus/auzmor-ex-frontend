@@ -47,6 +47,9 @@ const AcceptInvite: FC<IAcceptInviteProps> = () => {
   const [searchParams, _] = useSearchParams();
   const token = searchParams.get('token');
   const orgId = searchParams.get('orgId');
+  const emailParams = searchParams.get('email');
+  const decodedUserEmail = decodeURIComponent(emailParams || ' ');
+
   const { setUser, setShowOnboard } = useAuth();
   const navigate = useNavigate();
   const navigateWithToken = useNavigateWithToken();
@@ -79,13 +82,11 @@ const AcceptInvite: FC<IAcceptInviteProps> = () => {
   } = useForm<IForm>({
     resolver: yupResolver(schema),
     mode: 'onChange',
+    defaultValues: {
+      workEmail: decodedUserEmail,
+    },
   });
 
-  useEffect(() => {
-    if (data?.result?.data?.email) {
-      setValue('workEmail', data.result.data.email);
-    }
-  }, [data, setValue]);
   useEffect(() => {
     acceptInviteMutation.reset();
   }, [watch('password'), watch('confirmPassword'), watch('privacyPolicy')]);
