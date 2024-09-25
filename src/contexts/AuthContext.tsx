@@ -2,7 +2,7 @@ import { ReactNode, createContext, useState, useEffect, FC } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { getItem, removeAllItems, setItem } from 'utils/persist';
 import { fetchMe } from 'queries/account';
-import { Role } from 'utils/enum';
+import { LearnRole, Role } from 'utils/enum';
 import PageLoader from 'components/PageLoader';
 import { getLearnUrl, getSubDomain, userChannel } from 'utils/misc';
 import { ILocation } from 'queries/location';
@@ -31,6 +31,11 @@ interface ISubscription {
   type: string;
   daysRemaining: number;
 }
+interface IIntegration {
+  name: string;
+  enabled: boolean;
+  accountDetails: Record<string, any>;
+}
 
 export interface IUser {
   id: string;
@@ -52,6 +57,8 @@ export interface IUser {
   outOfOffice?: Record<string, any>;
   notificationSettings?: INotificationSettings;
   preferences?: Record<string, any>;
+  integrations?: IIntegration[];
+  learnRole?: LearnRole;
 }
 
 export interface IBranding {
@@ -208,7 +215,10 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
                 0,
               ),
             },
+            // set integration here !
+            integrations: data?.org?.integrations ?? [],
             preferences: data?.preferences,
+            learnRole: data?.learnRole,
           });
           setBranding(data.branding);
         } else {

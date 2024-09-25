@@ -11,6 +11,8 @@ export const parseDate = (timestring: string, format = 'YYYY-MM-DD') => {
   return moment(timestring, format).toDate();
 };
 
+export const humatAtTimeFormat = 'DD MMM YYYY [at] hh:mm A';
+
 export const getTimeDifference = (
   startDateTimestamp: number,
   endDateTimestamp: number,
@@ -103,7 +105,7 @@ export const convertTimezone = (
 ) => {
   try {
     const sourceDatetime = momentTimezone.tz(
-      moment(sourceDate).format('YYYY-MM-DD') + ' ' + sourceTime,
+      moment(sourceDate.toISOString()).format('YYYY-MM-DD') + ' ' + sourceTime,
       'YYYY-MM-DD hh:mm a',
       sourceTimezone,
     );

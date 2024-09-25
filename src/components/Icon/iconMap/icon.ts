@@ -179,6 +179,10 @@ import MessageTagIcon from '../components/message-tag';
 import LockOpenIcon from '../components/LockOpen';
 import GlobalEditIcon from '../components/GlobalEdit';
 import DocumentViewIcon from '../components/CarbonDocumentView';
+import DeelIcon from '../components/Deel/DeelIcon';
+import MinusCircle from '../components/MinusCircle';
+import DeelIcon2 from '../components/DeelIcon2/DeelIcon2';
+import RestInPeaceIcon from '../components/RestInPeace';
 
 export const icon = {
   add: Add,
@@ -301,6 +305,7 @@ export const icon = {
   messageQuestion: MessageQuestionIcon,
   mic: MicIcon,
   minus: Minus,
+  minusCircle: MinusCircle,
   more: MoreIcon,
   mute: MuteIcon,
   news: NewsIcon,
@@ -364,4 +369,7 @@ export const icon = {
   zoomIn: ZoomInIcon,
   zoomOut: ZoomOutIcon,
   documentView: DocumentViewIcon,
+  deel: DeelIcon,
+  deel2: DeelIcon2,
+  restInPeace: RestInPeaceIcon,
 };
