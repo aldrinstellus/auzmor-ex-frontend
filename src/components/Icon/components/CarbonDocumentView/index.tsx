@@ -1,5 +1,5 @@
-import DocumentViewFilled from './DocumentViewFilled';
+import DocumentViewOutline from './DocumentViewOutline';
 
-const DocumentViewIcon = DocumentViewFilled;
+const DocumentViewIcon = DocumentViewOutline;
 
 export default DocumentViewIcon;
