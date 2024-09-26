@@ -8,6 +8,7 @@ import { useGetEvaluation } from 'queries/learn';
 import EvaluationRequestRow from './Component/EvaluationRequestRow';
 import Card from 'components/Card';
 import EmptyState from './Component/EmptyState';
+import Skeleton from 'react-loading-skeleton';
 
 const ID = 'EvaluationRequestWidget';
 
@@ -37,11 +38,16 @@ const EvaluationRequestWidget = (className = '') => {
     () => clsx({ 'min-w-[293px]': true, [className]: true }),
     [className],
   );
+  const totalCount = data?.result?.total_records;
 
   return (
     <div className={style}>
       <div className="flex justify-between items-center ">
-        <div className="text-base font-bold">{t('evaluationRequest')}</div>
+        <div className="text-base font-bold">
+          {t('pendingEvaluation')} &#40;&nbsp;
+          {isLoading ? <Skeleton count={1} className="!w-8 h-5" /> : totalCount}
+          &nbsp;&#41;
+        </div>
         <Button
           variant={Variant.Secondary}
           label={t('viewAll')}

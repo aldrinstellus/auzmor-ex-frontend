@@ -35,7 +35,7 @@
     "attempts": "Attempts",
     "attemptedOn": "Attempted on",
     "dateFormat": "MMM D, YYYY",
-    "evaluationRequest": "Evaluation Request",
+    "pendingEvaluation": "Pending evaluations",
     "viewAll": "View All"
   }
 }
