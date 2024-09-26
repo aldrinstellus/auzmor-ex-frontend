@@ -15,6 +15,7 @@ export interface IPostBuilderProps {
   closeModal: () => void;
   mode?: PostBuilderMode;
   customActiveFlow?: CreatePostFlow;
+  isDirectPost?: boolean;
 }
 
 const PostBuilder: FC<IPostBuilderProps> = ({
@@ -24,6 +25,7 @@ const PostBuilder: FC<IPostBuilderProps> = ({
   openModal,
   closeModal,
   customActiveFlow = CreatePostFlow.CreatePost,
+  isDirectPost,
 }) => {
   return (
     <CreatePostProvider data={data}>
@@ -34,6 +36,7 @@ const PostBuilder: FC<IPostBuilderProps> = ({
         data={data}
         mode={mode}
         customActiveFlow={customActiveFlow}
+        isDirectPost={isDirectPost}
       />
     </CreatePostProvider>
   );

@@ -3,12 +3,19 @@ import useRole from 'hooks/useRole';
 import Button, { Size, Variant } from 'components/Button';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { CreatePostFlow } from 'contexts/CreatePostContext';
 
 interface EmptyStateProps {
   openModal?: () => void;
+  setCustomActiveFlow?: (e: CreatePostFlow) => void;
+  setIsDirectPost?: (e: any) => void;
 }
 
-const EmptyState: FC<EmptyStateProps> = ({ openModal }) => {
+const EmptyState: FC<EmptyStateProps> = ({
+  openModal,
+  setCustomActiveFlow,
+  setIsDirectPost,
+}) => {
   const { isAdmin } = useRole();
   const showCreateAnnouncement = isAdmin && !!openModal;
   const { t } = useTranslation('announcement');
@@ -30,6 +37,8 @@ const EmptyState: FC<EmptyStateProps> = ({ openModal }) => {
             label={t('create-CTA')}
             onClick={() => {
               openModal();
+              setCustomActiveFlow?.(CreatePostFlow.CreateAnnouncement);
+              setIsDirectPost?.(false);
             }}
           />
           <p className="text-xs text-neutral-500">{t('admin-header')}</p>

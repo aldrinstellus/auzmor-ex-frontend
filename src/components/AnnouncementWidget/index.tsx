@@ -16,6 +16,8 @@ import { isEmpty } from 'lodash';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useShouldRender } from 'hooks/useShouldRender';
+import { CreatePostFlow } from 'contexts/CreatePostContext';
+import useRole from 'hooks/useRole';
 
 const ID = 'AnnouncementWidget';
 
@@ -23,12 +25,16 @@ export interface IAnnouncementCardProps {
   postId?: string;
   openModal?: () => void;
   className?: string;
+  setCustomActiveFlow?: (e: CreatePostFlow) => void;
+  setIsDirectPost?: (e: any) => void;
 }
 
 const AnnouncementCard: FC<IAnnouncementCardProps> = ({
   postId,
   openModal,
   className = '',
+  setCustomActiveFlow,
+  setIsDirectPost,
 }) => {
   const { t: tp } = useTranslation('profile');
   const { t } = useTranslation('announcement');
@@ -39,6 +45,7 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { isAdmin } = useRole();
 
   // Default values for useAnnouncementWidget when postId is undefined
   let limit = 1,
@@ -59,6 +66,7 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
       await queryClient.invalidateQueries(['feed']);
     },
   });
+  const showCreateAnnouncement = isAdmin && !!openModal;
 
   const { data, isLoading } = useAnnouncementsWidget(limit, queryKey);
 
@@ -87,7 +95,21 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
     <div className={style}>
       <div className="flex justify-between items-center ">
         <div className="text-base font-bold">{t('header')}</div>
-        {/* <div className="text-sm font-bold">View All</div> */}
+        {showCreateAnnouncement && (
+          <Button
+            rightIcon="addCircle"
+            label={t('addNew')}
+            variant={Variant.Secondary}
+            onClick={() => {
+              openModal();
+              setCustomActiveFlow?.(CreatePostFlow.CreateAnnouncement);
+              setIsDirectPost?.(false);
+            }}
+            className="border-0 !bg-transparent !px-0 !py-1 group"
+            labelClassName=" text-primary-500 hover:text-primary-600  group-focus:text-primary-500"
+            leftIconSize={20}
+          />
+        )}
       </div>
       <div className="mt-2">
         <Card
@@ -188,7 +210,11 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
                   )}
                 </div>
               ) : (
-                <EmptyState openModal={openModal} />
+                <EmptyState
+                  openModal={openModal}
+                  setCustomActiveFlow={setCustomActiveFlow}
+                  setIsDirectPost={setIsDirectPost}
+                />
               )}
             </div>
           )}

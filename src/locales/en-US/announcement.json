@@ -6,5 +6,6 @@
   "create-CTA": "Create an announcement",
   "admin-header": "Only admin can see this.",
   "share-post": "Shared a post",
-  "read-CTA": "Mark as read"
+  "read-CTA": "Mark as read",
+  "addNew": "Add new"
 }

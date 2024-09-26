@@ -68,6 +68,7 @@ import FinishSetup from 'pages/ChannelDetail/components/Home/FinishSetup';
 import Congrats from 'pages/ChannelDetail/components/Home/Congrats';
 import { IS_PROD } from 'utils/constants';
 import EvaluationRequestWidget from 'components/EvaluationRequestWidget';
+import { CreatePostFlow } from 'contexts/CreatePostContext';
 
 const EmptyWidget = () => <></>;
 
@@ -177,6 +178,10 @@ const Feed: FC<IFeedProps> = ({
     [PostFilterKeys.PostType]: [],
     [PostFilterKeys.PostPreference]: [],
   });
+  const [customActiveFlow, setCustomActiveFlow] = useState<CreatePostFlow>(
+    CreatePostFlow.CreatePost,
+  );
+  const [isDirectPost, setIsDirectPost] = useState();
   const { getScrollTop, pauseRecordingScrollTop, resumeRecordingScrollTop } =
     useScrollTop('app-shell-container');
 
@@ -520,7 +525,11 @@ const Feed: FC<IFeedProps> = ({
             showCreatePostCard || showCreatePostCard ? '' : 'hidden'
           }`}
         >
-          {showCreatePostCard && <CreatePostCard openModal={openModal} />}
+          {showCreatePostCard && (
+            <div onClick={() => setCustomActiveFlow(CreatePostFlow.CreatePost)}>
+              <CreatePostCard openModal={openModal} />
+            </div>
+          )}
           {showFeedFilterBar && (
             <div className=" flex flex-col gap-6">
               <div className="flex flex-row items-center gap-6">
@@ -632,6 +641,8 @@ const Feed: FC<IFeedProps> = ({
               {...widgetProps[widgetenum]}
               key={widgetenum}
               openModal={openModal}
+              setCustomActiveFlow={setCustomActiveFlow}
+              setIsDirectPost={setIsDirectPost}
             />
           );
         }
@@ -801,6 +812,8 @@ const Feed: FC<IFeedProps> = ({
           open={open}
           openModal={openModal}
           closeModal={closeModal}
+          customActiveFlow={customActiveFlow}
+          isDirectPost={isDirectPost}
         />
       )}
     </section>
