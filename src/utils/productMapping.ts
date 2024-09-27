@@ -4,7 +4,6 @@ export const HIDDEN_COMPONENTS_FOR_LXP_ONLY = [
 ];
 
 export const VISIBLE_COMPONENTS_FOR_LXP_ONLY = [
-  'AnnouncementWidget',
   'ProgressTrackerWidget',
   'EventWidget',
   'Recommendation',
@@ -13,7 +12,6 @@ export const VISIBLE_COMPONENTS_FOR_LXP_ONLY = [
 ];
 export const VISIBLE_COMPONENTS_FOR_ADMIN_LXP_ONLY = [
   'ChannelRequestWidget',
-  'AnnouncementWidget',
   'EvaluationRequestWidget',
   'Recommendation',
 ];

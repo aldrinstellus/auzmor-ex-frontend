@@ -93,7 +93,7 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
     <div className={style}>
       <div className="flex justify-between items-center ">
         <div className="text-base font-bold">{t('header')}</div>
-        {showCreateAnnouncement && (
+        {showCreateAnnouncement && itemCount && !isAcknowledged && (
           <Button
             rightIcon="addCircle"
             label={t('addNew')}
