@@ -37,6 +37,7 @@ const routers = createBrowserRouter(
           <Route path="/apps/:id/launch" element={<AppLaunchPage />} />
           <Route path="/scheduledPosts" element={<HomeFeed />} />
           <Route path="/bookmarks" element={<HomeFeed />} />
+          <Route path="/announcements" element={<HomeFeed />} />
           <Route path="/feed" element={<HomeFeed />} />
           <Route path="/posts/:id" element={<PostPage />} />
           <Route path="/notifications" element={<Notifications />} />
@@ -91,6 +92,7 @@ const routers = createBrowserRouter(
           <Route path="apps/:id/launch" element={<AppLaunchPage />} />
           <Route path="scheduledPosts" element={<HomeFeed />} />
           <Route path="bookmarks" element={<HomeFeed />} />
+          <Route path="announcements" element={<HomeFeed />} />
           <Route path="feed" element={<HomeFeed />} />
           <Route path="posts/:id" element={<PostPage />} />
           <Route path="notifications" element={<Notifications />} />

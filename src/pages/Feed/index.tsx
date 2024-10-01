@@ -33,8 +33,11 @@ export interface IMyReactions {
 const HomeFeed: FC<IHomeFeedProps> = () => {
   const { pathname } = useLocation();
 
-  const bookmarks = pathname === '/bookmarks' || '/user/bookmarks';
-  const scheduled = pathname === '/scheduledPosts' || '/user/scheduledPosts';
+  const bookmarks = pathname === '/bookmarks' || pathname == '/user/bookmarks';
+  const scheduled =
+    pathname === '/scheduledPosts' || pathname == '/user/scheduledPosts';
+  const announcements =
+    pathname === '/announcements' || pathname == '/user/announcements';
 
   const { isOffice } = useProduct();
 
@@ -43,6 +46,8 @@ const HomeFeed: FC<IHomeFeedProps> = () => {
     usePageTitle('scheduledPosts');
   } else if (bookmarks) {
     usePageTitle('bookmarks');
+  } else if (announcements) {
+    usePageTitle('announcements');
   } else {
     usePageTitle('feed');
   }

@@ -742,6 +742,7 @@ export const fetchBookmarks = async (
   const comments: IComment[] = [];
   const feed = getFeed();
 
+  console.log('context :', context);
   // Fetching data
   if (!!!context.pageParam) {
     response = await apiService.get('/posts/my-bookmarks', context.queryKey[1]);
@@ -774,11 +775,68 @@ export const fetchBookmarks = async (
   }
   return response;
 };
+export const fetchAnnouncements = async (
+  context: QueryFunctionContext<
+    (string | Record<string, any> | undefined)[],
+    any
+  >,
+  getFeed: () => {
+    [key: string]: IPost;
+  },
+  setFeed: (feed: { [key: string]: IPost }) => void,
+  appendComments: (comments: IComment[]) => void,
+) => {
+  let response: any = null;
+  const comments: IComment[] = [];
+  const feed = getFeed();
+  const postType = 'ANNOUNCEMENT'; // need change
+  const excludeMyAnnouncements = true;
+  // Fetching data
+  let resp;
+  if (!!!context.pageParam) {
+    resp = await apiService.get(
+      `/posts?feed=${postType}&excludeMyAnnouncements=${excludeMyAnnouncements}`,
+      context.queryKey[1],
+    );
+    response = await apiService.get(
+      `/posts?feed=${postType}&excludeMyAnnouncements=${excludeMyAnnouncements}`,
+      context.queryKey[1],
+    );
+  } else {
+    resp = response = await apiService.get(context.pageParam);
+  }
 
+  console.log('resp :', resp);
+  // Collecting all comments
+  collectComments(response, comments);
+
+  // appending post to comment store
+  appendComments(comments.flat());
+
+  // Updating feed store
+  setFeed({
+    ...feed,
+    ...chain(response.data.result.data).keyBy('id').value(),
+  });
+
+  // Updating response
+  response.data.result.data = response.data.result.data.map(
+    (eachPost: IPost) => ({ id: eachPost.id }),
+  );
+
+  // Setting next next param
+  if (!!context.pageParam) {
+    if (context.pageParam == response.data.result.paging.next) {
+      response.data.result.paging.next = null;
+    }
+  }
+  return response;
+};
 const feedFunction: Record<string, any> = {
   feed: fetchFeed,
   bookmarks: fetchBookmarks,
   scheduledPosts: fetchScheduledPosts,
+  announcements: fetchAnnouncements,
 };
 
 export const useInfiniteFeed = (pathname: string, q?: Record<string, any>) => {

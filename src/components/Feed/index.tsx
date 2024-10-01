@@ -72,6 +72,7 @@ import EvaluationRequestWidget, {
 } from 'components/EvaluationRequestWidget';
 import { CreatePostFlow } from 'contexts/CreatePostContext';
 import useProduct from 'hooks/useProduct';
+import AnnouncementFeedHeader from './components/AnnouncementFeedHeader';
 
 const EmptyWidget = () => <></>;
 
@@ -191,6 +192,7 @@ const Feed: FC<IFeedProps> = ({
   const hashtag = searchParams.get('hashtag') || '';
   let bookmarks = false;
   let scheduled = false;
+  let announcements = false;
   let apiEndpoint = '/feed';
 
   if (isLxp) {
@@ -199,6 +201,8 @@ const Feed: FC<IFeedProps> = ({
         bookmarks = pathname === '/bookmarks' || pathname === '/user/bookmarks';
         scheduled =
           pathname === '/scheduledPosts' || pathname === '/user/scheduledPosts';
+        announcements =
+          pathname === '/announcements' || pathname === '/user/announcements';
         break;
       case FeedModeEnum.Channel:
         bookmarks =
@@ -226,6 +230,7 @@ const Feed: FC<IFeedProps> = ({
       case FeedModeEnum.Default:
         bookmarks = pathname === '/bookmarks';
         scheduled = pathname === '/scheduledPosts';
+        announcements = pathname === '/announcements';
         break;
       case FeedModeEnum.Channel:
         bookmarks =
@@ -245,8 +250,10 @@ const Feed: FC<IFeedProps> = ({
   if (bookmarks) {
     apiEndpoint = '/bookmarks';
   }
+  if (announcements) {
+    apiEndpoint = `/announcements`;
+  }
   if (scheduled) apiEndpoint = '/scheduledPosts';
-
   //handle scroll
   useEffect(() => {
     if (hashtag) {
@@ -319,7 +326,7 @@ const Feed: FC<IFeedProps> = ({
         ...((modeProps as any)[mode as any]?.params || {}),
       }),
     );
-
+  data;
   const feedIds = (
     (data?.pages.flatMap((page) =>
       page.data?.result?.data
@@ -328,6 +335,8 @@ const Feed: FC<IFeedProps> = ({
             return !!feed[post.id]?.bookmarked;
           } else if (scheduled) {
             return !!feed[post.id]?.schedule;
+          } else if (announcements) {
+            return !!feed[post.id]?.isAnnouncement;
           }
           return true;
         })
@@ -353,8 +362,9 @@ const Feed: FC<IFeedProps> = ({
         isRegularPost(feed[post.id], currentDate, isAdmin),
       )
     : [];
-
-  useEffect(() => setActiveFeedPostCount(feedIds.length), [feedIds]);
+  useEffect(() => {
+    setActiveFeedPostCount(feedIds.length);
+  }, [feedIds]);
 
   const clearAppliedFilters = () => {
     setAppliedFeedFilters({
@@ -565,6 +575,7 @@ const Feed: FC<IFeedProps> = ({
           return '/bookmarks';
       }
     };
+
     if (hashtag) {
       return (
         <HashtagFeedHeader
@@ -577,6 +588,8 @@ const Feed: FC<IFeedProps> = ({
       return <BookmarkFeedHeader mode={mode} />;
     } else if (scheduled) {
       return <ScheduledFeedHeader mode={mode} />;
+    } else if (announcements) {
+      return <AnnouncementFeedHeader mode={mode} />;
     } else {
       return (
         <div
@@ -585,8 +598,13 @@ const Feed: FC<IFeedProps> = ({
           }`}
         >
           {showCreatePostCard && (
-            <div onClick={() => setCustomActiveFlow(CreatePostFlow.CreatePost)}>
-              <CreatePostCard openModal={openModal} />
+            <div>
+              <CreatePostCard
+                openModal={() => {
+                  openModal();
+                  setCustomActiveFlow(CreatePostFlow.CreatePost);
+                }}
+              />
             </div>
           )}
           {showFeedFilterBar && (

@@ -16,7 +16,7 @@ export const useShouldRender = (id: string) => {
     return false;
   }
 
-  if (isLxp && VISIBLE_COMPONENTS_FOR_LXP_ONLY.includes(id)) {
+  if (isLxp) {
     // If product is LXP, Show components with given id
     if (isAdmin && VISIBLE_COMPONENTS_FOR_ADMIN_LXP_ONLY.includes(id)) {
       return true;

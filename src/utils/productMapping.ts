@@ -14,6 +14,7 @@ export const VISIBLE_COMPONENTS_FOR_ADMIN_LXP_ONLY = [
   'ChannelRequestWidget',
   'EvaluationRequestWidget',
   'Recommendation',
+  'AnnouncementWidget',
 ];
 export const VISIBLE_COMPONENTS_FOR_LEARNER_LXP_ONLY = [
   'ProgressTrackerWidget',

@@ -19,6 +19,11 @@ import { useShouldRender } from 'hooks/useShouldRender';
 import { CreatePostFlow } from 'contexts/CreatePostContext';
 import useRole from 'hooks/useRole';
 import useNavigate from 'hooks/useNavigation';
+import useModal from 'hooks/useModal';
+import AnnouncementAnalytics from 'components/Post/components/AnnouncementAnalytics';
+import FeedPostMenu from 'components/Post/components/FeedPostMenu';
+import Truncate from 'components/Truncate';
+import useProduct from 'hooks/useProduct';
 
 const ID = 'AnnouncementWidget';
 
@@ -41,10 +46,12 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
   if (!shouldRender) {
     return <></>;
   }
+  const { isLxp } = useProduct();
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { isAdmin } = useRole();
+  const [analytics, showAnalytics, closeAnalytics] = useModal();
 
   // Default values for useAnnouncementWidget when postId is undefined
   let limit = 1,
@@ -71,6 +78,7 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
 
   const result = data?.data?.result?.data;
 
+  const totalCount = data?.data?.result?.totalCount;
   // By default, postData will be result[0].
   // If postId is defined and result[0].id === postId, then set postData = result[1]
   let postData = result?.[0];
@@ -93,14 +101,14 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
   return (
     <div className={style}>
       <div className="flex justify-between items-center ">
-        <div className="text-base font-bold">{t('header')}</div>
-        {showCreateAnnouncement && itemCount && !isAcknowledged && (
+        <div className="text-base font-bold">{t('title')}</div>
+        {showCreateAnnouncement && (
           <Button
             rightIcon="addCircle"
             label={t('addNew')}
             variant={Variant.Secondary}
             onClick={() => {
-              openModal();
+              openModal?.();
               setCustomActiveFlow?.(CreatePostFlow.CreateAnnouncement);
             }}
             className="border-0 !bg-transparent !px-0 !py-1 group"
@@ -114,14 +122,26 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
           className="pb-6 flex flex-col rounded-9xl max-h-[386px]"
           shadowOnHover
         >
-          <div className="rounded-t-9xl bg-secondary-500 text-white py-3 w-full flex justify-start space-x-3 px-3">
-            <Icon
-              name="flashIcon"
-              className="text-white"
-              hover={false}
-              size={16}
-            />
-            <div className="text-xs font-bold">{t('title')}</div>
+          <div className="rounded-t-9xl bg-secondary-500 text-white py-3 w-full flex justify-between items-center px-3">
+            <div className="flex items-center space-x-3">
+              <Icon
+                name="flashIcon"
+                className="text-white"
+                hover={false}
+                size={16}
+              />
+              <div className="text-xs font-bold">
+                {t('title')} {totalCount > 0 && `(1 of ${totalCount})`}
+              </div>
+            </div>
+            {totalCount > 0 && (
+              <div
+                onClick={() => navigate('/announcements')}
+                className="text-xs font-bold cursor-pointer"
+              >
+                View All
+              </div>
+            )}
           </div>
           {isLoading ? (
             <SkeletonLoader />
@@ -140,33 +160,37 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
                         image={getProfileImage(postData?.createdBy)}
                         size={32}
                         className="border-2 border-white"
-                        onClick={() =>
+                        onClick={() => {
+                          if (isLxp) return;
                           navigate(
                             postData?.createdBy?.userId === user?.id
                               ? '/profile'
                               : `/users/${postData?.createdBy?.userId}`,
-                          )
-                        }
+                          );
+                        }}
                       />
 
                       <div className="w-full">
-                        <div
-                          className="flex w-full space-x-1 text-sm cursor-pointer"
-                          onClick={() =>
-                            navigate(
-                              postData?.createdBy?.userId === user?.id
-                                ? '/profile'
-                                : `/users/${postData?.createdBy?.userId}`,
-                            )
-                          }
-                        >
-                          <span className="text-neutral-900">
-                            <b>{getFullName(postData?.createdBy)}</b>{' '}
+                        <div className="flex w-full space-x-1 text-sm cursor-pointer">
+                          <span>
+                            <Truncate
+                              onClick={() => {
+                                if (isLxp) return;
+                                navigate(
+                                  postData?.createdBy?.userId === user?.id
+                                    ? '/profile'
+                                    : `/users/${postData?.createdBy?.userId}`,
+                                );
+                              }}
+                              text={getFullName(postData?.createdBy)}
+                              className="text-neutral-900 font-bold inline mr-1"
+                            />
                             {t('share-post')}
                           </span>
-                          {/* <span className="text-neutral-900 font-normal bg-yellow-100">
-                            shared a post
-                          </span> */}
+
+                          <div className="relative">
+                            <FeedPostMenu data={postData} />
+                          </div>
                         </div>
                         <div className="flex space-x-2 items-center">
                           <div className="text-xs text-gray-500">
@@ -192,6 +216,19 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
                       </div>
                     </Link>
                   </div>
+
+                  {showCreateAnnouncement && (
+                    <Button
+                      label={'View insight'}
+                      variant={Variant.Secondary}
+                      size={Size.Small}
+                      className="border-2 border-neutral-200 mt-4 w-full"
+                      loading={acknowledgeAnnouncement.isLoading}
+                      onClick={() => {
+                        showAnalytics();
+                      }}
+                    />
+                  )}
                   {!hasLoggedInUserCreatedAnnouncement && (
                     <div className="w-full flex justify-center">
                       <Button
@@ -217,6 +254,13 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
           )}
         </Card>
       </div>
+      {analytics && (
+        <AnnouncementAnalytics
+          post={postData}
+          open={analytics}
+          closeModal={closeAnalytics}
+        />
+      )}
     </div>
   );
 };
