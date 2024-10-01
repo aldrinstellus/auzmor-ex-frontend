@@ -8,7 +8,7 @@ import Button, { Size, Type as ButtonType } from 'components/Button';
 import { Logo } from 'components/Logo';
 import { useMutation } from '@tanstack/react-query';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { acceptInviteSetPassword, useVerifyInviteLink } from 'queries/users';
 import PageLoader from 'components/PageLoader';
 import InviteLinkExpired from './components/InviteLinkExpired';
@@ -16,6 +16,7 @@ import useAuth from 'hooks/useAuth';
 import { useNavigateWithToken } from 'hooks/useNavigateWithToken';
 import { usePageTitle } from 'hooks/usePageTitle';
 import { useTranslation } from 'react-i18next';
+import useNavigate from 'hooks/useNavigation';
 
 interface IForm {
   workEmail: string;
@@ -47,6 +48,9 @@ const AcceptInvite: FC<IAcceptInviteProps> = () => {
   const [searchParams, _] = useSearchParams();
   const token = searchParams.get('token');
   const orgId = searchParams.get('orgId');
+  const emailParams = searchParams.get('email');
+  const decodedUserEmail = decodeURIComponent(emailParams || ' ');
+
   const { setUser, setShowOnboard } = useAuth();
   const navigate = useNavigate();
   const navigateWithToken = useNavigateWithToken();
@@ -79,7 +83,7 @@ const AcceptInvite: FC<IAcceptInviteProps> = () => {
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
-      workEmail: data?.result?.data?.email,
+      workEmail: decodedUserEmail,
     },
   });
 

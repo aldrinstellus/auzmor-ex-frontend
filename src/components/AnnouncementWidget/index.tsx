@@ -7,7 +7,7 @@ import Icon from 'components/Icon';
 import { humanizeTime } from 'utils/time';
 import SkeletonLoader from './components/SkeletonLoader';
 import RenderQuillContent from 'components/RenderQuillContent';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import useAuth from 'hooks/useAuth';
 import { getFullName, getProfileImage } from 'utils/misc';
 import EmptyState from './components/EmptyState';
@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { useShouldRender } from 'hooks/useShouldRender';
 import { CreatePostFlow } from 'contexts/CreatePostContext';
 import useRole from 'hooks/useRole';
+import useNavigate from 'hooks/useNavigation';
 
 const ID = 'AnnouncementWidget';
 

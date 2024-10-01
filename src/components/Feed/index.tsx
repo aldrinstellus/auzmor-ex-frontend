@@ -71,6 +71,7 @@ import EvaluationRequestWidget, {
   IEvaluationRequestWidgetProps,
 } from 'components/EvaluationRequestWidget';
 import { CreatePostFlow } from 'contexts/CreatePostContext';
+import useProduct from 'hooks/useProduct';
 
 const EmptyWidget = () => <></>;
 
@@ -176,6 +177,7 @@ const Feed: FC<IFeedProps> = ({
   const { ref, inView } = useInView();
   const [searchParams] = useSearchParams();
   const currentDate = new Date().toISOString();
+  const { isLxp } = useProduct();
   const [appliedFeedFilters, setAppliedFeedFilters] = useState<IPostFilters>({
     [PostFilterKeys.PostType]: [],
     [PostFilterKeys.PostPreference]: [],
@@ -191,21 +193,53 @@ const Feed: FC<IFeedProps> = ({
   let scheduled = false;
   let apiEndpoint = '/feed';
 
-  switch (mode) {
-    case FeedModeEnum.Default:
-      bookmarks = pathname === '/bookmarks';
-      scheduled = pathname === '/scheduledPosts';
-      break;
-    case FeedModeEnum.Channel:
-      bookmarks =
-        pathname ===
-        `/channels/${modeProps?.[FeedModeEnum.Channel]?.channel.id}/bookmarks`;
-      scheduled =
-        pathname ===
-        `/channels/${
-          modeProps?.[FeedModeEnum.Channel]?.channel.id
-        }/scheduledPosts`;
-      break;
+  if (isLxp) {
+    switch (mode) {
+      case FeedModeEnum.Default:
+        bookmarks = pathname === '/bookmarks' || pathname === '/user/bookmarks';
+        scheduled =
+          pathname === '/scheduledPosts' || pathname === '/user/scheduledPosts';
+        break;
+      case FeedModeEnum.Channel:
+        bookmarks =
+          pathname ===
+            `/channels/${
+              modeProps?.[FeedModeEnum.Channel]?.channel.id
+            }/bookmarks` ||
+          pathname ===
+            `/user/channels/${
+              modeProps?.[FeedModeEnum.Channel]?.channel.id
+            }/bookmarks`;
+        scheduled =
+          pathname ===
+            `/channels/${
+              modeProps?.[FeedModeEnum.Channel]?.channel.id
+            }/scheduledPosts` ||
+          pathname ===
+            `/user/channels/${
+              modeProps?.[FeedModeEnum.Channel]?.channel.id
+            }/scheduledPosts`;
+        break;
+    }
+  } else {
+    switch (mode) {
+      case FeedModeEnum.Default:
+        bookmarks = pathname === '/bookmarks';
+        scheduled = pathname === '/scheduledPosts';
+        break;
+      case FeedModeEnum.Channel:
+        bookmarks =
+          pathname ===
+          `/channels/${
+            modeProps?.[FeedModeEnum.Channel]?.channel.id
+          }/bookmarks`;
+        scheduled =
+          pathname ===
+          `/channels/${
+            modeProps?.[FeedModeEnum.Channel]?.channel.id
+          }/scheduledPosts`;
+        break;
+    }
   }
 
   if (bookmarks) {
@@ -484,6 +518,18 @@ const Feed: FC<IFeedProps> = ({
 
   const FeedHeader = useMemo(() => {
     const getScheduleLinkTo = () => {
+      if (isLxp && pathname.split('/')[1] === 'user') {
+        switch (mode) {
+          case FeedModeEnum.Default:
+            return '/user/scheduledPosts';
+          case FeedModeEnum.Channel:
+            return `/user/channels/${
+              modeProps?.[FeedModeEnum.Channel]?.channel.id
+            }/scheduledPosts`;
+          default:
+            return '/user/scheduledPosts';
+        }
+      }
       switch (mode) {
         case FeedModeEnum.Default:
           return '/scheduledPosts';
@@ -496,6 +542,18 @@ const Feed: FC<IFeedProps> = ({
       }
     };
     const getBookmarkLinkTo = () => {
+      if (isLxp && pathname.split('/')[1] === 'user') {
+        switch (mode) {
+          case FeedModeEnum.Default:
+            return '/user/bookmarks';
+          case FeedModeEnum.Channel:
+            return `/user/channels/${
+              modeProps?.[FeedModeEnum.Channel]?.channel.id
+            }/bookmarks`;
+          default:
+            return '/user/bookmarks';
+        }
+      }
       switch (mode) {
         case FeedModeEnum.Default:
           return '/bookmarks';

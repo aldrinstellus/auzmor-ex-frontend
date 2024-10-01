@@ -32,9 +32,12 @@ export interface IMyReactions {
 
 const HomeFeed: FC<IHomeFeedProps> = () => {
   const { pathname } = useLocation();
-  const bookmarks = pathname === '/bookmarks';
-  const scheduled = pathname === '/scheduledPosts';
+
+  const bookmarks = pathname === '/bookmarks' || '/user/bookmarks';
+  const scheduled = pathname === '/scheduledPosts' || '/user/scheduledPosts';
+
   const { isOffice } = useProduct();
+
   // Set page title
   if (scheduled) {
     usePageTitle('scheduledPosts');
