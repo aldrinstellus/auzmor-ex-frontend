@@ -24,15 +24,15 @@ const useRole = (
   let isAdmin = exact ? user?.role === Role.Admin : isAdminOrSuperAdmin;
   let isSuperAdmin = user?.role === Role.SuperAdmin;
 
-  if (isLxp) {
-    const isLearner = pathname.split('/')[1] === 'user';
-    if (isLearner) {
-      isAdminOrSuperAdmin = false;
-      isOwnerOrAdmin = isAdminOrSuperAdmin || user?.id === userId;
-      isMember = true;
-      isAdmin = false;
-      isSuperAdmin = false;
-    }
+  // Used for lxp only
+  const isLearner = pathname.split('/')[1] === 'user';
+
+  if (isLxp && isLearner) {
+    isAdminOrSuperAdmin = false;
+    isOwnerOrAdmin = isAdminOrSuperAdmin || user?.id === userId;
+    isMember = true;
+    isAdmin = false;
+    isSuperAdmin = false;
   }
 
   return {
@@ -41,6 +41,7 @@ const useRole = (
     isMember,
     isAdmin,
     isSuperAdmin,
+    isLearner,
   };
 };
 
