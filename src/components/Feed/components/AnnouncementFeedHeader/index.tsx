@@ -1,6 +1,7 @@
 import Icon from 'components/Icon';
 import useProduct from 'hooks/useProduct';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { FeedModeEnum } from 'stores/feedStore';
 
@@ -13,6 +14,7 @@ const AnnouncementFeedHeader: FC<IAnnouncementFeedHeaderProps> = ({
 }) => {
   const { pathname } = useLocation();
   const { isLxp } = useProduct();
+  const { t } = useTranslation('feed');
 
   let backTo = '';
 
@@ -44,7 +46,7 @@ const AnnouncementFeedHeader: FC<IAnnouncementFeedHeaderProps> = ({
             </Link>
             <div className="text-2xl font-bold text-neutral-900">
               <span data-testid={`feedpage-filter-bookmark`}>
-                All Announcemet
+                {t('announcementPosts.title')}
               </span>
             </div>
           </div>

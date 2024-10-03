@@ -455,6 +455,27 @@ const Feed: FC<IFeedProps> = ({
         </div>
       );
     }
+    if (announcements) {
+      return (
+        <div className="bg-white p-6 flex flex-col rounded-9xl">
+          <div className="h-220 bg-blue-50 flex justify-center rounded-9xl">
+            <img
+              src={NoPosts}
+              data-testid="mybookmark-tab-nopost"
+              alt="No Posts"
+            />
+          </div>
+          <div data-testid="scheduledpost-tab-nodata">
+            <div className="font-bold text-base text-neutral-900 text-center mt-6">
+              {t('announcements.emptyMessage1')}
+            </div>
+            <div className="font-bold text-base text-neutral-900 text-center">
+              {t('announcements.emptyMessage2')}
+            </div>
+          </div>
+        </div>
+      );
+    }
     if (
       appliedFeedFilters[PostFilterKeys.PostType]?.length ||
       appliedFeedFilters[PostFilterKeys.PostPreference]?.length

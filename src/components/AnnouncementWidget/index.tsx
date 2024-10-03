@@ -142,7 +142,7 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
                 onClick={() => navigate('/announcements')}
                 className="text-xs font-bold cursor-pointer"
               >
-                View All
+                {t('viewAll')}
               </div>
             )}
           </div>
@@ -222,7 +222,7 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
 
                   {showCreateAnnouncement && (
                     <Button
-                      label={'View insight'}
+                      label={t('viewInsight')}
                       variant={Variant.Secondary}
                       size={Size.Small}
                       className="border-2 border-neutral-200 mt-4 w-full"

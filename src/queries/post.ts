@@ -736,7 +736,6 @@ export const fetchBookmarks = async (
   const comments: IComment[] = [];
   const feed = getFeed();
 
-  console.log('context :', context);
   // Fetching data
   if (!!!context.pageParam) {
     response = await apiService.get('/posts/my-bookmarks', context.queryKey[1]);

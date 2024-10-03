@@ -6,5 +6,7 @@
   "admin-header": "Only admin can see this.",
   "share-post": "Shared a post",
   "read-CTA": "Mark as read",
-  "addNew": "Add new"
+  "addNew": "Add new",
+  "viewAll": "View All",
+  "viewInsight": "View insight"
 }
