@@ -15,8 +15,10 @@ export const VISIBLE_COMPONENTS_FOR_ADMIN_LXP_ONLY = [
   'EvaluationRequestWidget',
   'Recommendation',
   'AnnouncementWidget',
+  'AppLauncher',
 ];
 export const VISIBLE_COMPONENTS_FOR_LEARNER_LXP_ONLY = [
+  'AppLauncher',
   'ProgressTrackerWidget',
   'EventWidget',
   'Recommendation',
