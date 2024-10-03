@@ -467,10 +467,10 @@ const Feed: FC<IFeedProps> = ({
           </div>
           <div data-testid="scheduledpost-tab-nodata">
             <div className="font-bold text-base text-neutral-900 text-center mt-6">
-              {t('announcements.emptyMessage1')}
+              {t('announcementPosts.emptyMessage')}
             </div>
             <div className="font-bold text-base text-neutral-900 text-center">
-              {t('announcements.emptyMessage2')}
+              {t('announcementPosts.emptyMessage2')}
             </div>
           </div>
         </div>
