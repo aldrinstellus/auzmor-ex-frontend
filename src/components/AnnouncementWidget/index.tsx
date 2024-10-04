@@ -115,8 +115,8 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
               setCustomActiveFlow?.(CreatePostFlow.CreateAnnouncement);
             }}
             className="border-0 !bg-transparent !px-0 !py-1 group"
-            labelClassName=" text-primary-500 hover:text-primary-600  group-focus:text-primary-500"
-            leftIconSize={20}
+            labelClassName=" text-sm font-bold  text-primary-500 hover:text-primary-600  group-focus:text-primary-500"
+            rightIconSize={20}
           />
         )}
       </div>
@@ -226,6 +226,7 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
                       variant={Variant.Secondary}
                       size={Size.Small}
                       className="border-2 border-neutral-200 mt-4 w-full"
+                      labelClassName="text-sm font-bold"
                       loading={acknowledgeAnnouncement.isLoading}
                       onClick={() => {
                         showAnalytics();
