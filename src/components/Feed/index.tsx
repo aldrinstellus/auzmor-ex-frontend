@@ -172,7 +172,7 @@ const Feed: FC<IFeedProps> = ({
   const isLargeScreen = useMediaQuery('(min-width: 1300px)');
   const [open, openModal, closeModal] = useModal(undefined, false);
   const { user } = useAuth();
-  const { isAdmin } = useRole();
+  const { isAdmin, isLearner } = useRole();
   const { feed, setActiveFeedPostCount, setFeedMode } = useFeedStore();
   const { pathname } = useLocation();
   const { ref, inView } = useInView();
@@ -549,7 +549,7 @@ const Feed: FC<IFeedProps> = ({
 
   const FeedHeader = useMemo(() => {
     const getScheduleLinkTo = () => {
-      if (isLxp && pathname.split('/')[1] === 'user') {
+      if (isLxp && isLearner) {
         switch (mode) {
           case FeedModeEnum.Default:
             return '/user/scheduledPosts';
@@ -573,7 +573,7 @@ const Feed: FC<IFeedProps> = ({
       }
     };
     const getBookmarkLinkTo = () => {
-      if (isLxp && pathname.split('/')[1] === 'user') {
+      if (isLxp && isLearner) {
         switch (mode) {
           case FeedModeEnum.Default:
             return '/user/bookmarks';
@@ -726,6 +726,13 @@ const Feed: FC<IFeedProps> = ({
 
   const getWidgets = (widgetList: WidgetEnum[]) => {
     let Widget: any = null;
+
+    if (isLxp && !isLearner) {
+      widgetList = widgetList.filter(
+        (widget) =>
+          widget !== WidgetEnum.Event && widget !== WidgetEnum.ProgressTracker,
+      );
+    }
 
     if (!isLargeScreen) {
       widgetList = [...widgetList, ...rightWidgets];
