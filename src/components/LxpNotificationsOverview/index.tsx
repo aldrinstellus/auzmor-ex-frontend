@@ -4,10 +4,6 @@ import Icon from 'components/Icon';
 import { FC, useRef, useState } from 'react';
 import Spinner from 'components/Spinner';
 import Popover from 'components/Popover';
-import {
-  markAllNotificationsAsRead,
-  useGetUnreadNotificationsCount,
-} from 'queries/notifications';
 import Tabs from 'components/Tabs';
 import NotificationsList from './components/NotificationsList';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -17,7 +13,8 @@ import {
   useGetLearnUnreadNotificationsCount,
 } from 'queries/learn';
 import { NavLink } from 'react-router-dom';
-// import { NavLink } from 'react-router-dom';
+import { usePermissions } from 'hooks/usePermissions';
+import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 
 export enum NotificationType {
   ALL = 'All',
@@ -25,6 +22,11 @@ export enum NotificationType {
 }
 
 const LxpNotificationsOverview: FC = () => {
+  const { getApi } = usePermissions();
+
+  const useGetUnreadNotificationsCount = getApi(
+    ApiEnum.GetNotificationsUnreadCount,
+  );
   const { data, isLoading, isError } = useGetUnreadNotificationsCount();
   const {
     data: learnCountData,
@@ -35,6 +37,7 @@ const LxpNotificationsOverview: FC = () => {
   const queryClient = useQueryClient();
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
+  const markAllNotificationsAsRead = getApi(ApiEnum.MarkAllNotificationsAsRead);
   const markReadMutation = useMutation(() => markAllNotificationsAsRead(), {
     onSuccess: () => {
       queryClient.invalidateQueries(['unread-count']);
