@@ -47,8 +47,10 @@ import Truncate from 'components/Truncate';
 import useAuth from 'hooks/useAuth';
 import { ChannelDetailTabsEnum } from '..';
 import useNavigate from 'hooks/useNavigation';
+import { ChannelPermissionEnum } from './utils/channelPermission';
 
 type ProfileSectionProps = {
+  permissions: ChannelPermissionEnum[];
   tabs?: ITab[];
   activeTab?: ChannelDetailTabsEnum;
 };
@@ -61,6 +63,7 @@ export enum TabStatus {
 const ProfileSection: React.FC<ProfileSectionProps> = ({
   tabs = [],
   activeTab,
+  permissions,
 }) => {
   const { channelId = '' } = useParams();
   const { user } = useAuth();
@@ -73,8 +76,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   const [isArchiveModalOpen, openArchiveModal, closeArchiveModal] = useModal();
   const navigate = useNavigate();
 
-  const { isChannelOwner, isChannelJoined, isChannelAdmin, isAdmin } =
-    useChannelRole(channelId);
+  const { isChannelOwner, isChannelJoined } = useChannelRole(channelId);
 
   const channelCoverImageRef = useRef<HTMLInputElement>(null);
   const showEditProfile = useRef<boolean>(true);
@@ -109,8 +111,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     isChannelPublic && !isChannelJoined && !!!channelData.joinRequest;
   const showWithdrawBtn =
     isChannelPrivate && !isChannelJoined && !!channelData?.joinRequest;
-
-  const showInviteYourSelf = isChannelPrivate && !isChannelJoined && isAdmin;
 
   const inviteYourselfMutation = useMutation({
     mutationKey: ['add-channel-members', channelData.id],
@@ -300,7 +300,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       stroke: twConfig.theme.colors.neutral['900'],
       onClick: openEditModal,
       dataTestId: '',
-      hidden: !isChannelAdmin,
+      hidden: !!!permissions.includes(ChannelPermissionEnum.CanEditSettings),
     },
     {
       icon: 'adminOutline',
@@ -310,7 +310,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         navigate(`/channels/${channelData?.id}/manage-access`);
       },
       dataTestId: '',
-      hidden: !isChannelAdmin,
+      hidden: !!!permissions.includes(ChannelPermissionEnum.CanAccessManageTab),
     },
     {
       icon: 'archive',
@@ -318,17 +318,22 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       stroke: twConfig.theme.colors.neutral['900'],
       onClick: openArchiveModal,
       dataTestId: '',
-      hidden: !isChannelAdmin,
+      hidden: !!!permissions.includes(ChannelPermissionEnum.CanArchive),
     },
     {
       renderNode: (
         <div
-          className={`text-xs ${
-            !isChannelJoined ? 'hidden' : ' py-2 px-6'
-          } bg-blue-50 font-Medium flex items-center justify-center cursor-default`}
+          className={`text-xs py-2 px-6 bg-blue-50 font-Medium flex items-center justify-center cursor-default`}
         >
           {t('securityAndAnalytics')}
         </div>
+      ),
+      hidden: !(
+        [
+          ChannelPermissionEnum.CanAddMember,
+          ChannelPermissionEnum.CanEditSettings,
+        ].some((permission) => permissions.includes(permission)) ||
+        isChannelJoined
       ),
     },
     {
@@ -339,7 +344,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         openAddMemberModal();
       },
       dataTestId: '',
-      hidden: !isChannelAdmin,
+      hidden: !!!permissions.includes(ChannelPermissionEnum.CanAddMember),
     },
     {
       icon: 'setting',
@@ -349,7 +354,9 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         navigate(`/channels/${channelData?.id}/settings`);
       },
       dataTestId: '',
-      hidden: !isChannelAdmin,
+      hidden: !!!permissions.includes(
+        ChannelPermissionEnum.CanAccessSettingsTab,
+      ),
     },
     {
       icon: 'logout',
@@ -361,7 +368,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       dataTestId: '',
       hidden: !isChannelJoined,
     },
-  ].filter((item) => !item.hidden);
+  ].filter((item) => item && !item.hidden);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -435,7 +442,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
             />
           )}
           <div className="cursor-pointer">
-            {isChannelJoined && (
+            {editMenuOptions.length > 0 && (
               <PopupMenu
                 triggerNode={
                   <div className="bg-white rounded-full  text-black">
@@ -451,7 +458,9 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                 menuItems={editMenuOptions}
                 title={
                   <>
-                    {isChannelAdmin && (
+                    {permissions.includes(
+                      ChannelPermissionEnum.CanAccessManageTab,
+                    ) && (
                       <div className="text-xs bg-blue-50 py-2 px-6 font-Medium flex items-center justify-center ">
                         {t('channelManageMent')}
                       </div>
@@ -462,7 +471,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
             )}
           </div>
           <div className="cursor-pointer">
-            {isChannelAdmin && (
+            {permissions.includes(ChannelPermissionEnum.CanEditSettings) && (
               <PopupMenu
                 triggerNode={
                   <div className="bg-white rounded-full text-black">
@@ -503,7 +512,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                 size={56}
                 dataTestId={'edit-profile-pic'}
               />
-              {isChannelAdmin && (
+              {permissions.includes(ChannelPermissionEnum.CanEditSettings) && (
                 <IconButton
                   icon="edit"
                   color="text-black"
@@ -538,7 +547,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
             </div>
           </div>
           <div className="flex gap-4">
-            {showInviteYourSelf && (
+            {permissions.includes(ChannelPermissionEnum.CanInviteSelf) && (
               <Button
                 label={t('joinAsAdmin.label')}
                 dataTestId="invite-your-self-channel-cta"
@@ -659,7 +668,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         />
       )}
 
-      {isChannelAdmin && (
+      {permissions.includes(ChannelPermissionEnum.CanEditSettings) && (
         <div>
           <input
             id="file-input"

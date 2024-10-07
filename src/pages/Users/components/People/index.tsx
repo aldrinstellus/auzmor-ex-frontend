@@ -15,10 +15,10 @@ import Layout, { FieldType } from 'components/Form';
 import Button, { Size, Variant } from 'components/Button';
 import { Variant as InputVariant } from 'components/Input';
 import UsersSkeleton from '../Skeletons/UsersSkeleton';
-import { UserRole, useInfiniteUsers } from 'queries/users';
+import { UserRole, UserStatus, useInfiniteUsers } from 'queries/users';
 import { isFiltersEmpty, titleCase } from 'utils/misc';
 
-import PeopleCard from './PeopleCard';
+import PeopleCard, { PeopleCardPermissionEnum } from './PeopleCard';
 import InviteUserModal from '../InviteUserModal';
 import { useInfiniteTeamMembers } from 'queries/teams';
 import { EntitySearchModalType } from 'components/EntitySearchModal';
@@ -34,6 +34,7 @@ import ImportUsers from '../ImportUsers';
 import { FilterKey } from 'components/FilterMenu';
 import useProduct from 'hooks/useProduct';
 import { useTranslation } from 'react-i18next';
+import useAuth from 'hooks/useAuth';
 
 export interface IPeopleProps {
   showModal: boolean;
@@ -87,6 +88,7 @@ const People: FC<IPeopleProps> = ({
   const { ref, inView } = useInView();
   const { isAdmin } = useRole();
   const { isLxp } = useProduct();
+  const { user: loggedInUser } = useAuth();
 
   const parsedRole = parseParams('role');
 
@@ -341,6 +343,58 @@ const People: FC<IPeopleProps> = ({
     );
   };
 
+  const getCardPermissions = (user: any) => {
+    const peopleCardPermissions: PeopleCardPermissionEnum[] = [];
+    if (!isLxp) {
+      if (isTeamPeople) {
+        if (isAdmin) {
+          peopleCardPermissions.push(
+            PeopleCardPermissionEnum.CanRemoveFromTeam,
+          );
+        }
+      } else {
+        if (user.id === loggedInUser?.id || isAdmin) {
+          peopleCardPermissions.push(PeopleCardPermissionEnum.CanEdit);
+        }
+
+        if (
+          isAdmin &&
+          [UserStatus.Invited, UserStatus.Created].includes(user.status)
+        ) {
+          peopleCardPermissions.push(PeopleCardPermissionEnum.CanResendInvite);
+        }
+
+        if (
+          isAdmin &&
+          user.role === UserRole.Member &&
+          user.status === UserStatus.Active
+        ) {
+          peopleCardPermissions.push(PeopleCardPermissionEnum.CanPromote);
+        }
+
+        if (
+          [UserStatus.Inactive, UserStatus.Active].includes(
+            user.status as any,
+          ) &&
+          user.role !== UserRole.Superadmin &&
+          user.id !== loggedInUser?.id &&
+          isAdmin
+        ) {
+          if (user.status === UserStatus.Inactive) {
+            peopleCardPermissions.push(PeopleCardPermissionEnum.CanReactivate);
+          } else {
+            peopleCardPermissions.push(PeopleCardPermissionEnum.CanDeactivate);
+          }
+        }
+
+        if (isAdmin && user.id !== loggedInUser?.id) {
+          peopleCardPermissions.push(PeopleCardPermissionEnum.CanDelete);
+        }
+      }
+    }
+    return peopleCardPermissions;
+  };
+
   return (
     <div className="relative pb-8">
       <div className="flex flex-col gap-6">
@@ -522,8 +576,8 @@ const People: FC<IPeopleProps> = ({
                     <PeopleCard
                       key={user.id}
                       teamId={teamId}
-                      isTeamPeople={isTeamPeople}
                       teamMemberId={user.id}
+                      permissions={getCardPermissions(user)}
                       {...{
                         userData: isTeamPeople
                           ? {
