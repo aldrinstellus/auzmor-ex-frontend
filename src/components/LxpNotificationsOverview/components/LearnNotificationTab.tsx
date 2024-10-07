@@ -1,7 +1,4 @@
-import NotificationProps from './Notification';
-import { IMedia } from 'contexts/CreatePostContext';
 import { forwardRef } from 'react';
-import { useGetLearnNotifications } from 'queries/learn';
 
 type LearnNotificationsList = {
   mentions?: boolean;
@@ -20,55 +17,7 @@ export enum ActionType {
   POST_PRE_PUBLISH = 'POST_PRE_PUBLISH',
 }
 
-export enum TargetType {
-  POST = 'POST',
-  COMMENT = 'COMMENT',
-  TEAM = 'TEAM',
-}
-
-export type Actor = {
-  fullName: string;
-  profileImage?: {
-    blurHash?: string;
-    original?: string;
-  };
-  workLocation?: Record<string, string>;
-  userId?: string;
-  department?: string;
-  designation?: string;
-  status: string;
-};
-
-export type Action = {
-  type: string;
-  content: string;
-  actedAt: string;
-  entityId: string;
-  image?: IMedia;
-};
-
-export type Target = {
-  type: string;
-  content: string;
-  entityId: string;
-  entityName?: string;
-  image?: IMedia;
-};
-
-export type NotificationProps = {
-  actor: Actor;
-  action: Action;
-  target: Target[];
-  isRead: boolean;
-  createdAt: string;
-  id: string;
-  interactionCount?: number;
-};
-
 const LearnNotificationsList = forwardRef(() => {
-  const { data } = useGetLearnNotifications();
-  console.log('data :', data);
-
   return <>learn Notification</>;
 });
 

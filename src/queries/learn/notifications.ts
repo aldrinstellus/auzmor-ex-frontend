@@ -55,3 +55,25 @@ export const useInfiniteNotifications = (q?: Record<string, any>) => {
     staleTime: 0,
   });
 };
+
+export const markAllLearnNotificationsAsRead = async () => {
+  const data = await apiService.post(
+    `/learner/notifications/mark_all_as_read`,
+    { role: 'LEARNER' },
+  );
+  return data;
+};
+
+//get unread notification count
+const getLearnUnreadNotificationsCount = async () => {
+  const data = await apiService.get('/notifications/counts');
+  return data;
+};
+
+export const useGetLearnUnreadNotificationsCount = () => {
+  return useQuery({
+    queryKey: ['unread-learn-notifications-count'],
+    queryFn: () => getLearnUnreadNotificationsCount(),
+    refetchInterval: 60 * 1000,
+  });
+};
