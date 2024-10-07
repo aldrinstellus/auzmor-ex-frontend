@@ -11,7 +11,7 @@ import { useCommentStore } from 'stores/commentStore';
 import { IPost, IPollVotes, IPostPayload } from 'interfaces';
 
 export const createPost = async (payload: IPostPayload) => {
-  const data = await apiService.post('/posts', payload);
+  const data = await apiService.post('/feed', payload);
   return data;
 };
 
@@ -35,7 +35,7 @@ export const updatePost = async (id: string, payload: IPostPayload) => {
     !payload.link || typeof payload.link === 'string'
       ? payload.link
       : payload.link.url;
-  const data = await apiService.put(`/posts/${id}`, {
+  const data = await apiService.put(`/feed/${id}`, {
     ...payload,
     files: fileIds,
     mentions: mentionIds,
@@ -56,7 +56,7 @@ export const fetchAnnouncement = async (
   excludeMyAnnouncements = true,
 ) => {
   const data = await apiService.get(
-    `/posts?feed=${postType}&excludeMyAnnouncements=${excludeMyAnnouncements}&limit=${limit}`,
+    `/feed?feed=${postType}&excludeMyAnnouncements=${excludeMyAnnouncements}&limit=${limit}`,
   );
   return data;
 };
@@ -86,7 +86,7 @@ const collectComments = (response: any, comments: IComment[]) => {
 };
 
 export const announcementRead = async (postId: string) => {
-  const data = await apiService.post(`/posts/${postId}/acknowledge`);
+  const data = await apiService.post(`/feed/${postId}/acknowledge`);
   return data;
 };
 
@@ -96,7 +96,7 @@ export const getPollVotes = async ({
 }: QueryFunctionContext<any>) => {
   if (pageParam === null) {
     const { postId, ...q } = queryKey[1];
-    return apiService.get(`posts/${postId}/votes/voters`, q);
+    return apiService.get(`feed/${postId}/votes/voters`, q);
   } else {
     return apiService.get(pageParam);
   }
@@ -123,7 +123,7 @@ export const pollVote = async ({
   postId: string;
   optionId: string;
 }) => {
-  const data = await apiService.post(`/posts/${postId}/votes`, { optionId });
+  const data = await apiService.post(`/feed/${postId}/votes`, { optionId });
   return data;
 };
 
@@ -134,7 +134,7 @@ export const deletePollVote = async ({
   postId: string;
   optionId: string;
 }) => {
-  const data = await apiService.delete(`/posts/${postId}/votes/${optionId}`);
+  const data = await apiService.delete(`/feed/${postId}/votes/${optionId}`);
   return data;
 };
 
@@ -156,7 +156,7 @@ export const fetchFeed = async (
   // Fetching data
   if (!!!context.pageParam) {
     response = await apiService.get(
-      '/posts',
+      '/feed',
       context.queryKey[1],
       context.signal,
     );
@@ -205,7 +205,7 @@ export const fetchScheduledPosts = async (
 
   // Fetching data
   if (!!!context.pageParam) {
-    response = await apiService.get('/posts/scheduled', context.queryKey[1]);
+    response = await apiService.get('/feed/scheduled', context.queryKey[1]);
   } else {
     response = await apiService.get(context.pageParam);
   }
@@ -247,7 +247,7 @@ export const fetchBookmarks = async (
 
   // Fetching data
   if (!!!context.pageParam) {
-    response = await apiService.get('/posts/my-bookmarks', context.queryKey[1]);
+    response = await apiService.get('/feed/my-bookmarks', context.queryKey[1]);
   } else {
     response = await apiService.get(context.pageParam);
   }
@@ -320,7 +320,7 @@ const getPost = async (
 ) => {
   const comments: IComment[] = [];
   const response = await apiService.get(
-    `/posts/${id}${commentId ? '?commentId=' + commentId : ''}`,
+    `/feed/${id}${commentId ? '?commentId=' + commentId : ''}`,
   );
 
   // Collecting all comments
@@ -380,12 +380,12 @@ export const useGetHashtags = (q: string) => {
 };
 
 export const createBookmark = async (id: string) => {
-  const { data } = await apiService.post(`/posts/${id}/bookmark`);
+  const { data } = await apiService.post(`/feed/${id}/bookmark`);
   return data;
 };
 
 export const deleteBookmark = async (id: string) => {
-  const { data } = await apiService.delete(`/posts/${id}/bookmark`);
+  const { data } = await apiService.delete(`/feed/${id}/bookmark`);
   return data;
 };
 
@@ -397,7 +397,7 @@ export const getAcknowledgements = async (
   }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>,
 ) => {
   if (pageParam === null) {
-    return await apiService.get(`/posts/${id}/acknowledgements`, queryKey[2]);
+    return await apiService.get(`/feed/${id}/acknowledgements`, queryKey[2]);
   } else return await apiService.get(pageParam);
 };
 
@@ -427,7 +427,7 @@ export const useInfiniteAcknowledgements = (
 
 export const downloadAcknowledgementReport = async (id: string) => {
   const { data } = await apiService.get(
-    `/posts/${id}/downloadAcknowledgementReport`,
+    `/feed/${id}/downloadAcknowledgementReport`,
   );
   return data;
 };

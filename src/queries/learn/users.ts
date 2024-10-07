@@ -37,8 +37,44 @@ export interface IPostUsers {
 }
 
 export const fetchMe = async () => {
-  const { data } = await apiService.get('/users/me');
-  return data;
+  const { data } = await apiService.get('/me');
+  const user = data?.result?.data;
+  const mappedData = {
+    message: data?.message,
+    result: {
+      data: {
+        id: user?.id,
+        fullName: user?.full_name,
+        workEmail: user?.email,
+        role: user?.role,
+        org: {
+          subscription: {},
+        },
+        ...(user?.designation && {
+          designation: {
+            name: user?.designation,
+          },
+        }),
+        ...(user?.image_url && {
+          profileImage: {
+            small: user.image_url,
+            medium: user.image_url,
+            large: user.image_url,
+            original: user.image_url,
+          },
+        }),
+        permissions: [],
+        preferences: {
+          ...(user?.preferences?.learner_view_type && {
+            learnerViewType: user?.preferences?.learner_view_type,
+          }),
+        },
+        timeZone: user?.time_zone,
+      },
+    },
+  };
+  console.log({ data, mappedData });
+  return mappedData;
 };
 
 export const getAllUser = async ({
