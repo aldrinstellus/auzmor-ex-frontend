@@ -14,5 +14,19 @@
   "signOut": "Sign Out",
   "account": {
     "goToProfile": "Go to My Profile"
+  },
+  "learn": {
+    "home": "Home",
+    "engage": "Engage",
+    "training": "Training",
+    "learningCenter": "Learning Center",
+    "forums": "Forums",
+    "company": "Company",
+    "analytics": "Analytics",
+    "ecommerce": "E-Commerce",
+    "courses": "Courses",
+    "paths": "Paths",
+    "events": "Events",
+    "external": "External"
   }
 }

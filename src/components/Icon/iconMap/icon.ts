@@ -6,6 +6,7 @@ import UsersIcon from '../components/Users';
 import HomeIcon from '../components/Home';
 import FeedIcon from '../components/Feed';
 import ArrowDown from '../components/ArrowDown';
+import ArrowDown2 from '../components/ArrowDown2';
 import ClockIcon from '../components/Clock';
 import FilterIcon from '../components/Filter';
 import MoreIcon from '../components/More';
@@ -191,6 +192,7 @@ export const icon = {
   announcementChart: AnnouncementChartIcon,
   archive: ArchiveIcon,
   arrowDown: ArrowDown,
+  arrowDown2: ArrowDown2,
   arrowLeft: ArrowLeftIcon,
   arrowRight: ArrowRightIcon,
   arrowRightUp: ArrowRightUp,
