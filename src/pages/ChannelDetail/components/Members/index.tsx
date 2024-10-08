@@ -3,7 +3,9 @@ import Card from 'components/Card';
 import AddChannelMembersModal from '../AddChannelMembersModal';
 import FilterMenu from 'components/FilterMenu';
 import useModal from 'hooks/useModal';
-import PeopleCard from 'pages/Users/components/People/PeopleCard';
+import PeopleCard, {
+  PeopleCardPermissionEnum,
+} from 'pages/Users/components/People/PeopleCard';
 import UsersSkeleton from 'pages/Users/components/Skeletons/UsersSkeleton';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +18,7 @@ import { useAppliedFiltersStore } from 'stores/appliedFiltersStore';
 import { FilterModalVariant } from 'components/FilterModal';
 import {
   CHANNEL_MEMBER_STATUS,
-  ChannelVisibilityEnum,
+  CHANNEL_ROLE,
   IChannel,
   IChannelRequest,
 } from '../../../../stores/channelStore';
@@ -25,7 +27,6 @@ import EntitySelector from 'components/EntitySelector';
 import RequestRow from './RequestRow';
 import { useMutation } from '@tanstack/react-query';
 import queryClient from 'utils/queryClient';
-import { useChannelRole } from 'hooks/useChannelRole';
 import { ShowingCount } from 'pages/Users/components/Teams';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import { failureToastConfig } from 'components/Toast/variants/FailureToast';
@@ -33,17 +34,24 @@ import { useInView } from 'react-intersection-observer';
 import PageLoader from 'components/PageLoader';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
+import useAuth from 'hooks/useAuth';
+import { ChannelPermissionEnum } from '../utils/channelPermission';
 
-type AppProps = {
+type MembersProp = {
   channelData: IChannel;
+  permissions: ChannelPermissionEnum[];
 };
 
-const Members: React.FC<AppProps> = ({ channelData }) => {
+const Members: React.FC<MembersProp> = ({ channelData, permissions }) => {
   const { getApi } = usePermissions();
   const { t } = useTranslation('channelDetail', { keyPrefix: 'memberTab' });
-  const { isChannelAdmin } = useChannelRole(channelData.id);
-  const { filters, clearFilters, updateFilter } = useAppliedFiltersStore();
   const [isGrid, setGrid] = useState(true);
+  const { searchParams } = useURLParams();
+  const parsedTab = searchParams.get('type');
+  const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
+    useModal(false);
+  const { user: loggedInUser } = useAuth();
+
   const filterForm = useForm<{
     search: string;
   }>({
@@ -54,22 +62,19 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
   const searchValue = watch('search');
 
   const { ref, inView } = useInView();
-
   useEffect(() => {
     if (inView) {
       fetchNextPage();
     }
   }, [inView]);
-  const { searchParams } = useURLParams();
-  const parsedTab = searchParams.get('type');
+
+  const { filters, clearFilters, updateFilter } = useAppliedFiltersStore();
   const channelRequestStatus = filters?.channelRequestStatus?.length
     ? filters?.channelRequestStatus
         ?.map((eachStatus: any) => eachStatus.id)
         .join(',')
     : CHANNEL_MEMBER_STATUS.PENDING;
 
-  const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
-    useModal(false);
   const useInfiniteChannelMembers = getApi(ApiEnum.GetChannelMembers);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteChannelMembers({
@@ -196,16 +201,15 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
         setGrid(true);
       },
     },
-    channelData?.settings?.visibility == ChannelVisibilityEnum.Private &&
-      isChannelAdmin && {
-        label: t('requests'),
-        labelClassName: 'text-xs font-medium',
-        stroke: 'text-neutral-900',
-        onClick: () => {
-          updateFilter('type', 'requests');
-          setGrid(false);
-        },
+    permissions.includes(ChannelPermissionEnum.CanManageChannelRequests) && {
+      label: t('requests'),
+      labelClassName: 'text-xs font-medium',
+      stroke: 'text-neutral-900',
+      onClick: () => {
+        updateFilter('type', 'requests');
+        setGrid(false);
       },
+    },
   ].filter(Boolean); // request options only for admin
 
   useEffect(() => {
@@ -217,12 +221,30 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
     return () => clearFilters();
   }, [parsedTab]);
 
+  const getCardPermissions = (user: any) => {
+    const peopleCardPermissions: PeopleCardPermissionEnum[] = [];
+    if (
+      permissions.includes(ChannelPermissionEnum.CanPromoteMember) &&
+      loggedInUser?.id != user.userId &&
+      user.role !== CHANNEL_ROLE.Admin
+    ) {
+      peopleCardPermissions.push(PeopleCardPermissionEnum.CanPromote);
+    }
+    if (
+      permissions.includes(ChannelPermissionEnum.CanRemoveMember) &&
+      loggedInUser?.id != user.userId
+    ) {
+      peopleCardPermissions.push(PeopleCardPermissionEnum.CanRemoveFromChannel);
+    }
+    return peopleCardPermissions;
+  };
+
   return (
     <>
       <Card className="p-8 flex flex-col gap-6">
         <div className="flex justify-between items-center">
           <p className="text-2xl font-bold text-neutral-900">{t('title')}</p>
-          {isChannelAdmin && (
+          {permissions.includes(ChannelPermissionEnum.CanAddMember) && (
             <Button
               label={t('addMemberCTA')}
               leftIcon="add"
@@ -255,8 +277,9 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
               />
             </div>
             <div className="relative">
-              {channelData?.settings?.visibility ==
-                ChannelVisibilityEnum.Private && isChannelAdmin ? (
+              {permissions.includes(
+                ChannelPermissionEnum.CanManageChannelRequests,
+              ) ? (
                 <PopupMenu
                   triggerNode={
                     <Button
@@ -310,8 +333,8 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
         {isGrid ? (
           <div className="flex gap-6 flex-wrap">
             {isLoading
-              ? [...Array(10)].map((element) => (
-                  <div key={element}>
+              ? [...Array(10)].map((_ele, index) => (
+                  <div key={`${index}-card-loading`}>
                     <UsersSkeleton />
                   </div>
                 ))
@@ -319,13 +342,12 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
 
             {users?.map((user: any) => (
               <PeopleCard
-                isChannelAdmin={isChannelAdmin}
                 isChannelPeople
-                isReadOnly={!!channelData?.member}
                 key={user.id}
                 userData={user}
                 channelId={channelData?.id}
                 showNewJoineeBadge={!isNewEntity(channelData.createdAt)}
+                permissions={getCardPermissions(user)}
               />
             ))}
           </div>
@@ -422,13 +444,14 @@ const Members: React.FC<AppProps> = ({ channelData }) => {
           </div>
         )}
       </Card>
-      {isChannelAdmin && showAddMemberModal && channelData && (
-        <AddChannelMembersModal
-          open={showAddMemberModal}
-          closeModal={closeAddMemberModal}
-          channelData={channelData}
-        />
-      )}
+      {permissions.includes(ChannelPermissionEnum.CanAddMember) &&
+        showAddMemberModal && (
+          <AddChannelMembersModal
+            open={showAddMemberModal}
+            closeModal={closeAddMemberModal}
+            channelData={channelData}
+          />
+        )}
     </>
   );
 };
