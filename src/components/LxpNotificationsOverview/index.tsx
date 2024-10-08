@@ -8,10 +8,7 @@ import Tabs from 'components/Tabs';
 import NotificationsList from './components/NotificationsList';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import LearnNotificationTab from './components/LearnNotificationTab';
-import {
-  markAllLearnNotificationsAsRead,
-  useGetLearnUnreadNotificationsCount,
-} from 'queries/learn';
+import { markAllLearnNotificationsAsRead } from 'queries/learn';
 import { NavLink } from 'react-router-dom';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
@@ -28,11 +25,7 @@ const LxpNotificationsOverview: FC = () => {
     ApiEnum.GetNotificationsUnreadCount,
   );
   const { data, isLoading, isError } = useGetUnreadNotificationsCount();
-  const {
-    data: learnCountData,
-    isLoading: learnLoading,
-    isError: learnError,
-  } = useGetLearnUnreadNotificationsCount();
+
   const viewAllRef = useRef<HTMLButtonElement>(null);
   const queryClient = useQueryClient();
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -103,19 +96,13 @@ const LxpNotificationsOverview: FC = () => {
       triggerNode={
         <div className="font-bold flex flex-row justify-center items-center p-3 border-none relative">
           {!isLoading &&
-            !learnLoading &&
             !isError &&
-            !learnError &&
-            data?.data?.result?.unread > 0 && (
+            data?.data?.result?.data?.notification_count > 0 && (
               <div className="absolute rounded-full bg-red-600 border border-white text-white antialiased text-xs font-bold leading-4 top-2 right-2.5 flex w-4 h-4 items-center justify-center">
                 {/* Get unread notif count here */}
-                {(data.data.result.unread +
-                  learnCountData?.data?.result?.data?.notification_count >
-                10
+                {(data?.data?.result?.data?.notification_count > 10
                   ? '9+'
-                  : data.data.result.unread +
-                    learnCountData?.data?.result?.data?.notification_count) ||
-                  ''}
+                  : data?.data?.result?.data?.notification_count) || ''}
               </div>
             )}
           {isLoading && (

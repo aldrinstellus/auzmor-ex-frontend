@@ -19,7 +19,7 @@ export const markNotificationAsReadById = async (id: string) => {
 
 // Get unread notifications count
 const getUnreadNotificationsCount = async () => {
-  const data = await apiService.get('/notifications/unread/count');
+  const data = await apiService.get('/notifications/counts');
   return data;
 };
 
@@ -53,6 +53,46 @@ export const useInfiniteNotifications = (q?: Record<string, any>) => {
         ? currentPage?.data?.result?.paging?.prev
         : null,
     staleTime: 0,
+  });
+};
+
+export const getLearnNotification = async ({
+  pageParam = 1,
+  queryKey,
+}: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
+  const query: any = queryKey[1];
+  const response = await apiService.get('/notifications', {
+    ...query,
+    page: pageParam,
+  });
+  const { data } = response;
+
+  const transformedData = data?.result?.data?.map((item: any) => ({
+    ...item,
+  }));
+
+  return {
+    data: {
+      result: {
+        data: transformedData,
+      },
+      nextPage: pageParam + 1,
+    },
+  };
+};
+
+export const useInfiniteLearnNotification = (query?: Record<string, any>) => {
+  return useInfiniteQuery({
+    queryKey: ['learn-notification', query],
+    queryFn: getLearnNotification,
+    getNextPageParam: (lastPage, pages) => {
+      if (lastPage?.data?.result?.data?.length === 0) {
+        return undefined; // No more data to fetch
+      }
+      const currentPage = pages.length;
+      return currentPage + 1; // Next page number
+    },
+    staleTime: 5 * 60 * 1000,
   });
 };
 

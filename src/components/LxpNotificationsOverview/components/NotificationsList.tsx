@@ -76,6 +76,7 @@ const NotificationsList = forwardRef(
     const useInfiniteNotifications = getApi(ApiEnum.GetNotifications);
     const { data, isLoading, isError } = useInfiniteNotifications({
       limit: 20,
+      category: 'LXP',
       ...(mentions ? { mentions: true } : undefined),
     });
 
