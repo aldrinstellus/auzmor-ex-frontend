@@ -14,5 +14,32 @@
   "signOut": "Sign Out",
   "account": {
     "goToProfile": "Go to My Profile"
+  },
+  "learn": {
+    "home": "Home",
+    "engage": "Engage",
+    "feed": "Feed",
+    "training": "Training",
+    "learningCenter": "Learning Center",
+    "forums": "Forums",
+    "company": "Company",
+    "analytics": "Analytics",
+    "ecommerce": "E-Commerce",
+    "courses": "Courses",
+    "paths": "Paths",
+    "events": "Events",
+    "external": "External",
+    "orders": "Orders",
+    "coupons": "Coupons",
+    "insights": "Insights",
+    "reports": "Reports",
+    "branches": "Branches",
+    "channels": "Channels",
+    "people": "People",
+    "teams": "Teams",
+    "tasks": "Tasks",
+    "mentorship": "Mentorship",
+    "myLearning": "My Learning",
+    "allTrainings": "All Trainings"
   }
 }
