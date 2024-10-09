@@ -64,7 +64,7 @@ export const fetchMyApps = async (
   const apps = getApps();
   let response = null;
   if (!!!context.pageParam) {
-    response = await apiService.get('/apps/me', context.queryKey[1]);
+    response = await apiService.get('/learner/apps', context.queryKey[1]);
   } else {
     response = await apiService.get(context.pageParam);
   }
@@ -137,7 +137,7 @@ export const fetchMyFeaturedApps = async (
   const featuredApps = getFeaturedApps();
   let response = null;
   if (!!!context.pageParam) {
-    response = await apiService.get('/apps/me', context.queryKey[1]);
+    response = await apiService.get('/learner/apps', context.queryKey[1]);
   } else {
     response = await apiService.get(context.pageParam);
   }

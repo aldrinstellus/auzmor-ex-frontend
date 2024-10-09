@@ -142,12 +142,6 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
       query.delete('visitToken');
     }
 
-    const viewAsRole = query.get('role');
-    if (viewAsRole) {
-      setItem('viewAsRole', viewAsRole);
-      query.delete('role');
-    }
-
     if (token) {
       setItem(process.env.REACT_APP_SESSION_KEY || 'uat', token);
       query.delete('accessToken');

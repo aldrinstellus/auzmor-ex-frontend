@@ -25,7 +25,8 @@ const useRole = (
   let isOwnerOrAdmin = isAdminOrSuperAdmin || user?.id === userId;
   let isMember = user?.role === UserRole.Member;
   let isAdmin = exact ? user?.role === UserRole.Admin : isAdminOrSuperAdmin;
-  let isSuperAdmin = user?.role === UserRole.Superadmin;
+  let isSuperAdmin =
+    user?.role === UserRole.Superadmin || user?.role === UserRole.PrimaryAdmin;
 
   // Used for lxp only
   const isLearner = pathname.split('/')[1] === 'user';
