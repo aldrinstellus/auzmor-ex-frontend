@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 
 import './style.css';
+import { getLearnUrl } from 'utils/misc';
 
 interface INavbarLxpProps {}
 
@@ -15,7 +16,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
     {
       id: 'home',
       label: t('learn.home'),
-      to: '/',
+      to: '/user/feed',
       icon: 'home',
       show: true,
       options: [],
@@ -23,7 +24,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
     {
       id: 'channels',
       label: t('learn.channels'),
-      to: '',
+      to: '/user/channels',
       show: true,
       icon: 'exploreOutline',
       options: [],
@@ -38,13 +39,14 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'myLearning',
           label: t('learn.myLearning'),
-          to: '/courses',
+          onClick: () => window.location.replace(`${getLearnUrl('/user')}`),
           show: true,
         },
         {
           id: 'allTrainings',
           label: t('learn.allTrainings'),
-          to: '/paths',
+          onClick: () =>
+            window.location.replace(`${getLearnUrl('/user/trainings')}`),
           show: true,
         },
       ],
@@ -59,19 +61,22 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'tasks',
           label: t('learn.tasks'),
-          to: '/tasks',
+          onClick: () =>
+            window.location.replace(`${getLearnUrl('/user/tasks')}`),
           show: true,
         },
         {
           id: 'mentorship',
           label: t('learn.mentorship'),
-          to: '/mentorship',
+          onClick: () =>
+            window.location.replace(`${getLearnUrl('/mentorship/overview')}`),
           show: true,
         },
         {
           id: 'forums',
           label: t('learn.forums'),
-          to: '/forums',
+          onClick: () =>
+            window.location.replace(`${getLearnUrl('/user/forums')}`),
           show: true,
         },
       ],
@@ -81,7 +86,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
     <div className="h-[78px] flex items-center justify-center bg-white px-14">
       <div className="w-full max-w-[1440px] flex items-center justify-between">
         <Logo />
-        <div className="flex items-center gap-[32px]">
+        <div className="flex items-center gap-[24px]">
           {navbarMenu
             .filter((item) => item.show)
             .map((item) =>
@@ -91,17 +96,19 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
                     triggerNode={
                       <div
                         tabIndex={0}
-                        className="nav-item px-[10px] py-[4px] cursor-pointer flex items-center gap-[8px] transition ease duration-150 hover:text-primary-500 multi-navitem"
+                        className="nav-item px-[10px] py-[4px] cursor-pointer flex items-center transition ease duration-150 hover:text-primary-500 multi-navitem"
                       >
                         <Icon
                           name={item.icon}
-                          size={24}
+                          size={18}
                           dataTestId={`${item.id}-collapse`}
                         />
-                        <span className="text-[15px]">{item.label}</span>
+                        <span className="text-[15px] ml-[8px]">
+                          {item.label}
+                        </span>
                         <Icon
                           name="arrowDown2"
-                          size={24}
+                          size={20}
                           dataTestId={`${item.id}-collapse`}
                         />
                       </div>
@@ -118,7 +125,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
                 >
                   <Icon
                     name={item.icon}
-                    size={24}
+                    size={item.id === 'channels' ? 22 : 18}
                     dataTestId={`${item.id}-collapse`}
                   />
                   {item.label}

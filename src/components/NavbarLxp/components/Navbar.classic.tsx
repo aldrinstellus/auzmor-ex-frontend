@@ -2,6 +2,7 @@ import { Logo } from 'components/Logo';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
+import { getLearnUrl } from 'utils/misc';
 
 interface INavbarLxpProps {}
 
@@ -11,55 +12,55 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
     {
       id: 'home',
       label: t('learn.home'),
-      to: '/',
+      to: '/user/feed',
       show: true,
     },
     {
       id: 'channels',
       label: t('learn.channels'),
-      to: '',
+      to: '/user/channels',
       show: true,
     },
     {
       id: 'myLearning',
       label: t('learn.myLearning'),
-      to: '/courses',
+      to: `${getLearnUrl('/user')}`,
       show: true,
     },
     {
       id: 'courses',
       label: t('learn.courses'),
-      to: '',
+      to: `${getLearnUrl('/user/courses')}`,
       show: true,
     },
     {
       id: 'paths',
       label: t('learn.paths'),
-      to: '',
+      to: `${getLearnUrl('/user/paths')}`,
       show: true,
     },
     {
       id: 'events',
       label: t('learn.events'),
-      to: '',
+      to: `${getLearnUrl('/user/events')}`,
       show: true,
     },
     {
       id: 'tasks',
       label: t('learn.tasks'),
-      to: '/tasks',
+      to: `${getLearnUrl('/user/tasks')}`,
       show: true,
     },
     {
       id: 'mentorship',
       label: t('learn.mentorship'),
-      to: '/mentorship',
+      to: `${getLearnUrl('/user/mentorship/overview')}`,
       show: true,
     },
     {
       id: 'forums',
       label: t('learn.forums'),
-      to: '/forums',
+      to: `${getLearnUrl('/user/forums')}`,
       show: true,
     },
   ];

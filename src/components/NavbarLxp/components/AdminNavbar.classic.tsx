@@ -195,7 +195,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
                         <span className="text-[15px]">{item.label}</span>
                         <Icon
                           name="arrowDown2"
-                          size={24}
+                          size={20}
                           dataTestId={`${item.id}-collapse`}
                         />
                       </div>
