@@ -1,9 +1,28 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 
-interface INavbarLxpProps {}
+import ModernNavbar from './components/Navbar.modern';
+import ClassicNavbar from './components/Navbar.classic';
+import useRole from 'hooks/useRole';
+import AdminNavbar from './components/AdminNavbar.classic';
 
-const NavbarLxp: FC<INavbarLxpProps> = ({}) => {
-  return <div>LXP Navbar</div>;
+interface INavbarLxpProps {
+  view: string;
+}
+
+const NavbarLxp: FC<INavbarLxpProps> = ({ view, ...rest }) => {
+  const { isOwnerOrAdmin } = useRole();
+
+  if (isOwnerOrAdmin) {
+    return <AdminNavbar />;
+  }
+
+  switch (view) {
+    case 'modern':
+      return <ModernNavbar {...rest} />;
+
+    default:
+      return <ClassicNavbar {...rest} />;
+  }
 };
 
 export default NavbarLxp;

@@ -6,6 +6,7 @@ import UsersIcon from '../components/Users';
 import HomeIcon from '../components/Home';
 import FeedIcon from '../components/Feed';
 import ArrowDown from '../components/ArrowDown';
+import ArrowDown2 from '../components/ArrowDown2';
 import ClockIcon from '../components/Clock';
 import FilterIcon from '../components/Filter';
 import MoreIcon from '../components/More';
@@ -183,6 +184,8 @@ import DeelIcon from '../components/Deel/DeelIcon';
 import MinusCircle from '../components/MinusCircle';
 import DeelIcon2 from '../components/DeelIcon2/DeelIcon2';
 import RestInPeaceIcon from '../components/RestInPeace';
+import TrainingIcon from '../components/Training';
+import LearningCenterIcon from '../components/LearningCenter';
 
 export const icon = {
   add: Add,
@@ -191,6 +194,7 @@ export const icon = {
   announcementChart: AnnouncementChartIcon,
   archive: ArchiveIcon,
   arrowDown: ArrowDown,
+  arrowDown2: ArrowDown2,
   arrowLeft: ArrowLeftIcon,
   arrowRight: ArrowRightIcon,
   arrowRightUp: ArrowRightUp,
@@ -280,6 +284,7 @@ export const icon = {
   insightfulReaction: InsightfulReaction,
   integration: Integration,
   launcher: LauncherIcon,
+  learningCenter: LearningCenterIcon,
   lifeBuoy: LifeBuoyIcon,
   like: Like,
   likeIcon: LikeIcon,
@@ -352,6 +357,7 @@ export const icon = {
   threeDots: ThreeDots,
   tickCircle: TickCircleIcon,
   trash: Trash,
+  training: TrainingIcon,
   'user-tag': UserTagIcon,
   userAdmin: UserAdminIcon,
   userManagement: UserManagement,
