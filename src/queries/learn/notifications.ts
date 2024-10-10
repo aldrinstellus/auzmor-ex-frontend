@@ -94,7 +94,7 @@ export const useInfiniteNotifications = (query?: Record<string, any>) => {
 };
 export const useInfiniteNotificationsLearner = (q?: Record<string, any>) => {
   return useInfiniteQuery({
-    queryKey: ['notifications-page', q],
+    queryKey: ['get-learner-notifications', q],
     queryFn: (context) => fetchNotifications(context, '/learner'),
     getNextPageParam: (lastPage: any) =>
       lastPage?.data?.result?.data?.length >= q?.limit

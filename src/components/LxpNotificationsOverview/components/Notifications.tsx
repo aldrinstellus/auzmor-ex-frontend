@@ -44,6 +44,7 @@ const Notifications: FC<Notifications> = ({ isSocial = false }) => {
       queryClient.invalidateQueries(['get-notifications']);
       queryClient.invalidateQueries(['unread-count']);
       queryClient.refetchQueries(['notifications-page']);
+      queryClient.refetchQueries(['get-learner-notifications']);
     },
     onError: (response) => {
       console.log(

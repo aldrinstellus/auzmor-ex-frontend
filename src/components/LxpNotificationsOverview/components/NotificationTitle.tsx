@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { getLearnUrl } from 'utils/misc';
 import NotificationText from './NotificationText';
 
@@ -10,6 +10,7 @@ const NotificationTitle = ({
   components,
   isLxpRoute,
 }: any) => {
+  const { t } = useTranslation('learnNotifications');
   const navigate = useNavigate();
   const handleClick = () => {
     if (isLxpRoute) {
@@ -22,7 +23,12 @@ const NotificationTitle = ({
   return (
     <div className={`${linkTo ? 'cursor-pointer' : ''}`} onClick={handleClick}>
       <NotificationText as="p">
-        <Trans i18nKey={i18nKey} values={values} components={components} />
+        <Trans
+          i18nKey={i18nKey}
+          t={t}
+          values={values}
+          components={components}
+        />
       </NotificationText>
     </div>
   );
