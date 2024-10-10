@@ -18,3 +18,8 @@ export * from './ExpiryReminder';
 export * from './ThumbsUpNotification';
 export * from './FeedbackPending';
 export * from './PollNotification';
+export * from './TaskUpdateNotification';
+export * from './FlagNotificationIcon';
+export * from './MentionNotificationIcon';
+export * from './ReplyNotificationIcon';
+export * from './HeartNotificationIcon';
