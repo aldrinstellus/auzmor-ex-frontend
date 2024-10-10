@@ -1,13 +1,45 @@
+import clsx from 'clsx';
+import Icon from 'components/Icon';
 import { Logo } from 'components/Logo';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { getLearnUrl } from 'utils/misc';
 
 interface INavbarLxpProps {}
 
 const Navbar: FC<INavbarLxpProps> = ({}) => {
   const { t } = useTranslation('navbar');
+  const { pathname } = useLocation();
+
+  const backBtn = {
+    show: false,
+    linkTo: '',
+    label: '',
+    for: '',
+  };
+
+  switch (pathname) {
+    case '/user/apps':
+      backBtn.show = true;
+      backBtn.linkTo = '/user/feed';
+      backBtn.label = t('learn.backToFeed');
+      backBtn.for = t('learn.appLauncher');
+      break;
+    case '/apps':
+      backBtn.show = true;
+      backBtn.linkTo = '/feed';
+      backBtn.label = t('learn.backToFeed');
+      backBtn.for = t('learn.appLauncher');
+      break;
+    case '/user/teams':
+      backBtn.show = true;
+      backBtn.linkTo = '/user/feed';
+      backBtn.label = t('learn.backToFeed');
+      backBtn.for = t('learn.myTeams');
+      break;
+  }
+
   const navbarMenu = [
     {
       id: 'home',
@@ -64,23 +96,52 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
       show: true,
     },
   ];
+
+  const optionWrapperStyle = clsx({
+    'w-full max-w-[1440px] flex items-center': true,
+    'justify-between': backBtn.show,
+  });
+
   return (
-    <div className="h-[78px] flex items-center justify-center bg-white px-14">
-      <div className="w-full max-w-[1440px] flex items-center">
-        <Logo />
-        <div className="ml-[26px] flex items-center gap-[16px]">
-          {navbarMenu
-            .filter((item) => item.show)
-            .map((item) => (
-              <NavLink
-                to={item.to}
-                key={item.id}
-                className="nav-item text-[15px] px-[10px] py-[4px] gap-[8px] transition ease duration-150 hover:text-primary-500 flex items-center"
-              >
-                {item.label}
-              </NavLink>
-            ))}
+    <div className="h-[78px] flex items-center justify-center bg-white px-14 sticky top-0 w-full z-50">
+      <div className={optionWrapperStyle}>
+        <div className="flex items-center gap-2">
+          <Logo />
+          {backBtn.show && (
+            <div className="text-neutral-900 text-base font-bold">
+              {backBtn.for}
+            </div>
+          )}
         </div>
+        {!backBtn.show && (
+          <div className="ml-[26px] flex items-center gap-[16px]">
+            {navbarMenu
+              .filter((item) => item.show)
+              .map((item) => (
+                <NavLink
+                  to={item.to}
+                  key={item.id}
+                  className="nav-item text-[15px] px-[10px] py-[4px] gap-[8px] transition ease duration-150 hover:text-primary-500 flex items-center"
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+          </div>
+        )}
+        {backBtn.show && (
+          <NavLink
+            to={backBtn.linkTo}
+            key={'backBtnNavbarClassic'}
+            className={`nav-item text-[15px] gap-[8px] transition ease duration-150 hover:text-primary-500 flex items-center px-4 py-2 border rounded-17xl`}
+          >
+            <Icon
+              name={'arrowLeft'}
+              size={18}
+              dataTestId={`backBtnNavbarClassicIcon`}
+            />
+            {backBtn.label}
+          </NavLink>
+        )}
       </div>
     </div>
   );

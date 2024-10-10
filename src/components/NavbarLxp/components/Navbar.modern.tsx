@@ -3,7 +3,7 @@ import { Logo } from 'components/Logo';
 import PopupMenu from 'components/PopupMenu';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
 import './style.css';
 import { getLearnUrl } from 'utils/misc';
@@ -12,6 +12,36 @@ interface INavbarLxpProps {}
 
 const Navbar: FC<INavbarLxpProps> = ({}) => {
   const { t } = useTranslation('navbar');
+  const { pathname } = useLocation();
+
+  const backBtn = {
+    show: false,
+    linkTo: '',
+    label: '',
+    for: '',
+  };
+
+  switch (pathname) {
+    case '/user/apps':
+      backBtn.show = true;
+      backBtn.linkTo = '/user/feed';
+      backBtn.label = t('learn.backToFeed');
+      backBtn.for = t('learn.appLauncher');
+      break;
+    case '/apps':
+      backBtn.show = true;
+      backBtn.linkTo = '/feed';
+      backBtn.label = t('learn.backToFeed');
+      backBtn.for = t('learn.appLauncher');
+      break;
+    case '/user/teams':
+      backBtn.show = true;
+      backBtn.linkTo = '/user/feed';
+      backBtn.label = t('learn.backToFeed');
+      backBtn.for = t('learn.myTeams');
+      break;
+  }
+
   const navbarMenu = [
     {
       id: 'home',
@@ -83,56 +113,80 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
     },
   ];
   return (
-    <div className="h-[78px] flex items-center justify-center bg-white px-14">
+    <div className="h-[78px] flex items-center justify-center bg-white px-14 sticky top-0 w-full z-50">
       <div className="w-full max-w-[1440px] flex items-center justify-between">
-        <Logo />
-        <div className="flex items-center gap-[24px]">
-          {navbarMenu
-            .filter((item) => item.show)
-            .map((item) =>
-              item.options.length > 0 ? (
-                <div className="relative" key={item.id}>
-                  <PopupMenu
-                    triggerNode={
-                      <div
-                        tabIndex={0}
-                        className="nav-item px-[10px] py-[4px] cursor-pointer flex items-center transition ease duration-150 hover:text-primary-500 multi-navitem"
-                      >
-                        <Icon
-                          name={item.icon}
-                          size={18}
-                          dataTestId={`${item.id}-collapse`}
-                        />
-                        <span className="text-[15px] ml-[8px]">
-                          {item.label}
-                        </span>
-                        <Icon
-                          name="arrowDown2"
-                          size={20}
-                          dataTestId={`${item.id}-collapse`}
-                        />
-                      </div>
-                    }
-                    menuItems={item.options}
-                    className="mt-1 right-0 border-1 border-neutral-200 focus-visible:outline-none"
-                  />
-                </div>
-              ) : (
-                <NavLink
-                  to={item.to}
-                  key={item.id}
-                  className="nav-item text-[15px] px-[10px] py-[4px] gap-[8px] transition ease duration-150 hover:text-primary-500 flex items-center"
-                >
-                  <Icon
-                    name={item.icon}
-                    size={item.id === 'channels' ? 22 : 18}
-                    dataTestId={`${item.id}-collapse`}
-                  />
-                  {item.label}
-                </NavLink>
-              ),
-            )}
+        <div className="flex items-center gap-2">
+          <Logo />
+          {backBtn.show && (
+            <div className="text-neutral-900 text-base font-bold">
+              {backBtn.for}
+            </div>
+          )}
         </div>
+        {!backBtn.show && (
+          <div className="flex items-center gap-[24px]">
+            {navbarMenu
+              .filter((item) => item.show)
+              .map((item) =>
+                item.options.length > 0 ? (
+                  <div className="relative" key={item.id}>
+                    <PopupMenu
+                      triggerNode={
+                        <div
+                          tabIndex={0}
+                          className="nav-item px-[10px] py-[4px] cursor-pointer flex items-center transition ease duration-150 hover:text-primary-500 multi-navitem"
+                        >
+                          <Icon
+                            name={item.icon}
+                            size={18}
+                            dataTestId={`${item.id}-collapse`}
+                          />
+                          <span className="text-[15px] ml-[8px]">
+                            {item.label}
+                          </span>
+                          <Icon
+                            name="arrowDown2"
+                            size={20}
+                            dataTestId={`${item.id}-collapse`}
+                          />
+                        </div>
+                      }
+                      menuItems={item.options}
+                      className="mt-1 right-0 border-1 border-neutral-200 focus-visible:outline-none"
+                    />
+                  </div>
+                ) : (
+                  <NavLink
+                    to={item.to}
+                    key={item.id}
+                    className={`nav-item text-[15px] px-[10px] py-[4px] gap-[8px] transition ease duration-150 hover:text-primary-500 flex items-center`}
+                  >
+                    <Icon
+                      name={item.icon}
+                      size={item.id === 'channels' ? 22 : 18}
+                      dataTestId={`${item.id}-collapse`}
+                    />
+                    {item.label}
+                  </NavLink>
+                ),
+              )}
+          </div>
+        )}
+
+        {backBtn.show && (
+          <NavLink
+            to={backBtn.linkTo}
+            key={'backBtnNavbarModern'}
+            className={`nav-item text-[15px] gap-[8px] transition ease duration-150 hover:text-primary-500 flex items-center px-4 py-2 border rounded-17xl`}
+          >
+            <Icon
+              name={'arrowLeft'}
+              size={18}
+              dataTestId={`backBtnNavbarModernIcon`}
+            />
+            {backBtn.label}
+          </NavLink>
+        )}
       </div>
     </div>
   );

@@ -40,6 +40,9 @@
     "tasks": "Tasks",
     "mentorship": "Mentorship",
     "myLearning": "My Learning",
-    "allTrainings": "All Trainings"
+    "allTrainings": "All Trainings",
+    "backToFeed": "Back to Feed",
+    "appLauncher": "App Launcher",
+    "myTeams": "My Teams"
   }
 }

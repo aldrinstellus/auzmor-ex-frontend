@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useNavigate from 'hooks/useNavigation';
 
@@ -9,12 +9,36 @@ import Icon from 'components/Icon';
 import './style.css';
 import PopupMenu from 'components/PopupMenu';
 import { getLearnUrl } from 'utils/misc';
+import { clsx } from 'clsx';
 
 interface INavbarLxpProps {}
 
 const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
   const { t } = useTranslation('navbar');
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const backBtn = {
+    show: false,
+    linkTo: '',
+    label: '',
+    for: '',
+  };
+
+  switch (pathname) {
+    case '/user/apps':
+      backBtn.show = true;
+      backBtn.linkTo = '/user/feed';
+      backBtn.label = t('learn.backToFeed');
+      backBtn.for = t('learn.appLauncher');
+      break;
+    case '/apps':
+      backBtn.show = true;
+      backBtn.linkTo = '/feed';
+      backBtn.label = t('learn.backToFeed');
+      backBtn.for = t('learn.appLauncher');
+      break;
+  }
 
   const navbarMenu = [
     {
@@ -176,45 +200,73 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
     },
   ];
 
+  const optionWrapperStyle = clsx({
+    'w-full max-w-[1440px] flex items-center': true,
+    'justify-between': backBtn.show,
+  });
+
   return (
-    <div className="h-[78px] flex items-center justify-center bg-white px-14">
-      <div className="w-full max-w-[1440px] flex items-center">
-        <Logo />
-        <div className="ml-[26px] flex items-center gap-[16px]">
-          {navbarMenu
-            .filter((item) => item.show)
-            .map((item) =>
-              item.options.length > 0 ? (
-                <div className="relative" key={item.id}>
-                  <PopupMenu
-                    triggerNode={
-                      <div
-                        tabIndex={0}
-                        className="px-[10px] py-[4px] cursor-pointer flex items-center transition ease duration-150 hover:text-primary-500 multi-navitem"
-                      >
-                        <span className="text-[15px]">{item.label}</span>
-                        <Icon
-                          name="arrowDown2"
-                          size={20}
-                          dataTestId={`${item.id}-collapse`}
-                        />
-                      </div>
-                    }
-                    menuItems={item.options}
-                    className="mt-1 right-0 border-1 border-neutral-200 focus-visible:outline-none"
-                  />
-                </div>
-              ) : (
-                <NavLink
-                  to={item.to}
-                  key={item.id}
-                  className="text-[15px] px-[10px] py-[4px] transition ease duration-150 hover:text-primary-500"
-                >
-                  {item.label}
-                </NavLink>
-              ),
-            )}
+    <div className="h-[78px] flex items-center justify-center bg-white px-14 sticky top-0 w-full z-50">
+      <div className={optionWrapperStyle}>
+        <div className="flex items-center gap-2">
+          <Logo />
+          {backBtn.show && (
+            <div className="text-neutral-900 text-base font-bold">
+              {backBtn.for}
+            </div>
+          )}
         </div>
+        {!backBtn.show && (
+          <div className="ml-[26px] flex items-center gap-[16px]">
+            {navbarMenu
+              .filter((item) => item.show)
+              .map((item) =>
+                item.options.length > 0 ? (
+                  <div className="relative" key={item.id}>
+                    <PopupMenu
+                      triggerNode={
+                        <div
+                          tabIndex={0}
+                          className="px-[10px] py-[4px] cursor-pointer flex items-center transition ease duration-150 hover:text-primary-500 multi-navitem"
+                        >
+                          <span className="text-[15px]">{item.label}</span>
+                          <Icon
+                            name="arrowDown2"
+                            size={20}
+                            dataTestId={`${item.id}-collapse`}
+                          />
+                        </div>
+                      }
+                      menuItems={item.options}
+                      className="mt-1 right-0 border-1 border-neutral-200 focus-visible:outline-none"
+                    />
+                  </div>
+                ) : (
+                  <NavLink
+                    to={item.to}
+                    key={item.id}
+                    className="text-[15px] px-[10px] py-[4px] transition ease duration-150 hover:text-primary-500"
+                  >
+                    {item.label}
+                  </NavLink>
+                ),
+              )}
+          </div>
+        )}
+        {backBtn.show && (
+          <NavLink
+            to={backBtn.linkTo}
+            key={'backBtnAdminNavbarClassic'}
+            className={`nav-item text-[15px] gap-[8px] transition ease duration-150 hover:text-primary-500 flex items-center px-4 py-2 border rounded-17xl`}
+          >
+            <Icon
+              name={'arrowLeft'}
+              size={18}
+              dataTestId={`backBtnAdminNavbarClassicIcon`}
+            />
+            {backBtn.label}
+          </NavLink>
+        )}
       </div>
     </div>
   );
