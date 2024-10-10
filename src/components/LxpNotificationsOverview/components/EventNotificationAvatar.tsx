@@ -27,7 +27,7 @@ const EventNotificationAvatar: React.FC<EventNotificationAvatarProps> = ({
             name={name || ''}
             image={userImageUrl}
             size={50}
-            className={`bg-${profileColor}`}
+            bgColor={profileColor}
           />
           <div className="absolute z-50 rounded-full cursor-pointer bottom-0 right-0 -mr-2 -mb-2">
             <Icon name={getIconForAction(actionType) || ''} />
