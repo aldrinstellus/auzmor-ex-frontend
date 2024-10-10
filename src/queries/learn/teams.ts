@@ -24,6 +24,27 @@ export const mapTeam = (team: any) =>
     totalMembers: team.members_count,
   } as ITeam);
 
+export const mapTeamMember = (member: any, teamId: string) => ({
+  id: member.id,
+  member: {
+    fullName: member.full_name,
+    designation: {
+      name: member.designation,
+    },
+    department: null,
+    workLocation: null,
+    profileImage: {
+      original: member.image_url,
+    },
+    status: member.status,
+    userId: member.id,
+    email: member.email,
+  },
+  team: teamId,
+  createdAt: member.created_at,
+  updatedAt: member.updated_at,
+});
+
 export const getAllTeams = async ({
   pageParam = null,
   queryKey,
@@ -57,7 +78,7 @@ export const getTeamMembers = async (
 ) => {
   let response = null;
   if (pageParam === null) {
-    response = await apiService.get(`/teams/members/${id}`, queryKey[1]);
+    response = await apiService.get(`/teams/${id}/users`, queryKey[1]);
   } else {
     response = await apiService.get(pageParam);
   }
@@ -67,7 +88,9 @@ export const getTeamMembers = async (
       ...response.data,
       result: {
         ...response.data.result,
-        data: response.data.result.data.map(mapTeam),
+        data: response.data.result.data.map((member: any) =>
+          mapTeamMember(member, id),
+        ),
       },
     },
   };
@@ -83,7 +106,7 @@ export const getTeam = async (id: string) => {
       ...data.data,
       result: {
         ...data.data.result,
-        data: data.data.result.data.map(mapTeam),
+        data: mapTeam(data.data.result.data),
       },
     },
   };
