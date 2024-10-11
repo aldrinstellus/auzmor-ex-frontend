@@ -20,7 +20,20 @@ export const mapTeam = (team: any) =>
     id: team.id,
     name: team.name,
     orgId: team?.orgId,
-    recentMembers: team.recent_users,
+    recentMembers: team.recent_users?.map((member: any) => ({
+      fullName: member.full_name,
+      designation: {
+        name: member.designation,
+      },
+      department: null,
+      workLocation: null,
+      profileImage: {
+        original: member.image_url,
+      },
+      status: member.status,
+      userId: member.id,
+      email: member.email,
+    })),
     totalMembers: team.members_count,
   } as ITeam);
 
@@ -51,7 +64,9 @@ export const getAllTeams = async ({
 }: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
   let response = null;
   if (pageParam === null) {
-    response = await apiService.get('/teams', queryKey[1]);
+    const { userId, ...q } = queryKey[1] as Record<string, any>;
+    if (userId) response = await apiService.get(`/users/teams`, q);
+    else response = await apiService.get('/teams', q);
   } else {
     response = await apiService.get(pageParam);
   }
@@ -78,7 +93,7 @@ export const getTeamMembers = async (
 ) => {
   let response = null;
   if (pageParam === null) {
-    response = await apiService.get(`/teams/${id}/users`, queryKey[1]);
+    response = await apiService.get(`users/teams/${id}/users`, queryKey[1]);
   } else {
     response = await apiService.get(pageParam);
   }
@@ -99,7 +114,7 @@ export const getTeamMembers = async (
 
 // get team by id -> teams/:id
 export const getTeam = async (id: string) => {
-  const data = await apiService.get(`/teams/${id}`, {});
+  const data = await apiService.get(`users/teams/${id}`, {});
   const mappedData = {
     ...data,
     data: {
