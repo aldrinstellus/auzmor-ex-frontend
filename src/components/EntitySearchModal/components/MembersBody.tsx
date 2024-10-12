@@ -125,7 +125,7 @@ const MembersBody: FC<IMembersBodyProps> = ({
     departmentSearch || '',
     500,
   );
-  const useInfiniteDepartments = getApi(ApiEnum.GetDepartments);
+  const useInfiniteDepartments = getApi(ApiEnum.GetDepartments) || (() => ({}));
   const {
     data: fetchedDepartments,
     isLoading: departmentLoading,
@@ -134,20 +134,24 @@ const MembersBody: FC<IMembersBodyProps> = ({
     hasNextPage: hasNextDepartmentPage,
   } = useInfiniteDepartments({
     q: debouncedDepartmentSearchValue,
-  });
-  const departmentData = fetchedDepartments?.pages.flatMap((page: any) => {
-    return page?.data?.result?.data.map((department: IDepartmentAPI) => {
-      try {
-        return department;
-      } catch (e) {
-        console.log('Error', { department });
-      }
-    });
-  });
+  }) || {};
+  const departmentData =
+    fetchedDepartments?.pages?.flatMap((page: any) => {
+      return (
+        page?.data?.result?.data?.map((department: IDepartmentAPI) => {
+          try {
+            return department;
+          } catch (e) {
+            console.log('Error', { department });
+            return null;
+          }
+        }) || []
+      );
+    }) || [];
 
   // fetch location from search input
   const debouncedLocationSearchValue = useDebounce(locationSearch || '', 500);
-  const useInfiniteLocations = getApi(ApiEnum.GetLocations);
+  const useInfiniteLocations = getApi(ApiEnum.GetLocations) || (() => ({}));
   const {
     data: fetchedLocations,
     isLoading: locationLoading,
@@ -156,23 +160,27 @@ const MembersBody: FC<IMembersBodyProps> = ({
     hasNextPage: hasNextLocationPage,
   } = useInfiniteLocations({
     q: debouncedLocationSearchValue,
-  });
-  const locationData = fetchedLocations?.pages.flatMap((page: any) => {
-    return page.data.result.data.map((location: ILocationAPI) => {
-      try {
-        return location;
-      } catch (e) {
-        console.log('Error', { location });
-      }
-    });
-  });
+  }) || {};
+  const locationData =
+    fetchedLocations?.pages.flatMap((page: any) => {
+      return (
+        page.data.result.data.map((location: ILocationAPI) => {
+          try {
+            return location;
+          } catch (e) {
+            console.log('Error', { location });
+          }
+        }) || []
+      );
+    }) || [];
 
   // fetch designation from search input
   const debouncedDesignationSearchValue = useDebounce(
     designationSearch || '',
     500,
   );
-  const useInfiniteDesignations = getApi(ApiEnum.GetDesignations);
+  const useInfiniteDesignations =
+    getApi(ApiEnum.GetDesignations) || (() => ({}));
   const {
     data: fetchedDesignations,
     isLoading: designationLoading,
@@ -184,16 +192,19 @@ const MembersBody: FC<IMembersBodyProps> = ({
       q: debouncedDesignationSearchValue,
     },
     startFetching: !!showJobTitleFilter,
-  });
-  const designationData = fetchedDesignations?.pages.flatMap((page: any) => {
-    return page.data.result.data.map((designation: IDesignationAPI) => {
-      try {
-        return designation;
-      } catch (e) {
-        console.log('Error', { designation });
-      }
-    });
-  });
+  }) || {};
+  const designationData =
+    fetchedDesignations?.pages.flatMap((page: any) => {
+      return (
+        page.data.result.data.map((designation: IDesignationAPI) => {
+          try {
+            return designation;
+          } catch (e) {
+            console.log('Error', { designation });
+          }
+        }) || []
+      );
+    }) || [];
 
   const { ref, inView } = useInView({
     root: document.getElementById('entity-search-members-body'),
