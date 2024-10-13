@@ -6,10 +6,8 @@ import Button, { Variant as ButtonVariant } from 'components/Button';
 import Icon from 'components/Icon';
 import clsx from 'clsx';
 import { channelCoverImages, channelCoverLogo } from './utils/ChannelImages';
-import { useUpload } from 'hooks/useUpload';
 import { useMutation } from '@tanstack/react-query';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
-import { EntityType } from 'interfaces';
 import queryClient from 'utils/queryClient';
 import { toBlob } from 'html-to-image';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +29,7 @@ const ChannelImageModal: FC<AppProps> = ({
   isCoverImg,
 }) => {
   const { getApi } = usePermissions();
+  const uploadLearnMedia = getApi(ApiEnum.UploadImage);
   const channelImages = isCoverImg ? channelCoverImages : channelCoverLogo;
   const [selectedImageId, setSelectedImageId] = useState<number>(0);
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -61,8 +60,6 @@ const ChannelImageModal: FC<AppProps> = ({
       }
     },
   });
-
-  const { uploadMedia } = useUpload();
   const uploadMediaFn = async () => {
     setIsFile(true);
     if (isCoverImg) {
@@ -83,15 +80,14 @@ const ChannelImageModal: FC<AppProps> = ({
               const file = new File([blob], 'cover.png', {
                 type: blob.type,
               });
+              const formData = new FormData();
+              formData.append('url', file);
+              const res = await uploadLearnMedia(formData);
+              const uploadedFile = res.result?.data?.url;
 
-              const profileImageUploadResponse = await uploadMedia(
-                [file],
-                EntityType.UserCoverImage,
-              );
-
-              if (profileImageUploadResponse) {
+              if (uploadedFile) {
                 updateChannelMutation.mutate({
-                  bannerUrl: profileImageUploadResponse[0].original,
+                  bannerUrl: uploadedFile,
                 });
               }
             }
@@ -109,18 +105,17 @@ const ChannelImageModal: FC<AppProps> = ({
         });
 
         if (newFile) {
-          const profileImageUploadResponse = await uploadMedia(
-            [
-              new File([newFile], 'logo.png', {
-                type: newFile.type,
-              }),
-            ],
-            EntityType.UserProfileImage,
-          );
+          const file = new File([newFile], 'icon.png', {
+            type: newFile.type,
+          });
+          const formData = new FormData();
+          formData.append('url', file);
+          const res = await uploadLearnMedia(formData);
+          const uploadedFile = res.result?.data?.url;
 
-          if (profileImageUploadResponse) {
+          if (uploadedFile) {
             updateChannelMutation.mutate({
-              displayImageUrl: profileImageUploadResponse[0].original,
+              displayImageUrl: uploadedFile,
             });
           }
         }
