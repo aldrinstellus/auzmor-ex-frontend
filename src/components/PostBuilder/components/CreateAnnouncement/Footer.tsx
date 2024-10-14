@@ -15,6 +15,7 @@ import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
+import useProduct from 'hooks/useProduct';
 
 export interface IFooterProps {
   handleSubmit: UseFormHandleSubmit<FieldValues>;
@@ -33,6 +34,7 @@ const Footer: FC<IFooterProps> = ({
   data,
 }) => {
   const { getApi } = usePermissions();
+  const { isLxp } = useProduct();
   const preIsAnnouncement = data?.isAnnouncement;
   const getPost = useFeedStore((state) => state.getPost);
   const updateFeed = useFeedStore((state) => state.updateFeed);
@@ -64,9 +66,16 @@ const Footer: FC<IFooterProps> = ({
   };
 
   const updatePost = getApi(ApiEnum.UpdatePost);
+  const markAsAnnouncement = getApi(ApiEnum.MarkAsAnnouncement);
   const makePostAnnouncementMutation = useMutation({
     mutationKey: ['makePostAnnouncementMutation', data?.id],
     mutationFn: (endDate: string) => {
+      if (isLxp)
+        return markAsAnnouncement(data!.id!, {
+          announcement: {
+            end: endDate,
+          },
+        });
       return updatePost(data!.id!, {
         ...data,
         type: data?.type || PostType.Update,

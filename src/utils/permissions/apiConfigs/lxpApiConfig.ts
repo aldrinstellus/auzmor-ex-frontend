@@ -115,6 +115,7 @@ export const apiConfigLxp = {
   [ApiEnum.UploadImage]: { [Default]: queries.uploadImage },
 
   //posts
+  [ApiEnum.MarkAsAnnouncement]: { [Default]: queries.markAsAnnouncement },
   [ApiEnum.GetPost]: {
     [Default]: queries.useGetPost,
     [Learner]: queries.useGetLearnerPost,

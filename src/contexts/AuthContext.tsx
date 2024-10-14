@@ -169,7 +169,7 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
         ) {
           setLoggedIn(true);
           setUser({
-            id: data?.id,
+            id: String(data?.id),
             name: data?.fullName,
             email: data?.workEmail,
             role: data?.role,
@@ -181,7 +181,7 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
             profileImage:
               data?.profileImage?.small || data?.profileImage?.original,
             permissions: data?.permissions,
-            timezone: data?.timeZone,
+            timezone: String(data?.timeZone),
             department: data?.department,
             workLocation: data?.workLocation,
             outOfOffice: data?.outOfOffice,

@@ -18,6 +18,13 @@ export const createPostLearner = async (payload: IPostPayload) => {
   const data = await apiService.post('/learner/feed', payload);
   return data;
 };
+export const markAsAnnouncement = async (id: string, payload: IPostPayload) => {
+  const data = await apiService.post(
+    `/feed/${id}/mark_as_announcement`,
+    payload,
+  );
+  return data;
+};
 
 export const updatePost = async (id: string, payload: IPostPayload) => {
   const fileIds = payload.files
@@ -303,7 +310,7 @@ export const fetchAnnouncements = async (
   // Fetching data
   if (!!!context.pageParam) {
     response = await apiService.get(
-      `/feed/announcements?limit=10`,
+      `/feed/announcements?limit=10&acknowledged=true`,
       context.queryKey[1],
     );
   } else {

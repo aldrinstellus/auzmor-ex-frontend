@@ -80,7 +80,8 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
 
   const useAnnouncementsWidget = getApi(ApiEnum.GetAnnouncementPosts);
   const { data, isLoading } = useAnnouncementsWidget(
-    { limit: limit },
+    { limit: limit, acknowledged: true },
+
     queryKey,
   );
 
