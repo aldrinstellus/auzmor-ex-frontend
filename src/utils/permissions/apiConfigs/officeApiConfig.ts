@@ -141,6 +141,7 @@ export const apiConfigOffice = {
   [ApiEnum.ValidateToken]: { [Default]: queries.useTokenValidation },
 
   //posts
+  [ApiEnum.MarkAsAnnouncement]: { [Default]: queries.updatePost },
   [ApiEnum.GetPost]: { [Default]: queries.useGetPost },
   [ApiEnum.CreatePost]: { [Default]: queries.createPost },
   [ApiEnum.UpdatePost]: { [Default]: queries.updatePost },

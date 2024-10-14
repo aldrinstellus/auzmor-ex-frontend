@@ -19,10 +19,10 @@ export const createPostLearner = async (payload: IPostPayload) => {
   return data;
 };
 export const markAsAnnouncement = async (id: string, payload: IPostPayload) => {
-  const data = await apiService.post(
-    `/feed/${id}/mark_as_announcement`,
-    payload,
-  );
+  const { announcement } = payload;
+  const data = await apiService.post(`/feed/${id}/mark_as_announcement`, {
+    announcement: announcement,
+  });
   return data;
 };
 
@@ -65,21 +65,23 @@ export const deletePostLearner = async (id: string) => {
   return data;
 };
 
-export const fetchAnnouncement = async (q: Record<string, any>) => {
-  const { data } = await apiService.get(`/feed/announcements`, q);
+export const fetchAnnouncement = async (limit: number) => {
+  const { data } = await apiService.get(`/feed/announcements`, {
+    limit: limit,
+    acknowledged: true,
+  });
   return data;
 };
 
 export const useAnnouncementsWidget = (
-  q: Record<string, any>,
+  limit = 1,
   queryKey = 'feed-announcements-widget',
 ) =>
   useQuery({
-    queryKey: [queryKey, q],
-    queryFn: () => fetchAnnouncement(q),
+    queryKey: [queryKey],
+    queryFn: () => fetchAnnouncement(limit),
     staleTime: 15 * 60 * 1000,
   });
-
 const collectComments = (response: any, comments: IComment[]) => {
   response?.data.result.data.forEach((eachPost: IPost) => {
     const postComments = eachPost.relevantComments || [];

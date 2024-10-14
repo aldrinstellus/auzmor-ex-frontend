@@ -50,18 +50,24 @@ export const deletePost = async (id: string) => {
   return data;
 };
 
-export const fetchAnnouncement = async (q: Record<string, any>) => {
-  const { data } = await apiService.get(`/feed/announcements`, q);
+export const fetchAnnouncement = async (
+  postType: string,
+  limit: number,
+  excludeMyAnnouncements = true,
+) => {
+  const data = await apiService.get(
+    `/posts?feed=${postType}&excludeMyAnnouncements=${excludeMyAnnouncements}&limit=${limit}`,
+  );
   return data;
 };
 
 export const useAnnouncementsWidget = (
-  q: Record<string, any>,
+  limit = 1,
   queryKey = 'feed-announcements-widget',
 ) =>
   useQuery({
-    queryKey: [queryKey, q],
-    queryFn: () => fetchAnnouncement(q),
+    queryKey: [queryKey],
+    queryFn: () => fetchAnnouncement('ANNOUNCEMENT', limit),
     staleTime: 15 * 60 * 1000,
   });
 
