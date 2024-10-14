@@ -123,6 +123,7 @@ export enum ApiEnum {
   CreatePost = 'CREATE_POST',
   UpdatePost = 'UPDATE_POST',
   DeletePost = 'DELETE_POST',
+  MarkAsAnnouncement = 'MARK_AS_ANNOUNCEMENT',
 
   AcknowledgeAccouncement = 'ACKNOWLEDGE_ANNOUNCEMENT',
   GetPostAcknowledgements = 'GET_POST_ACKNOWLEDGEMENTS',

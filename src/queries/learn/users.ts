@@ -54,7 +54,7 @@ export const fetchMe = async () => {
     message: data?.message,
     result: {
       data: {
-        id: user?.id,
+        id: String(user?.id),
         fullName: user?.full_name,
         workEmail: user?.email,
         role: user?.role,

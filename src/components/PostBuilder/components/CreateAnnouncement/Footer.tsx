@@ -63,11 +63,11 @@ const Footer: FC<IFooterProps> = ({
     makePostAnnouncementMutation.mutate(getSelectedAnnouncement(data).value);
   };
 
-  const updatePost = getApi(ApiEnum.UpdatePost);
+  const markAsAnnouncement = getApi(ApiEnum.MarkAsAnnouncement);
   const makePostAnnouncementMutation = useMutation({
     mutationKey: ['makePostAnnouncementMutation', data?.id],
     mutationFn: (endDate: string) => {
-      return updatePost(data!.id!, {
+      return markAsAnnouncement(data!.id!, {
         ...data,
         type: data?.type || PostType.Update,
         isAnnouncement: true,

@@ -79,10 +79,7 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
   const showCreateAnnouncement = isAdmin && !!openModal;
 
   const useAnnouncementsWidget = getApi(ApiEnum.GetAnnouncementPosts);
-  const { data, isLoading } = useAnnouncementsWidget(
-    { limit: limit },
-    queryKey,
-  );
+  const { data, isLoading } = useAnnouncementsWidget(limit, queryKey);
 
   const result = data?.result?.data;
 
