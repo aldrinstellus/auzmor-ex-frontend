@@ -273,6 +273,7 @@ const getSocialSourceRoute = (
   actionType,
 ) => {
   switch (target1Type) {
+    case 'COMMENT':
     case 'POST': {
       return `${isLearn ? '/user' : ''}/posts/${targetId1}`;
     }
