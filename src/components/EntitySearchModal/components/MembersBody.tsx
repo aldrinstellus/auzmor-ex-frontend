@@ -52,6 +52,7 @@ const MembersBody: FC<IMembersBodyProps> = ({
   const [selectedDesignations, setSelectedDesignations] = useState<string[]>(
     [],
   );
+
   const { form } = useEntitySearchFormStore();
   const { watch, setValue, control, unregister } = form!;
   const [
@@ -134,16 +135,11 @@ const MembersBody: FC<IMembersBodyProps> = ({
     hasNextPage: hasNextDepartmentPage,
   } = useInfiniteDepartments({
     q: debouncedDepartmentSearchValue,
-  });
-  const departmentData = fetchedDepartments?.pages.flatMap((page: any) => {
-    return page?.data?.result?.data.map((department: IDepartmentAPI) => {
-      try {
-        return department;
-      } catch (e) {
-        console.log('Error', { department });
-      }
-    });
-  });
+  }) ?? {};
+
+  const departmentData = fetchedDepartments?.pages.flatMap(
+    (page: any) => page.data.result.data,
+  );
 
   // fetch location from search input
   const debouncedLocationSearchValue = useDebounce(locationSearch || '', 500);
@@ -156,16 +152,11 @@ const MembersBody: FC<IMembersBodyProps> = ({
     hasNextPage: hasNextLocationPage,
   } = useInfiniteLocations({
     q: debouncedLocationSearchValue,
-  });
-  const locationData = fetchedLocations?.pages.flatMap((page: any) => {
-    return page.data.result.data.map((location: ILocationAPI) => {
-      try {
-        return location;
-      } catch (e) {
-        console.log('Error', { location });
-      }
-    });
-  });
+  }) ?? {};
+
+  const locationData = fetchedLocations?.pages.flatMap(
+    (page: any) => page.data.result.data,
+  );
 
   // fetch designation from search input
   const debouncedDesignationSearchValue = useDebounce(
@@ -184,16 +175,10 @@ const MembersBody: FC<IMembersBodyProps> = ({
       q: debouncedDesignationSearchValue,
     },
     startFetching: !!showJobTitleFilter,
-  });
-  const designationData = fetchedDesignations?.pages.flatMap((page: any) => {
-    return page.data.result.data.map((designation: IDesignationAPI) => {
-      try {
-        return designation;
-      } catch (e) {
-        console.log('Error', { designation });
-      }
-    });
-  });
+  }) ?? {};
+  const designationData = fetchedDesignations?.pages.flatMap(
+    (page: any) => page.data.result.data,
+  );
 
   const { ref, inView } = useInView({
     root: document.getElementById('entity-search-members-body'),

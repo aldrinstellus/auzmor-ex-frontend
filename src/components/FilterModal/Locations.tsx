@@ -56,7 +56,7 @@ const Locations: FC<ILocationsProps> = ({ control, watch, setValue }) => {
     hasNextPage,
   } = useInfiniteLocations({
     q: debouncedLocationSearchValue,
-  });
+  }) || {};
   const locationData = fetchedLocations?.pages.flatMap((page: any) => {
     return page.data.result.data.map((location: ILocation) => location);
   });

@@ -94,6 +94,8 @@ const EditImageModal: FC<AppProps> = ({
   }, []);
 
   const updateChannel = getApi(ApiEnum.UpdateChannel);
+  const uploadLearnMedia = getApi(ApiEnum.UploadImage);
+
   const updateChannelMutation = useMutation({
     mutationFn: (data: any) => updateChannel(channelId, data),
     mutationKey: ['update-channel-name-mutation'],
@@ -175,17 +177,21 @@ const EditImageModal: FC<AppProps> = ({
       );
       let profileImageUploadResponse;
       if (newFile) {
-        profileImageUploadResponse = await uploadMedia(
-          [newFile],
-          fileEntityType,
-        );
-
+        // only call for office gcp upload.
+        if (!isLxp) {
+          profileImageUploadResponse = await uploadMedia(
+            [newFile],
+            fileEntityType,
+          );
+        }
         if (fileEntityType === EntityType.UserProfileImage) {
           if (isLxp) {
+            const formData = new FormData();
+            formData.append('url', newFile);
+            const res = await uploadLearnMedia(formData);
+            const uploadedFile = res.result?.data?.url;
             updateChannelMutation.mutate({
-              displayImageUrl:
-                profileImageUploadResponse &&
-                profileImageUploadResponse[0].original,
+              displayImageUrl: uploadedFile,
             });
           } else
             updateUsersPictureMutation.mutate({
@@ -200,10 +206,12 @@ const EditImageModal: FC<AppProps> = ({
             });
         } else {
           if (isLxp) {
+            const formData = new FormData();
+            formData.append('url', newFile);
+            const res = await uploadLearnMedia(formData);
+            const uploadedFile = res.result?.data?.url;
             updateChannelMutation.mutate({
-              bannerUrl:
-                profileImageUploadResponse &&
-                profileImageUploadResponse[0].original,
+              bannerUrl: uploadedFile,
             });
           } else
             updateUsersPictureMutation.mutate({
