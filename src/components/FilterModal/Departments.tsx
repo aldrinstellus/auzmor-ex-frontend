@@ -52,7 +52,7 @@ const Departments: FC<IDepartmentsProps> = ({ control, watch, setValue }) => {
     departmentSearch || '',
     300,
   );
-  const useInfiniteDepartments = getApi(ApiEnum.GetDepartments) || (() => ({}));
+  const useInfiniteDepartments = getApi(ApiEnum.GetDepartments);
   const {
     data: fetchedDepartments,
     isLoading,
@@ -61,13 +61,10 @@ const Departments: FC<IDepartmentsProps> = ({ control, watch, setValue }) => {
     hasNextPage,
   } = useInfiniteDepartments({
     q: debouncedDepartmentSearchValue,
-  }) || {};
-  const departmentData =
-    fetchedDepartments?.pages.flatMap((page: any) => {
-      return (
-        page.data.result.data.map((department: IDepartment) => department) || []
-      );
-    }) || [];
+  });
+  const departmentData = fetchedDepartments?.pages.flatMap((page: any) => {
+    return page.data.result.data.map((department: IDepartment) => department);
+  });
 
   const departmentFields = [
     {

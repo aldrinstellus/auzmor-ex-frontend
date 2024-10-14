@@ -187,7 +187,7 @@ const EditProfileModal: FC<IEditProfileModal> = ({
       disabled: fieldDisabledMap.designation,
       control,
       fetchQuery: (q: any) =>
-        useInfiniteDesignations({ q, startFetching: true }) || {},
+        useInfiniteDesignations({ q, startFetching: true }),
       getFormattedData: (data: any) =>
         formatCreatableOptions(data, 'designation-option'),
       queryParams: {},
@@ -198,7 +198,7 @@ const EditProfileModal: FC<IEditProfileModal> = ({
     },
   ];
 
-  const useInfiniteDepartments = getApi(ApiEnum.GetDepartments) || (() => ({}));
+  const useInfiniteDepartments = getApi(ApiEnum.GetDepartments);
   const departmentField = [
     {
       type: FieldType.CreatableSearch,

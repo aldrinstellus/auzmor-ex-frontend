@@ -47,7 +47,7 @@ const Locations: FC<ILocationsProps> = ({ control, watch, setValue }) => {
 
   // fetch location from search input
   const debouncedLocationSearchValue = useDebounce(locationSearch || '', 300);
-  const useInfiniteLocations = getApi(ApiEnum.GetLocations) || (() => ({}));
+  const useInfiniteLocations = getApi(ApiEnum.GetLocations);
   const {
     data: fetchedLocations,
     isLoading,
@@ -57,10 +57,9 @@ const Locations: FC<ILocationsProps> = ({ control, watch, setValue }) => {
   } = useInfiniteLocations({
     q: debouncedLocationSearchValue,
   }) || {};
-  const locationData =
-    fetchedLocations?.pages.flatMap((page: any) => {
-      return page.data.result.data.map((location: ILocation) => location) || [];
-    }) || [];
+  const locationData = fetchedLocations?.pages.flatMap((page: any) => {
+    return page.data.result.data.map((location: ILocation) => location);
+  });
 
   const locationFields = [
     {
