@@ -121,8 +121,7 @@ const Footer: FC<IFooterProps> = ({
       closeModal();
       await Promise.allSettled([
         queryClient.invalidateQueries(['feed-announcements-widget']),
-        queryClient.invalidateQueries(['post-announcements-widget']),
-        queryClient.invalidateQueries(['feed-announcements-widget']),
+        queryClient.invalidateQueries(['post-announcements-widget'])
       ]);
     },
   });
