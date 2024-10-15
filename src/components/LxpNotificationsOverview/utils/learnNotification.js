@@ -38,8 +38,9 @@ const SOCIAL_GROUP = {
   DIRECT_MANAGERS: 'managers',
   ALL_VIEWERS: 'viewers',
 };
-export const getIconForAction = (actionType) => {
+export const getIconForAction = (actionType, target1Type) => {
   let iconName;
+
   switch (actionType) {
     case NOTIFICATION_ACTION_TYPES.LxpAnnouncementReminderOnFeed:
       iconName = 'AcknowledgeAnnouncementNotification';
@@ -56,11 +57,12 @@ export const getIconForAction = (actionType) => {
       iconName = 'starShoutOut';
       break;
 
-    case NOTIFICATION_ACTION_TYPES.LxpMentionOnFeed && actionType == 'POST':
-      iconName = 'MentionInPost';
-      break;
-    case NOTIFICATION_ACTION_TYPES.LxpMentionOnFeed && actionType == 'COMMENT':
-      iconName = 'CommentNotification';
+    case NOTIFICATION_ACTION_TYPES.LxpMentionOnFeed:
+      if (target1Type === 'POST' || target1Type === 'COMMENT') {
+        iconName = 'MentionInPost';
+      } else if (target1Type === 'COMMENT') {
+        iconName = 'CommentNotification';
+      }
       break;
     case NOTIFICATION_ACTION_TYPES.LxpCommentOnPost:
       iconName = 'CommentNotification';
@@ -271,6 +273,7 @@ const getSocialSourceRoute = (
   actionType,
 ) => {
   switch (target1Type) {
+    case 'COMMENT':
     case 'POST': {
       return `${isLearn ? '/user' : ''}/posts/${targetId1}`;
     }
