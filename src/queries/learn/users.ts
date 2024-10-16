@@ -60,8 +60,10 @@ export const fetchMe = async () => {
         role: user?.role,
         org: {
           subscription: {
-            type: orgData.result.data?.remaining_trial_days ? 'TRIAL' : 'TRIAL',
-            daysRemaining: orgData.result.data?.remaining_trial_days || 10,
+            type: orgData.result.data?.remaining_trial_days
+              ? 'TRIAL'
+              : 'PURCHASED',
+            daysRemaining: orgData.result.data?.remaining_trial_days || 0,
           },
           setting: {
             enableMentorship:
