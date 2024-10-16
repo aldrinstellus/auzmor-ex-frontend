@@ -14,6 +14,7 @@ import LxpNotificationsOverview from 'components/LxpNotificationsOverview';
 import AccountCard from './AccountCard';
 import useAuth from 'hooks/useAuth';
 import SubscriptionBanner from 'components/AppShell/components/SubscriptionBanner';
+import IconButton from 'components/IconButton';
 
 interface INavbarLxpProps {}
 
@@ -64,7 +65,6 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
       to: '',
       show: true,
       isActive: true,
-      optionContainerClassname: 'group-hover/item:h-[78px]',
       options: [
         {
           id: 'feed',
@@ -95,7 +95,6 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
       label: t('learn.training'),
       to: '',
       show: true,
-      optionContainerClassname: 'group-hover/item:h-[156px]',
       options: [
         {
           id: 'courses',
@@ -137,13 +136,12 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
       label: t('learn.learningCenter'),
       to: '',
       show: true,
-      optionContainerClassname: 'group-hover/item:h-[117px]',
       options: [
         {
           id: 'tasks',
           label: t('learn.tasks'),
           onClick: () => window.location.replace(`${getLearnUrl('/tasks')}`),
-          show: true,
+          show: !!user?.organization?.setting?.enablechecklist,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
           labelClassName: '!text-black hover:!text-black leading-4',
         },
@@ -152,7 +150,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
           label: t('learn.mentorship'),
           onClick: () =>
             window.location.replace(`${getLearnUrl('/mentorship')}`),
-          show: true,
+          show: !!user?.organization?.setting?.enableMentorship,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
           labelClassName: '!text-black hover:!text-black leading-4',
         },
@@ -164,14 +162,13 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
           labelClassName: '!text-black hover:!text-black leading-4',
         },
-      ],
+      ].filter((option) => option.show),
     },
     {
       id: 'company',
       label: t('learn.company'),
       to: '',
       show: true,
-      optionContainerClassname: 'group-hover/item:h-[117px]',
       options: [
         {
           id: 'people',
@@ -208,7 +205,6 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
       label: t('learn.analytics'),
       to: '',
       show: true,
-      optionContainerClassname: 'group-hover/item:h-[78px]',
       options: [
         {
           id: 'insights',
@@ -232,8 +228,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
       id: 'ecommerce',
       label: t('learn.ecommerce'),
       to: '',
-      show: true,
-      optionContainerClassname: 'group-hover/item:h-[78px]',
+      show: !!user?.organization?.setting?.enableEcommerce,
       options: [
         {
           id: 'orders',
@@ -253,10 +248,10 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         },
       ],
     },
-  ];
+  ].filter((each) => each.show);
 
   const optionWrapperStyle = clsx({
-    'w-full max-w-[1440px] flex items-center': true,
+    'w-full max-w-[1280px] flex items-center': true,
     'justify-between': backBtn.show,
   });
 
@@ -286,12 +281,24 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
     return '';
   };
 
+  const getOptionHeight = (length: number) => {
+    return clsx({
+      'group-hover/item:h-[39px]': length === 1,
+      'group-hover/item:h-[78px]': length === 2,
+      'group-hover/item:h-[117px]': length === 3,
+      'group-hover/item:h-[156px]': length === 4,
+    });
+  };
+
   return (
     <div className="sticky top-0 w-full z-50">
-      <div className="group-hover/item:h-[78px] flex items-center justify-center bg-white px-14">
+      <div className="h-[78px] flex items-center justify-center bg-white px-14">
         <div className={optionWrapperStyle}>
           <div className="flex items-center gap-2">
-            <Logo />
+            <Logo
+              className="cursor-pointer"
+              onClick={() => window.location.replace(getLearnUrl())}
+            />
             {backBtn.show && (
               <div className="text-neutral-900 text-base font-bold">
                 {backBtn.for}
@@ -327,7 +334,9 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
                             </div>
                           }
                           menuItems={item.options}
-                          className={`dropdown-menu-option group-hover/item:visible invisible h-[39px] !transition-[height] !duration-300 w-[124px] left-1/2 -translate-x-1/2 ${item.optionContainerClassname}`}
+                          className={`dropdown-menu-option group-hover/item:visible invisible h-[39px] !transition-[height] !duration-300 w-[124px] left-1/2 -translate-x-1/2 ${getOptionHeight(
+                            item.options.length,
+                          )}`}
                           controlled
                           isOpen
                         />
@@ -343,7 +352,21 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
                     ),
                   )}
               </div>
-              <ul className="flex items-center gap-6">
+              <ul className="flex items-center gap-[19px]">
+                <div className="w-[1px] h-5 bg-[#e5e5e5]"></div>
+                <li>
+                  <IconButton
+                    icon="messageQuestionOutline"
+                    color="#888888"
+                    size={22}
+                    onClick={() => {
+                      window.open(`${getLearnUrl()}?openHelpSupport=true`);
+                    }}
+                    ariaLabel="help and support"
+                    className="bg-white hover:!bg-neutral-100 rounded-md active:bg-white py-[9px] px-[13px]"
+                    iconClassName="group-hover:!text-neutral-500"
+                  />
+                </li>
                 <li>
                   <LxpNotificationsOverview />
                 </li>

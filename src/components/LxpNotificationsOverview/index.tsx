@@ -91,26 +91,28 @@ const LxpNotificationsOverview: FC = () => {
   return (
     <Popover
       triggerNode={
-        <div className="font-bold flex flex-row justify-center items-center p-3 border-none relative">
+        <div className="font-bold flex flex-row justify-center items-center border-none relative px-[13px] py-[9px] hover:bg-neutral-100 rounded-md cursor-pointer outline-none">
           {!isLoading && !isError && notificationCount > 0 && (
-            <div className="absolute text-[8px] tracking-[0.3px] font-semibold font-lato text-light opacity-100 no-underline rounded-full bg-primary-500 border border-white text-white antialiased  leading-4 top-2 right-2.5 flex w-4 h-4 items-center justify-center">
+            <div className="absolute text-[8px] tracking-[0.3px] font-semibold font-lato text-light opacity-100 no-underline rounded-full bg-primary-500 border border-white text-white antialiased  leading-4 top-1 right-2.5 flex w-4 h-4 items-center justify-center">
               {/* Get unread notif count here */}
               {notificationCount || ''}
             </div>
           )}
           {isLoading && (
-            <Spinner className="absolute top-1.5 right-2.5 fill-primary-500 !w-4 !h-4 !m-0" />
+            <Spinner className="absolute top-1 right-2.5 fill-primary-500 !w-4 !h-4 !m-0" />
           )}
 
           <Icon
             name="notification"
-            size={25}
+            size={23}
             dataTestId="office-notification-page"
             ariaLabel="notifications"
+            hover={false}
           />
         </div>
       }
       ref={viewAllRef}
+      triggerNodeClassName="outline-none"
     >
       <Card className=" rounded absolute w-[455px] h-[487px] right-0 top-4 border border-neutral-200 mt-1   overflow-y-auto">
         {/* Header */}

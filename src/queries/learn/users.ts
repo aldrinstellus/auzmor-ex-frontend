@@ -70,6 +70,8 @@ export const fetchMe = async () => {
               orgData.result.data.organization_setting.enable_mentorship,
             enablechecklist:
               orgData.result.data.organization_setting.enablechecklist,
+            enableEcommerce:
+              orgData.result.data.organization_setting.enable_ecommerce,
           },
         },
         ...(user?.designation && {
