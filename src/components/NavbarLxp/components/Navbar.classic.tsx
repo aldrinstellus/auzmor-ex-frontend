@@ -9,6 +9,9 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { getLearnUrl } from 'utils/misc';
 import useAuth from 'hooks/useAuth';
 import SubscriptionBanner from 'components/AppShell/components/SubscriptionBanner';
+import IconButton from 'components/IconButton';
+import './style.css';
+import useNavigate from 'hooks/useNavigation';
 
 interface INavbarLxpProps {}
 
@@ -16,6 +19,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
   const { t } = useTranslation('navbar');
   const { pathname } = useLocation();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [showSubscriptionBanner, setShowSubscriptionBanner] = useState(
     user?.subscription?.type === 'TRIAL' &&
@@ -104,7 +108,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
   ];
 
   const optionWrapperStyle = clsx({
-    'w-full max-w-[1440px] flex items-center': true,
+    'w-full max-w-[1280px] flex items-center': true,
     'justify-between': backBtn.show,
   });
 
@@ -113,7 +117,10 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
       <div className="h-[78px] flex items-center justify-center bg-white px-14">
         <div className={optionWrapperStyle}>
           <div className="flex items-center gap-2">
-            <Logo />
+            <Logo
+              className="cursor-pointer"
+              onClick={() => navigate('/feed')}
+            />
             {backBtn.show && (
               <div className="text-neutral-900 text-base font-bold">
                 {backBtn.for}
@@ -139,8 +146,21 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
                     </NavLink>
                   ))}
               </div>
-
-              <ul className="flex items-center gap-6">
+              <ul className="flex items-center gap-[19px]">
+                <div className="w-[1px] h-5 bg-[#e5e5e5]"></div>
+                <li>
+                  <IconButton
+                    icon="messageQuestionOutline"
+                    color="#888888"
+                    size={22}
+                    onClick={() => {
+                      window.open(`${getLearnUrl()}?openHelpSupport=true`);
+                    }}
+                    ariaLabel="help and support"
+                    className="bg-white hover:!bg-neutral-100 rounded-md active:bg-white py-[9px] px-[13px]"
+                    iconClassName="group-hover:!text-neutral-500"
+                  />
+                </li>
                 <li>
                   <LxpNotificationsOverview />
                 </li>

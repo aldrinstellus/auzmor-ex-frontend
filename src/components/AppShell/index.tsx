@@ -17,6 +17,7 @@ export interface IAppShellProps {
 const AppShell: FC<IAppShellProps> = ({ children }) => {
   const { isOrgChartMounted } = useOrgChartStore();
   const { pathname } = useLocation();
+  const { isLxp } = useProduct();
   const wraperStyle = clsx({
     'flex w-full justify-center h-[calc(100%-64px)]': true,
     'px-14 pt-6': !isOrgChartMounted,
@@ -24,14 +25,13 @@ const AppShell: FC<IAppShellProps> = ({ children }) => {
   const containerStyle = clsx({
     'w-full': true,
     'max-w-[1440px]': !isOrgChartMounted,
+    'max-w-[1280px]': isLxp,
   });
 
   const showNavbar =
     !pathname.startsWith('/apps') || !pathname.endsWith('/launch');
 
   const showJobProgress = useJobStore((state) => state.showJobProgress);
-
-  const { isLxp } = useProduct();
 
   return (
     <div
