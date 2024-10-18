@@ -218,7 +218,7 @@ export const parseMentions = (mentions, text) => {
   return finalText;
 };
 export const getAvatarInitial = ({ firstName = '', lastName = '' }) =>
-  `${firstName && firstName.trim()[0]} ${lastName && lastName.trim()[0]}`;
+  `${firstName && firstName?.trim()[0]} ${lastName && lastName?.trim()[0]}`;
 
 const CERTIFICATE = 'certificate';
 

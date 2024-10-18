@@ -26,10 +26,10 @@ const EventNotificationAvatar: React.FC<EventNotificationAvatarProps> = ({
       {source === 'user' && (
         <div className="relative w-[50px]">
           <Avatar
-            name={name || ''}
-            image={userImageUrl}
+            name={name ?? ''}
+            image={userImageUrl || ''}
             size={50}
-            bgColor={profileColor}
+            bgColor={profileColor || '#67ae3f'} // fallback condition
           />
           <div className="absolute z-50 rounded-full cursor-pointer bottom-0 right-0 -mr-2 -mb-2">
             <Icon name={getIconForAction(actionType, target1Type) || ''} />

@@ -100,15 +100,16 @@ const EventNotificationCard: React.FC<EventNotificationCardProps> = ({
           <EventNotificationAvatar
             source={source}
             actionType={actionType}
-            userImageUrl={actor && actor.image_url}
-            profileColor={actor && actor.profile_color}
+            userImageUrl={actor && actor?.image_url}
+            profileColor={actor && actor?.profile_color}
             target1Type={target1Type}
             name={
-              actor &&
-              getAvatarInitial({
-                firstName: actor.first_name,
-                lastName: actor.last_name,
-              })
+              (actor &&
+                getAvatarInitial({
+                  firstName: actor?.first_name,
+                  lastName: actor?.last_name,
+                })) ||
+              '✷'
             }
           />
         </div>
