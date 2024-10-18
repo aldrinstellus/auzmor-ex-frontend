@@ -1,6 +1,5 @@
 import React, { FC, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
-import NotificationsOverviewSkeleton from './NotificationsOverviewSkeleton';
 import Divider from 'components/Divider';
 import EventNotificationCard from './EventNotificationCard';
 import { NOTIFICATION_ACTION_TYPES } from '../utils/constants';
@@ -13,6 +12,7 @@ import { useMutation } from '@tanstack/react-query';
 import queryClient from 'utils/queryClient';
 import NoNotification from 'images/noNotification.svg';
 import { useTranslation } from 'react-i18next';
+import NotificationSkeleton from './NotificationSkeleton';
 
 type Notifications = {
   isSocial?: boolean;
@@ -72,7 +72,13 @@ const Notifications: FC<Notifications> = ({ isSocial = false }) => {
     markNotificationAsReadMutation.mutate(id);
   };
 
-  if (isLoading) return <NotificationsOverviewSkeleton />;
+  if (isLoading) {
+    return (
+      <div className=" w-full">
+        <NotificationSkeleton loaderCount={6} />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -111,7 +117,7 @@ const Notifications: FC<Notifications> = ({ isSocial = false }) => {
           ))}
           <div>
             {hasNextPage && isFetchingNextPage && (
-              <NotificationsOverviewSkeleton />
+              <NotificationSkeleton loaderCount={1} />
             )}
             {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
           </div>

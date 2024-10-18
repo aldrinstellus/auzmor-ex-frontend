@@ -188,6 +188,9 @@ export const getIconForAction = (actionType, target1Type) => {
     case NOTIFICATION_ACTION_TYPES.FeedbackSubmitReminder:
       iconName = 'feedbackPending';
       break;
+    case NOTIFICATION_ACTION_TYPES.ApprovalReminderExternalCertificate:
+      iconName = 'updateNotification';
+      break;
     case NOTIFICATION_ACTION_TYPES.TasksNotificationOnAssigned:
     case NOTIFICATION_ACTION_TYPES.TasksNotificationOnSubmission:
     case NOTIFICATION_ACTION_TYPES.TasksNotificationOnStatusChange:
@@ -198,6 +201,7 @@ export const getIconForAction = (actionType, target1Type) => {
     case NOTIFICATION_ACTION_TYPES.TasksNotificationReviewerUpdateReview:
       iconName = 'taskUpdateNotification';
       break;
+
     default:
     // console.log('Invalid action type');
   }
@@ -218,7 +222,7 @@ export const parseMentions = (mentions, text) => {
   return finalText;
 };
 export const getAvatarInitial = ({ firstName = '', lastName = '' }) =>
-  `${firstName && firstName.trim()[0]} ${lastName && lastName.trim()[0]}`;
+  `${firstName && firstName?.trim()[0]} ${lastName && lastName?.trim()[0]}`;
 
 const CERTIFICATE = 'certificate';
 
