@@ -9,6 +9,7 @@ import { IComment } from 'components/Comments';
 import { useFeedStore } from 'stores/feedStore';
 import { useCommentStore } from 'stores/commentStore';
 import { IPost, IPollVotes, IPostPayload } from 'interfaces';
+import useRole from 'hooks/useRole';
 
 export const createPost = async (payload: IPostPayload) => {
   const data = await apiService.post('/posts', payload);
@@ -50,27 +51,27 @@ export const deletePost = async (id: string) => {
   return data;
 };
 
-export const fetchAnnouncement = async (
-  postType: string,
-  limit: number,
-  excludeMyAnnouncements = true,
-) => {
-  const data = await apiService.get(
-    `/posts?feed=${postType}&excludeMyAnnouncements=${excludeMyAnnouncements}&limit=${limit}`,
-  );
+export const fetchAnnouncement = async (limit: number, isAdmin: boolean) => {
+  const { data } = await apiService.get(`/posts/announcements`, {
+    limit: limit,
+    acknowledged: isAdmin,
+    excludeMyAnnouncements: !isAdmin,
+  });
   return data;
 };
 
 export const useAnnouncementsWidget = (
   limit = 1,
   queryKey = 'feed-announcements-widget',
-) =>
-  useQuery({
+) => {
+  const { isAdmin } = useRole();
+
+  return useQuery({
     queryKey: [queryKey],
-    queryFn: () => fetchAnnouncement('ANNOUNCEMENT', limit),
+    queryFn: () => fetchAnnouncement(limit, isAdmin),
     staleTime: 15 * 60 * 1000,
   });
-
+};
 const collectComments = (response: any, comments: IComment[]) => {
   response?.data.result.data.forEach((eachPost: IPost) => {
     const postComments = eachPost.relevantComments || [];
@@ -474,7 +475,7 @@ export const fetchAnnouncements = async (
   // Fetching data
   if (!!!context.pageParam) {
     response = await apiService.get(
-      `/posts/announcements?limit=10`,
+      `/posts/announcements?limit=10&acknowledged=true`,
       context.queryKey[1],
     );
   } else {
