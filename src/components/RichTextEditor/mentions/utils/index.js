@@ -49,20 +49,29 @@ function hasValidMentionCharIndex(mentionCharIndex, text, isolateChar) {
 
 // create user mention list with the require props
 function createMentionsList(mentionsList, character) {
+  console.log('mentionsList', mentionsList);
   const atValues = [];
   // eslint-disable-next-line array-callback-return
   mentionsList &&
     mentionsList.map((mention) => {
-      const val = (mention?.preferredName?.trim() ?? '') || mention?.fullName;
+      const val =
+        (mention?.preferredName?.trim() ?? '') ||
+        mention?.fullName ||
+        mention?.name;
       atValues.push({
         ...mention,
         charDenotation: character,
         name: val,
         value: val,
+        fullName: val,
+        workEmail:
+          mention?.email || mention?.additional_info?.designation || '',
+        preferredName: mention?.preferredName || val,
         avatar: null, // profile image
         title: 'Anything', // Profile Designation
       });
     });
+  console.log('atValues', atValues);
   return atValues;
 }
 
