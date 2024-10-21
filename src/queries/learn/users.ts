@@ -36,15 +36,17 @@ export interface IPostUsers {
   users: IPostUser[];
 }
 
-export const mapUser = (user: Record<string, any>) => ({
-  preferredName: user?.display_name,
-  fullName: user?.full_name,
-  firstName: user?.first_name,
-  lastName: user?.last_name,
-  profileImage: { original: user?.image_url },
-  workEmail: user?.email,
-  ...user,
-});
+export const mapUser = (user: Record<string, any>) => {
+  return {
+    preferredName: user?.display_name,
+    fullName: user?.full_name || user?.name,
+    firstName: user?.first_name,
+    lastName: user?.last_name,
+    profileImage: { original: user?.image_url },
+    workEmail: user?.email,
+    ...user,
+  };
+};
 
 export const fetchMe = async () => {
   const { data } = await apiService.get('/me');
@@ -109,10 +111,17 @@ export const fetchMe = async () => {
 export const getAllUser = async ({
   pageParam = null,
   queryKey,
-}: QueryFunctionContext<(Record<string, any> | undefined | string)[], any>) => {
+}: QueryFunctionContext<[string, any | undefined], any>) => {
   let response = null;
+  const defaultParams = {
+    identifier: '@',
+    q: '',
+  };
   if (pageParam === null) {
-    response = await apiService.get('/users', queryKey[1]);
+    response = await apiService.get('/mentions/auto_suggest', {
+      ...defaultParams,
+      ...queryKey[1],
+    });
   } else {
     response = await apiService.get(pageParam);
   }
@@ -176,6 +185,7 @@ export const useInfiniteUsers = ({
   startFetching?: boolean;
   q?: Record<string, any>;
 }) => {
+  console.log('hi');
   return useInfiniteQuery({
     queryKey: ['users', q],
     queryFn: getAllUser,
