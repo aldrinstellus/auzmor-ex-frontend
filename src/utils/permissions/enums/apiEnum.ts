@@ -141,6 +141,7 @@ export enum ApiEnum {
 
   GetFeedPosts = 'GET_FEED_POSTS',
   GetAnnouncementPosts = 'GET_ANNOUNCEMENT_POSTS',
+  FetchAnnouncement = 'FETCH_ANNOUNCEMENT',
 
   CreateBookmarkPost = 'CREATE_BOOKMARK_POST',
   DeleteBookmarkPost = 'DELETE_BOOKMARK_POST',

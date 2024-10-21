@@ -2,7 +2,7 @@ import * as queries from 'queries/office';
 import { ApiEnum } from '../enums/apiEnum';
 import { OfficeRoleEnum } from '../enums/roleEnum';
 
-const { Default } = OfficeRoleEnum;
+const { Default, Admin, Member, SuperAdmin } = OfficeRoleEnum;
 
 export const apiConfigOffice = {
   //audience
@@ -171,7 +171,16 @@ export const apiConfigOffice = {
   },
 
   [ApiEnum.GetFeedPosts]: { [Default]: queries.useInfiniteFeed },
-  [ApiEnum.GetAnnouncementPosts]: { [Default]: queries.useAnnouncementsWidget },
+  [ApiEnum.GetAnnouncementPosts]: {
+    [Default]: queries.useAnnouncementsWidget,
+  },
+
+  [ApiEnum.FetchAnnouncement]: {
+    [Default]: queries.fetchAnnouncement,
+    [SuperAdmin]: queries.fetchAnnouncementAdmin,
+    [Admin]: queries.fetchAnnouncementAdmin,
+    [Member]: queries.fetchAnnouncementMember,
+  },
 
   [ApiEnum.CreateBookmarkPost]: { [Default]: queries.createBookmark },
   [ApiEnum.DeleteBookmarkPost]: { [Default]: queries.deleteBookmark },
