@@ -60,7 +60,7 @@ const LxpNotificationsOverview: FC = () => {
           {t('learn')}
         </p>
       ),
-      tabContent: <Notifications isSocial={false} />,
+      tabContent: <Notifications isSocial={false} ref={viewAllRef} />,
       dataTestId: 'learn-notification',
     },
     {
@@ -76,7 +76,7 @@ const LxpNotificationsOverview: FC = () => {
           {t('social')}
         </p>
       ),
-      tabContent: <Notifications isSocial={true} />,
+      tabContent: <Notifications isSocial={true} ref={viewAllRef} />,
       dataTestId: 'social-notification',
     },
   ];
