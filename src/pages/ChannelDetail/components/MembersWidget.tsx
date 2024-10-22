@@ -31,15 +31,19 @@ const MembersWidget: FC<MembersWidgetProps> = ({
   });
   const [showAddMemberModal, openAddMemberModal, closeAddMemberModal] =
     useModal(false);
-  const users = data?.pages.flatMap((page: any) => {
-    return page?.data?.result?.data.map((user: any) => {
-      try {
-        return { id: user.id, role: user.role, ...user.user };
-      } catch (e) {
-        console.log('Error', { user });
-      }
-    });
-  });
+  const users =
+    data?.pages
+      .flatMap((page: any) => {
+        return page?.data?.result?.data.map((user: any) => {
+          try {
+            return { id: user.id, role: user.role, ...user.user };
+          } catch (e) {
+            console.log('Error', { user });
+            return null;
+          }
+        });
+      })
+      .filter(Boolean) || [];
   const navigate = useNavigate();
 
   const toggleWidget = () => setShow((t) => !t);

@@ -43,44 +43,44 @@ const routers = createBrowserRouter(
           <Route path="/feed" element={<HomeFeed />} />
           <Route path="/posts/:id" element={<PostPage />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/channels" element={<Channels />} />
+          <Route
+            path="/channels/:channelId/documents"
+            element={
+              <ChannelDetail activeTab={ChannelDetailTabsEnum.Documents} />
+            }
+          />
+          <Route
+            path="/channels/:channelId/members"
+            element={
+              <ChannelDetail activeTab={ChannelDetailTabsEnum.Members} />
+            }
+          />
+          <Route
+            path="/channels/:channelId/settings"
+            element={
+              <ChannelDetail activeTab={ChannelDetailTabsEnum.Setting} />
+            }
+          />
+          <Route
+            path="/channels/:channelId/manage-access"
+            element={
+              <ChannelDetail activeTab={ChannelDetailTabsEnum.ManageAccess} />
+            }
+          />
+          <Route
+            path="/channels/:channelId"
+            element={<ChannelDetail activeTab={ChannelDetailTabsEnum.Home} />}
+          />
+          <Route
+            path="/channels/:channelId/scheduledPosts"
+            element={<ChannelDetail activeTab={ChannelDetailTabsEnum.Home} />}
+          />
+          <Route
+            path="/channels/:channelId/bookmarks"
+            element={<ChannelDetail activeTab={ChannelDetailTabsEnum.Home} />}
+          />
           <Route element={<RequireNonProdAuth />}>
-            <Route path="/channels" element={<Channels />} />
-            <Route
-              path="/channels/:channelId/documents"
-              element={
-                <ChannelDetail activeTab={ChannelDetailTabsEnum.Documents} />
-              }
-            />
-            <Route
-              path="/channels/:channelId/members"
-              element={
-                <ChannelDetail activeTab={ChannelDetailTabsEnum.Members} />
-              }
-            />
-            <Route
-              path="/channels/:channelId/settings"
-              element={
-                <ChannelDetail activeTab={ChannelDetailTabsEnum.Setting} />
-              }
-            />
-            <Route
-              path="/channels/:channelId/manage-access"
-              element={
-                <ChannelDetail activeTab={ChannelDetailTabsEnum.ManageAccess} />
-              }
-            />
-            <Route
-              path="/channels/:channelId"
-              element={<ChannelDetail activeTab={ChannelDetailTabsEnum.Home} />}
-            />
-            <Route
-              path="/channels/:channelId/scheduledPosts"
-              element={<ChannelDetail activeTab={ChannelDetailTabsEnum.Home} />}
-            />
-            <Route
-              path="/channels/:channelId/bookmarks"
-              element={<ChannelDetail activeTab={ChannelDetailTabsEnum.Home} />}
-            />
             <Route path="/search" element={<SearchResults />} />
           </Route>
         </Route>
@@ -98,45 +98,45 @@ const routers = createBrowserRouter(
           <Route path="feed" element={<HomeFeed />} />
           <Route path="posts/:id" element={<PostPage />} />
           <Route path="notifications" element={<Notifications />} />
+          <Route path="channels" element={<Channels />} />
+          <Route
+            path="channels/:channelId/documents"
+            element={
+              <ChannelDetail activeTab={ChannelDetailTabsEnum.Documents} />
+            }
+          />
+          <Route
+            path="channels/:channelId/members"
+            element={
+              <ChannelDetail activeTab={ChannelDetailTabsEnum.Members} />
+            }
+          />
+          <Route
+            path="channels/:channelId/settings"
+            element={
+              <ChannelDetail activeTab={ChannelDetailTabsEnum.Setting} />
+            }
+          />
+          <Route
+            path="channels/:channelId/manage-access"
+            element={
+              <ChannelDetail activeTab={ChannelDetailTabsEnum.ManageAccess} />
+            }
+          />
+          <Route
+            path="channels/:channelId"
+            element={<ChannelDetail activeTab={ChannelDetailTabsEnum.Home} />}
+          />
+          <Route
+            path="channels/:channelId/scheduledPosts"
+            element={<ChannelDetail activeTab={ChannelDetailTabsEnum.Home} />}
+          />
+          <Route
+            path="channels/:channelId/bookmarks"
+            element={<ChannelDetail activeTab={ChannelDetailTabsEnum.Home} />}
+          />
           {/* retricted routes for prod  */}
           <Route element={<RequireNonProdAuth />}>
-            <Route path="channels" element={<Channels />} />
-            <Route
-              path="channels/:channelId/documents"
-              element={
-                <ChannelDetail activeTab={ChannelDetailTabsEnum.Documents} />
-              }
-            />
-            <Route
-              path="channels/:channelId/members"
-              element={
-                <ChannelDetail activeTab={ChannelDetailTabsEnum.Members} />
-              }
-            />
-            <Route
-              path="channels/:channelId/settings"
-              element={
-                <ChannelDetail activeTab={ChannelDetailTabsEnum.Setting} />
-              }
-            />
-            <Route
-              path="channels/:channelId/manage-access"
-              element={
-                <ChannelDetail activeTab={ChannelDetailTabsEnum.ManageAccess} />
-              }
-            />
-            <Route
-              path="channels/:channelId"
-              element={<ChannelDetail activeTab={ChannelDetailTabsEnum.Home} />}
-            />
-            <Route
-              path="channels/:channelId/scheduledPosts"
-              element={<ChannelDetail activeTab={ChannelDetailTabsEnum.Home} />}
-            />
-            <Route
-              path="channels/:channelId/bookmarks"
-              element={<ChannelDetail activeTab={ChannelDetailTabsEnum.Home} />}
-            />
             <Route path="search" element={<SearchResults />} />
           </Route>
         </Route>

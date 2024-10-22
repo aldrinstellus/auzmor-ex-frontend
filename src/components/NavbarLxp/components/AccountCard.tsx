@@ -155,15 +155,13 @@ const AccountCard = () => {
               </Link>
             ) : null}
             <Divider className="my-[6px]" />
-            {isLearnerView && (
-              <div
-                className={`flex ${menuItemStyle} justify-between`}
-                data-testid="user-menu-switch-theme"
-              >
-                <div>{t('switchTheme')}</div>
-                <SwitchView viewType={user?.preferences?.learnerViewType} />
-              </div>
-            )}
+            <div
+              className={`flex ${menuItemStyle} justify-between`}
+              data-testid="user-menu-switch-theme"
+            >
+              <div>{t('switchTheme')}</div>
+              <SwitchView viewType={user?.preferences?.learnerViewType} />
+            </div>
             <div
               className={`flex ${menuItemStyle}`}
               onClick={() => {

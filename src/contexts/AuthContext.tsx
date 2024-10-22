@@ -301,6 +301,8 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
 
   const reset = () => {
     setUser(null); // set user
+    setLoggedIn(false);
+    setLoading(false);
     queryClient.clear();
     removeAllItems();
     setSessionExpired(false);

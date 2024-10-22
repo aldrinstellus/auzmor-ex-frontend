@@ -51,6 +51,10 @@
     "switchTheme": "Switch Theme",
     "classic": "Classic",
     "modern": "Modern",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "toastMessages": {
+      "switchingToModernView": "Switching to Modern View...",
+      "switchingToClassicView": "Switching to Classic View..."
+    }
   }
 }

@@ -25,15 +25,18 @@ const AdminsWidget = () => {
     },
   });
   const admins =
-    data?.pages.flatMap((page: any) => {
-      return page?.data?.result?.data.map((admin: any) => {
-        try {
-          return { id: admin.id, role: admin.role, ...admin.user };
-        } catch (e) {
-          console.log('Error', { admin });
-        }
-      });
-    }) || [];
+    data?.pages
+      .flatMap((page: any) => {
+        return page?.data?.result?.data.map((admin: any) => {
+          try {
+            return { id: admin.id, role: admin.role, ...admin.user };
+          } catch (e) {
+            console.log('Error', { admin });
+            return null;
+          }
+        });
+      })
+      .filter(Boolean) || [];
 
   if (admins?.length == 0) return null;
   const toggleModal = () => setShow((t) => !t);

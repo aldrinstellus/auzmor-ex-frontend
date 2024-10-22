@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { FRONTEND_VIEWS } from 'interfaces';
 import clsx from 'clsx';
+import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 
 export const SwitchView = ({ viewType }: { viewType: FRONTEND_VIEWS }) => {
   const { getApi } = usePermissions();
@@ -17,7 +18,13 @@ export const SwitchView = ({ viewType }: { viewType: FRONTEND_VIEWS }) => {
     mutationKey: ['user-toggle-view'],
     mutationFn: (payload: { viewType: string }) => toggleView(payload.viewType),
     onError: (error) => console.log(error),
-    onSuccess: async () => {
+    onSuccess: async (_response, variables) => {
+      successToastConfig({
+        content:
+          variables.viewType === FRONTEND_VIEWS.classic
+            ? t('toastMessages.switchingToClassicView')
+            : t('toastMessages.switchingToModernView'),
+      });
       setTimeout(() => window.location.reload(), 1000);
     },
   });

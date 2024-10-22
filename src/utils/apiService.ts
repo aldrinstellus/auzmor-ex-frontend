@@ -57,7 +57,7 @@ export class ApiService {
         return response;
       },
       (error: any) => {
-        const userStatus = error?.response.headers?.['x-user-status'];
+        const userStatus = error?.response?.headers?.['x-user-status'];
         if (userStatus === 'USER_IS_DEACTIVATED') {
           window.document.dispatchEvent(new Event('account_deactivated'));
         } else if (

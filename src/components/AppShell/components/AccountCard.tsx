@@ -31,18 +31,24 @@ const AccountCard = () => {
 
   const logoutMutation = useMutation(getApi(ApiEnum.Logout), {
     onSuccess: async () => {
-      userChannel.postMessage({
-        userId: user?.id,
-        payload: {
-          type: 'SIGN_OUT',
-        },
-      });
       if (isLxp) {
         deleteCookie(getCookieParam('region_url'));
         deleteCookie(getCookieParam());
+        userChannel.postMessage({
+          userId: user?.id,
+          payload: {
+            type: 'SIGN_OUT',
+          },
+        });
         window.location.replace(`${getLearnUrl()}`);
       }
       if (isOffice) {
+        userChannel.postMessage({
+          userId: user?.id,
+          payload: {
+            type: 'SIGN_OUT',
+          },
+        });
         navigate('/logout');
       }
       reset();
