@@ -52,7 +52,7 @@ export const deletePost = async (id: string) => {
   return data;
 };
 
-export const fetchAnnouncementAdmin = async (limit: number) => {
+export const fetchAdminAnnouncment = async (limit: number) => {
   const { data } = await apiService.get(`/posts/announcements`, {
     limit: limit,
     acknowledged: true,
@@ -60,7 +60,7 @@ export const fetchAnnouncementAdmin = async (limit: number) => {
   });
   return data;
 };
-export const fetchAnnouncementMember = async (limit: number) => {
+export const fetchMemberAnnouncment = async (limit: number) => {
   const { data } = await apiService.get(`/posts/announcements`, {
     limit: limit,
     acknowledged: false,
@@ -81,7 +81,7 @@ export const useAnnouncementsWidget = (
   queryKey = 'feed-announcements-widget',
 ) => {
   const { getApi } = usePermissions();
-  const fetchAnnouncement = getApi(ApiEnum.GetAnnouncementPosts);
+  const fetchAnnouncement = getApi(ApiEnum.FetchAnnouncement);
   return useQuery({
     queryKey: [queryKey],
     queryFn: () => fetchAnnouncement(limit),

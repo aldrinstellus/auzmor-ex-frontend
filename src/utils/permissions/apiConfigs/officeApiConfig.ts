@@ -177,9 +177,9 @@ export const apiConfigOffice = {
 
   [ApiEnum.FetchAnnouncement]: {
     [Default]: queries.fetchAnnouncement,
-    [SuperAdmin]: queries.fetchAnnouncementAdmin,
-    [Admin]: queries.fetchAnnouncementAdmin,
-    [Member]: queries.fetchAnnouncementMember,
+    [SuperAdmin]: queries.fetchAdminAnnouncment,
+    [Admin]: queries.fetchAdminAnnouncment,
+    [Member]: queries.fetchMemberAnnouncment,
   },
 
   [ApiEnum.CreateBookmarkPost]: { [Default]: queries.createBookmark },
