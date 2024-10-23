@@ -176,6 +176,7 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
                               : `/users/${postData?.createdBy?.userId}`,
                           );
                         }}
+                        ariaLabel={getFullName(postData?.createdBy) || 'avatar'}
                       />
 
                       <div className="w-full">
