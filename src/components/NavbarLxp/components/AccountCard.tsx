@@ -24,6 +24,7 @@ import { useState } from 'react';
 import useModal from 'hooks/useModal';
 import AuzmorLogo from 'images/AuzmorLogo.svg';
 import ConfirmationModal from './ConfirmationModal';
+import Truncate from 'components/Truncate';
 
 const AccountCard = () => {
   const { user, reset } = useAuth();
@@ -247,13 +248,19 @@ const AccountCard = () => {
                           </div>
 
                           <div className="flex flex-col">
-                            <p
+                            {/* <p
                               className={`font-semibold  text-[14px] leading-[30px] flex items-center gap-2 ${
                                 active ? 'text-black' : 'text-gray-500'
                               }`}
                             >
                               {branch.name}
-                            </p>
+                            </p> */}
+                            <Truncate
+                              className={`font-semibold  text-[14px] leading-[30px] flex items-center gap-2 ${
+                                active ? 'text-black' : 'text-gray-500'
+                              }`}
+                              text={branch.name}
+                            />
 
                             {isPending && (
                               <div className="flex items-center gap-1 text-gray-500 text-sm">
