@@ -21,9 +21,9 @@ import { UserRole } from 'interfaces';
 import Divider from 'components/Divider';
 import { SwitchView } from './SwitchView';
 import { useState } from 'react';
-import ConfirmationBox from 'components/ConfirmationBox';
 import useModal from 'hooks/useModal';
 import AuzmorLogo from 'images/AuzmorLogo.svg';
+import ConfirmationModal from './ConfirmationModal';
 
 const AccountCard = () => {
   const { user, reset } = useAuth();
@@ -37,7 +37,7 @@ const AccountCard = () => {
   const useGetBranches = getApi(ApiEnum.GetLearnBranch);
   const { data } = useGetBranches(user?.organization?.orgDetails?.id || '');
   const [confirm, showConfirm, closeConfirm] = useModal();
-  const totalBranches = data?.result?.total_records;
+  const totalBranches = data?.result?.totalRecords;
 
   const [selectedBranch, setSelectedBranch] = useState('');
 
@@ -214,13 +214,14 @@ const AccountCard = () => {
                   <div className="!text-base tracking-wider !font-normal !text-gray-600 opacity-100 no-underline font-lato">
                     {t('switchBranch')}
                   </div>
+
                   {branches?.map((branch: any) => {
                     const { subdomain, accountStatus } = branch;
                     const active = !isLearn && hostName === subdomain;
                     const isPending = accountStatus === 'PENDING';
                     return (
                       <div
-                        className="flex flex-col my-1 cursor-pointer  hover:bg-neutral-50"
+                        className="flex flex-col my-1 cursor-pointer hover:bg-neutral-50"
                         key={branch.id}
                         onClick={() => {
                           if (isPending) {
@@ -245,26 +246,30 @@ const AccountCard = () => {
                             />
                           </div>
 
-                          <p
-                            className={`font-semibold text-[14px] leading-[30px] flex items-center gap-2 ${
-                              active ? 'text-black' : 'text-gray-500'
-                            }`}
-                          >
-                            {branch.name}
+                          <div className="flex flex-col">
+                            <p
+                              className={`font-semibold  text-[14px] leading-[30px] flex items-center gap-2 ${
+                                active ? 'text-black' : 'text-gray-500'
+                              }`}
+                            >
+                              {branch.name}
+                            </p>
+
                             {isPending && (
-                              <span className="flex items-center gap-1">
+                              <div className="flex items-center gap-1 text-gray-500 text-sm">
                                 <Icon name="exclamation" size={12} />
                                 <span>{t('Pending')}</span>
-                              </span>
+                              </div>
                             )}
-                          </p>
+                          </div>
                         </div>
                       </div>
                     );
                   })}
+
                   {totalBranches > 2 && (
                     <div
-                      className="flex text-sm font-bold items-center text-neutral-800 justify-center cursor-pointer"
+                      className="flex text-lg tracking-wide font-semibold text-primary-500 opacity-100 no-underline justify-center cursor-pointer"
                       onClick={() => {
                         window.location.replace(
                           `${getLearnUrl('/select-branch')}`,
@@ -299,26 +304,15 @@ const AccountCard = () => {
         )}
         triggerNodeClassName="outline-none"
       />
-      {
-        <ConfirmationBox
+      {confirm && (
+        <ConfirmationModal
           open={confirm}
-          onClose={closeConfirm}
-          title="Accept"
-          description={<span>{t('confirmationMsg')}</span>}
-          success={{
-            label: t('accept'),
-            className: 'bg-green-500 text-white ',
-            onSubmit: () => {
-              redirectToDomain(selectedBranch);
-            },
-          }}
-          discard={{
-            label: t('cancel'),
-            className: 'text-neutral-900 bg-white ',
-            onCancel: closeConfirmation,
+          closeModal={closeConfirm}
+          onClick={() => {
+            redirectToDomain(selectedBranch);
           }}
         />
-      }
+      )}
     </>
   );
 };

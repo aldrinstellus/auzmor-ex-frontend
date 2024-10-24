@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-query';
 import apiService from 'utils/apiService';
 import { IPostUser } from 'interfaces';
+import { convertKeysToCamelCase } from 'utils/misc';
 
 // for future filters
 export enum PeopleFilterKeys {
@@ -190,7 +191,7 @@ export const getBranches = async (orgId: string) => {
     {},
   );
 
-  return data;
+  return convertKeysToCamelCase(data);
 };
 
 export const useGetBranches = (orgId: string) =>
