@@ -17,7 +17,7 @@ export const mapTeam = (team: any) =>
     category: team?.category,
     createdAt: team.created_at,
     description: team?.description,
-    id: team.id,
+    id: String(team.id),
     name: team.name,
     orgId: team?.orgId,
     recentMembers: team.recent_users?.map((member: any) => ({
@@ -38,7 +38,7 @@ export const mapTeam = (team: any) =>
   } as ITeam);
 
 export const mapTeamMember = (member: any, teamId: string) => ({
-  id: member.id,
+  id: String(member.id),
   member: {
     fullName: member.full_name,
     designation: {
