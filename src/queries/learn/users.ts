@@ -62,6 +62,10 @@ export const fetchMe = async () => {
         workEmail: user?.email,
         role: user?.role,
         org: {
+          id: orgData.result.data.id,
+          domain: orgData.result.data.custom_domain,
+          name: orgData.result.data.name,
+          url: orgData.result.data.url,
           subscription: {
             type: orgData.result.data?.remaining_trial_days
               ? 'TRIAL'
@@ -75,14 +79,6 @@ export const fetchMe = async () => {
               orgData.result.data.organization_setting.enablechecklist,
             enableEcommerce:
               orgData.result.data.organization_setting.enable_ecommerce,
-          },
-          orgDetails: {
-            customDomain: orgData.result.data.custom_domain,
-            customDomainEnabled: orgData.result.data.custom_domain_enabled,
-            id: orgData.result.data.id,
-            name: orgData.result.data.name,
-            orgType: orgData.result.data.organization_type,
-            url: orgData.result.data.url,
           },
         },
         ...(user?.designation && {

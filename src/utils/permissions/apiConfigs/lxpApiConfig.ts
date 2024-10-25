@@ -111,6 +111,7 @@ export const apiConfigLxp = {
 
   //organizations
   [ApiEnum.GetOrganization]: { [Default]: queries.useOrganization },
+  [ApiEnum.GetOrganizationBranch]: { [Default]: queries.useGetBranches },
 
   //photos
   [ApiEnum.UploadImage]: { [Default]: queries.uploadImage },
@@ -192,7 +193,4 @@ export const apiConfigLxp = {
   [ApiEnum.GetUser]: { [Default]: queries.useSingleUser },
   [ApiEnum.GetUserApi]: { [Default]: queries.getUser },
   [ApiEnum.GetMembers]: { [Default]: queries.useInfiniteMembers },
-
-  //learn
-  [ApiEnum.GetLearnBranch]: { [Default]: queries.useGetBranches },
 };

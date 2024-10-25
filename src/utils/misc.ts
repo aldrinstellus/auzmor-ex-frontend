@@ -55,16 +55,6 @@ export const isSafariBrowser = () => {
   return ua.indexOf('safari') !== -1 && ua.indexOf('chrome') === -1;
 };
 
-export const getDomainName = () => {
-  const { hostname = '' } = window.location;
-  const appHost = new URL(process.env.REACT_APP_BASE_URL || '').hostname;
-
-  const [hostName] = hostname.split('.') || [];
-  const isLearn = hostname === appHost;
-
-  return { name: !isLearn ? hostName : '', isLearn };
-};
-
 export const humanFileSize = (size: number) => {
   if (size === 0) return ' ';
   const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));

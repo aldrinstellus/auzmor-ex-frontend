@@ -109,6 +109,7 @@ export enum ApiEnum {
   DeleteOrganizationSSO = 'DELETE_ORGANIZATION_SSO',
   UpdateOrganizationConfiguration = 'UPDATE_ORGANIZATION_CONFIGURATION',
   GetOrganizationCelebrations = 'GET_ORGANIZATION_CELEBRATIONS',
+  GetOrganizationBranch = 'GET_ORGANIZATION_BRANCH',
 
   //password
   ForgotPassword = 'FORGOT_PASSWORD',
@@ -204,7 +205,4 @@ export enum ApiEnum {
   GetOrganizationChart = 'GET_ORGANIZATION_CHART',
   GetOrganizationChartApi = 'GET_ORGANIZATION_CHART_API',
   ResendInvitation = 'RESEND_INVITATION',
-
-  //Learn
-  GetLearnBranch = 'GET_LEARN_Branch',
 }
