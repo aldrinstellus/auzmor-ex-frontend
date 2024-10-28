@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 import useMediaQuery from 'hooks/useMediaQuery';
 import { CELEBRATION_TYPE } from 'components/CelebrationWidget';
 import { FeedModeEnum } from 'stores/feedStore';
+import useProduct from 'hooks/useProduct';
 
 interface IHomeFeedProps {}
 
@@ -31,14 +32,22 @@ export interface IMyReactions {
 
 const HomeFeed: FC<IHomeFeedProps> = () => {
   const { pathname } = useLocation();
-  const bookmarks = pathname === '/bookmarks';
-  const scheduled = pathname === '/scheduledPosts';
+
+  const bookmarks = pathname === '/bookmarks' || pathname == '/user/bookmarks';
+  const scheduled =
+    pathname === '/scheduledPosts' || pathname == '/user/scheduledPosts';
+  const announcements =
+    pathname === '/announcements' || pathname == '/user/announcements';
+
+  const { isOffice } = useProduct();
 
   // Set page title
   if (scheduled) {
     usePageTitle('scheduledPosts');
   } else if (bookmarks) {
     usePageTitle('bookmarks');
+  } else if (announcements) {
+    usePageTitle('announcements');
   } else {
     usePageTitle('feed');
   }
@@ -56,15 +65,16 @@ const HomeFeed: FC<IHomeFeedProps> = () => {
       ]}
       rightWidgets={[
         WidgetEnum.ProgressTracker,
-        WidgetEnum.ChannelRequest,
         WidgetEnum.CelebrationBirthday,
         WidgetEnum.CelebrationAnniversary,
         WidgetEnum.Event,
         WidgetEnum.AnnouncementCard,
+        WidgetEnum.ChannelRequest,
+        WidgetEnum.EvaluationRequestWidget,
       ]}
       widgetProps={{
         [WidgetEnum.MyTeam]: {
-          className: isLargeScreen ? 'sticky top-24' : '',
+          className: isLargeScreen ? 'sticky top-4' : '',
         },
         [WidgetEnum.CelebrationBirthday]: {
           type: CELEBRATION_TYPE.Birthday,
@@ -73,10 +83,13 @@ const HomeFeed: FC<IHomeFeedProps> = () => {
           type: CELEBRATION_TYPE.WorkAnniversary,
         },
         [WidgetEnum.Event]: {
-          className: 'sticky top-24',
+          className: 'sticky top-4',
         },
         [WidgetEnum.AnnouncementCard]: {
-          className: 'sticky top-24',
+          className: isOffice ? 'sticky top-4' : ' ',
+        },
+        [WidgetEnum.EvaluationRequestWidget]: {
+          className: 'sticky top-4',
         },
       }}
       modeProps={{ [FeedModeEnum.Default]: {} }}

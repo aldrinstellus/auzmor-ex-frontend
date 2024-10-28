@@ -6,6 +6,9 @@ import { getInitials } from 'utils/misc';
 import Spinner from 'components/Spinner';
 import BlurImg from 'components/Image/components/BlurImg';
 import Icon from 'components/Icon';
+import useProduct from 'hooks/useProduct';
+import useAuth from 'hooks/useAuth';
+import { useBrandingStore } from 'stores/branding';
 
 export type AvatarProps = {
   name?: string;
@@ -47,6 +50,14 @@ const Avatar: FC<AvatarProps> = ({
   outOfOffice = false,
   ariaLabel = 'Avatar',
 }) => {
+  const { isLxp } = useProduct();
+  const { user } = useAuth();
+  const branding = useBrandingStore((state) => state.branding);
+
+  if (isLxp) {
+    bgColor = user?.profileColor || branding.primaryColor;
+  }
+
   const containerStyles = useMemo(
     () =>
       clsx(
@@ -96,7 +107,7 @@ const Avatar: FC<AvatarProps> = ({
     [size, bgColor],
   );
 
-  const isBgDark = isDarkColor(bgColor);
+  const isBgDark = isDarkColor(bgColor) || isLxp;
 
   const textStyles = clsx(
     { 'text-white': isBgDark },

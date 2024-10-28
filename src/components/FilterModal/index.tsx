@@ -2,8 +2,16 @@ import Button, { Variant as ButtonVariant } from 'components/Button';
 import Divider from 'components/Divider';
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
-import { IDepartmentAPI } from 'queries/department';
-import { ILocationAPI } from 'queries/location';
+import {
+  ICategory,
+  IDepartmentAPI,
+  IDocType,
+  ILocationAPI,
+  ITeam,
+  UserStatus,
+  CategoryType,
+  UserRole,
+} from 'interfaces';
 import { FC, ReactNode, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Locations from './Locations';
@@ -11,11 +19,7 @@ import Departments from './Departments';
 import Status from './Status';
 import { ICheckboxListOption } from 'components/CheckboxList';
 import Categories from './Categories';
-import { ICategory } from 'queries/category';
-import { ITeam } from 'queries/teams';
 import Teams from './Teams';
-import { CategoryType } from 'queries/apps';
-import { UserStatus } from 'queries/users';
 import {
   CHANNEL_MEMBER_STATUS,
   ChannelVisibilityEnum,
@@ -23,17 +27,16 @@ import {
 import Visibility from './Visibility';
 import ChannelType, { ChannelTypeEnum } from './ChannelType';
 import { useTranslation } from 'react-i18next';
-import { IDocType } from 'queries/storage';
 import DocumentPeople from './DocumentPeople';
 import DocumentType from './DocumentType';
 import DocumentModified from './DocumentModifed';
 import Roles from './Roles';
-import { Role } from 'utils/enum';
 import ByPeople, { ByPeopleEnum } from './ByPeople';
 import ChannelRequestStatus from './ChannelRequestStatus';
 import { titleCase } from 'utils/misc';
 import Channels from './Channels';
 import { IS_PROD } from 'utils/constants';
+import useRole from 'hooks/useRole';
 
 export interface IFilterForm {
   visibilityRadio: ChannelVisibilityEnum;
@@ -78,7 +81,7 @@ export interface IChannelRequestStatus {
   name: string;
 }
 export interface IRole {
-  id: Role;
+  id: UserRole;
   name: string;
 }
 export interface IBypeople {
@@ -156,6 +159,7 @@ const FilterModal: FC<IFilterModalProps> = ({
   variant = FilterModalVariant.People,
 }) => {
   const { t } = useTranslation('filterModal');
+  const { isLearner } = useRole();
 
   const defaultChannelRequestStatus = !!(
     appliedFilters?.channelRequestStatus || []
@@ -324,7 +328,7 @@ const FilterModal: FC<IFilterModalProps> = ({
       : [FilterModalVariant.People, FilterModalVariant.LxpApp],
     'team-filters': [
       FilterModalVariant.App,
-      FilterModalVariant.LxpApp,
+      ...(isLearner ? [] : [FilterModalVariant.LxpApp]),
       ...(IS_PROD
         ? []
         : [

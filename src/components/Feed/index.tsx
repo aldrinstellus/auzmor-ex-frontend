@@ -18,8 +18,7 @@ import {
   PostFilterPreference,
   PostType,
   PostTypeMapping,
-  useInfiniteFeed,
-} from 'queries/post';
+} from 'interfaces';
 import { useTranslation } from 'react-i18next';
 import { useInView } from 'react-intersection-observer';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
@@ -49,7 +48,6 @@ import MembersWidget, {
 } from 'pages/ChannelDetail/components/MembersWidget';
 import AdminsWidget from 'pages/ChannelDetail/components/AdminsWidget';
 import { IChannel } from 'stores/channelStore';
-import { useGetRecommendation } from 'queries/learn';
 import useAuth from 'hooks/useAuth';
 import Recommendation from 'components/Recommendation';
 import ChannelsWidget from 'components/ChannelsWidget';
@@ -67,6 +65,14 @@ import Welcome from 'pages/ChannelDetail/components/Home/Welcome';
 import FinishSetup from 'pages/ChannelDetail/components/Home/FinishSetup';
 import Congrats from 'pages/ChannelDetail/components/Home/Congrats';
 import { IS_PROD } from 'utils/constants';
+import EvaluationRequestWidget, {
+  IEvaluationRequestWidgetProps,
+} from 'components/EvaluationRequestWidget';
+import { CreatePostFlow } from 'contexts/CreatePostContext';
+import useProduct from 'hooks/useProduct';
+import AnnouncementFeedHeader from './components/AnnouncementFeedHeader';
+import { ApiEnum } from 'utils/permissions/enums/apiEnum';
+import { usePermissions } from 'hooks/usePermissions';
 
 const EmptyWidget = () => <></>;
 
@@ -84,6 +90,7 @@ export enum WidgetEnum {
   CelebrationAnniversary = 'CELEBRATION_ANNIVERSARY',
   Event = 'EVENT',
   AnnouncementCard = 'ANNOUNCEMENT_CARD',
+  EvaluationRequestWidget = 'EVALUATION_REQUEST_WIDGET',
 }
 
 export const widgetMapping = {
@@ -100,6 +107,7 @@ export const widgetMapping = {
   [WidgetEnum.CelebrationAnniversary]: CelebrationWidget,
   [WidgetEnum.Event]: EventWidget,
   [WidgetEnum.AnnouncementCard]: AnnouncementCard,
+  [WidgetEnum.EvaluationRequestWidget]: EvaluationRequestWidget,
 };
 
 interface IFeedProps {
@@ -124,6 +132,7 @@ interface IFeedProps {
     [WidgetEnum.CelebrationAnniversary]?: ICelebrationWidgetProps;
     [WidgetEnum.Event]?: IEventWidgetProps;
     [WidgetEnum.AnnouncementCard]?: IAnnouncementCardProps;
+    [WidgetEnum.EvaluationRequestWidget]?: IEvaluationRequestWidgetProps;
   };
   modeProps?: {
     [FeedModeEnum.Default]?: {
@@ -163,46 +172,89 @@ const Feed: FC<IFeedProps> = ({
   const isLargeScreen = useMediaQuery('(min-width: 1300px)');
   const [open, openModal, closeModal] = useModal(undefined, false);
   const { user } = useAuth();
-  const { isAdmin } = useRole();
+  const { isAdmin, isLearner } = useRole();
   const { feed, setActiveFeedPostCount, setFeedMode } = useFeedStore();
   const { pathname } = useLocation();
   const { ref, inView } = useInView();
   const [searchParams] = useSearchParams();
   const currentDate = new Date().toISOString();
+  const { isLxp } = useProduct();
+  const { getApi } = usePermissions();
   const [appliedFeedFilters, setAppliedFeedFilters] = useState<IPostFilters>({
     [PostFilterKeys.PostType]: [],
     [PostFilterKeys.PostPreference]: [],
   });
+  const [customActiveFlow, setCustomActiveFlow] = useState<CreatePostFlow>(
+    CreatePostFlow.CreatePost,
+  );
   const { getScrollTop, pauseRecordingScrollTop, resumeRecordingScrollTop } =
     useScrollTop('app-shell-container');
 
   const hashtag = searchParams.get('hashtag') || '';
   let bookmarks = false;
   let scheduled = false;
+  let announcements = false;
   let apiEndpoint = '/feed';
 
-  switch (mode) {
-    case FeedModeEnum.Default:
-      bookmarks = pathname === '/bookmarks';
-      scheduled = pathname === '/scheduledPosts';
-      break;
-    case FeedModeEnum.Channel:
-      bookmarks =
-        pathname ===
-        `/channels/${modeProps?.[FeedModeEnum.Channel]?.channel.id}/bookmarks`;
-      scheduled =
-        pathname ===
-        `/channels/${
-          modeProps?.[FeedModeEnum.Channel]?.channel.id
-        }/scheduledPosts`;
-      break;
+  if (isLxp) {
+    switch (mode) {
+      case FeedModeEnum.Default:
+        bookmarks = pathname === '/bookmarks' || pathname === '/user/bookmarks';
+        scheduled =
+          pathname === '/scheduledPosts' || pathname === '/user/scheduledPosts';
+        announcements =
+          pathname === '/announcements' || pathname === '/user/announcements';
+        break;
+      case FeedModeEnum.Channel:
+        bookmarks =
+          pathname ===
+            `/channels/${
+              modeProps?.[FeedModeEnum.Channel]?.channel.id
+            }/bookmarks` ||
+          pathname ===
+            `/user/channels/${
+              modeProps?.[FeedModeEnum.Channel]?.channel.id
+            }/bookmarks`;
+        scheduled =
+          pathname ===
+            `/channels/${
+              modeProps?.[FeedModeEnum.Channel]?.channel.id
+            }/scheduledPosts` ||
+          pathname ===
+            `/user/channels/${
+              modeProps?.[FeedModeEnum.Channel]?.channel.id
+            }/scheduledPosts`;
+        break;
+    }
+  } else {
+    switch (mode) {
+      case FeedModeEnum.Default:
+        bookmarks = pathname === '/bookmarks';
+        scheduled = pathname === '/scheduledPosts';
+        announcements = pathname === '/announcements';
+        break;
+      case FeedModeEnum.Channel:
+        bookmarks =
+          pathname ===
+          `/channels/${
+            modeProps?.[FeedModeEnum.Channel]?.channel.id
+          }/bookmarks`;
+        scheduled =
+          pathname ===
+          `/channels/${
+            modeProps?.[FeedModeEnum.Channel]?.channel.id
+          }/scheduledPosts`;
+        break;
+    }
   }
 
   if (bookmarks) {
     apiEndpoint = '/bookmarks';
   }
+  if (announcements) {
+    apiEndpoint = `/announcements`;
+  }
   if (scheduled) apiEndpoint = '/scheduledPosts';
-
   //handle scroll
   useEffect(() => {
     if (hashtag) {
@@ -248,13 +300,18 @@ const Feed: FC<IFeedProps> = ({
   }, [hashtag]);
 
   // Learn data
+  const useGetRecommendations = getApi(ApiEnum.GetRecommendations);
   const { data: recommendationData, isLoading: recommendationLoading } =
-    useGetRecommendation(mode === FeedModeEnum.Default);
+    isLxp &&
+    useGetRecommendations({
+      enabled: isLxp && mode === FeedModeEnum.Default,
+    });
   const trendingCards =
     recommendationData?.data?.result?.data?.trending?.trainings || [];
   const recentlyPublishedCards =
     recommendationData?.data?.result?.data?.recently_published?.trainings || [];
 
+  const useInfiniteFeed = getApi(ApiEnum.GetFeedPosts);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteFeed(
       apiEndpoint,
@@ -275,15 +332,16 @@ const Feed: FC<IFeedProps> = ({
         ...((modeProps as any)[mode as any]?.params || {}),
       }),
     );
-
   const feedIds = (
-    (data?.pages.flatMap((page) =>
+    (data?.pages.flatMap((page: any) =>
       page.data?.result?.data
         .filter((post: { id: string }) => {
           if (bookmarks) {
             return !!feed[post.id]?.bookmarked;
           } else if (scheduled) {
             return !!feed[post.id]?.schedule;
+          } else if (announcements) {
+            return !isRegularPost(feed[post.id], currentDate, isAdmin);
           }
           return true;
         })
@@ -303,14 +361,14 @@ const Feed: FC<IFeedProps> = ({
           !isRegularPost(feed[post.id], currentDate, isAdmin),
       )
     : [];
-
   const regularFeedIds = feedIds
     ? feedIds.filter((post: { id: string }) =>
         isRegularPost(feed[post.id], currentDate, isAdmin),
       )
     : [];
-
-  useEffect(() => setActiveFeedPostCount(feedIds.length), [feedIds]);
+  useEffect(() => {
+    setActiveFeedPostCount(feedIds.length);
+  }, [feedIds]);
 
   const clearAppliedFilters = () => {
     setAppliedFeedFilters({
@@ -401,6 +459,27 @@ const Feed: FC<IFeedProps> = ({
         </div>
       );
     }
+    if (announcements) {
+      return (
+        <div className="bg-white p-6 flex flex-col rounded-9xl">
+          <div className="h-220 bg-blue-50 flex justify-center rounded-9xl">
+            <img
+              src={NoPosts}
+              data-testid="mybookmark-tab-nopost"
+              alt="No Posts"
+            />
+          </div>
+          <div data-testid="scheduledpost-tab-nodata">
+            <div className="font-bold text-base text-neutral-900 text-center mt-6">
+              {t('announcementPosts.emptyMessage')}
+            </div>
+            <div className="font-bold text-base text-neutral-900 text-center">
+              {t('announcementPosts.emptyMessage2')}
+            </div>
+          </div>
+        </div>
+      );
+    }
     if (
       appliedFeedFilters[PostFilterKeys.PostType]?.length ||
       appliedFeedFilters[PostFilterKeys.PostPreference]?.length
@@ -474,6 +553,18 @@ const Feed: FC<IFeedProps> = ({
 
   const FeedHeader = useMemo(() => {
     const getScheduleLinkTo = () => {
+      if (isLxp && isLearner) {
+        switch (mode) {
+          case FeedModeEnum.Default:
+            return '/user/scheduledPosts';
+          case FeedModeEnum.Channel:
+            return `/user/channels/${
+              modeProps?.[FeedModeEnum.Channel]?.channel.id
+            }/scheduledPosts`;
+          default:
+            return '/user/scheduledPosts';
+        }
+      }
       switch (mode) {
         case FeedModeEnum.Default:
           return '/scheduledPosts';
@@ -486,6 +577,18 @@ const Feed: FC<IFeedProps> = ({
       }
     };
     const getBookmarkLinkTo = () => {
+      if (isLxp && isLearner) {
+        switch (mode) {
+          case FeedModeEnum.Default:
+            return '/user/bookmarks';
+          case FeedModeEnum.Channel:
+            return `/user/channels/${
+              modeProps?.[FeedModeEnum.Channel]?.channel.id
+            }/bookmarks`;
+          default:
+            return '/user/bookmarks';
+        }
+      }
       switch (mode) {
         case FeedModeEnum.Default:
           return '/bookmarks';
@@ -497,6 +600,7 @@ const Feed: FC<IFeedProps> = ({
           return '/bookmarks';
       }
     };
+
     if (hashtag) {
       return (
         <HashtagFeedHeader
@@ -509,6 +613,8 @@ const Feed: FC<IFeedProps> = ({
       return <BookmarkFeedHeader mode={mode} />;
     } else if (scheduled) {
       return <ScheduledFeedHeader mode={mode} />;
+    } else if (announcements) {
+      return <AnnouncementFeedHeader mode={mode} />;
     } else {
       return (
         <div
@@ -516,7 +622,16 @@ const Feed: FC<IFeedProps> = ({
             showCreatePostCard || showCreatePostCard ? '' : 'hidden'
           }`}
         >
-          {showCreatePostCard && <CreatePostCard openModal={openModal} />}
+          {showCreatePostCard && (
+            <div>
+              <CreatePostCard
+                openModal={() => {
+                  openModal();
+                  setCustomActiveFlow(CreatePostFlow.CreatePost);
+                }}
+              />
+            </div>
+          )}
           {showFeedFilterBar && (
             <div className=" flex flex-col gap-6">
               <div className="flex flex-row items-center gap-6">
@@ -616,6 +731,13 @@ const Feed: FC<IFeedProps> = ({
   const getWidgets = (widgetList: WidgetEnum[]) => {
     let Widget: any = null;
 
+    if (isLxp && !isLearner) {
+      widgetList = widgetList.filter(
+        (widget) =>
+          widget !== WidgetEnum.Event && widget !== WidgetEnum.ProgressTracker,
+      );
+    }
+
     if (!isLargeScreen) {
       widgetList = [...widgetList, ...rightWidgets];
     }
@@ -628,6 +750,7 @@ const Feed: FC<IFeedProps> = ({
               {...widgetProps[widgetenum]}
               key={widgetenum}
               openModal={openModal}
+              setCustomActiveFlow={setCustomActiveFlow}
             />
           );
         }
@@ -797,6 +920,7 @@ const Feed: FC<IFeedProps> = ({
           open={open}
           openModal={openModal}
           closeModal={closeModal}
+          customActiveFlow={customActiveFlow}
         />
       )}
     </section>

@@ -17,7 +17,7 @@ export enum Size {
 export type IconButtonProps = {
   icon: string;
   variant?: Variant;
-  size?: Size;
+  size?: Size | number;
   disabled?: boolean;
   loading?: boolean;
   onClick?: MouseEventHandler<Element>;
@@ -27,6 +27,7 @@ export type IconButtonProps = {
   color?: string;
   dataTestId?: string;
   ariaLabel?: string;
+  iconClassName?: string;
 };
 
 const IconButton = ({
@@ -42,6 +43,7 @@ const IconButton = ({
   color,
   dataTestId,
   ariaLabel = 'icon button',
+  iconClassName = '',
 }: IconButtonProps) => {
   const styles = useMemo(
     () =>
@@ -92,6 +94,8 @@ const IconButton = ({
         return 16;
       case Size.Small:
         return 12;
+      default:
+        return size;
     }
   };
 
@@ -110,6 +114,7 @@ const IconButton = ({
           size={getSize()}
           color={color}
           disabled={disabled || loading}
+          className={iconClassName}
         />
         {loading && <Spinner />}
       </button>

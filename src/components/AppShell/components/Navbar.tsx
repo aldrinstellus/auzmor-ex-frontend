@@ -13,24 +13,9 @@ import useAuth from 'hooks/useAuth';
 import { useState } from 'react';
 import SubscriptionBanner from './SubscriptionBanner';
 import { useTranslation } from 'react-i18next';
-import useProduct from 'hooks/useProduct';
-import { getLearnUrl } from 'utils/misc';
 import GlobalSearch from './GlobalSearch';
-import IconButton, { Size } from 'components/IconButton';
-
-const learnNavigations = [
-  {
-    icon: 'messageQuestionOutline',
-    hoverIcon: 'messageQuestionFilled',
-    linkTo: `${getLearnUrl()}?openHelpSupport=true`,
-    dataTestId: 'learn-help-support-page',
-    iconSize: 24,
-    ariaLabel: 'help and support',
-  },
-];
 
 const Navbar = () => {
-  const { isLxp } = useProduct();
   const { isAdmin } = useRole();
   const { user } = useAuth();
   const [showSubscriptionBanner, setShowSubscriptionBanner] = useState(
@@ -61,16 +46,6 @@ const Navbar = () => {
       iconSize: 24,
     },
     {
-      label: t('teams'),
-      icon: 'usersOutline',
-      hoverIcon: 'usersFilled',
-      linkTo: '/teams',
-      dataTestId: 'office-team-page',
-      iconSize: 24,
-      isActive: isLxp && location.pathname.includes('/teams'),
-      hidden: !isLxp,
-    },
-    {
       label: t('people'),
       icon: 'peopleOutline',
       hoverIcon: 'peopleFilled',
@@ -80,17 +55,7 @@ const Navbar = () => {
       isActive:
         location.pathname.includes('/users') ||
         location.pathname.includes('/teams'),
-      hidden: isLxp,
-    },
-    {
-      label: t('learningHub'),
-      icon: 'lifeBuoyOutline',
-      hoverIcon: 'lifeBuoyFilled',
-      linkTo: `${getLearnUrl()}/user`,
-      dataTestId: 'learn-page', // need to change
-      iconSize: 24,
-      isActive: false, // Since this is for Learning Hub, it's not active by default
-      hidden: !isLxp,
+      hidden: false,
     },
     {
       label: t('apps'),
@@ -141,27 +106,13 @@ const Navbar = () => {
             </ul>
             <Divider className="h-full" variant={Variant.Vertical} />
             <ul className="flex items-center gap-6">
-              {!isLxp &&
-                isAdmin &&
+              {isAdmin &&
                 adminNavigations.map((nav) => (
                   <li key={nav.dataTestId} className="flex">
                     <NavbarMenuItem nav={nav} />
                   </li>
                 ))}
-              {isLxp &&
-                learnNavigations.map((nav) => (
-                  <li key={nav.dataTestId}>
-                    <IconButton
-                      icon={nav.icon}
-                      size={Size.Large}
-                      onClick={() => {
-                        window.open(nav.linkTo);
-                      }}
-                      ariaLabel="help and support"
-                      className="bg-white hover:bg-white active:bg-white"
-                    />
-                  </li>
-                ))}
+
               <li>
                 <NotificationsOverview />
               </li>

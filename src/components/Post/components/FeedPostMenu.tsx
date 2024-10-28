@@ -3,13 +3,7 @@ import Icon from 'components/Icon';
 import PopupMenu from 'components/PopupMenu';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import ConfirmationBox from 'components/ConfirmationBox';
-import {
-  AudienceEntityType,
-  IPost,
-  PostType,
-  deletePost,
-  updatePost,
-} from 'queries/post';
+import { AudienceEntityType, IPost, PostType } from 'interfaces';
 import PostBuilder, { PostBuilderMode } from 'components/PostBuilder';
 import useModal from 'hooks/useModal';
 import useAuth from 'hooks/useAuth';
@@ -24,8 +18,11 @@ import ClosePollModal from './ClosePollModal';
 import PollVotesModal from './PollVotesModal';
 import ChangeToRegularPostModal from './ChangeToRegularPostModal';
 import AnnouncementAnalytics from './AnnouncementAnalytics';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import useNavigate from 'hooks/useNavigation';
+import { usePermissions } from 'hooks/usePermissions';
+import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 
 export interface IFeedPostMenuProps {
   data: IPost;
@@ -33,6 +30,7 @@ export interface IFeedPostMenuProps {
 }
 
 const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data, readOnly = false }) => {
+  const { getApi } = usePermissions();
   const { user } = useAuth();
   const { isMember } = useRole();
   const location = useLocation();
@@ -59,9 +57,10 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data, readOnly = false }) => {
   const { channelId = '' } = useParams();
   const { t } = useTranslation('post', { keyPrefix: 'feedPostMenu' });
 
+  const deletePost = getApi(ApiEnum.DeletePost);
   const deletePostMutation = useMutation({
     mutationKey: ['deletePostMutation', data.id],
-    mutationFn: deletePost,
+    mutationFn: (id: string) => deletePost(id),
     onMutate: (variables) => {
       const previousFeed = feedRef.current;
       if (!isPostPage) setFeed({ ...omit(feedRef.current, [variables]) });
@@ -94,6 +93,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data, readOnly = false }) => {
     },
   });
 
+  const updatePost = getApi(ApiEnum.UpdatePost);
   const updatePostMutation = useMutation({
     mutationKey: ['updatePostMutation'],
     mutationFn: (payload: any) => updatePost(payload.id || '', payload as any),

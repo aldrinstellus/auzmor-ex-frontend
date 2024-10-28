@@ -12,7 +12,6 @@ import { useInView } from 'react-intersection-observer';
 import { useForm } from 'react-hook-form';
 import { useDebounce } from 'hooks/useDebounce';
 import TeamModal from '../TeamModal';
-import { useInfiniteTeams } from 'queries/teams';
 import { isFiltersEmpty } from 'utils/misc';
 import PageLoader from 'components/PageLoader';
 import TeamNotFound from 'images/TeamNotFound.svg';
@@ -24,7 +23,7 @@ import FilterModal, {
   FilterModalVariant,
   IAppliedFilters,
 } from 'components/FilterModal';
-import { ICategory } from 'queries/category';
+import { ICategory } from 'interfaces';
 
 import useAuth from 'hooks/useAuth';
 import useURLParams from 'hooks/useURLParams';
@@ -32,6 +31,8 @@ import useRole from 'hooks/useRole';
 import NoDataFound from 'components/NoDataFound';
 import useProduct from 'hooks/useProduct';
 import { useTranslation } from 'react-i18next';
+import { ApiEnum } from 'utils/permissions/enums/apiEnum';
+import { usePermissions } from 'hooks/usePermissions';
 interface IForm {
   search?: string;
 }
@@ -111,6 +112,7 @@ const Team: FC<ITeamProps> = ({
   const { user } = useAuth();
   const { isAdmin } = useRole();
   const { isLxp } = useProduct();
+  const { getApi } = usePermissions();
   const [teamFlow, setTeamFlow] = useState<TeamFlow>(TeamFlow.CreateTeam); // to context
   const [teamDetails, setTeamDetails] = useState<Record<string, any> | null>(
     {},
@@ -144,6 +146,7 @@ const Team: FC<ITeamProps> = ({
   const searchValue = watch('search');
   const debouncedSearchValue = useDebounce(searchValue || '', 500);
 
+  const useInfiniteTeams = getApi(ApiEnum.GetTeams);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteTeams({
       startFetching,
@@ -166,14 +169,8 @@ const Team: FC<ITeamProps> = ({
     }
   }, [inView]);
 
-  const teamsData = data?.pages.flatMap((page) => {
-    return page?.data?.result?.data.map((team: any) => {
-      try {
-        return team;
-      } catch (e) {
-        console.log('Error', { team });
-      }
-    });
+  const teamsData = data?.pages.flatMap((page: any) => {
+    return page?.data?.result?.data.map((team: any) => team);
   });
 
   const handleRemoveFilters = (key: string, id: any) => {
@@ -379,7 +376,7 @@ const Team: FC<ITeamProps> = ({
 
       <div>
         {showGrid ? (
-          <div className="grid grid-cols-6 gap-6 justify-items-center lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+          <div className="grid grid-cols-3 gap-6 justify-items-center lg:grid-cols-3 1.5lg:grid-cols-4 1.5xl:grid-cols-5 2xl:grid-cols-5">
             {isLoading
               ? [...Array(30)].map((_value, i) => (
                   <div key={`${i}-teams-skeleton`}>

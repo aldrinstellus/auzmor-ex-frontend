@@ -1,7 +1,5 @@
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from 'components/../../tailwind.config.js';
-import { IMedia } from 'contexts/CreatePostContext';
-import { validDocumentFileTypes, validImageTypes } from 'queries/files';
 import { getItem, removeItem } from './persist';
 import { DeltaStatic } from 'quill';
 import {
@@ -12,18 +10,50 @@ import DeactivatedCoverImage from 'images/deactivatedCoverPhoto.png';
 import DefaultCoverImage from 'images/png/CoverImage.png';
 import capitalize from 'lodash/capitalize';
 import DeactivatedUser from 'images/DeactivatedUser.png';
-import { EditUserSection, UserStatus } from 'queries/users';
 import { MouseEvent, MouseEventHandler } from 'react';
-import { ILocation } from 'queries/location';
-import { IDepartment } from 'queries/department';
-import { IDesignation } from 'queries/designation';
-import { IPost } from 'queries/post';
+import {
+  IMedia,
+  IPost,
+  ILocation,
+  IDepartment,
+  IDesignation,
+  UserStatus,
+  EditUserSection,
+} from 'interfaces';
 import moment from 'moment';
-import { EMPTY_REGEX, HEX_REGEX, SESSION_ID } from './constants';
+import {
+  EMPTY_REGEX,
+  HEX_REGEX,
+  SESSION_ID,
+  validDocumentFileTypes,
+  validImageTypes,
+} from './constants';
+
+export const toCamelCase = (str: string) => {
+  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+};
+
+export const convertKeysToCamelCase = (obj: any): any => {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => convertKeysToCamelCase(item));
+  } else if (obj !== null && typeof obj === 'object') {
+    return Object.keys(obj).reduce((acc, key) => {
+      const camelCaseKey = toCamelCase(key);
+      acc[camelCaseKey] = convertKeysToCamelCase(obj[key]);
+      return acc;
+    }, {} as any);
+  }
+  return obj; // Return the value if it's neither an object nor an array
+};
 
 export const twConfig: any = resolveConfig(tailwindConfig);
 
 export const userChannel = new BroadcastChannel('user');
+
+export const isSafariBrowser = () => {
+  const ua = navigator.userAgent.toLowerCase();
+  return ua.indexOf('safari') !== -1 && ua.indexOf('chrome') === -1;
+};
 
 export const humanFileSize = (size: number) => {
   if (size === 0) return ' ';

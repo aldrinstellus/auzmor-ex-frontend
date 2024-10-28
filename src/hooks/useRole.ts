@@ -1,5 +1,7 @@
-import { Role } from 'utils/enum';
 import useAuth from './useAuth';
+import { useLocation } from 'react-router-dom';
+import useProduct from './useProduct';
+import { UserRole } from 'interfaces';
 
 interface IRoleProps {
   exact?: boolean;
@@ -10,18 +12,40 @@ const useRole = (
   { exact, userId }: IRoleProps = { exact: false, userId: '' },
 ) => {
   const { user } = useAuth();
+  const { pathname } = useLocation();
+  const { isLxp } = useProduct();
 
-  const isAdminOrSuperAdmin = [Role.Admin, Role.SuperAdmin].includes(
-    // @ts-ignore
-    user?.role,
-  );
+  let isAdminOrSuperAdmin = [
+    UserRole.Admin,
+    UserRole.PrimaryAdmin,
+    UserRole.Superadmin,
+  ].includes(user?.role || UserRole.Member);
+
+  const isOwner = user?.id === userId;
+  let isOwnerOrAdmin = isAdminOrSuperAdmin || user?.id === userId;
+  let isMember = user?.role === UserRole.Member;
+  let isAdmin = exact ? user?.role === UserRole.Admin : isAdminOrSuperAdmin;
+  let isSuperAdmin =
+    user?.role === UserRole.Superadmin || user?.role === UserRole.PrimaryAdmin;
+
+  // Used for lxp only
+  const isLearner = pathname.split('/')[1] === 'user';
+
+  if (isLxp && isLearner) {
+    isAdminOrSuperAdmin = false;
+    isOwnerOrAdmin = isAdminOrSuperAdmin || user?.id === userId;
+    isMember = true;
+    isAdmin = false;
+    isSuperAdmin = false;
+  }
 
   return {
-    isOwner: user?.id === userId,
-    isOwnerOrAdmin: isAdminOrSuperAdmin || user?.id === userId,
-    isMember: user?.role === Role.Member,
-    isAdmin: exact ? user?.role === Role.Admin : isAdminOrSuperAdmin,
-    isSuperAdmin: user?.role === Role.SuperAdmin,
+    isOwner,
+    isOwnerOrAdmin,
+    isMember,
+    isAdmin,
+    isSuperAdmin,
+    isLearner,
   };
 };
 
