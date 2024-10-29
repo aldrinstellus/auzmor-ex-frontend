@@ -110,6 +110,7 @@ export enum ApiEnum {
   UpdateOrganizationConfiguration = 'UPDATE_ORGANIZATION_CONFIGURATION',
   GetOrganizationCelebrations = 'GET_ORGANIZATION_CELEBRATIONS',
   GetOrganizationBranch = 'GET_ORGANIZATION_BRANCH',
+  GetCartItems = 'GET_CART_ITEMS',
 
   //password
   ForgotPassword = 'FORGOT_PASSWORD',

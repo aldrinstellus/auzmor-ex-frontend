@@ -76,7 +76,7 @@ export const fetchMe = async () => {
             enableMentorship:
               orgData.result.data.organization_setting.enable_mentorship,
             enablechecklist:
-              orgData.result.data.organization_setting.enablechecklist,
+              orgData.result.data.organization_setting.enable_checklist,
             enableEcommerce:
               orgData.result.data.organization_setting.enable_ecommerce,
           },
@@ -194,6 +194,18 @@ export const useGetBranches = (orgId: string) =>
   useQuery({
     queryKey: ['learn-branches'],
     queryFn: () => getBranches(orgId),
+    staleTime: 15 * 60 * 1000,
+  });
+
+export const getCartItems = async () => {
+  const { data } = await apiService.get(`cart_items`);
+  return data;
+};
+
+export const useGetCartItems = () =>
+  useQuery({
+    queryKey: ['learn-cart-items'],
+    queryFn: () => getCartItems(),
     staleTime: 15 * 60 * 1000,
   });
 
