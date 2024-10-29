@@ -12,6 +12,7 @@ import SubscriptionBanner from 'components/AppShell/components/SubscriptionBanne
 import IconButton from 'components/IconButton';
 import './style.css';
 import useNavigate from 'hooks/useNavigation';
+import Cart from './Cart';
 
 interface INavbarLxpProps {}
 
@@ -148,6 +149,11 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
               </div>
               <ul className="flex items-center gap-[19px]">
                 <div className="w-[1px] h-5 bg-[#e5e5e5]"></div>
+                {!!user?.organization?.setting?.enableEcommerce && (
+                  <li>
+                    <Cart />
+                  </li>
+                )}
                 <li>
                   <IconButton
                     icon="messageQuestionOutline"
