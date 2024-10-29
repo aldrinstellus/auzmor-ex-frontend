@@ -57,6 +57,7 @@
     "viewAll": "View All",
     "accept": "Accept",
     "cancel": "Cancel",
+    "cartCount": "10+",
     "confirmationMsg": "Do you want to accept the invitation to join the branch?",
     "toastMessages": {
       "switchingToModernView": "Switching to Modern View...",

@@ -197,6 +197,18 @@ export const useGetBranches = (orgId: string) =>
     staleTime: 15 * 60 * 1000,
   });
 
+export const getCartItems = async () => {
+  const { data } = await apiService.get(`cart_items`);
+  return data;
+};
+
+export const useGetCartItems = () =>
+  useQuery({
+    queryKey: ['learn-cart-items'],
+    queryFn: () => getCartItems(),
+    staleTime: 15 * 60 * 1000,
+  });
+
 /* REACT QUERY */
 
 export const useInfiniteUsers = ({
