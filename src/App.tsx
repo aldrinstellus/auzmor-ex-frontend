@@ -14,6 +14,7 @@ import { getLearnUrl } from 'utils/misc';
 import UserOnboard from 'components/UserOnboard';
 import LxpRouter from 'components/LxpRouter';
 import './i18n/config';
+import FontFamilySwitcher from 'components/FontFamilySwitcher';
 
 function App() {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
@@ -32,7 +33,9 @@ function App() {
             </section>
           ) : null}
           <UserOnboard />
-          {getProduct() === ProductEnum.Lxp ? <LxpRouter /> : <Router />}
+          <FontFamilySwitcher>
+            {getProduct() === ProductEnum.Lxp ? <LxpRouter /> : <Router />}
+          </FontFamilySwitcher>
           <Toast />
         </AuthProvider>
       </ProductProvider>
