@@ -70,7 +70,8 @@ module.exports = {
         xxs: '0.625rem',
       },
       fontFamily: {
-        lato: ['Lato', 'sans-serif'], // Add Lato font here
+        lato: ['Lato', 'sans-serif'],
+        manrope: 'Manrope',
       },
       boxShadow: {
         'shadow-sm': '0px 1px 2px 0px rgba(0,0,0,0.08)',
