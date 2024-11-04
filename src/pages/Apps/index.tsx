@@ -282,7 +282,7 @@ const Apps: FC<IAppsProps> = () => {
           isLxp ? 'min-h-[calc(100vh-112px)] relative mb-6' : ''
         }`}
       >
-        {isLxp ? (
+        {!isLxp ? (
           <div className="flex justify-between pb-4">
             <h1 className="font-bold text-2xl text-black" tabIndex={0}>
               {t('title')}
