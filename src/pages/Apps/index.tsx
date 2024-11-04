@@ -32,6 +32,7 @@ import { usePageTitle } from 'hooks/usePageTitle';
 import { isTrim } from 'pages/ChannelDetail/components/utils';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { usePermissions } from 'hooks/usePermissions';
+import useAuth from 'hooks/useAuth';
 
 interface IAppsProps {}
 interface IAppSearchForm {
@@ -93,6 +94,7 @@ const Apps: FC<IAppsProps> = () => {
   const { getApi } = usePermissions();
   const { apps, featuredApps } = useAppStore();
   const { isAdmin } = useRole();
+  const { user } = useAuth();
   const [selectedQuickCategory, setSelectedQuickCategory] =
     useState<string>('');
 
