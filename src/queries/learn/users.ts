@@ -39,13 +39,26 @@ export interface IPostUsers {
 
 export const mapUser = (user: Record<string, any>) => {
   return {
+    ...user,
     preferredName: user?.display_name,
     fullName: user?.full_name || user?.name,
     firstName: user?.first_name,
     lastName: user?.last_name,
     profileImage: { original: user?.image_url },
     workEmail: user?.email,
+    id: user?.id?.toString(),
+  };
+};
+
+export const mapMentionsUser = (user: Record<string, any>) => {
+  return {
     ...user,
+    preferredName: user?.name,
+    fullName: user?.full_name || user?.name,
+    profileImage: { original: user?.additional_info?.image_url },
+    workEmail: user?.email,
+    designation: user?.additional_info?.designation,
+    id: user?.id?.toString(),
   };
 };
 
@@ -138,7 +151,7 @@ export const getAllUser = async ({
       ...response.data,
       result: {
         ...response.data.result,
-        data: response.data.result.data.map(mapUser),
+        data: response.data.result.data.map(mapMentionsUser),
       },
     },
   };
