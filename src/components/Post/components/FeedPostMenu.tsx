@@ -142,7 +142,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data, readOnly = false }) => {
       stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-promote-to-announcement',
       permissions: ['CREATE_ANNOUNCEMENTS'],
-      enabled: isRegularPost(data, currentDate, isAdmin) && isAdmin,
+      enabled: isAdmin && isRegularPost(data, currentDate, isAdmin),
     },
     {
       label: t('editAnnouncement'),
@@ -154,7 +154,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data, readOnly = false }) => {
       stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-edit-announcement',
       permissions: ['UPDATE_ANNOUNCEMENTS'],
-      enabled: !isRegularPost(data, currentDate, isAdmin),
+      enabled: isAdmin && !isRegularPost(data, currentDate, isAdmin),
     },
     {
       label: t('changeToRegularPost'),
@@ -163,7 +163,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data, readOnly = false }) => {
       stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-changeto-regularpost',
       permissions: ['UPDATE_ANNOUNCEMENTS'],
-      enabled: !isRegularPost(data, currentDate, isAdmin),
+      enabled: isAdmin && !isRegularPost(data, currentDate, isAdmin),
     },
     {
       label: t('editPost'),
@@ -207,7 +207,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data, readOnly = false }) => {
       stroke: 'text-neutral-900',
       dataTestId: 'post-ellipsis-view-acknowledgement-report',
       permissions: ['CREATE_ANNOUNCEMENTS', 'UPDATE_ANNOUNCEMENTS'],
-      enabled: !isRegularPost(data, currentDate, isAdmin),
+      enabled: isAdmin && !isRegularPost(data, currentDate, isAdmin),
     },
     {
       label: t('deletePost'),
