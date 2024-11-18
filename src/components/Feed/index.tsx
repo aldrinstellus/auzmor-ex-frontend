@@ -336,13 +336,17 @@ const Feed: FC<IFeedProps> = ({
     (data?.pages.flatMap((page: any) =>
       page.data?.result?.data
         .filter((post: { id: string }) => {
-          if (bookmarks) {
-            return !!feed[post.id]?.bookmarked;
-          } else if (scheduled) {
-            return !!feed[post.id]?.schedule;
-          } else if (announcements) {
+          // If Channels Feed, hide Global Posts
+          if (mode === FeedModeEnum.Channel && !feed[post.id]?.audience?.length)
+            return false;
+          // If Bookmarks Feed, show only bookmarked posts
+          if (bookmarks) return !!feed[post.id]?.bookmarked;
+          // If Scheduled Feed, show only scheduled posts
+          if (scheduled) return !!feed[post.id]?.schedule;
+          // If Announcements Feed, show only announcements
+          if (announcements)
             return !isRegularPost(feed[post.id], currentDate, isAdmin);
-          }
+          // If none of the above, show the post
           return true;
         })
         .map((post: { id: string }) => post),
