@@ -406,7 +406,7 @@ const FilterMenu: FC<IFilterMenu> = ({
               onClick={clearFilters}
               data-testid={`people-clear-filters`}
             >
-              {tf('clearFilters')}
+              {tf('clearFilterCTA')}
             </div>
           </div>
         ) : null}

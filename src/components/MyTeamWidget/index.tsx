@@ -99,7 +99,16 @@ const MyTeamWidget: FC<IMyTeamWidgetProps> = ({ className = '' }) => {
                   <ul className="divide-y divide-neutral-200">
                     {teamsData?.map((team: any) => (
                       <li key={team.id} className="py-2">
-                        <TeamCard {...team} />
+                        <TeamCard
+                          {...team}
+                          onClick={(id) =>
+                            isLxp && isAdmin
+                              ? window.location.assign(
+                                  getLearnUrl(`/teams/${id}`),
+                                )
+                              : navigate(`/teams/${id}`)
+                          }
+                        />
                       </li>
                     ))}
                   </ul>
@@ -113,7 +122,7 @@ const MyTeamWidget: FC<IMyTeamWidgetProps> = ({ className = '' }) => {
                       dataTestId="my-teams-cta"
                       onClick={() =>
                         isLxp && isAdmin
-                          ? window.location.replace(
+                          ? window.location.assign(
                               getLearnUrl('/peoples?tab=teams'),
                             )
                           : navigate('/teams?tab=myTeams')
