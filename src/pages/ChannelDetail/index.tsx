@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import Documents from './components/Documents';
+import Document from './components/Documents';
 import ChannelHome from './components/Home';
 import ProfileSection from './components/ProfileSection';
 import Members from './components/Members';
@@ -176,7 +176,7 @@ const ChannelDetail: FC<AppProps> = ({
       dataTestId: 'channel-document-tab',
       tabContent: showBanner(ChannelDetailTabsEnum.Documents) || (
         <DocumentPathProvider>
-          <Documents />
+          <Document permissions={permissions} />
         </DocumentPathProvider>
       ),
     },

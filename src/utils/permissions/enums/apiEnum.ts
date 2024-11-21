@@ -211,4 +211,6 @@ export enum ApiEnum {
   //Documents
   GetDirectories = 'GET_DIRECTORIES',
   UpdateConnection = 'UPDATE_CONNECTION',
+  GetFiles = 'GET_FILES',
+  GetChannelDocumentStatus = 'GET_CHANNEL_DOCUMENT_STATUS',
 }

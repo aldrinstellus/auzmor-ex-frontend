@@ -36,7 +36,7 @@ const Modal: FC<ModalProps> = ({
       {ReactDOM.createPortal(
         <CSSTransition in={open} timeout={200} classNames="modal" unmountOnExit>
           <div
-            className="z-50 flex items-center justify-center fixed left-0 right-0 top-0 bottom-0 backdrop-blur-sm bg-black/60"
+            className="z-[999] flex items-center justify-center fixed left-0 right-0 top-0 bottom-0 backdrop-blur-sm bg-black/60"
             onClick={closeModal}
           >
             <div

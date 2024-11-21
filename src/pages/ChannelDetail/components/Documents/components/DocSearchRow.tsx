@@ -1,6 +1,6 @@
 import Icon from 'components/Icon';
 import React from 'react';
-import { getIconName } from './Doc';
+import { getIconFromMime } from './Doc';
 import { humanizeTime } from 'utils/time';
 import { humanFileSize } from 'utils/misc';
 
@@ -35,7 +35,7 @@ function getSummary(summary: string | undefined) {
 }
 
 const DocSearchRow = ({ data, variant = Variant.Small }: DocSearchProps) => {
-  const iconName = getIconName(data?.raw?.mimeType);
+  const iconName = getIconFromMime(data?.raw?.mimeType);
   const summary = getSummary(data?.raw?.summary);
 
   if (variant === Variant.Small) {

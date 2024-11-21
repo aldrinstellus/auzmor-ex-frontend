@@ -189,6 +189,7 @@ import LearningCenterIcon from '../components/LearningCenter';
 import ArrowDown3 from '../components/ArrowDown3';
 import { ExclamationSVG } from 'components/LearnIcons';
 import DirIcon from '../components/Dir';
+import GridIcon from '../components/Grid';
 
 export const icon = {
   add: Add,
@@ -281,6 +282,7 @@ export const icon = {
   global: Global,
   'global-edit': GlobalEditIcon,
   google: GoogleIcon,
+  grid: GridIcon,
   group: GroupIcon,
   home: HomeIcon,
   iconLinear: IconLinear,

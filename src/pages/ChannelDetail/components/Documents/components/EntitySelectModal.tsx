@@ -1,6 +1,6 @@
 import { ColumnDef, Table } from '@tanstack/react-table';
 import Button, { Variant as ButtonVariant, Size } from 'components/Button';
-import DataList from 'components/DataGrid';
+import DataGrid from 'components/DataGrid';
 import Modal from 'components/Modal';
 import Header from 'components/ModalHeader';
 import { useDataGrid } from 'hooks/useDataGrid';
@@ -20,6 +20,7 @@ interface IEntitySelectModalProps {
   onSelect: (entity: any) => void;
   integrationType?: DocIntegrationEnum;
   headerText?: string;
+  q?: Record<string, any>;
 }
 
 interface IForm {
@@ -33,6 +34,7 @@ const EntitySelectModal: FC<IEntitySelectModalProps> = ({
   onSelect,
   integrationType = DocIntegrationEnum.GoogleDrive,
   headerText,
+  q,
 }) => {
   const { channelId } = useParams();
   const { control, watch, setValue } = useForm<IForm>({
@@ -96,10 +98,17 @@ const EntitySelectModal: FC<IEntitySelectModalProps> = ({
     [totalRows],
   );
 
-  const datalistProps = useDataGrid({
+  const dataGridProps = useDataGrid({
     apiEnum: ApiEnum.GetDirectories,
     isInfiniteQuery: false,
-    q: { channelId: channelId, q: debouncedSearchValue, folderId: folderId },
+    q: {
+      channelId: channelId,
+      params: {
+        q: debouncedSearchValue,
+        folderId: folderId,
+        ...q,
+      },
+    },
     dataGridProps: {
       columns,
       isRowSelectionEnabled: true,
@@ -126,8 +135,8 @@ const EntitySelectModal: FC<IEntitySelectModalProps> = ({
   });
 
   useEffect(() => {
-    setTotalRows((datalistProps?.flatData || []).length);
-  }, [datalistProps.flatData]);
+    setTotalRows((dataGridProps?.flatData || []).length);
+  }, [dataGridProps.flatData]);
 
   return (
     <Modal open={isOpen}>
@@ -155,7 +164,7 @@ const EntitySelectModal: FC<IEntitySelectModalProps> = ({
             },
           ]}
         />
-        <DataList {...datalistProps} />
+        <DataGrid {...dataGridProps} />
       </div>
 
       {/* Footer */}
@@ -173,12 +182,12 @@ const EntitySelectModal: FC<IEntitySelectModalProps> = ({
             console.log('clicked');
             onSelect(
               Object.keys(
-                (datalistProps.tableRef?.current as Table<any>).getState()
+                (dataGridProps.tableRef?.current as Table<any>).getState()
                   .rowSelection,
-              ).map((i) => datalistProps.flatData[i]),
+              ).map((i) => dataGridProps.flatData[i]),
             );
           }}
-          disabled={datalistProps.isLoading || !datalistProps.isRowSelected}
+          disabled={dataGridProps.isLoading || !dataGridProps.isRowSelected}
           size={Size.Small}
         />
       </div>

@@ -2,16 +2,15 @@ import { clsx } from 'clsx';
 import Card from 'components/Card';
 import Icon from 'components/Icon';
 import Truncate from 'components/Truncate';
-import React, { FC, useMemo, useState } from 'react';
-import useModal from 'hooks/useModal';
-import { DocType } from 'interfaces';
-import FilePreviewModal from './FilePreviewModal';
+import React, { FC, useMemo } from 'react';
+import { Doc as DocType } from 'interfaces';
+import Avatar from 'components/Avatar';
 
 interface IDocProps {
-  file: DocType;
+  doc: DocType;
 }
 
-export const getIconName = (mimeType?: string) => {
+export const getIconFromMime = (mimeType?: string) => {
   if (
     mimeType?.includes('image/') ||
     ['jpeg', 'jpg', 'png', 'svg'].includes(mimeType ?? '')
@@ -49,57 +48,54 @@ export const getIconName = (mimeType?: string) => {
   return MIME_TO_ICON[mimeType ?? ''] || 'file';
 };
 
-const Doc: FC<IDocProps> = ({ file }) => {
-  const [filePreview, openFilePreview, closeFilePreview] = useModal(
-    false,
-    true,
-  );
-
-  const [imgSrc, setImgSrc] = useState<string | undefined>(
-    file.fileThumbnailUrl,
-  );
-  const onError = () => setImgSrc('');
+const Doc: FC<IDocProps> = ({ doc }) => {
+  // const [filePreview, openFilePreview, closeFilePreview] = useModal(
+  //   false,
+  //   true,
+  // );
 
   const style = useMemo(
     () =>
       clsx({
-        'p-4 bg-white flex flex-col w-64 cursor-pointer gap-4': true,
+        'flex flex-col gap-2 px-3 py-2 rounded-9xl border border-neutral-200 min-w-[223px]':
+          true,
       }),
     [],
   );
 
-  const iconName = getIconName(file.mimeType);
+  const iconName = doc.isFolder ? 'dir' : getIconFromMime(doc.mimeType);
   return (
     <>
-      <Card
-        className={style}
-        onClick={() =>
-          imgSrc ? openFilePreview() : window.open(file.fileUrl, '_blank')
-        }
-      >
-        <div className="border border-neutral-300 overflow-hidden rounded-7xl w-full h-28">
-          {imgSrc ? (
-            <img src={imgSrc} onError={onError} alt="Image" />
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <Icon name={iconName} size={56} />
-            </div>
-          )}
+      <Card className={style}>
+        <div className="flex justify-center items-center py-[15px] border border-neutral-200">
+          <Icon name={iconName} size={70} />
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 items-center flex">
-            <Icon name={iconName} />
+        <div className="flex flex-col gap-1">
+          <Truncate
+            text="Invoice Details"
+            className="text-xs font-medium leading-[18px] w-[200px]"
+          />
+          <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5">
+              <Avatar size={16} />
+              <span className="text-[8px] text-neutral-500 font-medium">
+                Jesse Leos
+              </span>
+            </div>
+            <div className="flex w-[3px] h-[3px] bg-neutral-300"></div>
+            <span className="text-[8px] text-neutral-500 font-medium">
+              Updated 5 mins ago
+            </span>
           </div>
-          <Truncate text={file.name} className="max-w-[190px] font-medium" />
         </div>
       </Card>
-      {filePreview && imgSrc && (
+      {/* {filePreview && (
         <FilePreviewModal
           file={file}
           open={filePreview}
           closeModal={closeFilePreview}
         />
-      )}
+      )} */}
     </>
   );
 };

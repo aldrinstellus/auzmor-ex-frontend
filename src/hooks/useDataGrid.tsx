@@ -5,24 +5,25 @@ import { IDataGridProps } from 'components/DataGrid';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import Skeleton from 'react-loading-skeleton';
 
-type DataGridType = {
+type DataGridType<T> = {
   apiEnum: ApiEnum;
   q?: Record<string, any>;
   isInfiniteQuery?: boolean;
   loadingRowCount?: number;
-  dataGridProps: IDataGridProps;
+  isEnabled?: boolean;
+  dataGridProps: IDataGridProps<T>;
 };
 
-export const useDataGrid: (config: DataGridType) => IDataGridProps = ({
+export const useDataGrid = <T extends object>({
   loadingRowCount = 5,
   ...rest
-}) => {
+}: DataGridType<T>) => {
   const { getApi } = usePermissions();
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isRowSelected, setIsRowSelected] = useState(false);
   const tableRef = useRef<any>(null);
-  const { apiEnum, q, isInfiniteQuery } = rest;
+  const { apiEnum, q, isInfiniteQuery, isEnabled } = rest;
   const { columns } = rest.dataGridProps;
 
   const generateLoadingRows = () => {
@@ -45,7 +46,7 @@ export const useDataGrid: (config: DataGridType) => IDataGridProps = ({
   if (isInfiniteQuery) {
     const useInfiniteQuery = getApi(apiEnum);
     const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-      useInfiniteQuery(q);
+      useInfiniteQuery(q, { enabled: isEnabled });
     const flatData = useMemo(
       () => data?.pages?.flatMap((page: { data: any }) => page.data) ?? [],
       [data],
@@ -58,21 +59,26 @@ export const useDataGrid: (config: DataGridType) => IDataGridProps = ({
     const tableColumns = useMemo(
       () =>
         isLoading
-          ? columns.map((column) => ({
-              ...column,
-              cell: () => (
-                <div className="w-full h-5">
-                  <Skeleton className="w-full h-full" />
-                </div>
-              ),
-            }))
+          ? columns.map(
+              (column) =>
+                ({
+                  ...column,
+                  header: () => <></>,
+                  cell: () => (
+                    <Skeleton
+                      containerClassName="w-full !h-3 !rounded-15xl !max-w-[280px] relative"
+                      className="!absolute !w-full top-0 left-0 h-3 !rounded-15xl"
+                    />
+                  ),
+                } as ColumnDef<T>),
+            )
           : columns,
       [isLoading, columns],
     );
 
     return {
       ...rest.dataGridProps,
-      columns: tableColumns as ColumnDef<any>[],
+      columns: tableColumns as ColumnDef<T>[],
       isFetchingNextPage,
       fetchNextPage,
       hasNextPage,
@@ -88,30 +94,34 @@ export const useDataGrid: (config: DataGridType) => IDataGridProps = ({
   }
 
   const useQuery = getApi(apiEnum);
-  const { data, isLoading } = useQuery(q);
-  const flatData = data?.result?.data || [];
+  const { data, isLoading } = useQuery(q, { enabled: isEnabled });
+  const flatData = data;
 
   const tableData = useMemo(
     () => (isLoading ? loadingData : flatData),
     [isLoading, flatData],
   );
+
   const tableColumns = useMemo(
     () =>
       isLoading
-        ? columns.map((column) => ({
-            ...column,
-            cell: () => (
-              <div className="w-full h-6">
-                <Skeleton
-                  className="w-full h-full"
-                  style={{ lineHeight: 'unset' }}
-                />
-              </div>
-            ),
-          }))
+        ? columns.map(
+            (column) =>
+              ({
+                ...column,
+                header: () => null,
+                cell: () => (
+                  <Skeleton
+                    containerClassName="w-full !h-3 !rounded-15xl !max-w-[280px] relative"
+                    className="!absolute !w-full top-0 left-0 h-3 !rounded-15xl"
+                  />
+                ),
+              } as ColumnDef<T>),
+          )
         : columns,
     [isLoading, columns],
   );
+
   return {
     ...rest.dataGridProps,
     flatData: tableData,

@@ -200,4 +200,8 @@ export const apiConfigLxp = {
   //documents
   [ApiEnum.GetDirectories]: { [Default]: queries.useDirectories },
   [ApiEnum.UpdateConnection]: { [Default]: queries.updateConnection },
+  [ApiEnum.GetFiles]: { [Default]: queries.useFiles },
+  [ApiEnum.GetChannelDocumentStatus]: {
+    [Default]: queries.useChannelDocumentStatus,
+  },
 };
