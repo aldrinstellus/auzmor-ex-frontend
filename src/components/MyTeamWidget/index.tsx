@@ -15,6 +15,7 @@ import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { usePermissions } from 'hooks/usePermissions';
 import useProduct from 'hooks/useProduct';
 import useRole from 'hooks/useRole';
+import { TeamTab } from 'pages/Users/components/Teams';
 
 export interface IMyTeamWidgetProps {
   className?: string;
@@ -106,7 +107,9 @@ const MyTeamWidget: FC<IMyTeamWidgetProps> = ({ className = '' }) => {
                               ? window.location.assign(
                                   getLearnUrl(`/teams/${id}`),
                                 )
-                              : navigate(`/teams/${id}`)
+                              : navigate(`/teams/${id}`, {
+                                  state: { prevRoute: TeamTab.MyTeams },
+                                })
                           }
                         />
                       </li>

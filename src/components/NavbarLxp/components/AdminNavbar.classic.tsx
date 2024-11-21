@@ -157,7 +157,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
           id: 'mentorship',
           label: t('learn.mentorship'),
           onClick: () =>
-            window.location.assign(`${getLearnUrl('/mentorship/overview')}`),
+            window.location.assign(`${getLearnUrl('/mentorship/admin')}`),
           show: !!user?.organization?.setting?.enableMentorship,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
           labelClassName: '!text-black hover:!text-black leading-4',

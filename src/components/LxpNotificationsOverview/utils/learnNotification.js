@@ -281,16 +281,19 @@ const getSocialSourceRoute = (
 ) => {
   switch (target1Type) {
     case 'COMMENT':
-    case 'POST': {
+    case 'POST':
+      const targetPost = additionalInfo?.target?.find(
+        (item) => item.entityType === 'POST',
+      );
       const targetComment = additionalInfo?.target
         ?.toReversed()
-        .find((item) => item.entity_type === 'COMMENT');
-      const url = `${isLearn ? '/user' : ''}/posts/${targetId1}${
-        targetComment ? `?commentId=${targetComment.entity_id}` : ''
+        ?.find((item) => item.entityType === 'COMMENT');
+      const targetPostId =
+        target1Type === 'POST' ? targetId1 : targetPost?.entityId;
+      const url = `${isLearn ? '/user' : ''}/posts/${targetPostId}${
+        targetComment ? `?commentId=${targetComment.entityId}` : ''
       }`;
-
       return url;
-    }
 
     case 'Poll':
       if (additionalInfo && additionalInfo.forum && additionalInfo.post) {
