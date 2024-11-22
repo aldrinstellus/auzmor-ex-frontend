@@ -54,7 +54,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data, readOnly = false }) => {
   const currentDate = new Date().toISOString();
 
   const isPostPage = location.pathname.startsWith('/posts/');
-  const isChannelPage = location.pathname.startsWith('/channels/');
+  const isChannelPage = location.pathname.includes('/channels/');
   const { channelId = '' } = useParams();
   const { t } = useTranslation('post', { keyPrefix: 'feedPostMenu' });
   const { isOffice } = useProduct();
