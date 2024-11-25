@@ -5,7 +5,7 @@ import { usePageTitle } from 'hooks/usePageTitle';
 import DocSearchRow, {
   Variant,
 } from 'pages/ChannelDetail/components/Documents/components/DocSearchRow';
-import { DocType } from 'interfaces';
+import { Doc as DocType } from 'interfaces';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';

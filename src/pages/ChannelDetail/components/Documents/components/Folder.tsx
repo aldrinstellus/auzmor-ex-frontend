@@ -2,28 +2,10 @@ import Card from 'components/Card';
 import React, { FC, useMemo } from 'react';
 import FolderSvg from 'images/folder.svg';
 import { clsx } from 'clsx';
-
-export type FolderType = {
-  id?: string;
-  remote_id?: string;
-  created_at?: string;
-  modifiedAt?: string;
-  name: string;
-  folder_url?: string;
-  size: number;
-  description?: string;
-  parent_folder?: string;
-  drive?: string;
-  permissions?: any;
-  remote_created_at?: string;
-  remote_updated_at?: string;
-  remote_was_deleted?: boolean;
-  field_mappings?: any;
-  remote_data?: any;
-};
+import { Doc } from 'interfaces';
 
 interface IFolderProps {
-  folder: FolderType;
+  folder: Doc;
   onClick?: () => void;
 }
 

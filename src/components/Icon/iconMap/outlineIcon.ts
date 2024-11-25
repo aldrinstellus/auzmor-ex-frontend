@@ -107,6 +107,7 @@ import SvgShoppingCartOutline from '../components/ShoppingCart/ShoppingCartOutli
 import SvgMessageQuestionOutline from '../components/MessageQuestion/MessageQuestionOutline';
 import SvgTeacherOutline from '../components/Teacher/TeacherOutline';
 import SvgVideoSquareOutline from '../components/VideoSquare/VideoSquareOutline';
+import SvgGridOutline from '../components/Grid/GridOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -158,6 +159,7 @@ export const outlineIcon = {
   galleryOutline: SvgGalleryOutline,
   gearOutline: SvgGearOutline,
   globalOutline: SvgGlobalOutline,
+  gridOutline: SvgGridOutline,
   groupOutline: SvgGroupOutline,
   homeOutline: SvgHomeOutline,
   iconLinearOutline: SvgIconLinearOutline,

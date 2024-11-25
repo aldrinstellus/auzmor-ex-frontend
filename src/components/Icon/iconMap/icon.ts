@@ -188,6 +188,8 @@ import TrainingIcon from '../components/Training';
 import LearningCenterIcon from '../components/LearningCenter';
 import ArrowDown3 from '../components/ArrowDown3';
 import { ExclamationSVG } from 'components/LearnIcons';
+import DirIcon from '../components/Dir';
+import GridIcon from '../components/Grid';
 
 export const icon = {
   add: Add,
@@ -233,11 +235,15 @@ export const icon = {
   crossCircle: CrossCircle,
   cyclicArrow: CyclicArrow,
   deactivateUser: DeactivateUser,
+  deel: DeelIcon,
+  deel2: DeelIcon2,
   delete: DeleteIcon,
   deleteCross: DeleteCrossIcon,
+  dir: DirIcon,
   doc: DocIcon,
   document: DocumentIcon,
   documentUpload: DocumentUpload,
+  documentView: DocumentViewIcon,
   docx: DocIcon,
   dotsHorizontal: dotsHorizontalIcon,
   dotsVertical: DotsVerticalIcon,
@@ -249,6 +255,7 @@ export const icon = {
   email: EmailIcon,
   emojiHappy: EmojiHappy,
   'employee-tag': EmployeeTagIcon,
+  exclamation: ExclamationSVG,
   expand: ExpandIcon,
   explore: ExploreIcon,
   export: ExportIcon,
@@ -275,6 +282,7 @@ export const icon = {
   global: Global,
   'global-edit': GlobalEditIcon,
   google: GoogleIcon,
+  grid: GridIcon,
   group: GroupIcon,
   home: HomeIcon,
   iconLinear: IconLinear,
@@ -339,6 +347,7 @@ export const icon = {
   reorder: Reorder,
   reply: Reply,
   repost: Repost,
+  restInPeace: RestInPeaceIcon,
   rotateLeft: RotateLeft,
   search: Search,
   security: Security,
@@ -359,8 +368,8 @@ export const icon = {
   teacher: TeacherIcon,
   threeDots: ThreeDots,
   tickCircle: TickCircleIcon,
-  trash: Trash,
   training: TrainingIcon,
+  trash: Trash,
   'user-tag': UserTagIcon,
   userAdmin: UserAdminIcon,
   userManagement: UserManagement,
@@ -377,9 +386,4 @@ export const icon = {
   xlsx: XlsIcon,
   zoomIn: ZoomInIcon,
   zoomOut: ZoomOutIcon,
-  documentView: DocumentViewIcon,
-  deel: DeelIcon,
-  deel2: DeelIcon2,
-  restInPeace: RestInPeaceIcon,
-  exclamation: ExclamationSVG,
 };

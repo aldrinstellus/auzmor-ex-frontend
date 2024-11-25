@@ -1,21 +1,14 @@
 import FilterModal, { FilterModalVariant } from 'components/FilterModal';
-import Layout, { FieldType } from 'components/Form';
 import IconButton, {
   Variant as IconVariant,
   Size as IconSize,
 } from 'components/IconButton';
-// import Sort from 'components/Sort';
 import useModal from 'hooks/useModal';
-import { FC, ReactNode, useEffect, useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
+import { FC, ReactNode, useEffect } from 'react';
 import useURLParams from 'hooks/useURLParams';
-import Icon from 'components/Icon';
-import { useDebounce } from 'hooks/useDebounce';
-import NoDataFound from 'components/NoDataFound';
-import DocSearchRow from 'pages/ChannelDetail/components/Documents/components/DocSearchRow';
 import { useAppliedFiltersForDoc } from 'stores/appliedFiltersForDoc';
-import { usePermissions } from 'hooks/usePermissions';
-import { ApiEnum } from 'utils/permissions/enums/apiEnum';
+import Sort from 'components/Sort';
+import PopupMenu from 'components/PopupMenu';
 
 export enum FilterKey {
   departments = 'departments',
@@ -24,42 +17,19 @@ export enum FilterKey {
 }
 
 interface IFilterMenu {
-  children: ReactNode;
-  filterForm: UseFormReturn<
-    {
-      search: string;
-      [key: string]: any;
-    },
-    any
-  >;
-  searchPlaceholder?: string;
+  children?: ReactNode;
   dataTestIdSort?: string;
   dataTestIdFilter?: string;
-  dataTestIdSearch?: string;
 }
 
 const FilterMenuDocument: FC<IFilterMenu> = ({
   children,
-  filterForm,
-  // dataTestIdSort,
+  dataTestIdSort,
   dataTestIdFilter,
 }) => {
-  const { getApi } = usePermissions();
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const { filters, setFilters } = useAppliedFiltersForDoc();
-  const { control } = filterForm;
-  const [documentSearch, setDocument] = useState('');
-  const debouncedDocumentSearch = useDebounce(documentSearch || '', 300);
-  const searchStorage = getApi(ApiEnum.SearchStorage);
-  const { data: documentData, isFetching } = searchStorage({
-    q: debouncedDocumentSearch,
-    mimeType: '',
-    ownerEmail: '',
-    modifiedBefor: '',
-    modifiedAfter: '',
-    limit: 4,
-  });
-  const documents = documentData?.data?.result?.data || [];
+
   const { updateParam, serializeFilter, deleteParam } = useURLParams();
 
   useEffect(() => {
@@ -104,58 +74,6 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
   //   });
   // };
 
-  const memberSearchfields = [
-    {
-      type: FieldType.AsyncSingleSelect,
-      control,
-      name: 'documentSearch',
-      dataTestId: 'docs-search',
-      className: `mr-2 min-w-[245px] block`,
-      selectClassName: 'docs-select',
-      placeholder: 'Search documents',
-      placement: 'bottomRight',
-      suffixIcon: <></>,
-      clearIcon: (
-        <Icon name="closeCircle" size={16} className="-mt-0.5 !mr-4" />
-      ),
-      isClearable: true,
-      isLoading: isFetching,
-      options: documents?.map(
-        (doc: any) =>
-          ({
-            value: doc.name,
-            label: doc.name,
-            raw: doc,
-          } as any),
-      ),
-      onEnter: () => {
-        if (documentSearch) {
-          updateParam(`search`, documentSearch);
-        }
-      },
-      disableFilterOption: true,
-      onSearch: (searchString: string) => {
-        setDocument(searchString);
-      },
-      optionRenderer: (documents: any) => {
-        return <DocSearchRow data={documents} />;
-      },
-      onClear: () => {},
-      noOptionsMessage: (
-        <NoDataFound
-          className="py-4 w-full"
-          illustration="noDocumentFound"
-          labelHeader={
-            <p>We&apos;re a little lost. Can you give us a hint? </p>
-          }
-          hideClearBtn
-          dataTestId="membersearch"
-        />
-      ),
-      // dataTestId: 'member-search',
-    },
-  ];
-
   const isFilterApplied =
     !!filters?.docTypeCheckbox?.length ||
     !!filters?.docPeopleCheckbox?.length ||
@@ -167,6 +85,19 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
         <div className="flex justify-between items-center">
           <div>{children}</div>
           <div className="flex space-x-2 justify-center items-center relative">
+            <PopupMenu
+              triggerNode={
+                <IconButton
+                  icon="grid"
+                  variant={IconVariant.Secondary}
+                  size={IconSize.Medium}
+                  borderAround
+                  className="bg-white !p-[10px]"
+                  dataTestId={dataTestIdFilter}
+                />
+              }
+              menuItems={[]}
+            />
             <div className="relative flex">
               <IconButton
                 onClick={openFilterModal}
@@ -181,7 +112,7 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
                 <div className="absolute w-2 h-2 rounded-full bg-red-500 top-0.5 right-0" />
               )}
             </div>
-            {/* <Sort
+            <Sort
               setFilter={(sortValue) => {
                 setFilters({ sort: sortValue });
               }}
@@ -190,10 +121,7 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
               filterValue={{ asc: 'ASC', desc: 'DESC' }}
               entity={'CHANNEL'}
               dataTestId={dataTestIdSort}
-            /> */}
-            <div>
-              <Layout fields={memberSearchfields} />
-            </div>
+            />
           </div>
         </div>
       </div>

@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { DocType } from 'interfaces';
 import Modal from 'components/Modal';
 import Icon from 'components/Icon';
 import Avatar from 'components/Avatar';
@@ -7,7 +6,7 @@ import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 
 interface IFilePreviewProps {
-  file: DocType;
+  file: any;
   open: boolean;
   closeModal: () => void;
 }
