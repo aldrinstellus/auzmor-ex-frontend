@@ -49,7 +49,7 @@ const Footer: FC<IFooterProps> = ({
   } = useContext(CreatePostContext);
   const { t } = useTranslation('postBuilder');
 
-  const { isMember } = useRole();
+  const { isAdmin } = useRole();
 
   const canSchedule = !(!!!schedule && mode === PostBuilderMode.Edit);
   const updateContext = () => {
@@ -176,10 +176,10 @@ const Footer: FC<IFooterProps> = ({
             name="moreOutline"
             color="stroke-[#292D32]"
             dataTestId="feed-createpost-ellipsis-icon"
-            tabIndex={isMember ? -1 : 0}
+            tabIndex={!isAdmin ? -1 : 0}
           />
         ),
-        hidden: isMember,
+        hidden: !isAdmin,
         menuItems: [
           {
             label: t('postMenuItems.shareAsAnnouncement'),
@@ -188,7 +188,7 @@ const Footer: FC<IFooterProps> = ({
               updateContext();
               setActiveFlow(CreatePostFlow.CreateAnnouncement);
             },
-            disabled: isMember,
+            disabled: !isAdmin,
             iconWrapperClassName: 'p-2 rounded-7xl border mr-2.5 bg-white',
             dataTestId: 'feed-createpost-shareasannouncement',
           },

@@ -163,8 +163,8 @@ const AccountCard = () => {
                   />
                   <div>
                     {user?.role === UserRole.Manager
-                      ? t('switchToMangerView')
-                      : t('switchToAdminsView')}
+                      ? t('learn.switchToMangerView')
+                      : t('learn.switchToAdminsView')}
                   </div>
                 </div>
               </Link>

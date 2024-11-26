@@ -2,6 +2,7 @@ import useAuth from './useAuth';
 import { useLocation } from 'react-router-dom';
 import useProduct from './useProduct';
 import { UserRole } from 'interfaces';
+import { IS_PROD_OR_STAGING } from 'utils/constants';
 
 interface IRoleProps {
   exact?: boolean;
@@ -23,7 +24,6 @@ const useRole = (
 
   const isOwner = user?.id === userId;
   let isOwnerOrAdmin = isAdminOrSuperAdmin || user?.id === userId;
-  let isMember = user?.role === UserRole.Member;
   let isAdmin = exact ? user?.role === UserRole.Admin : isAdminOrSuperAdmin;
   let isSuperAdmin =
     user?.role === UserRole.Superadmin || user?.role === UserRole.PrimaryAdmin;
@@ -31,10 +31,9 @@ const useRole = (
   // Used for lxp only
   const isLearner = pathname.split('/')[1] === 'user';
 
-  if (isLxp && isLearner) {
+  if (isLxp && isLearner && !IS_PROD_OR_STAGING) {
     isAdminOrSuperAdmin = false;
     isOwnerOrAdmin = isAdminOrSuperAdmin || user?.id === userId;
-    isMember = true;
     isAdmin = false;
     isSuperAdmin = false;
   }
@@ -42,7 +41,6 @@ const useRole = (
   return {
     isOwner,
     isOwnerOrAdmin,
-    isMember,
     isAdmin,
     isSuperAdmin,
     isLearner,

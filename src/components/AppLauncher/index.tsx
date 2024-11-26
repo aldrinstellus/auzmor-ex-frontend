@@ -21,12 +21,13 @@ import useNavigate from 'hooks/useNavigation';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { usePermissions } from 'hooks/usePermissions';
 import useProduct from 'hooks/useProduct';
+import { IS_PROD_OR_STAGING } from 'utils/constants';
 
 const AppLauncher = () => {
   const { t } = useTranslation('appLauncher');
   const { getApi } = usePermissions();
   const navigate = useNavigate();
-  const { isAdmin, isLearner } = useRole();
+  const { isAdmin } = useRole();
   const { isLxp } = useProduct();
   const widgetApps = useAppStore((state) => state.widgetApps);
   const [open, openCollpase, closeCollapse] = useModal(true, false);
@@ -128,9 +129,13 @@ const AppLauncher = () => {
                   dataTestId="app-launcher-view-all"
                   onClick={() => {
                     if (isLxp) {
-                      navigate(isLearner ? '/apps?myApp=true' : '/apps');
+                      navigate(
+                        isAdmin && !IS_PROD_OR_STAGING
+                          ? '/apps'
+                          : '/apps?myApp=true',
+                      );
                     } else {
-                      navigate(isAdmin ? '/apps?myApp=true' : '/apps');
+                      navigate(isAdmin ? '/apps' : '/apps?myApp=true');
                     }
                   }}
                 />

@@ -2,13 +2,16 @@ import * as queries from 'queries/learn';
 
 import { ApiEnum } from '../enums/apiEnum';
 import { LxpRoleEnum } from '../enums/roleEnum';
+import { IS_PROD_OR_STAGING } from 'utils/constants';
 
 const { Default, Learner } = LxpRoleEnum;
 
 export const apiConfigLxp = {
   //apps
   [ApiEnum.GetApps]: {
-    [Default]: queries.useInfiniteApps,
+    [Default]: IS_PROD_OR_STAGING
+      ? queries.useInfiniteAppsLearner
+      : queries.useInfiniteApps,
     [Learner]: queries.useInfiniteAppsLearner,
   },
   [ApiEnum.GetFeaturedApps]: { [Default]: queries.useInfiniteFeaturedApps },
@@ -33,7 +36,9 @@ export const apiConfigLxp = {
 
   //channels
   [ApiEnum.GetChannels]: {
-    [Default]: queries.useInfiniteChannels,
+    [Default]: IS_PROD_OR_STAGING
+      ? queries.useInfiniteChannelsLearner
+      : queries.useInfiniteChannels,
     [Learner]: queries.useInfiniteChannelsLearner,
   },
   [ApiEnum.GetChannel]: { [Default]: queries.useChannelDetails },
@@ -151,7 +156,9 @@ export const apiConfigLxp = {
   [ApiEnum.DeletePollVote]: { [Default]: queries.deletePollVote },
 
   [ApiEnum.GetFeedPosts]: {
-    [Default]: queries.useInfiniteFeed,
+    [Default]: IS_PROD_OR_STAGING
+      ? queries.useInfiniteLearnerFeed
+      : queries.useInfiniteFeed,
     [Learner]: queries.useInfiniteLearnerFeed,
   },
   [ApiEnum.GetAnnouncementPosts]: { [Default]: queries.useAnnouncementsWidget },

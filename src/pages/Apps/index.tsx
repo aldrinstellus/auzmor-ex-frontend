@@ -32,6 +32,7 @@ import { usePageTitle } from 'hooks/usePageTitle';
 import { isTrim } from 'pages/ChannelDetail/components/utils';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { usePermissions } from 'hooks/usePermissions';
+import { IS_PROD_OR_STAGING } from 'utils/constants';
 
 interface IAppsProps {}
 interface IAppSearchForm {
@@ -302,7 +303,7 @@ const Apps: FC<IAppsProps> = () => {
         ) : null}
         <div className="flex justify-between pb-4">
           <div className="flex items-center gap-x-4">
-            {!(isLxp && !isLearner) && (
+            {!(isLxp && isAdmin && !IS_PROD_OR_STAGING) && (
               <Button
                 variant={ButtonVariant.Secondary}
                 label={t('my-apps')}

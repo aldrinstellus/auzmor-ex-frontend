@@ -14,6 +14,7 @@ import { useState } from 'react';
 import SubscriptionBanner from './SubscriptionBanner';
 import { useTranslation } from 'react-i18next';
 import GlobalSearch from './GlobalSearch';
+import { IS_PROD } from 'utils/constants';
 
 const Navbar = () => {
   const { isAdmin } = useRole();
@@ -73,7 +74,7 @@ const Navbar = () => {
       dataTestId: 'channels-page',
       iconSize: 24,
       isActive: location.pathname.includes('/channels'),
-      hidden: process.env.REACT_APP_ENV === 'PRODUCTION', // hide for office and lxp
+      hidden: IS_PROD, // hide for office and lxp
     },
   ].filter((each) => !!!each?.hidden);
 
@@ -91,7 +92,7 @@ const Navbar = () => {
             <Logo />
           </Link>
 
-          {process.env.REACT_APP_ENV != 'PRODUCTION' && (
+          {!IS_PROD && (
             <div className="flex-1" title="global search">
               <GlobalSearch />
             </div>

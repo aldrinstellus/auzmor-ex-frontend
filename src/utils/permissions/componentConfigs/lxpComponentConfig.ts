@@ -14,6 +14,7 @@ import UserWidget from 'components/UserWidget';
 
 import { ComponentEnum } from '../enums/componentEnum';
 import { LxpRoleEnum } from '../enums/roleEnum';
+import { IS_PROD } from '../../constants';
 
 const { Default, Admin, PrimaryAdmin, Learner } = LxpRoleEnum;
 
@@ -35,10 +36,10 @@ export const componentConfigLxp = {
     [Default]: ChannelMembersWidget,
   },
   [ComponentEnum.ChannelRequestWidget]: {
-    [Default]: ChannelRequestWidget,
+    [Default]: !IS_PROD ? ChannelRequestWidget : null,
   },
   [ComponentEnum.ChannelsWidget]: {
-    [Default]: ChannelsWidget,
+    [Default]: !IS_PROD ? ChannelsWidget : null,
   },
   [ComponentEnum.EvaluationRequestWidget]: {
     [PrimaryAdmin]: EvaluationRequestWidget,

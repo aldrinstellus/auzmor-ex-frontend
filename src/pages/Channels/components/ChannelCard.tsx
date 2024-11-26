@@ -29,6 +29,7 @@ import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import useProduct from 'hooks/useProduct';
 import useRole from 'hooks/useRole';
 import useAuth from 'hooks/useAuth';
+import { IS_PROD_OR_STAGING } from 'utils/constants';
 
 interface IChannelCardProps {
   channel: IChannel;
@@ -45,13 +46,14 @@ const ChannelCard: FC<IChannelCardProps> = ({ channel }) => {
   const { user } = useAuth();
 
   const showRequestBtn =
-    !(isLxp && isAdmin) &&
+    !(isLxp && isAdmin && !IS_PROD_OR_STAGING) &&
     channel.settings?.visibility === ChannelVisibilityEnum.Private &&
     !!!channel.member &&
     !!!channel.joinRequest;
   const showInviteYourselfBtn =
     isLxp &&
     isAdmin &&
+    !IS_PROD_OR_STAGING &&
     channel.settings?.visibility === ChannelVisibilityEnum.Private &&
     !!!channel.member;
   const showJoinChannelBtn =
@@ -59,7 +61,7 @@ const ChannelCard: FC<IChannelCardProps> = ({ channel }) => {
     !!!channel.member &&
     !!!channel.joinRequest;
   const showWithdrawBtn =
-    !(isLxp && isAdmin) &&
+    !(isLxp && isAdmin && !IS_PROD_OR_STAGING) &&
     channel.settings?.visibility === ChannelVisibilityEnum.Private &&
     !!!channel.member &&
     !!channel.joinRequest;
