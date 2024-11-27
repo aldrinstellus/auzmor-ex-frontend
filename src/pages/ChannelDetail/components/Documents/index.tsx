@@ -26,6 +26,7 @@ import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import { failureToastConfig } from 'components/Toast/variants/FailureToast';
 import BreadCrumb from 'components/BreadCrumb';
 import { DocumentPathContext } from 'contexts/DocumentPathContext';
+import RecentlyAddedEntities from './components/RecentlyAddedEntities';
 
 export enum DocIntegrationEnum {
   Sharepoint = 'SHAREPOINT',
@@ -69,7 +70,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   const integrationType: DocIntegrationEnum = DocIntegrationEnum.Sharepoint;
   const availableAccount = statusResponse?.availableAccounts[0];
 
-  const updateConnection = getApi(ApiEnum.UpdateConnection);
+  const updateConnection = getApi(ApiEnum.UpdateChannelDocumentConnection);
   const updateConnectionMutation = useMutation({
     mutationKey: ['update-channel-connection', channelId],
     mutationFn: updateConnection,
@@ -201,10 +202,13 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   );
 
   const dataGridProps = useDataGrid<DocType>({
-    apiEnum: ApiEnum.GetFiles,
+    apiEnum: ApiEnum.GetChannelFiles,
     isInfiniteQuery: false,
-    q: {
-      folderId: items.length === 1 ? undefined : items[items.length - 1].id,
+    payload: {
+      channelId,
+      params: {
+        folderId: items.length === 1 ? undefined : items[items.length - 1].id,
+      },
     },
     isEnabled: !isLoading,
     dataGridProps: {
@@ -319,6 +323,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         </div>
         {isBaseFolderSet ? (
           <Fragment>
+            <RecentlyAddedEntities />
             <FilterMenuDocument />
             <DataGrid {...dataGridProps} />
           </Fragment>
