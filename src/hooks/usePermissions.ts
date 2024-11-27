@@ -9,8 +9,12 @@ import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { ComponentEnum } from 'utils/permissions/enums/componentEnum';
 import useAuth from './useAuth';
 import { UserRole } from 'interfaces';
+import { IS_PROD_OR_STAGING } from 'utils/constants';
 
 export const usePermissions = () => {
+  const orgRole = useAuth().user?.role;
+  const product = process.env.REACT_APP_PRODUCT || ProductEnum.Lxp;
+
   const getRole = (orgRole: any) => {
     let role = orgRole;
     if (getProduct() === ProductEnum.Lxp) {
@@ -21,10 +25,7 @@ export const usePermissions = () => {
     return role;
   };
 
-  const role = getRole(useAuth().user?.role as any);
-
-  const product = process.env.REACT_APP_PRODUCT || ProductEnum.Lxp;
-
+  const apiRole = IS_PROD_OR_STAGING ? orgRole : getRole(orgRole as any);
   const apiConfig = (
     product === ProductEnum.Lxp ? apiConfigLxp : apiConfigOffice
   ) as any;
@@ -32,8 +33,8 @@ export const usePermissions = () => {
   const getApi = (apiEnum: ApiEnum) => {
     const defaultResponse = () => {};
     try {
-      if (role && !!apiConfig[apiEnum][role]) {
-        return apiConfig[apiEnum][role];
+      if (apiRole && !!apiConfig[apiEnum][apiRole]) {
+        return apiConfig[apiEnum][apiRole];
       } else if (!!apiConfig[apiEnum]!['DEFAULT']) {
         return apiConfig[apiEnum]!['DEFAULT'];
       }
@@ -43,6 +44,11 @@ export const usePermissions = () => {
     return defaultResponse;
   };
 
+  const componentRole =
+    product === ProductEnum.Lxp && IS_PROD_OR_STAGING
+      ? UserRole.Learner
+      : apiRole;
+
   const componentConfig = (
     product === ProductEnum.Lxp ? componentConfigLxp : componentConfigOffice
   ) as any;
@@ -50,8 +56,8 @@ export const usePermissions = () => {
   const getComponent = (componentEnum: ComponentEnum) => {
     const defaultResponse = null;
     try {
-      if (role && !!componentConfig[componentEnum][role]) {
-        return componentConfig[componentEnum][role];
+      if (componentRole && !!componentConfig[componentEnum][componentRole]) {
+        return componentConfig[componentEnum][componentRole];
       } else if (!!componentConfig[componentEnum]!['DEFAULT']) {
         return componentConfig[componentEnum]!['DEFAULT'];
       }

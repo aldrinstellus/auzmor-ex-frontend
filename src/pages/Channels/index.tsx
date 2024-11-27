@@ -32,6 +32,7 @@ import _ from 'lodash';
 import useProduct from 'hooks/useProduct';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { usePermissions } from 'hooks/usePermissions';
+import { IS_PROD_OR_STAGING } from 'utils/constants';
 
 interface IChannelsProps {
   isInfinite?: boolean;
@@ -109,9 +110,10 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
           filters?.channelType === ChannelTypeEnum.MyChannels
         ) {
           setFilters({
-            channelType: isAdmin
-              ? ChannelTypeEnum.AllChannels
-              : ChannelTypeEnum.DiscoverNewChannels,
+            channelType:
+              isAdmin && !IS_PROD_OR_STAGING
+                ? ChannelTypeEnum.AllChannels
+                : ChannelTypeEnum.DiscoverNewChannels,
           });
         }
       },
@@ -127,7 +129,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
     ) as { id: string }[]) || [];
 
   useEffect(() => {
-    if (isAdmin) {
+    if (isAdmin && !IS_PROD_OR_STAGING) {
       setFilters({
         visibility: ChannelVisibilityEnum.All,
         channelType: ChannelTypeEnum.AllChannels,
@@ -182,7 +184,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
           filters?.channelType === ChannelTypeEnum.MyChannels,
         )}`,
         dataTestId: 'my-channels-filter',
-        isHidden: isAdmin,
+        isHidden: isAdmin && !IS_PROD_OR_STAGING,
       },
       {
         label: t('filterCTA.allChannels'),
@@ -195,7 +197,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
           filters?.channelType === ChannelTypeEnum.AllChannels,
         )}`,
         dataTestId: 'all-channels-filter',
-        isHidden: !isAdmin,
+        isHidden: !(isAdmin && !IS_PROD_OR_STAGING),
       },
       {
         label: t('filterCTA.managed'),
@@ -221,7 +223,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
           filters?.channelType === ChannelTypeEnum.DiscoverNewChannels,
         )}`,
         dataTestId: 'discover-new-channels-filter',
-        isHidden: isAdmin,
+        isHidden: isAdmin && !IS_PROD_OR_STAGING,
       },
       {
         label: t('filterCTA.starred'),
@@ -234,7 +236,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
           filters?.channelType === ChannelTypeEnum.Starred,
         )}`,
         dataTestId: 'starred-filter',
-        isHidden: isAdmin,
+        isHidden: isAdmin && !IS_PROD_OR_STAGING,
       },
       {
         label: t('filterCTA.requested'),
@@ -247,7 +249,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
           filters?.channelType === ChannelTypeEnum.Requested,
         )}`,
         dataTestId: 'requested-filter',
-        isHidden: isAdmin,
+        isHidden: isAdmin && !IS_PROD_OR_STAGING,
       },
     ].filter((item) => !item.isHidden);
   }, [filters]);

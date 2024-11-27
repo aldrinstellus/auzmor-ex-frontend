@@ -15,6 +15,8 @@ export const HEX_REGEX = /^#([0-9a-f]{6})$/i;
 export const SESSION_ID = 'auz-session-id';
 
 export const IS_PROD = process.env.REACT_APP_ENV === 'PRODUCTION';
+export const IS_STAGING = process.env.REACT_APP_ENV === 'STAGING';
+export const IS_PROD_OR_STAGING = IS_PROD || IS_STAGING;
 
 export const validImageTypes = [
   'image/png',
