@@ -2,11 +2,10 @@ import Avatar from 'components/Avatar';
 import AvatarList from 'components/AvatarList';
 import useAuth from 'hooks/useAuth';
 import useProduct from 'hooks/useProduct';
-import { IAudience } from 'queries/audience';
-import { AudienceEntityType } from 'queries/post';
+import { IAudience, AudienceEntityType } from 'interfaces';
 import React, { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
 import TeamWork from 'images/teamwork.svg';
+import useNavigate from 'hooks/useNavigation';
 
 interface IAudienceRowProps {
   audience: IAudience;
@@ -40,6 +39,7 @@ const AudienceRow: FC<IAudienceRowProps> = ({ audience }) => {
               name={audience?.name}
               image={audience?.profileImage}
               size={32}
+              ariaLabel={audience?.name}
             />
           ) : (audience?.recentMembers || []).length > 0 ? (
             <AvatarList

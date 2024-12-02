@@ -17,13 +17,8 @@ import { useAppliedFiltersStore } from 'stores/appliedFiltersStore';
 import { UseFormReturn } from 'react-hook-form';
 import useURLParams from 'hooks/useURLParams';
 import Icon from 'components/Icon';
-import { IDepartmentAPI } from 'queries/department';
-import { ILocationAPI } from 'queries/location';
+import { ICategory, ITeam, IDepartmentAPI, ILocationAPI } from 'interfaces';
 import { useTranslation } from 'react-i18next';
-// import { ChannelVisibilityEnum } from 'stores/channelStore';
-// import { ChannelTypeEnum } from 'components/FilterModal/ChannelType';
-import { ICategory } from 'queries/category';
-import { ITeam } from 'queries/teams';
 import { channelRequestStatusData } from 'components/FilterModal/ChannelRequestStatus';
 
 export enum FilterKey {
@@ -154,7 +149,7 @@ const FilterMenu: FC<IFilterMenu> = ({
       teams: [],
       byPeople: [],
       visibility: [],
-      channeType: [],
+      channelType: [],
       channels: [],
     });
   };
@@ -179,9 +174,7 @@ const FilterMenu: FC<IFilterMenu> = ({
               setFilter={(sortValue) => {
                 setFilters({ sort: sortValue });
               }}
-              filterKey={{ createdAt: 'createdAt', aToZ: 'name' }}
               selectedValue={filters ? filters.sort : ''}
-              filterValue={{ asc: 'ASC', desc: 'DESC' }}
               entity={'CHANNEL'}
               dataTestId={dataTestIdSort}
             />
@@ -411,7 +404,7 @@ const FilterMenu: FC<IFilterMenu> = ({
               onClick={clearFilters}
               data-testid={`people-clear-filters`}
             >
-              {tf('clearFilters')}
+              {tf('clearFilterCTA')}
             </div>
           </div>
         ) : null}
