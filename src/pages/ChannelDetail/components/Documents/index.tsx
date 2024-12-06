@@ -40,6 +40,7 @@ import Avatar from 'components/Avatar';
 import Skeleton from 'react-loading-skeleton';
 import FilePreviewModal from './components/FilePreviewModal';
 import moment from 'moment';
+import { useChannelDocUpload } from 'hooks/useUpload';
 
 export enum DocIntegrationEnum {
   Sharepoint = 'SHAREPOINT',
@@ -61,11 +62,12 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   const { control } = useForm<IForm>();
   const [totalRows, setTotalRows] = useState<number>(0);
   const { getApi } = usePermissions();
-  const { channelId } = useParams();
+  const { channelId = '' } = useParams();
   const { items, appendItem, sliceItems } = useContext(DocumentPathContext);
   const [view, setView] = useState<'LIST' | 'GRID'>('GRID');
   const [filePreview, openFilePreview, closeFilePreview, filePreviewProps] =
     useModal();
+  const { uploadMedia } = useChannelDocUpload(channelId);
 
   const useChannelDocumentStatus = getApi(ApiEnum.GetChannelDocumentStatus);
   const {
@@ -74,6 +76,12 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     refetch,
   } = useChannelDocumentStatus({
     channelId,
+  });
+
+  const createChannelDocFolder = getApi(ApiEnum.CreateChannelDocFolder);
+  const _createFolderMutation = useMutation({
+    mutationKey: ['create-channel-doc-folder'],
+    mutationFn: createChannelDocFolder,
   });
 
   const isBaseFolderSet = statusResponse?.status === 'ACTIVE';
@@ -384,6 +392,17 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     </Card>
   ) : (
     <Fragment>
+      <input
+        className="hidden"
+        type="file"
+        multiple={true}
+        onChange={(e) => {
+          const files = Array.prototype.slice
+            .call(e.target.files)
+            .map((file: File) => ({ file, parentFolderId: '' }));
+          uploadMedia(files);
+        }}
+      />
       <Card className="flex flex-col gap-6 p-8 pb-16 w-full justify-center bg-white">
         <div className="flex justify-between">
           <BreadCrumb
@@ -434,6 +453,13 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                           <Icon name={'dir'} size={16} /> Folder
                         </div>
                       ),
+                      onClick: () => {
+                        // createFolderMutation.mutate({
+                        //   channelId: channelId,
+                        //   remoteFolderId: '',
+                        //   name: 'NewFolder123',
+                        // } as any);
+                      },
                     },
                     {
                       renderNode: (

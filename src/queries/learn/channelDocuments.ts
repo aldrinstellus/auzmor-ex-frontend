@@ -72,6 +72,22 @@ const getChannelFilePreview = async (payload: {
   );
 };
 
+// Create folder in channel documents
+export const createChannelDocFolder = async ({
+  channelId,
+  remoteFolderId,
+  name,
+}: {
+  channelId: string;
+  remoteFolderId: string;
+  name: string;
+}) => {
+  return await apiService.post(`/channels/${channelId}/folder`, {
+    remoteFolderId,
+    name,
+  });
+};
+
 /** Hooks */
 
 // To list out all rirectories / sites

@@ -263,3 +263,196 @@ export const useUpload = () => {
     removeCoverImage,
   };
 };
+
+export interface IUploadUrlPayload {
+  fileName: string;
+  parentFolderId: string;
+}
+export interface IUploadUrlResponse {
+  status: string;
+  name: string;
+  uploadURL: string;
+}
+
+interface IUploadToSharepointResposne {
+  id?: string;
+  etags?: IETag[];
+}
+
+export const useChannelDocUpload = (channelId: string) => {
+  const [uploadStatus, setUploadStatus] = useState<UploadStatus>(
+    UploadStatus.YetToStart,
+  );
+  const [error, setError] = useState('');
+  const chunksize = 5 * 1024 * 1024; // 5 MB
+
+  const getUploadUrl = async (payload: IUploadUrlPayload) =>
+    await apiService.get(`/channels/${channelId}/file/uploadUrl`, payload);
+
+  const uploadToSharepoint = async (res: IUploadUrlResponse, file: File) => {
+    const promises: any[] = [];
+    const uploadUrl = res.uploadURL;
+    const chunkSize = 5 * 1024 * 1024; // 5 MB
+    const totalBytes = file.size;
+    let offset = 0;
+    while (offset < totalBytes) {
+      const chunk = file.slice(offset, offset + chunkSize);
+      const startByte = offset;
+      const endByte = offset + chunk.size - 1;
+
+      const headers = {
+        'Content-Range': `bytes ${startByte}-${endByte}/${totalBytes}`,
+      };
+
+      promises.push(
+        fetch(uploadUrl, {
+          method: 'PUT',
+          headers,
+          body: chunk,
+        }),
+      );
+      offset += chunk.size;
+    }
+    if (promises.length > 0) {
+      const promiseResponse = await Promise.allSettled(promises);
+      const eTags: { partnumber: any; etag: any }[] = [];
+      promiseResponse.forEach((eachPromise) => {
+        if (eachPromise.status === 'fulfilled') {
+          const partnumber = parseInt(
+            (
+              new URL((eachPromise as any).value.config.url) as any
+            ).searchParams.get('partNumber'),
+          ) as any;
+          const etag = (eachPromise as any).value.headers.etag;
+          eTags.push({ partnumber, etag: etag.replaceAll('"', '').toString() });
+        }
+      });
+      return { id: res.uploadURL, etags: eTags } as IUploadToSharepointResposne;
+    }
+  };
+
+  const postETags = async (
+    id?: string,
+    etags?: IETag[],
+    coverImageUrl?: string,
+  ) => await apiService.patch(`/files/${id}`, { etags: etags, coverImageUrl });
+
+  function getChunk(partNumber: number, file: any) {
+    const beginchunk = (partNumber - 1) * chunksize;
+    let endchunk = partNumber * chunksize;
+
+    if (endchunk > file.size) {
+      endchunk = file.size;
+    }
+
+    return file.slice(beginchunk, endchunk);
+  }
+  const uploadMedia = async (
+    fileList: { parentFolderId: string; file: File }[],
+  ) => {
+    // TODO Add error state when upload fails.
+    const uploadedFiles: IMedia[] = [];
+    const uploadUrlPromises: Promise<IUploadUrlResponse>[] = [];
+    const uploadToSharepointPromises: Promise<
+      IUploadToSharepointResposne | undefined
+    >[] = [];
+    const uploadETagPromises: Promise<any>[] = [];
+    setUploadStatus(UploadStatus.Uploading);
+    const files: IUploadUrlPayload[] = [];
+    fileList.forEach(({ file, parentFolderId }) => {
+      files.push({
+        fileName: file?.name,
+        parentFolderId,
+      });
+    });
+    files.forEach((file: IUploadUrlPayload, _index: number) => {
+      uploadUrlPromises.push(getUploadUrl(file) as Promise<any>);
+    });
+
+    if (uploadUrlPromises.length > 0) {
+      const promisesRes = await Promise.allSettled(uploadUrlPromises);
+      promisesRes.forEach(
+        (promiseRes: PromiseSettledResult<IUploadUrlResponse>) => {
+          if (promiseRes.status === 'fulfilled') {
+            // console.log('uploading to gcp...');
+            // console.log((promiseRes.value as any).result.data);
+            uploadToSharepointPromises.push(
+              uploadToSharepoint(
+                (promiseRes.value as any).data.result as IUploadUrlResponse,
+                fileList.find(
+                  ({ file }) =>
+                    file.name === (promiseRes.value as any).data.result.name,
+                )!.file,
+              ),
+            );
+            setError('');
+          } else {
+            const reason =
+              promiseRes?.reason?.response?.data?.errors?.[0]?.message ||
+              'Something went wrong';
+            if (reason.includes('File type')) {
+              setError('File type not supported. Upload a supported file type');
+            } else {
+              setError(
+                promiseRes?.reason?.response?.data?.errors?.[0]?.message ||
+                  'Something went wrong',
+              );
+            }
+
+            console.log('create file failed');
+            // setUploadStatus(UploadStatus.Error);
+          }
+        },
+      );
+    } else {
+      setUploadStatus(UploadStatus.Finished);
+      return uploadedFiles;
+    }
+
+    if (uploadToSharepointPromises.length > 0) {
+      const promisesRes = await Promise.allSettled(uploadToSharepointPromises);
+      promisesRes.forEach(
+        (
+          promiseRes: PromiseSettledResult<
+            IUploadToSharepointResposne | undefined
+          >,
+        ) => {
+          if (promiseRes.status === 'fulfilled') {
+            // console.log('uploading etags...');
+            uploadETagPromises.push(
+              postETags(promiseRes.value?.id, promiseRes.value?.etags),
+            );
+          } else {
+            console.log(promiseRes);
+            console.log('upload to sharepoint failed');
+          }
+        },
+      );
+    } else {
+      if (uploadStatus !== UploadStatus.Error) {
+        setUploadStatus(UploadStatus.Finished);
+      }
+      return uploadedFiles;
+    }
+
+    if (uploadETagPromises.length > 0) {
+      const promisesRes = await Promise.allSettled(uploadETagPromises);
+      promisesRes.forEach((promiseRes: PromiseSettledResult<IMedia>) => {
+        if (promiseRes.status === 'fulfilled') {
+          uploadedFiles.push((promiseRes.value as any).result.data);
+        } else {
+          console.log(promiseRes);
+          console.log('etag upload failed');
+        }
+      });
+    }
+    setUploadStatus(UploadStatus.Finished);
+    return uploadedFiles;
+  };
+
+  return {
+    error,
+    uploadMedia,
+    uploadStatus,
+  };
+};
