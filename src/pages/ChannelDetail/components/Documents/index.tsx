@@ -41,15 +41,17 @@ import Skeleton from 'react-loading-skeleton';
 import FilePreviewModal from './components/FilePreviewModal';
 import moment from 'moment';
 import { useChannelDocUpload } from 'hooks/useUpload';
+import { useAppliedFiltersStore } from 'stores/appliedFiltersStore';
 
 export enum DocIntegrationEnum {
   Sharepoint = 'SHAREPOINT',
   GoogleDrive = 'GOOGLE_DRIVE',
 }
 
-interface IForm {
+export interface IForm {
   selectAll: boolean;
   documentSearch: string;
+  docType?: Record<string, any>;
 }
 
 interface IDocumentProps {
@@ -59,7 +61,7 @@ interface IDocumentProps {
 const Document: FC<IDocumentProps> = ({ permissions }) => {
   const [isOpen, openModal, closeModal] = useModal();
   const [isAddModalOpen, openAddModal, closeAddModal] = useModal();
-  const { control } = useForm<IForm>();
+  const { control, watch } = useForm<IForm>();
   const [totalRows, setTotalRows] = useState<number>(0);
   const { getApi } = usePermissions();
   const { channelId = '' } = useParams();
@@ -68,6 +70,8 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   const [filePreview, openFilePreview, closeFilePreview, filePreviewProps] =
     useModal();
   const { uploadMedia } = useChannelDocUpload(channelId);
+  const { filters } = useAppliedFiltersStore();
+  const docType = watch('docType');
 
   const useChannelDocumentStatus = getApi(ApiEnum.GetChannelDocumentStatus);
   const {
@@ -262,6 +266,9 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
       channelId,
       params: {
         folderId: items.length === 1 ? undefined : items[items.length - 1].id,
+        sort: filters?.sort ? filters?.sort.split(':')[0] : undefined,
+        order: filters?.sort ? filters?.sort.split(':')[1] : undefined,
+        isFolder: docType ? !!(docType.value === 'folder') : undefined,
       },
     },
     isEnabled: !isLoading,
@@ -393,7 +400,6 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   ) : (
     <Fragment>
       <input
-        className="hidden"
         type="file"
         multiple={true}
         onChange={(e) => {
@@ -505,6 +511,8 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
               />
             ) : (
               <FilterMenuDocument
+                control={control}
+                watch={watch}
                 view={view}
                 changeView={(view) => setView(view)}
               />

@@ -303,7 +303,7 @@ const FilterModal: FC<IFilterModalProps> = ({
   };
 
   const filterOptionMappings = {
-    'doc-people-filters': [FilterModalVariant.Document],
+    'doc-owner-filters': [FilterModalVariant.Document],
     'doc-type-filters': [FilterModalVariant.Document],
     'doc-modified-filters': [FilterModalVariant.Document],
     'visibility-filters': IS_PROD ? [] : [FilterModalVariant.ChannelsListing],
@@ -359,7 +359,7 @@ const FilterModal: FC<IFilterModalProps> = ({
     {
       label: () => (
         <div className="flex items-center">
-          <div>{t('people')}</div>
+          <div>Owner</div>
           {!!documentPeopleCheckbox.length && (
             <div className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center ml-1 text-xxs font-bold">
               {documentPeopleCheckbox.length}
@@ -367,11 +367,11 @@ const FilterModal: FC<IFilterModalProps> = ({
           )}
         </div>
       ),
-      key: 'doc-people-filters',
+      key: 'doc-owner-filters',
       component: () => (
         <DocumentPeople control={control} watch={watch} setValue={setValue} />
       ),
-      isHidden: !filterOptionMappings['doc-people-filters'].includes(variant),
+      isHidden: !filterOptionMappings['doc-owner-filters'].includes(variant),
       dataTestId: 'filterby-doc-people',
     },
     {
