@@ -16,7 +16,6 @@ import useModal from 'hooks/useModal';
 import ChannelModal from './components/ChannelModal';
 import { ChannelTypeEnum } from 'components/FilterModal/ChannelType';
 import ChannelRow from './components/ChannelRow';
-import Divider from 'components/Divider';
 import ChannelRowSkeleton from './components/ChannelRowSkeleton';
 import ChannelCardSkeleton from './components/ChannelCardSkeleton';
 import NoDataFound from 'components/NoDataFound';
@@ -327,10 +326,9 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
             ))
           ) : (
             <>
-              {channelIds.map(({ id }, index) => (
+              {channelIds.map(({ id }) => (
                 <Fragment key={id}>
                   <ChannelRow channel={channels[id]} />
-                  {index !== channelIds.length - 1 && <Divider />}
                 </Fragment>
               ))}
             </>
