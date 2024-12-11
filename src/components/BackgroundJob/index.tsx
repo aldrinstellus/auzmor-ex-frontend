@@ -3,13 +3,23 @@ import Icon from 'components/Icon';
 import ProgressBar from 'components/ProgressBar';
 import React, { FC, Fragment, useEffect, useState } from 'react';
 import { useBackgroundJobStore } from 'stores/backgroundJobStore';
+import './progressbarStyle.css';
 
 interface IindexProps {}
 
 const BackgroundJob: FC<IindexProps> = ({}) => {
   const [right, setRight] = useState<number>(2);
-  const { isExpanded, jobTitle, progress, jobs, jobsRenderer, setIsExpanded } =
-    useBackgroundJobStore();
+  const {
+    isExpanded,
+    jobTitle,
+    progress,
+    jobs,
+    setJobTitle,
+    setProgress,
+    jobsRenderer,
+    setIsExpanded,
+    reset,
+  } = useBackgroundJobStore();
 
   useEffect(() => {
     try {
@@ -22,6 +32,26 @@ const BackgroundJob: FC<IindexProps> = ({}) => {
     }
   }, []);
 
+  useEffect(() => {
+    let progress = 0;
+    let total = 0;
+    const jobKeys = Object.keys(jobs);
+    jobKeys.forEach((key) => {
+      progress += jobs[key].progress;
+      total += 100;
+    });
+    if (total === 0) {
+      setProgress(total);
+    } else {
+      setProgress(Math.floor((progress * 100) / total));
+    }
+    setJobTitle(
+      `Uploading ${Math.floor(progress / 100)} out of ${Math.floor(
+        total / 100,
+      )} files`,
+    );
+  }, [jobs]);
+
   const style = clsx({
     'fixed flex flex-col bottom-0 z-[999] w-[420px] transition-all h-[72px] duration-300 rounded-t-9xl border border-neutral-300 bg-white':
       true,
@@ -31,8 +61,6 @@ const BackgroundJob: FC<IindexProps> = ({}) => {
   const contentStyle = clsx({
     'flex flex-col gap-4 w-full h-[168px] overflow-y-auto px-4 py-3': true,
   });
-
-  console.log(jobs);
 
   return (
     <div
@@ -53,7 +81,7 @@ const BackgroundJob: FC<IindexProps> = ({}) => {
             onClick={() => setIsExpanded(!isExpanded)}
             className={clsx({ 'rotate-0': isExpanded, '-rotate-180': true })}
           />
-          <Icon name="close" size={20} />
+          <Icon name="close" size={20} onClick={reset} />
         </div>
         <div className="flex items-center gap-4">
           <span>{progress}%</span>

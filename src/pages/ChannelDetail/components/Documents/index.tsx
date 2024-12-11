@@ -81,7 +81,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   const folderInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const docType = watch('docType');
-  const { setJobs, getIconFromStatus, setJobTitle, setJobsRenderer } =
+  const { setJobs, getIconFromStatus, setJobTitle, setJobsRenderer, setShow } =
     useBackgroundJobStore();
 
   // Api call: Check connection status
@@ -483,7 +483,6 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     return items;
   }, [dataGridProps.rowSelection]);
 
-  console.log(items);
   return isLoading ? (
     <Card className="flex flex-col gap-6 p-8 pb-16 w-full justify-center bg-white overflow-hidden">
       <p className="font-bold text-2xl text-neutral-900">Documents</p>
@@ -538,7 +537,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                       </span>
                     )}
                   </span>
-                  {getIconFromStatus(status)}
+                  {getIconFromStatus(status, progress)}
                 </div>
               ),
             };
@@ -572,6 +571,41 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
 
           const allFiles: File[] = Array.from(e.target.files);
 
+          setJobTitle('Analysing folder...');
+          setJobsRenderer((jobs) => {
+            let completed = 0;
+            let total = 0;
+            let status = BackgroundJobStatusEnum.YetToStart;
+            jobs.forEach((job) => {
+              completed += job.progress;
+              total += 100;
+            });
+            const progress = Math.floor((completed * 100) / total);
+            if (progress > 0 && progress < 100) {
+              status = BackgroundJobStatusEnum.Running;
+            } else if (progress === 100) {
+              status = BackgroundJobStatusEnum.CompletedSuccessfully;
+            }
+
+            if (jobs?.length) {
+              return (
+                <div className="flex gap-2 items-center">
+                  <Icon name="dir" hover={false} />
+                  <span className="flex-grow">
+                    {jobs[0].jobData?.file?.webkitRelativePath?.split('/')[0]}{' '}
+                  </span>
+                  {getIconFromStatus(status, progress)}
+                </div>
+              );
+            }
+            return (
+              <div className="flex w-full h-full items-center justify-center h-ful">
+                <Spinner />
+              </div>
+            );
+          });
+          setShow(true);
+
           for (const file of allFiles) {
             const folderNames = file.webkitRelativePath.split('/').slice(0, -1);
             let parentFolderId = rootFolderId;
@@ -604,8 +638,6 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
             files.push({ file, parentFolderId });
           }
 
-          setJobTitle('Upload in progress...');
-
           setJobs(
             Object.assign(
               ...(files.map((each, index) => ({
@@ -619,18 +651,6 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
               })) as [{ [key: string]: any }]),
             ),
           );
-
-          setJobsRenderer((jobs) => {
-            console.log(jobs);
-            return (
-              <div className="flex gap-2">
-                <Icon name="dir" />
-                <span className="flex-grow">
-                  {jobs[0].jobData?.webkitRelativePath?.split[0]}
-                </span>
-              </div>
-            );
-          });
 
           // Call your uploadMedia function here
           uploadMedia(files);
@@ -787,9 +807,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
             createFolderMutation.mutate({
               channelId: channelId,
               remoteFolderId:
-                items.length > 1
-                  ? items[items.length - 1]?.meta?.externalId
-                  : '',
+                items.length > 1 ? items[items.length - 1]?.id.toString() : '',
               name: folderName,
             } as any);
             closeAddModal();

@@ -280,19 +280,7 @@ export interface IUploadUrlResponse {
 }
 
 export const useChannelDocUpload = (channelId: string) => {
-  const { jobs, setShow, setProgress, updateJobProgress } =
-    useBackgroundJobStore();
-
-  useEffect(() => {
-    let progress = 0;
-    let total = 0;
-    Object.keys(jobs).forEach((key) => {
-      console.log(jobs);
-      progress += jobs[key].progress;
-      total += 100;
-    });
-    setProgress((progress * 100) / total);
-  }, [jobs]);
+  const { jobs, setShow, updateJobProgress } = useBackgroundJobStore();
 
   const getUploadUrl = async (payload: IUploadUrlPayload) =>
     await apiService.get(`/channels/${channelId}/file/uploadUrl`, payload);
@@ -386,8 +374,7 @@ export const useChannelDocUpload = (channelId: string) => {
             externalUrl: response?.webUrl,
             mimeType: response?.file?.mimeType,
             size: response?.size,
-          }).then((response) => {
-            console.log(response);
+          }).then(() => {
             updateJobProgress(
               jobId,
               100,
