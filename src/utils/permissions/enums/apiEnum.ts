@@ -219,4 +219,8 @@ export enum ApiEnum {
   GetChannelFilePreview = 'GET_CHANNEL_FILE_PREVIEW',
   CreateChannelDocFolder = 'CREATE_CHANNEL_DOC_FOLDER',
   GetChannelDocOwners = 'GET_CHANNEL_DOC_OWNERS',
+  UpdateChannelFileFinish = 'UPDATE_CHANNEL_FILE_FINISH',
+  DeleteChannelDoc = 'DELETE_CHANNEL_DOC',
+  RenameChannelFile = 'RENAME_CHANNEL_FILE',
+  RenameChannelFolder = 'RENAME_CHANNEL_FOLDER',
 }

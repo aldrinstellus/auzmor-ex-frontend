@@ -5,6 +5,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import Card from 'components/Card';
@@ -42,6 +43,11 @@ import FilePreviewModal from './components/FilePreviewModal';
 import moment from 'moment';
 import { useChannelDocUpload } from 'hooks/useUpload';
 import { useAppliedFiltersStore } from 'stores/appliedFiltersStore';
+import {
+  BackgroundJobStatusEnum,
+  useBackgroundJobStore,
+} from 'stores/backgroundJobStore';
+import queryClient from 'utils/queryClient';
 
 export enum DocIntegrationEnum {
   Sharepoint = 'SHAREPOINT',
@@ -71,7 +77,9 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     useModal();
   const { uploadMedia } = useChannelDocUpload(channelId);
   const { filters } = useAppliedFiltersStore();
+  const folderInputRef = useRef<HTMLInputElement>(null);
   const docType = watch('docType');
+  const { setJobs, getIconFromStatus, setJobTitle } = useBackgroundJobStore();
 
   // Api call: Check connection status
   const useChannelDocumentStatus = getApi(ApiEnum.GetChannelDocumentStatus);
@@ -85,9 +93,15 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
 
   // Api call: Create folder mutation
   const createChannelDocFolder = getApi(ApiEnum.CreateChannelDocFolder);
-  const _createFolderMutation = useMutation({
+  const createFolderMutation = useMutation({
     mutationKey: ['create-channel-doc-folder'],
     mutationFn: createChannelDocFolder,
+    onSuccess: () => {
+      successToastConfig({ content: 'Folder created successfully' });
+    },
+    onError: () => {
+      failureToastConfig({ content: 'Folder creation failed' });
+    },
   });
 
   // Api call: Connect site / folder
@@ -96,6 +110,53 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     mutationKey: ['update-channel-connection', channelId],
     mutationFn: updateConnection,
   });
+
+  // Initialise rename file mutation
+  const renameChannelFileMutation = useMutation({
+    mutationFn: getApi(ApiEnum.RenameChannelFile),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-channel-files'], {
+        exact: false,
+      });
+      successToastConfig({ content: 'File renamed successfully' });
+      dataGridProps.setRowSelection({});
+    },
+    onError: () => {
+      failureToastConfig({ content: 'File rename failed' });
+    },
+  });
+
+  // Initialise rename folder mutation
+  const renameChannelFolderMutation = useMutation({
+    mutationFn: getApi(ApiEnum.RenameChannelFolder),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['get-channel-files'], {
+        exact: false,
+      });
+      successToastConfig({ content: 'Folder renamed successfully' });
+      dataGridProps.setRowSelection({});
+    },
+    onError: () => {
+      failureToastConfig({ content: 'Folder rename failed' });
+    },
+  });
+
+  // Api call: Handle rename file / folder
+  const handleRename = async (name: string) => {
+    if (selectedItems[0].isFolder) {
+      renameChannelFolderMutation.mutate({
+        channelId,
+        name,
+        folderId: selectedItems[0].id,
+      } as any);
+    } else {
+      renameChannelFileMutation.mutate({
+        channelId,
+        name,
+        fileId: selectedItems[0].id,
+      } as any);
+    }
+  };
 
   // State management flags
   const isBaseFolderSet = statusResponse?.status === 'ACTIVE';
@@ -302,6 +363,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           appendItem({
             id: virtualRow.original.id,
             label: virtualRow?.original?.name,
+            meta: virtualRow.original,
           });
           table.setRowSelection({});
           return;
@@ -332,6 +394,15 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   useEffect(() => {
     setTotalRows((dataGridProps?.flatData || []).length);
   }, [dataGridProps.flatData]);
+
+  // Hook to update input tag attributes
+  useEffect(() => {
+    if (folderInputRef.current) {
+      folderInputRef.current.setAttribute('directory', '');
+      folderInputRef.current.setAttribute('webkitdirectory', '');
+      folderInputRef.current.setAttribute('multiple', '');
+    }
+  }, [isLoading]);
 
   // Component to render before connection.
   const NoConnection = () =>
@@ -409,6 +480,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     return items;
   }, [dataGridProps.rowSelection]);
 
+  console.log(items);
   return isLoading ? (
     <Card className="flex flex-col gap-6 p-8 pb-16 w-full justify-center bg-white overflow-hidden">
       <p className="font-bold text-2xl text-neutral-900">Documents</p>
@@ -417,13 +489,85 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   ) : (
     <Fragment>
       <input
+        id="input-folder-upload"
         type="file"
-        className="hidden"
+        ref={folderInputRef}
         multiple={true}
-        onChange={(e) => {
-          const files = Array.prototype.slice
-            .call(e.target.files)
-            .map((file: File) => ({ file, parentFolderId: '' }));
+        onChange={async (e: any) => {
+          // Variable to store all new folder and respective ids and parent folder ids
+          const folders: {
+            [folderName: string]: { parentFolderId: string; id: string };
+          } = {};
+
+          // Id of root folder
+          const rootFolderId =
+            items.length <= 1 ? '' : items[items.length - 1].id;
+
+          // Collection file with mapped parent folder id
+          const files: { file: File; parentFolderId: string }[] = [];
+
+          const allFiles: File[] = Array.from(e.target.files);
+
+          for (const file of allFiles) {
+            const folderNames = file.webkitRelativePath.split('/').slice(0, -1);
+            let parentFolderId = rootFolderId;
+
+            // Process each folder in sequence
+            for (const folderName of folderNames) {
+              if (!folders[folderName]) {
+                try {
+                  const response: any = await createFolderMutation.mutateAsync({
+                    channelId: channelId,
+                    remoteFolderId: parentFolderId,
+                    name: folderName,
+                  } as any);
+
+                  const folderId = (response?.result?.data?.id).toString();
+                  folders[folderName] = { id: folderId, parentFolderId };
+                  parentFolderId = folderId; // Update parentFolderId for next folder
+                } catch (error) {
+                  console.error(
+                    `Error creating folder "${folderName}":`,
+                    error,
+                  );
+                  throw error; // Stop execution on error
+                }
+              } else {
+                parentFolderId = folders[folderName].id.toString();
+              }
+            }
+
+            files.push({ file, parentFolderId });
+          }
+
+          setJobTitle('Upload in progress...');
+
+          setJobs(
+            Object.assign(
+              ...(files.map((each, index) => ({
+                [`upload-job-${index}`]: {
+                  id: `upload-job-${index}`,
+                  jobData: each,
+                  progress: 0,
+                  status: BackgroundJobStatusEnum.YetToStart,
+                  renderer: (
+                    id: string,
+                    jobData: { parentFolderId: string; file: File },
+                    progress: number,
+                    status: BackgroundJobStatusEnum,
+                  ) => (
+                    <div className="flex gap-2">
+                      <Icon name={getIconFromMime(jobData?.file.type)} />
+                      <span className="flex-grow">{jobData?.file.name}</span>
+                      {getIconFromStatus(status)}
+                    </div>
+                  ),
+                },
+              })) as [{ [key: string]: any }]),
+            ),
+          );
+
+          // Call your uploadMedia function here
           uploadMedia(files);
         }}
       />
@@ -477,13 +621,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                           <Icon name={'dir'} size={16} /> Folder
                         </div>
                       ),
-                      onClick: () => {
-                        // createFolderMutation.mutate({
-                        //   channelId: channelId,
-                        //   remoteFolderId: '',
-                        //   name: 'NewFolder123',
-                        // } as any);
-                      },
+                      onClick: openAddModal,
                     },
                     {
                       renderNode: (
@@ -526,6 +664,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                 onDeselect={() => {
                   dataGridProps.setRowSelection({});
                 }}
+                onRename={handleRename}
               />
             ) : (
               <FilterMenuDocument
@@ -578,8 +717,14 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           isOpen={isAddModalOpen}
           closeModal={closeAddModal}
           onSelect={(folderName) => {
-            console.log(folderName);
-            openModal();
+            createFolderMutation.mutate({
+              channelId: channelId,
+              remoteFolderId:
+                items.length > 1
+                  ? items[items.length - 1]?.meta?.externalId
+                  : '',
+              name: folderName,
+            } as any);
             closeAddModal();
           }}
         />
