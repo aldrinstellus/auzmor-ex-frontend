@@ -23,7 +23,6 @@ const useRole = (
 
   const isOwner = user?.id === userId;
   let isOwnerOrAdmin = isAdminOrSuperAdmin || user?.id === userId;
-  let isMember = user?.role === UserRole.Member;
   let isAdmin = exact ? user?.role === UserRole.Admin : isAdminOrSuperAdmin;
   let isSuperAdmin =
     user?.role === UserRole.Superadmin || user?.role === UserRole.PrimaryAdmin;
@@ -34,7 +33,6 @@ const useRole = (
   if (isLxp && isLearner) {
     isAdminOrSuperAdmin = false;
     isOwnerOrAdmin = isAdminOrSuperAdmin || user?.id === userId;
-    isMember = true;
     isAdmin = false;
     isSuperAdmin = false;
   }
@@ -42,7 +40,6 @@ const useRole = (
   return {
     isOwner,
     isOwnerOrAdmin,
-    isMember,
     isAdmin,
     isSuperAdmin,
     isLearner,

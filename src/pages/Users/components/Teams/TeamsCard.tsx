@@ -43,7 +43,7 @@ const TeamsCard: FC<ITeamsCardProps> = ({
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [isHovered, eventHandlers] = useHover();
-  const { isMember } = useRole();
+  const { isAdmin } = useRole();
   const { isLxp } = useProduct();
   return (
     <div className="cursor-pointer w-full" data-testid="" {...eventHandlers}>
@@ -66,7 +66,7 @@ const TeamsCard: FC<ITeamsCardProps> = ({
           }}
           title={`${name} with ${totalMembers} ${t('members')}`}
         >
-          {!isMember && !isLxp && isHovered && (
+          {isAdmin && !isLxp && isHovered && (
             <TeamOptions
               id={id}
               onEdit={() => {

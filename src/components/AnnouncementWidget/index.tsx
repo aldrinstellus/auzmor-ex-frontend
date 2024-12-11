@@ -204,7 +204,11 @@ const AnnouncementCard: FC<IAnnouncementCardProps> = ({
                           <div className="bg-neutral-500 rounded-full w-1 h-1" />
                           <div className="p-0.5">
                             <Icon
-                              name="globalOutline"
+                              name={
+                                postData?.audience && postData?.audience.length
+                                  ? 'noteFavourite'
+                                  : 'global'
+                              }
                               size={16}
                               hover={false}
                             />

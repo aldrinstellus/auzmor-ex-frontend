@@ -24,6 +24,7 @@ import moment from 'moment';
 import {
   EMPTY_REGEX,
   HEX_REGEX,
+  IS_PROD,
   SESSION_ID,
   validDocumentFileTypes,
   validImageTypes,
@@ -576,7 +577,8 @@ export const getUserCardTooltipProps = (user: any, fallbackValue: string) => {
   return {
     id: user?.id || user?.userId || '',
     fullName: user?.fullName || user?.userName || user?.name || fallbackValue,
-    workEmail: user?.email || user?.workEmail || fallbackValue,
+    workEmail:
+      user?.email || user?.workEmail || user?.primaryEmail || fallbackValue,
     email: user?.email || user?.workEmail || fallbackValue,
     workLocation: workLocation,
     designation: designation,
@@ -670,7 +672,7 @@ export const deleteCookie = (key: string) => {
 };
 
 export const getCookieParam = (key = SESSION_ID) => {
-  if (process.env.REACT_APP_ENV === 'PRODUCTION') {
+  if (IS_PROD) {
     return key;
   }
   const [hostname] =

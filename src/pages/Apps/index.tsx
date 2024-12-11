@@ -32,6 +32,9 @@ import { usePageTitle } from 'hooks/usePageTitle';
 import { isTrim } from 'pages/ChannelDetail/components/utils';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { usePermissions } from 'hooks/usePermissions';
+import { useLocation } from 'react-router-dom';
+import PageLoader from 'components/PageLoader';
+import useAuth from 'hooks/useAuth';
 
 interface IAppsProps {}
 interface IAppSearchForm {
@@ -91,10 +94,27 @@ const Apps: FC<IAppsProps> = () => {
   });
   const { isLxp } = useProduct();
   const { getApi } = usePermissions();
+  const { user } = useAuth();
   const { apps, featuredApps } = useAppStore();
   const { isAdmin } = useRole();
   const [selectedQuickCategory, setSelectedQuickCategory] =
     useState<string>('');
+  const { pathname } = useLocation();
+
+  // Redirect Non Admins to /user/apps for LMS
+  if (
+    isLxp &&
+    user?.organization.type === 'LMS' &&
+    pathname === '/apps' &&
+    !isAdmin
+  ) {
+    window.location.assign('/user/apps');
+    return (
+      <div className="w-full h-screen">
+        <PageLoader />
+      </div>
+    );
+  }
 
   // Add apps modal
   const [open, openModal, closeModal] = useModal(false, false);
@@ -302,7 +322,7 @@ const Apps: FC<IAppsProps> = () => {
         ) : null}
         <div className="flex justify-between pb-4">
           <div className="flex items-center gap-x-4">
-            {!(isLxp && !isLearner) && (
+            {!(isLxp && isAdmin) && (
               <Button
                 variant={ButtonVariant.Secondary}
                 label={t('my-apps')}

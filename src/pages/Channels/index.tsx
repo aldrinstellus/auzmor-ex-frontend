@@ -16,7 +16,6 @@ import useModal from 'hooks/useModal';
 import ChannelModal from './components/ChannelModal';
 import { ChannelTypeEnum } from 'components/FilterModal/ChannelType';
 import ChannelRow from './components/ChannelRow';
-import Divider from 'components/Divider';
 import ChannelRowSkeleton from './components/ChannelRowSkeleton';
 import ChannelCardSkeleton from './components/ChannelCardSkeleton';
 import NoDataFound from 'components/NoDataFound';
@@ -32,6 +31,8 @@ import _ from 'lodash';
 import useProduct from 'hooks/useProduct';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { usePermissions } from 'hooks/usePermissions';
+import { isEmpty } from 'lodash';
+import { useSearchParams } from 'react-router-dom';
 
 interface IChannelsProps {
   isInfinite?: boolean;
@@ -52,6 +53,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
   const { t } = useTranslation('channels');
   const { filters, setFilters, updateFilter, clearFilters } =
     useAppliedFiltersStore();
+  const [searchParams] = useSearchParams();
   const [isModalOpen, openModal, closeModal] = useModal();
   const filterForm = useForm<{
     search: string;
@@ -102,19 +104,6 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
       ),
     }),
     {
-      onSuccess: (data: any) => {
-        if (
-          data.pages.flatMap((page: any) => page.data.result.data).length ===
-            0 &&
-          filters?.channelType === ChannelTypeEnum.MyChannels
-        ) {
-          setFilters({
-            channelType: isAdmin
-              ? ChannelTypeEnum.AllChannels
-              : ChannelTypeEnum.DiscoverNewChannels,
-          });
-        }
-      },
       refetchOnMount: 'always',
     },
   );
@@ -127,28 +116,36 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
     ) as { id: string }[]) || [];
 
   useEffect(() => {
-    if (isAdmin) {
-      setFilters({
-        visibility: ChannelVisibilityEnum.All,
-        channelType: ChannelTypeEnum.AllChannels,
-      });
-      return;
+    if (isEmpty(filters?.channelType) && !isLoading) {
+      const visibilityParam = searchParams.get('visibility');
+      const channelTypeParam = searchParams.get('channelType');
+      if (visibilityParam && channelTypeParam) {
+        setFilters({
+          visibility: visibilityParam,
+          channelType: channelTypeParam,
+        });
+        return;
+      }
+      if (isAdmin && isLxp) {
+        setFilters({
+          visibility: ChannelVisibilityEnum.All,
+          channelType: ChannelTypeEnum.AllChannels,
+        });
+        return;
+      }
+      if (channelIds.length === 0) {
+        setFilters({
+          visibility: ChannelVisibilityEnum.All,
+          channelType: ChannelTypeEnum.DiscoverNewChannels,
+        });
+      } else {
+        setFilters({
+          visibility: ChannelVisibilityEnum.All,
+          channelType: ChannelTypeEnum.MyChannels,
+        });
+      }
     }
-    if (
-      channelIds.length === 0 &&
-      filters?.channelType === ChannelTypeEnum.MyChannels
-    ) {
-      setFilters({
-        visibility: ChannelVisibilityEnum.All,
-        channelType: ChannelTypeEnum.DiscoverNewChannels,
-      });
-    } else {
-      setFilters({
-        visibility: ChannelVisibilityEnum.All,
-        channelType: ChannelTypeEnum.MyChannels,
-      });
-    }
-  }, []);
+  }, [filters, isLoading]);
 
   const onFilterButtonClick = (type: ChannelTypeEnum) => {
     return () => {
@@ -182,7 +179,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
           filters?.channelType === ChannelTypeEnum.MyChannels,
         )}`,
         dataTestId: 'my-channels-filter',
-        isHidden: isAdmin,
+        isHidden: isAdmin && isLxp,
       },
       {
         label: t('filterCTA.allChannels'),
@@ -195,7 +192,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
           filters?.channelType === ChannelTypeEnum.AllChannels,
         )}`,
         dataTestId: 'all-channels-filter',
-        isHidden: !isAdmin,
+        isHidden: !isAdmin || !isLxp,
       },
       {
         label: t('filterCTA.managed'),
@@ -221,7 +218,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
           filters?.channelType === ChannelTypeEnum.DiscoverNewChannels,
         )}`,
         dataTestId: 'discover-new-channels-filter',
-        isHidden: isAdmin,
+        isHidden: isAdmin && isLxp,
       },
       {
         label: t('filterCTA.starred'),
@@ -234,7 +231,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
           filters?.channelType === ChannelTypeEnum.Starred,
         )}`,
         dataTestId: 'starred-filter',
-        isHidden: isAdmin,
+        isHidden: isAdmin && isLxp,
       },
       {
         label: t('filterCTA.requested'),
@@ -247,7 +244,7 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
           filters?.channelType === ChannelTypeEnum.Requested,
         )}`,
         dataTestId: 'requested-filter',
-        isHidden: isAdmin,
+        isHidden: isAdmin && isLxp,
       },
     ].filter((item) => !item.isHidden);
   }, [filters]);
@@ -312,10 +309,9 @@ export const Channels: FC<IChannelsProps> = ({ isInfinite = true }) => {
             ))
           ) : (
             <>
-              {channelIds.map(({ id }, index) => (
+              {channelIds.map(({ id }) => (
                 <Fragment key={id}>
                   <ChannelRow channel={channels[id]} />
-                  {index !== channelIds.length - 1 && <Divider />}
                 </Fragment>
               ))}
             </>

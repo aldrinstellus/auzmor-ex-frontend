@@ -36,7 +36,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data, readOnly = false }) => {
   const { getApi } = usePermissions();
   const { user } = useAuth();
   const { isOffice } = useProduct();
-  const { isMember, isAdmin } = useRole();
+  const { isAdmin } = useRole();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -253,7 +253,7 @@ const FeedPostMenu: FC<IFeedPostMenuProps> = ({ data, readOnly = false }) => {
       if (
         option.permissions &&
         !canPerform(option.permissions, user?.permissions) &&
-        isMember &&
+        !isAdmin &&
         isOffice
       ) {
         return false;

@@ -19,6 +19,7 @@ import apiService, { ProductEnum, getProduct } from 'utils/apiService';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { usePermissions } from 'hooks/usePermissions';
 import { useTranslation } from 'react-i18next';
+import { IS_PROD_OR_STAGING } from 'utils/constants';
 
 type AuthContextProps = {
   children: ReactNode;
@@ -134,11 +135,7 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
 
     const lxpBaseUrl = getItem(`${ProductEnum.Lxp}RegionUrl`);
 
-    if (
-      (process.env.REACT_APP_ENV === 'PRODUCTION' ||
-        process.env.REACT_APP_ENV === 'STAGING') &&
-      isLxp
-    ) {
+    if (IS_PROD_OR_STAGING && isLxp) {
       if (lxpBaseUrl) apiService.updateBaseUrl(lxpBaseUrl);
     }
 

@@ -6,7 +6,6 @@ import Spinner from 'components/Spinner';
 import useRole from 'hooks/useRole';
 import { FC, useEffect } from 'react';
 import { useEntitySearchFormStore } from 'stores/entitySearchFormStore';
-import { IS_PROD } from 'utils/constants';
 import { useTranslation } from 'react-i18next';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
@@ -14,6 +13,7 @@ import useProduct from 'hooks/useProduct';
 import useAuth from 'hooks/useAuth';
 
 interface IAudienceSelectorProps {
+  audienceType?: AudienceType;
   audienceFlow: AudienceFlow;
   setAudienceFlow: any;
   isEveryoneSelected: boolean;
@@ -22,7 +22,13 @@ interface IAudienceSelectorProps {
   dataTestId?: string;
 }
 
+export enum AudienceType {
+  PostAudience = 'POST_AUDIENCE',
+  AppAudience = 'APP_AUDIENCE',
+}
+
 const AudienceSelector: FC<IAudienceSelectorProps> = ({
+  audienceType = AudienceType.PostAudience,
   audienceFlow,
   setAudienceFlow,
   isEveryoneSelected,
@@ -35,6 +41,14 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
   const { isLxp } = useProduct();
   const { getApi } = usePermissions();
   const useOrganization = getApi(ApiEnum.GetOrganization);
+  const fetchChannels =
+    audienceType === AudienceType.PostAudience
+      ? getApi(ApiEnum.GetMyChannels)
+      : getApi(ApiEnum.GetChannels);
+  const fetchTeams =
+    audienceType === AudienceType.PostAudience
+      ? getApi(ApiEnum.GetMyTeams)
+      : getApi(ApiEnum.GetTeams);
   const { data, isLoading } = useOrganization(undefined, { enabled: !isLxp });
   const { user } = useAuth();
   const { form } = useEntitySearchFormStore();
@@ -89,7 +103,7 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
       title: t('channels'),
       subTitle: t('channelsSubtitle'),
       onClick: () => setAudienceFlow(AudienceFlow.ChannelSelect),
-      isHidden: IS_PROD || user?.organization.type === 'LMS',
+      isHidden: !isLxp || user?.organization.type === 'LMS',
       isSelected:
         channels &&
         Object.keys(channels).some(
@@ -193,6 +207,7 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
               ? Object.keys(channels).filter((key: string) => channels[key])
               : []
           }
+          fetchChannels={fetchChannels}
         />
       );
     }
@@ -204,6 +219,7 @@ const AudienceSelector: FC<IAudienceSelectorProps> = ({
           selectedTeamIds={
             teams ? Object.keys(teams).filter((key: string) => teams[key]) : []
           }
+          fetchTeams={fetchTeams}
         />
       );
     }
