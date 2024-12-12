@@ -1,6 +1,7 @@
 import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
 import { ReactNode } from 'react';
+import { buildStyles, CircularProgressbar } from 'react-circular-progressbar';
 import { create } from 'zustand';
 
 export enum BackgroundJobStatusEnum {
@@ -47,7 +48,10 @@ interface IBackgroundJobActions {
     progress: number,
     status?: BackgroundJobStatusEnum,
   ) => void;
-  getIconFromStatus: (status: BackgroundJobStatusEnum) => ReactNode;
+  getIconFromStatus: (
+    status: BackgroundJobStatusEnum,
+    progress: number,
+  ) => ReactNode;
   reset: () => void;
 }
 
@@ -57,7 +61,7 @@ export const useBackgroundJobStore = create<
   show: false,
   jobTitle: 'Uploading in progress',
   progress: 75,
-  isExpanded: false,
+  isExpanded: true,
   jobs: {},
 
   setShow: (flag) => set({ show: flag }),
@@ -77,12 +81,22 @@ export const useBackgroundJobStore = create<
         },
       },
     })),
-  getIconFromStatus: (status) => {
+  getIconFromStatus: (status, progress) => {
     switch (status) {
       case BackgroundJobStatusEnum.YetToStart:
         return <Spinner className="!w-5 !h-5" />;
       case BackgroundJobStatusEnum.Running:
-        return <Spinner className="!w-5 !h-5" />;
+        return (
+          <div className="flex items-center justify-center w-5 h-5">
+            <CircularProgressbar
+              value={progress}
+              strokeWidth={10}
+              styles={buildStyles({
+                pathTransitionDuration: 0.15,
+              })}
+            />
+          </div>
+        );
       case BackgroundJobStatusEnum.Cancelled:
         return <Icon name="infoCircleFilled" size={20} hover={false} />;
       case BackgroundJobStatusEnum.Error:
@@ -111,7 +125,7 @@ export const useBackgroundJobStore = create<
       show: false,
       jobTitle: '',
       progress: 0,
-      isExpanded: false,
+      isExpanded: true,
       jobs: {},
       jobsRenderer: undefined,
     }),
