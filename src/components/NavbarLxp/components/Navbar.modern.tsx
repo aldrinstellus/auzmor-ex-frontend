@@ -180,7 +180,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
   };
 
   return (
-    <div className="flex flex-col justify-center bg-white sticky w-full top-0 z-50">
+    <div className="font-manrope flex flex-col justify-center bg-white sticky w-full top-0 z-50">
       <div className="h-[78px] flex items-center justify-center bg-white px-14">
         <div className="w-full max-w-[1280px] flex items-center justify-between">
           <div className="flex items-center gap-2">
