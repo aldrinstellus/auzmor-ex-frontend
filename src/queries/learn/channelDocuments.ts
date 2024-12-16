@@ -141,8 +141,19 @@ export const renameChannelFolder = async (payload: {
 export const deleteChannelDocConnection = async (payload: {
   channelId: string;
 }) => {
-  const response = await apiService.patch(
+  const response = await apiService.delete(
     `/channels/${payload.channelId}/unlink`,
+  );
+  return response;
+};
+
+// Get download URL for files / folders
+export const getChannelDocDownloadUrl = async (payload: {
+  channelId: string;
+  itemId: string;
+}) => {
+  const response = await apiService.get(
+    `/channels/${payload.channelId}/files/${payload.itemId}/download`,
   );
   return response;
 };

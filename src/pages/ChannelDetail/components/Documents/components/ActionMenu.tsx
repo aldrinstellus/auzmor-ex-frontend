@@ -16,19 +16,23 @@ import { useParams } from 'react-router-dom';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import queryClient from 'utils/queryClient';
 import RenameChannelDocModal from './RenameChannelDocModal';
+import { downloadFromUrl } from 'utils/misc';
+import { IChannel } from 'stores/channelStore';
 
 interface IActionMenuProps {
   selectedItems: Doc[];
-  changeView: (view: 'LIST' | 'GRID') => void;
   view: 'LIST' | 'GRID';
+  channelData: IChannel;
+  changeView: (view: 'LIST' | 'GRID') => void;
   onDeselect: () => void;
   onRename: (name: string) => void;
 }
 
 const ActionMenu: FC<IActionMenuProps> = ({
   view,
-  changeView,
+  channelData,
   selectedItems,
+  changeView,
   onDeselect,
   onRename,
 }) => {
@@ -50,8 +54,11 @@ const ActionMenu: FC<IActionMenuProps> = ({
   const { getApi } = usePermissions();
   const deleteChannelDoc = getApi(ApiEnum.DeleteChannelDoc);
   const showRename = selectedItems.length === 1;
-  const showDownload = selectedItems.some((doc) => doc.downloadable);
+  const showDownload =
+    !!channelData?.settings?.restriction?.canDownloadDocuments &&
+    selectedItems.some((doc) => doc.downloadable);
   const { channelId } = useParams();
+  const getChannelDocDownloadUrl = getApi(ApiEnum.GetChannelDocDownloadUrl);
 
   const handleDeleteDoc = async () => {
     closeConfirm();
@@ -64,6 +71,32 @@ const ActionMenu: FC<IActionMenuProps> = ({
         failureToastConfig({
           content: `Failed to delete ${item.name}`,
           dataTestId: 'file-delete-toaster',
+        });
+      }
+    }
+    await queryClient.invalidateQueries(['get-channel-files'], {
+      exact: false,
+    });
+    onDeselect();
+    setPauseAction(() => false);
+  };
+
+  const handleDownloadDoc = async () => {
+    setPauseAction(() => true);
+    for (const item of selectedItems) {
+      try {
+        const { data } = await getChannelDocDownloadUrl({
+          channelId,
+          itemId: item.id,
+        });
+        downloadFromUrl(
+          data?.result?.data?.downloadUrl,
+          data?.result?.data?.name,
+        );
+      } catch (e) {
+        failureToastConfig({
+          content: `Failed to download ${item.name}`,
+          dataTestId: 'file-download-toaster',
         });
       }
     }
@@ -128,6 +161,7 @@ const ActionMenu: FC<IActionMenuProps> = ({
             labelClassName={labelStyle}
             leftIconClassName={leftIconStyle}
             disabled={pauseActions}
+            onClick={handleDownloadDoc}
           />
         )}
         {/* <Button

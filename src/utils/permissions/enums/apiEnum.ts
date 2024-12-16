@@ -224,4 +224,5 @@ export enum ApiEnum {
   RenameChannelFile = 'RENAME_CHANNEL_FILE',
   RenameChannelFolder = 'RENAME_CHANNEL_FOLDER',
   DeleteChannelDocConnection = 'DELETE_CHANNEL_DOC_CONNECTION',
+  GetChannelDocDownloadUrl = 'GET_CHANNEL_DOC_DOWNLOAD_URL',
 }

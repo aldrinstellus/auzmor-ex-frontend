@@ -222,4 +222,7 @@ export const apiConfigLxp = {
   [ApiEnum.DeleteChannelDocConnection]: {
     [Default]: queries.deleteChannelDocConnection,
   },
+  [ApiEnum.GetChannelDocDownloadUrl]: {
+    [Default]: queries.getChannelDocDownloadUrl,
+  },
 };

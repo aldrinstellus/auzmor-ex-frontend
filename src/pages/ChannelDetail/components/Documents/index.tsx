@@ -48,7 +48,10 @@ import {
   useBackgroundJobStore,
 } from 'stores/backgroundJobStore';
 import queryClient from 'utils/queryClient';
-import { isThisAFile } from 'utils/misc';
+import { downloadFromUrl, isThisAFile } from 'utils/misc';
+import { IChannel } from 'stores/channelStore';
+import RenameChannelDocModal from './components/RenameChannelDocModal';
+import ConfirmationBox from 'components/ConfirmationBox';
 
 export enum DocIntegrationEnum {
   Sharepoint = 'SHAREPOINT',
@@ -62,10 +65,11 @@ export interface IForm {
 }
 
 interface IDocumentProps {
+  channelData: IChannel;
   permissions: ChannelPermissionEnum[];
 }
 
-const Document: FC<IDocumentProps> = ({ permissions }) => {
+const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
   const [isOpen, openModal, closeModal] = useModal();
   const [isAddModalOpen, openAddModal, closeAddModal] = useModal();
   const { control, watch } = useForm<IForm>();
@@ -83,6 +87,11 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   const docType = watch('docType');
   const { setJobs, getIconFromStatus, setJobTitle, setJobsRenderer, setShow } =
     useBackgroundJobStore();
+  const getChannelDocDownloadUrl = getApi(ApiEnum.GetChannelDocDownloadUrl);
+  const [renameModal, showRenameModal, closeRenameModal, renameModalProps] =
+    useModal();
+  const [confirm, showConfirm, closeConfirm, deleteDocProps] = useModal();
+  const deleteChannelDoc = getApi(ApiEnum.DeleteChannelDoc);
 
   // Api call: Check connection status
   const useChannelDocumentStatus = getApi(ApiEnum.GetChannelDocumentStatus);
@@ -161,6 +170,25 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     }
   };
 
+  // Api call: delete document
+  const handleDeleteDoc = async () => {
+    closeConfirm();
+    try {
+      await deleteChannelDoc({ channelId, itemId: deleteDocProps?.doc.id });
+      successToastConfig({
+        content: `“${deleteDocProps?.doc?.name}” file deleted`,
+      });
+    } catch (e) {
+      failureToastConfig({
+        content: `Failed to delete ${deleteDocProps?.doc?.name}`,
+        dataTestId: 'file-delete-toaster',
+      });
+    }
+    await queryClient.invalidateQueries(['get-channel-files'], {
+      exact: false,
+    });
+  };
+
   // State management flags
   const isBaseFolderSet = statusResponse?.status === 'ACTIVE';
   const isConnectionMade =
@@ -172,7 +200,20 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
 
   // A function that decides what options to show on each row of documents
   const getAllOptions = useCallback((info: CellContext<DocType, unknown>) => {
+    const showDownload =
+      !!channelData?.settings?.restriction?.canDownloadDocuments &&
+      !!info?.row?.original?.downloadable;
     return [
+      {
+        label: 'Rename',
+        onClick: (e: Event) => {
+          e.stopPropagation();
+          showRenameModal({ name: info?.row?.original?.name });
+        },
+        dataTestId: 'folder-menu',
+        className: '!px-6 !py-2',
+        isHidden: false,
+      },
       {
         label: 'Remove from starred',
         onClick: (e: Event) => {
@@ -184,12 +225,37 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
       },
       {
         label: 'Download',
-        onClick: (e: Event) => {
+        onClick: async (e: Event) => {
           e.stopPropagation();
+          try {
+            const { data } = await getChannelDocDownloadUrl({
+              channelId,
+              itemId: info?.row?.original?.id,
+            });
+            downloadFromUrl(
+              data?.result?.data?.downloadUrl,
+              data?.result?.data?.name,
+            );
+          } catch (e) {
+            failureToastConfig({
+              content: `Failed to download ${info?.row?.original?.name}`,
+              dataTestId: 'file-download-toaster',
+            });
+          }
         },
         dataTestId: 'folder-menu',
         className: '!px-6 !py-2',
-        isHidden: !info?.row?.original?.downloadable,
+        isHidden: !showDownload,
+      },
+      {
+        label: 'Delete',
+        onClick: (e: Event) => {
+          e.stopPropagation();
+          showConfirm({ doc: info?.row?.original });
+        },
+        dataTestId: 'folder-menu',
+        className: '!px-6 !py-2 [&_*]:text-red-500',
+        isHidden: false,
       },
     ].filter((option) => !option?.isHidden) as any as IMenuItem[];
   }, []);
@@ -297,21 +363,27 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
       {
         accessorKey: 'more',
         header: () => '',
-        cell: (info) => (
-          <PopupMenu
-            triggerNode={
-              <div
-                className="cursor-pointer relative"
-                data-testid="feed-post-ellipsis"
-                title="more"
-              >
-                <Icon name="moreV2Filled" tabIndex={0} size={16} />
-              </div>
-            }
-            menuItems={getAllOptions(info)}
-            className="right-0 top-full border-1 border-neutral-200 focus-visible:outline-none w-44"
-          />
-        ),
+        cell: (info) => {
+          const options = getAllOptions(info);
+          console.log(options);
+          return options.length > 0 ? (
+            <PopupMenu
+              triggerNode={
+                <div
+                  className="cursor-pointer relative"
+                  data-testid="feed-post-ellipsis"
+                  title="more"
+                >
+                  <Icon name="moreV2Filled" tabIndex={0} size={16} />
+                </div>
+              }
+              menuItems={options}
+              className="right-0 top-full border-1 border-neutral-200 focus-visible:outline-none w-44"
+            />
+          ) : (
+            <></>
+          );
+        },
         size: 16,
         tdClassName: 'items-center relative',
       },
@@ -747,6 +819,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
               <ActionMenu
                 selectedItems={selectedItems}
                 view={view}
+                channelData={channelData}
                 changeView={(view) => setView(view)}
                 onDeselect={() => {
                   dataGridProps.setRowSelection({});
@@ -821,6 +894,32 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           closeModal={closeFilePreview}
         />
       )}
+      {renameModal && (
+        <RenameChannelDocModal
+          isOpen={renameModal}
+          closeModal={closeRenameModal}
+          defaultName={renameModalProps?.name}
+          onSave={handleRename}
+        />
+      )}
+      <ConfirmationBox
+        open={confirm}
+        onClose={closeConfirm}
+        title={`Delete ${selectedItems.length > 1 ? 'files' : 'file'}?`}
+        description={
+          <span>Are you sure you want to delete? This cannot be undone</span>
+        }
+        success={{
+          label: 'Delete',
+          className: 'bg-red-500 text-white ',
+          onSubmit: handleDeleteDoc,
+        }}
+        discard={{
+          label: 'Cancel',
+          className: 'text-neutral-900 bg-white ',
+          onCancel: closeConfirm,
+        }}
+      />
     </Fragment>
   );
 };
