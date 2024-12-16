@@ -197,6 +197,7 @@ import VuesaxIcon from '../components/Vuesax';
 import LaunchIcon from '../components/Launch';
 import UserTickIcon from '../components/UserTick';
 import RefreshCircleIcon from '../components/RefreshCircle';
+import UploadIcon from '../components/Upload';
 
 export const icon = {
   add: Add,
@@ -382,6 +383,7 @@ export const icon = {
   tickCircle: TickCircleIcon,
   training: TrainingIcon,
   trash: Trash,
+  upload: UploadIcon,
   'user-tag': UserTagIcon,
   userAdmin: UserAdminIcon,
   userManagement: UserManagement,

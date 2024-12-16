@@ -5,6 +5,7 @@ import PrivacySetting from './components/PrivacySetting';
 import BasicSettingSkeleton from './components/Skeletons/BasicSettingSkeleton';
 import { ChannelPermissionEnum } from '../utils/channelPermission';
 import IntegrationSetting from './components/IntegrationSetting';
+import DocumentSetting from './components/DocumentSetting';
 
 type AppProps = {
   channelData: IChannel;
@@ -29,6 +30,10 @@ const Setting: FC<AppProps> = ({ channelData, isLoading, permissions }) => {
       />
       <IntegrationSetting
         canEdit={permissions.includes(ChannelPermissionEnum.CanEditSettings)}
+      />
+      <DocumentSetting
+        canEdit={permissions.includes(ChannelPermissionEnum.CanEditSettings)}
+        channelData={channelData}
       />
     </div>
   );

@@ -113,6 +113,7 @@ import SvgFolderUploadOutline from '../components/FolderUpload/FolderUploadOutli
 import SvgVuesaxOutline from '../components/Vuesax/VuesaxOutline';
 import SvgUserTickOutline from '../components/UserTick/UserTickOutline';
 import SvgRefreshCircleOutline from '../components/RefreshCircle/RefreshCircleOutline';
+import SvgUploadOutline from '../components/Upload/UploadOutline';
 
 export const outlineIcon = {
   addCircleOutline: SvgAddCircleOutline,
@@ -218,6 +219,7 @@ export const outlineIcon = {
   threeDotsOutline: SvgThreeDotsOutline,
   tickCircleOutline: SvgTickCircleOutline,
   trashOutline: SvgTrashOutline,
+  uploadOutline: SvgUploadOutline,
   userManagementOutline: SvgUserManagementOutline,
   userRemoveOutline: SvgUserRemoveOutline,
   userRole: SvgUserRoleOutline,

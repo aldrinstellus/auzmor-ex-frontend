@@ -1,30 +1,40 @@
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import InfoRow from 'components/ProfileInfo/components/InfoRow';
 import Layout, { FieldType } from 'components/Form';
 import { IRadioListOption } from 'components/RadioGroup';
-import { ChannelVisibilityEnum, IChannel } from 'stores/channelStore';
+import { IChannel } from 'stores/channelStore';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
-import { useTranslation } from 'react-i18next';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { usePermissions } from 'hooks/usePermissions';
+import queryClient from 'utils/queryClient';
 
-type AppProps = {
+type DocAccessLevelRowProps = {
   data: IChannel;
   canEdit: boolean;
 };
 
-const PrivacyRow: FC<AppProps> = ({ data, canEdit }) => {
+const DocAccessLevelRow: FC<DocAccessLevelRowProps> = ({ data, canEdit }) => {
   const { channelId = '' } = useParams();
-  const { t } = useTranslation('channelDetail', {
-    keyPrefix: 'setting.privacyRow',
-  });
-  const queryClient = useQueryClient();
-
   const { getApi } = usePermissions();
   const updateChannel = getApi(ApiEnum.UpdateChannel);
+
+  const mapToString = (value: boolean) => {
+    if (value) {
+      return 'Viewer';
+    }
+    return 'Can’t download';
+  };
+
+  const mapToBool = (value: string) => {
+    if (value === 'Viewer') {
+      return true;
+    }
+    return false;
+  };
+
   const updateChannelMutation = useMutation({
     mutationKey: ['update-channel-mutation'],
     mutationFn: (data: any) => updateChannel(channelId, data),
@@ -32,41 +42,40 @@ const PrivacyRow: FC<AppProps> = ({ data, canEdit }) => {
     onSuccess: async (_response: any) => {
       successToastConfig({});
       queryClient.invalidateQueries(['channel']);
-      queryClient.invalidateQueries(['channel-requests']);
-      queryClient.invalidateQueries(['channel-members']);
     },
   });
 
   const { control } = useForm<any>({
     mode: 'onSubmit',
     defaultValues: {
-      privacySetting: data?.settings?.visibility,
+      docAccessLevel: mapToString(
+        !!data.settings?.restriction?.canDownloadDocuments,
+      ),
     },
   });
 
-  const handleChange = (visibility: ChannelVisibilityEnum) => {
+  const handleChange = (value: string) => {
     updateChannelMutation.mutate({
       channelId,
       settings: {
-        visibility,
-        restriction: data?.settings?.restriction,
+        restriction: { canDownloadDocuments: mapToBool(value) },
       },
     });
   };
 
-  const privacySettingOptions: IRadioListOption[] = [
+  const uploadSettingOptions: IRadioListOption[] = [
     {
       data: {
-        value: ChannelVisibilityEnum.Private,
-        label: t('privateDescription'),
+        value: 'Viewer',
+        label: 'Anyone in the channel can view the documents',
         onChange: handleChange,
       },
       dataTestId: '',
     },
     {
       data: {
-        value: ChannelVisibilityEnum.Public,
-        label: t('publicDescription'),
+        value: 'Can’t download',
+        label: 'Members can view but cannot download documents.',
         onChange: handleChange,
       },
       dataTestId: '',
@@ -76,11 +85,11 @@ const PrivacyRow: FC<AppProps> = ({ data, canEdit }) => {
   const fields = [
     {
       type: FieldType.Radio,
-      name: 'privacySetting',
+      name: 'docAccessLevel',
       rowClassName: 'space-y-4',
       control,
       disabled: !canEdit,
-      radioList: privacySettingOptions,
+      radioList: uploadSettingOptions,
       labelRenderer: (option: IRadioListOption) => {
         return (
           <>
@@ -101,12 +110,12 @@ const PrivacyRow: FC<AppProps> = ({ data, canEdit }) => {
   return (
     <InfoRow
       icon={{
-        name: 'global-edit',
-        color: '!text-orange-500',
-        bgColor: '!bg-orange-50',
+        name: 'lock-open',
+        color: '!text-teal-500',
+        bgColor: '!bg-teal-50',
       }}
       isEditButton={false}
-      label={<div className="my-6">{t('label')}</div>}
+      label={<div className="my-6">Access level to members</div>}
       isEditMode={true}
       value={data?.settings?.visibility}
       dataTestId=""
@@ -125,4 +134,4 @@ const PrivacyRow: FC<AppProps> = ({ data, canEdit }) => {
   );
 };
 
-export default PrivacyRow;
+export default DocAccessLevelRow;

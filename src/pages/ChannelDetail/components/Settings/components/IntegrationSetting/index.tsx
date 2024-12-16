@@ -61,6 +61,13 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
     mutationFn: updateConnection,
   });
 
+  // Api call: Disconnect site / folder
+  const deleteConnection = getApi(ApiEnum.DeleteChannelDocConnection);
+  const deleteConnectionMutation = useMutation({
+    mutationKey: ['delete-channel-connection', channelId],
+    mutationFn: deleteConnection,
+  });
+
   const isActive = statusResponse?.status === 'ACTIVE';
   const integrationType = mapIntegrationType(
     isActive
@@ -69,7 +76,6 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
   );
   const availableAccount = statusResponse?.availableAccounts[0];
 
-  console.log(isActive, integrationType, statusResponse);
   return (
     <div className="flex flex-col gap-3">
       <Header
@@ -158,7 +164,9 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
                     <span className="font-medium text-xs">Disconnect</span>
                   </div>
                 ),
-                onClick: () => {},
+                onClick: () => {
+                  deleteConnectionMutation.mutate({ channelId } as any);
+                },
                 dataTestId: 'folder-menu',
                 className: '!px-6 !py-2',
               },

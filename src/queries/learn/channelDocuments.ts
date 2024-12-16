@@ -137,6 +137,16 @@ export const renameChannelFolder = async (payload: {
   return response;
 };
 
+// Delete channel doc connection
+export const deleteChannelDocConnection = async (payload: {
+  channelId: string;
+}) => {
+  const response = await apiService.patch(
+    `/channels/${payload.channelId}/unlink`,
+  );
+  return response;
+};
+
 /** Hooks */
 
 // To list out all rirectories / sites

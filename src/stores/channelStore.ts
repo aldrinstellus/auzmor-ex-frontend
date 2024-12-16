@@ -39,6 +39,9 @@ export interface IChannel {
       canPost: boolean;
       canComment: boolean;
       canMakeAnnouncements: boolean;
+      canEditDocuments: boolean;
+      enableDocuments: boolean;
+      canDownloadDocuments: boolean;
     };
   };
   displayImage?: { original: string };
