@@ -704,3 +704,56 @@ export const isThisAFile = (maybeFile: File) => {
     reader.readAsArrayBuffer(maybeFile);
   });
 };
+
+export const downloadFromUrl = async (url: string, fileName: string) => {
+  // try {
+  //   // Show loading indicator
+  //   document.body.classList.add('loading'); // Add a 'loading' class or show a spinner
+
+  //   // Make the API call to fetch the file
+  //   const response = await fetch(url);
+
+  //   // Handle errors if the response is not OK
+  //   if (!response.ok) {
+  //     throw new Error(`Error fetching the file: ${response.statusText}`);
+  //   }
+
+  //   // Convert the response to a Blob
+  //   const blob = await response.blob();
+
+  //   // Create a URL for the Blob
+  //   const blobUrl = URL.createObjectURL(blob);
+
+  //   // Create an anchor tag for the download
+  //   const anchor = document.createElement('a');
+  //   anchor.href = blobUrl;
+  //   anchor.download = fileName;
+
+  //   // Trigger the download
+  //   anchor.click();
+
+  //   // Wait for the browser to process the download trigger (approximate delay)
+  //   await new Promise((resolve) => setTimeout(resolve, 500)); // Adjust delay as needed
+
+  //   // Revoke the Blob URL after the download is triggered
+  //   URL.revokeObjectURL(blobUrl);
+  // } catch (error) {
+  //   console.error("Download failed:", error);
+  //   alert("Failed to download the file. Please try again.");
+  // } finally {
+  //   // Hide loading indicator
+  //   document.body.classList.remove('loading');
+  // }
+
+  // Create a temporary anchor element
+  const anchor = document.createElement('a');
+  anchor.href = url;
+
+  // Optional: Set the download attribute for custom file naming
+  anchor.download = fileName;
+
+  // Append the anchor to the body, click it, and then remove it
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+};

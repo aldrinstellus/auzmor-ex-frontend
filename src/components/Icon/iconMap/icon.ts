@@ -195,6 +195,9 @@ import FileUploadIcon from '../components/FileUpload';
 import FolderUploadIcon from '../components/FolderUpload';
 import VuesaxIcon from '../components/Vuesax';
 import LaunchIcon from '../components/Launch';
+import UserTickIcon from '../components/UserTick';
+import RefreshCircleIcon from '../components/RefreshCircle';
+import UploadIcon from '../components/Upload';
 
 export const icon = {
   add: Add,
@@ -353,6 +356,7 @@ export const icon = {
   reactivateUser: ReactivateUser,
   redo: Redo,
   refresh: RefreshIcon,
+  refreshCircle: RefreshCircleIcon,
   reorder: Reorder,
   reply: Reply,
   repost: Repost,
@@ -379,11 +383,13 @@ export const icon = {
   tickCircle: TickCircleIcon,
   training: TrainingIcon,
   trash: Trash,
+  upload: UploadIcon,
   'user-tag': UserTagIcon,
   userAdmin: UserAdminIcon,
   userManagement: UserManagement,
   userRemove: UserRemove,
   users: UsersIcon,
+  userTick: UserTickIcon,
   video: VideoIcon,
   videoFile: VideoFileIcon,
   videoPlay: VideoPlayIcon,

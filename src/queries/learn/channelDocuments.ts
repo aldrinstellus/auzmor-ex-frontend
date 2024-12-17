@@ -137,6 +137,27 @@ export const renameChannelFolder = async (payload: {
   return response;
 };
 
+// Delete channel doc connection
+export const deleteChannelDocConnection = async (payload: {
+  channelId: string;
+}) => {
+  const response = await apiService.delete(
+    `/channels/${payload.channelId}/unlink`,
+  );
+  return response;
+};
+
+// Get download URL for files / folders
+export const getChannelDocDownloadUrl = async (payload: {
+  channelId: string;
+  itemId: string;
+}) => {
+  const response = await apiService.get(
+    `/channels/${payload.channelId}/files/${payload.itemId}/download`,
+  );
+  return response;
+};
+
 /** Hooks */
 
 // To list out all rirectories / sites
