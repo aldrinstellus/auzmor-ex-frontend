@@ -587,7 +587,7 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
             jobs[`upload-job-${index}`] = {
               id: `upload-job-${index}`,
               jobData: { file, parentFolderId: rootFolderId },
-              progress: 100,
+              progress: isFile ? 0 : 100,
               status: isFile
                 ? BackgroundJobStatusEnum.YetToStart
                 : BackgroundJobStatusEnum.Cancelled,
