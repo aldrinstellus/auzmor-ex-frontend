@@ -154,7 +154,7 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
     {
       icon: 'calendar',
       label: 'Date modified',
-      key: 'modifiedAt:asc',
+      key: 'external_updated_at',
       dataTestId: 'sortby-dateadded',
     },
     {
