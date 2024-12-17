@@ -14,7 +14,6 @@ import Skeleton from 'react-loading-skeleton';
 import FilePreviewModal from './FilePreviewModal';
 import useModal from 'hooks/useModal';
 import Truncate from 'components/Truncate';
-// import moment from 'moment';
 
 interface IRecentlyAddedEntitiesProps {}
 
@@ -70,7 +69,7 @@ const RecentlyAddedEntities: FC<IRecentlyAddedEntitiesProps> = ({}) => {
       channelId,
       params: {
         folderId: items.length === 1 ? undefined : items[items.length - 1].id,
-        // modifiedAfter: moment().startOf('D').subtract(10, 'Q').valueOf(),
+        sort: 'external_updated_at',
         limit: 5,
       },
     },
