@@ -41,7 +41,6 @@ const getChannelFiles = async (payload: {
   channelId: string;
   params: Record<string, any>;
 }) => {
-  console.log(payload);
   const response = await apiService
     .get(`/channels/${payload.channelId}/files`, isFiltersEmpty(payload.params))
     .catch((_e) => {
@@ -158,6 +157,18 @@ export const getChannelDocDownloadUrl = async (payload: {
   return response;
 };
 
+// Search channel document
+export const getChannelDocDeepSearch = async (payload: {
+  channelId: string;
+  params: Record<string, any>;
+}) => {
+  const response = await apiService.get(
+    `/channels/${payload.channelId}/search`,
+    { ...payload.params },
+  );
+  return (response as any)?.data?.result?.data;
+};
+
 /** Hooks */
 
 // To list out all rirectories / sites
@@ -224,5 +235,17 @@ export const useChannelDocOwners = (channelId: string) => {
   return useQuery({
     queryKey: ['channel-doc-owners', channelId],
     queryFn: () => getChannelDocOwners({ channelId }),
+  });
+};
+
+// Channel document deep search
+export const useChannelDocDeepSearch = (
+  payload: { channelId: string; params: Record<string, any> },
+  options: Record<string, any>,
+) => {
+  return useQuery({
+    queryKey: ['channel-doc-deep-search', payload.channelId],
+    queryFn: () => getChannelDocDeepSearch(payload),
+    ...options,
   });
 };
