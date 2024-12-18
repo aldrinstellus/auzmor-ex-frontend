@@ -52,6 +52,7 @@ import { downloadFromUrl, isThisAFile } from 'utils/misc';
 import { IChannel } from 'stores/channelStore';
 import RenameChannelDocModal from './components/RenameChannelDocModal';
 import ConfirmationBox from 'components/ConfirmationBox';
+import DocSearch from './components/DocSearch';
 
 export enum DocIntegrationEnum {
   Sharepoint = 'SHAREPOINT',
@@ -62,6 +63,7 @@ export interface IForm {
   selectAll: boolean;
   documentSearch: string;
   docType?: Record<string, any>;
+  applyDocumentSearch: string;
 }
 
 interface IDocumentProps {
@@ -72,25 +74,33 @@ interface IDocumentProps {
 const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
   const [isOpen, openModal, closeModal] = useModal();
   const [isAddModalOpen, openAddModal, closeAddModal] = useModal();
-  const { control, watch } = useForm<IForm>();
   const [totalRows, setTotalRows] = useState<number>(0);
+  const [view, setView] = useState<'LIST' | 'GRID'>('GRID');
+  const [confirm, showConfirm, closeConfirm, deleteDocProps] = useModal();
+  const [filePreview, openFilePreview, closeFilePreview, filePreviewProps] =
+    useModal();
+  const [renameModal, showRenameModal, closeRenameModal, renameModalProps] =
+    useModal();
+  const { control, watch, setValue } = useForm<IForm>({
+    defaultValues: {
+      applyDocumentSearch: '',
+    },
+  });
   const { getApi } = usePermissions();
   const { channelId = '' } = useParams();
   const { items, appendItem, sliceItems } = useContext(DocumentPathContext);
-  const [view, setView] = useState<'LIST' | 'GRID'>('GRID');
-  const [filePreview, openFilePreview, closeFilePreview, filePreviewProps] =
-    useModal();
   const { uploadMedia } = useChannelDocUpload(channelId);
   const { filters } = useAppliedFiltersStore();
-  const folderInputRef = useRef<HTMLInputElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const docType = watch('docType');
   const { setJobs, getIconFromStatus, setJobTitle, setJobsRenderer, setShow } =
     useBackgroundJobStore();
+  const folderInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [docType, applyDocumentSearch, documentSearch] = watch([
+    'docType',
+    'applyDocumentSearch',
+    'documentSearch',
+  ]);
   const getChannelDocDownloadUrl = getApi(ApiEnum.GetChannelDocDownloadUrl);
-  const [renameModal, showRenameModal, closeRenameModal, renameModalProps] =
-    useModal();
-  const [confirm, showConfirm, closeConfirm, deleteDocProps] = useModal();
   const deleteChannelDoc = getApi(ApiEnum.DeleteChannelDoc);
 
   // Api call: Check connection status
@@ -365,7 +375,6 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
         header: () => '',
         cell: (info) => {
           const options = getAllOptions(info);
-          console.log(options);
           return options.length > 0 ? (
             <PopupMenu
               triggerNode={
@@ -413,6 +422,7 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
         sort: filters?.sort ? filters?.sort.split(':')[0] : undefined,
         order: filters?.sort ? filters?.sort.split(':')[1] : undefined,
         isFolder: docType ? !!(docType.value === 'folder') : undefined,
+        byTitle: documentSearch === '' ? documentSearch : applyDocumentSearch,
         owners: (filters?.docOwnerCheckbox || []).map(
           (owner: any) => owner.name,
         ),
@@ -460,6 +470,7 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
         <NoDataFound
           labelHeader="No documents found"
           clearBtnLabel="Upload now"
+          onClearSearch={() => fileInputRef?.current?.click()}
         />
       ),
     },
@@ -478,6 +489,13 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
       folderInputRef.current.setAttribute('multiple', '');
     }
   }, [isLoading]);
+
+  // Hook to reset document search param
+  useEffect(() => {
+    if (documentSearch === '' && applyDocumentSearch !== '') {
+      setValue('applyDocumentSearch', '');
+    }
+  }, [documentSearch, applyDocumentSearch]);
 
   // Component to render before connection.
   const NoConnection = () =>
@@ -735,18 +753,12 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
             onItemClick={(item) => sliceItems(item.id)}
           />
           <div className="flex gap-2 items-center">
-            <Layout
-              fields={[
-                {
-                  type: FieldType.Input,
-                  control,
-                  name: 'documentSearch',
-                  placeholder: 'Search documents',
-                  inputClassName: 'text-sm !py-2 h-10',
-                  leftIcon: 'search',
-                  className: 'w-[480px] h-10',
-                },
-              ]}
+            <DocSearch
+              control={control}
+              watch={watch}
+              onEnter={(value: string) =>
+                setValue('applyDocumentSearch', value)
+              }
             />
             {permissions.includes(
               ChannelPermissionEnum.CanCreateNewChannelDoc,

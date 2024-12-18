@@ -2,9 +2,7 @@ import NoDataFound from 'components/NoDataFound';
 import PageLoader from 'components/PageLoader';
 import useAuth from 'hooks/useAuth';
 import { usePageTitle } from 'hooks/usePageTitle';
-import DocSearchRow, {
-  Variant,
-} from 'pages/ChannelDetail/components/Documents/components/DocSearchRow';
+import DocSearchRow from 'pages/ChannelDetail/components/Documents/components/DocSearchRow';
 import { Doc as DocType } from 'interfaces';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -77,7 +75,7 @@ const SearchResults: FC = () => {
           ) : null}
           {!isLoading && documents?.length > 0
             ? documents.map((doc: DocType) => (
-                <DocSearchRow key={doc.id} data={doc} variant={Variant.Large} />
+                <DocSearchRow key={doc.id} data={doc} />
               ))
             : null}
         </div>

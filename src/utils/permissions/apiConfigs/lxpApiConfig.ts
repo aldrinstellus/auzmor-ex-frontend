@@ -225,4 +225,7 @@ export const apiConfigLxp = {
   [ApiEnum.GetChannelDocDownloadUrl]: {
     [Default]: queries.getChannelDocDownloadUrl,
   },
+  [ApiEnum.GetChannelDocDeepSearch]: {
+    [Default]: queries.useChannelDocDeepSearch,
+  },
 };
