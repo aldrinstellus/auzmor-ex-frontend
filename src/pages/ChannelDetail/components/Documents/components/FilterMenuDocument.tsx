@@ -182,7 +182,7 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
                       value: 'folder',
                       render: () => (
                         <div className="flex gap-2 font-medium text-xs op">
-                          <Icon name="dir" size={16} /> Folder
+                          <Icon name="folder" size={16} /> Folder
                         </div>
                       ),
                     },

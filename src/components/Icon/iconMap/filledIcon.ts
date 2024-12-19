@@ -94,8 +94,8 @@ import SvgMessageQuestionFilled from '../components/MessageQuestion/MessageQuest
 import SvgRadarFilled from '../components/Radar/RadarFilled';
 import SvgMedalStarFilled from '../components/MedalStar/MedalStarFilled';
 import SvgRestInPeaceFilled from '../components/RestInPeace/RestInPeaceFilled';
-import SvgDirFilled from '../components/Dir/DirFilled';
 import SvgMoreV2Filled from '../components/More/MoreV2Filled';
+import SvgAudioFilled from '../components/AudioFile/AudioFileFilled';
 
 export const filledIcon = {
   addCircleFilled: SvgAddCircleFilled,
@@ -103,6 +103,7 @@ export const filledIcon = {
   adminFilled: SvgAdminFilled,
   arrowLeftFilled: SvgArrowLeftFilled,
   arrowRightFilled: SvgArrowRightFilled,
+  audioFileFilled: SvgAudioFilled,
   calendarFilled: SvgCalendarFilled,
   calendarFilledTwo: SvgCalendarFilledTwo,
   carouselCloseFilled: SvgCarouselCloseFilled,
@@ -124,7 +125,6 @@ export const filledIcon = {
   cyclicArrowFilled: SvgCyclicArrowFilled,
   deleteCrossFilled: SvgDeleteCrossFilled,
   deleteFilled: SvgDeleteFilled,
-  dir: SvgDirFilled,
   documentFilled: SvgDocumentFilled,
   documentUpload: SvgDocumentUploadOutline,
   draftFilled: SvgDraftFilled,

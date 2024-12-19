@@ -82,36 +82,36 @@ export const documentOptions: ICheckboxListOption[] = [
   //   },
   //   datatestId: `document-${IDocType.TXT}`,
   // },
-  // {
-  //   data: {
-  //     id: 'image',
-  //     value: ['jpg', 'jpeg', 'png', 'gif', 'bmp'],
-  //     label: 'Image',
-  //     icon: 'img',
-  //     paramKey: 'Image',
-  //   },
-  //   datatestId: `document-${IDocType.IMAGE}`,
-  // },
-  // {
-  //   data: {
-  //     id: 'video',
-  //     value: ['mp4', '3gp', 'mkv', 'avi'],
-  //     label: 'Video',
-  //     icon: 'video',
-  //     paramKey: 'Video',
-  //   },
-  //   datatestId: `document-${IDocType.VIDEO}`,
-  // },
-  // {
-  //   data: {
-  //     id: 'audio',
-  //     value: ['mp3', 'wav', 'flac'],
-  //     label: 'Audio',
-  //     icon: 'audio',
-  //     paramKey: 'Audio',
-  //   },
-  //   datatestId: `document-${IDocType.AUDIO}`,
-  // },
+  {
+    data: {
+      id: 'image',
+      value: ['jpg', 'jpeg', 'png', 'gif', 'bmp'],
+      label: 'Image',
+      icon: 'imageFile',
+      paramKey: 'Image',
+    },
+    datatestId: `document-${IDocType.IMAGE}`,
+  },
+  {
+    data: {
+      id: 'video',
+      value: ['mp4', '3gp', 'mkv', 'avi'],
+      label: 'Video',
+      icon: 'videoFile',
+      paramKey: 'Video',
+    },
+    datatestId: `document-${IDocType.VIDEO}`,
+  },
+  {
+    data: {
+      id: 'audio',
+      value: ['mp3', 'wav', 'flac'],
+      label: 'Audio',
+      icon: 'audioFile',
+      paramKey: 'Audio',
+    },
+    datatestId: `document-${IDocType.AUDIO}`,
+  },
   // {
   //   data: {
   //     id: 'archive',

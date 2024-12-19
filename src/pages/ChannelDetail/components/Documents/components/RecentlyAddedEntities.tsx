@@ -37,7 +37,7 @@ const RecentlyAddedEntities: FC<IRecentlyAddedEntitiesProps> = ({}) => {
               <Icon
                 name={
                   info.row.original.isFolder
-                    ? 'dir'
+                    ? 'folder'
                     : getIconFromMime(info.row.original.mimeType)
                 }
                 size={16}
