@@ -333,7 +333,7 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
             <Icon
               name={
                 info?.row?.original?.isFolder
-                  ? 'dir'
+                  ? 'folder'
                   : getIconFromMime(info.row.original.mimeType)
               }
             />
@@ -680,7 +680,7 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
             if (jobs?.length) {
               return (
                 <div className="flex gap-2 items-center">
-                  <Icon name="dir" hover={false} />
+                  <Icon name="folder" hover={false} />
                   <span className="flex-grow">
                     {jobs[0].jobData?.file?.webkitRelativePath?.split('/')[0]}{' '}
                   </span>
@@ -787,7 +787,7 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
                     {
                       label: (
                         <div className="flex gap-2 items-center text-xs">
-                          <Icon name={'dir'} size={16} /> Folder
+                          <Icon name={'folder'} size={16} /> Folder
                         </div>
                       ),
                       onClick: openAddModal,

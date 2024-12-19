@@ -82,7 +82,7 @@ const EntitySelectModal: FC<IEntitySelectModalProps> = ({
             {integrationType === DocIntegrationEnum.Sharepoint ? (
               <SiteIcon name={info.getValue() as string} />
             ) : (
-              <Icon name="dir" />
+              <Icon name="folder" />
             )}
             {info.getValue() as string}
           </div>

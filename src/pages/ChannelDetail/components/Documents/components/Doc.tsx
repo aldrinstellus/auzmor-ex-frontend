@@ -23,30 +23,57 @@ export const getIconFromMime = (mimeType?: string) => {
   )
     return 'videoFile';
 
-  const MIME_TO_ICON: Record<string, string> = {
-    doc: 'doc',
-    docx: 'doc',
-    ppt: 'ppt',
-    pptx: 'ppt',
-    xls: 'xls',
-    xlsx: 'xls',
-    pdf: 'pdf',
-    'application/msword': 'doc',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+  const ICON_TO_MIME: Record<string, string[]> = {
+    doc: [
       'doc',
-    'application/pdf': 'pdf',
-    'application/vnd.ms-powerpoint': 'ppt',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+      'docx',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.google-apps.document',
+      'application/rtf',
+      'text/plain',
+      'application/wordperfect',
+    ],
+    ppt: [
       'ppt',
-    'application/vnd.google-apps.presentation': 'ppt',
-    'application/vnd.ms-excel': 'xls',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
-    'application/vnd.google-apps.spreadsheet': 'xls',
-    'application/vnd.google-apps.document': 'doc',
-    'application/vnd.google-apps.folder': 'folder',
-    'application/vnd.google-apps.form': 'form',
+      'pptx',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'application/vnd.google-apps.presentation',
+      'application/vnd.ms-powerpoint.template.macroenabled.12',
+      'application/vnd.ms-powerpoint.addin.macroenabled.12',
+      'application/vnd.oasis.opendocument.presentation',
+    ],
+    xls: [
+      'xls',
+      'xlsx',
+      'application/vnd.ms-excel',
+      'application/vnd.google-apps.spreadsheet',
+      'application/vnd.ms-excel.sheet.macroenabled.12',
+      'application/vnd.oasis.opendocument.spreadsheet',
+    ],
+    pdf: [
+      'pdf',
+      'application/pdf',
+      'application/x-pdf',
+      'application/vnd.adobe.pdfxml',
+    ],
+    videoFile: ['application/mp4', 'application/vnd.apple.mpegurl'],
+    folder: ['application/vnd.google-apps.folder', 'inode/directory'],
+    form: [
+      'application/vnd.google-apps.form',
+      'application/x-www-form-urlencoded',
+    ],
   };
-  return MIME_TO_ICON[mimeType ?? ''] || 'file';
+
+  if (mimeType) {
+    for (const [key, values] of Object.entries(ICON_TO_MIME)) {
+      if (values.includes(mimeType)) {
+        return key;
+      }
+    }
+  }
+  return 'file';
 };
 
 const Doc: FC<IDocProps> = ({ doc }) => {
@@ -59,7 +86,7 @@ const Doc: FC<IDocProps> = ({ doc }) => {
     [],
   );
 
-  const iconName = doc.isFolder ? 'dir' : getIconFromMime(doc.mimeType);
+  const iconName = doc.isFolder ? 'folder' : getIconFromMime(doc.mimeType);
   return (
     <Card className={style}>
       <div className="flex justify-center items-center py-[15px] bg-neutral-100 rounded-md">

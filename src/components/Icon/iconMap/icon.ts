@@ -188,7 +188,6 @@ import TrainingIcon from '../components/Training';
 import LearningCenterIcon from '../components/LearningCenter';
 import ArrowDown3 from '../components/ArrowDown3';
 import { ExclamationSVG } from 'components/LearnIcons';
-import DirIcon from '../components/Dir';
 import GridIcon from '../components/Grid';
 import ListIcon from '../components/List';
 import FileUploadIcon from '../components/FileUpload';
@@ -198,6 +197,7 @@ import LaunchIcon from '../components/Launch';
 import UserTickIcon from '../components/UserTick';
 import RefreshCircleIcon from '../components/RefreshCircle';
 import UploadIcon from '../components/Upload';
+import AudioFileIcon from '../components/AudioFile';
 
 export const icon = {
   add: Add,
@@ -213,6 +213,7 @@ export const icon = {
   arrowRightUp: ArrowRightUp,
   arrowSwap: ArrowSwap,
   arrowUp: ArrowUp,
+  audioFile: AudioFileIcon,
   boldTick: BoldTick,
   bookmarkOutline: BookmarkOutline,
   branding: Branding,
@@ -247,7 +248,6 @@ export const icon = {
   deel2: DeelIcon2,
   delete: DeleteIcon,
   deleteCross: DeleteCrossIcon,
-  dir: DirIcon,
   doc: DocIcon,
   document: DocumentIcon,
   documentUpload: DocumentUpload,
