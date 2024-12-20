@@ -169,6 +169,12 @@ export const getChannelDocDeepSearch = async (payload: {
   return (response as any)?.data?.result?.data;
 };
 
+// Trigger manual sync
+export const channelDocSync = async (payload: { channelId: string }) => {
+  const response = await apiService.post(`/channels/${payload.channelId}/sync`);
+  return response;
+};
+
 /** Hooks */
 
 // To list out all rirectories / sites

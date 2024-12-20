@@ -181,7 +181,9 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
                     <span className="font-medium text-xs">Re-sync</span>
                   </div>
                 ),
-                onClick: () => {},
+                onClick: () => {
+                  console.log('manual sync');
+                },
                 dataTestId: 'folder-menu',
                 className: '!px-6 !py-2',
               },
