@@ -226,4 +226,5 @@ export enum ApiEnum {
   DeleteChannelDocConnection = 'DELETE_CHANNEL_DOC_CONNECTION',
   GetChannelDocDownloadUrl = 'GET_CHANNEL_DOC_DOWNLOAD_URL',
   GetChannelDocDeepSearch = 'GET_CHANNEL_DOC_DEEP_SEARCH',
+  ChannelDocSync = 'CHANNEL_DOC_SYNC',
 }

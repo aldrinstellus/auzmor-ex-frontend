@@ -48,7 +48,7 @@ import {
   useBackgroundJobStore,
 } from 'stores/backgroundJobStore';
 import queryClient from 'utils/queryClient';
-import { downloadFromUrl, isThisAFile } from 'utils/misc';
+import { downloadFromUrl, getLearnUrl, isThisAFile } from 'utils/misc';
 import { IChannel } from 'stores/channelStore';
 import RenameChannelDocModal from './components/RenameChannelDocModal';
 import ConfirmationBox from 'components/ConfirmationBox';
@@ -501,61 +501,65 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
   const NoConnection = () =>
     permissions.includes(ChannelPermissionEnum.CanConnectChannelDoc) ? (
       <Fragment>
-        <NoDataFound
-          illustration={isConnectionMade ? 'noChannelFound' : 'noResultAlt'}
-          hideClearBtn
-          hideText
-        />
-        <div className="flex flex-col gap-4 justify-between">
-          {isConnectionMade ? (
-            <p className="w-full text-2xl font-semibold text-neutral-900 text-center">
-              Activate folder
-            </p>
-          ) : (
-            <p className="w-full text-2xl font-semibold text-neutral-900 text-center">
-              Integration not enabled for this organization
-            </p>
-          )}
-          <Divider />
-          {isConnectionMade ? (
-            <p className="text-center text-lg font-medium text-neutral-900">
-              Activate your preferred folder/site from google drive or
-              sharepoint to create, share and collaborate on files and folders
-              in this channel.
-            </p>
-          ) : (
-            <p className="text-center text-lg font-medium text-neutral-900">
-              To view your files in EX, you need to enable google drive or share
-              point integration.
-            </p>
-          )}
-        </div>
         {isConnectionMade ? (
-          <div className="flex gap-6 w-full justify-center">
-            <Button
-              label="Select existing"
-              variant={ButtonVariant.Secondary}
-              size={Size.Small}
-              onClick={openModal}
-            />
-            {integrationType !== DocIntegrationEnum.Sharepoint && (
+          <Fragment>
+            <NoDataFound illustration="noChannelFound" hideClearBtn hideText />
+            <div className="flex flex-col gap-4 justify-between">
+              <p className="w-full text-2xl font-semibold text-neutral-900 text-center">
+                Activate folder
+              </p>
+              <Divider />
+              <p className="text-center text-lg font-medium text-neutral-900">
+                Activate your preferred folder/site from google drive or
+                sharepoint to create, share and collaborate on files and folders
+                in this channel.
+              </p>
+            </div>
+            <div className="flex gap-6 w-full justify-center">
               <Button
-                label="Add new"
-                leftIcon="plus"
+                label="Select existing"
+                variant={ButtonVariant.Secondary}
                 size={Size.Small}
-                onClick={openAddModal}
+                onClick={openModal}
               />
-            )}
-          </div>
+              {integrationType !== DocIntegrationEnum.Sharepoint && (
+                <Button
+                  label="Add new"
+                  leftIcon="plus"
+                  size={Size.Small}
+                  onClick={openAddModal}
+                />
+              )}
+            </div>
+          </Fragment>
         ) : (
-          <div className="flex gap-6 w-full justify-center">
-            <Button
-              label="Connect"
-              size={Size.Small}
-              onClick={openModal}
-              variant={ButtonVariant.Primary}
-            />
-          </div>
+          <Fragment>
+            <div className="flex flex-col w-full border border-neutral-200 rounded-7xl px-6 py-10 gap-10">
+              <div className="flex flex-col gap-4">
+                <p className="font-bold text-neutral-900 text-center">
+                  Enable integrations to view your files
+                </p>
+                <p className="text-neutral-900 text-center">
+                  To view your files here, you need to enable SharePoint
+                  integration
+                </p>
+              </div>
+              <div className="flex justify-center">
+                <Button
+                  label="SharePoint"
+                  size={Size.Small}
+                  variant={ButtonVariant.Secondary}
+                  leftIcon={'sharePoint'}
+                  onClick={() =>
+                    window.location.assign(
+                      getLearnUrl('/settings/market-place'),
+                    )
+                  }
+                  className="flex !text-[#036b70] group-hover:border-neutral-900 hover:border-neutral-900"
+                />
+              </div>
+            </div>
+          </Fragment>
         )}
       </Fragment>
     ) : (
@@ -752,76 +756,78 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
             items={items}
             onItemClick={(item) => sliceItems(item.id)}
           />
-          <div className="flex gap-2 items-center">
-            <DocSearch
-              control={control}
-              watch={watch}
-              onEnter={(value: string) =>
-                setValue('applyDocumentSearch', value)
-              }
-            />
-            {permissions.includes(
-              ChannelPermissionEnum.CanCreateNewChannelDoc,
-            ) && (
-              <div className="relative">
-                <PopupMenu
-                  triggerNode={
-                    <Button
-                      label="New"
-                      leftIcon="add"
-                      className="px-4 py-2 gap-1 h-10"
-                      leftIconClassName="text-white focus:text-white group-focus:text-white"
-                      leftIconHoverColor="text-white"
-                      size={Size.Small}
-                    />
-                  }
-                  menuItems={[
-                    {
-                      renderNode: (
-                        <div className="bg-blue-50 px-6 text-xs font-medium text-neutral-500 py-2">
-                          Add new
-                        </div>
-                      ),
-                      isBanner: true,
-                    },
-                    {
-                      label: (
-                        <div className="flex gap-2 items-center text-xs">
-                          <Icon name={'folder'} size={16} /> Folder
-                        </div>
-                      ),
-                      onClick: openAddModal,
-                    },
-                    {
-                      renderNode: (
-                        <div className="bg-blue-50 px-6 text-xs font-medium text-neutral-500 py-2">
-                          Upload new
-                        </div>
-                      ),
-                      isBanner: true,
-                    },
-                    {
-                      label: (
-                        <div className="flex gap-2.5 items-center text-xs">
-                          <Icon name={'fileUpload'} size={16} /> File
-                        </div>
-                      ),
-                      onClick: () => fileInputRef?.current?.click(),
-                    },
-                    {
-                      label: (
-                        <div className="flex gap-2.5 items-center text-xs">
-                          <Icon name={'folderUpload'} size={16} /> Folder
-                        </div>
-                      ),
-                      onClick: () => folderInputRef?.current?.click(),
-                    },
-                  ]}
-                  className="right-0 mt-2 top-full border-1 border-neutral-200 focus-visible:outline-none w-[247px]"
-                />
-              </div>
-            )}
-          </div>
+          {isBaseFolderSet && (
+            <div className="flex gap-2 items-center">
+              <DocSearch
+                control={control}
+                watch={watch}
+                onEnter={(value: string) =>
+                  setValue('applyDocumentSearch', value)
+                }
+              />
+              {permissions.includes(
+                ChannelPermissionEnum.CanCreateNewChannelDoc,
+              ) && (
+                <div className="relative">
+                  <PopupMenu
+                    triggerNode={
+                      <Button
+                        label="New"
+                        leftIcon="add"
+                        className="px-4 py-2 gap-1 h-10"
+                        leftIconClassName="text-white focus:text-white group-focus:text-white"
+                        leftIconHoverColor="text-white"
+                        size={Size.Small}
+                      />
+                    }
+                    menuItems={[
+                      {
+                        renderNode: (
+                          <div className="bg-blue-50 px-6 text-xs font-medium text-neutral-500 py-2">
+                            Add new
+                          </div>
+                        ),
+                        isBanner: true,
+                      },
+                      {
+                        label: (
+                          <div className="flex gap-2 items-center text-xs">
+                            <Icon name={'folder'} size={16} /> Folder
+                          </div>
+                        ),
+                        onClick: openAddModal,
+                      },
+                      {
+                        renderNode: (
+                          <div className="bg-blue-50 px-6 text-xs font-medium text-neutral-500 py-2">
+                            Upload new
+                          </div>
+                        ),
+                        isBanner: true,
+                      },
+                      {
+                        label: (
+                          <div className="flex gap-2.5 items-center text-xs">
+                            <Icon name={'fileUpload'} size={16} /> File
+                          </div>
+                        ),
+                        onClick: () => fileInputRef?.current?.click(),
+                      },
+                      {
+                        label: (
+                          <div className="flex gap-2.5 items-center text-xs">
+                            <Icon name={'folderUpload'} size={16} /> Folder
+                          </div>
+                        ),
+                        onClick: () => folderInputRef?.current?.click(),
+                      },
+                    ]}
+                    className="right-0 mt-2 top-full border-1 border-neutral-200 focus-visible:outline-none w-[247px]"
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
         {isBaseFolderSet ? (
           <Fragment>
