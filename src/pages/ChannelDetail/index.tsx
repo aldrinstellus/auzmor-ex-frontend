@@ -23,7 +23,7 @@ import {
 import { useChannelRole } from 'hooks/useChannelRole';
 import useRole from 'hooks/useRole';
 import useProduct from 'hooks/useProduct';
-import Button, { Size, Variant } from 'components/Button';
+import Button, { Variant } from 'components/Button';
 import { IS_PROD } from 'utils/constants';
 
 export enum ChannelDetailTabsEnum {
@@ -257,9 +257,10 @@ const ChannelDetail: FC<AppProps> = ({
           label={t('backToChannels')}
           leftIcon="arrowLeft"
           leftIconClassName="!text-neutral-900 group-hover:!text-primary-500"
+          leftIconSize={20}
+          className="!py-[7px]"
           variant={Variant.Secondary}
           onClick={handleGoBack}
-          size={Size.Large}
         />
       </div>
       <ProfileSection
