@@ -67,7 +67,7 @@ const UploadControlRow: FC<UploadControlRowProps> = ({ data, canEdit }) => {
     {
       data: {
         value: 'Anyone',
-        label: 'Anyone in the channel can view the documents',
+        label: 'Anyone can upload documents',
         onChange: handleChange,
       },
       dataTestId: '',

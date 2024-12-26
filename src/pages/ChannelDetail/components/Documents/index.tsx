@@ -32,7 +32,7 @@ import Doc, { getIconFromMime } from './components/Doc';
 import FilterMenuDocument from './components/FilterMenuDocument';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import { failureToastConfig } from 'components/Toast/variants/FailureToast';
-import BreadCrumb from 'components/BreadCrumb';
+import BreadCrumb, { BreadCrumbVariantEnum } from 'components/BreadCrumb';
 import { DocumentPathContext } from 'contexts/DocumentPathContext';
 import RecentlyAddedEntities from './components/RecentlyAddedEntities';
 import ActionMenu from './components/ActionMenu';
@@ -52,6 +52,7 @@ import { IChannel } from 'stores/channelStore';
 import RenameChannelDocModal from './components/RenameChannelDocModal';
 import ConfirmationBox from 'components/ConfirmationBox';
 import DocSearch from './components/DocSearch';
+import Popover from 'components/Popover';
 
 export enum DocIntegrationEnum {
   Sharepoint = 'SHAREPOINT',
@@ -74,7 +75,7 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
   const [isOpen, openModal, closeModal] = useModal();
   const [isAddModalOpen, openAddModal, closeAddModal] = useModal();
   const [totalRows, setTotalRows] = useState<number>(0);
-  const [view, setView] = useState<'LIST' | 'GRID'>('GRID');
+  const [view, setView] = useState<'LIST' | 'GRID'>('LIST');
   const [confirm, showConfirm, closeConfirm, deleteDocProps] = useModal();
   const [filePreview, openFilePreview, closeFilePreview, filePreviewProps] =
     useModal();
@@ -87,7 +88,8 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
   });
   const { getApi } = usePermissions();
   const { channelId = '' } = useParams();
-  const { items, appendItem, sliceItems } = useContext(DocumentPathContext);
+  const { items, appendItem, sliceItems, setItems } =
+    useContext(DocumentPathContext);
   const { uploadMedia } = useChannelDocUpload(channelId);
   const { filters } = useAppliedFiltersStore();
   const { setJobs, getIconFromStatus, setJobTitle, setJobsRenderer, setShow } =
@@ -270,6 +272,21 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
     ].filter((option) => !option?.isHidden) as any as IMenuItem[];
   }, []);
 
+  // A function to get formated props for location breadcrumb
+  const getMappedLocation = (doc: DocType) => {
+    let items = [
+      { id: 'root', label: 'Documents' },
+      ...Object.keys(doc?.path || {}).map((key) => ({
+        id: doc?.path[key],
+        label: key,
+      })),
+    ];
+    if (!doc.isFolder) {
+      items = items.slice(0, -1);
+    }
+    return items;
+  };
+
   // Columns configuration for Datagrid component for List view
   const columnsListView = React.useMemo<ColumnDef<DocType>[]>(
     () => [
@@ -369,6 +386,43 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
           </div>
         ),
         size: 200,
+      },
+      {
+        accessorKey: 'location',
+        header: () => (
+          <div className="font-bold text-neutral-500">Location</div>
+        ),
+        cell: (info) => (
+          <Popover
+            triggerNode={
+              <BreadCrumb
+                items={getMappedLocation(info?.row?.original)}
+                onItemClick={(item) => console.log(item)}
+              />
+            }
+            triggerNodeClassName="w-full"
+            wrapperClassName="w-full"
+            contentRenderer={() => (
+              <div className="flex p-3 bg-primary-50 rounded-9xl border border-primary-50 shadow">
+                <BreadCrumb
+                  items={getMappedLocation(info?.row?.original)}
+                  className="hover:text-primary-500 hover:underline min-w-max"
+                  onItemClick={(item) => {
+                    const items = getMappedLocation(info?.row?.original);
+                    const sliceIndex = items.findIndex(
+                      (eachItem) => eachItem.id === item.id,
+                    );
+                    if (sliceIndex >= 0) {
+                      console.log(items.slice(0, sliceIndex));
+                      setItems(items.slice(0, sliceIndex + 1));
+                    }
+                  }}
+                />
+              </div>
+            )}
+          />
+        ),
+        size: 260,
       },
       {
         accessorKey: 'more',
@@ -752,6 +806,7 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
       <Card className="flex flex-col gap-6 p-8 pb-16 w-full justify-center bg-white">
         <div className="flex justify-between">
           <BreadCrumb
+            variant={BreadCrumbVariantEnum.ChannelDoc}
             items={items}
             onItemClick={(item) => sliceItems(item.id)}
           />

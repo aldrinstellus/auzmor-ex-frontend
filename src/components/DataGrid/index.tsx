@@ -185,7 +185,6 @@ const DataGrid = <T extends object>({
       className={className}
       ref={tableContainerRef}
       style={{
-        overflow: 'auto', //our scrollable table container
         position: 'relative', //needed for sticky header
         height,
       }}
