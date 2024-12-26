@@ -198,6 +198,9 @@ export const apiConfigLxp = {
     [Default]: queries.updateChannelDocumentConnection,
   },
   [ApiEnum.GetChannelFiles]: { [Default]: queries.useChannelFiles },
+  [ApiEnum.GetInfiniteChannelFiles]: {
+    [Default]: queries.useInfiniteChannelFiles,
+  },
   [ApiEnum.GetChannelDocumentStatus]: {
     [Default]: queries.useChannelDocumentStatus,
   },

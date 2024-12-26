@@ -185,14 +185,13 @@ const DataGrid = <T extends object>({
       className={className}
       ref={tableContainerRef}
       style={{
-        overflow: 'auto', //our scrollable table container
         position: 'relative', //needed for sticky header
         height,
       }}
     >
       {/* Even though we're still using sematic table tags, we must use CSS grid and flexbox for dynamic row heights */}
       <table className="grid gap-2">
-        <thead className="grid sticky top-0 z-20">
+        <thead className="grid z-20">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className={trHeaderClassName()}>
               {headerGroup.headers.map((header: Header<T, unknown>) => {
@@ -264,13 +263,15 @@ const DataGrid = <T extends object>({
                 </tr>
               );
             })}
-          {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
-          {isFetchingNextPage && (
-            <div className="w-full flex items-center justify-center p-8">
-              <Spinner />
-            </div>
-          )}
         </tbody>
+        {hasNextPage && !isFetchingNextPage && (
+          <div className="flex" ref={ref} />
+        )}
+        {isFetchingNextPage && (
+          <div className="w-full flex items-center justify-center p-8">
+            <Spinner />
+          </div>
+        )}
       </table>
     </div>
   );
