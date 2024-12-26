@@ -467,8 +467,8 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
 
   // Get props for Datagrid component
   const dataGridProps = useDataGrid<DocType>({
-    apiEnum: ApiEnum.GetChannelFiles,
-    isInfiniteQuery: false,
+    apiEnum: ApiEnum.GetInfiniteChannelFiles,
+    isInfiniteQuery: true,
     payload: {
       channelId,
       params: {

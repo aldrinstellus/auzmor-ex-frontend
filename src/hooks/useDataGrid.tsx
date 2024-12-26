@@ -50,8 +50,11 @@ export const useDataGrid = <T extends object>({
     const useInfiniteQuery = getApi(apiEnum);
     const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
       useInfiniteQuery(payload, { enabled: isEnabled });
+    console.log(data);
     const flatData = useMemo(
-      () => data?.pages?.flatMap((page: { data: any }) => page.data) ?? [],
+      () =>
+        data?.pages?.flatMap((page: { data: any }) => page.data.result.data) ??
+        [],
       [data],
     );
 
@@ -66,13 +69,16 @@ export const useDataGrid = <T extends object>({
               (column) =>
                 ({
                   ...column,
-                  header: () => <></>,
-                  cell: () => (
-                    <Skeleton
-                      containerClassName="w-full !h-3 !rounded-15xl !max-w-[280px] relative"
-                      className="!absolute !w-full top-0 left-0 h-3 !rounded-15xl"
-                    />
-                  ),
+                  header: () => null,
+                  cell: () =>
+                    view === 'LIST' ? (
+                      <Skeleton
+                        containerClassName="w-full !h-3 !rounded-15xl !max-w-[280px] relative"
+                        className="!absolute !w-full top-0 left-0 h-3 !rounded-15xl"
+                      />
+                    ) : (
+                      loadingGrid
+                    ),
                 } as ColumnDef<T>),
             )
           : columns,
@@ -81,18 +87,18 @@ export const useDataGrid = <T extends object>({
 
     return {
       ...rest.dataGridProps,
-      columns: tableColumns as ColumnDef<T>[],
-      isFetchingNextPage,
-      fetchNextPage,
-      hasNextPage,
-      isRowSelected,
       flatData: tableData,
+      columns: tableColumns,
       isLoading,
       tableContainerRef,
       rowSelection,
       setRowSelection,
       tableRef,
+      isRowSelected,
       onRowClick: isLoading ? () => {} : rest.dataGridProps.onRowClick,
+      isFetchingNextPage,
+      fetchNextPage,
+      hasNextPage,
     };
   }
 

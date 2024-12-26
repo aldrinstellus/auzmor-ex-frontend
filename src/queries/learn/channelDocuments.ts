@@ -1,4 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import {
+  QueryFunctionContext,
+  useInfiniteQuery,
+  useQuery,
+} from '@tanstack/react-query';
 import { dummyFiles, dummyFolders } from 'mocks/documents';
 import apiService from 'utils/apiService';
 import { isFiltersEmpty } from 'utils/misc';
@@ -47,6 +51,34 @@ const getChannelFiles = async (payload: {
       return dummyFiles;
     });
   return (response as any)?.data?.result?.data;
+};
+
+// To get files based on params Infinite listing
+const getInfiniteChannelFiles = async (
+  context: QueryFunctionContext<
+    (Record<string, any> | undefined | string)[],
+    any
+  >,
+  payload: {
+    channelId: string;
+    params: Record<string, any>;
+  },
+) => {
+  let response = null;
+
+  try {
+    if (!!!context.pageParam) {
+      response = await apiService.get(
+        `/channels/${payload.channelId}/files`,
+        isFiltersEmpty(payload.params),
+      );
+    } else {
+      response = await apiService.get(context.pageParam);
+    }
+  } catch (e) {
+    return dummyFiles;
+  }
+  return response;
 };
 
 // To get status of documents tab of respected channels
@@ -211,6 +243,33 @@ export const useChannelFiles = (
   return useQuery({
     queryKey: ['get-channel-files', payload],
     queryFn: () => getChannelFiles(payload),
+    ...options,
+  });
+};
+
+// To get all files for selected folder / site infinite listing
+export const useInfiniteChannelFiles = (
+  payload: {
+    channelId: string;
+    params: Record<string, any>;
+  },
+  options: Record<string, any>,
+) => {
+  return useInfiniteQuery({
+    queryKey: ['get-channel-files', payload],
+    queryFn: (context) => getInfiniteChannelFiles(context, payload),
+    getNextPageParam: (lastPage: any) => {
+      const pageDataLen = lastPage?.data?.result?.data?.length;
+      const pageLimit = lastPage?.data?.result?.paging?.limit;
+      if (pageDataLen < pageLimit) {
+        return null;
+      }
+      return lastPage?.data?.result?.paging?.next;
+    },
+    getPreviousPageParam: (currentPage: any) => {
+      return currentPage?.data?.result?.paging?.prev;
+    },
+    staleTime: 5 * 60 * 1000,
     ...options,
   });
 };
