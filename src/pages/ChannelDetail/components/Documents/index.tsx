@@ -818,6 +818,7 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
                 onEnter={(value: string) =>
                   setValue('applyDocumentSearch', value)
                 }
+                onClick={(doc) => setItems(getMappedLocation(doc))}
               />
               {permissions.includes(
                 ChannelPermissionEnum.CanCreateNewChannelDoc,

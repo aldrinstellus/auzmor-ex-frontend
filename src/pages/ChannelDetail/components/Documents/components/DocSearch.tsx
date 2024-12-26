@@ -16,9 +16,15 @@ interface IDocSearchProps {
   control: Control<IForm, any>;
   watch: UseFormWatch<IForm>;
   onEnter: (documentSearchDebounceValue: string) => void;
+  onClick: (doc: Doc) => void;
 }
 
-const DocSearch: FC<IDocSearchProps> = ({ control, watch, onEnter }) => {
+const DocSearch: FC<IDocSearchProps> = ({
+  control,
+  watch,
+  onEnter,
+  onClick,
+}) => {
   const documentSearch = watch('documentSearch');
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { getApi } = usePermissions();
@@ -51,10 +57,9 @@ const DocSearch: FC<IDocSearchProps> = ({ control, watch, onEnter }) => {
   }
 
   const style = clsx({
-    'absolute flex flex-col gap-[15px] w-full px-3 py-4 bg-white overflow-auto top-full mt-2 rounded-7xl border border-[#E7EDF6] transition-all duration-100 opacity-0 h-0':
+    'absolute flex flex-col gap-[15px] w-full px-3 py-4 bg-white overflow-auto top-full mt-2 rounded-7xl border border-[#E7EDF6] transition-all duration-100 opacity-0 max-h-[212px]':
       true,
-    'group-focus-within/searchdoc:opacity-100 group-focus-within/searchdoc:!h-[212px]':
-      true,
+    'group-focus-within/searchdoc:opacity-100': true,
   });
   return (
     <div className="flex relative group/searchdoc">
@@ -98,6 +103,7 @@ const DocSearch: FC<IDocSearchProps> = ({ control, watch, onEnter }) => {
               <DocSearchRow
                 data={doc}
                 searchQuery={documentSearchDebounceValue}
+                onClick={onClick}
               />
             </li>
           ))
