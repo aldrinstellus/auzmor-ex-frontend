@@ -60,7 +60,7 @@ const RecentlyAddedEntities: FC<IRecentlyAddedEntitiesProps> = ({}) => {
         ),
       },
     ],
-    [],
+    [isRootDir],
   );
 
   const dataGridProps = useDataGrid<Doc>({
