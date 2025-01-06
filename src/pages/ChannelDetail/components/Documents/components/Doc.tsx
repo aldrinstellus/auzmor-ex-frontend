@@ -100,19 +100,29 @@ const Doc: FC<IDocProps> = ({ doc, isFolder }) => {
           className="text-xs font-medium leading-[18px] w-[200px] text-neutral-900"
         />
         <div className="flex items-center gap-1">
-          <div className="flex items-center gap-0.5">
-            <Avatar size={16} image={doc?.ownerImage} name={doc.ownerName} />
+          {doc?.ownerName && (
+            <>
+              <div className="flex items-center gap-0.5">
+                <Avatar
+                  size={16}
+                  image={doc?.ownerImage}
+                  name={doc.ownerName}
+                />
+                <span className="text-xxs text-neutral-500 font-medium">
+                  {doc.ownerName}
+                </span>
+              </div>
+              <div className="flex w-[3px] h-[3px] bg-neutral-300"></div>
+            </>
+          )}
+          {doc?.externalUpdatedAt && (
             <span className="text-xxs text-neutral-500 font-medium">
-              {doc.ownerName}
+              Updated{' '}
+              {doc.externalUpdatedAt
+                ? humanizeTime(doc.externalUpdatedAt)
+                : 'while ago'}
             </span>
-          </div>
-          <div className="flex w-[3px] h-[3px] bg-neutral-300"></div>
-          <span className="text-xxs text-neutral-500 font-medium">
-            Updated{' '}
-            {doc.externalUpdatedAt
-              ? humanizeTime(doc.externalUpdatedAt)
-              : 'while ago'}
-          </span>
+          )}
         </div>
       </div>
     </Card>
