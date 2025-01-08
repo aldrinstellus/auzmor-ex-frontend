@@ -898,7 +898,11 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
               }
             }
 
-            files.push({ file, parentFolderId, rootFolderId });
+            files.push({
+              file,
+              parentFolderId,
+              rootFolderId: `${rootFolderId}`,
+            });
           }
 
           setJobs(
