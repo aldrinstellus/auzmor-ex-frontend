@@ -136,13 +136,15 @@ export const createChannelDocFolder = async ({
 export const getChannelDocOwners = async ({
   channelId,
   rootFolderId,
+  name,
 }: {
   channelId: string;
   rootFolderId: string;
+  name?: string;
 }) => {
   const response = await apiService.get(
     `/channels/${channelId}/document/owners`,
-    { rootFolderId },
+    { rootFolderId, name },
   );
   return response?.data?.result?.data?.owners;
 };

@@ -9,20 +9,27 @@ import { useParams } from 'react-router-dom';
 import { ICheckboxListOption } from 'components/CheckboxList';
 import { titleCase } from 'utils/misc';
 import { useChannelStore } from 'stores/channelStore';
+import { useDebounce } from 'hooks/useDebounce';
+import NoDataFound from 'components/NoDataFound';
 interface IVisibilityProps {
   control: Control<IFilterForm, any>;
   watch: UseFormWatch<IFilterForm>;
   setValue: UseFormSetValue<IFilterForm>;
 }
 
-const DocumentOwner: FC<IVisibilityProps> = ({ control }) => {
+const DocumentOwner: FC<IVisibilityProps> = ({ control, watch, setValue }) => {
   const { getApi } = usePermissions();
   const { channelId = '' } = useParams();
   const { rootFolderId } = useChannelStore();
+
+  const [docOwnerSearch] = watch(['docOwnerSearch']);
+  const debouncedDocOwnerSearch = useDebounce(docOwnerSearch, 300);
+
   const useChannelDocOwners = getApi(ApiEnum.GetChannelDocOwners);
   const { data: owners, isLoading } = useChannelDocOwners({
     channelId,
     rootFolderId,
+    name: debouncedDocOwnerSearch,
   });
 
   const searchField = [
@@ -57,6 +64,8 @@ const DocumentOwner: FC<IVisibilityProps> = ({ control }) => {
     [owners],
   );
 
+  console.log(owners);
+
   return (
     <div className="px-2 py-4">
       <Layout fields={searchField} />
@@ -71,10 +80,15 @@ const DocumentOwner: FC<IVisibilityProps> = ({ control }) => {
             </div>
           ))}
         </>
-      ) : (
+      ) : !!owners.length ? (
         <div className="max-h-[330px] min-h-[330px] overflow-y-auto">
           <Layout fields={documentFields} />
         </div>
+      ) : (
+        <NoDataFound
+          className="pt-8"
+          onClearSearch={() => setValue('docOwnerSearch', '')}
+        />
       )}
     </div>
   );

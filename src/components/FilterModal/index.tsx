@@ -60,7 +60,7 @@ export interface IFilterForm {
   statusSearch: string;
   roleSearch: string;
   byPeopleSearch: string;
-  docUserSearch: string;
+  docOwnerSearch: string;
   visibilitySearch: string;
   channelTypeSearch: string;
   channelRequestStatusSearch: string;
