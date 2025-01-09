@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -49,11 +50,12 @@ import {
 } from 'stores/backgroundJobStore';
 import queryClient from 'utils/queryClient';
 import { downloadFromUrl, getLearnUrl, isThisAFile } from 'utils/misc';
-import { IChannel, useChannelStore } from 'stores/channelStore';
+import { useChannelStore } from 'stores/channelStore';
 import RenameChannelDocModal from './components/RenameChannelDocModal';
 import ConfirmationBox from 'components/ConfirmationBox';
 import DocSearch from './components/DocSearch';
 import Popover from 'components/Popover';
+import { parseNumber } from 'react-advanced-cropper';
 
 export enum DocIntegrationEnum {
   Sharepoint = 'SHAREPOINT',
@@ -68,11 +70,10 @@ export interface IForm {
 }
 
 interface IDocumentProps {
-  channelData: IChannel;
   permissions: ChannelPermissionEnum[];
 }
 
-const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
+const Document: FC<IDocumentProps> = ({ permissions }) => {
   const [isOpen, openModal, closeModal] = useModal();
   const [isAddModalOpen, openAddModal, closeAddModal] = useModal();
   const [totalRows, setTotalRows] = useState<number>(0);
@@ -266,7 +267,7 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
   // A function that decides what options to show on each row of documents
   const getAllOptions = useCallback((info: CellContext<DocType, unknown>) => {
     const showDownload =
-      !!channelData?.settings?.restriction?.canDownloadDocuments &&
+      permissions.includes(ChannelPermissionEnum.CanDownloadDocuments) &&
       !!info?.row?.original?.downloadable &&
       !!!info?.row?.original?.isFolder;
     return [
@@ -533,7 +534,6 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
                       (eachItem) => eachItem.id === item.id,
                     );
                     if (sliceIndex >= 0) {
-                      console.log(items.slice(0, sliceIndex));
                       setItems(items.slice(0, sliceIndex + 1));
                     }
                   }}
@@ -585,6 +585,63 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
     [isRootDir],
   );
 
+  // Its a function to parse modified on filter that maps string to respected date param oo api
+  const parseModifiedOnFilter = useMemo(() => {
+    if (filters?.docModifiedRadio?.includes('custom')) {
+      const [start, end] = filters?.docModifiedRadio
+        .replace('custom:', '')
+        .split('-');
+      if (parseNumber(start) && parseNumber(end)) {
+        return {
+          modifiedAfter: start,
+          modifiedBefore: end,
+        };
+      }
+    }
+    if (filters?.docModifiedRadio) {
+      switch (filters.docModifiedRadio) {
+        case 'Today':
+          return {
+            modifiedAfter: moment().startOf('day').valueOf(),
+            modifiedBefore: moment().endOf('day').valueOf(),
+          };
+        case 'Last 7 days':
+          return {
+            modifiedAfter: moment()
+              .subtract(7, 'days')
+              .startOf('day')
+              .valueOf(),
+            modifiedBefore: moment().endOf('day').valueOf(),
+          };
+        case 'Last 30 days':
+          return {
+            modifiedAfter: moment()
+              .subtract(30, 'days')
+              .startOf('day')
+              .valueOf(),
+            modifiedBefore: moment().endOf('day').valueOf(),
+          };
+        case 'This year':
+          return {
+            modifiedAfter: moment().startOf('year').valueOf(),
+            modifiedBefore: moment().endOf('day').valueOf(),
+          };
+        case 'Last year':
+          return {
+            modifiedAfter: moment()
+              .subtract(1, 'year')
+              .startOf('year')
+              .valueOf(),
+            modifiedBefore: moment()
+              .subtract(1, 'year')
+              .endOf('year')
+              .valueOf(),
+          };
+      }
+    }
+    return {};
+  }, [filters]);
+
   // Get props for Datagrid component
   const dataGridProps = useDataGrid<DocType>({
     apiEnum:
@@ -609,6 +666,7 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
               type: (filters?.docTypeCheckbox || []).map(
                 (type: any) => type.paramKey,
               ),
+              ...parseModifiedOnFilter,
             }
           : { q: applyDocumentSearch },
     },
@@ -991,7 +1049,7 @@ const Document: FC<IDocumentProps> = ({ channelData, permissions }) => {
                 onClick={(doc) => setItems(getMappedLocation(doc))}
               />
               {permissions.includes(
-                ChannelPermissionEnum.CanCreateNewChannelDoc,
+                ChannelPermissionEnum.CanEditChannelDoc,
               ) && (
                 <div className="relative">
                   <PopupMenu
