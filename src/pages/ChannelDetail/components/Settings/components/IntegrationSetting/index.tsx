@@ -18,6 +18,7 @@ import {
   useBackgroundJobStore,
 } from 'stores/backgroundJobStore';
 import { getLearnUrl } from 'utils/misc';
+import moment from 'moment';
 
 interface IIntegrationSettingProps {
   canEdit: boolean;
@@ -119,6 +120,11 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
     },
   });
 
+  // API call: get last sync information from this api call
+  const useChannelDocSyncStatus = getApi(ApiEnum.UseChannelDocSyncStatus);
+  const { data: syncStatus, loading } = useChannelDocSyncStatus({ channelId });
+  const connectedDriveStatus = syncStatus?.data?.result?.data;
+
   const isBaseFolderSet = statusResponse?.status === 'ACTIVE';
   const isConnectionMade =
     isBaseFolderSet ||
@@ -130,6 +136,13 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
       : statusResponse?.availableAccounts[0],
   );
   const availableAccount = statusResponse?.availableAccounts[0];
+  const lastSynced = !loading
+    ? Math.min(
+        ...connectedDriveStatus.map(
+          (each: { lastSyncAt: any }) => each.lastSyncAt,
+        ),
+      )
+    : '';
 
   const popOptions = [
     {
@@ -195,9 +208,9 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
           </p>
         </div>
         <div className="flex flex-col gap-3 flex-grow">
-          {isConnectionMade && (
+          {isConnectionMade && lastSynced && (
             <div className="flex gap-2 text-xs text-neutral-700 font-medium">
-              Last sync: 14th july 2024
+              Last sync: {moment(lastSynced).format('Do MMM YYYY')}
             </div>
           )}
           {canEdit && (

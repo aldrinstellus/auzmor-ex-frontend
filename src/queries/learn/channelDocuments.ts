@@ -236,7 +236,6 @@ export const getChannelDocDeepSearch = async (
 // Trigger manual sync
 export const channelDocSync = async (payload: { channelId: string }) => {
   const response = await apiService.post(`/channels/${payload.channelId}/sync`);
-  console.log(response);
   return response;
 };
 
@@ -369,5 +368,13 @@ export const useChannelDocDeepSearch = (
       return currentPage?.data?.result?.paging?.prev;
     },
     ...options,
+  });
+};
+
+// Get sync status
+export const useChannelDocSyncStatus = (payload: { channelId: string }) => {
+  return useQuery({
+    queryKey: ['channel-doc-sync-status', payload],
+    queryFn: () => getChannelDocumentSyncStatus(payload),
   });
 };

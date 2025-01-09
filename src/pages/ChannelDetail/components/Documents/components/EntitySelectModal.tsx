@@ -99,13 +99,13 @@ const EntitySelectModal: FC<IEntitySelectModalProps> = ({
         size: 302,
       },
       {
-        accessorKey: 'lastUpdatedAt',
+        accessorKey: 'createdAt',
         header: () => (
-          <div className="font-bold text-neutral-500">Last Updated</div>
+          <div className="font-bold text-neutral-500">Created At</div>
         ),
         cell: (info) => (
           <span>
-            {moment(info.row.original.lastUpdatedAt).format('MMM DD,YYYY')}
+            {moment(info.row.original.createdAt).format('MMM DD,YYYY')}
           </span>
         ),
         size: 120,

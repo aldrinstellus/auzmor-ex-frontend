@@ -244,4 +244,7 @@ export const apiConfigLxp = {
   [ApiEnum.GetChannelDocSyncStatus]: {
     [Default]: queries.getChannelDocumentSyncStatus,
   },
+  [ApiEnum.UseChannelDocSyncStatus]: {
+    [Default]: queries.useChannelDocSyncStatus,
+  },
 };
