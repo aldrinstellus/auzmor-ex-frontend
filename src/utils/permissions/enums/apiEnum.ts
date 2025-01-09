@@ -229,4 +229,5 @@ export enum ApiEnum {
   GetChannelDocDeepSearch = 'GET_CHANNEL_DOC_DEEP_SEARCH',
   ChannelDocSync = 'CHANNEL_DOC_SYNC',
   GetChannelDocSyncStatus = 'GET_CHANNEL_DOC_SYNC_STATUS',
+  UseChannelDocSyncStatus = 'USE_CHANNEL_DOC_SYNC_STATUS',
 }
