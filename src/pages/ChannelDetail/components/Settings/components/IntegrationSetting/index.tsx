@@ -122,7 +122,9 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
 
   // API call: get last sync information from this api call
   const useChannelDocSyncStatus = getApi(ApiEnum.UseChannelDocSyncStatus);
-  const { data: syncStatus, loading } = useChannelDocSyncStatus({ channelId });
+  const { data: syncStatus, isLoading } = useChannelDocSyncStatus({
+    channelId,
+  });
   const connectedDriveStatus = syncStatus?.data?.result?.data;
 
   const isBaseFolderSet = statusResponse?.status === 'ACTIVE';
@@ -136,7 +138,7 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
       : statusResponse?.availableAccounts[0],
   );
   const availableAccount = statusResponse?.availableAccounts[0];
-  const lastSynced = !loading
+  const lastSynced = !isLoading
     ? Math.min(
         ...connectedDriveStatus.map(
           (each: { lastSyncAt: any }) => each.lastSyncAt,
