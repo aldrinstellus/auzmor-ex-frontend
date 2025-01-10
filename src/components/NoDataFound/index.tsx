@@ -9,9 +9,11 @@ interface INoDataFoundProps {
   dataTestId?: string;
   className?: string;
   hideClearBtn?: boolean;
+  hideText?: boolean;
   clearBtnLabel?: string;
   labelHeader?: ReactNode;
   illustration?: string;
+  illustrationClassName?: string;
 }
 
 const illustrationMap: Record<string, any> = {
@@ -29,26 +31,36 @@ const NoDataFound: FC<INoDataFoundProps> = ({
   dataTestId,
   className = '',
   hideClearBtn = false,
+  hideText = false,
   clearBtnLabel = 'Clear search',
   illustration = 'noResult',
+  illustrationClassName = '',
 }) => {
   const style = clsx({ [className]: true });
+  const illustrationStyle = clsx({
+    'flex w-full justify-center': true,
+    [illustrationClassName]: true,
+  });
   return (
     <div className={style}>
-      <div className="flex w-full justify-center">
+      <div className={illustrationStyle}>
         <img src={illustrationMap[illustration]} alt="No Data Found" />
       </div>
-      <div className="text-center">
-        <div
-          className="mt-8 text-lg font-bold text-neutral-900"
-          data-testid={`${dataTestId}-noresult-found`}
-        >
-          {labelHeader}
-          {!labelHeader &&
-            `No result found ${!!searchString ? `for '${searchString}'` : ''}`}
+      {!hideText && (
+        <div className="text-center">
+          <div
+            className="mt-8 text-lg font-bold text-neutral-900"
+            data-testid={`${dataTestId}-noresult-found`}
+          >
+            {labelHeader}
+            {!labelHeader &&
+              `No result found ${
+                !!searchString ? `for '${searchString}'` : ''
+              }`}
+          </div>
+          <div className="text-sm text-gray-500 mt-2">{message}</div>
         </div>
-        <div className="text-sm text-gray-500 mt-2">{message}</div>
-      </div>
+      )}
 
       {!hideClearBtn && (
         <div className="flex justify-center mt-6 group">

@@ -1,0 +1,248 @@
+import { ColumnDef, Table } from '@tanstack/react-table';
+import Button, { Variant as ButtonVariant, Size } from 'components/Button';
+import DataGrid from 'components/DataGrid';
+import Modal from 'components/Modal';
+import Header from 'components/ModalHeader';
+import { useDataGrid } from 'hooks/useDataGrid';
+import React, { FC, useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { ApiEnum } from 'utils/permissions/enums/apiEnum';
+import { DocIntegrationEnum } from '..';
+import Icon from 'components/Icon';
+import Layout, { FieldType } from 'components/Form';
+import { useForm } from 'react-hook-form';
+import { useDebounce } from 'hooks/useDebounce';
+import { getInitials } from 'utils/misc';
+import NoDataFound from 'components/NoDataFound';
+import moment from 'moment';
+import BreadCrumb, { BreadCrumbVariantEnum } from 'components/BreadCrumb';
+import { DocumentPathContext } from 'contexts/DocumentPathContext';
+
+interface IEntitySelectModalProps {
+  isOpen: boolean;
+  closeModal: () => void;
+  onSelect: (entity: any, callback: () => void) => void;
+  integrationType?: DocIntegrationEnum;
+  headerText?: string;
+  q?: Record<string, any>;
+}
+
+interface IForm {
+  entitySearch: string;
+}
+
+const EntitySelectModal: FC<IEntitySelectModalProps> = ({
+  isOpen,
+  closeModal,
+  onSelect,
+  integrationType = DocIntegrationEnum.GoogleDrive,
+  headerText,
+  q,
+}) => {
+  const { channelId } = useParams();
+  const { control, watch } = useForm<IForm>({
+    defaultValues: { entitySearch: '' },
+  });
+  const [totalRows, setTotalRows] = useState<number>(0);
+  const [entitySearch] = watch(['entitySearch']);
+  const debouncedSearchValue = useDebounce(entitySearch || '', 500);
+  const [onSelectLoading, setOnSelectLoading] = useState(false);
+  const { items, appendItem, sliceItems } = useContext(DocumentPathContext);
+
+  const directoryId = items?.length >= 2 ? items[1]?.meta?.directoryId : '';
+  const driveId =
+    !!(items?.length >= 3) &&
+    (items[2]?.meta?.rootFolderId || items[2]?.meta?.folderId);
+  const parentFolderId =
+    items?.length >= 4 ? items[items.length - 1]?.meta?.folderId : '';
+
+  const integrationHeadingMapping = {
+    [DocIntegrationEnum.GoogleDrive]: {
+      headerText: headerText || 'File Picker- Google drive',
+      placeholder: 'Select a google drive folder',
+      btnLabel: 'Select folder',
+    },
+    [DocIntegrationEnum.Sharepoint]: {
+      headerText: headerText || 'Select base site',
+      placeholder: 'Search a sharepoint site',
+      btnLabel: 'Select site',
+    },
+  };
+
+  const SiteIcon: FC<{ name: string }> = ({ name }) => {
+    return (
+      <div className="flex w-5 h-5 border-1 border-neutral-200 text-white items-end justify-center text-xs font-medium leading-3 bg-primary-600 font-lato">
+        {getInitials(name || '')}
+      </div>
+    );
+  };
+
+  const columns = React.useMemo<ColumnDef<any>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: () => (
+          <div className="font-bold text-neutral-500">
+            File Name ({totalRows})
+          </div>
+        ),
+        cell: (info) => (
+          <div className="flex gap-2 font-medium text-neutral-900 leading-6">
+            {!info.row?.original?.folderId ? (
+              <SiteIcon name={info.getValue() as string} />
+            ) : (
+              <Icon name="folder" />
+            )}
+            {info.getValue() as string}
+          </div>
+        ),
+        size: 302,
+      },
+      {
+        accessorKey: 'createdAt',
+        header: () => (
+          <div className="font-bold text-neutral-500">Created At</div>
+        ),
+        cell: (info) => (
+          <span>
+            {moment(info.row.original.createdAt).format('MMM DD,YYYY')}
+          </span>
+        ),
+        size: 120,
+      },
+    ],
+    [totalRows, directoryId],
+  );
+
+  const dataGridProps = useDataGrid({
+    apiEnum: ApiEnum.GetChannelDirectories,
+    isInfiniteQuery: false,
+    payload: {
+      channelId: channelId,
+      directoryId,
+      driveId,
+      params: {
+        name: debouncedSearchValue,
+        parentFolderId,
+        ...q,
+      },
+    },
+    dataGridProps: {
+      columns,
+      className: 'overflow-y-auto',
+      view: 'LIST',
+      isRowSelectionEnabled: true,
+      onRowClick: (e, table, virtualRow, isDoubleClick) => {
+        if (isDoubleClick) {
+          const directoryId = virtualRow.original.directoryId;
+          let driveId = virtualRow.original.rootFolderId;
+          let folderId = virtualRow.original.folderId;
+          if (driveId === null) {
+            driveId = folderId;
+            folderId = '';
+          }
+          appendItem({
+            id: `${directoryId}-${driveId || ''}-${folderId || ''}`,
+            label: virtualRow.original.name,
+            meta: virtualRow.original,
+          });
+        } else {
+          if (
+            virtualRow.original?.directoryId &&
+            virtualRow.original?.rootFolderId &&
+            virtualRow.original?.folderId
+          ) {
+            table.setRowSelection((param) => {
+              return {
+                ...param,
+                [virtualRow.index]: !!!param[virtualRow.index],
+              };
+            });
+          }
+        }
+      },
+      height: 312,
+      noDataFound: <NoDataFound hideClearBtn />,
+    },
+  });
+
+  useEffect(() => {
+    setTotalRows((dataGridProps?.flatData || []).length);
+  }, [dataGridProps.flatData]);
+
+  return (
+    <Modal open={isOpen}>
+      {/* Header */}
+      <Header
+        title={integrationHeadingMapping[integrationType].headerText}
+        onClose={closeModal}
+      />
+
+      {/* Body */}
+      <div className="flex flex-col gap-3 px-5">
+        <Layout
+          fields={[
+            {
+              type: FieldType.Input,
+              control,
+              name: 'entitySearch',
+              placeholder:
+                integrationHeadingMapping[integrationType].placeholder,
+              dataTestId: `entitySearch-search`,
+              inputClassName: 'text-sm py-[9px]',
+              autofocus: true,
+              rightIcon: 'search',
+              className: 'mt-4 sticky top-0',
+            },
+          ]}
+        />
+        {!!(items.length > 1) && !!!debouncedSearchValue && (
+          <BreadCrumb
+            items={items}
+            onItemClick={(item) => sliceItems(item.id)}
+            variant={BreadCrumbVariantEnum.ChannelDoc}
+            iconSize={16}
+            labelClassName="!text-base"
+          />
+        )}
+        <DataGrid {...dataGridProps} />
+      </div>
+
+      {/* Footer */}
+      <div className="flex gap-4 justify-end items-center h-16 p-6 bg-blue-50 rounded-b-9xl">
+        <Button
+          label="Cancel"
+          variant={ButtonVariant.Secondary}
+          onClick={closeModal}
+          size={Size.Small}
+        />
+        <Button
+          label={integrationHeadingMapping[integrationType].btnLabel}
+          variant={ButtonVariant.Primary}
+          onClick={() => {
+            setOnSelectLoading(true);
+            onSelect(
+              Object.keys(
+                (dataGridProps.tableRef?.current as Table<any>).getState()
+                  .rowSelection,
+              ).map((i) => dataGridProps.flatData[i]),
+              () => {
+                setOnSelectLoading(false);
+                closeModal();
+              },
+            );
+          }}
+          loading={dataGridProps.isLoading || onSelectLoading}
+          disabled={
+            dataGridProps.isLoading ||
+            !dataGridProps.isRowSelected ||
+            onSelectLoading
+          }
+          size={Size.Small}
+        />
+      </div>
+    </Modal>
+  );
+};
+
+export default EntitySelectModal;
