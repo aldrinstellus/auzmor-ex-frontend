@@ -48,13 +48,22 @@ export const useDataGrid = <T extends object>({
 
   if (isInfiniteQuery) {
     const useInfiniteQuery = getApi(apiEnum);
-    const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-      useInfiniteQuery(payload, { enabled: isEnabled });
+    const {
+      data,
+      isLoading,
+      isFetchingNextPage,
+      fetchNextPage,
+      hasNextPage,
+      isError,
+    } = useInfiniteQuery(payload, { enabled: isEnabled });
     const flatData = useMemo(
       () =>
-        data?.pages?.flatMap((page: { data: any }) => page.data.result.data) ??
-        [],
-      [data],
+        isError
+          ? []
+          : data?.pages?.flatMap(
+              (page: { data: any }) => page.data.result.data,
+            ) ?? [],
+      [data, isError],
     );
 
     const tableData = useMemo(
@@ -103,7 +112,7 @@ export const useDataGrid = <T extends object>({
 
   const useQuery = getApi(apiEnum);
   const { data, isLoading } = useQuery(payload, { enabled: isEnabled });
-  const flatData = data;
+  const flatData = data || [];
 
   const tableData = useMemo(
     () => (isLoading ? loadingData : flatData),

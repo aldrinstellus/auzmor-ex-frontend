@@ -3,7 +3,6 @@ import {
   useInfiniteQuery,
   useQuery,
 } from '@tanstack/react-query';
-import { dummyFiles, dummyFolders } from 'mocks/documents';
 import apiService from 'utils/apiService';
 import { isFiltersEmpty } from 'utils/misc';
 
@@ -21,8 +20,8 @@ const getChannelDirectories = async (payload: {
       }${payload.driveId ? `/${payload.driveId}` : ''}`,
       isFiltersEmpty(payload.params || {}),
     )
-    .catch((_e) => {
-      return dummyFolders;
+    .catch((e) => {
+      throw e;
     });
   return (response as any)?.data?.result?.data;
 };
@@ -54,8 +53,8 @@ const getChannelFiles = async (payload: {
 }) => {
   const response = await apiService
     .get(`/channels/${payload.channelId}/files`, isFiltersEmpty(payload.params))
-    .catch((_e) => {
-      return dummyFiles;
+    .catch((e) => {
+      throw e;
     });
   return (response as any)?.data?.result?.data;
 };
@@ -83,7 +82,7 @@ const getInfiniteChannelFiles = async (
       response = await apiService.get(context.pageParam);
     }
   } catch (e) {
-    return dummyFiles;
+    throw e;
   }
   return response;
 };
@@ -274,7 +273,7 @@ export const useChannelFiles = (
   return useQuery({
     queryKey: ['get-channel-files', payload],
     queryFn: () => getChannelFiles(payload),
-    ...options,
+    ...{ ...options, networkMode: 'always', staleTime: 1 * 60 * 1000 },
   });
 };
 
@@ -300,8 +299,8 @@ export const useInfiniteChannelFiles = (
     getPreviousPageParam: (currentPage: any) => {
       return currentPage?.data?.result?.paging?.prev;
     },
-    staleTime: 5 * 60 * 1000,
-    ...options,
+    staleTime: 1 * 60 * 1000, // 1min
+    ...{ ...options, networkMode: 'always' },
   });
 };
 
@@ -367,7 +366,8 @@ export const useChannelDocDeepSearch = (
     getPreviousPageParam: (currentPage: any) => {
       return currentPage?.data?.result?.paging?.prev;
     },
-    ...options,
+    staleTime: 1 * 60 * 1000, // 1min
+    ...{ ...options, networkMode: 'always' },
   });
 };
 
