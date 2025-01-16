@@ -30,7 +30,7 @@ const DocSearch: FC<IDocSearchProps> = ({
   const { getApi } = usePermissions();
   const useChannelDocDeepSearch = getApi(ApiEnum.GetChannelDocDeepSearch);
   const { channelId } = useParams();
-  const documentSearchDebounceValue = useDebounce(documentSearch, 100);
+  const documentSearchDebounceValue = useDebounce(documentSearch, 500);
 
   // Api call: Get search results
   const { data, isLoading } = useChannelDocDeepSearch({
