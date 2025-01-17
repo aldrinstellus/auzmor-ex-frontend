@@ -28,11 +28,9 @@ const Setting: FC<AppProps> = ({ channelData, isLoading, permissions }) => {
         canEdit={permissions.includes(ChannelPermissionEnum.CanEditSettings)}
         channelData={channelData}
       />
-      <IntegrationSetting
-        canEdit={permissions.includes(
-          ChannelPermissionEnum.CanConnectChannelDoc,
-        )}
-      />
+      {permissions.includes(ChannelPermissionEnum.CanConnectChannelDoc) && (
+        <IntegrationSetting />
+      )}
       <DocumentSetting
         canEdit={permissions.includes(ChannelPermissionEnum.CanEditSettings)}
         channelData={channelData}
