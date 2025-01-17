@@ -14,7 +14,7 @@ type AppProps = {
   canEdit: boolean;
 };
 
-const DocVisibilityRow: FC<AppProps> = ({ data }) => {
+const DocVisibilityRow: FC<AppProps> = ({ data, canEdit }) => {
   const { channelId = '' } = useParams();
   const { getApi } = usePermissions();
   const updateChannel = getApi(ApiEnum.UpdateChannel);
@@ -55,7 +55,7 @@ const DocVisibilityRow: FC<AppProps> = ({ data }) => {
           onChange={(checked) => {
             handleChange(checked);
           }}
-          disabled={updateChannelMutation.isLoading}
+          disabled={updateChannelMutation.isLoading || !canEdit}
         />
       }
       className="!pt-2 !pb-2"

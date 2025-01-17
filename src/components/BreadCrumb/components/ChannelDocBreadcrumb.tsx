@@ -14,7 +14,7 @@ interface IChannelDocBreadcrumbProps {
 
 const ChannelDocBreadcrumb: FC<IChannelDocBreadcrumbProps> = ({
   items,
-  width = 600,
+  width = 548,
   iconSize = 20,
   labelClassName = '',
   onItemClick = () => {},
@@ -30,10 +30,15 @@ const ChannelDocBreadcrumb: FC<IChannelDocBreadcrumbProps> = ({
   useEffect(() => {
     if (ref.current) {
       if (ref.current.clientWidth < ref.current.scrollWidth) {
-        setPopupItemIndex(popupItemIndex + 1);
+        setPopupItemIndex((popupItemIndex) => popupItemIndex + 1);
       }
     }
   }, [items, popupItemIndex]);
+
+  const handleItemClick = (item: Item) => {
+    onItemClick(item);
+    setPopupItemIndex(0);
+  };
 
   return (
     <div className="flex items-center gap-2" ref={ref} style={{ width }}>
@@ -50,7 +55,7 @@ const ChannelDocBreadcrumb: FC<IChannelDocBreadcrumbProps> = ({
             }
             menuItems={items.slice(0, popupItemIndex).map((each) => ({
               label: each.label,
-              onClick: () => onItemClick(each),
+              onClick: () => handleItemClick(each),
               stroke: 'text-neutral-900',
               dataTestId: 'post-ellipsis-edit-comment',
             }))}
@@ -66,7 +71,7 @@ const ChannelDocBreadcrumb: FC<IChannelDocBreadcrumbProps> = ({
               index === items.slice(popupItemIndex).length - 1 &&
               'font-bold text-neutral-900 cursor-default'
             }`}
-            onClick={() => onItemClick(each)}
+            onClick={() => handleItemClick(each)}
           >
             {each.label}
           </div>

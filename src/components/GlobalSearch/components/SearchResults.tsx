@@ -129,7 +129,11 @@ const SearchResults: FC<ISearchResultsProps> = ({
   const getEntityRenderer = (
     result: ISearchResult,
     entityType: ISearchResultType,
+    isRecent: boolean,
   ) => {
+    const textStyles = `text-sm leading-4 text-black ${
+      isRecent ? 'font-semibold' : ''
+    }`;
     switch (entityType) {
       case ISearchResultType.PEOPLE:
         return (
@@ -143,7 +147,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
             <div className="min-w-0">
               <Truncate
                 text={result.fullName}
-                className="text-sm leading-4"
+                className={textStyles}
                 textRenderer={(text) => (
                   <HighlightText text={text} subString={searchQuery} />
                 )}
@@ -162,26 +166,29 @@ const SearchResults: FC<ISearchResultsProps> = ({
       case ISearchResultType.CHANNEL:
         return (
           <div className="flex gap-1.5 items-center overflow-hidden">
-            <div className="flex items-center justify-center">
-              <Icon name="hashtagOutline" size={22} hover={false} />
+            <div className="flex items-center justify-center border-1 border-neutral-200 rounded-full h-[24px] w-[24px] shrink-0">
+              <Icon
+                name="hashtagOutline"
+                size={16}
+                hover={false}
+                color="!text-neutral-500"
+              />
             </div>
             <div className="min-w-0">
               <Truncate
                 text={result.name}
-                className="text-sm leading-4"
+                className={textStyles}
                 textRenderer={(text) => (
                   <HighlightText text={text} subString={searchQuery} />
                 )}
               />
             </div>
-            {!!result?.totalMembers && (
-              <div className="flex gap-2 items-center">
-                <div className="flex w-[3px] h-[3px] bg-neutral-500 rounded-full" />
-                <div className="text-xs text-neutral-500">
-                  {`${result.totalMembers} members`}
-                </div>
+            <div className="flex gap-2 items-center shrink-0">
+              <div className="flex w-[3px] h-[3px] bg-neutral-500 rounded-full" />
+              <div className="text-xs text-neutral-500">
+                {`${result.usersCount || 0} members`}
               </div>
-            )}
+            </div>
           </div>
         );
       case ISearchResultType.TEAM:
@@ -193,7 +200,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
             <div className="min-w-0">
               <Truncate
                 text={result.name}
-                className="text-sm leading-4"
+                className={textStyles}
                 textRenderer={(text) => (
                   <HighlightText text={text} subString={searchQuery} />
                 )}
@@ -218,7 +225,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
             <div className="min-w-0">
               <Truncate
                 text={result.name}
-                className="text-sm"
+                className={textStyles}
                 textRenderer={(text) => (
                   <HighlightText text={text} subString={searchQuery} />
                 )}
@@ -244,7 +251,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
             <div className="min-w-0">
               <Truncate
                 text={result.name}
-                className="text-sm"
+                className={textStyles}
                 textRenderer={(text) => (
                   <HighlightText text={text} subString={searchQuery} />
                 )}
@@ -276,7 +283,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
             <div className="min-w-0">
               <Truncate
                 text={result.name}
-                className="text-sm leading-4"
+                className={textStyles}
                 textRenderer={(text) => (
                   <HighlightText text={text} subString={searchQuery} />
                 )}
@@ -299,19 +306,16 @@ const SearchResults: FC<ISearchResultsProps> = ({
         );
       case ISearchResultType.KEYWORD:
         return (
-          <div className="flex pr-2 items-center gap-2 w-full overflow-hidden">
+          <div className="flex items-center gap-2 w-full overflow-hidden">
             <div className="flex items-center gap-2 grow">
               <Icon name="clock" size={14} color="!text-[#FF3366]" />
-              <Truncate
-                text={result.term}
-                className="text-sm text-black leading-4"
-              />
+              <Truncate text={result.term} className={textStyles} />
             </div>
             <Icon
               name="close"
               className="hidden group-hover:block p-[2px]"
               size={16}
-              color="!text-black"
+              color="!text-neutral-900"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteRecentSearchTermMutation.mutate(result.id);
@@ -321,10 +325,10 @@ const SearchResults: FC<ISearchResultsProps> = ({
         );
       default:
         return (
-          <div className="text-xs overflow-hidden">
+          <div className="overflow-hidden">
             <Truncate
               text={result.name}
-              className="text-xs"
+              className={textStyles}
               textRenderer={(text) => (
                 <HighlightText text={text} subString={searchQuery} />
               )}
@@ -341,21 +345,33 @@ const SearchResults: FC<ISearchResultsProps> = ({
     return (
       <NoDataFound
         className="py-4 w-full"
-        illustration="noDocumentFound"
-        hideClearBtn
+        searchString={searchQuery}
+        onClearSearch={() => updateSearchQuery('')}
+        message={
+          <p className="text-neutral-900">
+            Sorry we can&apos;t find the what you are looking for.
+            <br /> Please try using a different query.
+          </p>
+        }
+        illustrationClassName="h-[121px]"
         dataTestId="globalsearch-noDataFound"
       />
     );
   }
 
   return (
-    <div className="max-h-[356px] overflow-y-auto">
+    <div
+      className="max-h-[320px] overflow-y-auto 
+      [&::-webkit-scrollbar]:w-2.5
+      [&::-webkit-scrollbar-thumb]:bg-neutral-500
+      [&::-webkit-scrollbar-track]:bg-neutral-200"
+    >
       {isLoading ? (
-        <div className="flex flex-col">
+        <div className="flex flex-col pl-3">
           <Skeleton count={10} />
         </div>
       ) : (
-        <ul className="flex flex-col gap-3.5">
+        <ul className="flex flex-col gap-3">
           {searchResults.map((entity, entityIndex) =>
             entity.results.length > 0 ? (
               <li
@@ -363,7 +379,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
                 className="flex flex-col gap-1.5 justify-center"
               >
                 {entity.name ? (
-                  <div className="text-[#666F8B] text-xs font-bold leading-4">
+                  <div className="text-[#666F8B] text-xs font-bold leading-4 pl-3">
                     {entity.name}
                   </div>
                 ) : null}
@@ -374,16 +390,18 @@ const SearchResults: FC<ISearchResultsProps> = ({
                         searchResults.slice(0, entityIndex),
                         (entity) => entity.results.length,
                       ) + resultIndex;
+                    const isRecent =
+                      entity.module === ISearchResultType.RECENT ||
+                      entity.module === ISearchResultType.KEYWORD;
                     const entityType =
-                      entity.module === ISearchResultType.RECENT &&
-                      result?.sourceType
+                      isRecent && result?.sourceType
                         ? (result.sourceType.toLowerCase() as ISearchResultType)
                         : entity.module;
                     return (
                       <li
                         id={`search-item-${index}`}
                         key={`search-item-${index}`}
-                        className={`flex py-[4px] gap-2 items-center group hover:bg-primary-50 cursor-pointer ${
+                        className={`flex px-3 py-[4px] gap-2 items-center group hover:bg-primary-50 cursor-pointer ${
                           index === selectedIndex && 'bg-primary-50'
                         }`}
                         onClick={() => handleItemClick(entityType, result)}
@@ -398,7 +416,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
                         }
                         aria-selected={selectedIndex === index}
                       >
-                        {getEntityRenderer(result, entityType)}
+                        {getEntityRenderer(result, entityType, isRecent)}
                       </li>
                     );
                   })}

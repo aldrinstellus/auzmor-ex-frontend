@@ -10,6 +10,7 @@ import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { usePermissions } from 'hooks/usePermissions';
 import { ISearchResultGroup, ISearchResultType } from 'interfaces/search';
 import Modal from 'components/Modal';
+import { sumBy } from 'lodash';
 
 export interface ISearchModalProps {
   onClose?: () => void;
@@ -98,8 +99,6 @@ const SearchModal: FC<ISearchModalProps> = ({ onClose }) => {
         name: t(`modules.${item.module}`),
       }));
 
-  console.log({ searchResults });
-
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   useEffect(() => setSelectedIndex(-1), [globalSearch]);
@@ -138,6 +137,11 @@ const SearchModal: FC<ISearchModalProps> = ({ onClose }) => {
     }
   };
 
+  const hideSearchResults =
+    showRecentSearchResults &&
+    (isLoading ||
+      sumBy(searchResults, (entity) => entity.results.length) === 0);
+
   return (
     <Modal
       open={true}
@@ -152,16 +156,20 @@ const SearchModal: FC<ISearchModalProps> = ({ onClose }) => {
           <Layout fields={fields} className="w-full" />
         </div>
       </div>
-      <div className="absolute w-full bg-white rounded-[8px] shadow px-3 top-[68px] py-4">
-        <SearchResults
-          searchResults={searchResults}
-          searchQuery={debouncedSearchQuery}
-          isLoading={isLoading}
-          onClose={onClose}
-          selectedIndex={selectedIndex}
-          updateSearchQuery={(value: string) => setValue('globalSearch', value)}
-        />
-      </div>
+      {!hideSearchResults && (
+        <div className="absolute w-full bg-white rounded-[8px] shadow pr-3 top-[68px] py-4">
+          <SearchResults
+            searchResults={searchResults}
+            searchQuery={debouncedSearchQuery}
+            isLoading={isLoading}
+            onClose={onClose}
+            selectedIndex={selectedIndex}
+            updateSearchQuery={(value: string) =>
+              setValue('globalSearch', value)
+            }
+          />
+        </div>
+      )}
     </Modal>
   );
 };

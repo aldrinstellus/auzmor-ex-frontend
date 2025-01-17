@@ -20,11 +20,9 @@ import {
 import { getLearnUrl } from 'utils/misc';
 import moment from 'moment';
 
-interface IIntegrationSettingProps {
-  canEdit: boolean;
-}
+interface IIntegrationSettingProps {}
 
-const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
+const IntegrationSetting: FC<IIntegrationSettingProps> = () => {
   const { getApi } = usePermissions();
   const { channelId } = useParams();
   const [isOpen, openModal, closeModal] = useModal();
@@ -174,7 +172,6 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
       className: '!px-6 !py-2',
     },
   ].filter((each) => {
-    if (!canEdit) return false;
     if (
       (each.dataTestId === 'disconnect' || each.dataTestId === 're-sync') &&
       !isBaseFolderSet
@@ -191,7 +188,7 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
         dataTestId="integration-settings"
         className="!mb-0"
       />
-      <Card shadowOnHover={canEdit} className="flex px-4 py-6 gap-4">
+      <Card shadowOnHover className="flex px-4 py-6 gap-4">
         <div className="flex flex-col gap-1 w-[400px]">
           <div className="flex gap-2.5 items-center">
             <Icon name={integrationMapping[integrationType].icon} size={24} />
@@ -210,44 +207,40 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = ({ canEdit }) => {
           </p>
         </div>
         <div className="flex flex-col gap-3 flex-grow">
-          {isConnectionMade && lastSynced && (
+          {isConnectionMade && isBaseFolderSet && lastSynced && (
             <div className="flex gap-2 text-xs text-neutral-700 font-medium">
               Last sync: {moment(lastSynced).format('Do MMM YYYY')}
             </div>
           )}
-          {canEdit && (
-            <div className="flex gap-6 w-full">
-              {isConnectionMade && !isBaseFolderSet && (
-                <Button
-                  label="Select existing"
-                  variant={ButtonVariant.Secondary}
-                  size={Size.Small}
-                  onClick={openModal}
-                  className="h-9"
-                />
-              )}
-              {!isConnectionMade && (
-                <Button
-                  label="Connect"
-                  size={Size.Small}
-                  onClick={() =>
-                    window.location.assign(
-                      getLearnUrl('/settings/market-place'),
-                    )
-                  }
-                  className="h-9"
-                />
-              )}
-              {integrationType !== DocIntegrationEnum.Sharepoint && (
-                <Button
-                  label="Add new"
-                  leftIcon="plus"
-                  size={Size.Small}
-                  onClick={() => {}}
-                />
-              )}
-            </div>
-          )}
+          <div className="flex gap-6 w-full">
+            {isConnectionMade && !isBaseFolderSet && (
+              <Button
+                label="Select existing"
+                variant={ButtonVariant.Secondary}
+                size={Size.Small}
+                onClick={openModal}
+                className="h-9"
+              />
+            )}
+            {!isConnectionMade && (
+              <Button
+                label="Connect"
+                size={Size.Small}
+                onClick={() =>
+                  window.location.assign(getLearnUrl('/settings/market-place'))
+                }
+                className="h-9"
+              />
+            )}
+            {integrationType !== DocIntegrationEnum.Sharepoint && (
+              <Button
+                label="Add new"
+                leftIcon="plus"
+                size={Size.Small}
+                onClick={() => {}}
+              />
+            )}
+          </div>
         </div>
         {!!popOptions.length && (
           <div className="relative">

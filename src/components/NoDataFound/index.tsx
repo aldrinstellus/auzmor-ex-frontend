@@ -69,7 +69,7 @@ const NoDataFound: FC<INoDataFoundProps> = ({
             variant={Variant.Secondary}
             onClick={onClearSearch}
             dataTestId={`${dataTestId}-clear-applied-filter`}
-            labelClassName="text-neutral-500 group-hover:text-primary-600"
+            labelClassName="text-neutral-900 font-bold group-hover:text-primary-600"
           />
         </div>
       )}
