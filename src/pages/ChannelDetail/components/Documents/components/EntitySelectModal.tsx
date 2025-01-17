@@ -280,7 +280,6 @@ const EntitySelectModal: FC<IEntitySelectModalProps> = ({
                 });
               }
             }}
-            loading={dataGridProps.isLoading || onSelectLoading}
             disabled={
               dataGridProps.isLoading ||
               onSelectLoading ||
@@ -302,7 +301,6 @@ const EntitySelectModal: FC<IEntitySelectModalProps> = ({
                 });
               }
             }}
-            loading={dataGridProps.isLoading || onSelectLoading}
             disabled={
               dataGridProps.isLoading ||
               onSelectLoading ||
@@ -322,7 +320,7 @@ const EntitySelectModal: FC<IEntitySelectModalProps> = ({
                 closeModal();
               });
             }}
-            loading={dataGridProps.isLoading || onSelectLoading}
+            loading={onSelectLoading}
             disabled={
               dataGridProps.isLoading ||
               onSelectLoading ||
