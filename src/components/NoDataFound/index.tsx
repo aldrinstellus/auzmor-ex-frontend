@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import Button, { Variant } from 'components/Button';
+import NoSearchResultFound from 'images/noSearchResultFound.svg';
 import { FC, ReactNode } from 'react';
 
 interface INoDataFoundProps {
@@ -21,6 +22,7 @@ const illustrationMap: Record<string, any> = {
   noResultAlt: require('images/noResultAlt.png'),
   noDocumentFound: require('images/noDocumentSearch.png'),
   noChannelFound: require('images/notFound.png'),
+  noSearchResultFound: NoSearchResultFound,
 };
 
 const NoDataFound: FC<INoDataFoundProps> = ({

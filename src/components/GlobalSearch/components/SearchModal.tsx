@@ -20,7 +20,9 @@ const SearchModal: FC<ISearchModalProps> = ({ onClose }) => {
   const { getApi } = usePermissions();
   const { t } = useTranslation('components', { keyPrefix: 'GlobalSearch' });
 
-  const { control, watch, setValue } = useForm<{ globalSearch: string }>({
+  const { control, watch, setValue, setFocus } = useForm<{
+    globalSearch: string;
+  }>({
     defaultValues: { globalSearch: '' },
   });
 
@@ -147,6 +149,7 @@ const SearchModal: FC<ISearchModalProps> = ({ onClose }) => {
       open={true}
       className="max-w-[700px] flex flex-col gap-2 !bg-transparent relative"
       wrapperClassName="-mt-[20%]"
+      maskClassName="backdrop-blur-none"
       onKeyDown={handleKeyDown}
       closeModal={onClose}
     >
@@ -164,9 +167,10 @@ const SearchModal: FC<ISearchModalProps> = ({ onClose }) => {
             isLoading={isLoading}
             onClose={onClose}
             selectedIndex={selectedIndex}
-            updateSearchQuery={(value: string) =>
-              setValue('globalSearch', value)
-            }
+            updateSearchQuery={(value: string) => {
+              setValue('globalSearch', value);
+              setFocus('globalSearch');
+            }}
           />
         </div>
       )}
