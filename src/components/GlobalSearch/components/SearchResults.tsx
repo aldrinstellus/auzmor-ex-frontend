@@ -384,9 +384,11 @@ const SearchResults: FC<ISearchResultsProps> = ({
         className="py-4 w-full"
         searchString={searchQuery}
         onClearSearch={() => updateSearchQuery('')}
-        labelHeader={t('noDataFoundHeader', { searchQuery })}
+        labelHeader={
+          <p className="text-base">{t('noDataFoundHeader', { searchQuery })}</p>
+        }
         message={
-          <p className="text-neutral-900">
+          <p className="text-neutral-900 text-xs leading-normal tracking-[0.3px]">
             {t('noDataFoundMessageLine1')}
             <br />
             {t('noDataFoundMessageLine2')}
@@ -400,9 +402,9 @@ const SearchResults: FC<ISearchResultsProps> = ({
 
   return (
     <div
-      className="max-h-[320px] overflow-y-auto 
+      className="max-h-[325px] overflow-y-auto 
       [&::-webkit-scrollbar]:w-2.5
-      [&::-webkit-scrollbar-thumb]:bg-neutral-300
+      [&::-webkit-scrollbar-thumb]:bg-neutral-400
       [&::-webkit-scrollbar-thumb:hover]:bg-neutral-500
       [&::-webkit-scrollbar-track]:bg-neutral-200"
     >
@@ -412,14 +414,19 @@ const SearchResults: FC<ISearchResultsProps> = ({
         </div>
       ) : (
         <ul className="flex flex-col gap-3">
-          {searchResults.map((entity, entityIndex) =>
-            entity.results.length > 0 ? (
+          {searchResults.map((entity, entityIndex) => {
+            const isRecent =
+              entity.module === ISearchResultType.RECENT ||
+              entity.module === ISearchResultType.KEYWORD;
+            return entity.results.length > 0 ? (
               <li
                 key={entity.module}
-                className="flex flex-col gap-3 justify-center"
+                className={`flex flex-col ${
+                  isRecent ? 'gap-3' : 'gap-1.5 pb-0.5'
+                } justify-center`}
               >
                 {entity.name ? (
-                  <div className="text-[#666F8B] text-xs font-bold leading-4 pl-3">
+                  <div className="text-[#666F8B] text-xs font-bold leading-5 pl-3">
                     {entity.name}
                   </div>
                 ) : null}
@@ -430,9 +437,6 @@ const SearchResults: FC<ISearchResultsProps> = ({
                         searchResults.slice(0, entityIndex),
                         (entity) => entity.results.length,
                       ) + resultIndex;
-                    const isRecent =
-                      entity.module === ISearchResultType.RECENT ||
-                      entity.module === ISearchResultType.KEYWORD;
                     const entityType =
                       isRecent && result?.sourceType
                         ? (result.sourceType.toLowerCase() as ISearchResultType)
@@ -482,8 +486,8 @@ const SearchResults: FC<ISearchResultsProps> = ({
                   })}
                 </ul>
               </li>
-            ) : null,
-          )}
+            ) : null;
+          })}
         </ul>
       )}
     </div>

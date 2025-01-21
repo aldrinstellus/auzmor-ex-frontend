@@ -68,7 +68,7 @@ const NoDataFound: FC<INoDataFoundProps> = ({
       {!hideText && (
         <div className="text-center">
           <div
-            className="mt-8 text-lg font-bold text-neutral-900"
+            className="mt-6 text-lg font-bold text-neutral-900"
             data-testid={`${dataTestId}-noresult-found`}
           >
             {labelHeader}
@@ -77,7 +77,7 @@ const NoDataFound: FC<INoDataFoundProps> = ({
                 !!searchString ? `for '${searchString}'` : ''
               }`}
           </div>
-          <div className="text-sm text-gray-500 mt-2">{message}</div>
+          <div className="text-sm text-gray-500 mt-4">{message}</div>
         </div>
       )}
 
@@ -88,7 +88,8 @@ const NoDataFound: FC<INoDataFoundProps> = ({
             variant={Variant.Secondary}
             onClick={onClearSearch}
             dataTestId={`${dataTestId}-clear-applied-filter`}
-            labelClassName="text-neutral-900 font-bold group-hover:text-primary-600"
+            className="focus:border-black"
+            labelClassName="text-sm text-neutral-900 font-bold group-hover:text-primary-600"
           />
         </div>
       )}

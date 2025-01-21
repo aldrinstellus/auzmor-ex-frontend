@@ -113,7 +113,7 @@ const SearchModal: FC<ISearchModalProps> = ({ onClose }) => {
       dataTestId: 'global-search',
       className: 'w-full',
       placeholder: t('searchPlaceholder'),
-      inputClassName: 'border-none !p-0 rounded-none text-sm font-medium',
+      inputClassName: 'border-none !p-0 rounded-none text-base font-medium',
       autofocus: true,
       clearIcon: <Icon name="closeCircle" size={16} className="-mr-3" />,
       isClearable: true,
@@ -121,10 +121,17 @@ const SearchModal: FC<ISearchModalProps> = ({ onClose }) => {
   ];
 
   const handleKeyDown = (e: any) => {
-    let totalItems = 0;
-    searchResults.forEach(
-      (eachEntity: any) => (totalItems += eachEntity.results.length),
-    );
+    if (e.key === 'Enter') {
+      document.getElementById(`search-item-${selectedIndex}`)?.click();
+      return;
+    }
+
+    const totalItems = sumBy(searchResults, (entity) => entity.results.length);
+
+    if (totalItems === 0) {
+      setSelectedIndex(-1);
+      return;
+    }
 
     if (e.key === 'ArrowDown') {
       // Move selection down, loop back to the top if at the end
@@ -134,8 +141,6 @@ const SearchModal: FC<ISearchModalProps> = ({ onClose }) => {
       setSelectedIndex((prevIndex) =>
         prevIndex === 0 ? totalItems - 1 : prevIndex - 1,
       );
-    } else if (e.key === 'Enter') {
-      document.getElementById(`search-item-${selectedIndex}`)?.click();
     }
   };
 
