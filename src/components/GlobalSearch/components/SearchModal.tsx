@@ -115,7 +115,7 @@ const SearchModal: FC<ISearchModalProps> = ({ onClose }) => {
       placeholder: t('searchPlaceholder'),
       inputClassName: 'border-none !p-0 rounded-none text-base font-medium',
       autofocus: true,
-      clearIcon: <Icon name="closeCircle" size={16} className="-mr-3" />,
+      clearIcon: <Icon name="closeCircle2" size={16} className="-mr-3" />,
       isClearable: true,
     },
   ];

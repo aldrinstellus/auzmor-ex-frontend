@@ -202,6 +202,7 @@ import Notification2Icon from '../components/Notification2';
 import Search2Icon from '../components/Search2';
 import TeamIcon from '../components/Team';
 import NoResultFoundIcon from '../components/NoResultFound';
+import CloseCircle2Icon from '../components/CloseCircle2';
 
 export const icon = {
   add: Add,
@@ -238,6 +239,7 @@ export const icon = {
   clock: ClockIcon,
   close: CloseIcon,
   closeCircle: CloseCircleIcon,
+  closeCircle2: CloseCircle2Icon,
   cloudAdd: CloudAddIcon,
   collapse: CollapseIcon,
   comment: CommentIcon,

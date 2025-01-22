@@ -11,6 +11,7 @@ export enum ISearchResultType {
   RECENT = 'recent',
   TASK = 'task',
   TEAM = 'team',
+  USER = 'user',
 }
 
 export type ISearchResult = Record<string, any>;
