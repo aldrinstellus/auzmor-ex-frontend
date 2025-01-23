@@ -9,7 +9,7 @@ import {
 import { sumBy } from 'lodash';
 import React, { FC, useEffect, useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { useNavigate } from 'react-router-dom';
+import useNavigate from 'hooks/useNavigation';
 import { getLearnUrl } from 'utils/misc';
 import DefaultAppIcon from 'images/DefaultAppIcon.svg';
 import { getIconFromMime } from 'pages/ChannelDetail/components/Documents/components/Doc';
@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next';
 import IconButton, {
   Variant as IconButtonVariant,
 } from 'components/IconButton';
+import useRole from 'hooks/useRole';
 
 interface ISearchResultsProps {
   searchResults: ISearchResultGroup[];
@@ -53,7 +54,7 @@ function getSourceType(entityType: ISearchResultType): string {
     case ISearchResultType.EVENT:
       return 'Event';
     case ISearchResultType.PATH:
-      return 'Path';
+      return 'LearningPath';
     case ISearchResultType.PEOPLE:
       return 'User';
     case ISearchResultType.TEAM:
@@ -79,6 +80,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
   const { getApi } = usePermissions();
   const itemRefs = useRef<Array<HTMLLIElement>>([]);
   const { user } = useAuth();
+  const { isAdmin } = useRole();
 
   const queryClient = useQueryClient();
 
@@ -134,7 +136,9 @@ const SearchResults: FC<ISearchResultsProps> = ({
     switch (entityType) {
       case ISearchResultType.APP:
         window.open(
-          `${window.location.origin}/apps/${entity.id}/launch`,
+          `${window.location.origin}${isAdmin ? '/apps/' : '/user/apps/'}${
+            entity.id
+          }/launch`,
           '_target',
         );
         break;
@@ -145,19 +149,38 @@ const SearchResults: FC<ISearchResultsProps> = ({
         window.open(entity.url, '_target');
         break;
       case ISearchResultType.COURSE:
-        window.location.assign(getLearnUrl(`/courses/${entity.id}`));
+        window.location.assign(
+          getLearnUrl(
+            isAdmin
+              ? `/courses/${entity.id}`
+              : `/user/courses/${entity.id}/detail`,
+          ),
+        );
         break;
       case ISearchResultType.EVENT:
-        window.location.assign(getLearnUrl(`/events/${entity.id}`));
+        window.location.assign(
+          getLearnUrl(
+            isAdmin
+              ? `/events/${entity.id}`
+              : `/user/events/${entity.id}/detail`,
+          ),
+        );
         break;
       case ISearchResultType.PATH:
-        window.location.assign(getLearnUrl(`/paths/${entity.id}`));
+        window.location.assign(
+          getLearnUrl(
+            isAdmin ? `/paths/${entity.id}` : `/user/paths/${entity.id}/detail`,
+          ),
+        );
         break;
+      case ISearchResultType.USER:
       case ISearchResultType.PEOPLE:
         window.location.assign(getLearnUrl(`/users/${entity.id}`));
         break;
       case ISearchResultType.TEAM:
-        window.location.assign(getLearnUrl(`/teams/${entity.id}`));
+        isAdmin
+          ? window.location.assign(getLearnUrl(`/teams/${entity.id}`))
+          : navigate(`/teams/${entity.id}`);
         break;
       default:
         return;
@@ -175,6 +198,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
     }`;
     switch (entityType) {
       case ISearchResultType.PEOPLE:
+      case ISearchResultType.USER:
         return (
           <div className="flex gap-1.5 items-center w-full overflow-hidden">
             <Avatar
@@ -476,7 +500,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
                                 );
                               else
                                 deleteRecentClickedResultMutation.mutate(
-                                  result.result_clicked_id,
+                                  result.resultClickedId,
                                 );
                             }}
                           />
