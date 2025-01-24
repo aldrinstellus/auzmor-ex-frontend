@@ -710,7 +710,10 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         <NoDataFound
           labelHeader="No documents found"
           clearBtnLabel="Upload now"
-          hideClearBtn={isRootDir}
+          hideClearBtn={
+            isRootDir ||
+            !permissions.includes(ChannelPermissionEnum.CanEditChannelDoc)
+          }
           onClearSearch={() => fileInputRef?.current?.click()}
         />
       ),
