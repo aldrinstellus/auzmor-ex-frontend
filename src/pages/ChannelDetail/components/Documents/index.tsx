@@ -59,6 +59,7 @@ import Popover from 'components/Popover';
 import { parseNumber } from 'react-advanced-cropper';
 import { getExtension, trimExtension } from '../utils';
 import { getChannelDocDownloadUrl } from 'queries/learn';
+import { useTranslation } from 'react-i18next';
 
 export enum DocIntegrationEnum {
   Sharepoint = 'SHAREPOINT',
@@ -79,6 +80,9 @@ interface IDocumentProps {
 }
 
 const Document: FC<IDocumentProps> = ({ permissions }) => {
+  const { t } = useTranslation('channelDetail', {
+    keyPrefix: 'documentTab',
+  });
   const [isOpen, openModal, closeModal] = useModal();
   const [isAddModalOpen, openAddModal, closeAddModal] = useModal();
   const [totalRows, setTotalRows] = useState<number>(0);
@@ -944,7 +948,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
 
   return isLoading ? (
     <Card className="flex flex-col gap-6 p-8 pb-16 w-full justify-center bg-white overflow-hidden">
-      <p className="font-bold text-2xl text-neutral-900">Documents</p>
+      <p className="font-bold text-2xl text-neutral-900">{t('title')}</p>
       <Spinner className="flex w-full justify-center" />
     </Card>
   ) : (
@@ -1088,13 +1092,12 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           <div className="flex gap-2 w-full p-2 border border-orange-400 bg-orange-50 items-center">
             <Icon name="warning" />
             <span className="text-neutral-600 text-sm font-medium">
-              The credentials for SharePoint have expired. Please log in again
-              to continue.{' '}
+              {t('reAuthorizeForAdmin')}
               <Link
                 to={getLearnUrl('/settings/market-place')}
                 className="text-orange-400 text-sm font-bold underline"
               >
-                Reauthorize
+                {t('reAuthorizeCTA')}
               </Link>
             </span>
           </div>
@@ -1103,7 +1106,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           <div className="flex gap-2 w-full p-2 border border-orange-400 bg-orange-50 items-center">
             <Icon name="warning" />
             <span className="text-neutral-600 text-sm font-medium">
-              There is a sync issue with SharePoint. Please contact{' '}
+              {t('reAuthorizeForOthersFirstHalf')}
               <Link
                 to={
                   `mailto:${currentUser?.result?.data?.org?.primaryAdmin?.email}` ||
@@ -1113,7 +1116,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
               >
                 {currentUser?.result?.data?.org?.primaryAdmin?.email || ''}
               </Link>{' '}
-              or support team to resolve this.
+              {t('reAuthorizeForOthersSecondHalf')}
             </span>
           </div>
         )}
@@ -1140,7 +1143,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                   <PopupMenu
                     triggerNode={
                       <Button
-                        label="New"
+                        label={t('addNewPopupLabelCTA')}
                         leftIcon="add"
                         className="px-4 py-2 gap-1 h-10"
                         leftIconClassName="text-white focus:text-white group-focus:text-white"
@@ -1153,7 +1156,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                       {
                         renderNode: (
                           <div className="bg-blue-50 px-6 text-xs font-medium text-neutral-500 py-2">
-                            Add new
+                            {t('addNewPopupBanner')}
                           </div>
                         ),
                         isBanner: true,
@@ -1161,7 +1164,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                       {
                         label: (
                           <div className="flex gap-2 items-center text-xs">
-                            <Icon name={'folder'} size={16} /> Folder
+                            <Icon name={'folder'} size={16} /> {t('folder')}
                           </div>
                         ),
                         onClick: openAddModal,
@@ -1169,7 +1172,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                       {
                         renderNode: (
                           <div className="bg-blue-50 px-6 text-xs font-medium text-neutral-500 py-2">
-                            Upload new
+                            {t('uploadNewPopupBanner')}
                           </div>
                         ),
                         isBanner: true,
@@ -1177,7 +1180,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                       {
                         label: (
                           <div className="flex gap-2.5 items-center text-xs">
-                            <Icon name={'fileUpload'} size={16} /> File
+                            <Icon name={'fileUpload'} size={16} /> {t('file')}
                           </div>
                         ),
                         onClick: () => fileInputRef?.current?.click(),
@@ -1185,7 +1188,8 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                       {
                         label: (
                           <div className="flex gap-2.5 items-center text-xs">
-                            <Icon name={'folderUpload'} size={16} /> Folder
+                            <Icon name={'folderUpload'} size={16} />{' '}
+                            {t('folder')}
                           </div>
                         ),
                         onClick: () => folderInputRef?.current?.click(),
@@ -1201,7 +1205,9 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         {isBaseFolderSet ? (
           <Fragment>
             <RecentlyAddedEntities permissions={permissions} />
-            <p className="text-base font-bold text-neutral-900">All files</p>
+            <p className="text-base font-bold text-neutral-900">
+              {t('allItemTitle')}
+            </p>
             <FilterMenuDocument
               control={control}
               watch={watch}

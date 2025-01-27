@@ -116,6 +116,28 @@
       "rejectSuccess": "Request to join channel rejected successfully"
     }
   },
+  "documentTab": {
+    "title": "Documents",
+    "reAuthorizeForAdmin": "The credentials for SharePoint have expired. Please log in again to continue ",
+    "reAuthorizeCTA": "Reauthorize",
+    "reAuthorizeForOthersFirstHalf": "There is a sync issue with SharePoint. Please contact ",
+    "reAuthorizeForOthersSecondHalf": "or support team to resolve this.",
+    "addNewPopupLabelCTA": "New",
+    "addNewPopupBanner": "Add new",
+    "uploadNewPopupBanner": "Upload new",
+    "folder": "Folder",
+    "file": "File",
+    "recentlyAdded": "Recently added",
+    "lastUpdated": "Last Updated",
+    "addedOn": "added {{date}}",
+    "updatedOn": "Updated on {{date}}",
+    "updatedBy": "by {{name}}",
+    "docSearchPlaceholder": "Search documents",
+    "allItemTitle": "All files",
+    "titleOnlyCTA": "Title only",
+    "list": "List",
+    "grid": "Grid"
+  },
   "memberTab": {
     "title": "Members",
     "addMemberCTA": "Add Member",
