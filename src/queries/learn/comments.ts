@@ -24,10 +24,10 @@ export interface IComments {
 }
 
 export const deleteComment = async (id: string) => {
-  await apiService.delete(`/comments/${id}`);
+  await apiService.delete(`/feed-comments/${id}`);
 };
 export const deleteCommentLearner = async (id: string) => {
-  await apiService.delete(`/learner/comments/${id}`);
+  await apiService.delete(`/learner/feed-comments/${id}`);
 };
 
 export const getComments = async (
@@ -39,7 +39,7 @@ export const getComments = async (
 ) => {
   let response = null;
   if (!!!context.pageParam) {
-    response = await apiService.get('/comments', context.queryKey[1]);
+    response = await apiService.get('/feed-comments', context.queryKey[1]);
     appendComments(response.data.result.data);
     response.data.result.data = response.data.result.data.map(
       (eachPost: IComment) => ({ id: eachPost.id }),
@@ -78,11 +78,11 @@ export const useInfiniteComments = (q: IComments) => {
 };
 
 export const createComment = async (payload: IComments) => {
-  const { result } = await apiService.post(`/comments`, payload);
+  const { result } = await apiService.post(`/feed-comments`, payload);
   return result?.data;
 };
 
 export const updateComment = async (id: string, payload: any) => {
-  const { result } = await apiService.put(`/comments/${id}`, payload);
+  const { result } = await apiService.put(`/feed-comments/${id}`, payload);
   return result.data;
 };
