@@ -121,7 +121,6 @@ const SearchModal: FC<ISearchModalProps> = ({ onClose }) => {
           size={16}
           className="-mr-1"
           color="!text-neutral-500"
-          hoverColor="!text-neutral-900"
         />
       ),
       isClearable: true,
