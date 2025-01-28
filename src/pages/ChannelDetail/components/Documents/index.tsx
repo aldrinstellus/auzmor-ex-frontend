@@ -118,6 +118,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   ]);
   const useCurrentUser = getApi(ApiEnum.GetMe);
   const { data: currentUser } = useCurrentUser();
+  const syncIntervalRef = useRef<any>(null);
 
   // Api call: Check connection status
   const useChannelDocumentStatus = getApi(ApiEnum.GetChannelDocumentStatus);
@@ -248,6 +249,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           }
         }
       },
+      staleTime: 0,
     },
   );
 
@@ -762,12 +764,14 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     () => () => {
       if (
         config.variant === BackgroundJobVariantEnum.ChannelDocumentSync &&
-        !!config.show
+        !!config.show &&
+        !!syncIntervalRef.current
       ) {
+        clearInterval(syncIntervalRef.current);
         reset();
       }
     },
-    [],
+    [config.variant],
   );
 
   // Component to render before connection.
@@ -899,19 +903,17 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   }, []);
 
   const handleSyncing = () => {
-    reset();
     setJobTitle('Sync in progress');
     setConfig({
       variant: BackgroundJobVariantEnum.ChannelDocumentSync,
       show: true,
       isExpanded: false,
     });
-    let intervalId: any = null;
-    intervalId = setInterval(async () => {
+    syncIntervalRef.current = setInterval(async () => {
       const response = await getApi(ApiEnum.GetChannelDocSyncStatus)({
         channelId,
       }).catch(() => {
-        clearInterval(intervalId);
+        clearInterval(syncIntervalRef.current);
         setJobTitle('Sync failed');
       });
       const syncResults = response?.data?.result?.data;
@@ -926,7 +928,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           }
         });
         if (successCount + failCount === syncResults?.length) {
-          clearInterval(intervalId);
+          clearInterval(syncIntervalRef.current);
           if (successCount === syncResults.length) {
             setJobTitle('Sync successful');
           } else {
