@@ -185,7 +185,8 @@
     "renameFolder": {
       "success": "Folder renamed successfully",
       "failure": "Folder rename failed"
-    }
+    },
+    "accessDenied": "Access Denied"
   },
   "memberTab": {
     "title": "Members",
@@ -258,6 +259,25 @@
       "canPostDescription": "Anyone can post and comment.",
       "canCommentDescription": "Anyone can post and comment, but announcements are restricted to admins.",
       "canAnnouncementDescription": "Anyone can comment, but announcements are restricted to admins."
+    },
+    "integrationSetting": {
+      "title": "Integration settings",
+      "activated": "Activated",
+      "description": "Choose your preferred folder that will be used to create, share, and collaborate on files and folders in this channel.",
+      "lastSync": "Last sync: {{date}}",
+      "connect": "Connect",
+      "disConnect": "Disconnect",
+      "reSync": "Re-sync"
+    },
+    "documentSetting": {
+      "title": "Document settings",
+      "docVisibilityRow": {
+        "title": "Show/Hide Documents"
+      },
+      "uploadControlRow": {
+        "title": "Who Can Upload Documents"
+      },
+      "DocAccessLevelRow": {}
     }
   }
 }

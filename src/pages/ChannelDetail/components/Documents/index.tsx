@@ -174,9 +174,13 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         content: t('deleteFile.success', { name: deleteDocProps?.doc?.name }),
       });
     },
-    onError: () => {
+    onError: (response: any) => {
+      const failMessage =
+        response?.response?.data?.errors[0]?.reason === 'ACCESS_DENIED'
+          ? t('accessDenied')
+          : t('deleteFile.failure', { name: deleteDocProps?.doc?.name });
       failureToastConfig({
-        content: t('deleteFile.failure', { name: deleteDocProps?.doc?.name }),
+        content: failMessage,
         dataTestId: 'file-delete-toaster',
       });
     },
@@ -194,8 +198,12 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     onSuccess: () => {
       successToastConfig({ content: t('renameFile.success') });
     },
-    onError: () => {
-      failureToastConfig({ content: t('renameFile.failure') });
+    onError: (response: any) => {
+      const failMessage =
+        response?.response?.data?.errors[0]?.reason === 'ACCESS_DENIED'
+          ? t('accessDenied')
+          : t('renameFile.failure');
+      failureToastConfig({ content: failMessage });
     },
     onSettled: async () => {
       await queryClient.invalidateQueries(['get-channel-files'], {
@@ -211,8 +219,12 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     onSuccess: () => {
       successToastConfig({ content: t('renameFolder.success') });
     },
-    onError: () => {
-      failureToastConfig({ content: t('renameFolder.failure') });
+    onError: (response: any) => {
+      const failMessage =
+        response?.response?.data?.errors[0]?.reason === 'ACCESS_DENIED'
+          ? t('accessDenied')
+          : t('renameFolder.failure');
+      failureToastConfig({ content: failMessage });
     },
     onSettled: async () => {
       await queryClient.invalidateQueries(['get-channel-files'], {
@@ -1234,9 +1246,14 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                       exact: false,
                     });
                   },
-                  onError: () => {
+                  onError: (response: any) => {
+                    const failMessage =
+                      response?.response?.data?.errors[0]?.reason ===
+                      'ACCESS_DENIED'
+                        ? 'Access Denied'
+                        : 'Fail to connect, Try again!';
                     failureToastConfig({
-                      content: 'Fail to connect, Try again!',
+                      content: failMessage,
                     });
                   },
                 },
