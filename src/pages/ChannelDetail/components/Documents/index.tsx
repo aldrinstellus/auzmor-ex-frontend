@@ -106,16 +106,8 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   const { uploadMedia } = useChannelDocUpload(channelId);
   const { filters } = useAppliedFiltersStore();
   const { setRootFolderId } = useChannelStore();
-  const {
-    setJobs,
-    getIconFromStatus,
-    setJobTitle,
-    setJobsRenderer,
-    setShow,
-    setIsExpanded,
-    setVariant,
-    reset,
-  } = useBackgroundJobStore();
+  const { config, setConfig, setJobs, getIconFromStatus, setJobTitle, reset } =
+    useBackgroundJobStore();
   const folderInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [docType, applyDocumentSearch, documentSearch, byTitle] = watch([
@@ -126,6 +118,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   ]);
   const useCurrentUser = getApi(ApiEnum.GetMe);
   const { data: currentUser } = useCurrentUser();
+  const syncIntervalRef = useRef<any>(null);
 
   // Api call: Check connection status
   const useChannelDocumentStatus = getApi(ApiEnum.GetChannelDocumentStatus);
@@ -256,6 +249,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           }
         }
       },
+      staleTime: 0,
     },
   );
 
@@ -765,6 +759,21 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     }
   }, [items]);
 
+  // Reset sync jobs on unmount
+  useEffect(
+    () => () => {
+      if (
+        config.variant === BackgroundJobVariantEnum.ChannelDocumentSync &&
+        !!config.show &&
+        !!syncIntervalRef.current
+      ) {
+        clearInterval(syncIntervalRef.current);
+        reset();
+      }
+    },
+    [config.variant],
+  );
+
   // Component to render before connection.
   const NoConnection = () =>
     permissions.includes(ChannelPermissionEnum.CanConnectChannelDoc) ? (
@@ -894,17 +903,17 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   }, []);
 
   const handleSyncing = () => {
-    reset();
     setJobTitle('Sync in progress');
-    setIsExpanded(false);
-    setShow(true);
-    setVariant(BackgroundJobVariantEnum.ChannelDocumentSync);
-    let intervalId: any = null;
-    intervalId = setInterval(async () => {
+    setConfig({
+      variant: BackgroundJobVariantEnum.ChannelDocumentSync,
+      show: true,
+      isExpanded: false,
+    });
+    syncIntervalRef.current = setInterval(async () => {
       const response = await getApi(ApiEnum.GetChannelDocSyncStatus)({
         channelId,
       }).catch(() => {
-        clearInterval(intervalId);
+        clearInterval(syncIntervalRef.current);
         setJobTitle('Sync failed');
       });
       const syncResults = response?.data?.result?.data;
@@ -919,7 +928,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           }
         });
         if (successCount + failCount === syncResults?.length) {
-          clearInterval(intervalId);
+          clearInterval(syncIntervalRef.current);
           if (successCount === syncResults.length) {
             setJobTitle('Sync successful');
           } else {
@@ -958,7 +967,11 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
             rootFolderId: string;
           }[] = [];
 
-          setJobTitle('Upload in progress...');
+          setConfig({
+            variant: BackgroundJobVariantEnum.ChannelDocumentUpload,
+            show: true,
+            isExpanded: false,
+          });
 
           let index = 0;
           const jobs: { [key: string]: any } = {};
@@ -1012,9 +1025,13 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
 
           const allFiles: File[] = Array.from(e.target.files);
 
+          setConfig({
+            variant: BackgroundJobVariantEnum.ChannelDocumentUpload,
+            show: true,
+            isExpanded: false,
+            jobsRenderer: folderUploadJobRenderer,
+          });
           setJobTitle('Analysing folder...');
-          setJobsRenderer(folderUploadJobRenderer);
-          setShow(true);
 
           for (const file of allFiles) {
             const folderNames = file.webkitRelativePath.split('/').slice(0, -1);
@@ -1240,7 +1257,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                   onSuccess: () => {
                     handleSyncing();
                     successToastConfig({
-                      content: `Connected successfully`,
+                      content: t('connectFolder.success'),
                     });
                     refetch();
                     queryClient.invalidateQueries(['get-channel-files'], {
@@ -1251,8 +1268,8 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                     const failMessage =
                       response?.response?.data?.errors[0]?.reason ===
                       'ACCESS_DENIED'
-                        ? 'Access Denied'
-                        : 'Fail to connect, Try again!';
+                        ? t('accessDenied')
+                        : t('connectFolder.failure');
                     failureToastConfig({
                       content: failMessage,
                     });
