@@ -290,70 +290,73 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     isLoading;
 
   // A function that decides what options to show on each row of documents
-  const getAllOptions = useCallback((info: CellContext<DocType, unknown>) => {
-    const showDownload =
-      !isCredExpired &&
-      permissions.includes(ChannelPermissionEnum.CanDownloadDocuments) &&
-      !!info?.row?.original?.downloadable &&
-      !!!info?.row?.original?.isFolder;
-    const canRename =
-      !isCredExpired &&
-      permissions.includes(ChannelPermissionEnum.CanRenameDocuments);
-    const canDelete =
-      !isCredExpired &&
-      permissions.includes(ChannelPermissionEnum.CanDeleteDocuments);
-    return [
-      {
-        label: t('rename'),
-        onClick: (e: Event) => {
-          e.stopPropagation();
-          showRenameModal({
-            name: !!info?.row?.original?.isFolder
-              ? info?.row?.original?.name
-              : trimExtension(info?.row?.original?.name),
-            meta: info?.row?.original,
-          });
-        },
-        dataTestId: 'folder-menu',
-        className: '!px-6 !py-2',
-        isHidden: !canRename,
-      },
-      {
-        label: t('download'),
-        onClick: async (e: Event) => {
-          e.stopPropagation();
-          try {
-            const { data } = await getChannelDocDownloadUrl({
-              channelId,
-              itemId: info?.row?.original?.id,
+  const getAllOptions = useCallback(
+    (info: CellContext<DocType, unknown>) => {
+      const showDownload =
+        !isCredExpired &&
+        permissions.includes(ChannelPermissionEnum.CanDownloadDocuments) &&
+        !!info?.row?.original?.downloadable &&
+        !!!info?.row?.original?.isFolder;
+      const canRename =
+        !isCredExpired &&
+        permissions.includes(ChannelPermissionEnum.CanRenameDocuments);
+      const canDelete =
+        !isCredExpired &&
+        permissions.includes(ChannelPermissionEnum.CanDeleteDocuments);
+      return [
+        {
+          label: t('rename'),
+          onClick: (e: Event) => {
+            e.stopPropagation();
+            showRenameModal({
+              name: !!info?.row?.original?.isFolder
+                ? info?.row?.original?.name
+                : trimExtension(info?.row?.original?.name),
+              meta: info?.row?.original,
             });
-            downloadFromUrl(
-              data?.result?.data?.downloadUrl,
-              data?.result?.data?.name,
-            );
-          } catch (e) {
-            failureToastConfig({
-              content: `Failed to download ${info?.row?.original?.name}`,
-              dataTestId: 'file-download-toaster',
-            });
-          }
+          },
+          dataTestId: 'folder-menu',
+          className: '!px-6 !py-2',
+          isHidden: !canRename,
         },
-        dataTestId: 'folder-menu',
-        className: '!px-6 !py-2',
-        isHidden: !showDownload,
-      },
-      {
-        label: tc('delete'),
-        onClick: (e: Event) => {
-          e.stopPropagation();
-          showConfirm({ doc: info?.row?.original });
+        {
+          label: t('download'),
+          onClick: async (e: Event) => {
+            e.stopPropagation();
+            try {
+              const { data } = await getChannelDocDownloadUrl({
+                channelId,
+                itemId: info?.row?.original?.id,
+              });
+              downloadFromUrl(
+                data?.result?.data?.downloadUrl,
+                data?.result?.data?.name,
+              );
+            } catch (e) {
+              failureToastConfig({
+                content: `Failed to download ${info?.row?.original?.name}`,
+                dataTestId: 'file-download-toaster',
+              });
+            }
+          },
+          dataTestId: 'folder-menu',
+          className: '!px-6 !py-2',
+          isHidden: !showDownload,
         },
-        dataTestId: 'folder-menu',
-        className: '!px-6 !py-2 [&_*]:text-red-500',
-        isHidden: !canDelete,
-      },
-    ].filter((option) => !option?.isHidden) as any as IMenuItem[];
-  }, []);
+        {
+          label: tc('delete'),
+          onClick: (e: Event) => {
+            e.stopPropagation();
+            showConfirm({ doc: info?.row?.original });
+          },
+          dataTestId: 'folder-menu',
+          className: '!px-6 !py-2 [&_*]:text-red-500',
+          isHidden: !canDelete,
+        },
+      ].filter((option) => !option?.isHidden) as any as IMenuItem[];
+    },
+    [isCredExpired, permissions],
+  );
 
   // A function to get formated props for location breadcrumb
   const getMappedLocation = (doc: DocType) => {
