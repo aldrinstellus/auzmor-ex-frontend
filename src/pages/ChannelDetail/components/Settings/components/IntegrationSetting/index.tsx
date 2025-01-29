@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import Header from 'components/ProfileInfo/components/Header';
 import Card from 'components/Card';
 import PopupMenu from 'components/PopupMenu';
@@ -31,8 +31,23 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = () => {
   const { getApi } = usePermissions();
   const { channelId } = useParams();
   const [isOpen, openModal, closeModal] = useModal();
-  const { setVariant, setShow, setJobTitle, setIsExpanded } =
-    useBackgroundJobStore();
+  const { config, setConfig, setJobTitle, reset } = useBackgroundJobStore();
+  const syncIntervalRef = useRef<any>(null);
+
+  useEffect(
+    () => () => {
+      if (
+        config.variant === BackgroundJobVariantEnum.ChannelDocumentSync &&
+        !!config.show &&
+        !!syncIntervalRef.current
+      ) {
+        clearInterval(syncIntervalRef.current);
+        syncIntervalRef.current = null;
+        reset();
+      }
+    },
+    [config.variant],
+  );
 
   const integrationMapping = {
     [DocIntegrationEnum.GoogleDrive]: {
@@ -41,7 +56,7 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = () => {
     },
     [DocIntegrationEnum.Sharepoint]: {
       icon: 'sharePoint',
-      label: t('sharepointCTA'),
+      label: t('documentTab.sharepointCTA'),
     },
   };
 
@@ -83,43 +98,10 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = () => {
 
   // API call: Re-sync
   const reSync = getApi(ApiEnum.ChannelDocSync);
-  const getSyncStatus = getApi(ApiEnum.GetChannelDocSyncStatus);
   const reSyncMutation = useMutation({
     mutationFn: reSync,
     onMutate: () => {
-      setVariant(BackgroundJobVariantEnum.ChannelDocumentSync);
-      setJobTitle('Sync in progress');
-      setIsExpanded(false);
-      setShow(true);
-    },
-    onSuccess: async () => {
-      let intervalId: any = null;
-      intervalId = setInterval(async () => {
-        const response = await getSyncStatus({ channelId }).catch(() => {
-          clearInterval(intervalId);
-          setJobTitle('Sync failed');
-        });
-        const syncResults = response?.data?.result?.data;
-        if (!!syncResults?.length) {
-          let successCount = 0;
-          let failCount = 0;
-          syncResults.forEach((each: { syncStatus: string }) => {
-            if (each.syncStatus === 'success') {
-              successCount += 1;
-            } else if (each.syncStatus === 'failed') {
-              failCount += 1;
-            }
-          });
-          if (successCount + failCount === syncResults?.length) {
-            clearInterval(intervalId);
-            if (successCount === syncResults.length) {
-              setJobTitle('Sync successful');
-            } else {
-              setJobTitle('Sync failed');
-            }
-          }
-        }
-      }, 1000);
+      handleSyncing();
     },
     onError: () => {
       setJobTitle('Sync failed');
@@ -128,9 +110,26 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = () => {
 
   // API call: get last sync information from this api call
   const useChannelDocSyncStatus = getApi(ApiEnum.UseChannelDocSyncStatus);
-  const { data: syncStatus, isLoading } = useChannelDocSyncStatus({
-    channelId,
-  });
+  const { data: syncStatus, isLoading } = useChannelDocSyncStatus(
+    {
+      channelId,
+    },
+    {
+      onSuccess: (data: any) => {
+        const syncResults = data?.data?.result?.data;
+        if (!!syncResults?.length) {
+          const isSynced = !syncResults.some(
+            (each: { syncStatus: string }) =>
+              each.syncStatus !== 'success' && each.syncStatus !== 'failed',
+          );
+          if (!isSynced) {
+            handleSyncing();
+          }
+        }
+      },
+      staleTime: 0,
+    },
+  );
   const connectedDriveStatus = syncStatus?.data?.result?.data || [];
 
   const isBaseFolderSet = statusResponse?.status === 'ACTIVE';
@@ -182,6 +181,7 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = () => {
       },
       dataTestId: 're-sync',
       className: '!px-6 !py-2',
+      disabled: (() => !!syncIntervalRef.current)(),
     },
   ].filter((each) => {
     if (
@@ -192,6 +192,45 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = () => {
     }
     return true;
   });
+
+  const handleSyncing = () => {
+    setJobTitle('Sync in progress');
+    setConfig({
+      variant: BackgroundJobVariantEnum.ChannelDocumentSync,
+      show: true,
+      isExpanded: false,
+    });
+    syncIntervalRef.current = setInterval(async () => {
+      const response = await getApi(ApiEnum.GetChannelDocSyncStatus)({
+        channelId,
+      }).catch(() => {
+        clearInterval(syncIntervalRef.current);
+        syncIntervalRef.current = null;
+        setJobTitle('Sync failed');
+      });
+      const syncResults = response?.data?.result?.data;
+      if (!!syncResults?.length) {
+        let successCount = 0;
+        let failCount = 0;
+        syncResults.forEach((each: { syncStatus: string }) => {
+          if (each.syncStatus === 'success') {
+            successCount += 1;
+          } else if (each.syncStatus === 'failed') {
+            failCount += 1;
+          }
+        });
+        if (successCount + failCount === syncResults?.length) {
+          clearInterval(syncIntervalRef.current);
+          syncIntervalRef.current = null;
+          if (successCount === syncResults.length) {
+            setJobTitle('Sync successful');
+          } else {
+            setJobTitle('Sync failed');
+          }
+        }
+      }
+    }, 1000);
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -231,7 +270,7 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = () => {
           <div className="flex gap-6 w-full">
             {isConnectionMade && !isBaseFolderSet && (
               <Button
-                label={t('selectExistingCTA')}
+                label={t('documentTab.selectExistingCTA')}
                 variant={ButtonVariant.Secondary}
                 size={Size.Small}
                 onClick={openModal}
@@ -293,16 +332,21 @@ const IntegrationSetting: FC<IIntegrationSettingProps> = () => {
                   onSettled: callback,
                   onSuccess: () => {
                     successToastConfig({
-                      content: `Connected successfully`,
+                      content: t('documentTab.connectFolder.success'),
                     });
                     refetch();
                     queryClient.invalidateQueries(['get-channel-files'], {
                       exact: false,
                     });
                   },
-                  onError: () => {
+                  onError: (response: any) => {
+                    const failMessage =
+                      response?.response?.data?.errors[0]?.reason ===
+                      'ACCESS_DENIED'
+                        ? t('documentTab.accessDenied')
+                        : t('documentTab.connectFolder.failure');
                     failureToastConfig({
-                      content: 'Fail to connect, Try again!',
+                      content: failMessage,
                     });
                   },
                 },
