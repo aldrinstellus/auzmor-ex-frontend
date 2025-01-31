@@ -727,20 +727,15 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           : columnsGridView,
       isRowSelectionEnabled: false,
       view,
-      onRowClick: (e, table, virtualRow, isDoubleClick) => {
-        if ((isRootDir || virtualRow.original.isFolder) && isDoubleClick) {
+      onRowClick: (e, table, virtualRow) => {
+        if (
+          virtualRow.original.isFolder ||
+          (!!!virtualRow.original.isFolder && !isCredExpired)
+        ) {
           const encodedPath = compressString(
             JSON.stringify(virtualRow?.original.pathWithId),
           );
           navigate(`/channels/${channelId}/documents/${encodedPath}`);
-          return;
-        } else if (
-          !isCredExpired &&
-          !!!virtualRow.original.isFolder &&
-          isDoubleClick
-        ) {
-          openFilePreview(virtualRow.original);
-          return;
         }
       },
       noDataFound: (
@@ -751,6 +746,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           onClearSearch={() => fileInputRef?.current?.click()}
         />
       ),
+      trDataClassName: isCredExpired ? '' : 'cursor-pointer',
     },
   });
 
@@ -787,10 +783,25 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   }, [items]);
 
   useEffect(() => {
-    if (documentPath) {
-      setItems([{ id: 'root', label: t('title') }, ...parseDocumentPath()]);
-    } else {
-      setItems([{ id: 'root', label: t('title') }]);
+    try {
+      if (documentPath) {
+        const items = [
+          { id: 'root', label: t('title') },
+          ...parseDocumentPath(),
+        ];
+        const pathWithId = JSON.parse(decompressString(documentPath)) || [];
+        if (pathWithId.at(-1).type === 'File') {
+          openFilePreview({ id: items.at(-1)?.id, pathWithId });
+          setItems(items.slice(0, -1));
+        } else {
+          setItems(items);
+        }
+      } else {
+        setItems([{ id: 'root', label: t('title') }]);
+      }
+    } catch (e) {
+      failureToastConfig({ content: 'Invalid document path' });
+      navigate(`/channels/${channelId}/documents`);
     }
   }, [documentPath]);
 
@@ -1333,10 +1344,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         </div>
         {isBaseFolderSet ? (
           <Fragment>
-            <RecentlyAddedEntities
-              permissions={permissions}
-              disableActions={isCredExpired}
-            />
+            <RecentlyAddedEntities disableActions={isCredExpired} />
             <p className="text-base font-bold text-neutral-900">
               {t('allItemTitle')}
             </p>
@@ -1352,7 +1360,6 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
             />
             <DataGrid
               {...dataGridProps}
-              // Remove before merging it
               flatData={dataGridProps.flatData.map((doc: any) => ({
                 ...doc,
                 pathWithId:
@@ -1467,13 +1474,28 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
       )}
       {filePreview && (
         <FilePreviewModal
-          file={(filePreviewProps as DocType) || {}}
+          fileId={(filePreviewProps as DocType).id}
+          rootFolderId={(filePreviewProps as DocType).pathWithId[0].id}
           open={filePreview}
-          canDownload={
-            permissions.includes(ChannelPermissionEnum.CanDownloadDocuments) &&
-            !!filePreviewProps?.downloadable
-          }
-          closeModal={closeFilePreview}
+          canDownload={permissions.includes(
+            ChannelPermissionEnum.CanDownloadDocuments,
+          )}
+          closeModal={() => {
+            const mappedItemsToEncode = items.slice(1).map((each) => ({
+              id: each.id,
+              name: each.label,
+              type: 'Folder',
+            }));
+            const encodedPath = compressString(
+              JSON.stringify(mappedItemsToEncode),
+            );
+            if (!!mappedItemsToEncode.length) {
+              navigate(`/channels/${channelId}/documents/${encodedPath}`);
+            } else {
+              navigate(`/channels/${channelId}/documents`);
+            }
+            closeFilePreview();
+          }}
         />
       )}
       {renameModal && (
