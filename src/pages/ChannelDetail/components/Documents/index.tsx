@@ -316,9 +316,11 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   // Flags to disable / enable actions
   const disableSelectExistingCTA = isCredExpired || isLoading;
   const disableSharepointCTA = isCredExpired || isLoading;
-  const disableAddNewPopup = isRootDir || isCredExpired || isLoading;
-  const disableFilter = isRootDir || isCredExpired || isLoading;
-  const disableSort = isRootDir || isCredExpired || isLoading;
+  const hideAddNewPopup = isRootDir;
+  const disableAddNewPopup = isCredExpired || isLoading;
+  const hideFilterRow = isRootDir;
+  const disableFilter = isCredExpired || isLoading;
+  const disableSort = isCredExpired || isLoading;
   const showTitleFilter = applyDocumentSearch !== '';
   const hideClearBtn =
     isRootDir ||
@@ -1310,75 +1312,74 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                 }}
                 disable={isCredExpired || isLoading}
               />
-              {permissions.includes(
-                ChannelPermissionEnum.CanEditChannelDoc,
-              ) && (
-                <div className="relative">
-                  <PopupMenu
-                    triggerNode={
-                      <Button
-                        label={t('addNewPopupLabelCTA')}
-                        leftIcon="add"
-                        className="px-4 py-2 gap-1 h-10"
-                        leftIconClassName="text-white focus:text-white group-focus:text-white"
-                        leftIconHoverColor="text-white"
-                        disabled={disableAddNewPopup}
-                        size={Size.Small}
-                      />
-                    }
-                    menuItems={[
-                      {
-                        renderNode: (
-                          <div className="bg-blue-50 px-6 text-xs font-medium text-neutral-500 py-2">
-                            {t('addNewPopupBanner')}
-                          </div>
-                        ),
-                        isBanner: true,
-                      },
-                      {
-                        label: (
-                          <div className="flex gap-2 items-center text-xs">
-                            <Icon name={'folder'} size={16} /> {t('folder')}
-                          </div>
-                        ),
-                        onClick: openAddModal,
-                      },
-                      {
-                        renderNode: (
-                          <div className="bg-blue-50 px-6 text-xs font-medium text-neutral-500 py-2">
-                            {t('uploadNewPopupBanner')}
-                          </div>
-                        ),
-                        isBanner: true,
-                      },
-                      {
-                        label: (
-                          <div className="flex gap-2.5 items-center text-xs">
-                            <Icon name={'fileUpload'} size={16} /> {t('file')}
-                          </div>
-                        ),
-                        onClick: () => {
-                          reset();
-                          fileInputRef?.current?.click();
+              {permissions.includes(ChannelPermissionEnum.CanEditChannelDoc) &&
+                !hideAddNewPopup && (
+                  <div className="relative">
+                    <PopupMenu
+                      triggerNode={
+                        <Button
+                          label={t('addNewPopupLabelCTA')}
+                          leftIcon="add"
+                          className="px-4 py-2 gap-1 h-10"
+                          leftIconClassName="text-white focus:text-white group-focus:text-white"
+                          leftIconHoverColor="text-white"
+                          disabled={disableAddNewPopup}
+                          size={Size.Small}
+                        />
+                      }
+                      menuItems={[
+                        {
+                          renderNode: (
+                            <div className="bg-blue-50 px-6 text-xs font-medium text-neutral-500 py-2">
+                              {t('addNewPopupBanner')}
+                            </div>
+                          ),
+                          isBanner: true,
                         },
-                      },
-                      {
-                        label: (
-                          <div className="flex gap-2.5 items-center text-xs">
-                            <Icon name={'folderUpload'} size={16} />{' '}
-                            {t('folder')}
-                          </div>
-                        ),
-                        onClick: () => {
-                          reset();
-                          folderInputRef?.current?.click();
+                        {
+                          label: (
+                            <div className="flex gap-2 items-center text-xs">
+                              <Icon name={'folder'} size={16} /> {t('folder')}
+                            </div>
+                          ),
+                          onClick: openAddModal,
                         },
-                      },
-                    ]}
-                    className="right-0 mt-2 top-full border-1 border-neutral-200 focus-visible:outline-none w-[247px]"
-                  />
-                </div>
-              )}
+                        {
+                          renderNode: (
+                            <div className="bg-blue-50 px-6 text-xs font-medium text-neutral-500 py-2">
+                              {t('uploadNewPopupBanner')}
+                            </div>
+                          ),
+                          isBanner: true,
+                        },
+                        {
+                          label: (
+                            <div className="flex gap-2.5 items-center text-xs">
+                              <Icon name={'fileUpload'} size={16} /> {t('file')}
+                            </div>
+                          ),
+                          onClick: () => {
+                            reset();
+                            fileInputRef?.current?.click();
+                          },
+                        },
+                        {
+                          label: (
+                            <div className="flex gap-2.5 items-center text-xs">
+                              <Icon name={'folderUpload'} size={16} />{' '}
+                              {t('folder')}
+                            </div>
+                          ),
+                          onClick: () => {
+                            reset();
+                            folderInputRef?.current?.click();
+                          },
+                        },
+                      ]}
+                      className="right-0 mt-2 top-full border-1 border-neutral-200 focus-visible:outline-none w-[247px]"
+                    />
+                  </div>
+                )}
             </div>
           )}
         </div>
@@ -1388,16 +1389,18 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
             <p className="text-base font-bold text-neutral-900">
               {t('allItemTitle')}
             </p>
-            <FilterMenuDocument
-              control={control}
-              watch={watch}
-              setValue={setValue}
-              view={view}
-              hideFilter={disableFilter}
-              hideSort={disableSort}
-              showTitleFilter={showTitleFilter}
-              changeView={(view) => setView(view)}
-            />
+            {!hideFilterRow && (
+              <FilterMenuDocument
+                control={control}
+                watch={watch}
+                setValue={setValue}
+                view={view}
+                hideFilter={disableFilter}
+                hideSort={disableSort}
+                showTitleFilter={showTitleFilter}
+                changeView={(view) => setView(view)}
+              />
+            )}
             <DataGrid
               {...dataGridProps}
               flatData={dataGridProps.flatData.map((doc: any) => ({
