@@ -291,10 +291,10 @@
       },
       "DocAccessLevelRow": {
         "title": "Who Can Download Documents",
-        "viewer": "Anyone",
-        "viewerDescription": "Anyone in the channel can download documents",
-        "cannotDownload": "Channel Admins",
-        "cannotDownloadDescription": "Only Channel Admins can download documents"
+        "anyone": "Anyone",
+        "anyoneDescription": "Anyone in the channel can download documents",
+        "channelAdmin": "Channel Admins",
+        "channelAdminDescription": "Only Channel Admins can download documents"
       }
     }
   }
