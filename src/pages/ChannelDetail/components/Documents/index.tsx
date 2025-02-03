@@ -288,7 +288,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   const disableSelectExistingCTA = isCredExpired || isLoading;
   const disableSharepointCTA = isCredExpired || isLoading;
   const disableAddNewPopup = isRootDir || isCredExpired || isLoading;
-  const disableFilter = isRootDir || isCredExpired || isLoading;
+  const disableFilter = isCredExpired || isLoading;
   const disableSort = isRootDir || isCredExpired || isLoading;
   const showTitleFilter = applyDocumentSearch !== '';
   const hideClearBtn =
@@ -1344,9 +1344,13 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         </div>
         {isBaseFolderSet ? (
           <Fragment>
-            <RecentlyAddedEntities disableActions={isCredExpired} />
+            {!isRootDir && (
+              <RecentlyAddedEntities disableActions={isCredExpired} />
+            )}
             <p className="text-base font-bold text-neutral-900">
-              {t('allItemTitle')}
+              {applyDocumentSearch === ''
+                ? t('allItemTitle')
+                : 'Search results'}
             </p>
             <FilterMenuDocument
               control={control}
