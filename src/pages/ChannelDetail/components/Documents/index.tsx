@@ -1513,32 +1513,10 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                 name: folderName,
               } as any,
               {
-                onSuccess: async (response: any) => {
+                onSuccess: async () => {
                   await queryClient.invalidateQueries(['get-channel-files'], {
                     exact: false,
                   });
-                  const folder = response?.result?.data;
-                  if (folder) {
-                    const itemsToEncode = [
-                      ...items,
-                      { id: folder.id, label: folder.name, meta: folder },
-                    ].slice(1);
-                    const mappedItemsToEncode = itemsToEncode.map((each) => ({
-                      id: each.id,
-                      name: each.label,
-                      type: 'Folder',
-                    }));
-                    const encodedPath = compressString(
-                      JSON.stringify(mappedItemsToEncode),
-                    );
-                    if (!!mappedItemsToEncode.length) {
-                      navigate(
-                        `/channels/${channelId}/documents/${encodedPath}`,
-                      );
-                    } else {
-                      navigate(`/channels/${channelId}/documents`);
-                    }
-                  }
                   successToastConfig({
                     content: 'New folder added successfully',
                   });
