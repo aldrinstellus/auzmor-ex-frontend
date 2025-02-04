@@ -801,7 +801,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
       },
       noDataFound: (
         <NoDataFound
-          labelHeader={t('noDataFound')}
+          labelHeader={t('noDataFound.docListing')}
           clearBtnLabel="Upload now"
           hideClearBtn={hideClearBtn}
           onClearSearch={() => fileInputRef?.current?.click()}
@@ -1458,7 +1458,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           <EntitySelectModal
             isOpen={isOpen}
             closeModal={closeModal}
-            onSelect={(entity: any, callback: () => void) => {
+            onSelect={(entity: any, callback: (isError: boolean) => void) => {
               updateConnectionMutation.mutate(
                 {
                   channelId: channelId,
@@ -1466,7 +1466,6 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                   orgProviderId: availableAccount?.orgProviderId,
                 } as any,
                 {
-                  onSettled: callback,
                   onSuccess: () => {
                     handleSyncing();
                     successToastConfig({
@@ -1476,6 +1475,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                     queryClient.invalidateQueries(['get-channel-files'], {
                       exact: false,
                     });
+                    callback(false);
                   },
                   onError: (response: any) => {
                     const failMessage =
@@ -1486,6 +1486,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                     failureToastConfig({
                       content: failMessage,
                     });
+                    callback(true);
                   },
                 },
               );
