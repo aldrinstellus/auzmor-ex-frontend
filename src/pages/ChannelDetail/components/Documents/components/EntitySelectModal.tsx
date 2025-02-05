@@ -191,12 +191,24 @@ const EntitySelectModal: FC<IEntitySelectModalProps> = ({
             drive: undefined,
             folders: [],
           });
+          appendItem({
+            id: virtualRow.original.id,
+            label: virtualRow.original.name,
+            meta: virtualRow.original,
+          });
+          resetField('entitySearch');
         } else if (headings === 'drive') {
           setSelectedItems({
             directory: selectedItems?.directory,
             drive: virtualRow.original,
             folders: [],
           });
+          appendItem({
+            id: virtualRow.original.id,
+            label: virtualRow.original.name,
+            meta: virtualRow.original,
+          });
+          resetField('entitySearch');
         } else {
           if (
             (selectedItems?.folders || [])?.findIndex(
