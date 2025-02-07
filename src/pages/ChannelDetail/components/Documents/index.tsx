@@ -800,7 +800,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           navigate(`/channels/${channelId}/documents/${encodedPath}`);
         }
       },
-      noDataFound: (
+      noDataFound: () => (
         <NoDataFound
           labelHeader={t('noDataFound.docListing')}
           clearBtnLabel="Upload now"

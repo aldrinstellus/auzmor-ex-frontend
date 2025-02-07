@@ -258,22 +258,45 @@ const EntitySelectModal: FC<IEntitySelectModalProps> = ({
         }
       },
       height: 312,
-      noDataFound: (
-        <NoDataFound
-          hideClearBtn
-          labelHeader={(() => {
-            switch (headings) {
-              case 'site':
-                return t('noDataFound.site');
-              case 'drive':
-                return t('noDataFound.drive');
-              case 'folder':
-                return t('noDataFound.folder');
+      noDataFound: (error) => {
+        const geNoResultProps = () => {
+          if (error) {
+            if (
+              error?.response?.data?.errors.some(
+                (e: { code: string }) => e.code === 'ACCESS_DENIED',
+              )
+            ) {
+              return {
+                illustration: 'accessDenied',
+                illustrationClassName: 'w-[200px] h-[133px]',
+                message: t('noDataFound.accessDeniedSite'),
+              };
             }
-            return t('noDataFound.common');
-          })()}
-        />
-      ),
+            return {
+              illustration: 'noResult',
+              illustrationClassName: undefined,
+              message: t('noDataFound.failure'),
+            };
+          }
+          return {
+            illustration: 'noResult',
+            illustrationClassName: '',
+            message: (() => {
+              switch (headings) {
+                case 'site':
+                  return t('noDataFound.site');
+                case 'drive':
+                  return t('noDataFound.drive');
+                case 'folder':
+                  return t('noDataFound.folder');
+                default:
+                  return '';
+              }
+            })(),
+          };
+        };
+        return <NoDataFound hideClearBtn {...geNoResultProps()} />;
+      },
       isDoubleClickAllowed: headings === 'folder',
     },
   });

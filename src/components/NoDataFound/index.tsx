@@ -31,6 +31,10 @@ const illustrationMap: Record<string, any> = {
     size: 121,
     color: '!text-primary-500',
   },
+  accessDenied: {
+    type: 'image',
+    src: require('images/png/PrivateChannelBanner.png'),
+  },
 };
 
 const NoDataFound: FC<INoDataFoundProps> = ({
