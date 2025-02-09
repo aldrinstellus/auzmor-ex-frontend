@@ -100,6 +100,9 @@ export const fetchMe = async () => {
             enableSocialLearning:
               orgData.result.data.organization_setting.enable_social_learning,
           },
+          primaryAdmin: {
+            ...orgData?.result?.data?.primary_admin,
+          },
         },
         ...(user?.designation && {
           designation: {
@@ -131,6 +134,10 @@ export const fetchMe = async () => {
       },
     },
   };
+  localStorage.setItem(
+    'profile',
+    JSON.stringify({ timeZone: mappedData.result.data.timeZone }),
+  );
   return mappedData;
 };
 

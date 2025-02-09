@@ -1,64 +1,166 @@
-import React, { FC } from 'react';
-import { DocType } from 'interfaces';
+import React, { FC, useEffect } from 'react';
 import Modal from 'components/Modal';
-import Icon from 'components/Icon';
-import Avatar from 'components/Avatar';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
+import { useParams } from 'react-router-dom';
+import Icon from 'components/Icon';
+import Divider from 'components/Divider';
+import Spinner from 'components/Spinner';
+import moment from 'moment';
+import { downloadFromUrl } from 'utils/misc';
+import { failureToastConfig } from 'components/Toast/variants/FailureToast';
+import { useTranslation } from 'react-i18next';
+import { Doc } from 'interfaces';
+import Skeleton from 'react-loading-skeleton';
+import { useMutation } from '@tanstack/react-query';
 
 interface IFilePreviewProps {
-  file: DocType;
+  fileId: string;
+  rootFolderId: string;
   open: boolean;
+  canDownload: boolean;
   closeModal: () => void;
 }
 
-const FilePreview: FC<IFilePreviewProps> = ({ file, open, closeModal }) => {
+const FilePreview: FC<IFilePreviewProps> = ({
+  fileId,
+  rootFolderId,
+  open,
+  canDownload = false,
+  closeModal,
+}) => {
+  const { t } = useTranslation('channelDetail', {
+    keyPrefix: 'documentTab',
+  });
   const { getApi } = usePermissions();
-  const downloadFile = getApi(ApiEnum.DownloadStorageFile);
-  const thumbnailUrl = new URL(file.fileThumbnailUrl);
-  if (thumbnailUrl.searchParams.has('sz')) {
-    thumbnailUrl.searchParams.set('sz', 'w1440');
-  }
+  const { channelId } = useParams();
 
-  const user = file.createdBy;
+  const useChannelDocById = getApi(ApiEnum.UseChannelDocById);
+  const { data: fileData, isLoading: fileLoading } = useChannelDocById({
+    channelId,
+    fileId,
+    rootFolderId,
+  });
+
+  const useChannelFilePreview = getApi(ApiEnum.GetChannelFilePreview);
+  const { data, isLoading: previewLoading } = useChannelFilePreview({
+    channelId,
+    fileId,
+  });
+
+  const downloadChannelFile = getApi(ApiEnum.GetChannelDocDownloadUrl);
+  const downloadChannelFileMutation = useMutation({
+    mutationFn: (payload: {
+      channelId: string;
+      itemId: string;
+      name: string;
+    }) =>
+      downloadChannelFile({
+        channelId: payload.channelId,
+        itemId: payload.itemId,
+      }),
+    onSuccess(data: any) {
+      downloadFromUrl(
+        data?.data?.result?.data?.downloadUrl,
+        data?.data?.result?.data?.name,
+      );
+    },
+    onError(response: any, variables) {
+      const failMessage =
+        response?.response?.data?.errors[0]?.reason === 'ACCESS_DENIED'
+          ? t('accessDenied')
+          : t('downloadFile.failure', { name: variables?.name });
+      failureToastConfig({
+        content: failMessage,
+        dataTestId: 'file-download-toaster',
+      });
+    },
+  });
+
+  useEffect(() => {
+    const elem = document.getElementById('videoplayer');
+    if (elem) {
+      elem?.setAttribute('oncontextmenu', 'return false;');
+    }
+  });
+
+  const isLoading = fileLoading || previewLoading;
+  const isDownloading = downloadChannelFileMutation.isLoading;
+
+  const file = fileData?.data?.result?.data as Doc;
+  const previewUrl = data?.data?.result?.previewURL;
+  const isVideo = file?.mimeType?.startsWith('video/');
 
   return (
     <Modal
       open={open}
-      closeModal={closeModal}
-      className="!w-[65vw] flex flex-col h-[80vh]"
+      className="!h-[calc(100vh-62px)] !w-[calc(100vw-96px)] flex flex-col overflow-hidden"
     >
-      <div className="flex justify-center items-center border-b-1 p-6 relative">
-        <span className="text-sm text-neutral-900 font-semibold">
-          {file.name}
-        </span>
-        <div className="flex flex-row gap-3 absolute right-4">
-          <Icon
-            name="download"
-            color="text-neutral-800"
-            onClick={() => downloadFile(file.id || '')}
-          />
-          <Icon name="postBookmark" color="text-neutral-800" />
-          <Icon name="export" color="text-neutral-800" />
+      <div className="flex items-center relative px-6 py-4 shrink-0">
+        <div className="flex flex-grow items-start ">
+          {fileLoading ? (
+            <Skeleton width={256} height={40} />
+          ) : (
+            <div>
+              <div className="text-base leading-normal text-neutral-900 font-semibold">
+                {file?.name || ''}
+              </div>
+              <div className="text-xs text-neutral-900">
+                {t('lastUpdatedDate', {
+                  date: moment(file?.externalUpdatedAt || '').format(
+                    'MMM DD, YYYY',
+                  ),
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="flex absolute gap-3 right-4">
+          {canDownload && !fileLoading && !!file.downloadable && (
+            <div className="flex gap-2">
+              {isDownloading && <Spinner />}
+              <Icon
+                name="download"
+                color="text-neutral-900"
+                disabled={isDownloading}
+                onClick={() => {
+                  downloadChannelFileMutation.mutate({
+                    channelId: channelId || '',
+                    itemId: fileId,
+                    name: file?.name || '',
+                  });
+                }}
+              />
+            </div>
+          )}
+          <Icon name="close2" color="text-neutral-900" onClick={closeModal} />
         </div>
       </div>
-      {user?.name ? (
-        <div className="m-4 mb-2 p-4 flex flex-row items-left gap-2 bg-sky-50 text-sm rounded-[12px] ">
-          <Avatar
-            size={40}
-            name={user?.name || 'U'}
-            image={user?.profileImage}
-          />
-          <div className="flex flex-col justify-center">
-            <div className="text-sm font-bold">{user?.name}</div>
-            <div className="text-neutral-500 text-xs">
-              {user?.designation?.name}
-            </div>
+      <Divider />
+      <div className="flex items-center justify-center w-full h-full">
+        {isLoading ? (
+          <Spinner className="!h-24 !w-24" />
+        ) : isVideo ? (
+          <div className="flex w-full h-full justify-center">
+            <video
+              id="videoplayer"
+              src={previewUrl}
+              controls
+              controlsList="nodownload"
+              className="object-contain h-[calc(100%-72px)] w-full"
+            />
           </div>
-        </div>
-      ) : null}
-      <div className="!w-full p-6 overflow-y-auto">
-        <img src={thumbnailUrl.toString()} alt="Thumbnail" />
+        ) : (
+          <iframe
+            src={previewUrl}
+            className="w-full h-full mt-2"
+            allowFullScreen
+            allow="all"
+            name="iframe_a"
+            loading={isLoading}
+            sandbox="allow-scripts allow-same-origin allow-forms" // downloads are not allowed
+          />
+        )}
       </div>
     </Modal>
   );

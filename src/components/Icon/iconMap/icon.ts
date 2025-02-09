@@ -31,7 +31,7 @@ import ArrowLeftIcon from '../components/ArrowLeft';
 import BookmarkOutline from '../components/Bookmark';
 import CopyLink from '../components/CopyLink';
 import DeleteIcon from '../components/Delete';
-import OrangeHashtagIcon from '../components/OrangeHashtag';
+import HashtagIcon from '../components/Hashtag';
 import MailIcon from '../components/Mail';
 import SlackIcon from '../components/Slack';
 import CarouselLeftIcon from '../components/CarouselLeft';
@@ -188,7 +188,23 @@ import TrainingIcon from '../components/Training';
 import LearningCenterIcon from '../components/LearningCenter';
 import ArrowDown3 from '../components/ArrowDown3';
 import { ExclamationSVG } from 'components/LearnIcons';
+import GridIcon from '../components/Grid';
+import ListIcon from '../components/List';
+import FileUploadIcon from '../components/FileUpload';
+import FolderUploadIcon from '../components/FolderUpload';
+import VuesaxIcon from '../components/Vuesax';
+import LaunchIcon from '../components/Launch';
+import UserTickIcon from '../components/UserTick';
+import RefreshCircleIcon from '../components/RefreshCircle';
+import UploadIcon from '../components/Upload';
+import AudioFileIcon from '../components/AudioFile';
 import Notification2Icon from '../components/Notification2';
+import Search2Icon from '../components/Search2';
+import TeamIcon from '../components/Team';
+import NoResultFoundIcon from '../components/NoResultFound';
+import CloseCircle2Icon from '../components/CloseCircle2';
+import WarningIcon from '../components/Warning';
+import Close2Icon from '../components/Close2';
 
 export const icon = {
   add: Add,
@@ -204,6 +220,7 @@ export const icon = {
   arrowRightUp: ArrowRightUp,
   arrowSwap: ArrowSwap,
   arrowUp: ArrowUp,
+  audioFile: AudioFileIcon,
   boldTick: BoldTick,
   bookmarkOutline: BookmarkOutline,
   branding: Branding,
@@ -223,7 +240,9 @@ export const icon = {
   clipboardClose: ClipboardCloseIcon,
   clock: ClockIcon,
   close: CloseIcon,
+  close2: Close2Icon,
   closeCircle: CloseCircleIcon,
+  closeCircle2: CloseCircle2Icon,
   cloudAdd: CloudAddIcon,
   collapse: CollapseIcon,
   comment: CommentIcon,
@@ -234,11 +253,14 @@ export const icon = {
   crossCircle: CrossCircle,
   cyclicArrow: CyclicArrow,
   deactivateUser: DeactivateUser,
+  deel: DeelIcon,
+  deel2: DeelIcon2,
   delete: DeleteIcon,
   deleteCross: DeleteCrossIcon,
   doc: DocIcon,
   document: DocumentIcon,
   documentUpload: DocumentUpload,
+  documentView: DocumentViewIcon,
   docx: DocIcon,
   dotsHorizontal: dotsHorizontalIcon,
   dotsVertical: DotsVerticalIcon,
@@ -250,6 +272,7 @@ export const icon = {
   email: EmailIcon,
   emojiHappy: EmojiHappy,
   'employee-tag': EmployeeTagIcon,
+  exclamation: ExclamationSVG,
   expand: ExpandIcon,
   explore: ExploreIcon,
   export: ExportIcon,
@@ -258,6 +281,7 @@ export const icon = {
   feed: FeedIcon,
   femaleIcon: FemaleIcon,
   file: FileIcon,
+  fileUpload: FileUploadIcon,
   filter: FilterIcon,
   filterLinear: FilterLinear,
   flashIcon: FlashIcon,
@@ -265,6 +289,7 @@ export const icon = {
   folder: FolderIcon,
   folderConnection: FolderConnectionIcon,
   folderOpen: FolderOpen,
+  folderUpload: FolderUploadIcon,
   forbidden: Forbidden,
   form: FormIcon,
   fullScreen: FullScreenIcon,
@@ -276,6 +301,7 @@ export const icon = {
   global: Global,
   'global-edit': GlobalEditIcon,
   google: GoogleIcon,
+  grid: GridIcon,
   group: GroupIcon,
   home: HomeIcon,
   iconLinear: IconLinear,
@@ -287,6 +313,7 @@ export const icon = {
   insightful: Insightful,
   insightfulReaction: InsightfulReaction,
   integration: Integration,
+  launch: LaunchIcon,
   launcher: LauncherIcon,
   learningCenter: LearningCenterIcon,
   lifeBuoy: LifeBuoyIcon,
@@ -296,6 +323,7 @@ export const icon = {
   linearLeftArrow: LinearLeftArrow,
   linearRightArrow: LinearRightArrow,
   link: Link,
+  list: ListIcon,
   location: LocationIcon,
   lock: LockIcon,
   'lock-open': LockOpenIcon,
@@ -318,10 +346,11 @@ export const icon = {
   more: MoreIcon,
   mute: MuteIcon,
   news: NewsIcon,
+  noResultFound: NoResultFoundIcon,
   noteFavourite: NoteFavouriteIcon,
   notification: NotificationIcon,
   notification2: Notification2Icon,
-  orangeHashtag: OrangeHashtagIcon,
+  hashtag: HashtagIcon,
   outOfOffice: OutOfOfficeIcon,
   pause: PauseIcon,
   pdf: PdfIcon,
@@ -338,11 +367,14 @@ export const icon = {
   reactivateUser: ReactivateUser,
   redo: Redo,
   refresh: RefreshIcon,
+  refreshCircle: RefreshCircleIcon,
   reorder: Reorder,
   reply: Reply,
   repost: Repost,
+  restInPeace: RestInPeaceIcon,
   rotateLeft: RotateLeft,
   search: Search,
+  search2: Search2Icon,
   security: Security,
   seekForward: SeekForwardIcon,
   send: Send,
@@ -358,30 +390,30 @@ export const icon = {
   support: Support,
   supportReaction: SupportReaction,
   tag: Tag,
+  team: TeamIcon,
   teacher: TeacherIcon,
   threeDots: ThreeDots,
   tickCircle: TickCircleIcon,
-  trash: Trash,
   training: TrainingIcon,
+  trash: Trash,
+  upload: UploadIcon,
   'user-tag': UserTagIcon,
   userAdmin: UserAdminIcon,
   userManagement: UserManagement,
   userRemove: UserRemove,
   users: UsersIcon,
+  userTick: UserTickIcon,
   video: VideoIcon,
   videoFile: VideoFileIcon,
   videoPlay: VideoPlayIcon,
   videoSlash: VideoSlash,
   videoSquare: VideoSquareIcon,
+  vuesax: VuesaxIcon,
   warningCircle: WarningCircleIcon,
   website: WebsiteIcon,
   xls: XlsIcon,
   xlsx: XlsIcon,
   zoomIn: ZoomInIcon,
   zoomOut: ZoomOutIcon,
-  documentView: DocumentViewIcon,
-  deel: DeelIcon,
-  deel2: DeelIcon2,
-  restInPeace: RestInPeaceIcon,
-  exclamation: ExclamationSVG,
+  warning: WarningIcon,
 };

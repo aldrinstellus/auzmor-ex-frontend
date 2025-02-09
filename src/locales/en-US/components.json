@@ -37,10 +37,28 @@
     "audience": "Audience"
   },
   "GlobalSearch": {
-    "searchAriaLabel": "search",
-    "searchPlaceholder": "Search name, channel, team, document etc.,",
+    "searchAriaLabel": "Search",
+    "searchPlaceholder": "Search trainings, people, teams, channels, documents, apps",
+    "searchPlaceholderLearner": "Search trainings, channels, documents, apps",
     "noResultsHint": "We're a little lost. Can you give us a hint?",
-    "connectStorageHint": "Please connect storage documents to search within first."
+    "connectStorageHint": "Connect your storage to enable document search.",
+    "noDataFoundHeader": "No results found for \"<searchQuery />\"",
+    "noDataFoundMessageLine1": "Sorry, we can't find what you're looking for.",
+    "noDataFoundMessageLine2": "Please try using a different keyword.",
+    "modules": {
+      "app": "Apps",
+      "people": "People",
+      "team": "Teams",
+      "channel": "Channels",
+      "document": "Documents",
+      "event": "Events",
+      "course": "Courses",
+      "path": "Paths",
+      "recent": "Recent Searches",
+      "forum": "Forums",
+      "task": "Tasks",
+      "mentorship": "Mentorship"
+    }
   },
   "SubscriptionBanner": {
     "productNameLearn": "Auzmor Learn",
@@ -149,6 +167,8 @@
     "updatedDate": "Updated Date",
     "sortBy": "Sort by",
     "clearSort": "Clear sort",
+    "dateModified": "Date modified",
+    "size": "Size",
     "sort": "sort"
   },
   "Reply": {

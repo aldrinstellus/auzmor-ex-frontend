@@ -22,6 +22,7 @@ import {
 import ChannelModal from 'pages/Channels/components/ChannelModal';
 import useModal from 'hooks/useModal';
 import ChannelArchiveModal from 'pages/Channels/components/ChannelArchiveModal';
+import ChannelLeaveModal from 'pages/Channels/components/ChannelLeaveModal';
 import Tabs, { ITab } from 'components/Tabs';
 import { useParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
@@ -71,6 +72,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     useModal();
   const [isCoverImg, setIsCoverImage] = useState(true);
   const [isArchiveModalOpen, openArchiveModal, closeArchiveModal] = useModal();
+  const [isLeaveModalOpen, openLeaveModal, closeLeaveModal] = useModal();
   const navigate = useNavigate();
 
   const { isChannelOwner, isChannelJoined } = useChannelRole(channelId);
@@ -180,19 +182,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['channel']);
-    },
-  });
-
-  const leaveChannel = getApi(ApiEnum.LeaveChannel);
-  const leaveChannelMutation = useMutation({
-    mutationKey: ['leave-channel-member'],
-    mutationFn: (channelId: string) => leaveChannel(channelId),
-    onError: (error: any) => {
-      console.log('API call resulted in error: ', error);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['channel']);
-      navigate('/channels');
     },
   });
 
@@ -368,9 +357,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       icon: 'logout',
       label: t('leaveChannel'),
       stroke: twConfig.theme.colors.neutral['900'],
-      onClick: () => {
-        leaveChannelMutation.mutate(channelId);
-      },
+      onClick: openLeaveModal,
       dataTestId: '',
       hidden: !isChannelJoined,
     },
@@ -557,7 +544,9 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               <Button
                 label={isLxp ? t('join') : t('joinAsAdmin.label')}
                 dataTestId="invite-your-self-channel-cta"
-                className={isLxp ? '' : 'min-w-max !bg-transparent text-white'}
+                className={
+                  isLxp ? 'text-sm' : 'min-w-max !bg-transparent text-white'
+                }
                 variant={isLxp ? Variant.Primary : Variant.Secondary}
                 loading={inviteYourselfMutation.isLoading}
                 onClick={() => inviteYourselfMutation.mutate()}
@@ -567,7 +556,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               <Button
                 label={t('join')}
                 dataTestId="join-channel-cta"
-                className="min-w-max "
+                className="min-w-max text-sm"
                 loading={joinChannelMutation.isLoading}
                 onClick={() => joinChannelMutation.mutate(channelData.id)}
               />
@@ -576,6 +565,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               <Button
                 label={tc('privateChannel.joinRequestCTA')}
                 variant={Variant.Primary}
+                className="text-sm"
                 onClick={() => joinChannelMutation.mutate(channelData.id)}
                 loading={joinChannelMutation.isLoading}
                 data-testid={'channel-request-to-join'}
@@ -585,6 +575,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
               <Button
                 label={tc('privateChannel.withdrawRequestCTA')}
                 variant={Variant.Danger}
+                className="text-sm"
                 onClick={() =>
                   withdrawJoinChannelRequest.mutate(
                     channelData.joinRequest!.id!,
@@ -699,6 +690,13 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         <ChannelArchiveModal
           isOpen={isArchiveModalOpen}
           closeModal={closeArchiveModal}
+          channelId={channelData.id}
+        />
+      )}
+      {isLeaveModalOpen && (
+        <ChannelLeaveModal
+          isOpen={isLeaveModalOpen}
+          closeModal={closeLeaveModal}
           channelId={channelData.id}
         />
       )}

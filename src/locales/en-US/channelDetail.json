@@ -116,6 +116,101 @@
       "rejectSuccess": "Request to join channel rejected successfully"
     }
   },
+  "documentTab": {
+    "title": "Documents",
+    "reAuthorizeForAdmin": "Your SharePoint credentials have expired. Please log in again to continue.",
+    "reAuthorizeCTA": "Reauthorize",
+    "reAuthorizeForOthersFirstHalf": "There is a sync issue with SharePoint. Please contact ",
+    "reAuthorizeForOthersSecondHalf": " or the support team to resolve this.",
+    "addNewPopupLabelCTA": "New",
+    "addNewPopupBanner": "Add New",
+    "uploadNewPopupBanner": "Upload New",
+    "folder": "Folder",
+    "file": "File",
+    "recentlyAdded": "Recently Added",
+    "lastUpdated": "Last Updated",
+    "lastUpdatedDate": "Last Updated: {{date}}",
+    "addedOn": "Added {{date}}",
+    "updated": "Updated {{date}}",
+    "updatedOn": "Updated on {{date}}",
+    "updatedBy": "by {{name}}",
+    "docSearchPlaceholder": "Search documents",
+    "allItemTitle": "All Files",
+    "titleOnlyCTA": "Title Only",
+    "list": "List",
+    "grid": "Grid",
+    "activateFolder": "Connect to SharePoint",
+    "activateFolderDescription": "Connect your preferred SharePoint site to create, share, and collaborate on files and folders in this channel.",
+    "selectExistingCTA": "Select Folders",
+    "enableIntegration": "Enable SharePoint to View Files",
+    "enableIntegrationDescriptionLine1": "Connect SharePoint to access and manage files directly from this platform.",
+    "enableIntegrationDescriptionLine2": "View, upload, and organize documents seamlessly within your workspace.",
+    "sharepointCTA": "Connect SharePoint",
+    "selectBaseSite": "Select SharePoint Site",
+    "searchSitePlaceholder": "Search a SharePoint site",
+    "selectSiteCTA": "Select Site",
+    "selectBaseDrive": "Select Drive",
+    "searchDrivePlaceholder": "Search a SharePoint drive",
+    "selectDriveCTA": "Select Drive",
+    "selectBaseFolder": "Select Folders",
+    "searchFolderPlaceholder": "Search SharePoint folders",
+    "selectFolderCTA": "Select Folders",
+    "nameColumn": "File Name ({{totalRows}})",
+    "createdAt": "Created At",
+    "addFolderTitle": "Add New Folder",
+    "folderNameInputLabel": "Folder Name",
+    "folderNameInputPlaceholder": "Enter folder name",
+    "emptyFolderNameError": "Folder name cannot be empty.",
+    "charLimitFolderNameError": "Folder name cannot exceed {{limit}} characters.",
+    "rename": "Rename",
+    "download": "Download",
+    "owner": "Owner",
+    "location": "Location",
+    "renameInputPlaceholder": "Enter new name",
+    "emptyRenameError": "Name cannot be empty.",
+    "charLimitRenameError": "Name cannot exceed {{limit}} characters.",
+    "deleteBoxTitle": "Delete File?",
+    "deleteDescription": "Are you sure you want to delete this? This action cannot be undone.",
+    "createFolder": {
+      "success": "New folder added successfully.",
+      "failure": "Folder creation failed."
+    },
+    "deleteFile": {
+      "success": "File “{{name}}” deleted.",
+      "failure": "Failed to delete {{name}}."
+    },
+    "downloadFile": {
+      "success": "File downloaded successfully.",
+      "failure": "Failed to download {{name}}."
+    },
+    "renameFile": {
+      "success": "File renamed successfully.",
+      "failure": "File rename failed."
+    },
+    "renameFolder": {
+      "success": "Folder renamed successfully.",
+      "failure": "Folder rename failed."
+    },
+    "connectFolder": {
+      "success": "Connected successfully",
+      "failure": "Failed to connect, Try again!"
+    },
+    "accessDenied": "Access Denied",
+    "backToDocuments": "Back to Documents",
+    "noDataFound": {
+      "docListing": "No documents found. Check back later or try another search.",
+      "site": "No sites available. Check your permissions or refresh the list.",
+      "drive": "No drives available. Check your permissions or refresh the list.",
+      "folder": "No folders available. Check your permissions or refresh the list.",
+      "noConnection": "No documents available in this channel.",
+      "accessDeniedSite": "You don’t have permission to access this site. Please choose a different site or try again.",
+      "failure": "Something went wrong, Please try again later."
+    },
+    "listDirectories": {
+      "failure": "Failed to load. Please check your connection and try again"
+    },
+    "sharepoint": "Sharepoint"
+  },
   "memberTab": {
     "title": "Members",
     "addMemberCTA": "Add Member",
@@ -164,7 +259,7 @@
   },
   "setting": {
     "basicSetting": "Basic Settings",
-    "persnolDetails": "Personal Details",
+    "privacySettings": "Privacy settings",
     "category": {
       "label": "Category",
       "channelCategoryPlaceholder": "Start typing for suggestions."
@@ -187,6 +282,34 @@
       "canPostDescription": "Anyone can post and comment.",
       "canCommentDescription": "Anyone can post and comment, but announcements are restricted to admins.",
       "canAnnouncementDescription": "Anyone can comment, but announcements are restricted to admins."
+    },
+    "integrationSetting": {
+      "title": "Integration Settings",
+      "activated": "Activated",
+      "lastSync": "Last sync: {{date}}",
+      "connect": "Connect",
+      "disConnect": "Disconnect",
+      "reSync": "Re-sync"
+    },
+    "documentSetting": {
+      "title": "Document Settings",
+      "docVisibilityRow": {
+        "title": "Documents Section Visibility"
+      },
+      "uploadControlRow": {
+        "title": "Who Can Upload Documents",
+        "anyone": "Anyone",
+        "anyoneDescription": "Anyone in the channel can upload documents",
+        "channelAdmin": "Channel Admins",
+        "channelAdminDescription": "Only Channel Admins can upload documents"
+      },
+      "DocAccessLevelRow": {
+        "title": "Who Can Download Documents",
+        "anyone": "Anyone",
+        "anyoneDescription": "Anyone in the channel can download documents",
+        "channelAdmin": "Channel Admins",
+        "channelAdminDescription": "Only Channel Admins can download documents"
+      }
     }
   }
 }
