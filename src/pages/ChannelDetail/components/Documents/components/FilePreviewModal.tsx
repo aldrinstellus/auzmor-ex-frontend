@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import Modal from 'components/Modal';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
@@ -13,6 +13,8 @@ import { useTranslation } from 'react-i18next';
 import { Doc } from 'interfaces';
 import Skeleton from 'react-loading-skeleton';
 import { useMutation } from '@tanstack/react-query';
+import { getIconFromMime } from './Doc';
+import NoDataFound from 'components/NoDataFound';
 
 interface IFilePreviewProps {
   fileId: string;
@@ -34,6 +36,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
   });
   const { getApi } = usePermissions();
   const { channelId } = useParams();
+  const [isIframeLoading, setIsIframeLoading] = React.useState(true);
 
   const useChannelDocById = getApi(ApiEnum.UseChannelDocById);
   const { data: fileData, isLoading: fileLoading } = useChannelDocById({
@@ -43,9 +46,13 @@ const FilePreview: FC<IFilePreviewProps> = ({
   });
 
   const useChannelFilePreview = getApi(ApiEnum.GetChannelFilePreview);
-  const { data, isLoading: previewLoading } = useChannelFilePreview({
+  const {
+    data,
+    isLoading: previewLoading,
+    isError,
+  } = useChannelFilePreview({
     channelId,
-    fileId: fileId,
+    fileId,
   });
 
   const downloadChannelFile = getApi(ApiEnum.GetChannelDocDownloadUrl);
@@ -77,10 +84,29 @@ const FilePreview: FC<IFilePreviewProps> = ({
     },
   });
 
+  useEffect(() => {
+    const elem = document.getElementById('videoplayer');
+    if (elem) {
+      elem?.setAttribute('oncontextmenu', 'return false;');
+    }
+  });
+
   const isLoading = fileLoading || previewLoading;
   const isDownloading = downloadChannelFileMutation.isLoading;
 
   const file = fileData?.data?.result?.data as Doc;
+  const previewUrl = data?.data?.result?.previewURL;
+  const isImage = file?.mimeType?.startsWith('image/');
+  const isSupportedVideo = ['video/mp4', 'video/webm'].includes(file?.mimeType);
+  const allowIframePreview =
+    isImage ||
+    ['doc', 'pdf', 'ppt', 'xls'].includes(getIconFromMime(file?.mimeType));
+
+  const showSpinner = isLoading;
+  const showNoPreview =
+    isError || (!isLoading && !isSupportedVideo && !allowIframePreview);
+  const showVideo = !isLoading && !isError && isSupportedVideo;
+  const showIframe = !isLoading && !isError && allowIframePreview;
 
   return (
     <Modal
@@ -129,19 +155,45 @@ const FilePreview: FC<IFilePreviewProps> = ({
       </div>
       <Divider />
       <div className="flex items-center justify-center w-full h-full">
-        {isLoading ? (
-          <Spinner className="!h-24 !w-24" />
-        ) : (
-          <iframe
-            src={data?.data?.result?.previewURL}
-            className="w-full h-full mt-2"
-            allowFullScreen
-            allow="all"
-            name="iframe_a"
-            loading={isLoading}
-            sandbox="allow-scripts allow-same-origin allow-popups allow-forms" // downloads are not allowed
+        {showSpinner ? <Spinner className="!h-24 !w-24" /> : null}
+        {showNoPreview ? (
+          <NoDataFound
+            illustration="noPreviewAvailable"
+            labelHeader={
+              <span className="text-sm font-semibold">
+                {t('noPreviewAvailable')}
+              </span>
+            }
+            hideClearBtn
           />
-        )}
+        ) : null}
+        {showVideo ? (
+          <div className="flex w-full h-full justify-center">
+            <video
+              id="videoplayer"
+              src={previewUrl}
+              controls
+              controlsList="nodownload"
+              className="object-contain h-[calc(100%-72px)] w-full"
+            />
+          </div>
+        ) : null}
+        {showIframe ? (
+          <div className="w-full h-full relative">
+            {isIframeLoading && (
+              <Spinner className="absolute !h-24 !w-24 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+            )}
+            <iframe
+              src={previewUrl}
+              className="w-full h-[calc(100%-8px)] mt-2"
+              allowFullScreen
+              allow="all"
+              name="iframe_a"
+              onLoad={() => setIsIframeLoading(false)}
+              sandbox="allow-scripts allow-same-origin allow-forms" // downloads are not allowed
+            />
+          </div>
+        ) : null}
       </div>
     </Modal>
   );
