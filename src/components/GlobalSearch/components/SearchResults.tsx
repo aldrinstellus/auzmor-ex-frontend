@@ -205,7 +205,15 @@ const SearchResults: FC<ISearchResultsProps> = ({
       await clickSearchResultMutation.mutateAsync({
         sourceId: entity.id,
         sourceType: getSourceType(entityType),
-        additionalInfo: { ...entity },
+        additionalInfo: {
+          channel_id: entity.channelId,
+          name: entity.name,
+          path_with_id: entity.pathWithId,
+          external_created_at: entity.externalCreatedAt,
+          created_at: entity.createdAt,
+          is_folder: entity.isFolder,
+          mime_type: entity.mimeType,
+        },
       });
     } else {
       await clickSearchResultMutation.mutateAsync({
@@ -381,7 +389,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
               <div className="flex w-[3px] h-[3px] bg-neutral-500 rounded-full" />
               <div className="text-xs text-neutral-500">
                 {`Created on ${getFormattedDate(
-                  documentData.createdAt,
+                  documentData.externalCreatedAt || documentData.createdAt,
                   user?.timezone,
                 )}`}
               </div>
