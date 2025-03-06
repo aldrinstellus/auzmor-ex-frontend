@@ -56,14 +56,20 @@ const DocSearch: FC<IDocSearchProps> = ({
     }
   }, []);
 
-  if (!!inputRef?.current) {
-    inputRef!.current!.onkeyup = (e) => {
-      if (e.code === 'Enter') {
-        inputRef.current!.blur();
-        onEnter(documentSearchDebounceValue);
-      }
-    };
-  }
+  useEffect(() => {
+    if (inputRef.current) {
+      const handleKeyUp = (e: KeyboardEvent) => {
+        if (e.code === 'Enter') {
+          inputRef.current!.blur();
+          onEnter(documentSearch);
+        }
+      };
+      inputRef.current.addEventListener('keyup', handleKeyUp);
+      return () => {
+        inputRef.current?.removeEventListener('keyup', handleKeyUp);
+      };
+    }
+  }, [documentSearch, onEnter]);
 
   const style = clsx({
     'absolute flex flex-col gap-[15px] w-full px-3 py-4 bg-white overflow-auto top-full mt-2 rounded-7xl border border-[#E7EDF6] transition-all duration-100 opacity-0 max-h-[212px] z-40 hidden':

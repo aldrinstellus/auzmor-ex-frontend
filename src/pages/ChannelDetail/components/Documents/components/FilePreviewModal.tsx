@@ -15,6 +15,7 @@ import Skeleton from 'react-loading-skeleton';
 import { useMutation } from '@tanstack/react-query';
 import { getIconFromMime } from './Doc';
 import NoDataFound from 'components/NoDataFound';
+import { getExtension } from '../../utils';
 
 interface IFilePreviewProps {
   fileId: string;
@@ -98,8 +99,10 @@ const FilePreview: FC<IFilePreviewProps> = ({
   const previewUrl = data?.data?.result?.previewURL;
   const isImage = file?.mimeType?.startsWith('image/');
   const isSupportedVideo = ['video/mp4', 'video/webm'].includes(file?.mimeType);
+  const fileExtension = getExtension(file?.name || '');
   const allowIframePreview =
     isImage ||
+    ['.html', '.htm', '.md'].includes(fileExtension) ||
     ['doc', 'pdf', 'ppt', 'xls'].includes(getIconFromMime(file?.mimeType));
 
   const showSpinner = isLoading;
@@ -190,7 +193,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
               allow="all"
               name="iframe_a"
               onLoad={() => setIsIframeLoading(false)}
-              sandbox="allow-scripts allow-same-origin allow-forms" // downloads are not allowed
+              sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-popups allow-popups-to-escape-sandbox" // downloads and modals are not allowed
             />
           </div>
         ) : null}
