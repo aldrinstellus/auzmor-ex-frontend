@@ -82,9 +82,9 @@ const RecentlyAddedEntities: FC<IRecentlyAddedEntitiesProps> = ({
         folderId: items.length < 3 ? undefined : items[items.length - 1].id,
         sort: 'external_created_at',
         createdAfter: getUtcMiliseconds(
-          moment().subtract(7, 'days').startOf('D').valueOf(),
+          moment().subtract(3, 'days').startOf('D').valueOf(),
         ),
-        limit: 5,
+        limit: 4,
       },
     },
     options: {
@@ -127,7 +127,7 @@ const RecentlyAddedEntities: FC<IRecentlyAddedEntitiesProps> = ({
       <div className="flex gap-6">
         <DataGrid
           {...dataGridProps}
-          flatData={dataGridProps.flatData.slice(0, 5).map((doc: any) => ({
+          flatData={dataGridProps.flatData.slice(0, 4).map((doc: any) => ({
             ...doc,
             pathWithId:
               items.length === 1

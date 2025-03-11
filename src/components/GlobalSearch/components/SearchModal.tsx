@@ -40,7 +40,7 @@ const SearchModal: FC<ISearchModalProps> = ({
   });
 
   const globalSearch = watch('globalSearch');
-  const debouncedSearchQuery = useDebounce(globalSearch, 200);
+  const debouncedSearchQuery = useDebounce(globalSearch, 500);
 
   const showRecentSearchResults = debouncedSearchQuery?.length === 0;
 
