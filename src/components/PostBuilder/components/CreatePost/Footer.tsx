@@ -88,7 +88,7 @@ const Footer: FC<IFooterProps> = ({
             color={isMediaDisabled ? 'text-neutral-200' : 'text-neutral-900'}
             size={14}
             disabled={isMediaDisabled}
-            dataTestId="feed-createpost-media"
+            dataTestId="feed-createpost-media feed-createpost-uploadedmedia"
             tabIndex={isMediaDisabled ? -1 : 0}
           />
         ),

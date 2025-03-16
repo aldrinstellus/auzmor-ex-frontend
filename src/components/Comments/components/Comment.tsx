@@ -197,7 +197,10 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
             />
           </div>
         ) : (
-          <div className="text-neutral-900 font-normal text-sm mt-2">
+          <div
+            className="text-neutral-900 font-normal text-sm mt-2"
+            data-testid="feed-post-comment"
+          >
             <RenderQuillContent data={comment} isComment />
           </div>
         )}

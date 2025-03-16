@@ -310,7 +310,7 @@ const ChannelModal: FC<IChannelModalProps> = ({
                   fetchQuery: useInfiniteCategories,
                   queryParams: { type: CategoryType.CHANNEL },
                   getFormattedData: formatCategory,
-                  dataTestId: `${dataTestId}-category-dropdown`,
+                  dataTestId: `${dataTestId}-category-dropdown channel-type-category`,
                   getPopupContainer: document.body,
                   error: errors.channelCategory?.message,
                   clearErrors,
