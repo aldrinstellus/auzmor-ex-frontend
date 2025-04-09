@@ -77,6 +77,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'feed',
           label: t('learn.feed'),
+          dataTestId: 'feed-menu',
           onClick: () => navigate('/user/feed'),
           show: true,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
@@ -88,6 +89,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'channels',
           label: t('learn.channels'),
+          dataTestId: 'channels-menu',
           onClick: () => navigate('/user/channels'),
           show: true,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
@@ -99,6 +101,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'forums',
           label: t('learn.forums'),
+          dataTestId: 'forums-menu',
           onClick: () =>
             window.location.assign(`${getLearnUrl('/user/forums')}`),
           show: !!user?.organization?.setting?.enableSocialLearning,
@@ -128,6 +131,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'mentorship',
           label: t('learn.mentorship'),
+          dataTestId: 'mentorship-menu',
           onClick: () =>
             window.location.assign(
               `${getLearnUrl('/user/mentorship/overview')}`,
@@ -140,6 +144,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'tasks',
           label: t('learn.tasks'),
+          dataTestId: 'tasks-menu',
           onClick: () =>
             window.location.assign(`${getLearnUrl('/user/tasks')}`),
           show: !!user?.organization?.setting?.enablechecklist,
