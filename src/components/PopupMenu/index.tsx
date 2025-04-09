@@ -2,6 +2,7 @@ import {
   ElementType,
   FC,
   Fragment,
+  MouseEventHandler,
   ReactElement,
   ReactNode,
   cloneElement,
@@ -38,6 +39,7 @@ export interface IPopupMenuProps {
   disabled?: boolean;
   controlled?: boolean;
   isOpen?: boolean;
+  onClick?: MouseEventHandler<HTMLElement>;
 }
 
 const PopupMenu: FC<IPopupMenuProps> = ({
@@ -49,6 +51,7 @@ const PopupMenu: FC<IPopupMenuProps> = ({
   disabled = false,
   controlled,
   isOpen,
+  onClick,
 }) => {
   useEffect(() => {
     const triggers = document.getElementsByClassName('menu-trigger');
@@ -64,7 +67,7 @@ const PopupMenu: FC<IPopupMenuProps> = ({
         as="menu"
         disabled={disabled}
         className={'menu-trigger'}
-        onClick={(e) => e.stopPropagation()}
+        onClick={onClick}
       >
         {triggerNode}
       </Menu.Button>

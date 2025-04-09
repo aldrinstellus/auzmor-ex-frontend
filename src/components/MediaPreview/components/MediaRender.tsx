@@ -37,7 +37,7 @@ const MediaRender: FC<IMediaRenderProps> = ({
     key: data?.name,
     alt: data?.name,
     blurhash: data?.blurhash,
-    'data-testid': 'feed-createpost-uploadedmedia',
+    dataTestId: 'feed-createpost-uploadedmedia',
   };
 
   return (

@@ -78,6 +78,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'feed',
           label: t('learn.feed'),
+          dataTestId: 'feed-menu',
           onClick: () => navigate('/feed'),
           show: true,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
@@ -88,6 +89,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'channels',
           label: t('learn.channels'),
+          dataTestId: 'channels-menu',
           onClick: () => navigate('/channels'),
           show: true,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
@@ -98,6 +100,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'forums',
           label: t('learn.forums'),
+          dataTestId: 'forums-menu',
           onClick: () => window.location.assign(`${getLearnUrl('/forums')}`),
           show: !!user?.organization?.setting?.enableSocialLearning,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
@@ -115,6 +118,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'courses',
           label: t('learn.courses'),
+          dataTestId: 'courses-menu',
           onClick: () => window.location.assign(`${getLearnUrl('/courses')}`),
           show: true,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
@@ -124,6 +128,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'paths',
           label: t('learn.paths'),
+          dataTestId: 'paths-menu',
           onClick: () => window.location.assign(`${getLearnUrl('/paths')}`),
           show: true,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
@@ -133,6 +138,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'events',
           label: t('learn.events'),
+          dataTestId: 'events-menu',
           onClick: () => window.location.assign(`${getLearnUrl('/events')}`),
           show: true,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
@@ -142,6 +148,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'external',
           label: t('learn.external'),
+          dataTestId: 'external-menu',
           onClick: () =>
             window.location.assign(`${getLearnUrl('/external-trainings')}`),
           show: true,
@@ -160,6 +167,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'mentorship',
           label: t('learn.mentorship'),
+          dataTestId: 'mentorship-menu',
           onClick: () =>
             window.location.assign(`${getLearnUrl('/mentorship/admin')}`),
           show: !!user?.organization?.setting?.enableMentorship,
@@ -170,6 +178,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'tasks',
           label: t('learn.tasks'),
+          dataTestId: 'tasks-menu',
           onClick: () => window.location.assign(`${getLearnUrl('/tasks')}`),
           show: !!user?.organization?.setting?.enablechecklist,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
@@ -187,6 +196,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'people',
           label: t('learn.people'),
+          dataTestId: 'people-menu',
           onClick: () =>
             window.location.assign(
               `${getLearnUrl('/peoples?tab=individuals')}`,
@@ -199,6 +209,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'teams',
           label: t('learn.teams'),
+          dataTestId: 'teams-menu',
           onClick: () =>
             window.location.assign(`${getLearnUrl('/peoples?tab=teams')}`),
           show: true,
@@ -226,6 +237,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'insights',
           label: t('learn.insights'),
+          dataTestId: 'insights-menu',
           onClick: () => window.location.assign(`${getLearnUrl('/insights')}`),
           show: true,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
@@ -235,6 +247,7 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
         {
           id: 'reports',
           label: t('learn.reports'),
+          dataTestId: 'reports-menu',
           onClick: () => window.location.assign(`${getLearnUrl('/reports')}`),
           show: true,
           className: '!py-[11px] !px-3 hover:!bg-neutral-100',
