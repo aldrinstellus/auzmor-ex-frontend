@@ -17,7 +17,6 @@ import {
   LEARNING_PATH,
   TASK_CONFIG_ROLES,
   TASK_CREATION_SCOPE,
-  TASK_TYPE,
   TASK_CATEGORIES,
 } from './constants';
 import moment from 'moment';
@@ -45,38 +44,10 @@ const SOCIAL_GROUP = {
   DIRECT_MANAGERS: 'managers',
   ALL_VIEWERS: 'viewers',
 };
+
 export const getIconForAction = (actionType, target1Type) => {
   let iconName;
-
   switch (actionType) {
-    case NOTIFICATION_ACTION_TYPES.LxpAnnouncementReminderOnFeed:
-      iconName = 'AcknowledgeAnnouncementNotification';
-      break;
-    case NOTIFICATION_ACTION_TYPES.LxpPostSchedulePostPublish:
-      iconName = 'PostLiveNotification';
-      break;
-
-    case NOTIFICATION_ACTION_TYPES.LxpPostScheduled:
-    case NOTIFICATION_ACTION_TYPES.LxpPostSchedulePrePublish:
-      iconName = 'PostScheduleClockNotification';
-      break;
-    case NOTIFICATION_ACTION_TYPES.ShoutOut:
-      iconName = 'starShoutOut';
-      break;
-
-    case NOTIFICATION_ACTION_TYPES.LxpMentionOnFeed:
-      if (target1Type === 'POST' || target1Type === 'COMMENT') {
-        iconName = 'MentionInPost';
-      } else if (target1Type === 'COMMENT') {
-        iconName = 'CommentNotification';
-      }
-      break;
-    case NOTIFICATION_ACTION_TYPES.LxpCommentOnPost:
-      iconName = 'CommentNotification';
-      break;
-    case NOTIFICATION_ACTION_TYPES.LxpRepliedOnFeedComment:
-      iconName = 'CommentNotification';
-      break;
     case NOTIFICATION_ACTION_TYPES.ReportGenerated:
     case NOTIFICATION_ACTION_TYPES.CourseCompleted:
     case NOTIFICATION_ACTION_TYPES.LearningPathCompleted:
@@ -84,6 +55,7 @@ export const getIconForAction = (actionType, target1Type) => {
     case NOTIFICATION_ACTION_TYPES.EventComplete:
     case NOTIFICATION_ACTION_TYPES.ApprovedExternalCertificate:
     case NOTIFICATION_ACTION_TYPES.AddExternalCertificate:
+    case NOTIFICATION_ACTION_TYPES.EventCompletionConfirmed:
       iconName = 'completedNotification';
       break;
     case NOTIFICATION_ACTION_TYPES.PublicCourse:
@@ -96,11 +68,23 @@ export const getIconForAction = (actionType, target1Type) => {
     case NOTIFICATION_ACTION_TYPES.EventUpdated:
     case NOTIFICATION_ACTION_TYPES.EventTakeAssessment:
     case NOTIFICATION_ACTION_TYPES.LearningPathUpdated:
+    case NOTIFICATION_ACTION_TYPES.UpdateLearningPathAdmin:
     case NOTIFICATION_ACTION_TYPES.StartEventReminderInstructor:
     case NOTIFICATION_ACTION_TYPES.StartEventReminderLearner:
     case NOTIFICATION_ACTION_TYPES.RecurringEventReminderInstructor:
     case NOTIFICATION_ACTION_TYPES.RecurringEventReminderLearner:
     case NOTIFICATION_ACTION_TYPES.EventReminder:
+    case NOTIFICATION_ACTION_TYPES.TaskNotificationOnEdit:
+    case NOTIFICATION_ACTION_TYPES.LearnerCourseOverdue:
+    case NOTIFICATION_ACTION_TYPES.LearnerLearningPathOverdue:
+    case NOTIFICATION_ACTION_TYPES.CourseOverdueByXDays:
+    case NOTIFICATION_ACTION_TYPES.LearningPathOverdueByXDays:
+    case NOTIFICATION_ACTION_TYPES.OverdueReportees:
+    case NOTIFICATION_ACTION_TYPES.OverdueTeamMembers:
+    case NOTIFICATION_ACTION_TYPES.ApprovalReminderExternalCertificate:
+    case NOTIFICATION_ACTION_TYPES.SessionDateUpdated:
+    case NOTIFICATION_ACTION_TYPES.SessionUpdated:
+    case NOTIFICATION_ACTION_TYPES.EventSessionReminder:
       iconName = 'updateNotification';
       break;
     case NOTIFICATION_ACTION_TYPES.RemoveManager:
@@ -109,6 +93,7 @@ export const getIconForAction = (actionType, target1Type) => {
     case NOTIFICATION_ACTION_TYPES.BulkDeleteUser:
     case NOTIFICATION_ACTION_TYPES.BulkDeleteTeam:
     case NOTIFICATION_ACTION_TYPES.DeleteExternalCertificate:
+    case NOTIFICATION_ACTION_TYPES.TaskNotificationOnDelete:
       iconName = 'deleteNotification';
       break;
     case NOTIFICATION_ACTION_TYPES.ArchiveCourse:
@@ -118,6 +103,7 @@ export const getIconForAction = (actionType, target1Type) => {
       break;
     case NOTIFICATION_ACTION_TYPES.CoursePublished:
     case NOTIFICATION_ACTION_TYPES.EventPublished:
+    case NOTIFICATION_ACTION_TYPES.SessionCreated:
       iconName = 'publishNotification';
       break;
     case NOTIFICATION_ACTION_TYPES.CourseAssigned:
@@ -135,7 +121,9 @@ export const getIconForAction = (actionType, target1Type) => {
     case NOTIFICATION_ACTION_TYPES.AddManager:
     case NOTIFICATION_ACTION_TYPES.UserAdd:
     case NOTIFICATION_ACTION_TYPES.BulkAddManagerToTeam:
-    case NOTIFICATION_ACTION_TYPES.AddInstructor:
+    case NOTIFICATION_ACTION_TYPES.InstructorAddedtoEventSession:
+    case NOTIFICATION_ACTION_TYPES.LearnerEnrolledToEventSession:
+    case NOTIFICATION_ACTION_TYPES.LearnerEnrolledToAllEventSessions:
       iconName = 'enrollmentNotification';
       break;
     case NOTIFICATION_ACTION_TYPES.AssessmentFailed:
@@ -153,6 +141,7 @@ export const getIconForAction = (actionType, target1Type) => {
     case NOTIFICATION_ACTION_TYPES.NotLoggedForXDays:
     case NOTIFICATION_ACTION_TYPES.EventCancelled:
     case NOTIFICATION_ACTION_TYPES.LearnerCertificateExpired:
+    case NOTIFICATION_ACTION_TYPES.SessionCancelled:
       iconName = 'expiryNotification';
       break;
     case NOTIFICATION_ACTION_TYPES.LearnerCertificateExpirationRemainder:
@@ -195,9 +184,6 @@ export const getIconForAction = (actionType, target1Type) => {
     case NOTIFICATION_ACTION_TYPES.FeedbackSubmitReminder:
       iconName = 'feedbackPending';
       break;
-    case NOTIFICATION_ACTION_TYPES.ApprovalReminderExternalCertificate:
-      iconName = 'updateNotification';
-      break;
     case NOTIFICATION_ACTION_TYPES.TasksNotificationOnAssigned:
     case NOTIFICATION_ACTION_TYPES.TasksNotificationOnSubmission:
     case NOTIFICATION_ACTION_TYPES.TasksNotificationOnStatusChange:
@@ -206,9 +192,117 @@ export const getIconForAction = (actionType, target1Type) => {
     case NOTIFICATION_ACTION_TYPES.TasksNotificationChecklistCompleted:
     case NOTIFICATION_ACTION_TYPES.TasksNotificationAssigneeUpdateResponse:
     case NOTIFICATION_ACTION_TYPES.TasksNotificationReviewerUpdateReview:
+    case NOTIFICATION_ACTION_TYPES.TaskReassign:
       iconName = 'taskUpdateNotification';
       break;
+    case NOTIFICATION_ACTION_TYPES.ProgramEnrollment:
+      iconName = 'addMemberWithBg';
+      break;
+    case NOTIFICATION_ACTION_TYPES.NominationRequest:
+      iconName = 'groupMember';
+      break;
+    case NOTIFICATION_ACTION_TYPES.MentorCancelChangeRequest:
+    case NOTIFICATION_ACTION_TYPES.MentorChangeRejection:
+      iconName = 'rejected';
+      break;
+    case NOTIFICATION_ACTION_TYPES.MentorExitProgram:
+    case NOTIFICATION_ACTION_TYPES.MenteeExitProgram:
+    case NOTIFICATION_ACTION_TYPES.ProgramJoinRequestRejection:
+    case NOTIFICATION_ACTION_TYPES.AdminPairingRequestRejection:
+    case NOTIFICATION_ACTION_TYPES.MentorPairingRequestRejection:
+    case NOTIFICATION_ACTION_TYPES.NominationsRejected:
+      iconName = 'mentorshipRejectedRequest';
+      break;
+    case NOTIFICATION_ACTION_TYPES.MentorChangeRequestAdmin:
+    case NOTIFICATION_ACTION_TYPES.MentorReschedulesMeeting:
+      iconName = 'changeRequest';
+      break;
+    case NOTIFICATION_ACTION_TYPES.InviteMenteeToProgram:
+    case NOTIFICATION_ACTION_TYPES.InviteMentorToProgram:
+    case NOTIFICATION_ACTION_TYPES.PairingRequestApprovalMentor:
+      iconName = 'plusWithBg';
+      break;
+    case NOTIFICATION_ACTION_TYPES.MenteeJoinRequestApproval:
+    case NOTIFICATION_ACTION_TYPES.PairingRequestApprovalMentee:
+    case NOTIFICATION_ACTION_TYPES.NominationsApproval:
+    case NOTIFICATION_ACTION_TYPES.MenteesAssignment:
+    case NOTIFICATION_ACTION_TYPES.MentorJoinRequestApproval:
+    case NOTIFICATION_ACTION_TYPES.CreateGoalMentor:
+    case NOTIFICATION_ACTION_TYPES.MilestoneCompletion:
+    case NOTIFICATION_ACTION_TYPES.ProgramTrainingCompletion:
+    case NOTIFICATION_ACTION_TYPES.ProgramCompletion:
+    case NOTIFICATION_ACTION_TYPES.MentorChangeApprovedMentor:
+    case NOTIFICATION_ACTION_TYPES.UpdateAdminProgram:
+    case NOTIFICATION_ACTION_TYPES.ReporteeProgramEnrollment:
+    case NOTIFICATION_ACTION_TYPES.NominationApprovedReportingManager:
+    case NOTIFICATION_ACTION_TYPES.CreateGoalReportingManager:
+    case NOTIFICATION_ACTION_TYPES.TeamMemberProgramEnrollment:
+    case NOTIFICATION_ACTION_TYPES.ProgramCompletionTeamManager:
+    case NOTIFICATION_ACTION_TYPES.NominationApprovedStakeholder:
+      iconName = 'mentorshipRequest';
+      break;
+    case NOTIFICATION_ACTION_TYPES.MentorMeetingRequestApproval:
+    case NOTIFICATION_ACTION_TYPES.MentorFeedback:
+    case NOTIFICATION_ACTION_TYPES.PreProgramFeedbackMentor:
+    case NOTIFICATION_ACTION_TYPES.MenteeFeedback:
+    case NOTIFICATION_ACTION_TYPES.MentorFeedbackReportingManager:
+    case NOTIFICATION_ACTION_TYPES.PreProgramFeedbackReportingManager:
+    case NOTIFICATION_ACTION_TYPES.ReporteeProgramCompletion:
+    case NOTIFICATION_ACTION_TYPES.MentorFeedbackTeamMember:
+      iconName = 'greenThumbsUp';
+      break;
+    case NOTIFICATION_ACTION_TYPES.MentorSchedulesMeeting:
+    case NOTIFICATION_ACTION_TYPES.KickoffMeetingRequest:
+    case NOTIFICATION_ACTION_TYPES.MeetingScheduledReportingManager:
+    case NOTIFICATION_ACTION_TYPES.MeetingRescheduledReportingManager:
+    case NOTIFICATION_ACTION_TYPES.ReporteeMeetingRequestApproval:
+      iconName = 'calendarWithBg';
+      break;
+    case NOTIFICATION_ACTION_TYPES.MentorAddingMeetingNotes:
+    case NOTIFICATION_ACTION_TYPES.MenteeAddingMeetingNotes:
+    case NOTIFICATION_ACTION_TYPES.ReporteeAddingMeetingNotes:
+      iconName = 'mentorshipNote';
+      break;
+    case NOTIFICATION_ACTION_TYPES.MentorFeedbackPending:
+    case NOTIFICATION_ACTION_TYPES.MenteeFeedbackPending:
+    case NOTIFICATION_ACTION_TYPES.OverdueMilestone:
+      iconName = 'reminderThumbsUp';
+      break;
+    case NOTIFICATION_ACTION_TYPES.MentorUpdateProgramContent:
+      iconName = 'mentorshipUpdate';
+      break;
 
+    // LXP Notifications
+    case NOTIFICATION_ACTION_TYPES.LxpAnnouncementReminderOnFeed:
+      iconName = 'AcknowledgeAnnouncementNotification';
+      break;
+    case NOTIFICATION_ACTION_TYPES.LxpPostSchedulePostPublish:
+      iconName = 'PostLiveNotification';
+      break;
+
+    case NOTIFICATION_ACTION_TYPES.LxpPostScheduled:
+    case NOTIFICATION_ACTION_TYPES.LxpPostSchedulePrePublish:
+      iconName = 'PostScheduleClockNotification';
+      break;
+    case NOTIFICATION_ACTION_TYPES.ShoutOut:
+      iconName = 'starShoutOut';
+      break;
+
+    case NOTIFICATION_ACTION_TYPES.LxpMentionOnFeed:
+      if (target1Type) {
+        if (target1Type === 'POST' || target1Type === 'COMMENT') {
+          iconName = 'MentionInPost';
+        } else if (target1Type === 'COMMENT') {
+          iconName = 'CommentNotification';
+        }
+      }
+      break;
+    case NOTIFICATION_ACTION_TYPES.LxpCommentOnPost:
+      iconName = 'CommentNotification';
+      break;
+    case NOTIFICATION_ACTION_TYPES.LxpRepliedOnFeedComment:
+      iconName = 'CommentNotification';
+      break;
     default:
     // console.log('Invalid action type');
   }
@@ -235,7 +329,7 @@ const CERTIFICATE = 'certificate';
 
 const getSourceList = (sourceNamesList = undefined, count) => {
   if (sourceNamesList) {
-    const visibleItems = sourceNamesList?.slice(0, 2);
+    const visibleItems = sourceNamesList.slice(0, 2);
     const visibleLabel = visibleItems
       .map((item) => truncate(item, visibleItems.length === 2 ? 20 : 48))
       .join(', ');
@@ -252,7 +346,7 @@ const getSourceList = (sourceNamesList = undefined, count) => {
   return count;
 };
 
-const getSourceRoute = (isLearn, target1Type, targetId1) => {
+const getSourceRoute = (isLearn, target1Type, targetId1, additionalInfo) => {
   switch (target1Type) {
     case SOURCE.course.id:
       return isLearn
@@ -260,9 +354,18 @@ const getSourceRoute = (isLearn, target1Type, targetId1) => {
         : `/courses/${targetId1}`;
     case SOURCE.event.id:
       return isLearn
-        ? `/user/events/${targetId1}/detail`
-        : `/events/${targetId1}`;
+        ? `/user/events/${targetId1}/detail${
+            additionalInfo.eventSessionId
+              ? `?activeSessionId=${additionalInfo.eventSessionId}`
+              : ''
+          }`
+        : `/events/${targetId1}${
+            additionalInfo.eventSessionId
+              ? `?activeSessionId=${additionalInfo.eventSessionId}`
+              : ''
+          }`;
     case SOURCE.path.pathAPIKey:
+    case ELEARNING_TYPE.path:
       return isLearn
         ? `/user/paths/${targetId1}/detail`
         : `/paths/${targetId1}`;
@@ -279,9 +382,7 @@ const getSocialSourceRoute = (
   isLearn,
   target1Type,
   targetId1,
-  userId,
   additionalInfo,
-  actionType,
 ) => {
   switch (target1Type) {
     case 'COMMENT':
@@ -298,7 +399,6 @@ const getSocialSourceRoute = (
         targetComment ? `?commentId=${targetComment.entityId}` : ''
       }`;
       return url;
-
     case 'Poll':
       if (additionalInfo && additionalInfo.forum && additionalInfo.post) {
         return `${isLearn ? '/user' : ''}/forums/${additionalInfo.forum.id}/${
@@ -340,11 +440,12 @@ const getTasksRoute = (isLearn, target1Type, targetId1, additionalInfo) => {
     parent,
   } = additionalInfo || {};
 
-  const taskId = target1Type === TASK_TYPE.subtask ? parent.id : targetId1;
+  const taskId =
+    target1Type === TASK_CATEGORIES.subtask ? parent.id : targetId1;
 
   const urlPrefix = isLearn ? '/user' : '';
   const urlPostfix =
-    target1Type === TASK_TYPE.subtask ? `subtaskId=${targetId1}` : '';
+    target1Type === TASK_CATEGORIES.subtask ? `subtaskId=${targetId1}` : '';
 
   const roleUrl = Object.values(TASK_CONFIG_ROLES).includes(role)
     ? `/${role.toLowerCase()}`
@@ -366,182 +467,14 @@ export const getNotificationTitle = (
   target1Type,
   target2Type,
   additionalInfo,
+  actor,
 ) => {
   const { user } = useAuth();
   const { t } = useTranslation('learnNotifications');
   if (additionalInfo) {
     additionalInfo = convertKeysToCamelCase(additionalInfo);
   }
-  // 1.when mention on feed-post -> actoName mention on post
-  if (
-    NOTIFICATION_ACTION_TYPES.LxpMentionOnFeed === actionType &&
-    target1Type == 'COMMENT'
-  ) {
-    return (
-      <NotificationTitle
-        i18nKey="notifications.LxpuserMentionedOnComment"
-        values={{ actor: name }}
-        isLxpRoute
-        linkTo={getSocialSourceRoute(
-          isLearn,
-          target1Type,
-          targetId1,
-          userId,
-          additionalInfo,
-          actionType,
-        )}
-        components={[<NotificationText bold viewInline />]}
-      />
-    );
-  }
-  // 2.when mention on feed-comment -> actoName mention on comment
-  if (
-    NOTIFICATION_ACTION_TYPES.LxpMentionOnFeed === actionType &&
-    target1Type == 'POST'
-  ) {
-    return (
-      <NotificationTitle
-        i18nKey="notifications.LxpuserMentionedOnPost"
-        values={{ actor: name }}
-        isLxpRoute
-        linkTo={getSocialSourceRoute(
-          isLearn,
-          target1Type,
-          targetId1,
-          userId,
-          additionalInfo,
-        )}
-        components={[<NotificationText bold viewInline />]}
-      />
-    );
-  }
-  // 3.  Lxp user base shoutOut , Shout-Out Kate Wilson gave you a shout-out for your outstanding efforts!
-  if (NOTIFICATION_ACTION_TYPES.ShoutOut === actionType) {
-    return (
-      <NotificationTitle
-        i18nKey="notifications.LxpShoutOut"
-        values={{ actor: name }}
-        isLxpRoute
-        linkTo={getSocialSourceRoute(
-          isLearn,
-          target1Type,
-          targetId1,
-          userId,
-          additionalInfo,
-        )}
-        components={[<NotificationText bold viewInline />]}
-      />
-    );
-  }
 
-  // 4. system generated lxp Announcement Please acknowledge our recent announcement.
-  if (NOTIFICATION_ACTION_TYPES.LxpAnnouncementReminderOnFeed === actionType) {
-    return (
-      <NotificationTitle
-        i18nKey="notifications.LxpAnnouncementReminder"
-        isLxpRoute
-        linkTo={getSocialSourceRoute(
-          isLearn,
-          target1Type,
-          targetId1,
-          userId,
-          additionalInfo,
-        )}
-        components={[<NotificationText bold viewInline />]}
-      />
-    );
-  }
-  // 5.  Lxp user base shoutOut , Shout-Out Kate Wilson gave you a shout-out for your outstanding efforts!
-  if (NOTIFICATION_ACTION_TYPES.LxpCommentOnPost === actionType) {
-    return (
-      <NotificationTitle
-        i18nKey="notifications.LxpCommentOnPost"
-        values={{ actor: name }}
-        isLxpRoute
-        linkTo={getSocialSourceRoute(
-          isLearn,
-          target1Type,
-          targetId1,
-          userId,
-          additionalInfo,
-        )}
-        components={[<NotificationText bold viewInline />]}
-      />
-    );
-  }
-
-  // 6.  schedule post . your post is scheduled .
-  if (NOTIFICATION_ACTION_TYPES.LxpPostScheduled === actionType) {
-    return (
-      <NotificationTitle
-        i18nKey="notifications.LxpPostScheduled"
-        isLxpRoute
-        linkTo={getSocialSourceRoute(
-          isLearn,
-          target1Type,
-          targetId1,
-          userId,
-          additionalInfo,
-        )}
-        components={[<NotificationText bold viewInline />]}
-      />
-    );
-  }
-  // 7.  schedule pre Publish post . your post going live in 1 hour ...
-  if (NOTIFICATION_ACTION_TYPES.LxpPostSchedulePrePublish === actionType) {
-    return (
-      <NotificationTitle
-        i18nKey="notifications.LxpSchedulePrePublishPost"
-        isLxpRoute
-        linkTo={getSocialSourceRoute(
-          isLearn,
-          target1Type,
-          targetId1,
-          userId,
-          additionalInfo,
-        )}
-        components={[<NotificationText bold viewInline />]}
-      />
-    );
-  }
-  // 8. schedule post Publish post . your post is live now ...
-  if (NOTIFICATION_ACTION_TYPES.LxpPostSchedulePostPublish === actionType) {
-    return (
-      <NotificationTitle
-        i18nKey="notifications.LxpSchedulePostPublishPost"
-        isLxpRoute
-        linkTo={getSocialSourceRoute(
-          isLearn,
-          target1Type,
-          targetId1,
-          userId,
-          additionalInfo,
-        )}
-        components={[<NotificationText bold viewInline />]}
-      />
-    );
-  }
-  //9 . replied on comment
-  if (NOTIFICATION_ACTION_TYPES.LxpRepliedOnFeedComment === actionType) {
-    return (
-      <NotificationTitle
-        i18nKey="notifications.LxpRepliedOnComment"
-        values={{ actor: name }}
-        isLxpRoute
-        linkTo={getSocialSourceRoute(
-          isLearn,
-          target1Type,
-          targetId1,
-          userId,
-          additionalInfo,
-          actionType,
-        )}
-        components={[<NotificationText bold viewInline />]}
-      />
-    );
-  }
-
-  //leran notification===============================================================
   if (NOTIFICATION_ACTION_TYPES.ReportGenerated === actionType) {
     return (
       <NotificationTitle
@@ -573,6 +506,7 @@ export const getNotificationTitle = (
       />
     );
   }
+
   if (NOTIFICATION_ACTION_TYPES.UserDelete === actionType) {
     return (
       <NotificationTitle
@@ -666,11 +600,15 @@ export const getNotificationTitle = (
     );
   }
   if (NOTIFICATION_ACTION_TYPES.RecurringEventReminderLearner === actionType) {
+    const { eventSessionId = '' } = additionalInfo || {};
     return (
       <NotificationTitle
         i18nKey="notifications.recurringEventReminderForLearner"
         values={{ eventName: deletedTargetName, periods, count: periods }}
-        linkTo={isLearn && `/user/events/${targetId1}/detail`}
+        linkTo={
+          isLearn &&
+          `/user/events/${targetId1}/detail?activeSessionId=${eventSessionId}`
+        }
         components={[<NotificationText bold viewInline />]}
       />
     );
@@ -678,31 +616,43 @@ export const getNotificationTitle = (
   if (
     NOTIFICATION_ACTION_TYPES.RecurringEventReminderInstructor === actionType
   ) {
+    const { eventSessionId = '' } = additionalInfo || {};
     return (
       <NotificationTitle
         i18nKey="notifications.recurringEventReminderForInstructor"
         values={{ eventName: deletedTargetName, count: periods, periods }}
-        linkTo={isLearn && `/user/events/${targetId1}/detail`}
+        linkTo={
+          isLearn &&
+          `/user/events/${targetId1}/detail?activeSessionId=${eventSessionId}`
+        }
         components={[<NotificationText bold viewInline />]}
       />
     );
   }
   if (NOTIFICATION_ACTION_TYPES.StartEventReminderLearner === actionType) {
+    const { eventSessionId = '' } = additionalInfo || {};
     return (
       <NotificationTitle
         i18nKey="notifications.eventStartReminderForLearner"
         values={{ eventName: deletedTargetName }}
-        linkTo={isLearn && `/user/events/${targetId1}/detail`}
+        linkTo={
+          isLearn &&
+          `/user/events/${targetId1}/detail?activeSessionId=${eventSessionId}`
+        }
         components={[<NotificationText bold viewInline />]}
       />
     );
   }
   if (NOTIFICATION_ACTION_TYPES.StartEventReminderInstructor === actionType) {
+    const { eventSessionId = '' } = additionalInfo || {};
     return (
       <NotificationTitle
         i18nKey="notifications.eventStartReminderForInstructor"
         values={{ eventName: deletedTargetName }}
-        linkTo={isLearn && `/user/events/${targetId1}/detail`}
+        linkTo={
+          isLearn &&
+          `/user/events/${targetId1}/detail?activeSessionId=${eventSessionId}`
+        }
         components={[<NotificationText bold viewInline />]}
       />
     );
@@ -768,7 +718,14 @@ export const getNotificationTitle = (
     return (
       <NotificationTitle
         i18nKey="notifications.eventCompleted"
-        values={{ eventName: deletedTargetName, assigneeName: name }}
+        values={{
+          assigneeName: actor.display_name,
+          eventName: deletedTargetName,
+          sessionName:
+            additionalInfo && additionalInfo.eventSessionTitle
+              ? additionalInfo.eventSessionTitle
+              : '',
+        }}
         linkTo={
           isLearn ? `/user/events/${targetId1}/detail` : `/events/${targetId1}`
         }
@@ -873,6 +830,24 @@ export const getNotificationTitle = (
           isLearn
             ? '/not-found?event-error=eventCancelled'
             : `/events/${targetId1}`
+        }
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
+  if (NOTIFICATION_ACTION_TYPES.SessionCancelled === actionType) {
+    return (
+      <NotificationTitle
+        i18nKey="notifications.sessionCancelled"
+        values={{
+          eventName: deletedTargetName,
+          sessionName:
+            additionalInfo && additionalInfo.eventSessionTitle
+              ? additionalInfo.eventSessionTitle
+              : '',
+        }}
+        linkTo={
+          isLearn ? `/user/events/${targetId1}/detail` : `/events/${targetId1}`
         }
         components={[<NotificationText bold viewInline />]}
       />
@@ -1006,15 +981,7 @@ export const getNotificationTitle = (
   if (NOTIFICATION_ACTION_TYPES.EcommerceDisabled === actionType) {
     return <NotificationTitle i18nKey="notifications.disabledEcommerce" />;
   }
-  if (NOTIFICATION_ACTION_TYPES.LogisticsDisabled === actionType) {
-    return (
-      <NotificationTitle
-        i18nKey="notifications.disabledLogistics"
-        values={{ logistic: deletedTargetName }}
-        components={[<NotificationText bold viewInline />]}
-      />
-    );
-  }
+
   if (NOTIFICATION_ACTION_TYPES.EcommerceContentPurchase === actionType) {
     return (
       <NotificationTitle
@@ -1024,18 +991,18 @@ export const getNotificationTitle = (
       />
     );
   }
-  // if (NOTIFICATION_ACTION_TYPES.EcommerceContentAssigned === actionType) {
-  //   return (
-  //     <NotificationTitle
-  //       i18nKey="notifications.paidContentAssigned"
-  //       values={{
-  //         amount: getCurrency(currency, additionalInfo.orderTotalAmount),
-  //         orderId: additionalInfo.orderUniqueKey,
-  //       }}
-  //       components={[<NotificationText bold viewInline />]}
-  //     />
-  //   );
-  // }
+  if (NOTIFICATION_ACTION_TYPES.EcommerceContentAssigned === actionType) {
+    return (
+      <NotificationTitle
+        i18nKey="notifications.paidContentAssigned"
+        values={{
+          amount: getCurrency(currency, additionalInfo.orderTotalAmount),
+          orderId: additionalInfo.orderUniqueKey,
+        }}
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
   if (NOTIFICATION_ACTION_TYPES.EcommerceDiscountExpired === actionType) {
     return (
       <NotificationTitle
@@ -1070,13 +1037,15 @@ export const getNotificationTitle = (
       />
     );
   }
-  if (NOTIFICATION_ACTION_TYPES.AddInstructor === actionType) {
+  if (NOTIFICATION_ACTION_TYPES.InstructorAddedtoEventSession === actionType) {
     return (
       <NotificationTitle
         i18nKey="notifications.instructorAdded"
         values={{ eventName: deletedTargetName }}
         linkTo={
-          isLearn ? `/user/events/${targetId1}/detail` : `/events/${targetId1}`
+          isLearn
+            ? `/user/events/${additionalInfo.eventId}/detail?activeSessionIds=${targetId1}`
+            : `/events/${additionalInfo.eventId}?activeSessionIds=${targetId1}`
         }
         components={[<NotificationText bold viewInline />]}
       />
@@ -1137,6 +1106,18 @@ export const getNotificationTitle = (
       />
     );
   }
+  if (NOTIFICATION_ACTION_TYPES.UpdateSharedPathVersion === actionType) {
+    return (
+      <NotificationTitle
+        i18nKey="notifications.pathUpdatedVersion"
+        values={{ pathName: deletedTargetName }}
+        linkTo={
+          isLearn ? `/user/paths/${targetId1}/detail` : `/paths/${targetId1}`
+        }
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
   if (NOTIFICATION_ACTION_TYPES.EventUpdated === actionType) {
     return (
       <NotificationTitle
@@ -1144,6 +1125,29 @@ export const getNotificationTitle = (
         values={{ eventName: deletedTargetName }}
         linkTo={
           isLearn ? `/user/events/${targetId1}/detail` : `/events/${targetId1}`
+        }
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
+  if (
+    NOTIFICATION_ACTION_TYPES.SessionUpdated === actionType ||
+    NOTIFICATION_ACTION_TYPES.SessionDateUpdated === actionType
+  ) {
+    return (
+      <NotificationTitle
+        i18nKey="notifications.sessionUpdated"
+        values={{
+          eventName: deletedTargetName,
+          sessionName:
+            additionalInfo && additionalInfo.eventSessionTitle
+              ? additionalInfo.eventSessionTitle
+              : '',
+        }}
+        linkTo={
+          isLearn
+            ? `/user/events/${targetId1}/detail?activeSessionId=${additionalInfo.eventSessionId}`
+            : `/events/${targetId1}?activeSessionId=${additionalInfo.eventSessionId}`
         }
         components={[<NotificationText bold viewInline />]}
       />
@@ -1364,19 +1368,25 @@ export const getNotificationTitle = (
             ? isLearn
               ? `/user/courses/${targetId1}/detail`
               : `/courses/${targetId1}/evaluations`
-            : isLearn
+            : // FIXME:4.0:
+            isLearn
             ? `/user/events/${targetId1}/detail`
-            : `/events/${targetId1}/evaluations`
+            : `/event_sessions/${targetId1}/evaluations`
         }
         components={[<NotificationText bold viewInline />]}
       />
     );
   }
   if (NOTIFICATION_ACTION_TYPES.EvaluationCompleted === actionType) {
-    const { sourceType: source, attempt, assessmentId } = additionalInfo || {};
+    const {
+      sourceType: source,
+      attempt,
+      assessmentId,
+      eventId = '',
+    } = additionalInfo || {};
     const param =
       isLearn && assessmentId && attempt
-        ? `?assessmentId=${assessmentId}&attempt=${attempt}`
+        ? `?assessmentId=${assessmentId}&attempt=${attempt}&eventId=${eventId}`
         : '';
 
     return (
@@ -1388,8 +1398,9 @@ export const getNotificationTitle = (
             ? isLearn
               ? `/user/courses/${targetId1}/summary${param}`
               : `/courses/${targetId1}`
-            : isLearn
-            ? `/user/events/${targetId1}/summary${param}`
+            : // FIXME:4.0: maybe we need eventId to add in params
+            isLearn
+            ? `/user/event_sessions/${targetId1}/summary${param}`
             : `/events/${targetId1}`
         }
         components={[<NotificationText bold viewInline />]}
@@ -1400,7 +1411,82 @@ export const getNotificationTitle = (
     return (
       <NotificationTitle
         i18nKey="notifications.eventPublished"
-        values={{ eventName: deletedTargetName, creator: name }}
+        values={{ eventName: deletedTargetName, eventCreator: name }}
+        linkTo={
+          isLearn ? `/user/events/${targetId1}/detail` : `/events/${targetId1}`
+        }
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
+  if (NOTIFICATION_ACTION_TYPES.SessionCreated === actionType) {
+    return (
+      <NotificationTitle
+        i18nKey="notifications.sessionCreated"
+        values={{
+          eventName: deletedTargetName,
+          sessionName:
+            additionalInfo && additionalInfo.eventSessionTitle
+              ? additionalInfo.eventSessionTitle
+              : '',
+        }}
+        linkTo={
+          isLearn
+            ? `/user/events/${targetId1}/detail?activeSessionId=${additionalInfo.eventSessionId}`
+            : `/events/${targetId1}?activeSessionId=${additionalInfo.eventSessionId}`
+        }
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
+  if (NOTIFICATION_ACTION_TYPES.EventSessionReminder === actionType) {
+    return (
+      <NotificationTitle
+        i18nKey="notifications.sessionReminder"
+        values={{
+          eventName: deletedTargetName,
+          sessionName:
+            additionalInfo && additionalInfo.eventSessionTitle
+              ? additionalInfo.eventSessionTitle
+              : '',
+        }}
+        linkTo={getSourceRoute(isLearn, target1Type, targetId1, additionalInfo)}
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
+  if (NOTIFICATION_ACTION_TYPES.LearnerEnrolledToEventSession === actionType) {
+    const { sessionCount = '' } = additionalInfo || {};
+    return (
+      <NotificationTitle
+        i18nKey="notifications.learnerEnrolled"
+        values={{ sessionCount, eventName: deletedTargetName }}
+        linkTo={
+          isLearn ? `/user/events/${targetId1}/detail` : `/events/${targetId1}`
+        }
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
+  if (
+    NOTIFICATION_ACTION_TYPES.LearnerEnrolledToAllEventSessions === actionType
+  ) {
+    return (
+      <NotificationTitle
+        i18nKey="notifications.learnerEnrolledToAllSessions"
+        values={{ eventName: deletedTargetName }}
+        linkTo={
+          isLearn ? `/user/events/${targetId1}/detail` : `/events/${targetId1}`
+        }
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
+  if (NOTIFICATION_ACTION_TYPES.EventCompletionConfirmed === actionType) {
+    return (
+      <NotificationTitle
+        i18nKey="notifications.eventCompletionConfirmed"
+        values={{ eventName: deletedTargetName }}
         linkTo={
           isLearn ? `/user/events/${targetId1}/detail` : `/events/${targetId1}`
         }
@@ -1418,6 +1504,16 @@ export const getNotificationTitle = (
             ? `/user/paths/${targetId1}/detail`
             : `/user/paths/${targetId1}`
         }
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
+  if (NOTIFICATION_ACTION_TYPES.UpdateLearningPathAdmin === actionType) {
+    return (
+      <NotificationTitle
+        i18nKey="notifications.updateLearningPathAdmin"
+        values={{ pathName: deletedTargetName }}
+        linkTo={`/paths/${targetId1}`}
         components={[<NotificationText bold viewInline />]}
       />
     );
@@ -1769,7 +1865,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1785,7 +1880,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1801,7 +1895,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1817,7 +1910,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1833,7 +1925,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1849,7 +1940,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1865,7 +1955,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1881,7 +1970,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1897,7 +1985,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1913,7 +2000,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1929,7 +2015,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1945,7 +2030,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1961,7 +2045,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1977,7 +2060,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -1993,7 +2075,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -2021,7 +2102,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -2037,7 +2117,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -3517,6 +3596,60 @@ export const getNotificationTitle = (
       />
     );
   }
+  if (NOTIFICATION_ACTION_TYPES.AssignedReporteesSummary === actionType) {
+    const singleUser = additionalInfo.count === 1;
+    const twoUsers = additionalInfo.count === 2;
+    const multipleUsers = additionalInfo.count > 2;
+    return (
+      <NotificationTitle
+        i18nKey={
+          singleUser
+            ? 'notifications.assignedReporteesSummary'
+            : twoUsers
+            ? 'notifications.twoAssignedReporteesSummary'
+            : 'notifications.multipleAssignedReporteesSummary'
+        }
+        values={{
+          actorName:
+            twoUsers || multipleUsers
+              ? additionalInfo.sourceNames[0]
+              : deletedTargetName,
+          count: twoUsers ? additionalInfo.count - 1 : additionalInfo.count - 2,
+          ...((twoUsers || multipleUsers) && {
+            actor2Name: additionalInfo.sourceNames[1],
+          }),
+        }}
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
+  if (NOTIFICATION_ACTION_TYPES.CompletedReporteesSummary === actionType) {
+    const singleUser = additionalInfo.count === 1;
+    const twoUsers = additionalInfo.count === 2;
+    const multipleUsers = additionalInfo.count > 2;
+    return (
+      <NotificationTitle
+        i18nKey={
+          singleUser
+            ? 'notifications.completedReporteesSummary'
+            : twoUsers
+            ? 'notifications.twoCompletedReporteesSummary'
+            : 'notifications.multipleCompletedReporteesSummary'
+        }
+        values={{
+          actorName:
+            twoUsers || multipleUsers
+              ? additionalInfo.sourceNames[0]
+              : deletedTargetName,
+          count: twoUsers ? additionalInfo.count - 1 : additionalInfo.count - 2,
+          ...((twoUsers || multipleUsers) && {
+            actor2Name: additionalInfo.sourceNames[1],
+          }),
+        }}
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
 
   // Team manager notifications
   if (NOTIFICATION_ACTION_TYPES.TeamMemberProgramEnrollment === actionType) {
@@ -3569,6 +3702,64 @@ export const getNotificationTitle = (
             : twoUsers
             ? 'notifications.twoOverdueTeamMembers'
             : 'notifications.multipleOverdueTeamMembers'
+        }
+        values={{
+          teamName: deletedTargetName,
+          actorName:
+            twoUsers || multipleUsers
+              ? additionalInfo.sourceNames[0]
+              : deletedTargetName,
+          count: twoUsers ? additionalInfo.count - 1 : additionalInfo.count - 2,
+          ...((twoUsers || multipleUsers) && {
+            actor2Name: additionalInfo.sourceNames[1],
+          }),
+        }}
+        linkTo={`/teams/${targetId1}?tab=insights&trainingType=elearning`}
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
+  if (NOTIFICATION_ACTION_TYPES.AssignedTeamMembersSummary === actionType) {
+    const singleUser = additionalInfo.count === 1;
+    const twoUsers = additionalInfo.count === 2;
+    const multipleUsers = additionalInfo.count > 2;
+    return (
+      <NotificationTitle
+        i18nKey={
+          singleUser
+            ? 'notifications.assignedTeamMembersSummary'
+            : twoUsers
+            ? 'notifications.twoAssignedTeamMembersSummary'
+            : 'notifications.multipleAssignedTeamMembersSummary'
+        }
+        values={{
+          teamName: deletedTargetName,
+          actorName:
+            twoUsers || multipleUsers
+              ? additionalInfo.sourceNames[0]
+              : deletedTargetName,
+          count: twoUsers ? additionalInfo.count - 1 : additionalInfo.count - 2,
+          ...((twoUsers || multipleUsers) && {
+            actor2Name: additionalInfo.sourceNames[1],
+          }),
+        }}
+        linkTo={`/teams/${targetId1}?tab=insights&trainingType=elearning`}
+        components={[<NotificationText bold viewInline />]}
+      />
+    );
+  }
+  if (NOTIFICATION_ACTION_TYPES.CompletedTeamMembersSummary === actionType) {
+    const singleUser = additionalInfo.count === 1;
+    const twoUsers = additionalInfo.count === 2;
+    const multipleUsers = additionalInfo.count > 2;
+    return (
+      <NotificationTitle
+        i18nKey={
+          singleUser
+            ? 'notifications.completedTeamMembersSummary'
+            : twoUsers
+            ? 'notifications.twoCompletedTeamMembersSummary'
+            : 'notifications.multipleCompletedTeamMembersSummary'
         }
         values={{
           teamName: deletedTargetName,
@@ -3943,8 +4134,17 @@ export const getNotificationTitle = (
   if (NOTIFICATION_ACTION_TYPES.ReassignPath === actionType) {
     return (
       <NotificationTitle
-        i18nKey="notifications.reassignPath"
-        values={{ pathName: deletedTargetName }}
+        i18nKey={
+          additionalInfo.reassignmentType === 'TRAINING'
+            ? 'notifications.reassignPath'
+            : 'notifications.latestVersionReassignPath'
+        }
+        values={{
+          pathName: deletedTargetName,
+          pathProgress: i18n.t(
+            LEARNER_ENROLLMENT_STATUS[additionalInfo.progressStatus],
+          ),
+        }}
         linkTo={getSourceRoute(isLearn, target1Type, targetId1)}
         components={[<NotificationText bold viewInline />]}
       />
@@ -3957,19 +4157,25 @@ export const getNotificationTitle = (
     NOTIFICATION_ACTION_TYPES.LxpMentionOnFeed === actionType &&
     target1Type === 'COMMENT'
   ) {
+    const targetComment =
+      additionalInfo && additionalInfo.target
+        ? [...additionalInfo.target]
+            .reverse()
+            .find((item) => item.entityType === 'COMMENT')
+        : null;
+
     return (
       <NotificationTitle
         i18nKey="notifications.LxpuserMentionedOnComment"
         values={{ actor: name }}
         isLxpRoute
         isLearner={isLearn}
+        params={targetComment ? { commentId: targetComment.entityId } : {}}
         linkTo={getSocialSourceRoute(
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
-          actionType,
         )}
         components={[<NotificationText bold viewInline />]}
       />
@@ -3990,7 +4196,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -4009,7 +4214,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -4028,7 +4232,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -4047,7 +4250,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -4066,7 +4268,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -4084,7 +4285,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -4102,7 +4302,6 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
         )}
         components={[<NotificationText bold viewInline />]}
@@ -4121,28 +4320,7 @@ export const getNotificationTitle = (
           isLearn,
           target1Type,
           targetId1,
-          userId,
           additionalInfo,
-          actionType,
-        )}
-        components={[<NotificationText bold viewInline />]}
-      />
-    );
-  }
-  if (NOTIFICATION_ACTION_TYPES.LxpRepliedOnFeedComment === actionType) {
-    return (
-      <NotificationTitle
-        i18nKey="notifications.LxpPostScheduled"
-        values={{ actor: name }}
-        isLxpRoute
-        isLearner={isLearn}
-        linkTo={getSocialSourceRoute(
-          isLearn,
-          target1Type,
-          targetId1,
-          userId,
-          additionalInfo,
-          actionType,
         )}
         components={[<NotificationText bold viewInline />]}
       />
