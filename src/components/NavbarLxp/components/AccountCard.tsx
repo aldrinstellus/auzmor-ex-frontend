@@ -44,9 +44,11 @@ const AccountCard = () => {
     const { url } = org;
     const isSafari = isSafariBrowser();
     const authToken = getCookieValue(getCookieParam());
-    const fullUrl = url.startsWith('http')
-      ? `${url}?generic_access_token=${authToken}`
-      : `https://${url}?generic_access_token=${authToken}`;
+    const base = url.startsWith('http') ? url : `https://${url}`;
+    const u = new URL(base);
+    u.pathname = '/redirect';
+    u.searchParams.set('generic_access_token', authToken || '');
+    const fullUrl = u.toString();
 
     const windowRef = isSafari ? window.open() : null;
     if (fullUrl) {
@@ -58,7 +60,6 @@ const AccountCard = () => {
     } else if (windowRef) {
       windowRef.close();
     }
-
     closeConfirmation();
   };
   const branchData = data?.result?.data;
