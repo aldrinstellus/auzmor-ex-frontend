@@ -251,16 +251,19 @@ const Feed: FC<IFeedProps> = ({
 
   // Learn data
   const useGetRecommendations = getApi(ApiEnum.GetRecommendations);
+  const useGetRecentlyPublished = getApi(ApiEnum.GetRecentlyPublished);
   const { data: recommendationData, isLoading: recommendationLoading } =
     isLxp &&
     useGetRecommendations({
       enabled: isLxp && mode === FeedModeEnum.Default,
     });
-  const trendingCards =
-    recommendationData?.data?.result?.data?.trending?.trainings || [];
-  const recentlyPublishedCards =
-    recommendationData?.data?.result?.data?.recently_published?.trainings || [];
-
+  const { data: recentlyPublishedData, isLoading: recentlyPublishedLoading } =
+    isLxp &&
+    useGetRecentlyPublished({
+      enabled: isLxp && mode === FeedModeEnum.Default,
+    });
+  const trendingCards = recommendationData?.data?.result?.data?.trending?.trainings || [];
+  const recentlyPublishedCards = recentlyPublishedData?.data?.result?.data || [];
   const useInfiniteFeed = getApi(ApiEnum.GetFeedPosts);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteFeed(
@@ -720,13 +723,13 @@ const Feed: FC<IFeedProps> = ({
     if (totalPosts > 10) {
       if (trendingCards.length > 1) {
         if (recentlyPublishedCards.length > 1) {
-          return { tIndex: 4, rIndex: 9 };
+          return { tIndex: 4, rIndex: 3 };
         } else {
           return { tIndex: 4, rIndex: -1 };
         }
       } else {
         if (recentlyPublishedCards.length > 1) {
-          return { tIndex: -1, rIndex: 4 };
+          return { tIndex: -1, rIndex: 3 };
         } else {
           return { tIndex: -1, rIndex: -1 };
         }
@@ -734,7 +737,35 @@ const Feed: FC<IFeedProps> = ({
     } else if (totalPosts <= 10 && totalPosts > 3) {
       if (trendingCards.length > 1) {
         if (recentlyPublishedCards.length > 1) {
-          return { tIndex: 2, rIndex: 5 };
+          return { tIndex: 2, rIndex: 3 };
+        } else {
+          return { tIndex: 2, rIndex: -1 };
+        }
+      } else {
+        if (recentlyPublishedCards.length > 1) {
+          return { tIndex: -1, rIndex: 3 };
+        } else {
+          return { tIndex: -1, rIndex: -1 };
+        }
+      }
+    } else if (totalPosts >= 3 && totalPosts < 5) {
+      if (trendingCards.length > 1) {
+        if (recentlyPublishedCards.length > 1) {
+          return { tIndex: 2, rIndex: 3 };
+        } else {
+          return { tIndex: 2, rIndex: -1 };
+        }
+      } else {
+        if (recentlyPublishedCards.length > 1) {
+          return { tIndex: -1, rIndex: 3 };
+        } else {
+          return { tIndex: -1, rIndex: -1 };
+        }
+      }
+    } else if (totalPosts === 2) {
+      if (trendingCards.length > 1) {
+        if (recentlyPublishedCards.length > 1) {
+          return { tIndex: 2, rIndex: 2 };
         } else {
           return { tIndex: 2, rIndex: -1 };
         }
@@ -745,17 +776,21 @@ const Feed: FC<IFeedProps> = ({
           return { tIndex: -1, rIndex: -1 };
         }
       }
-    } else if (totalPosts >= 3 && totalPosts < 5) {
+    } else if (totalPosts === 1) {
       if (trendingCards.length > 1) {
-        return { tIndex: 2, rIndex: -1 };
+        if (recentlyPublishedCards.length > 1) {
+          return { tIndex: 2, rIndex: 1 };
+        } else {
+          return { tIndex: 2, rIndex: -1 };
+        }
       } else {
         if (recentlyPublishedCards.length > 1) {
-          return { tIndex: -1, rIndex: 2 };
+          return { tIndex: -1, rIndex: 1 };
         } else {
           return { tIndex: -1, rIndex: -1 };
         }
       }
-    } else return { tIndex: -1, rIndex: -1 };
+    } else return { tIndex: -1, rIndex: 0 };
   }, [announcementFeedIds, regularFeedIds]);
 
   const handleTrendingContent = () => {
@@ -769,7 +804,7 @@ const Feed: FC<IFeedProps> = ({
   const handleRecentlyPublishContent = () => {
     if (user?.preferences?.learnerViewType === 'MODERN') {
       window.location.assign(
-        `${getLearnUrl()}/user/trainings?type=elearning&tab=PUBLIC&sort=created_at`,
+        `${getLearnUrl()}/user/trainings?filter=ASSIGNED&sort=updated_at&type=elearning`,
       );
     } else {
       window.location.assign(
@@ -784,17 +819,6 @@ const Feed: FC<IFeedProps> = ({
   const getListItem = (id: string, index: number) => {
     return (
       <Fragment key={`${id}-post-index-${index}-fragment`}>
-        <li
-          data-testid={`feed-post-${index}`}
-          className="flex flex-col gap-6"
-          key={`${id}-post-index-${index}`}
-        >
-          <VirtualisedPost
-            readOnly={isReadOnlyPost}
-            postId={id!}
-            commentIds={feed[id]?.relevantComments || []}
-          />
-        </li>
         {mode === FeedModeEnum.Default && (
           <>
             {index === recommendationIndex.tIndex && (
@@ -811,14 +835,25 @@ const Feed: FC<IFeedProps> = ({
               <li data-testid={`recently-published-content-post`}>
                 <Recommendation
                   cards={recentlyPublishedCards}
-                  title="Recently Published"
-                  isLoading={recommendationLoading}
+                  title="Recent Course & Learning Path Assignments"
+                  isLoading={recentlyPublishedLoading}
                   onCLick={handleRecentlyPublishContent}
                 />
               </li>
             )}
           </>
         )}
+        <li
+          data-testid={`feed-post-${index}`}
+          className="flex flex-col gap-6"
+          key={`${id}-post-index-${index}`}
+        >
+          <VirtualisedPost
+            readOnly={isReadOnlyPost}
+            postId={id!}
+            commentIds={feed[id]?.relevantComments || []}
+          />
+        </li>
       </Fragment>
     );
   };
