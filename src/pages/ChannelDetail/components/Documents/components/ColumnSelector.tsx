@@ -5,6 +5,7 @@ import useModal from 'hooks/useModal';
 import { useTranslation } from 'react-i18next';
 import Checkbox from 'components/Checkbox';
 import { useForm, FormProvider } from 'react-hook-form';
+import Layout, { FieldType } from 'components/Form';
 
 interface ColumnItem {
   id: string;
@@ -27,7 +28,11 @@ const ColumnSelector: FC<IColumnSelecorProps> = ({
   const [open, openMenu, closeMenu] = useModal();
   const ColumnSelectorRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation('components', {
-    keyPrefix: 'ColumnSelector',
+    keyPrefix: 'columnSelector',
+  });
+
+  const searchForm = useForm<{ search: string }>({
+    defaultValues: { search: '' },
   });
 
   // Setup react-hook-form for checkboxes
@@ -77,15 +82,23 @@ const ColumnSelector: FC<IColumnSelecorProps> = ({
     };
   }, [closeMenu]);
 
-  const menuItems = columns.map((item) => ({
+  // Filter columns by search
+  const searchValue = searchForm.watch('search');
+  const filteredColumns = searchValue.trim()
+    ? columns.filter((col) =>
+        col.label.toLowerCase().includes(searchValue.trim().toLowerCase()),
+      )
+    : columns;
+
+  const menuItems = filteredColumns.map((item) => ({
     key: item.id,
     renderNode: (
       <Checkbox
         name={item.name}
         control={methods.control}
         label={item.label}
-        className="w-full flex item-center !justify-start px-4 py-2 hover:bg-primary-100"
-        labelClassName="text-sm !font-normal text-neutral-900"
+        disabled={item.name === 'name'}
+        className="w-full px-3 py-2 hover:bg-primary-100 !justify-start"
         dataTestId={`column-selector-checkbox-${item.label}`}
       />
     ),
@@ -93,12 +106,30 @@ const ColumnSelector: FC<IColumnSelecorProps> = ({
   }));
 
   const renderTitle = () => (
-    <div className="flex justify-between items-center px-6 py-2 font-sm font-medium text-neutral-900"></div>
+    <Layout
+      className="w-full p-3 pb-1 text-sm"
+      fields={[
+        {
+          type: FieldType.Input,
+          control: searchForm.control,
+          name: 'search',
+          label: '',
+          leftIcon: 'search',
+          placeholder: t('search'),
+          inputClassName: '!py-1.5',
+          dataTestId: `column-selector-search`,
+        },
+      ]}
+    />
   );
 
   const renderFooter = () => (
     <div className="w-full px-6 py-2 font-sm font-bold text-neutral-500 hover:text-primary-500 text-center border-t-1 border-t-neutral-200 cursor-pointer">
-      {t('selectedColumns')}
+      {t('selectedColumns', {
+        selectedCount:
+          filteredColumns.filter((item) => item.isVisible).length || 0,
+        totalCount: filteredColumns.length || 0,
+      })}
     </div>
   );
 
