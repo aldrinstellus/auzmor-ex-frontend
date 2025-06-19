@@ -1419,7 +1419,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
             </div>
           )}
         </div>
-        {isBaseFolderSet ? (
+        {true ? (
           <Fragment>
             {!isRootDir && !isDocSearchApplied && (
               <RecentlyAddedEntities disableActions={isCredExpired} />
@@ -1427,7 +1427,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
             <p className="text-base font-bold text-neutral-900">
               {isDocSearchApplied ? 'Search results' : t('allItemTitle')}
             </p>
-            {!hideFilterRow && (
+            {hideFilterRow && (
               <FilterMenuDocument
                 control={control}
                 watch={watch}
