@@ -11,18 +11,20 @@ import Divider from 'components/Divider';
 import Header from 'components/ModalHeader';
 import { useTranslation } from 'react-i18next';
 
+export interface IFilterNavigation<TFilters extends FieldValues> {
+  key: string;
+  label: () => string;
+  dataTestId?: string;
+  component: (form: UseFormReturn<TFilters, any>) => React.ReactNode;
+}
+
 export interface IFilterModalNewProps<TFilters extends FieldValues> {
   open: boolean;
   closeModal: () => void;
   appliedFilters: Partial<TFilters>;
   onApply: (filters: TFilters) => void;
   onClear: () => void;
-  filterNavigation: {
-    key: string;
-    label: () => string;
-    dataTestId?: string;
-    component: (form: UseFormReturn<TFilters, any>) => React.ReactNode;
-  }[];
+  filterNavigation: IFilterNavigation<TFilters>[];
   defaultValues: TFilters;
 }
 

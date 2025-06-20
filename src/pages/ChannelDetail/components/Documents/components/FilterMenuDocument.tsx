@@ -19,8 +19,8 @@ import Button, { Variant as ButtonVariant } from 'components/Button';
 import Layout, { FieldType } from 'components/Form';
 import Sort from 'components/Sort';
 import PopupMenu from 'components/PopupMenu';
-import ColumnSelector from './ColumnSelector';
-import { FilterModalNew } from 'components/FilterModalNew';
+import ColumnSelector, { ColumnItem } from './ColumnSelector';
+import { FilterModalNew, GenericFilter } from 'components/FilterModalNew';
 import DocumentOwner from 'components/FilterModalNew/components/DocumentOwner';
 import DocumentType from 'components/FilterModalNew/components/DocumentType';
 import DocModified from 'components/FilterModalNew/components/DocumentModifed';
@@ -31,6 +31,8 @@ import useURLParams from 'hooks/useURLParams';
 import { getIconFromMime } from './Doc';
 import { IForm } from '..';
 import { ICheckboxListOption } from 'components/CheckboxList';
+import { IFilterNavigation } from 'components/FilterModalNew/components/FilterModalNew';
+import { titleCase } from 'utils/misc';
 
 // Interfaces
 interface IFilterMenu {
@@ -40,8 +42,8 @@ interface IFilterMenu {
   dataTestIdSort?: string;
   dataTestIdFilter?: string;
   view: 'LIST' | 'GRID';
-  columns?: any[];
-  updateColumns?: (columns: object[]) => void;
+  columns?: ColumnItem[];
+  updateColumns?: (columns: ColumnItem[]) => void;
   hideFilter?: boolean;
   hideSort?: boolean;
   hideColumnSelector?: boolean;
@@ -50,6 +52,14 @@ interface IFilterMenu {
 }
 
 type SortType = 'name:asc' | 'name:desc' | 'external_updated_at' | 'size:asc';
+
+interface IFilters {
+  sort?: SortType;
+  docOwners: ICheckboxListOption[];
+  docType: ICheckboxListOption[];
+  docModified?: string;
+  [key: string]: any;
+}
 
 // Component
 const FilterMenuDocument: FC<IFilterMenu> = ({
@@ -72,12 +82,7 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
 
   const [showFilterModal, openFilterModal, closeFilterModal] = useModal();
   const [isInitialized, setIsInitialized] = useState(false);
-  const [filters, setFilters] = useState<{
-    sort?: SortType;
-    docOwners: ICheckboxListOption[];
-    docType: ICheckboxListOption[];
-    docModified?: string;
-  }>({
+  const [filters, setFilters] = useState<IFilters>({
     sort: undefined,
     docOwners: [],
     docType: [],
@@ -93,6 +98,24 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
   } = useURLParams();
 
   const [docType, byTitle] = watch(['docType', 'byTitle']);
+
+  const dynamicFilters: IFilterNavigation<any>[] = useMemo(
+    () =>
+      columns
+        .filter((column) => column.isCustomField && column.visibility)
+        .map((column) => ({
+          key: column.fieldName,
+          label: () => titleCase(column.fieldName),
+          component: (form: UseFormReturn<any>) => (
+            <GenericFilter
+              options={column.values}
+              name={column.fieldName}
+              {...form}
+            />
+          ),
+        })),
+    [columns],
+  );
 
   const selectedClass = '!bg-primary-50 text-primary-500 text-sm';
   const regularClass =
@@ -369,7 +392,7 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
           open={showFilterModal}
           closeModal={closeFilterModal}
           appliedFilters={filters}
-          onApply={(newFilters) => {
+          onApply={(newFilters: IFilters) => {
             setFilters(newFilters);
             closeFilterModal();
           }}
@@ -381,25 +404,26 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
           filterNavigation={[
             {
               key: 'docOwners',
-              label: () => 'Document owner',
+              label: () => 'Owner',
               component: (form: UseFormReturn<any>) => (
                 <DocumentOwner {...form} name="docOwners" />
               ),
             },
             {
               key: 'docType',
-              label: () => 'Document type',
+              label: () => 'Type',
               component: (form: UseFormReturn<any>) => (
                 <DocumentType {...form} name="docType" />
               ),
             },
             {
               key: 'docModified',
-              label: () => 'Document modified',
+              label: () => 'Modified',
               component: (form: UseFormReturn<any>) => (
                 <DocModified {...form} name="docModified" />
               ),
             },
+            ...dynamicFilters,
           ]}
         />
       )}

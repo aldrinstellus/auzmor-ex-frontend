@@ -1,6 +1,7 @@
 import { ICheckboxListOption } from 'components/CheckboxList';
 import Layout, { FieldType } from 'components/Form';
 import Icon from 'components/Icon';
+import NoDataFound from 'components/NoDataFound';
 import Truncate from 'components/Truncate';
 import { useDebounce } from 'hooks/useDebounce';
 import {
@@ -140,31 +141,14 @@ const GenericFilter = <TFilters extends Record<string, any>>({
             ))}
           </div>
         )}
-        {(() => {
-          if ((options || []).length > 0) {
-            return (
-              <div>
-                <Layout fields={checkboxFields} />
-              </div>
-            );
-          }
-          return (
-            <>
-              {(debouncedSearchValue === undefined ||
-                debouncedSearchValue === '') &&
-              options?.length === 0 ? (
-                <div className="flex items-center w-full text-lg font-bold">
-                  No data found
-                </div>
-              ) : (
-                <div className="py-16 w-full text-lg font-bold text-center">
-                  {`No result found`}
-                  {debouncedSearchValue && ` for '${debouncedSearchValue}'`}
-                </div>
-              )}
-            </>
-          );
-        })()}
+        {options?.length > 0 ? (
+          <Layout fields={checkboxFields} />
+        ) : (
+          <NoDataFound
+            className="py-4 w-full h-full min-h-[330px] flex flex-col justify-center"
+            hideClearBtn
+          />
+        )}
       </div>
     </div>
   );
