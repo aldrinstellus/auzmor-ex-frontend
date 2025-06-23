@@ -24,7 +24,7 @@ const Recommendation: FC<IRecommendationProps> = ({
       <div className="flex top-8 gap-4 w-full overflow-hidden hover:overflow-x-scroll pb-4">
           {cards.map((card: Record<string, any>) => (
             <LearnCard  
-              className={` h-[290px] ${cards.length === 1 ? 'w-full' : cards.length === 2 ? 'w-[calc(50%-0.5rem)]' : 'w-[254px]'} flex-shrink-0`}
+              className={`${cards.length === 1 ? 'w-full' : cards.length === 2 ? 'w-[calc(50%-0.5rem)]' : 'w-[254px]'} h-[290px] flex-shrink-0`}
               data={card}
               key={card.id}
               isLoading={isLoading}
