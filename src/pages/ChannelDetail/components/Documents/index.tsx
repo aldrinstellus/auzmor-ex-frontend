@@ -43,7 +43,11 @@ import Skeleton from 'react-loading-skeleton';
 import FilePreviewModal from './components/FilePreviewModal';
 import moment from 'moment';
 import { useChannelDocUpload } from 'hooks/useUpload';
-import { useAppliedFiltersStore } from 'stores/appliedFiltersStore';
+import {
+  checkboxTransform,
+  FilterKey,
+  useAppliedFiltersStore,
+} from 'stores/appliedFiltersStore';
 import {
   BackgroundJob,
   BackgroundJobStatusEnum,
@@ -57,6 +61,7 @@ import {
   downloadFromUrl,
   getLearnUrl,
   isThisAFile,
+  titleCase,
 } from 'utils/misc';
 import { useChannelStore } from 'stores/channelStore';
 import RenameChannelDocModal from './components/RenameChannelDocModal';
@@ -69,6 +74,7 @@ import { useTranslation } from 'react-i18next';
 import { getUtcMiliseconds } from 'utils/time';
 import useNavigate from 'hooks/useNavigation';
 import { ColumnItem } from './components/ColumnSelector';
+// import { ICheckboxListOption } from 'components/CheckboxList';
 
 export enum DocIntegrationEnum {
   Sharepoint = 'SHAREPOINT',
@@ -78,7 +84,7 @@ export enum DocIntegrationEnum {
 export interface IForm {
   selectAll: boolean;
   documentSearch: string;
-  docType?: Record<string, any>;
+  fileOrFolder?: Record<string, any>;
   applyDocumentSearch: string;
   byTitle?: boolean;
   recentlyModified?: boolean;
@@ -207,7 +213,8 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   const { channelId = '', documentPath = '' } = useParams();
   const { items, setItems } = useContext(DocumentPathContext);
   const { uploadMedia } = useChannelDocUpload(channelId);
-  const { filters } = useAppliedFiltersStore();
+  const { filters, validFilterKey, setValidFilterKeys } =
+    useAppliedFiltersStore();
   const { setRootFolderId } = useChannelStore();
   const {
     config,
@@ -220,8 +227,8 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   } = useBackgroundJobStore();
   const folderInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [docType, applyDocumentSearch, documentSearch, byTitle] = watch([
-    'docType',
+  const [fileOrFolder, applyDocumentSearch, documentSearch, byTitle] = watch([
+    'fileOrFolder',
     'applyDocumentSearch',
     'documentSearch',
     'byTitle',
@@ -566,23 +573,39 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           ),
           size: 260,
         },
-        ...(documentFields
-          ?.filter((field: any) => field.visibility)
+        ...((documentFields as ColumnItem[])
+          ?.filter(
+            (field: ColumnItem) =>
+              field.visibility && field.fieldName !== 'Name',
+          )
           ?.map((field: any) => ({
             accessorKey: field.fieldName,
             header: () => (
               <div className="font-bold text-neutral-500">{field.label}</div>
             ),
             cell: (info: CellContext<DocType, unknown>) => {
-              if (field.fieldName === 'ownerName') {
+              if (field.fieldName === 'Owner') {
                 return (
                   <OwnerField
                     ownerName={info.row.original?.ownerName}
                     ownerImage={info.row.original?.ownerImage}
                   />
                 );
-              } else if (field.type === 'datetime') {
+              } else if (
+                field.fieldName === 'Last Updated' ||
+                field.type === 'datetime'
+              ) {
                 return <TimeField time={info.getValue() as string} />;
+              } else {
+                return (
+                  <span>
+                    {(
+                      (info.row.original.customFields ?? []).find(
+                        (eachField: any) => field.id == eachField.id,
+                      ) as any
+                    )?.value ?? ''}
+                  </span>
+                );
               }
             },
             size: field.size || fieldSize[field.fieldName] || 256,
@@ -658,8 +681,8 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
 
   // Its a function to parse modified on filter that maps string to respected date param oo api
   const parseModifiedOnFilter = useMemo(() => {
-    if (filters?.docModifiedRadio?.includes('custom')) {
-      const [start, end] = filters?.docModifiedRadio
+    if (filters?.modifiedOn?.includes('custom')) {
+      const [start, end] = filters?.modifiedOn
         .replace('custom:', '')
         .split('-');
       if (parseNumber(start) && parseNumber(end)) {
@@ -669,8 +692,8 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         };
       }
     }
-    if (filters?.docModifiedRadio) {
-      switch (filters.docModifiedRadio) {
+    if (filters?.modifiedOn) {
+      switch (filters.modifiedOn) {
         case 'Today':
           return {
             modifiedAfter: getUtcMiliseconds(moment().startOf('day').valueOf()),
@@ -711,6 +734,41 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     return {};
   }, [filters]);
 
+  const staticFilterKeys: FilterKey[] = [
+    { key: 'owners', label: 'Owners', transform: checkboxTransform },
+    { key: 'type', label: 'Type', transform: checkboxTransform },
+    { key: 'modifiedOn', label: 'Modified on', transform: () => {} },
+    { key: 'sort', label: 'Sort by', transform: () => {} },
+  ];
+
+  console.log(filters);
+
+  const customFields = filters
+    ? validFilterKey
+        .filter((each) => {
+          return (
+            !!each.isDynamic &&
+            Object.keys(filters).includes(each.key) &&
+            filters[each.key].length
+          );
+        })
+        .map((each: FilterKey) =>
+          JSON.stringify({
+            custom_field_id: parseNumber(
+              (documentFields as ColumnItem[]).find(
+                (docField) => docField.fieldName == each.key,
+              )!.id,
+            ),
+            field_name: (documentFields as ColumnItem[]).find(
+              (docField) => docField.fieldName == each.key,
+            )?.fieldName,
+            field_values: filters
+              ? each.transform(filters[each.key] ?? [])
+              : [],
+          }),
+        )
+    : [];
+
   // Get props for Datagrid component
   const dataGridProps = useDataGrid<DocType>({
     apiEnum: isDocSearchApplied
@@ -720,16 +778,21 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     payload: {
       channelId,
       params: {
+        ...(validFilterKey ?? [])
+          .filter((validField) => !validField.isDynamic)
+          .reduce((acc, current) => {
+            acc[current.key as string] = current.transform(
+              filters?.[current.key] || [],
+            );
+            return acc;
+          }, {} as Record<string, any>),
+        customFields: [...customFields],
         sort: filters?.sort ? filters?.sort.split(':')[0] : undefined,
         order: filters?.sort ? filters?.sort.split(':')[1] : undefined,
-        isFolder: docType ? !!(docType.value === 'folder') : undefined,
-        owners: (filters?.docOwnerCheckbox || []).map(
-          (owner: any) => owner.name,
-        ),
-        type: (filters?.docTypeCheckbox || []).map(
-          (type: any) => type.paramKey,
-        ),
         ...parseModifiedOnFilter,
+        isFolder: fileOrFolder
+          ? !!(fileOrFolder.value === 'folder')
+          : undefined,
         ...(isDocSearchApplied
           ? {
               q: applyDocumentSearch,
@@ -775,6 +838,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         />
       ),
       trDataClassName: isCredExpired ? '' : 'cursor-pointer',
+      className: '!overflow-x-auto pb-4',
     },
   });
 
@@ -849,6 +913,22 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     },
     [config.variant],
   );
+
+  // Set valid filter keys
+  useEffect(() => {
+    if (!documentFields) return;
+    setValidFilterKeys([
+      ...staticFilterKeys,
+      ...(documentFields as ColumnItem[])
+        .filter((column) => column.isCustomField && column.visibility)
+        .map((column) => ({
+          key: column.fieldName,
+          label: titleCase(column.label),
+          transform: checkboxTransform,
+          isDynamic: true,
+        })),
+    ]);
+  }, [documentFields]);
 
   // Component to render before connection.
   const NoConnection = () =>
@@ -1048,7 +1128,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   };
 
   return isLoading ? (
-    <Card className="flex flex-col gap-6 p-8 pb-16 w-full justify-center bg-white overflow-hidden">
+    <Card className="flex flex-col gap-6 p-8 w-full justify-center bg-white overflow-hidden">
       <p className="font-bold text-2xl text-neutral-900">{t('title')}</p>
       <Spinner className="flex w-full justify-center" />
     </Card>
@@ -1274,7 +1354,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           }
         }}
       />
-      <Card className="flex flex-col gap-6 p-8 pb-16 w-full justify-center bg-white">
+      <Card className="flex flex-col gap-6 p-8 w-full justify-center bg-white">
         {reAuthorizeForAdmin && (
           <div className="flex gap-2 w-full p-2 border border-orange-400 bg-orange-50 items-center">
             <Icon name="warning" />
