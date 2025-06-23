@@ -197,7 +197,7 @@ export enum ApiEnum {
   //trainings
   GetProgressTracker = 'GET_PROGRESS_TRACKER',
   GetRecommendations = 'GET_RECOMMENDATIONS',
-  GetRecentlyPublished = 'GET_RECENTLY_PUBLISHED',
+  GetRecentlyAssigned = 'GET_RECENTLY_PUBLISHED',
 
   //users
   GetMe = 'GET_ME',

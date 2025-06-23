@@ -251,19 +251,19 @@ const Feed: FC<IFeedProps> = ({
 
   // Learn data
   const useGetRecommendations = getApi(ApiEnum.GetRecommendations);
-  const useGetRecentlyPublished = getApi(ApiEnum.GetRecentlyPublished);
+  const useGetRecentlyAssigned = getApi(ApiEnum.GetRecentlyAssigned);
   const { data: recommendationData, isLoading: recommendationLoading } =
     isLxp &&
     useGetRecommendations({
       enabled: isLxp && mode === FeedModeEnum.Default,
     });
-  const { data: recentlyPublishedData, isLoading: recentlyPublishedLoading } =
+  const { data: recentlyAssignedData, isLoading: recentlyAssignedLoading } =
     isLxp &&
-    useGetRecentlyPublished({
+    useGetRecentlyAssigned({
       enabled: isLxp && mode === FeedModeEnum.Default,
     });
   const trendingCards = recommendationData?.data?.result?.data?.trending?.trainings || [];
-  const recentlyPublishedCards = recentlyPublishedData?.data?.result?.data || [];
+  const recentlyAssignedCards = recentlyAssignedData?.data?.result?.data || [];
   const useInfiniteFeed = getApi(ApiEnum.GetFeedPosts);
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteFeed(
@@ -722,13 +722,13 @@ const Feed: FC<IFeedProps> = ({
     const totalPosts = announcementFeedIds.length + regularFeedIds.length;
     if (totalPosts > 10) {
       if (trendingCards.length > 1) {
-        if (recentlyPublishedCards.length > 1) {
+        if (recentlyAssignedCards.length > 1) {
           return { tIndex: 4, rIndex: 3 };
         } else {
           return { tIndex: 4, rIndex: -1 };
         }
       } else {
-        if (recentlyPublishedCards.length > 1) {
+        if (recentlyAssignedCards.length > 1) {
           return { tIndex: -1, rIndex: 3 };
         } else {
           return { tIndex: -1, rIndex: -1 };
@@ -736,13 +736,13 @@ const Feed: FC<IFeedProps> = ({
       }
     } else if (totalPosts <= 10 && totalPosts > 3) {
       if (trendingCards.length > 1) {
-        if (recentlyPublishedCards.length > 1) {
+        if (recentlyAssignedCards.length > 1) {
           return { tIndex: 2, rIndex: 3 };
         } else {
           return { tIndex: 2, rIndex: -1 };
         }
       } else {
-        if (recentlyPublishedCards.length > 1) {
+        if (recentlyAssignedCards.length > 1) {
           return { tIndex: -1, rIndex: 3 };
         } else {
           return { tIndex: -1, rIndex: -1 };
@@ -750,13 +750,13 @@ const Feed: FC<IFeedProps> = ({
       }
     } else if (totalPosts >= 3 && totalPosts < 5) {
       if (trendingCards.length > 1) {
-        if (recentlyPublishedCards.length > 1) {
+        if (recentlyAssignedCards.length > 1) {
           return { tIndex: 2, rIndex: 3 };
         } else {
           return { tIndex: 2, rIndex: -1 };
         }
       } else {
-        if (recentlyPublishedCards.length > 1) {
+        if (recentlyAssignedCards.length > 1) {
           return { tIndex: -1, rIndex: 3 };
         } else {
           return { tIndex: -1, rIndex: -1 };
@@ -764,13 +764,13 @@ const Feed: FC<IFeedProps> = ({
       }
     } else if (totalPosts === 2) {
       if (trendingCards.length > 1) {
-        if (recentlyPublishedCards.length > 1) {
+        if (recentlyAssignedCards.length > 1) {
           return { tIndex: 2, rIndex: 2 };
         } else {
           return { tIndex: 2, rIndex: -1 };
         }
       } else {
-        if (recentlyPublishedCards.length > 1) {
+        if (recentlyAssignedCards.length > 1) {
           return { tIndex: -1, rIndex: 2 };
         } else {
           return { tIndex: -1, rIndex: -1 };
@@ -778,13 +778,13 @@ const Feed: FC<IFeedProps> = ({
       }
     } else if (totalPosts === 1) {
       if (trendingCards.length > 1) {
-        if (recentlyPublishedCards.length > 1) {
+        if (recentlyAssignedCards.length > 1) {
           return { tIndex: 2, rIndex: 1 };
         } else {
           return { tIndex: 2, rIndex: -1 };
         }
       } else {
-        if (recentlyPublishedCards.length > 1) {
+        if (recentlyAssignedCards.length > 1) {
           return { tIndex: -1, rIndex: 1 };
         } else {
           return { tIndex: -1, rIndex: -1 };
@@ -801,7 +801,7 @@ const Feed: FC<IFeedProps> = ({
     }
   };
 
-  const handleRecentlyPublishContent = () => {
+  const handleRecentlyAssignedContent = () => {
     if (user?.preferences?.learnerViewType === 'MODERN') {
       window.location.assign(
         `${getLearnUrl()}/user/trainings?filter=ASSIGNED&sort=updated_at&type=elearning`,
@@ -825,19 +825,19 @@ const Feed: FC<IFeedProps> = ({
               <li data-testid={`trending-content-post`}>
                 <Recommendation
                   cards={trendingCards}
-                  title="Trending Content"
+                  title={t('recommendation.trending.title')}
                   isLoading={recommendationLoading}
                   onCLick={handleTrendingContent}
                 />
               </li>
             )}
             {index === recommendationIndex.rIndex && (
-              <li data-testid={`recently-published-content-post`}>
+              <li data-testid={`recently-assigned-content-post`}>
                 <Recommendation
-                  cards={recentlyPublishedCards}
-                  title="Recent Course & Learning Path Assignments"
-                  isLoading={recentlyPublishedLoading}
-                  onCLick={handleRecentlyPublishContent}
+                  cards={recentlyAssignedCards}
+                  title={t('recommendation.recentlyAssigned.title')}
+                  isLoading={recentlyAssignedLoading}
+                  onCLick={handleRecentlyAssignedContent}
                 />
               </li>
             )}

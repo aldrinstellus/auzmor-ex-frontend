@@ -203,7 +203,7 @@ export const apiConfigLxp = {
   //trainings
   [ApiEnum.GetProgressTracker]: { [Default]: queries.useProgressTracker },
   [ApiEnum.GetRecommendations]: { [Default]: queries.useGetRecommendation },
-  [ApiEnum.GetRecentlyPublished]: { [Default]: queries.useGetRecentlyPublished },
+  [ApiEnum.GetRecentlyAssigned]: { [Default]: queries.useGetRecentlyAssigned },
 
   //users
   [ApiEnum.GetMe]: { [Default]: queries.useCurrentUser },

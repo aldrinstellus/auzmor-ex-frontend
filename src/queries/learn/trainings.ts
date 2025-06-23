@@ -19,9 +19,9 @@ export const useGetRecommendation = ({ enabled }: Record<string, any>) => {
   });
 };
 
-export const useGetRecentlyPublished = ({ enabled }: Record<string, any>) => {
+export const useGetRecentlyAssigned = ({ enabled }: Record<string, any>) => {
   return useQuery({
-    queryKey: ['recently-published-content'],
+    queryKey: ['recently-assigned-content'],
     queryFn: async () =>
       await apiService.get('/learner/libraries?limit=3&filter=ASSIGNED&sort=updated_at&type=elearning&page=1'),
     enabled,
