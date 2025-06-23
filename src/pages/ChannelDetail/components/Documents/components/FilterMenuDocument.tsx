@@ -29,7 +29,6 @@ import { getIconFromMime } from './Doc';
 import { IForm } from '..';
 import { ICheckboxListOption } from 'components/CheckboxList';
 import { IFilterNavigation } from 'components/FilterModalNew/components/FilterModalNew';
-import { titleCase } from 'utils/misc';
 import { useAppliedFilter } from 'hooks/useAppliedFilter';
 
 // Interfaces
@@ -102,7 +101,7 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
         .filter((column) => column.isCustomField && column.visibility)
         .map((column) => ({
           key: column.fieldName,
-          label: () => titleCase(column.fieldName),
+          label: () => column.label,
           component: (form: UseFormReturn<any>) => (
             <GenericFilter
               options={column.values}

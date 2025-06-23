@@ -19,6 +19,7 @@ export type FilterKey = {
   key: string;
   label: string;
   transform: (value: any) => any;
+  isDynamic?: boolean;
 };
 
 export const checkboxTransform = (values: ICheckboxListOption[]) => {
@@ -44,7 +45,7 @@ export const useAppliedFiltersStore = create<State & Actions>()(
       }),
     setValidFilterKeys: (filterKeys: FilterKey[]) =>
       set((state) => {
-        state.validFilterKey = [...state.validFilterKey, ...filterKeys];
+        state.validFilterKey = [...filterKeys];
       }),
     updateFilter: (key, value) =>
       set((state) => {

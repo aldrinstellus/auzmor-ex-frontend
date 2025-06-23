@@ -573,23 +573,39 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           ),
           size: 260,
         },
-        ...(documentFields
-          ?.filter((field: any) => field.visibility)
+        ...((documentFields as ColumnItem[])
+          ?.filter(
+            (field: ColumnItem) =>
+              field.visibility && field.fieldName !== 'Name',
+          )
           ?.map((field: any) => ({
             accessorKey: field.fieldName,
             header: () => (
               <div className="font-bold text-neutral-500">{field.label}</div>
             ),
             cell: (info: CellContext<DocType, unknown>) => {
-              if (field.fieldName === 'ownerName') {
+              if (field.fieldName === 'Owner') {
                 return (
                   <OwnerField
                     ownerName={info.row.original?.ownerName}
                     ownerImage={info.row.original?.ownerImage}
                   />
                 );
-              } else if (field.type === 'datetime') {
+              } else if (
+                field.fieldName === 'Last Updated' ||
+                field.type === 'datetime'
+              ) {
                 return <TimeField time={info.getValue() as string} />;
+              } else {
+                return (
+                  <span>
+                    {(
+                      (info.row.original.customFields ?? []).find(
+                        (eachField: any) => field.id == eachField.id,
+                      ) as any
+                    )?.value ?? ''}
+                  </span>
+                );
               }
             },
             size: field.size || fieldSize[field.fieldName] || 256,
@@ -725,6 +741,34 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     { key: 'sort', label: 'Sort by', transform: () => {} },
   ];
 
+  console.log(filters);
+
+  const customFields = filters
+    ? validFilterKey
+        .filter((each) => {
+          return (
+            !!each.isDynamic &&
+            Object.keys(filters).includes(each.key) &&
+            filters[each.key].length
+          );
+        })
+        .map((each: FilterKey) =>
+          JSON.stringify({
+            custom_field_id: parseNumber(
+              (documentFields as ColumnItem[]).find(
+                (docField) => docField.fieldName == each.key,
+              )!.id,
+            ),
+            field_name: (documentFields as ColumnItem[]).find(
+              (docField) => docField.fieldName == each.key,
+            )?.fieldName,
+            field_values: filters
+              ? each.transform(filters[each.key] ?? [])
+              : [],
+          }),
+        )
+    : [];
+
   // Get props for Datagrid component
   const dataGridProps = useDataGrid<DocType>({
     apiEnum: isDocSearchApplied
@@ -734,6 +778,15 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     payload: {
       channelId,
       params: {
+        ...(validFilterKey ?? [])
+          .filter((validField) => !validField.isDynamic)
+          .reduce((acc, current) => {
+            acc[current.key as string] = current.transform(
+              filters?.[current.key] || [],
+            );
+            return acc;
+          }, {} as Record<string, any>),
+        customFields: [...customFields],
         sort: filters?.sort ? filters?.sort.split(':')[0] : undefined,
         order: filters?.sort ? filters?.sort.split(':')[1] : undefined,
         ...parseModifiedOnFilter,
@@ -750,12 +803,6 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
               folderId:
                 items.length < 3 ? undefined : items[items.length - 1].id,
             }),
-        ...(validFilterKey ?? []).reduce((acc, current) => {
-          acc[current.key as string] = current.transform(
-            filters?.[current.key] || [],
-          );
-          return acc;
-        }, {} as Record<string, any>),
       },
     },
     options: {
@@ -876,8 +923,9 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         .filter((column) => column.isCustomField && column.visibility)
         .map((column) => ({
           key: column.fieldName,
-          label: titleCase(column.fieldName),
+          label: titleCase(column.label),
           transform: checkboxTransform,
+          isDynamic: true,
         })),
     ]);
   }, [documentFields]);

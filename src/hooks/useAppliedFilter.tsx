@@ -19,6 +19,7 @@ export const useAppliedFilter = (initialFilters: Record<string, any>) => {
     serializeFilter,
     deleteParam,
     parseParams,
+    deleteAllParms,
   } = useURLParams();
 
   // Sync filters to URL
@@ -113,7 +114,6 @@ export const useAppliedFilter = (initialFilters: Record<string, any>) => {
       dataTestId: string;
     }[];
   }) => {
-    console.log(filterKeys);
     return isFilterApplied ? (
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-4">
@@ -173,7 +173,7 @@ export const useAppliedFilter = (initialFilters: Record<string, any>) => {
         </div>
         <div
           className="text-neutral-500 border px-3 py-[3px] rounded-7xl hover:text-primary-600 hover:border-primary-600 cursor-pointer"
-          onClick={store.clearFilters}
+          onClick={clearFilters}
           data-testid="people-clear-filters"
         >
           Clear all
@@ -208,5 +208,10 @@ export const useAppliedFilter = (initialFilters: Record<string, any>) => {
     </div>
   );
 
-  return { ...store, isFilterApplied, FilterChips };
+  const clearFilters = () => {
+    store.clearFilters();
+    deleteAllParms();
+  };
+
+  return { ...store, isFilterApplied, FilterChips, clearFilters };
 };
