@@ -27,6 +27,8 @@ import { useFeedStore } from 'stores/feedStore';
 import { useTranslation } from 'react-i18next';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { usePermissions } from 'hooks/usePermissions';
+import { useCommentsFetcher } from './utils';
+import NoDataFound from 'components/NoDataFound';
 
 export const validImageTypesForComments = [
   'image/png',
@@ -35,8 +37,14 @@ export const validImageTypesForComments = [
   'image/gif',
 ];
 
-interface CommentsProps {
+interface CommentsProps<T = any> {
   entityId: string;
+  getApiEnum?: ApiEnum;
+  createApiEnum?: ApiEnum;
+  getApiParams?: T;
+  createApiParams?: T;
+  extractCommentsIds: (page: T) => { id: string }[];
+  showEmptyState?: boolean;
 }
 
 export interface IComment {
@@ -62,7 +70,15 @@ export interface IComment {
   shoutoutRecipients?: IShoutoutRecipient[];
 }
 
-const Comments: FC<CommentsProps> = ({ entityId }) => {
+const Comments: FC<CommentsProps> = ({
+  entityId,
+  getApiEnum,
+  createApiEnum,
+  getApiParams,
+  createApiParams,
+  extractCommentsIds,
+  showEmptyState = false,
+}) => {
   const { t } = useTranslation('post', { keyPrefix: 'commentComponent' });
   const WORK_ANNIVERSARY_SUGGESTIONS = [
     t('workAnniversary.title'),
@@ -87,26 +103,27 @@ const Comments: FC<CommentsProps> = ({ entityId }) => {
     setMediaValidationErrors,
     setUploads,
   } = useUploadState();
-  const useInfiniteComments = getApi(ApiEnum.GetComments);
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-    comment,
-  } = useInfiniteComments({
+  const useApiHook = getApi(getApiEnum || ApiEnum.GetComments);
+  const defaultParams = { 
     entityId: entityId,
     entityType: 'post',
-    limit: 4,
-  });
+    limit: 4
+  }
+  const {
+  commentIds,
+  isLoading,
+  isFetchingNextPage,
+  fetchNextPage,
+  hasNextPage,
+  comment,
+} = useCommentsFetcher({
+  useApiHook,
+  hookParams: getApiParams || defaultParams,
+  extractComments: extractCommentsIds,
+});
   const [isCreateCommentLoading, setIsCreateCommentLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string>('');
   const getPost = useFeedStore((state) => state.getPost);
-
-  const commentIds = data?.pages.flatMap((page: any) => {
-    return page.data?.result?.data.map((comment: { id: string }) => comment);
-  }) as { id: string }[];
 
   return (
     <div>
@@ -122,13 +139,18 @@ const Comments: FC<CommentsProps> = ({ entityId }) => {
           className="w-0 flex-grow"
           entityId={entityId}
           entityType="post"
+          createApiEnum={createApiEnum}
+          getApiParams={getApiParams}
+          createApiParams={createApiParams}
           inputRef={inputRef}
           media={media}
           removeMedia={() => {
             setMedia([]);
             setFiles([]);
             setMediaValidationErrors([]);
-            inputRef!.current!.value = '';
+            if (inputRef.current) {
+                inputRef.current.value = '';
+            }
           }}
           files={files}
           mediaValidationErrors={mediaValidationErrors}
@@ -173,7 +195,7 @@ const Comments: FC<CommentsProps> = ({ entityId }) => {
         </div>
       ) : (
         commentIds &&
-        commentIds.length > 0 && (
+        commentIds.length > 0 ? (
           <>
             <Divider className="mt-4" />
             <div className="pt-4">
@@ -182,12 +204,12 @@ const Comments: FC<CommentsProps> = ({ entityId }) => {
                 {commentIds
                   ?.filter(({ id }) => !!comment[id])
                   .map(({ id }, _i: any) => (
-                    <Comment key={id} commentId={id} />
+                    <Comment key={id} commentId={id}/>
                   ))}
               </div>
               {hasNextPage && !isFetchingNextPage && (
                 <LoadMore
-                  onClick={fetchNextPage}
+                  onClick={async () => await fetchNextPage()}
                   label={t('loadMoreComments')}
                   dataTestId="comments-loadmorecta"
                 />
@@ -199,7 +221,22 @@ const Comments: FC<CommentsProps> = ({ entityId }) => {
               )}
             </div>
           </>
-        )
+        ) : showEmptyState ? (
+          <div className='w-full h-[80%] flex items-center justify-center'>
+            <NoDataFound
+                illustration="noCommentAvailable"
+                labelHeader={
+                  <div className='flex flex-col items-center justify-center'>
+                    {t('noComments')}
+                    <span className="text-sm font-semibold">
+                      {t('noCommentAvailable')}
+                    </span>
+                  </div>
+                }
+                hideClearBtn
+            />
+          </div>
+        ) : null
       )}
       <input
         type="file"

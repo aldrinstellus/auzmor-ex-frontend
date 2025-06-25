@@ -38,7 +38,9 @@ interface CommentProps {
   commentId: string;
 }
 
-export const Comment: FC<CommentProps> = ({ commentId }) => {
+export const Comment: FC<CommentProps> = ({
+  commentId,
+}) => {
   const { t: tp } = useTranslation('profile');
   const { t } = useTranslation('post', { keyPrefix: 'commentComponent' });
   const getPost = useFeedStore((state) => state.getPost);
@@ -66,6 +68,7 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
     (total, count) => total + count,
     0,
   );
+  console.log(comment);
 
   useEffect(() => {
     if (showReplies) {
@@ -80,12 +83,14 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
     onMutate: (variables) => {
       const previousData = storedcomments;
       const post = getPost(storedcomments[variables].entityId);
-      updateFeed(
+      if (post) {
+        updateFeed(
         post.id!,
         produce(post, (draft) => {
           draft.commentsCount = draft.commentsCount - 1;
         }),
       );
+      }
       setComment({ ...omit(storedcomments, [variables]) });
       closeConfirm();
       return { previousData };
@@ -309,12 +314,12 @@ export const Comment: FC<CommentProps> = ({ commentId }) => {
 
       {showReplies ? (
         <div className="mt-4">
-          <ReplyCard entityId={comment.id} />
+          <ReplyCard entityId={comment.id}/>
         </div>
       ) : !previousShowReply.current && replies?.length ? (
         replies.map((reply) => (
           <div className="mt-4 ml-8" key={reply.id}>
-            <Reply comment={reply} />
+            <Reply comment={reply}/>
           </div>
         ))
       ) : null}

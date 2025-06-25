@@ -16,7 +16,8 @@ import { useMutation } from '@tanstack/react-query';
 import { getIconFromMime } from './Doc';
 import NoDataFound from 'components/NoDataFound';
 import { getExtension } from '../../utils';
-import Comments from './CommentSection';
+// import Comments from './CommentSection';
+import CommentCard from 'components/Comments/index'
 
 interface IFilePreviewProps {
   fileId: string;
@@ -51,6 +52,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
     fileId,
     rootFolderId,
   });
+  console.log(canPostComment);
 
   const useChannelFilePreview = getApi(ApiEnum.GetChannelFilePreview);
   const {
@@ -218,7 +220,24 @@ const FilePreview: FC<IFilePreviewProps> = ({
          {/* Comment Section */}
       <div className={`transition-all duration-300 ease-in-out ${showComment ? 'w-[32%] px-2 pb-4' : 'w-0 overflow-hidden'} relative h-full`}>
         {showComment && (
-          <Comments channelId={channelId} canPostComment={canPostComment} entityId={fileId} />
+          // <Comments channelId={channelId} canPostComment={canPostComment} entityId={fileId} />
+          <CommentCard
+            entityId={fileId || ''}
+            getApiEnum={ApiEnum.GetChannelDocumentComments}
+            createApiEnum={ApiEnum.CreateChannelDocumentComments}
+            getApiParams={{
+              fileId,
+              channelId, 
+              limit: 4
+            }}
+            createApiParams={(payload: any) => ({
+              channelId,
+              fileId,
+              payload,
+            })}
+            extractCommentsIds={(page: any) => page?.data?.data?.comments ?? []}
+            showEmptyState={true}
+          />
         )}
       </div>
       </div>

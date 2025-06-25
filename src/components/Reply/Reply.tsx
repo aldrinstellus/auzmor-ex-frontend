@@ -157,7 +157,7 @@ export const Reply: FC<ReplyProps> = ({ comment }) => {
                         dataTestId="comment-reply-ecllipsis"
                       />
                     }
-                    className="left-0 rounded-9xl"
+                    className="right-0 rounded-9xl"
                   >
                     <div>
                       {!editReply && (
