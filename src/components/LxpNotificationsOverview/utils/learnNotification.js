@@ -18,6 +18,7 @@ import {
   TASK_CONFIG_ROLES,
   TASK_CREATION_SCOPE,
   TASK_CATEGORIES,
+  ELEARNING_TYPE,
 } from './constants';
 import moment from 'moment';
 import NotificationTitle from '../components/NotificationTitle';
