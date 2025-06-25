@@ -29,7 +29,10 @@ export interface activeCommentsDataType {
   type: string;
 }
 
-const Comments: FC<CommentsProps> = ({ entityId, className }) => {
+const Comments: FC<CommentsProps> = ({
+  entityId,
+  className,
+}) => {
   const { user } = useAuth();
   const { getApi } = usePermissions();
   const {

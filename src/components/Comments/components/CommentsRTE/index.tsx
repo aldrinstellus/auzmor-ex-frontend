@@ -43,6 +43,9 @@ interface CommentFormProps {
   wrapperClassName?: string;
   entityId?: string;
   entityType: string;
+  createApiEnum?: ApiEnum;
+  getApiParams?: any;
+  createApiParams?: (data: object) => object;
   mode?: PostCommentMode;
   setEditComment?: (edit: boolean) => void;
   commentData?: IComment;
@@ -73,6 +76,9 @@ export const CommentsRTE: FC<CommentFormProps> = ({
   entityId,
   entityType,
   mode = PostCommentMode.Create,
+  createApiEnum,
+  getApiParams,
+  createApiParams,
   commentData,
   setEditComment,
   inputRef = null,
@@ -98,10 +104,10 @@ export const CommentsRTE: FC<CommentFormProps> = ({
   const [isEmpty, setIsEmpty] = useState(true);
   const { getApi } = usePermissions();
 
-  const createComment = getApi(ApiEnum.CreateComment);
+  const createComment = getApi(createApiEnum || ApiEnum.CreateComment);
   const createCommentMutation = useMutation({
     mutationKey: ['create-comment'],
-    mutationFn: (payload: IUpdateCommentPayload) => createComment(payload),
+    mutationFn: (payload: any) => createComment(payload),
     onError: () => {
       failureToastConfig({
         content: `Error adding ${entityType === 'post' ? 'Comment' : 'Reply'}`,
@@ -133,18 +139,25 @@ export const CommentsRTE: FC<CommentFormProps> = ({
         return;
       }
       await queryClient.setQueryData(
-        ['comments', { entityId, entityType, limit: 4 }],
+        ['comments', getApiParams || { entityId, entityType, limit: 4 }],
         (oldData) => {
           if (oldData) {
             return produce(oldData, (draft: any) => {
-              draft.pages[0].data.result.data = [
+              if(draft.pages[0].data.result) {
+                draft.pages[0].data.result.data = [
                 { id: data.id },
                 ...draft.pages[0].data.result.data,
               ];
+              } else {
+                draft.pages[0].data.data.comments = [
+                { id: data.id },
+                ...draft.pages[0].data.data.comments,
+                ];
+              }
             });
           } else {
             queryClient.invalidateQueries(
-              ['comments', { entityId, entityType, limit: 4 }],
+              ['comments', getApiParams || { entityId, entityType, limit: 4 }],
               {
                 exact: false,
               },
@@ -155,14 +168,16 @@ export const CommentsRTE: FC<CommentFormProps> = ({
       if (entityType === 'post' && entityId) {
         setComment({ ...comment, [data.id]: { ...data } });
         const post = getPost(entityId);
-        updateFeed(
+        if (post) {
+          updateFeed(
           entityId,
           produce(post, (draft) => {
             draft.commentsCount = draft.commentsCount
               ? draft.commentsCount + 1
               : 1;
           }),
-        );
+         );
+        }
       } else if (entityType === 'comment' && entityId) {
         const updatedComment = produce(comment[entityId], (draft) => {
           draft.repliesCount = draft.repliesCount ? draft.repliesCount + 1 : 1;
@@ -276,14 +291,18 @@ export const CommentsRTE: FC<CommentFormProps> = ({
         },
       );
       const data = {
-        entityId: entityId || '',
-        entityType: entityType,
         content: commentContent,
         mentions: mentionList,
         hashtags: hashtagList,
         files: fileIds,
       };
-      createCommentMutation.mutate(data);
+      const customCreateApiParams = createApiParams ? createApiParams(data) : null;
+
+      createCommentMutation.mutate(customCreateApiParams || {
+        entityId: entityId || '',
+        entityType: entityType,
+        ...data,
+      })
     } else if (mode === PostCommentMode.Edit) {
       const commentContent = removeEmptyLines({
         text:

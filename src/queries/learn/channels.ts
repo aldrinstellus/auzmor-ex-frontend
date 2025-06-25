@@ -337,8 +337,9 @@ export const getChannelDocumentComments = async (
   return response;
 };
 
-export const createDocComment = async (channelId: string, id: string, payload: any) => {
-  const { result } = await apiService.post(`/channels/${channelId}/files/${id}/comments`, payload);
+export const createDocComment = async (payload: any) => {
+  const { channelId, fileId, payload: payloadValue } = payload || {};
+  const { result } = await apiService.post(`/channels/${channelId}/files/${fileId}/comments`, payloadValue);
   return result?.data;
 };
 
