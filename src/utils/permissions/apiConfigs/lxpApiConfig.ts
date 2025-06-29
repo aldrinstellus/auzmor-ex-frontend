@@ -203,6 +203,7 @@ export const apiConfigLxp = {
   //trainings
   [ApiEnum.GetProgressTracker]: { [Default]: queries.useProgressTracker },
   [ApiEnum.GetRecommendations]: { [Default]: queries.useGetRecommendation },
+  [ApiEnum.GetRecentlyAssigned]: { [Default]: queries.useGetRecentlyAssigned },
 
   //users
   [ApiEnum.GetMe]: { [Default]: queries.useCurrentUser },
@@ -224,6 +225,12 @@ export const apiConfigLxp = {
   [ApiEnum.GetChannelDocumentStatus]: {
     [Default]: queries.useChannelDocumentStatus,
   },
+  // [ApiEnum.GetChannelDocumentFields]: {
+  //   [Default]: queries.useChannelDocumentFields,
+  // }, TODO: custom-fields
+  // [ApiEnum.UpdateChannelDocumentFields]: {
+  //   [Default]: queries.updateChannelDocumentFields,
+  // }, TODO: custom-fields
   [ApiEnum.GetChannelFilePreview]: {
     [Default]: queries.useChannelFilePreview,
   },

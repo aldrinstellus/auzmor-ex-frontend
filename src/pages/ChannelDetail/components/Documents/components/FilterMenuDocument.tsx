@@ -19,6 +19,7 @@ import { parseNumber } from 'react-advanced-cropper';
 import Button, { Variant as ButtonVariant } from 'components/Button';
 import { isTrim } from '../../utils';
 import { useTranslation } from 'react-i18next';
+// import ColumnSelector from './ColumnSelector'; TODO: custom-fields
 
 export enum FilterKey {
   departments = 'departments',
@@ -33,8 +34,11 @@ interface IFilterMenu {
   dataTestIdSort?: string;
   dataTestIdFilter?: string;
   view: 'LIST' | 'GRID';
+  // columns?: any[];
+  // updateColumns?: (columns: object[]) => void; TODO: custom-fields
   hideFilter?: boolean;
   hideSort?: boolean;
+  // hideColumnSelector?: boolean; TODO: custom-fields
   showTitleFilter?: boolean;
   changeView: (view: 'LIST' | 'GRID') => void;
 }
@@ -46,8 +50,11 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
   dataTestIdSort,
   dataTestIdFilter,
   view,
+  // columns = [],
+  // updateColumns = () => {}, TODO: custom-fields
   hideFilter = false,
   hideSort = false,
+  // hideColumnSelector = false, TODO: custom-fields
   showTitleFilter = true,
   changeView,
 }) => {
@@ -301,6 +308,9 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
                 sortOptions={sortOptions}
               />
             )}
+            {/* {!hideColumnSelector && ( TODO: custom-fields
+              <ColumnSelector columns={columns} updateColumns={updateColumns} />
+            )} */}
           </div>
         </div>
         {(filters?.sort || isFilterApplied) && (
