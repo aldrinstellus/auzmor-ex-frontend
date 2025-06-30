@@ -37,11 +37,17 @@ export const validImageTypesForComments = [
   'image/gif',
 ];
 
+export interface GetParams {
+  channelId?: string;
+  fileId: string;
+  limit: number;
+}
+
 interface CommentsProps<T = any> {
   entityId: string;
   getApiEnum?: ApiEnum;
   createApiEnum?: ApiEnum;
-  getApiParams?: T;
+  getApiParams?: GetParams;
   createApiParams?: T;
   showEmptyState?: boolean;
   className?: string;
