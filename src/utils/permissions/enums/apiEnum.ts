@@ -200,6 +200,7 @@ export enum ApiEnum {
   //trainings
   GetProgressTracker = 'GET_PROGRESS_TRACKER',
   GetRecommendations = 'GET_RECOMMENDATIONS',
+  GetRecentlyAssigned = 'GET_RECENTLY_PUBLISHED',
 
   //users
   GetMe = 'GET_ME',
@@ -228,6 +229,8 @@ export enum ApiEnum {
   GetChannelFiles = 'GET_CHANNEL_FILES',
   GetInfiniteChannelFiles = 'GET_INFINITE_CHANNEL_FILES',
   GetChannelDocumentStatus = 'GET_CHANNEL_DOCUMENT_STATUS',
+  GetChannelDocumentFields = 'GET_CHANNEL_DOCUMENT_FIELDS',
+  UpdateChannelDocumentFields = 'UPDATE_CHANNEL_DOCUMENT_FIELDS',
   GetChannelFilePreview = 'GET_CHANNEL_FILE_PREVIEW',
   CreateChannelDocFolder = 'CREATE_CHANNEL_DOC_FOLDER',
   GetChannelDocOwners = 'GET_CHANNEL_DOC_OWNERS',

@@ -3,6 +3,7 @@ import {
   useInfiniteQuery,
   useQuery,
 } from '@tanstack/react-query';
+import { ColumnItem } from 'pages/ChannelDetail/components/Documents/components/ColumnSelector';
 import apiService from 'utils/apiService';
 import { isFiltersEmpty } from 'utils/misc';
 
@@ -100,6 +101,63 @@ const getChannelFiles = async (payload: {
       throw e;
     });
   return (response as any)?.data?.result?.data;
+};
+
+// To get all fields for the channel documents
+const getChannelDocumentFields = async (payload: {
+  channelId: string;
+  params: Record<string, any>;
+}) => {
+  try {
+    const response = await apiService.get(
+      `/channels/${payload.channelId}/document-fields`,
+      payload.params,
+    );
+    return response.data.result.data.fields;
+  } catch (e) {
+    return [
+      {
+        id: 1,
+        fieldName: 'name',
+        label: 'Name',
+        type: 'string',
+        visibility: true,
+      },
+      {
+        id: 2,
+        fieldName: 'ownerName',
+        label: 'Owner',
+        type: 'string',
+        visibility: true,
+      },
+      {
+        id: 3,
+        fieldName: 'modifiedAt',
+        label: 'Last Updated',
+        type: 'datetime',
+        visibility: true,
+      },
+    ]; // Mocked response for fields
+  }
+};
+
+// To update fields for the channel documents
+export const updateChannelDocumentFields = async (payload: {
+  channelId: string;
+  fields: ColumnItem[];
+}) => {
+  return await apiService
+    .patch(`/channels/${payload.channelId}/document-fields`, {
+      documentFields:
+        payload.fields?.map((field) => ({
+          id: parseInt(field.id),
+          visibility: field.visibility,
+          is_custom_field: field.isCustomField,
+        })) || [],
+    })
+    .catch((e) => {
+      throw e;
+    });
 };
 
 // To get files based on params Infinite listing
@@ -345,6 +403,18 @@ export const useChannelFiles = (
   return useQuery({
     queryKey: ['get-channel-files', payload],
     queryFn: () => getChannelFiles(payload),
+    ...{ ...options, networkMode: 'always', staleTime: 1 * 60 * 1000 },
+  });
+};
+
+// To get all fields for the channel documents
+export const useChannelDocumentFields = (
+  payload: { channelId: string; params: Record<string, any> },
+  options: Record<string, any>,
+) => {
+  return useQuery({
+    queryKey: ['get-channel-document-fields', payload],
+    queryFn: () => getChannelDocumentFields(payload),
     ...{ ...options, networkMode: 'always', staleTime: 1 * 60 * 1000 },
   });
 };
