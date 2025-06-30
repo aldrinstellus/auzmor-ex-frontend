@@ -20,7 +20,7 @@ import { useFeedStore } from 'stores/feedStore';
 import { failureToastConfig } from 'components/Toast/variants/FailureToast';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import Button, { Size, Variant } from 'components/Button';
-import { IComment } from 'components/Comments';
+import { GetParams, IComment } from 'components/Comments';
 import MediaPreview, { Mode } from 'components/MediaPreview';
 import {
   IMediaValidationError,
@@ -54,7 +54,7 @@ interface CommentFormProps {
   entityId?: string;
   entityType: string;
   createApiEnum?: ApiEnum;
-  getApiParams?: any;
+  getApiParams?: GetParams;
   createApiParams?: (data: object) => object;
   mode?: PostCommentMode;
   setEditComment?: (edit: boolean) => void;
