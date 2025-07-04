@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useEffect } from 'react';
 import Modal from 'components/Modal';
 import { usePermissions } from 'hooks/usePermissions';
@@ -56,6 +57,8 @@ const FilePreview: FC<IFilePreviewProps> = ({
   const { getApi } = usePermissions();
   const { channelId } = useParams();
   const [isIframeLoading, setIsIframeLoading] = React.useState(true);
+  const [iframeSrc, setIframeSrc] = React.useState('');
+  const [iframeError, setIframeError] = React.useState(false);
 
   const useChannelDocById = getApi(ApiEnum.UseChannelDocById);
   const { data: fileData, isLoading: fileLoading } = useChannelDocById({
@@ -128,6 +131,27 @@ const FilePreview: FC<IFilePreviewProps> = ({
     isError || (!isLoading && !isSupportedVideo && !allowIframePreview);
   const showVideo = !isLoading && !isError && isSupportedVideo;
   const showIframe = !isLoading && !isError && allowIframePreview;
+
+   useEffect(() => {
+  if (!previewUrl) return;
+  if (fileExtension === '.url') {
+    fetch(previewUrl, { method: 'HEAD' })
+    .then((res) => {
+      if (res.ok) {
+        setIframeSrc(previewUrl);
+      } else {
+        throw new Error('Invalid link');
+      }
+    })
+    .catch(() => {
+      setIframeError(true);
+    })
+    .finally(() => {
+      setIsIframeLoading(false);
+    });
+  }
+  setIframeSrc(previewUrl);
+}, [previewUrl]);
 
   return (
     <Modal
