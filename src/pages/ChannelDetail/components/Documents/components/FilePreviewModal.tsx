@@ -28,24 +28,6 @@ interface IFilePreviewProps {
   closeModal: () => void;
 }
 
-function getPreviewUrl(previewUrl: string | undefined): string {
-  if (!previewUrl) {
-    return '';
-  }
-
-  // Ensure the Youtube URL is properly formatted for embedding
-  if (previewUrl.includes('youtube.com') && !previewUrl.includes('/embed/')) {
-    previewUrl = previewUrl.replace('watch?v=', 'embed/');
-  } else if (
-    previewUrl.includes('youtu.be') &&
-    !previewUrl.includes('/embed/')
-  ) {
-    previewUrl = previewUrl.replace('youtu.be/', 'youtube.com/embed/');
-  }
-
-  return previewUrl;
-}
-
 const FilePreview: FC<IFilePreviewProps> = ({
   fileId,
   rootFolderId,
@@ -117,8 +99,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
   const isDownloading = downloadChannelFileMutation.isLoading;
 
   const file = fileData?.data?.result?.data as Doc;
-  const originalPreviewUrl = data?.data?.result?.previewURL;
-  const previewUrl = getPreviewUrl(originalPreviewUrl);
+  const previewUrl = data?.data?.result?.previewURL;
   const isImage = file?.mimeType?.startsWith('image/');
   const isSupportedVideo = ['video/mp4', 'video/webm'].includes(file?.mimeType);
   const fileExtension = getExtension(file?.name || '');
@@ -177,13 +158,13 @@ const FilePreview: FC<IFilePreviewProps> = ({
               />
             </div>
           )}
-          {isLink && originalPreviewUrl ? (
+          {isLink && previewUrl ? (
             <Icon
               name="launch"
               color="text-neutral-900"
               onClick={() => {
                 window.open(
-                  originalPreviewUrl,
+                  previewUrl,
                   '_blank',
                   'noopener,noreferrer',
                 );
