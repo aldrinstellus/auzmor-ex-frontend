@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { Metadata } from 'interfaces';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PREVIEW_CARD_VARIANT } from 'utils/constants';
 
@@ -33,14 +32,13 @@ const IconPreview: FC<IconPreviewProps> = ({ metaData, dataTestId, previewUrl, v
               </div>
             </div>
             {previewUrl && (
-              <Link
-                to={previewUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs py-1 px-2 flex bg-white border border-neutral-300 font-bold rounded-full"
+              <button
+                onClick={() => window.open(previewUrl, '_blank', 'noopener,noreferrer')}
+                className="text-xs sm:text-sm px-4 py-2 rounded-9xl bg-white border border-neutral-300 font-bold text-neutral-900
+                          hover:bg-neutral-100 hover:border-neutral-500 hover:shadow-md transition-all duration-200"
               >
                 {t('viewLink')}
-              </Link>
+              </button>
             )}
           </div>
         </>

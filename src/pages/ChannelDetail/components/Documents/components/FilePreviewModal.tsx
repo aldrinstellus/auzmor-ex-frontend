@@ -214,12 +214,13 @@ const FilePreview: FC<IFilePreviewProps> = ({
               sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-popups allow-popups-to-escape-sandbox"
             />
           </div>
-          ) : isLink ? (<div className="w-full h-full flex items-center justify-center">
+          ) : isLink ? (<div className="w-full h-full">
             <PreviewLink
               previewUrl={previewUrl}
               showCloseIcon={false}
               variant={PREVIEW_CARD_VARIANT.document}
-              className="h-[80%] max-h-[80%] mt-[60px]"
+              className='w-full !m-0 flex items-center justify-center'
+              cardClassName="w-[70%] h-[80%] max-h-[80%]"
             />
           </div>) : null}
       </div>

@@ -26,6 +26,7 @@ export type PreviewLinkProps = {
   showCloseIcon?: boolean;
   variant?: string;
   className?: string;
+  cardClassName?: string;
 };
 
 const PreviewLink: FC<PreviewLinkProps> = ({
@@ -35,6 +36,7 @@ const PreviewLink: FC<PreviewLinkProps> = ({
   showCloseIcon = true,
   variant,
   className = '',
+  cardClassName = '',
 }) => {
   const { media, poll } = useContext(CreatePostContext);
   const debouncePreviewUrl = useDebounce(previewUrl, 1000);
@@ -52,7 +54,7 @@ const PreviewLink: FC<PreviewLinkProps> = ({
   );
 
   return (
-    <div className="relative m-6 h-full">
+    <div className={`relative m-6 h-full ${className}`}>
       {showCloseIcon && isMetaDataPresent && !isLoading && media.length === 0 && !poll && (
         <IconButton
           icon="closeOutline"
@@ -72,7 +74,7 @@ const PreviewLink: FC<PreviewLinkProps> = ({
           isLoading={isLoading}
           isError={isError}
           variant={variant}
-          className={className}
+          className={cardClassName}
         />
       )}
     </div>
