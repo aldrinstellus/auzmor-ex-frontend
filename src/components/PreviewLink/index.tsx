@@ -9,6 +9,7 @@ import PreviewCard from 'components/PreviewCard';
 import { CreatePostContext } from 'contexts/CreatePostContext';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
+import { PREVIEW_CARD_VARIANT } from 'utils/constants';
 
 export type LinkMetadataProps = {
   title?: string;
@@ -25,7 +26,6 @@ export type PreviewLinkProps = {
   setIsPreviewRemove?: (isPreviewRemove: boolean) => void;
   showCloseIcon?: boolean;
   variant?: string;
-  className?: string;
   cardClassName?: string;
 };
 
@@ -35,7 +35,6 @@ const PreviewLink: FC<PreviewLinkProps> = ({
   setIsPreviewRemove = () => {},
   showCloseIcon = true,
   variant,
-  className = '',
   cardClassName = '',
 }) => {
   const { media, poll } = useContext(CreatePostContext);
@@ -54,7 +53,7 @@ const PreviewLink: FC<PreviewLinkProps> = ({
   );
 
   return (
-    <div className={`relative m-6 h-full ${className}`}>
+    <div className={`relative m-6 h-full ${variant === PREVIEW_CARD_VARIANT.document ? 'w-full m-0 flex items-center justify-center' :' m-6 h-full'}`}>
       {showCloseIcon && isMetaDataPresent && !isLoading && media.length === 0 && !poll && (
         <IconButton
           icon="closeOutline"
