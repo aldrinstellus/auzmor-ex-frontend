@@ -48,3 +48,8 @@ export const validDocumentFileTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'application/vnd.ms-excel',
 ];
+
+export const PREVIEW_CARD_VARIANT = {
+  document: 'DOCUMENT',
+  feed: 'FEED',
+};

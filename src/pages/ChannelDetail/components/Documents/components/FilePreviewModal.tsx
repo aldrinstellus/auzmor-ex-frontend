@@ -18,6 +18,7 @@ import { getIconFromMime } from './Doc';
 import NoDataFound from 'components/NoDataFound';
 import { getExtension } from '../../utils';
 import PreviewLink from 'components/PreviewLink';
+import { PREVIEW_CARD_VARIANT } from 'utils/constants';
 
 interface IFilePreviewProps {
   fileId: string;
@@ -193,7 +194,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
         </div>
       </div>
       <Divider />
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex items-center justify-center w-full h-full bg-neutral-100 ">
         {showSpinner ? <Spinner className="!h-24 !w-24 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" /> : null}
         {showNoPreview ? (
           <NoDataFound
@@ -236,10 +237,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
             <PreviewLink
               previewUrl={previewUrl}
               showCloseIcon={false}
-              className="w-full h-[82%] max-h-[82%]"
-              showViewLink
-              imgHeight="h-[86%]"
-              textHeight="h-[14%]"
+              variant={PREVIEW_CARD_VARIANT.document}
             />
           </div>)}
       </div>

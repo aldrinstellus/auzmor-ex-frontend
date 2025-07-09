@@ -215,8 +215,7 @@
       "failure": "Failed to load. Please check your connection and try again"
     },
     "sharepoint": "Sharepoint",
-    "noPreviewAvailable": "This file cannot be previewed.",
-    "viewLink": "View Link"
+    "noPreviewAvailable": "This file cannot be previewed."
   },
   "memberTab": {
     "title": "Members",

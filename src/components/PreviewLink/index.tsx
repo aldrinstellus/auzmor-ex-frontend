@@ -24,10 +24,7 @@ export type PreviewLinkProps = {
   setPreviewUrl?: (previewUrl: string) => void;
   setIsPreviewRemove?: (isPreviewRemove: boolean) => void;
   showCloseIcon?: boolean;
-  className?: string;
-  showViewLink?: boolean;
-  imgHeight?: string;
-  textHeight?: string;
+  variant?: string;
 };
 
 const PreviewLink: FC<PreviewLinkProps> = ({
@@ -35,10 +32,7 @@ const PreviewLink: FC<PreviewLinkProps> = ({
   // setPreviewUrl = () => {},
   setIsPreviewRemove = () => {},
   showCloseIcon = true,
-  className ='',
-  showViewLink = false,
-  imgHeight = '',
-  textHeight = '',
+  variant,
 }) => {
   const { media, poll } = useContext(CreatePostContext);
   const debouncePreviewUrl = useDebounce(previewUrl, 1000);
@@ -75,10 +69,7 @@ const PreviewLink: FC<PreviewLinkProps> = ({
           metaData={data}
           isLoading={isLoading}
           isError={isError}
-          className={className}
-          showViewLink={showViewLink}
-          imgHeight={imgHeight}
-          textHeight={textHeight}
+          variant={variant}
         />
       )}
     </div>
