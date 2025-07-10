@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { Metadata } from 'interfaces';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PREVIEW_CARD_VARIANT } from 'utils/constants';
 
@@ -20,10 +19,10 @@ const IconPreview: FC<IconPreviewProps> = ({ metaData, dataTestId, previewUrl, v
           <img
             src={metaData?.favicon}
             alt={metaData?.title}
-            className="w-full h-[480px] object-contain p-4 rounded-t-9xl bg-neutral-100 border-[16px] border-white"
+            className="w-full h-[86%] object-contain px-4 rounded-t-9xl bg-neutral-100 border-t-[16px] border-s-[16px] border-e-[16px] border-white"
             data-testid="preview-img"
           />
-          <div className="flex items-center bg-white justify-between rounded-b-9xl p-4">
+          <div className="h-[14%] flex items-center bg-white justify-between rounded-b-9xl px-4 py-4">
             <div className="flex flex-col">
               <div className="font-bold text-sm text-neutral-900 break-normal [overflow-wrap:anywhere]" data-testid="preview-link-title">
                 {metaData?.title}
@@ -33,14 +32,13 @@ const IconPreview: FC<IconPreviewProps> = ({ metaData, dataTestId, previewUrl, v
               </div>
             </div>
             {previewUrl && (
-              <Link
-                to={previewUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs py-1 px-2 flex bg-white border border-neutral-300 font-bold rounded-full"
+              <button
+                onClick={() => window.open(previewUrl, '_blank', 'noopener,noreferrer')}
+                className="text-xs sm:text-sm px-4 py-2 rounded-9xl bg-white border border-neutral-300 font-bold text-neutral-900
+                          hover:bg-neutral-100 hover:border-neutral-500 hover:shadow-md transition-all duration-200"
               >
                 {t('viewLink')}
-              </Link>
+              </button>
             )}
           </div>
         </>

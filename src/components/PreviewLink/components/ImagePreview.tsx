@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { Metadata } from 'interfaces';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { PREVIEW_CARD_VARIANT } from 'utils/constants';
 
 type ImagePreviewProps = {
@@ -27,10 +26,10 @@ const ImagePreview: FC<ImagePreviewProps> = ({
           <img
             src={metaData?.image}
             alt={metaData?.title}
-            className="w-full p-4 h-[480px] object-cover rounded-t-9xl"
+            className="w-full px-4 pt-4 h-[88%] object-cover rounded-t-9xl"
             data-testid="preview-img"
           />
-          <div className="flex items-center justify-between p-4 rounded-b-9xl">
+          <div className="h-[12%] flex items-center justify-between px-4 py-3 rounded-b-9xl">
             <div className="flex flex-col">
               <div className="font-bold text-sm text-neutral-900 break-normal [overflow-wrap:anywhere]" data-testid="link-preview-title">
                 {metaData?.title}
@@ -40,14 +39,13 @@ const ImagePreview: FC<ImagePreviewProps> = ({
               </div>
             </div>
             {previewUrl && (
-              <Link
-                to={previewUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs py-1 w-[80px] h-[28px] flex justify-center items-center bg-white border border-neutral-300 font-bold rounded-9xl"
+              <button
+                onClick={() => window.open(previewUrl, '_blank', 'noopener,noreferrer')}
+                className="text-xs px-4 py-2 rounded-9xl bg-white border border-neutral-300 font-bold text-neutral-900
+                          hover:bg-neutral-100 hover:border-neutral-500 hover:shadow-md transition-all duration-200"
               >
                 {t('viewLink')}
-              </Link>
+              </button>
             )}
           </div>
         </>
