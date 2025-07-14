@@ -53,6 +53,7 @@ interface CommentsProps<T = any> {
   className?: string;
   commentsWrapperClassName?: string;
   canPostComment?: boolean;
+  isChannelAdmin?: boolean;
 }
 
 export interface IComment {
@@ -88,6 +89,7 @@ const Comments: FC<CommentsProps> = ({
   className= '',
   commentsWrapperClassName= '',
   canPostComment = true,
+  isChannelAdmin = true,
 }) => {
   const { t } = useTranslation('post', { keyPrefix: 'commentComponent' });
   const WORK_ANNIVERSARY_SUGGESTIONS = [
@@ -213,7 +215,7 @@ const Comments: FC<CommentsProps> = ({
                 {commentIds
                   ?.filter(({ id }) => !!comment[id])
                   .map(({ id }, _i: any) => (
-                    <Comment key={id} canPostComment={canPostComment} commentId={id}/>
+                    <Comment key={id} canPostComment={canPostComment} isChannelAdmin={isChannelAdmin} commentId={id}/>
                   ))}
               </div>
               {hasNextPage && !isFetchingNextPage && (

@@ -20,6 +20,7 @@ import CommentCard from 'components/Comments/index';
 import { ICommentPayload } from 'components/Comments/components/CommentsRTE';
 import PreviewLink from 'components/PreviewLink';
 import { PREVIEW_CARD_VARIANT } from 'utils/constants';
+import { useChannelRole } from 'hooks/useChannelRole';
 
 interface IFilePreviewProps {
   fileId: string;
@@ -100,6 +101,8 @@ const FilePreview: FC<IFilePreviewProps> = ({
       elem?.setAttribute('oncontextmenu', 'return false;');
     }
   });
+
+  const { isChannelAdmin } = useChannelRole(channelId);
 
   const isLoading = fileLoading || previewLoading;
   const isDownloading = downloadChannelFileMutation.isLoading;
@@ -270,6 +273,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
               })}
               showEmptyState={true}
               canPostComment={canPostComment}
+              isChannelAdmin={isChannelAdmin}
             />
           )}
         </div>
