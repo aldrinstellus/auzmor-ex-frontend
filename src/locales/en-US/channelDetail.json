@@ -218,7 +218,8 @@
     "loadMoreComments": "Load more comments",
     "noComments": "No Commments yet",
     "noCommentAvailable": "Be the first to leave a comment or ask a question.",
-    "uploadNow": "Upload Now"
+    "uploadNow": "Upload Now",
+    "foundIn": "- found in"
   },
   "memberTab": {
     "title": "Members",

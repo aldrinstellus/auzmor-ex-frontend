@@ -22,7 +22,7 @@ const DocSearchRow = ({
   const iconName = data?.isFolder ? 'folder' : getIconFromMime(data?.mimeType);
   return (
     <div
-      className="flex gap-2 items-center hover:bg-primary-50 cursor-pointer"
+      className="flex gap-2 items-center hover:bg-primary-50 cursor-pointer border-2 border-black"
       onPointerDown={(e) => e.preventDefault()}
       onClick={() => onClick(data)}
     >
@@ -31,7 +31,7 @@ const DocSearchRow = ({
         <div className="text-xs">
           <HighlightText text={data?.name || ''} subString={searchQuery} />
         </div>
-        <div className="text-xs">
+        <div className="text-xs text-customBlue">
           {t('updatedOn', {
             date: moment(data?.updatedAt).format('DD MMM YYYY'),
           })}{' '}
@@ -39,6 +39,21 @@ const DocSearchRow = ({
           {data?.externalModifiedBy &&
             t('updatedBy', { name: data?.externalModifiedBy })}
         </div>
+        {data?.customFields && !Array.isArray(data?.customFields) && (
+          <div className="text-xs text-customBlue">
+            &quot;
+            <span className="text-primary">
+              {searchQuery}
+            </span>
+            &quot;
+            &nbsp;
+            {t('foundIn')}
+            &nbsp;
+            <span className="font-semibold">
+              {data?.customFields?.fieldName}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

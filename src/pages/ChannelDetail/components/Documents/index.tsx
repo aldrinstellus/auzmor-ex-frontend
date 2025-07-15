@@ -224,7 +224,7 @@ const renderCustomField = (type: string, value: any): React.ReactNode => {
           href={value.Url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 underline"
+          className="text-sm text-blue-600 underline"
         >
           WEBSITE LINK
         </a>
