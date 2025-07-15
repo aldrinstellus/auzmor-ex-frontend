@@ -37,13 +37,13 @@ import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 interface CommentProps {
   commentId: string;
   canPostComment?: boolean;
-  isChannelAdmin?: boolean;
+  canDeleteComment?: boolean;
 }
 
 export const Comment: FC<CommentProps> = ({
   commentId,
   canPostComment = true,
-  isChannelAdmin = true,
+  canDeleteComment = false,
 }) => {
   const { t: tp } = useTranslation('profile');
   const { t } = useTranslation('post', { keyPrefix: 'commentComponent' });
@@ -69,8 +69,8 @@ export const Comment: FC<CommentProps> = ({
   const replies = getComments(comment?.relevantComments || []);
 
   const isOwner = user?.id === comment?.createdBy?.userId;
-  const canEdit = isOwner && (isChannelAdmin || !isChannelAdmin);
-  const canDelete = (isChannelAdmin && !!comment?.createdBy?.userId) || (!isChannelAdmin && isOwner);
+  const canEdit = isOwner;
+  const canDelete = (canDeleteComment || isOwner);
 
   const totalCount = Object.values(comment?.reactionsCount || {}).reduce(
     (total, count) => total + count,
@@ -330,11 +330,11 @@ export const Comment: FC<CommentProps> = ({
       </div>
 
       {showReplies ? (
-        <ReplyCard entityId={comment?.id} canPostComment={canPostComment} isChannelAdmin={isChannelAdmin} />
+        <ReplyCard entityId={comment?.id} canPostComment={canPostComment} canDeleteComment={canDeleteComment} />
       ) : !previousShowReply.current && replies?.length ? (
         replies.map((reply) => (
           <div className="mt-4 ml-8" key={reply.id}>
-            <Reply comment={reply} isChannelAdmin={isChannelAdmin} canPostComment={canPostComment} />
+            <Reply comment={reply} canDeleteComment={canDeleteComment} canPostComment={canPostComment} />
           </div>
         ))
       ) : null}

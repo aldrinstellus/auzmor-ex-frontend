@@ -40,11 +40,11 @@ import { usePermissions } from 'hooks/usePermissions';
 interface ReplyProps {
   comment: IComment;
   className?: string;
-  isChannelAdmin?: boolean;
+  canDeleteComment?: boolean;
   canPostComment?: boolean;
 }
 
-export const Reply: FC<ReplyProps> = ({ comment, isChannelAdmin, canPostComment }) => {
+export const Reply: FC<ReplyProps> = ({ comment, canDeleteComment, canPostComment }) => {
   const { t: tp } = useTranslation('profile');
   const { t } = useTranslation('components', { keyPrefix: 'Reply' });
   const { user } = useAuth();
@@ -56,8 +56,8 @@ export const Reply: FC<ReplyProps> = ({ comment, isChannelAdmin, canPostComment 
   const { comment: storedComments, setComment } = useCommentStore();
 
   const isOwner = user?.id === comment?.createdBy?.userId;
-  const canEdit = isOwner && (isChannelAdmin || !isChannelAdmin);
-  const canDelete = (isChannelAdmin && !!comment?.createdBy?.userId) || (!isChannelAdmin && isOwner);
+  const canEdit = isOwner;
+  const canDelete = (canDeleteComment || isOwner);
 
   const deleteComment = getApi(ApiEnum.DeleteComment);
   const deleteReplyMutation = useMutation({

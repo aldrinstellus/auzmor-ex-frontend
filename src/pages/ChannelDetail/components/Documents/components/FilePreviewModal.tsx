@@ -273,7 +273,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
               })}
               showEmptyState={true}
               canPostComment={canPostComment}
-              isChannelAdmin={isChannelAdmin}
+              canDeleteComment={isChannelAdmin}
             />
           )}
         </div>

@@ -57,7 +57,7 @@ interface CommentsProps<T = any> {
   showEmptyState?: boolean;
   className?: string;
   canPostComment?: boolean;
-  isChannelAdmin?: boolean;
+  canDeleteComment?: boolean;
 }
 
 export interface IComment {
@@ -93,7 +93,7 @@ const Comments: FC<CommentsProps> = ({
   showEmptyState = false,
   className= '',
   canPostComment = true,
-  isChannelAdmin = true,
+  canDeleteComment = true,
 }) => {
   const { t } = useTranslation('post', { keyPrefix: 'commentComponent' });
   const WORK_ANNIVERSARY_SUGGESTIONS = [
@@ -188,7 +188,7 @@ const Comments: FC<CommentsProps> = ({
                     {commentIds
                       ?.filter(({ id }) => !!comment[id])
                       .map(({ id }, _i: any) => (
-                        <Comment key={id} canPostComment={canPostComment} isChannelAdmin={isChannelAdmin} commentId={id}/>
+                        <Comment key={id} canPostComment={canPostComment} canDeleteComment={canDeleteComment} commentId={id}/>
                       ))}
                   </div>
                   {hasNextPage && !isFetchingNextPage && (
@@ -337,7 +337,7 @@ const Comments: FC<CommentsProps> = ({
                     {commentIds
                       ?.filter(({ id }) => !!comment[id])
                       .map(({ id }, _i: any) => (
-                        <Comment key={id} canPostComment={canPostComment} isChannelAdmin={isChannelAdmin} commentId={id}/>
+                        <Comment key={id} commentId={id}/>
                       ))}
                   </div>
                   {hasNextPage && !isFetchingNextPage && (

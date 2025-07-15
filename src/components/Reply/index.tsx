@@ -23,7 +23,7 @@ interface CommentsProps {
   entityId: string;
   canPostComment?: boolean;
   className?: string;
-  isChannelAdmin?: boolean;
+  canDeleteComment?: boolean;
 }
 
 export interface activeCommentsDataType {
@@ -33,8 +33,8 @@ export interface activeCommentsDataType {
 
 const Comments: FC<CommentsProps> = ({
   entityId,
-  canPostComment = true,
-  isChannelAdmin = true,
+  canPostComment,
+  canDeleteComment,
   className,
 }) => {
   const { user } = useAuth();
@@ -111,7 +111,7 @@ const Comments: FC<CommentsProps> = ({
                       // handleClick={handleClick}
                       comment={comment[id]}
                       key={id}
-                      isChannelAdmin={isChannelAdmin}
+                      canDeleteComment={canDeleteComment}
                       canPostComment={canPostComment}
                     />
                   ))}
