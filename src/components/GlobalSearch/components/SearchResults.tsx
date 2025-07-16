@@ -406,17 +406,10 @@ const SearchResults: FC<ISearchResultsProps> = ({
             {result?.customFields && !Array.isArray(result?.customFields) && (
           <div className="text-xs text-neutral-500">
             &quot;
-            {result?.customFields?.display_name
-            ?.split(new RegExp(`(${searchQuery})`, 'gi'))
-            .map((part: string, i: number) =>
-              part.toLowerCase() === searchQuery?.toLowerCase() ? (
-                <span key={i} className="text-primary-500 font-semibold">
-                  {part}
-                </span>
-              ) : (
-                <span key={i}>{part}</span>
-              )
-            )}
+            <HighlightText
+              text={result?.customFields?.display_name}
+              subString={searchQuery}
+            />
             &quot;
             &nbsp;
             {t('foundIn')}
