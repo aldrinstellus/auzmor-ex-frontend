@@ -16,7 +16,6 @@ const DocSearchRow = ({
   searchQuery = '',
   onClick = () => {},
 }: DocSearchProps) => {
-  console.log(data.customFields);
   const { t } = useTranslation('channelDetail', {
     keyPrefix: 'documentTab',
   });
