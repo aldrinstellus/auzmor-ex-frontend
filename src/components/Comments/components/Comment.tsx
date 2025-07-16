@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import Likes from 'components/Reactions';
 import Avatar from 'components/Avatar';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient  } from '@tanstack/react-query';
 import { humanizeTime } from 'utils/time';
 import useAuth from 'hooks/useAuth';
 import ReplyCard from 'components/Reply';
@@ -33,20 +33,26 @@ import PopupMenu from 'components/PopupMenu';
 import { useTranslation } from 'react-i18next';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
+import { GetParams } from '../index';
 
 interface CommentProps {
   commentId: string;
   canPostComment?: boolean;
   canDeleteComment?: boolean;
+  getApiParams?: GetParams;
+  defaultParams?: GetParams;
 }
 
 export const Comment: FC<CommentProps> = ({
   commentId,
   canPostComment = true,
   canDeleteComment = false,
+  getApiParams,
+  defaultParams,
 }) => {
   const { t: tp } = useTranslation('profile');
   const { t } = useTranslation('post', { keyPrefix: 'commentComponent' });
+  const queryClient = useQueryClient();
   const getPost = useFeedStore((state) => state.getPost);
   const [getComments, storedcomments, setComment] = useCommentStore(
     ({ getComments, comment, setComment }) => [
@@ -98,7 +104,7 @@ export const Comment: FC<CommentProps> = ({
         }),
       );
       }
-      setComment({ ...omit(storedcomments, [variables]) });
+      setComment(omit(storedcomments, [commentId]));
       closeConfirm();
       return { previousData };
     },
@@ -107,11 +113,35 @@ export const Comment: FC<CommentProps> = ({
         content: t('deleteFailToast'),
         dataTestId: 'comment-toaster',
       }),
-    onSuccess: () =>
-      successToastConfig({
-        content: t('deleteSuccessToast'),
-        dataTestId: 'comment-toaster',
-      }),
+    onSuccess: (_, id) =>{
+      const queryKey = ['comments', getApiParams || defaultParams];
+      queryClient.setQueryData(queryKey, (oldData: any) => {
+        if (!oldData?.pages) return oldData;
+        const newPages = oldData.pages.map((page: any) => {
+          const updatedData = page?.data?.result?.data?.filter(
+            (c: any) => c.id !== id
+          );
+          return {
+            ...page,
+            data: {
+              ...page.data,
+              result: {
+                ...page.data.result,
+                data: updatedData,
+              },
+            },
+          };
+        });
+        return {
+          ...oldData,
+          pages: newPages,
+        };
+      });
+          successToastConfig({
+            content: t('deleteSuccessToast'),
+            dataTestId: 'comment-toaster',
+          });
+        },
   });
 
   const profileUrl = isLxp

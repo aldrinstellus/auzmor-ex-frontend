@@ -39,7 +39,9 @@ export const validImageTypesForComments = [
 
 export interface GetParams {
   channelId?: string;
-  fileId: string;
+  entityId?: string;
+  entityType?: string;
+  fileId?: string;
   limit: number;
 }
 
@@ -139,6 +141,7 @@ const Comments: FC<CommentsProps> = ({
   const [isCreateCommentLoading, setIsCreateCommentLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string>('');
   const getPost = useFeedStore((state) => state.getPost);
+  console.log(commentIds);
 
   const renderCommentComponent = (variant?: CommentVariant) => {
     switch (variant) {
@@ -188,7 +191,14 @@ const Comments: FC<CommentsProps> = ({
                     {commentIds
                       ?.filter(({ id }) => !!comment[id])
                       .map(({ id }, _i: any) => (
-                        <Comment key={id} canPostComment={canPostComment} canDeleteComment={canDeleteComment} commentId={id}/>
+                        <Comment
+                          key={id}
+                          canPostComment={canPostComment}
+                          canDeleteComment={canDeleteComment}
+                          commentId={id}
+                          getApiParams={getApiParams}
+                          defaultParams={defaultParams}
+                        />
                       ))}
                   </div>
                   {hasNextPage && !isFetchingNextPage && (
