@@ -39,9 +39,7 @@ export const validImageTypesForComments = [
 
 export interface GetParams {
   channelId?: string;
-  entityId?: string;
-  entityType?: string;
-  fileId?: string;
+  fileId: string;
   limit: number;
 }
 
@@ -196,8 +194,6 @@ const Comments: FC<CommentsProps> = ({
                           canPostComment={canPostComment}
                           canDeleteComment={canDeleteComment}
                           commentId={id}
-                          getApiParams={getApiParams}
-                          defaultParams={defaultParams}
                         />
                       ))}
                   </div>

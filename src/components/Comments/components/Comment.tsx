@@ -33,22 +33,17 @@ import PopupMenu from 'components/PopupMenu';
 import { useTranslation } from 'react-i18next';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
-import { GetParams } from '../index';
 
 interface CommentProps {
   commentId: string;
   canPostComment?: boolean;
   canDeleteComment?: boolean;
-  getApiParams?: GetParams;
-  defaultParams?: GetParams;
 }
 
 export const Comment: FC<CommentProps> = ({
   commentId,
   canPostComment = true,
   canDeleteComment = false,
-  getApiParams,
-  defaultParams,
 }) => {
   const { t: tp } = useTranslation('profile');
   const { t } = useTranslation('post', { keyPrefix: 'commentComponent' });
@@ -114,7 +109,7 @@ export const Comment: FC<CommentProps> = ({
         dataTestId: 'comment-toaster',
       }),
     onSuccess: () =>{
-      queryClient.invalidateQueries(['comments', getApiParams || defaultParams]);
+      queryClient.invalidateQueries(['comments']);
       successToastConfig({
         content: t('deleteSuccessToast'),
         dataTestId: 'comment-toaster',
