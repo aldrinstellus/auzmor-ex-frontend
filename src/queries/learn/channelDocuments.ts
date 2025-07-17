@@ -118,7 +118,7 @@ const getChannelDocumentFields = async (payload: {
     return [
       {
         id: 1,
-        fieldName: 'name',
+        fieldName: 'Name',
         label: 'Name',
         type: 'string',
         visibility: true,
@@ -126,7 +126,7 @@ const getChannelDocumentFields = async (payload: {
       },
       {
         id: 2,
-        fieldName: 'ownerName',
+        fieldName: 'Owner',
         label: 'Owner',
         type: 'string',
         visibility: true,
@@ -134,7 +134,7 @@ const getChannelDocumentFields = async (payload: {
       },
       {
         id: 3,
-        fieldName: 'modifiedAt',
+        fieldName: 'Last Updated',
         label: 'Last Updated',
         type: 'datetime',
         visibility: true,
