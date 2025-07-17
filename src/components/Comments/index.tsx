@@ -229,7 +229,7 @@ const Comments: FC<CommentsProps> = ({
             ) : null
           )}
           {canPostComment && (<div className="flex h-[60px] flex-row items-center justify-between p-0 gap-2 pb-2">
-            <div>
+            <div className='mb-2'>
               <Avatar
                 name={user?.name || 'U'}
                 size={32}
