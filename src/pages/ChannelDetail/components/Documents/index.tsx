@@ -75,7 +75,6 @@ import { getUtcMiliseconds } from 'utils/time';
 import useNavigate from 'hooks/useNavigation';
 import { ColumnItem } from './components/ColumnSelector';
 import Truncate from 'components/Truncate';
-import type { TFunction } from 'i18next';
 // import { ICheckboxListOption } from 'components/CheckboxList';
 
 export enum DocIntegrationEnum {
@@ -150,7 +149,11 @@ const OwnerField = ({
 }) => (
   <div className="flex gap-2 items-center">
     <Avatar image={ownerImage} name={ownerName} size={24} />
-    <span className="truncate">{ownerName}</span>
+    <Truncate
+      maxLength={10}
+      toolTipClassName='!z-[999]'
+      text={ownerName}
+    />
   </div>
 );
 
@@ -204,7 +207,7 @@ const LocationField = ({
   );
 };
 
-const renderCustomField = (type: string, value: any, tc: TFunction): React.ReactNode => {
+const renderCustomField = (type: string, value: any): React.ReactNode => {
   if (value === null || value === undefined || value === '') return <span className='text-neutral-300'>-</span>;
 
   switch (type) {
@@ -247,9 +250,15 @@ const renderCustomField = (type: string, value: any, tc: TFunction): React.React
           href={value.Url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-blue-600 underline"
+          className="text-sm underline"
+          onClick={(e) => e.stopPropagation()}
         >
-          {tc('websiteLink')}
+          <Truncate
+            maxLength={10}
+            toolTipClassName='!z-[999]'
+            text={value.Description}
+            className="text-neutral-900 font-medium"
+          />
         </a>
       );
     case 'boolean':
@@ -258,15 +267,6 @@ const renderCustomField = (type: string, value: any, tc: TFunction): React.React
     case 'date':
       const dateTime = moment(value).format('MMMM DD,YYYY');
       return dateTime;
-    case 'image':
-      return (
-        <img
-          src={value}
-          alt="field"
-          className="w-16 h-10 object-cover rounded border border-gray-300"
-        />
-      );
-
     default:
       return typeof value === 'string' ? value : JSON.stringify(value);
   }
@@ -688,7 +688,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                     (eachField: any) => field.fieldName === eachField.field_name
                   ) as { field_values?: any } | undefined;
 
-                  return <>{renderCustomField(field.type, matched?.field_values, tc)}</>;
+                  return <>{renderCustomField(field.type, matched?.field_values)}</>;
               }
             },
             size: field.size || fieldSize[field.fieldName] || fieldSizeByType[field.type] || 256,
