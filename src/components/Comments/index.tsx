@@ -238,8 +238,8 @@ const Comments: FC<CommentsProps> = ({
             </div>
             <div className="relative h-full flex-grow !bg-white">
               <CommentsRTE
-                className="absolute w-full bottom-[8px] overflow-y-auto z-[999]"
-                wrapperClassName='bg-white'
+                className="absolute w-full bottom-[8px] z-[10]"
+                wrapperClassName='bg-white max-h-[450px]'
                 entityId={entityId}
                 entityType="post"
                 placeholder={Placeholder.DocumentComment}
