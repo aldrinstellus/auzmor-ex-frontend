@@ -243,6 +243,7 @@ const Comments: FC<CommentsProps> = ({
                 entityId={entityId}
                 entityType="post"
                 placeholder={Placeholder.DocumentComment}
+                charLimit={500}
                 createApiEnum={createApiEnum}
                 getApiParams={getApiParams}
                 createApiParams={createApiParams}
