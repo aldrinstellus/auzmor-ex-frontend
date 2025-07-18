@@ -238,12 +238,12 @@ const Comments: FC<CommentsProps> = ({
             </div>
             <div className="relative h-full flex-grow !bg-white">
               <CommentsRTE
-                className="absolute w-full bottom-[6px] z-[10]"
-                wrapperClassName='bg-white max-h-[450px]'
+                className="absolute w-full bottom-[6px] z-[999]"
+                wrapperClassName='bg-white max-h-[600px]'
                 entityId={entityId}
                 entityType="post"
                 placeholder={Placeholder.DocumentComment}
-                charLimit={500}
+                charLimit={1000}
                 createApiEnum={createApiEnum}
                 getApiParams={getApiParams}
                 createApiParams={createApiParams}
