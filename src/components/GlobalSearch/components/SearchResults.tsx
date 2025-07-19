@@ -411,9 +411,15 @@ const SearchResults: FC<ISearchResultsProps> = ({
                 &quot;
                 <HighlightText
                   text={
-                    Array.isArray(result.customFields[0].customFieldValues)
-                      ? result.customFields[0].customFieldValues[0]
-                      : result.customFields[0].customFieldValues
+                    Array.isArray(result.customFields?.[0]?.customFieldValues)
+                      ? result.customFields[0].customFieldValues.find((val: any) =>
+                          typeof val === 'string' &&
+                          searchQuery &&
+                          val.toLowerCase().includes(searchQuery.toLowerCase())
+                        ) || ''
+                      : typeof result.customFields?.[0]?.customFieldValues === 'string'
+                        ? result.customFields[0].customFieldValues
+                        : ''
                   }
                   subString={searchQuery}
                 />
