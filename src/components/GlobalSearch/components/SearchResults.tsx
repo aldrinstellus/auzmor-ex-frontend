@@ -426,7 +426,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
                 &quot;&nbsp;
                 {t('foundIn')}&nbsp;
                 <span className="font-semibold text-neutral-700">
-                  {result.customFields[0].fieldName}
+                  {result.customFields[0].displayName}
                 </span>
               </div>
             )}

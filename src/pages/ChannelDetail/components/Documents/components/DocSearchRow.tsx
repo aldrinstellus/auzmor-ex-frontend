@@ -61,7 +61,7 @@ const DocSearchRow = ({
             {t('foundIn')}
             &nbsp;
             <span className="font-semibold">
-              {data?.customFields[0]?.field_name}
+              {data?.customFields[0]?.display_name}
             </span>
           </div>
         )}

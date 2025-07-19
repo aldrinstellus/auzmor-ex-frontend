@@ -94,6 +94,11 @@ export const getChannelPermissions: (
               !isSuperAdmin
             )
               return false;
+            if (
+                permission === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
+            )
+              return false;
             return true;
           });
         } else {
@@ -196,6 +201,11 @@ export const getChannelPermissions: (
             if (
               permission === ChannelPermissionEnum.CanReauthorize &&
               !isSuperAdmin
+            )
+              return false;
+            if (
+                permission === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
             )
               return false;
             return true;
@@ -418,7 +428,14 @@ export const getChannelPermissions: (
               ChannelPermissionEnum.CanDownloadDocuments,
               ChannelPermissionEnum.CanViewCommentDocuments,
               ChannelPermissionEnum.CanPostCommentsChannelDoc,
-            ];
+            ].filter((permission) => {
+              if (
+                permission === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
+              )
+                return false;
+              return true;
+            });
           }
         }
       }
