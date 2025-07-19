@@ -406,21 +406,21 @@ const SearchResults: FC<ISearchResultsProps> = ({
               </div>
             </div>
             </div>
-            {result?.customFields && !Array.isArray(result?.customFields) && (
+            {result?.customFields && Array.isArray(result.customFields) && result.customFields.length > 0 && (
               <div className="text-xs text-neutral-500">
                 &quot;
                 <HighlightText
                   text={
-                    Array.isArray(result.customFields.custom_field_values)
-                      ? result.customFields.custom_field_values[0]
-                      : result.customFields.custom_field_values
+                    Array.isArray(result.customFields[0].customFieldValues)
+                      ? result.customFields[0].customFieldValues[0]
+                      : result.customFields[0].customFieldValues
                   }
                   subString={searchQuery}
                 />
                 &quot;&nbsp;
                 {t('foundIn')}&nbsp;
-                <span className="font-semibold">
-                  {result?.customFields?.field_name}
+                <span className="font-semibold text-neutral-700">
+                  {result.customFields[0].fieldName}
                 </span>
               </div>
             )}

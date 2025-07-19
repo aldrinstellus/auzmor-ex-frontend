@@ -39,14 +39,14 @@ const DocSearchRow = ({
           {data?.externalModifiedBy &&
             t('updatedBy', { name: data?.externalModifiedBy })}
         </div>
-        {data?.customFields && !Array.isArray(data?.customFields) && (
+        {data?.customFields && Array.isArray(data.customFields) && data.customFields.length > 0 && (
           <div className="text-xs text-neutral-700">
             &quot;
             <HighlightText
               text={
-                Array.isArray(data.customFields.custom_field_values)
-                  ? data.customFields.custom_field_values[0]
-                  : data.customFields.custom_field_values
+                Array.isArray(data.customFields[0].custom_field_values)
+                  ? data.customFields[0].custom_field_values[0]
+                  : data.customFields[0].custom_field_values
               }
               subString={searchQuery}
             />
@@ -55,7 +55,7 @@ const DocSearchRow = ({
             {t('foundIn')}
             &nbsp;
             <span className="font-semibold">
-              {data?.customFields?.field_name}
+              {data?.customFields[0]?.field_name}
             </span>
           </div>
         )}
