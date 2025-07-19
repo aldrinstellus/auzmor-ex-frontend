@@ -29,7 +29,7 @@ interface IFilePreviewProps {
   rootFolderId: string;
   open: boolean;
   canDownload: boolean;
-  canComment: boolean;
+  canViewComment: boolean;
   canPostComment: boolean;
   closeModal: () => void;
 }
@@ -39,7 +39,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
   rootFolderId,
   open,
   canDownload = false,
-  canComment = false,
+  canViewComment = false,
   canPostComment = false,
   closeModal,
 }) => {
@@ -155,7 +155,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
           )}
         </div>
         <div className="flex absolute gap-3 right-4">
-          {(canComment || isChannelAdmin || isAdmin) && (
+          {(canViewComment || isChannelAdmin || isAdmin) && (
             <Icon
               name={showComment ? 'commentFilled' : 'comment'}
               color="text-red-500"
@@ -276,7 +276,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
                 payload,
               })}
               showEmptyState={true}
-              canPostComment={canPostComment}
+              canPostComment={canPostComment && canViewComment}
               canDeleteComment={canDeleteComment}
             />
           )}
