@@ -1880,8 +1880,8 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           canDownload={permissions.includes(
             ChannelPermissionEnum.CanDownloadDocuments,
           )}
-          canComment={permissions.includes(
-            ChannelPermissionEnum.CanCommentDocuments,
+          canViewComment={permissions.includes(
+            ChannelPermissionEnum.CanViewCommentDocuments,
           )}
           canPostComment={permissions.includes(
             ChannelPermissionEnum.CanPostCommentsChannelDoc,
