@@ -67,7 +67,6 @@ const DocumentPreview: FC<DocumentPreviewProps> = ({
   const showVideo = !previewLoading && !isError && isSupportedVideo;
   const showIframe = !isLink && !previewLoading && !isError && allowIframePreview;
 
-
   return (
     <>
       <Card className="flex flex-col">

@@ -352,7 +352,14 @@ const Comments: FC<CommentsProps> = ({
                     {commentIds
                       ?.filter(({ id }) => !!comment[id])
                       .map(({ id }, _i: any) => (
-                        <Comment key={id} commentId={id}/>
+                        <Comment
+                          key={id}
+                          commentId={id}
+                          canPostComment={canPostComment}
+                          canDeleteComment={canDeleteComment}
+                          deleteApiEnum={deleteApiEnum}
+                          deleteApiParams={deleteApiParams}
+                        />
                       ))}
                   </div>
                   {hasNextPage && !isFetchingNextPage && (

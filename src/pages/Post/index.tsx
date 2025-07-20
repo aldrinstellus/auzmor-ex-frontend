@@ -15,7 +15,7 @@ import { ChannelVisibilityEnum, IChannel } from 'stores/channelStore';
 import { useFeedStore } from 'stores/feedStore';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { ComponentEnum } from 'utils/permissions/enums/componentEnum';
-import DocumentPreview from 'components/DocumnetPreview';
+import DocumentPreview from 'components/DocumentPreview';
 import { useChannelDetails } from 'queries/learn';
 
 const PostPage: FC = () => {
