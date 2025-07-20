@@ -71,6 +71,7 @@ const DocumentPreview: FC<DocumentPreviewProps> = ({
     <>
       <Card className="flex flex-col">
         <div className="post-content px-4 py-3 flex flex-col gap-3">
+          {!previewLoading ? 
           <div
             className="bg-gray-200 min-h-[400px] transition-all duration-300 ease-in-out w-full flex items-center justify-center h-full px-8 pt-8">
             {showNoPreview ? (
@@ -121,6 +122,9 @@ const DocumentPreview: FC<DocumentPreviewProps> = ({
               </div>
             ) : null}
           </div>
+          : <div className='w-full h-[400px] bg-gray-200 flex items-center justify-center'>
+              <Spinner className="!h-24 !w-24"/>
+            </div>}
         </div>
         {/* Comments */}
           <div className="pb-3 px-6">
