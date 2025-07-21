@@ -10,6 +10,7 @@ import Input from 'components/Input';
 
 export interface ColumnItem {
   id: string;
+  custom_field_id: string;
   fieldName: string;
   label: string;
   type: string;
@@ -59,7 +60,7 @@ const ColumnSelector: FC<IColumnSelecorProps> = ({
     }
   }, [watchedColumns]);
 
-  const disabledFieldName = ['Name', 'Owner', 'Last Updated'];
+  const disabledFieldName = ['Name'];
 
   const columnFields = useMemo(
     () => [
@@ -97,7 +98,7 @@ const ColumnSelector: FC<IColumnSelecorProps> = ({
             variant={Variant.Secondary}
             size={Size.Medium}
             borderAround
-            className="bg-white !p-[10px]"
+            className="h-full flex items-center justify-center bg-white !p-[10px] "
             dataTestId="column-selector-button"
             ariaLabel={t('sort')}
           />
