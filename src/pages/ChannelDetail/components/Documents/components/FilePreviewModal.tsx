@@ -119,7 +119,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
   if (commentId) {
     setShowComment(true);
   }
-}, [commentId]);
+}, [commentId, postId]);
 
   useEffect(() => {
     const elem = document.getElementById('videoplayer');
