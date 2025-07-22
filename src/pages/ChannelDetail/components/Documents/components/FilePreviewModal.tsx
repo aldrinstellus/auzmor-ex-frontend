@@ -53,7 +53,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
   });
   const { getApi } = usePermissions();
   const { channelId } = useParams();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const commentId = searchParams.get('commentId') || '';
   const postId = searchParams.get('postId') || '';
   const { getPost } = useFeedStore();
@@ -159,6 +159,19 @@ const FilePreview: FC<IFilePreviewProps> = ({
       <div className="px-2">
         <div className='text-sm font-semibold pb-2 mb-2 border-b-1 border-neutral-200 flex items-center justify-between'>
           {t('commentTitle')}
+          <div
+            className='text-xs cursor-pointer hover:!text-primary-400' 
+            onClick={() => {
+              setLocalCommentId('');
+              setLocalPostId('');
+              const updatedParams = new URLSearchParams(searchParams.toString());
+              updatedParams.delete('commentId');
+              updatedParams.delete('postId');
+              setSearchParams(updatedParams);
+            }}
+          >
+            {t('viewAllComments')}
+          </div>
         </div>
         {isSingleCommentLoading ? 
           <div className='pt-4 h-[86%]'>
@@ -237,15 +250,7 @@ const FilePreview: FC<IFilePreviewProps> = ({
               }}
             />
           ) : null}
-          <Icon 
-            name="close2"
-            color="text-neutral-900"
-            onClick={() => {
-            closeModal();
-            setLocalCommentId('');
-            setLocalPostId('');
-            }}
-          />
+          <Icon name="close2" color="text-neutral-900" onClick={closeModal} />
         </div>
       </div>
       <Divider />
