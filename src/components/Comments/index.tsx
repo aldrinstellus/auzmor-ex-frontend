@@ -1,6 +1,6 @@
 /* Comment RTE - Post Level Comment Editor */
 import { FC, useState } from 'react';
-import { Comment } from './components/Comment';
+import { Comment, deleteParams } from './components/Comment';
 import { DeltaStatic } from 'quill';
 import useAuth from 'hooks/useAuth';
 import Avatar from 'components/Avatar';
@@ -15,7 +15,7 @@ import {
 import Spinner from 'components/Spinner';
 import LoadMore from './components/LoadMore';
 import CommentSkeleton from './components/CommentSkeleton';
-import { CommentsRTE } from './components/CommentsRTE';
+import { CommentsRTE, Placeholder } from './components/CommentsRTE';
 import Divider from 'components/Divider';
 import {
   IMG_FILE_SIZE_LIMIT,
@@ -27,6 +27,8 @@ import { useFeedStore } from 'stores/feedStore';
 import { useTranslation } from 'react-i18next';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { usePermissions } from 'hooks/usePermissions';
+import NoDataFound from 'components/NoDataFound';
+import { useCommentsFetcher } from './utils';
 
 export const validImageTypesForComments = [
   'image/png',
@@ -35,8 +37,29 @@ export const validImageTypesForComments = [
   'image/gif',
 ];
 
-interface CommentsProps {
+export interface GetParams {
+  channelId?: string;
+  fileId: string;
+  limit: number;
+}
+
+export enum CommentVariant {
+  Document = 'DOCUMENT_COMMENT',
+}
+
+interface CommentsProps<T = any> {
   entityId: string;
+  variant?: CommentVariant;
+  getApiEnum?: ApiEnum;
+  createApiEnum?: ApiEnum;
+  deleteApiEnum?: ApiEnum;
+  getApiParams?: GetParams;
+  deleteApiParams?: deleteParams;
+  createApiParams?: T;
+  showEmptyState?: boolean;
+  className?: string;
+  canPostComment?: boolean;
+  canDeleteComment?: boolean;
 }
 
 export interface IComment {
@@ -62,7 +85,20 @@ export interface IComment {
   shoutoutRecipients?: IShoutoutRecipient[];
 }
 
-const Comments: FC<CommentsProps> = ({ entityId }) => {
+const Comments: FC<CommentsProps> = ({
+  entityId,
+  variant,
+  getApiEnum,
+  createApiEnum,
+  deleteApiEnum,
+  getApiParams,
+  createApiParams,
+  deleteApiParams,
+  showEmptyState = false,
+  className= '',
+  canPostComment = true,
+  canDeleteComment = true,
+}) => {
   const { t } = useTranslation('post', { keyPrefix: 'commentComponent' });
   const WORK_ANNIVERSARY_SUGGESTIONS = [
     t('workAnniversary.title'),
@@ -87,120 +123,277 @@ const Comments: FC<CommentsProps> = ({ entityId }) => {
     setMediaValidationErrors,
     setUploads,
   } = useUploadState();
-  const useInfiniteComments = getApi(ApiEnum.GetComments);
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-    comment,
-  } = useInfiniteComments({
+  const useApiHook = getApi(getApiEnum || ApiEnum.GetComments);
+  const defaultParams = { 
     entityId: entityId,
     entityType: 'post',
-    limit: 4,
-  });
+    limit: 4
+  }
+  const {
+  commentIds,
+  isLoading,
+  isFetchingNextPage,
+  fetchNextPage,
+  hasNextPage,
+  comment,
+} = useCommentsFetcher({
+  useApiHook,
+  hookParams: getApiParams || defaultParams,
+});
   const [isCreateCommentLoading, setIsCreateCommentLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string>('');
   const getPost = useFeedStore((state) => state.getPost);
 
-  const commentIds = data?.pages.flatMap((page: any) => {
-    return page.data?.result?.data.map((comment: { id: string }) => comment);
-  }) as { id: string }[];
-
-  return (
-    <div>
-      <div className="flex flex-row items-center justify-between p-0 gap-2">
-        <div>
-          <Avatar
-            name={user?.name || 'U'}
-            size={32}
-            image={user?.profileImage}
-          />
-        </div>
-        <CommentsRTE
-          className="w-0 flex-grow"
-          entityId={entityId}
-          entityType="post"
-          inputRef={inputRef}
-          media={media}
-          removeMedia={() => {
-            setMedia([]);
-            setFiles([]);
-            setMediaValidationErrors([]);
-            inputRef!.current!.value = '';
-          }}
-          files={files}
-          mediaValidationErrors={mediaValidationErrors}
-          setIsCreateCommentLoading={setIsCreateCommentLoading}
-          setMediaValidationErrors={setMediaValidationErrors}
-          isCreateCommentLoading={isCreateCommentLoading}
-          suggestions={suggestions}
-        />
-      </div>
-      {getPost(entityId)?.occasionContext?.type === 'WORK_ANNIVERSARY' && (
-        <div className="flex mt-2 w-full justify-center">
-          {WORK_ANNIVERSARY_SUGGESTIONS.map((suggestions: string) => (
-            <div
-              className="px-3 py-1.5 rounded-17xl border border-neutral-200 mx-2 text-xxs font-medium cursor-pointer"
-              onClick={() => setSuggestions(suggestions)}
-              key={suggestions}
-            >
-              {suggestions}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {getPost(entityId)?.occasionContext?.type === 'BIRTHDAY' && (
-        <div className="flex mt-2 w-full justify-center">
-          {BIRTHDAY_SUGGESTIONS.map((suggestions: string) => (
-            <div
-              className="px-3 py-1.5 rounded-17xl border border-neutral-200 mx-2 text-xxs font-medium cursor-pointer"
-              onClick={() => setSuggestions(suggestions)}
-              key={suggestions}
-            >
-              {suggestions}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {isLoading ? (
-        <div>
-          <Divider className="my-4" />
-          <CommentSkeleton />
-        </div>
-      ) : (
-        commentIds &&
-        commentIds.length > 0 && (
+  const renderCommentComponent = (variant?: CommentVariant) => {
+    switch (variant) {
+      case CommentVariant.Document:
+        return (
           <>
-            <Divider className="mt-4" />
-            <div className="pt-4">
-              {isCreateCommentLoading && <CommentSkeleton />}
-              <div className="flex flex-col gap-4">
-                {commentIds
-                  ?.filter(({ id }) => !!comment[id])
-                  .map(({ id }, _i: any) => (
-                    <Comment key={id} commentId={id} />
-                  ))}
-              </div>
-              {hasNextPage && !isFetchingNextPage && (
-                <LoadMore
-                  onClick={fetchNextPage}
-                  label={t('loadMoreComments')}
-                  dataTestId="comments-loadmorecta"
-                />
-              )}
-              {isFetchingNextPage && (
-                <div className="flex justify-center items-center py-10">
-                  <Spinner />
+          <div className='font-semibold pb-2 border-b-1 border-neutral-200'>
+            {t('commentTitle')}
+          </div>
+          {getPost(entityId)?.occasionContext?.type === 'WORK_ANNIVERSARY' && (
+            <div className="flex mt-2 w-full justify-center">
+              {WORK_ANNIVERSARY_SUGGESTIONS.map((suggestions: string) => (
+                <div
+                  className="px-3 py-1.5 rounded-17xl border border-neutral-200 mx-2 text-xxs font-medium cursor-pointer"
+                  onClick={() => setSuggestions(suggestions)}
+                  key={suggestions}
+                >
+                  {suggestions}
                 </div>
-              )}
+              ))}
             </div>
+          )}
+          {getPost(entityId)?.occasionContext?.type === 'BIRTHDAY' && (
+            <div className="flex mt-2 w-full justify-center">
+              {BIRTHDAY_SUGGESTIONS.map((suggestions: string) => (
+                <div
+                  className="px-3 py-1.5 rounded-17xl border border-neutral-200 mx-2 text-xxs font-medium cursor-pointer"
+                  onClick={() => setSuggestions(suggestions)}
+                  key={suggestions}
+                >
+                  {suggestions}
+                </div>
+              ))}
+            </div>
+          )}
+          {isLoading ? (
+            <div className='pt-4 h-[86%]'>
+              <CommentSkeleton />
+            </div>
+          ) : (
+            commentIds &&
+            commentIds.length > 0 ? (
+              <>
+                <div className={`pt-4 ${canPostComment ? 'h-[84%] mb-3 ' : 'h-[92%]'} overflow-y-auto`}>
+                  {isCreateCommentLoading && <CommentSkeleton />}
+                  <div className="flex flex-col gap-4">
+                    {commentIds
+                      ?.filter(({ id }) => !!comment[id])
+                      .map(({ id }, _i: any) => (
+                        <Comment
+                          key={id}
+                          canPostComment={canPostComment}
+                          canDeleteComment={canDeleteComment}
+                          commentId={id}
+                          deleteApiEnum={deleteApiEnum}
+                          deleteApiParams={deleteApiParams}
+                        />
+                      ))}
+                  </div>
+                  {hasNextPage && !isFetchingNextPage && (
+                    <LoadMore
+                      onClick={async () => await fetchNextPage()}
+                      label={t('loadMoreComments')}
+                      dataTestId="comments-loadmorecta"
+                    />
+                  )}
+                  {isFetchingNextPage && (
+                    <div className="flex justify-center items-center py-10">
+                      <Spinner />
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : showEmptyState ? (
+              <div className='w-full h-[87%] flex items-center justify-center'>
+                <NoDataFound
+                    illustration="noComments"
+                    illustrationClassName="w-[150px] h-[150px]"
+                    labelHeader={
+                      <div className='flex flex-col items-center justify-center'>
+                        {t('noComments.label')}
+                        <span className="text-sm text-neutral-400 font-semibold">
+                          {t('noComments.desc')}
+                        </span>
+                      </div>
+                    }
+                    hideClearBtn
+                />
+              </div>
+            ) : null
+          )}
+          {canPostComment && (<div className="flex h-[60px] flex-row items-center justify-between p-0 gap-2 pb-2">
+            <div className='mb-2'>
+              <Avatar
+                name={user?.name || 'U'}
+                size={32}
+                image={user?.profileImage}
+              />
+            </div>
+            <div className="relative h-full flex-grow !bg-white">
+              <CommentsRTE
+                className="absolute w-full bottom-[6px] z-[999]"
+                wrapperClassName='bg-white max-h-[600px]'
+                entityId={entityId}
+                entityType="post"
+                placeholder={Placeholder.DocumentComment}
+                charLimit={1000}
+                createApiEnum={createApiEnum}
+                getApiParams={getApiParams}
+                createApiParams={createApiParams}
+                inputRef={inputRef}
+                media={media}
+                removeMedia={() => {
+                  setMedia([]);
+                  setFiles([]);
+                  setMediaValidationErrors([]);
+                  if (inputRef.current) {
+                      inputRef.current.value = '';
+                  }
+                }}
+                files={files}
+                mediaValidationErrors={mediaValidationErrors}
+                setIsCreateCommentLoading={setIsCreateCommentLoading}
+                setMediaValidationErrors={setMediaValidationErrors}
+                isCreateCommentLoading={isCreateCommentLoading}
+                suggestions={suggestions}
+              />
+            </div>
+          </div>)}
           </>
-        )
-      )}
+        );
+      default:
+        return (
+          <>
+          <div className="flex flex-row items-center justify-between p-0 gap-2">
+            <div>
+              <Avatar
+                name={user?.name || 'U'}
+                size={32}
+                image={user?.profileImage}
+              />
+            </div>
+            <CommentsRTE
+              className="w-0 flex-grow"
+              entityId={entityId}
+              entityType="post"
+              createApiEnum={createApiEnum}
+              getApiParams={getApiParams}
+              createApiParams={createApiParams}
+              inputRef={inputRef}
+              media={media}
+              removeMedia={() => {
+                setMedia([]);
+                setFiles([]);
+                setMediaValidationErrors([]);
+                if (inputRef.current) {
+                    inputRef.current.value = '';
+                }
+              }}
+              files={files}
+              mediaValidationErrors={mediaValidationErrors}
+              setIsCreateCommentLoading={setIsCreateCommentLoading}
+              setMediaValidationErrors={setMediaValidationErrors}
+              isCreateCommentLoading={isCreateCommentLoading}
+              suggestions={suggestions}
+            />
+          </div>
+          {getPost(entityId)?.occasionContext?.type === 'WORK_ANNIVERSARY' && (
+            <div className="flex mt-2 w-full justify-center">
+              {WORK_ANNIVERSARY_SUGGESTIONS.map((suggestions: string) => (
+                <div
+                  className="px-3 py-1.5 rounded-17xl border border-neutral-200 mx-2 text-xxs font-medium cursor-pointer"
+                  onClick={() => setSuggestions(suggestions)}
+                  key={suggestions}
+                >
+                  {suggestions}
+                </div>
+              ))}
+            </div>
+          )}
+          {getPost(entityId)?.occasionContext?.type === 'BIRTHDAY' && (
+            <div className="flex mt-2 w-full justify-center">
+              {BIRTHDAY_SUGGESTIONS.map((suggestions: string) => (
+                <div
+                  className="px-3 py-1.5 rounded-17xl border border-neutral-200 mx-2 text-xxs font-medium cursor-pointer"
+                  onClick={() => setSuggestions(suggestions)}
+                  key={suggestions}
+                >
+                  {suggestions}
+                </div>
+              ))}
+            </div>
+          )}
+          {isLoading ? (
+            <div>
+              <Divider className="my-4" />
+              <CommentSkeleton />
+            </div>
+          ) : (
+            commentIds &&
+            commentIds.length > 0 ? (
+              <>
+                <Divider className="mt-4" />
+                <div className="pt-4">
+                  {isCreateCommentLoading && <CommentSkeleton />}
+                  <div className="flex flex-col gap-4">
+                    {commentIds
+                      ?.filter(({ id }) => !!comment[id])
+                      .map(({ id }, _i: any) => (
+                        <Comment key={id} commentId={id}/>
+                      ))}
+                  </div>
+                  {hasNextPage && !isFetchingNextPage && (
+                    <LoadMore
+                      onClick={async () => await fetchNextPage()}
+                      label={t('loadMoreComments')}
+                      dataTestId="comments-loadmorecta"
+                    />
+                  )}
+                  {isFetchingNextPage && (
+                    <div className="flex justify-center items-center py-10">
+                      <Spinner />
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : showEmptyState ? (
+              <div className='w-full h-[80%] flex items-center justify-center'>
+                <NoDataFound
+                    illustration="noComments"
+                    illustrationClassName="w-[150px] h-[150px]"
+                    labelHeader={
+                      <div className='flex flex-col items-center justify-center'>
+                        {t('noComments.label')}
+                        <span className="text-sm text-neutral-400 font-semibold">
+                          {t('noComments.desc')}
+                        </span>
+                      </div>
+                    }
+                    hideClearBtn
+                />
+              </div>
+            ) : null
+          )}
+          </>
+        );
+    }
+  }
+  return (
+    <div className={className}>
+      {renderCommentComponent(variant)}
       <input
         type="file"
         className="hidden"

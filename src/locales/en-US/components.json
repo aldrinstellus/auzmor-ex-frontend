@@ -58,7 +58,8 @@
       "forum": "Forums",
       "task": "Tasks",
       "mentorship": "Mentorship"
-    }
+    },
+    "foundIn": "- found in"
   },
   "SubscriptionBanner": {
     "productNameLearn": "Auzmor Learn",
@@ -169,7 +170,9 @@
     "clearSort": "Clear sort",
     "dateModified": "Date modified",
     "size": "Size",
-    "sort": "sort"
+    "sort": "sort",
+    "filterBy":"Filter By:",
+    "clearAll": "Clear All"
   },
   "columnSelector": {
     "search": "Search",

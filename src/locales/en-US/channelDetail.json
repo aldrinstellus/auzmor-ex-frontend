@@ -168,6 +168,7 @@
     "charLimitFolderNameError": "Folder name cannot exceed {{limit}} characters.",
     "rename": "Rename",
     "download": "Download",
+    "launch": "Launch",
     "owner": "Owner",
     "location": "Location",
     "renameInputPlaceholder": "Enter new name",
@@ -214,7 +215,14 @@
       "failure": "Failed to load. Please check your connection and try again"
     },
     "sharepoint": "Sharepoint",
-    "noPreviewAvailable": "This file cannot be previewed."
+    "noPreviewAvailable": "This file cannot be previewed.",
+    "loadMoreComments": "Load more comments",
+    "noComments": "No Commments yet",
+    "noCommentAvailable": "Be the first to leave a comment or ask a question.",
+    "uploadNow": "Upload Now",
+    "foundIn": "- found in",
+    "commentTitle": "Comment",
+    "viewAllComments": "View All Comments"
   },
   "memberTab": {
     "title": "Members",
@@ -314,7 +322,18 @@
         "anyoneDescription": "Anyone in the channel can download documents",
         "channelAdmin": "Channel Admins",
         "channelAdminDescription": "Only Channel Admins can download documents"
+      },
+      "commentVisibilityRow": {
+        "title": "Enable comments"
+      },
+      "commentControlRow": {
+        "title": "Who Can Post Comments",
+        "anyone": "Anyone",
+        "anyoneDescription": "Anyone in the channel can post comments",
+        "channelAdmin": "Channel Admins",
+        "channelAdminDescription": "Only Channel Admins can post comments"
       }
     }
-  }
+  },
+  "refineSearch": "Please refine your search or filter."
 }

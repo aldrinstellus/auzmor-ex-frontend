@@ -25,7 +25,7 @@ import moment from 'moment';
 import NotificationTitle from '../components/NotificationTitle';
 import NotificationText from '../components/NotificationText';
 
-import { convertKeysToCamelCase } from 'utils/misc';
+import { compressString, convertKeysToCamelCase } from 'utils/misc';
 import useAuth from 'hooks/useAuth';
 import { formatDateWithTimeZone } from 'utils/time';
 
@@ -34,6 +34,7 @@ export const isLearnerRoute = () => {
   return (
     path.startsWith('/learn') ||
     path.startsWith('/user') ||
+    path.startsWith('/lxp/user') ||
     (path.startsWith('/user') && !path.includes('users'))
   );
 };
@@ -397,6 +398,15 @@ const getSocialSourceRoute = (
         ?.find((item) => item.entityType === 'COMMENT');
       const targetPostId =
         target1Type === 'POST' ? targetId1 : targetPost?.entityId;
+      const { channelId = "" , pathWithId = {} } = targetPost || {};
+
+      if (channelId && pathWithId) {
+        const encodedPath = compressString(JSON.stringify(pathWithId));
+        const basePath = isLearn ? '/user' : '';
+        const commentParam = targetComment ? `?commentId=${targetComment.entityId}` : '';
+        const postParam = commentParam && targetPostId ? `&postId=${targetPostId}` : '';
+        return `${basePath}/channels/${channelId}/documents/${encodedPath}${commentParam}${postParam}`;
+      }
       const url = `${isLearn ? '/user' : ''}/posts/${targetPostId}${
         targetComment ? `?commentId=${targetComment.entityId}` : ''
       }`;

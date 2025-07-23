@@ -123,7 +123,6 @@ const DocAccessLevelRow: FC<DocAccessLevelRowProps> = ({ data, canEdit }) => {
       isEditMode={true}
       value={data?.settings?.visibility}
       dataTestId=""
-      border={false}
       editNode={
         <div>
           <form>

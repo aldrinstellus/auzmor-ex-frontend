@@ -13,6 +13,8 @@ export enum ChannelPermissionEnum {
   CanConnectChannelDoc = 'CAN_CONNECT_CHANNEL_DOC',
   CanEditChannelDoc = 'CAN_EDIT_CHANNEL_DOC',
   CanDownloadDocuments = 'CAN_DOWNLOAD_DOCUMENTS',
+  CanViewCommentDocuments = 'CAN_COMMENT_DOCUMENTS',
+  CanPostCommentsChannelDoc = 'CAN_POST_COMMENTS_CHANNEL_DOC',
   CanRenameDocuments = 'CAN_RENAME_DOCUMENTS',
   CanDeleteDocuments = 'CAN_DELETE_DOCUMENTS',
   CanReauthorize = 'CAN_REAUTHORIZE',
@@ -53,7 +55,7 @@ export const getChannelPermissions: (
 ) => {
   let channelPermissions: ChannelPermissionEnum[] = [];
   if (isLxp) {
-    const { canDownloadDocuments, canEditDocuments, enableDocuments } =
+    const { canPost, canComment, canDownloadDocuments, canEditDocuments, enableDocuments } =
       channelRestriction || {
         canComment: false,
         canDownloadDocuments: false,
@@ -81,6 +83,8 @@ export const getChannelPermissions: (
             ChannelPermissionEnum.CanConnectChannelDoc,
             ChannelPermissionEnum.CanEditChannelDoc,
             ChannelPermissionEnum.CanDownloadDocuments,
+            ChannelPermissionEnum.CanPostCommentsChannelDoc,
+            ChannelPermissionEnum.CanViewCommentDocuments,
             ChannelPermissionEnum.CanRenameDocuments,
             ChannelPermissionEnum.CanDeleteDocuments,
             ChannelPermissionEnum.CanReauthorize,
@@ -88,6 +92,11 @@ export const getChannelPermissions: (
             if (
               permission === ChannelPermissionEnum.CanReauthorize &&
               !isSuperAdmin
+            )
+              return false;
+            if (
+                permission === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
             )
               return false;
             return true;
@@ -110,6 +119,8 @@ export const getChannelPermissions: (
               ChannelPermissionEnum.CanConnectChannelDoc,
               ChannelPermissionEnum.CanEditChannelDoc,
               ChannelPermissionEnum.CanDownloadDocuments,
+              ChannelPermissionEnum.CanViewCommentDocuments,
+              ChannelPermissionEnum.CanPostCommentsChannelDoc,
               ChannelPermissionEnum.CanRenameDocuments,
               ChannelPermissionEnum.CanDeleteDocuments,
               ChannelPermissionEnum.CanReauthorize,
@@ -117,6 +128,11 @@ export const getChannelPermissions: (
               if (
                 permission === ChannelPermissionEnum.CanReauthorize &&
                 !isSuperAdmin
+              )
+                return false;
+              if (
+                permission === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
               )
                 return false;
               return true;
@@ -138,6 +154,8 @@ export const getChannelPermissions: (
               ChannelPermissionEnum.CanConnectChannelDoc,
               ChannelPermissionEnum.CanEditChannelDoc,
               ChannelPermissionEnum.CanDownloadDocuments,
+              ChannelPermissionEnum.CanViewCommentDocuments,
+              ChannelPermissionEnum.CanPostCommentsChannelDoc,
               ChannelPermissionEnum.CanRenameDocuments,
               ChannelPermissionEnum.CanDeleteDocuments,
               ChannelPermissionEnum.CanReauthorize,
@@ -145,6 +163,11 @@ export const getChannelPermissions: (
               if (
                 permission === ChannelPermissionEnum.CanReauthorize &&
                 !isSuperAdmin
+              )
+                return false;
+              if (
+                permission === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
               )
                 return false;
               return true;
@@ -169,6 +192,8 @@ export const getChannelPermissions: (
             ChannelPermissionEnum.CanConnectChannelDoc,
             ChannelPermissionEnum.CanEditChannelDoc,
             ChannelPermissionEnum.CanDownloadDocuments,
+            ChannelPermissionEnum.CanViewCommentDocuments,
+            ChannelPermissionEnum.CanPostCommentsChannelDoc,
             ChannelPermissionEnum.CanRenameDocuments,
             ChannelPermissionEnum.CanDeleteDocuments,
             ChannelPermissionEnum.CanReauthorize,
@@ -176,6 +201,11 @@ export const getChannelPermissions: (
             if (
               permission === ChannelPermissionEnum.CanReauthorize &&
               !isSuperAdmin
+            )
+              return false;
+            if (
+                permission === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
             )
               return false;
             return true;
@@ -199,6 +229,8 @@ export const getChannelPermissions: (
               ChannelPermissionEnum.CanConnectChannelDoc,
               ChannelPermissionEnum.CanEditChannelDoc,
               ChannelPermissionEnum.CanDownloadDocuments,
+              ChannelPermissionEnum.CanViewCommentDocuments,
+              ChannelPermissionEnum.CanPostCommentsChannelDoc,
               ChannelPermissionEnum.CanRenameDocuments,
               ChannelPermissionEnum.CanDeleteDocuments,
               ChannelPermissionEnum.CanReauthorize,
@@ -206,6 +238,11 @@ export const getChannelPermissions: (
               if (
                 permission === ChannelPermissionEnum.CanReauthorize &&
                 !isSuperAdmin
+              )
+                return false;
+              if (
+                permission === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
               )
                 return false;
               return true;
@@ -228,6 +265,8 @@ export const getChannelPermissions: (
               ChannelPermissionEnum.CanConnectChannelDoc,
               ChannelPermissionEnum.CanEditChannelDoc,
               ChannelPermissionEnum.CanDownloadDocuments,
+              ChannelPermissionEnum.CanViewCommentDocuments,
+              ChannelPermissionEnum.CanPostCommentsChannelDoc,
               ChannelPermissionEnum.CanRenameDocuments,
               ChannelPermissionEnum.CanDeleteDocuments,
               ChannelPermissionEnum.CanReauthorize,
@@ -235,6 +274,11 @@ export const getChannelPermissions: (
               if (
                 permission === ChannelPermissionEnum.CanReauthorize &&
                 !isSuperAdmin
+              )
+                return false;
+              if (
+                permission === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
               )
                 return false;
               return true;
@@ -262,6 +306,8 @@ export const getChannelPermissions: (
               ChannelPermissionEnum.CanAccessSettingsTab,
               ChannelPermissionEnum.CanEditChannelDoc,
               ChannelPermissionEnum.CanDownloadDocuments,
+              ChannelPermissionEnum.CanViewCommentDocuments,
+              ChannelPermissionEnum.CanPostCommentsChannelDoc,
             ].filter((each) => {
               if (
                 each === ChannelPermissionEnum.CanEditChannelDoc &&
@@ -276,6 +322,16 @@ export const getChannelPermissions: (
               if (
                 each === ChannelPermissionEnum.CanDownloadDocuments &&
                 !canDownloadDocuments
+              )
+                return false;
+              if (
+                each === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
+              )
+                return false;
+              if (
+                each === ChannelPermissionEnum.CanPostCommentsChannelDoc &&
+                !canPost
               )
                 return false;
               return true;
@@ -296,7 +352,16 @@ export const getChannelPermissions: (
               ChannelPermissionEnum.CanAccessSettingsTab,
               ChannelPermissionEnum.CanEditChannelDoc,
               ChannelPermissionEnum.CanDownloadDocuments,
-            ];
+              ChannelPermissionEnum.CanViewCommentDocuments,
+              ChannelPermissionEnum.CanPostCommentsChannelDoc,
+            ].filter((permission) => {
+              if (
+                permission === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
+              )
+                return false;
+              return true;
+            });
           }
         }
       } else if (channelPrivacy === ChannelVisibilityEnum.Private) {
@@ -314,6 +379,8 @@ export const getChannelPermissions: (
               ChannelPermissionEnum.CanAccessDocumentsTab,
               ChannelPermissionEnum.CanEditChannelDoc,
               ChannelPermissionEnum.CanDownloadDocuments,
+              ChannelPermissionEnum.CanViewCommentDocuments,
+              ChannelPermissionEnum.CanPostCommentsChannelDoc,
             ].filter((each) => {
               if (
                 each === ChannelPermissionEnum.CanEditChannelDoc &&
@@ -328,6 +395,16 @@ export const getChannelPermissions: (
               if (
                 each === ChannelPermissionEnum.CanDownloadDocuments &&
                 !canDownloadDocuments
+              )
+                return false;
+              if (
+                each === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
+              )
+                return false;
+              if (
+                each === ChannelPermissionEnum.CanPostCommentsChannelDoc &&
+                !canPost
               )
                 return false;
               return true;
@@ -349,7 +426,16 @@ export const getChannelPermissions: (
               ChannelPermissionEnum.CanAccessSettingsTab,
               ChannelPermissionEnum.CanEditChannelDoc,
               ChannelPermissionEnum.CanDownloadDocuments,
-            ];
+              ChannelPermissionEnum.CanViewCommentDocuments,
+              ChannelPermissionEnum.CanPostCommentsChannelDoc,
+            ].filter((permission) => {
+              if (
+                permission === ChannelPermissionEnum.CanViewCommentDocuments &&
+                !canComment
+              )
+                return false;
+              return true;
+            });
           }
         }
       }

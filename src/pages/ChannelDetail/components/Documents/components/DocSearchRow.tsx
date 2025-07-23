@@ -31,7 +31,7 @@ const DocSearchRow = ({
         <div className="text-xs">
           <HighlightText text={data?.name || ''} subString={searchQuery} />
         </div>
-        <div className="text-xs">
+        <div className="text-xs text-neutral-700">
           {t('updatedOn', {
             date: moment(data?.updatedAt).format('DD MMM YYYY'),
           })}{' '}
@@ -39,6 +39,32 @@ const DocSearchRow = ({
           {data?.externalModifiedBy &&
             t('updatedBy', { name: data?.externalModifiedBy })}
         </div>
+        {data?.customFields && Array.isArray(data.customFields) && data.customFields.length > 0 && (
+          <div className="text-xs text-neutral-700">
+            &quot;
+            <HighlightText
+              text={
+                Array.isArray(data.customFields[0].custom_field_values)
+                  ? data.customFields[0].custom_field_values.find((val: any) =>
+                      typeof val === 'string' &&
+                      searchQuery &&
+                      val.toLowerCase().includes(searchQuery.toLowerCase())
+                    ) || ''
+                  : typeof data.customFields[0].custom_field_values === 'string'
+                    ? data.customFields[0].custom_field_values
+                    : ''
+              }
+              subString={searchQuery}
+            />
+            &quot;
+            &nbsp;
+            {t('foundIn')}
+            &nbsp;
+            <span className="font-semibold">
+              {data?.customFields[0]?.display_name}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

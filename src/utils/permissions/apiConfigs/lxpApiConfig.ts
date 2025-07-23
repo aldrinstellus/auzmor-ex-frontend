@@ -76,6 +76,18 @@ export const apiConfigLxp = {
   [ApiEnum.UpdateChannelJoinRequests]: {
     [Default]: queries.bulkChannelRequestUpdate,
   },
+  [ApiEnum.GetCommentById]: {
+    [Default]: queries.useGetCommentById,
+  },
+  [ApiEnum.GetChannelDocumentComments]: {
+    [Default]: queries.useInfiniteChannelDocumentComments,
+  },
+  [ApiEnum.CreateChannelDocumentComments]: {
+    [Default]: queries.createDocComment,
+  },
+  [ApiEnum.DeleteChannelDocumentComments]: {
+    [Default]: queries.deleteDocComment,
+  },
 
   //comments
   [ApiEnum.GetComments]: { [Default]: queries.useInfiniteComments },
@@ -225,14 +237,17 @@ export const apiConfigLxp = {
   [ApiEnum.GetChannelDocumentStatus]: {
     [Default]: queries.useChannelDocumentStatus,
   },
-  // [ApiEnum.GetChannelDocumentFields]: {
-  //   [Default]: queries.useChannelDocumentFields,
-  // }, TODO: custom-fields
-  // [ApiEnum.UpdateChannelDocumentFields]: {
-  //   [Default]: queries.updateChannelDocumentFields,
-  // }, TODO: custom-fields
+  [ApiEnum.GetChannelDocumentFields]: {
+    [Default]: queries.useChannelDocumentFields,
+  },
+  [ApiEnum.UpdateChannelDocumentFields]: {
+    [Default]: queries.updateChannelDocumentFields,
+  },
   [ApiEnum.GetChannelFilePreview]: {
     [Default]: queries.useChannelFilePreview,
+  },
+  [ApiEnum.GetChannelFilePreviewApi]: {
+    [Default]: queries.getChannelFilePreview,
   },
   [ApiEnum.CreateChannelDocFolder]: {
     [Default]: queries.createChannelDocFolder,

@@ -2,7 +2,7 @@ import React, { FC, useEffect } from 'react';
 import Modal from 'components/Modal';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import Icon from 'components/Icon';
 import Divider from 'components/Divider';
 import Spinner from 'components/Spinner';
@@ -16,38 +16,36 @@ import { useMutation } from '@tanstack/react-query';
 import { getIconFromMime } from './Doc';
 import NoDataFound from 'components/NoDataFound';
 import { getExtension } from '../../utils';
+import CommentCard, { CommentVariant } from 'components/Comments/index';
+import { ICommentPayload } from 'components/Comments/components/CommentsRTE';
+import PreviewLink from 'components/PreviewLink';
+import { PREVIEW_CARD_VARIANT } from 'utils/constants';
+import { useChannelRole } from 'hooks/useChannelRole';
+import useRole from 'hooks/useRole';
+import { isLearnerRoute } from 'components/LxpNotificationsOverview/utils/learnNotification';
+import { Comment } from 'components/Comments/components/Comment';
+import CommentSkeleton from 'components/Comments/components/CommentSkeleton';
+import { useFeedStore } from 'stores/feedStore';
 
 interface IFilePreviewProps {
   fileId: string;
   rootFolderId: string;
   open: boolean;
+  pathWithId: { name: string; id: string; type: 'File' | 'Folder' }[];
   canDownload: boolean;
+  canViewComment: boolean;
+  canPostComment: boolean;
   closeModal: () => void;
-}
-
-function getPreviewUrl(previewUrl: string | undefined): string {
-  if (!previewUrl) {
-    return '';
-  }
-
-  // Ensure the Youtube URL is properly formatted for embedding
-  if (previewUrl.includes('youtube.com') && !previewUrl.includes('/embed/')) {
-    previewUrl = previewUrl.replace('watch?v=', 'embed/');
-  } else if (
-    previewUrl.includes('youtu.be') &&
-    !previewUrl.includes('/embed/')
-  ) {
-    previewUrl = previewUrl.replace('youtu.be/', 'youtube.com/embed/');
-  }
-
-  return previewUrl;
 }
 
 const FilePreview: FC<IFilePreviewProps> = ({
   fileId,
   rootFolderId,
   open,
+  pathWithId,
   canDownload = false,
+  canViewComment = false,
+  canPostComment = false,
   closeModal,
 }) => {
   const { t } = useTranslation('channelDetail', {
@@ -55,7 +53,15 @@ const FilePreview: FC<IFilePreviewProps> = ({
   });
   const { getApi } = usePermissions();
   const { channelId } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const commentId = searchParams.get('commentId') || '';
+  const postId = searchParams.get('postId') || '';
+  const { getPost } = useFeedStore();
+
+  const [localCommentId, setLocalCommentId] = React.useState(commentId || '');
+  const [localPostId, setLocalPostId] = React.useState(postId || '');
   const [isIframeLoading, setIsIframeLoading] = React.useState(true);
+  const [showComment, setShowComment] = React.useState(false);
 
   const useChannelDocById = getApi(ApiEnum.UseChannelDocById);
   const { data: fileData, isLoading: fileLoading } = useChannelDocById({
@@ -103,6 +109,18 @@ const FilePreview: FC<IFilePreviewProps> = ({
     },
   });
 
+  const useGetPost = getApi(ApiEnum.GetPost);
+  const { isLoading: isSingleCommentLoading } = useGetPost(localPostId, localCommentId, {
+  enabled: !!localCommentId && !!localPostId,
+  });
+  const post = getPost(localPostId) as any;
+
+  useEffect(() => {
+  if (commentId) {
+    setShowComment(true);
+  }
+}, [commentId, postId]);
+
   useEffect(() => {
     const elem = document.getElementById('videoplayer');
     if (elem) {
@@ -110,31 +128,74 @@ const FilePreview: FC<IFilePreviewProps> = ({
     }
   });
 
+  const { isAdmin } = useRole();
+  const { isChannelAdmin } = useChannelRole(channelId);
+  const canDeleteComment = isChannelAdmin || (isAdmin && !isLearnerRoute());
+
   const isLoading = fileLoading || previewLoading;
   const isDownloading = downloadChannelFileMutation.isLoading;
 
   const file = fileData?.data?.result?.data as Doc;
-  const previewUrl = getPreviewUrl(data?.data?.result?.previewURL);
+  const previewUrl = data?.data?.result?.previewURL;
   const isImage = file?.mimeType?.startsWith('image/');
   const isSupportedVideo = ['video/mp4', 'video/webm'].includes(file?.mimeType);
   const fileExtension = getExtension(file?.name || '');
+  const isLink = fileExtension === '.url';
   const allowIframePreview =
     isImage ||
-    ['.html', '.htm', '.md', '.url'].includes(fileExtension) ||
+    isLink ||
+    ['.html', '.htm', '.md'].includes(fileExtension) ||
     ['doc', 'pdf', 'ppt', 'xls'].includes(getIconFromMime(file?.mimeType));
 
   const showSpinner = isLoading;
   const showNoPreview =
-    isError || (!isLoading && !isSupportedVideo && !allowIframePreview);
+    !isLink &&
+    (isError || (!isLoading && !isSupportedVideo && !allowIframePreview));
   const showVideo = !isLoading && !isError && isSupportedVideo;
-  const showIframe = !isLoading && !isError && allowIframePreview;
+  const showIframe = !isLink && !isLoading && !isError && allowIframePreview;
+
+  const renderSingleComment = () => {
+    return (
+      <div className="px-2">
+        <div className='text-sm font-semibold pb-2 mb-2 border-b-1 border-neutral-200 flex items-center justify-between'>
+          {t('commentTitle')}
+          <div
+            className='text-xs cursor-pointer hover:!text-primary-400' 
+            onClick={() => {
+              setLocalCommentId('');
+              setLocalPostId('');
+              const updatedParams = new URLSearchParams(searchParams.toString());
+              updatedParams.delete('commentId');
+              updatedParams.delete('postId');
+              setSearchParams(updatedParams);
+            }}
+          >
+            {t('viewAllComments')}
+          </div>
+        </div>
+        {isSingleCommentLoading ? 
+          <div className='pt-4 h-[86%]'>
+            <CommentSkeleton />
+          </div>
+         : <Comment
+            key={post?.comment?.id}
+            commentId={post?.comment?.id}
+            deleteApiEnum={ApiEnum.DeleteChannelDocumentComments}
+            deleteApiParams={{ channelId, fileId }}
+            canPostComment={canPostComment && canViewComment}
+            canDeleteComment={canDeleteComment}
+          />
+        }
+      </div>
+    );
+  };
 
   return (
     <Modal
       open={open}
       className="!h-[calc(100vh-62px)] !w-[calc(100vw-96px)] flex flex-col overflow-hidden"
     >
-      <div className="flex items-center relative px-6 py-4 shrink-0">
+      <div className="w-full h-[10%] flex items-center relative px-6 py-4 shrink-0">
         <div className="flex flex-grow items-start ">
           {fileLoading ? (
             <Skeleton width={256} height={40} />
@@ -154,7 +215,16 @@ const FilePreview: FC<IFilePreviewProps> = ({
           )}
         </div>
         <div className="flex absolute gap-3 right-4">
-          {canDownload && !fileLoading && !!file.downloadable && (
+          {(canViewComment || isChannelAdmin || isAdmin) && (
+            <Icon
+              name={showComment ? 'commentFilled' : 'comment'}
+              color="text-red-500"
+              onClick={() => {
+                setShowComment(!showComment);
+              }}
+            />
+          )}
+          {canDownload && !fileLoading && !isLink && !!file.downloadable && (
             <div className="flex gap-2">
               {isDownloading && <Spinner />}
               <Icon
@@ -171,50 +241,116 @@ const FilePreview: FC<IFilePreviewProps> = ({
               />
             </div>
           )}
+          {isLink && previewUrl ? (
+            <Icon
+              name="launch"
+              color="text-neutral-900"
+              onClick={() => {
+                window.open(previewUrl, '_blank', 'noopener,noreferrer');
+              }}
+            />
+          ) : null}
           <Icon name="close2" color="text-neutral-900" onClick={closeModal} />
         </div>
       </div>
       <Divider />
-      <div className="flex items-center justify-center w-full h-full">
-        {showSpinner ? <Spinner className="!h-24 !w-24" /> : null}
-        {showNoPreview ? (
-          <NoDataFound
-            illustration="noPreviewAvailable"
-            labelHeader={
-              <span className="text-sm font-semibold">
-                {t('noPreviewAvailable')}
-              </span>
-            }
-            hideClearBtn
-          />
-        ) : null}
-        {showVideo ? (
-          <div className="flex w-full h-full justify-center">
-            <video
-              id="videoplayer"
-              src={previewUrl}
-              controls
-              controlsList="nodownload"
-              className="object-contain h-[calc(100%-72px)] w-full"
+      <div className="flex items-center justify-center w-full h-[90%] overflow-hidden bg-neutral-100">
+        {/* Main Content */}
+        <div
+          className={`bg-gray-200 transition-all duration-300 ease-in-out ${
+            showComment ? 'w-[66%]' : 'w-full'
+          } flex items-center justify-center h-full px-8 pt-8`}
+        >
+          {showSpinner ? (
+            <Spinner className="!h-24 !w-24 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          ) : null}
+          {showNoPreview ? (
+            <NoDataFound
+              illustration="noPreviewAvailable"
+              labelHeader={
+                <span className="text-sm font-semibold">
+                  {t('noPreviewAvailable')}
+                </span>
+              }
+              hideClearBtn
             />
-          </div>
-        ) : null}
-        {showIframe ? (
-          <div className="w-full h-full relative">
-            {isIframeLoading && (
-              <Spinner className="absolute !h-24 !w-24 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-            )}
-            <iframe
-              src={previewUrl}
-              className="w-full h-full p-2"
-              allowFullScreen
-              allow="all"
-              name="iframe_a"
-              onLoad={() => setIsIframeLoading(false)}
-              sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-popups allow-popups-to-escape-sandbox" // downloads and modals are not allowed
+          ) : null}
+          {showVideo ? (
+            <div className="flex w-full h-full justify-center">
+              <video
+                id="videoplayer"
+                src={previewUrl}
+                controls
+                controlsList="nodownload"
+                className="w-full h-full object-contain"
+              />
+            </div>
+          ) : null}
+          {showIframe && !showSpinner ? (
+            <div className="w-full h-full relative">
+              {isIframeLoading && (
+                <Spinner className="absolute !h-24 !w-24 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+              )}
+              <iframe
+                src={previewUrl}
+                className="w-full h-full p-2"
+                allowFullScreen
+                allow="all"
+                name="iframe_a"
+                onLoad={() => setIsIframeLoading(false)}
+                sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-popups allow-popups-to-escape-sandbox"
+              />
+            </div>
+          ) : isLink ? (
+            <div className="w-full h-full">
+              <PreviewLink
+                previewUrl={previewUrl}
+                showCloseIcon={false}
+                variant={PREVIEW_CARD_VARIANT.document}
+                cardClassName="w-[70%] h-[80%] max-h-[80%]"
+              />
+            </div>
+          ) : null}
+        </div>
+        {/* Comment Section */}
+        <div
+          className={`transition-all duration-300 ease-in-out ${
+            showComment ? 'w-[34%] px-3 pt-3 pb-3' : 'w-0 overflow-hidden'
+          } relative h-[100%] bg-white`}
+        >
+          {showComment && (
+          localCommentId ? renderSingleComment() : (
+            <CommentCard
+              className="h-full"
+              variant={CommentVariant.Document}
+              entityId={fileId || ''}
+              getApiEnum={ApiEnum.GetChannelDocumentComments}
+              createApiEnum={ApiEnum.CreateChannelDocumentComments}
+              deleteApiEnum={ApiEnum.DeleteChannelDocumentComments}
+              getApiParams={{
+                fileId,
+                channelId,
+                limit: 4,
+              }}
+              createApiParams={(payload: ICommentPayload) => ({
+                channelId,
+                fileId,
+                payload: {
+                  ...payload,
+                  pathWithId,
+                },
+              })}
+              deleteApiParams={{
+                channelId,
+                fileId,
+              }}
+              showEmptyState={true}
+              canPostComment={canPostComment && canViewComment}
+              canDeleteComment={canDeleteComment}
             />
-          </div>
-        ) : null}
+          )
+        )}
+        </div>
       </div>
     </Modal>
   );

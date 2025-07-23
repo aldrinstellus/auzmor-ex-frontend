@@ -20,7 +20,7 @@ import { useFeedStore } from 'stores/feedStore';
 import { failureToastConfig } from 'components/Toast/variants/FailureToast';
 import { successToastConfig } from 'components/Toast/variants/SuccessToast';
 import Button, { Size, Variant } from 'components/Button';
-import { IComment } from 'components/Comments';
+import { GetParams, IComment } from 'components/Comments';
 import MediaPreview, { Mode } from 'components/MediaPreview';
 import {
   IMediaValidationError,
@@ -31,11 +31,22 @@ import { UploadStatus, useUpload } from 'hooks/useUpload';
 import Banner, { Variant as BannerVariant } from 'components/Banner';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
+import { useTranslation } from 'react-i18next';
 
 export enum PostCommentMode {
   Create = 'CREATE',
   Edit = 'EDIT',
   SendWish = 'SEND_WISH',
+  Reply = 'REPLY',
+  EditReply = 'EDIT_REPLY',
+}
+
+export enum Placeholder {
+  EditComment = 'EDIT_COMMENT',
+  CreateReply = 'CREATE_REPLY',
+  EditReply = 'EDIT_REPLY',
+  SendWish = 'SEND_WISH',
+  DocumentComment = 'DOCUMENT_COMMENT',
 }
 
 interface CommentFormProps {
@@ -43,6 +54,9 @@ interface CommentFormProps {
   wrapperClassName?: string;
   entityId?: string;
   entityType: string;
+  createApiEnum?: ApiEnum;
+  getApiParams?: GetParams;
+  createApiParams?: (data: object) => object;
   mode?: PostCommentMode;
   setEditComment?: (edit: boolean) => void;
   commentData?: IComment;
@@ -56,6 +70,8 @@ interface CommentFormProps {
   isCreateCommentLoading?: boolean;
   suggestions?: string;
   toolbarId?: string;
+  placeholder?: Placeholder;
+  charLimit?: number;
 }
 
 interface IUpdateCommentPayload {
@@ -65,6 +81,23 @@ interface IUpdateCommentPayload {
   hashtags: string[];
   mentions: Array<any>;
   files: string[];
+  pathWithId?: [];
+}
+
+export interface ICommentPayload {
+  entityId?: string;
+  entityType?: string;
+  channelId?: string;
+  fileId?: string;
+  content: {
+    text: string;
+    html: string;
+    editor: DeltaStatic;
+  };
+  mentions: string[];
+  hashtags: string[];
+  files: string[];
+  pathWithId?: [];
 }
 
 export const CommentsRTE: FC<CommentFormProps> = ({
@@ -73,6 +106,9 @@ export const CommentsRTE: FC<CommentFormProps> = ({
   entityId,
   entityType,
   mode = PostCommentMode.Create,
+  createApiEnum,
+  getApiParams,
+  createApiParams,
   commentData,
   setEditComment,
   inputRef = null,
@@ -84,7 +120,10 @@ export const CommentsRTE: FC<CommentFormProps> = ({
   setMediaValidationErrors = () => {},
   suggestions,
   toolbarId,
+  placeholder,
+  charLimit = 3000,
 }) => {
+  const { t } = useTranslation('post', { keyPrefix: 'commentComponent' });
   const {
     comment,
     setComment,
@@ -98,10 +137,10 @@ export const CommentsRTE: FC<CommentFormProps> = ({
   const [isEmpty, setIsEmpty] = useState(true);
   const { getApi } = usePermissions();
 
-  const createComment = getApi(ApiEnum.CreateComment);
+  const createComment = getApi(createApiEnum || ApiEnum.CreateComment);
   const createCommentMutation = useMutation({
     mutationKey: ['create-comment'],
-    mutationFn: (payload: IUpdateCommentPayload) => createComment(payload),
+    mutationFn: (payload: ICommentPayload) => createComment(payload),
     onError: () => {
       failureToastConfig({
         content: `Error adding ${entityType === 'post' ? 'Comment' : 'Reply'}`,
@@ -133,18 +172,25 @@ export const CommentsRTE: FC<CommentFormProps> = ({
         return;
       }
       await queryClient.setQueryData(
-        ['comments', { entityId, entityType, limit: 4 }],
+        ['comments', getApiParams || { entityId, entityType, limit: 4 }],
         (oldData) => {
           if (oldData) {
             return produce(oldData, (draft: any) => {
-              draft.pages[0].data.result.data = [
+              if(draft.pages[0].data.result) {
+                draft.pages[0].data.result.data = [
                 { id: data.id },
                 ...draft.pages[0].data.result.data,
               ];
+              } else {
+                draft.pages[0].data.data.comments = [
+                { id: data.id },
+                ...draft.pages[0].data.data.comments,
+                ];
+              }
             });
           } else {
             queryClient.invalidateQueries(
-              ['comments', { entityId, entityType, limit: 4 }],
+              ['comments', getApiParams || { entityId, entityType, limit: 4 }],
               {
                 exact: false,
               },
@@ -155,14 +201,16 @@ export const CommentsRTE: FC<CommentFormProps> = ({
       if (entityType === 'post' && entityId) {
         setComment({ ...comment, [data.id]: { ...data } });
         const post = getPost(entityId);
-        updateFeed(
+        if (post) {
+          updateFeed(
           entityId,
           produce(post, (draft) => {
             draft.commentsCount = draft.commentsCount
               ? draft.commentsCount + 1
               : 1;
           }),
-        );
+         );
+        }
       } else if (entityType === 'comment' && entityId) {
         const updatedComment = produce(comment[entityId], (draft) => {
           draft.repliesCount = draft.repliesCount ? draft.repliesCount + 1 : 1;
@@ -276,14 +324,21 @@ export const CommentsRTE: FC<CommentFormProps> = ({
         },
       );
       const data = {
-        entityId: entityId || '',
-        entityType: entityType,
         content: commentContent,
         mentions: mentionList,
         hashtags: hashtagList,
         files: fileIds,
       };
-      createCommentMutation.mutate(data);
+      const customCreateApiParams = createApiParams ? createApiParams(data) : null;
+
+      const payload: ICommentPayload = customCreateApiParams as ICommentPayload ||
+      {
+        entityId: entityId || '',
+        entityType: entityType,
+        ...data,
+      };
+
+      createCommentMutation.mutate(payload)
     } else if (mode === PostCommentMode.Edit) {
       const commentContent = removeEmptyLines({
         text:
@@ -363,6 +418,23 @@ export const CommentsRTE: FC<CommentFormProps> = ({
     createCommentMutation.isLoading ||
     updateCommentMutation.isLoading ||
     uploadStatus === UploadStatus.Uploading;
+  
+  const getPlaceholder = (mode?: Placeholder): string => {
+    switch (mode) {
+      case Placeholder.SendWish:
+        return t('createWishPlaceholder');
+      case Placeholder.CreateReply:
+        return t('createReplyPlaceholder');
+      case Placeholder.EditReply:
+        return t('editReplyPlaceholder');
+      case Placeholder.EditComment:
+        return t('editCommentPlaceholder');
+      case Placeholder.DocumentComment:
+        return t('documentCommentPlaceholder');
+      default:
+        return t('leaveCommentPlaceholder');
+    }
+  };
 
   return (
     <div className={`flex flex-row ${className} `}>
@@ -372,12 +444,9 @@ export const CommentsRTE: FC<CommentFormProps> = ({
         <RichTextEditor
           toolbarId={`toolbar-${toolbarId || entityId}`}
           defaultValue={commentData?.content?.editor}
-          placeholder={
-            mode === PostCommentMode.SendWish
-              ? 'Wish them now...'
-              : 'Leave a comment...'
-          }
+          placeholder={getPlaceholder(placeholder)}
           className="max-w-full flex-grow text-sm"
+          charLimit={charLimit}
           ref={quillRef}
           dataTestId="postcomment-textbox"
           onChangeEditor={onChangeEditor}

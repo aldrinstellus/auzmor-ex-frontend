@@ -381,8 +381,11 @@ const SearchResults: FC<ISearchResultsProps> = ({
           ? 'folder'
           : getIconFromMime(documentData?.mimeType);
         return (
-          <div className="flex gap-1.5 items-center w-full overflow-hidden">
-            <Icon name={iconName} size={24} hover={false} />
+          <>
+          <div className="flex gap-1.5 w-full overflow-hidden">
+          <Icon name={iconName} size={24} hover={false} />
+          <div>
+            <div>
             <div className="min-w-0">
               <Truncate
                 text={documentData.name}
@@ -392,6 +395,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
                 )}
               />
             </div>
+
             <div className="flex gap-2 items-center">
               <div className="flex w-[3px] h-[3px] bg-neutral-500 rounded-full" />
               <div className="text-xs text-neutral-500">
@@ -401,7 +405,34 @@ const SearchResults: FC<ISearchResultsProps> = ({
                 )}`}
               </div>
             </div>
+            </div>
+            {result?.customFields && Array.isArray(result.customFields) && result.customFields.length > 0 && (
+              <div className="text-xs text-neutral-500">
+                &quot;
+                <HighlightText
+                  text={
+                    Array.isArray(result.customFields[0].customFieldValues)
+                      ? result.customFields[0].customFieldValues.find((val: any) =>
+                          typeof val === 'string' &&
+                          searchQuery &&
+                          val.toLowerCase().includes(searchQuery.toLowerCase())
+                        ) || ''
+                      : typeof result.customFields[0].customFieldValues === 'string'
+                        ? result.customFields[0].customFieldValues
+                        : ''
+                  }
+                  subString={searchQuery}
+                />
+                &quot;&nbsp;
+                {t('foundIn')}&nbsp;
+                <span className="font-semibold text-neutral-700">
+                  {result.customFields[0].displayName}
+                </span>
+              </div>
+            )}
           </div>
+        </div>
+          </>
         );
       case ISearchResultType.COURSE:
       case ISearchResultType.PATH:
