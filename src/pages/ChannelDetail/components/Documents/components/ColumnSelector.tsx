@@ -1,5 +1,4 @@
-import isEqual from 'lodash/isEqual';
-import { FC, useEffect, useMemo, useRef } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import IconButton, { Size, Variant } from 'components/IconButton';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
@@ -8,6 +7,7 @@ import Popover from 'components/Popover';
 import { ICheckboxListOption } from 'components/CheckboxList';
 import { searchObjects } from 'utils/misc';
 import Input from 'components/Input';
+import { useDebounce } from 'hooks/useDebounce';
 
 export interface ColumnItem {
   id: string;
@@ -33,9 +33,8 @@ const ColumnSelector: FC<IColumnSelecorProps> = ({
   const { t } = useTranslation('components', {
     keyPrefix: 'columnSelector',
   });
-  const isInitialRender = useRef(true);
 
-  const { control, watch } = useForm({
+  const { control, watch, formState: { dirtyFields } } = useForm({
     defaultValues: {
       columns: columns
         .filter((column) => !!column.visibility)
@@ -48,25 +47,21 @@ const ColumnSelector: FC<IColumnSelecorProps> = ({
     'columns',
     'columnSearch',
   ]);
+
+  const debouncedWatchedColumns = useDebounce(watchedColumns, 500);
+
   useEffect(() => {
-  if (isInitialRender.current) {
-    isInitialRender.current = false;
-    return;
-  }
-
-  if (watchedColumns) {
-    const updated = columns.map((column) => ({
-      ...column,
-      visibility: !!watchedColumns.find(
-        (watchedColumn) => watchedColumn.data.id === column.id,
-      ),
-    }));
-
-    if (!isEqual(columns, updated)) {
-      updateColumns(updated);
+    if (debouncedWatchedColumns && dirtyFields?.columns) {
+      updateColumns(
+        columns.map((column) => ({
+          ...column,
+          visibility: !!debouncedWatchedColumns.find(
+            (watchedColumn: any) => watchedColumn.data.id === column.id,
+          ),
+        })),
+      );
     }
-  }
-}, [watchedColumns]);
+  }, [debouncedWatchedColumns, dirtyFields]);
 
   const disabledFieldName = ['Name'];
 
