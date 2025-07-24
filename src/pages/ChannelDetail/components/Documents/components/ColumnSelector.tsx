@@ -1,4 +1,5 @@
-import { FC, useEffect, useMemo } from 'react';
+import isEqual from 'lodash/isEqual';
+import { FC, useEffect, useMemo, useRef } from 'react';
 import IconButton, { Size, Variant } from 'components/IconButton';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
@@ -32,6 +33,7 @@ const ColumnSelector: FC<IColumnSelecorProps> = ({
   const { t } = useTranslation('components', {
     keyPrefix: 'columnSelector',
   });
+  const isInitialRender = useRef(true);
 
   const { control, watch } = useForm({
     defaultValues: {
@@ -46,19 +48,25 @@ const ColumnSelector: FC<IColumnSelecorProps> = ({
     'columns',
     'columnSearch',
   ]);
-
   useEffect(() => {
-    if (watchedColumns) {
-      updateColumns(
-        columns.map((column) => ({
-          ...column,
-          visibility: !!watchedColumns.find(
-            (watchedColumn) => watchedColumn.data.id === column.id,
-          ),
-        })),
-      );
+  if (isInitialRender.current) {
+    isInitialRender.current = false;
+    return;
+  }
+
+  if (watchedColumns) {
+    const updated = columns.map((column) => ({
+      ...column,
+      visibility: !!watchedColumns.find(
+        (watchedColumn) => watchedColumn.data.id === column.id,
+      ),
+    }));
+
+    if (!isEqual(columns, updated)) {
+      updateColumns(updated);
     }
-  }, [watchedColumns]);
+  }
+}, [watchedColumns]);
 
   const disabledFieldName = ['Name'];
 
