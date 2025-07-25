@@ -218,7 +218,7 @@ const renderCustomField = (type: string, value: any): React.ReactNode => {
     case 'number':
     case 'currency':
     case 'metadata':
-      return typeof value === 'object' && value !== null ?
+      return typeof value === 'object' ?
         <a
           href={value.Url}
           target="_blank"
