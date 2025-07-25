@@ -39,7 +39,7 @@ const DocSearch: FC<IDocSearchProps> = ({
   const useChannelDocDeepSearch = getApi(ApiEnum.GetChannelDocDeepSearch);
   const { channelId } = useParams();
   const documentSearchDebounceValue = useDebounce(documentSearch, 500);
-  const shouldFetch = !!documentSearchDebounceValue && dirtyFields.documentSearch;
+  const shouldFetch = !!documentSearchDebounceValue && dirtyFields?.documentSearch;
 
   // Api call: Get search results
   const { data, isLoading, isError } = useChannelDocDeepSearch(
