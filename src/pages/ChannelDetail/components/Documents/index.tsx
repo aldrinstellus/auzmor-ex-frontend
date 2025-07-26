@@ -707,8 +707,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                   return <>{renderCustomField(field.type, matched?.field_values)}</>;
               }
             },
-            minSize: field.size || fieldSize[field.fieldName] || fieldSizeByType[field.type] || 256,
-            maxSize: 256,
+            size: field.size || fieldSize[field.fieldName] || fieldSizeByType[field.type] || 256,
             thClassName: 'py-3 px-3',
             tdClassName: 'border-b-1 border-neutral-200 py-3 px-3',
           })) || []),
