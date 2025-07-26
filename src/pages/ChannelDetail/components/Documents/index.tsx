@@ -108,6 +108,8 @@ const fieldSizeByType: Record<string, number> = {
   date: 150,
   boolean: 150,
   number: 150,
+  text: 150,
+  choice: 140,
 };
 
 const TimeField = ({ time }: { time: string }) => (
@@ -176,7 +178,7 @@ const LocationField = ({
       triggerNode={<BreadCrumb items={pathItems} onItemClick={() => {}} />}
       triggerNodeClassName="w-full"
       wrapperClassName="w-full"
-      className='right-[-100px] top-[-10px] rounded-9xl'
+      className='right-[-10px] top-[-10px] rounded-9xl'
       contentRenderer={() => (
         <div className="flex p-3 bg-white rounded-9xl border border-primary-50 shadow">
           <BreadCrumb
@@ -230,7 +232,12 @@ const renderCustomField = (type: string, value: any): React.ReactNode => {
                 key={idx}
                 className="bg-white h-[30px] text-sm rounded-full px-3 py-1 inline-block border border-neutral-200"
               >
-                {item}
+                <Truncate
+                maxLength={12}
+                toolTipClassName='!z-[999]'
+                text={item}
+                className="text-neutral-900 font-medium"
+              />
               </span>
             ))}
             {remaining > 0 && (
@@ -243,7 +250,12 @@ const renderCustomField = (type: string, value: any): React.ReactNode => {
       }
       return (
         <span className="bg-white h-[30px] text-sm rounded-full px-3 py-1 inline-block border border-neutral-200">
-          {value}
+          <Truncate
+                maxLength={12}
+                toolTipClassName='!z-[999]'
+                text={value}
+                className="text-neutral-900 font-medium"
+              />
         </span>
       );
     }
@@ -829,29 +841,14 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         ),
         cell: (info: CellContext<DocType, unknown>) => {
           return (
-            <Popover
-              triggerNode={
-                <BreadCrumb
-                  items={getMappedLocation(info?.row?.original)}
-                  onItemClick={() => {}}
-                />
-              }
-              className='left-[-100px] top-0 rounded-9xl'
-              triggerNodeClassName="w-full"
-              wrapperClassName="w-full"
-              contentRenderer={() => (
-                <div className="flex p-3 bg-white rounded-9xl border border-primary-50 shadow">
-                  <LocationField
-                    pathItems={getMappedLocation(info?.row?.original)}
-                    pathWithId={info?.row?.original?.pathWithId}
-                    channelId={channelId}
-                    updateDocumentSearch={(value: string) =>
-                      setValue('applyDocumentSearch', value)
-                    }
-                  />
-                </div>
-              )}
-            />
+              <LocationField
+                pathItems={getMappedLocation(info?.row?.original)}
+                pathWithId={info?.row?.original?.pathWithId}
+                channelId={channelId}
+                updateDocumentSearch={(value: string) =>
+                  setValue('applyDocumentSearch', value)
+                }
+              />
           );
         },
         size: 260,
