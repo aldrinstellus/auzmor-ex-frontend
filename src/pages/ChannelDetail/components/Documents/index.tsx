@@ -254,7 +254,7 @@ const renderCustomField = (type: string, value: any): React.ReactNode => {
       return (
         <span className="bg-white h-[30px] text-sm rounded-full px-3 py-1 inline-block border border-neutral-200">
           <Truncate
-                maxLength={10}
+                maxLength={12}
                 toolTipClassName='!z-[999]'
                 text={value}
                 className="text-neutral-900 font-medium"
