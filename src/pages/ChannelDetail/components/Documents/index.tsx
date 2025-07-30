@@ -135,7 +135,9 @@ const NameField = ({
         hover={false}
       />
     </div>
-    {name || ''}
+     <div className="break-words overflow-hidden">
+      {name || ''}
+    </div>
   </div>
 );
 
