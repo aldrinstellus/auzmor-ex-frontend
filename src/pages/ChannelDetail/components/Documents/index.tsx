@@ -149,7 +149,7 @@ const OwnerField = ({
   <div className="flex gap-2">
     <Avatar image={ownerImage} name={ownerName} size={24} />
     <Truncate
-      maxLength={10}
+      maxLength={14}
       toolTipClassName='!z-[999]'
       text={ownerName}
     />
