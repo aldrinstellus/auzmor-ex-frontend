@@ -135,12 +135,7 @@ const NameField = ({
         hover={false}
       />
     </div>
-    <Truncate
-      maxLength={25}
-      toolTipClassName='!z-[999]'
-      text={name || ''}
-      className="text-neutral-900 font-medium"
-    />
+    {name || ''}
   </div>
 );
 
