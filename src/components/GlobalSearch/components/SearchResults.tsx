@@ -411,7 +411,9 @@ const SearchResults: FC<ISearchResultsProps> = ({
               <div className="text-xs text-neutral-500">
                 &quot;
                 <HighlightText
-                  text={matched.field_values}
+                  text={Array.isArray(matched.field_values)
+                    ? matched.field_values.find((val: any) => val?.toLowerCase?.().includes(searchQuery?.toLowerCase?.()))
+                    : matched.field_values}
                   subString={searchQuery}
                 />
                 &quot;&nbsp;
