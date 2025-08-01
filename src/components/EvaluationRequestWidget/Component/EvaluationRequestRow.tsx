@@ -45,6 +45,7 @@ const EvaluationRequestRow: FC<EvaluationRequestRowProps> = ({
           </Tooltip>
           <Truncate
             className={'text-sm font-bold'}
+            maxLength={16}
             toolTipTextClassName="overflow-hidden"
             text={
               (data?.module === 'EventSession'
@@ -85,6 +86,7 @@ const EvaluationRequestRow: FC<EvaluationRequestRowProps> = ({
           <div className="flex items-center justify-between w-full">
             <Truncate
               className={'text-sm font-bold'}
+              maxLength={14}
               text={data?.user?.full_name}
             />
             <div className="flex items-center gap-1">
