@@ -94,7 +94,7 @@ const EvaluationRequestRow: FC<EvaluationRequestRowProps> = ({
               <span className="text-xs text-neutral-500">{data?.attempt}</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 w-full">
+          <div className="flex items-center justify-between gap-2 w-full">
             <div className="flex items-center gap-1">
               <Icon name="calendar" className="w-4 h-4" />
               <span className="text-xs text-neutral-500">
