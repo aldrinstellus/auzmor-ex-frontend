@@ -807,7 +807,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                 <HighlightText
                   text={Array.isArray(matched.field_values)
                     ? matched.field_values.find((val: any) => val?.toLowerCase?.().includes(applyDocumentSearch?.toLowerCase?.()))
-                    : typeof matched.field_values === 'object' ? matched.field_values.Description : matched.field_values}
+                    : matched.field_values?.Description ?? matched.field_values}
                   subString={applyDocumentSearch}
                 />
                 &quot;
