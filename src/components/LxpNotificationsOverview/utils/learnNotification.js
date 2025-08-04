@@ -619,7 +619,7 @@ export const getNotificationTitle = (
         values={{ eventName: deletedTargetName, periods, count: periods }}
         linkTo={
           isLearn &&
-          `/user/events/${targetId1}/detail?activeSessionId=${eventSessionId}`
+          `/user/events/${targetId1}/detail${eventSessionId ? `?activeSessionId=${eventSessionId}` : ''}`
         }
         components={[<NotificationText bold viewInline />]}
       />
@@ -635,7 +635,7 @@ export const getNotificationTitle = (
         values={{ eventName: deletedTargetName, count: periods, periods }}
         linkTo={
           isLearn &&
-          `/user/events/${targetId1}/detail?activeSessionId=${eventSessionId}`
+          `/user/events/${targetId1}/detail${eventSessionId ? `?activeSessionId=${eventSessionId}` : ''}`
         }
         components={[<NotificationText bold viewInline />]}
       />
@@ -649,7 +649,7 @@ export const getNotificationTitle = (
         values={{ eventName: deletedTargetName }}
         linkTo={
           isLearn &&
-          `/user/events/${targetId1}/detail?activeSessionId=${eventSessionId}`
+          `/user/events/${targetId1}/detail${eventSessionId ? `?activeSessionId=${eventSessionId}` : ''}`
         }
         components={[<NotificationText bold viewInline />]}
       />
@@ -663,7 +663,7 @@ export const getNotificationTitle = (
         values={{ eventName: deletedTargetName }}
         linkTo={
           isLearn &&
-          `/user/events/${targetId1}/detail?activeSessionId=${eventSessionId}`
+          `/user/events/${targetId1}/detail${eventSessionId ? `?activeSessionId=${eventSessionId}` : ''}`
         }
         components={[<NotificationText bold viewInline />]}
       />
@@ -1158,8 +1158,8 @@ export const getNotificationTitle = (
         }}
         linkTo={
           isLearn
-            ? `/user/events/${targetId1}/detail?activeSessionId=${additionalInfo.eventSessionId}`
-            : `/events/${targetId1}?activeSessionId=${additionalInfo.eventSessionId}`
+            ? `/user/events/${targetId1}/detail${additionalInfo?.eventSessionId ? `?activeSessionId=${additionalInfo.eventSessionId}` : ''}`
+            : `/events/${targetId1}${additionalInfo?.eventSessionId ? `?activeSessionId=${additionalInfo.eventSessionId}` : ''}`
         }
         components={[<NotificationText bold viewInline />]}
       />
@@ -1444,8 +1444,8 @@ export const getNotificationTitle = (
         }}
         linkTo={
           isLearn
-            ? `/user/events/${targetId1}/detail?activeSessionId=${additionalInfo.eventSessionId}`
-            : `/events/${targetId1}?activeSessionId=${additionalInfo.eventSessionId}`
+            ? `/user/events/${targetId1}/detail${additionalInfo?.eventSessionId ? `?activeSessionId=${additionalInfo.eventSessionId}` : ''}`
+            : `/events/${targetId1}${additionalInfo?.eventSessionId ? `?activeSessionId=${additionalInfo.eventSessionId}` : ''}`
         }
         components={[<NotificationText bold viewInline />]}
       />
