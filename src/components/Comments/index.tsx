@@ -151,7 +151,7 @@ const Comments: FC<CommentsProps> = ({
         return (
           <>
           <div className='font-semibold pb-2 border-b-1 border-neutral-200'>
-            {t('commentTitle', { count: commentIds.length })}
+            {t('commentTitle', { count: commentIds?.length })}
           </div>
           {getPost(entityId)?.occasionContext?.type === 'WORK_ANNIVERSARY' && (
             <div className="flex mt-2 w-full justify-center">
