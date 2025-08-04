@@ -203,7 +203,7 @@ const Comments: FC<CommentsProps> = ({
                         />
                       ))}
                   </div>
-                  {hasNextPage && !isFetchingNextPage && (totalCommentsCount !== commentIds.length) && (
+                  {hasNextPage && !isFetchingNextPage && (totalCommentsCount !== commentIds?.length) && (
                     <LoadMore
                       onClick={async () => await fetchNextPage()}
                       label={t('loadMoreComments')}
