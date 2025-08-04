@@ -413,7 +413,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
                 <HighlightText
                   text={Array.isArray(matched.fieldValues)
                     ? matched.fieldValues.find((val: any) => val?.toLowerCase?.().includes(searchQuery?.toLowerCase?.()))
-                    : matched.fieldValues}
+                    : typeof matched.fieldValues === 'object' ? matched.fieldValues.Description : matched.fieldValues}
                   subString={searchQuery}
                 />
                 &quot;&nbsp;
