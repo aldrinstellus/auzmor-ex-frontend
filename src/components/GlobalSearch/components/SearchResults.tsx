@@ -14,7 +14,6 @@ import { compressString, getLearnUrl } from 'utils/misc';
 import DefaultAppIcon from 'images/DefaultAppIcon.svg';
 import { getIconFromMime } from 'pages/ChannelDetail/components/Documents/components/Doc';
 import HighlightText from 'components/HighlightText';
-import Truncate from 'components/Truncate';
 import { usePermissions } from 'hooks/usePermissions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
@@ -27,6 +26,7 @@ import IconButton, {
 import useRole from 'hooks/useRole';
 import Spinner from 'components/Spinner';
 import { PUBLIC_URL } from 'utils/constants';
+import Truncate from 'components/Truncate';
 
 interface ISearchResultsProps {
   searchResults: ISearchResultGroup[];
@@ -248,7 +248,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
     entityType: ISearchResultType,
     isRecent: boolean,
   ) => {
-    const textStyles = `text-sm leading-4 text-black ${
+    const textStyles = `text-sm leading-4 text-black max-w-[250px] ${
       isRecent ? 'font-semibold' : ''
     }`;
     switch (entityType) {
@@ -384,13 +384,16 @@ const SearchResults: FC<ISearchResultsProps> = ({
         return (
           <>
           <div className="flex gap-1.5 w-full overflow-hidden">
-          <Icon name={iconName} size={24} hover={false} />
+          <div>
+            <Icon name={iconName} size={24} hover={false} />
+          </div>
           <div>
             <div className='flex gap-1 items-center'>
             <div className="min-w-0">
               <Truncate
                 text={documentData.name}
                 className={textStyles}
+                toolTipClassName='!w-[450px] break-words'
                 textRenderer={(text) => (
                   <HighlightText text={text} subString={searchQuery} />
                 )}
