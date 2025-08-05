@@ -13,6 +13,8 @@ interface IBreadCrumbProps {
   items: Item[];
   width?: number | '100%' | '100vw' | '100vh';
   labelClassName?: string;
+  IconWrapperClassName?: string;
+  wrapperClassName?: string;
   iconSize?: number;
   folderIconSize?: number;
   onItemClick?: (
@@ -26,6 +28,8 @@ const BreadCrumb: FC<IBreadCrumbProps> = ({
   items,
   width,
   labelClassName,
+  IconWrapperClassName,
+  wrapperClassName,
   iconSize,
   folderIconSize,
   onItemClick = () => {},
@@ -45,6 +49,8 @@ const BreadCrumb: FC<IBreadCrumbProps> = ({
       width={width}
       onItemClick={onItemClick}
       labelClassName={labelClassName}
+      IconWrapperClassName={IconWrapperClassName}
+      wrapperClassName={wrapperClassName}
       iconSize={iconSize}
       folderIconSize={folderIconSize}
     />
