@@ -6,7 +6,7 @@ import clsx from 'clsx';
 interface IClassicBreadcrumbProps {
   items: Item[];
   labelClassName?: string;
-  IconWrapperClassName?: string;
+  iconWrapperClassName?: string;
   wrapperClassName?: string;
   iconSize?: number;
   folderIconSize?: number;
@@ -19,7 +19,7 @@ interface IClassicBreadcrumbProps {
 const ClassicBreadcrumb: FC<IClassicBreadcrumbProps> = ({
   items,
   labelClassName = '',
-  IconWrapperClassName = '',
+  iconWrapperClassName = '',
   wrapperClassName = '',
   iconSize = 16,
   folderIconSize,
@@ -31,7 +31,7 @@ const ClassicBreadcrumb: FC<IClassicBreadcrumbProps> = ({
   });
   return (
   <div className="flex items-center gap-2 w-full">
-    <div className={`sticky left-0 z-10 flex items-center h-full ${IconWrapperClassName}`}>
+    <div className={`sticky left-0 z-10 flex items-center h-full ${iconWrapperClassName}`}>
       <Icon name="folder" size={folderIconSize || 20} />
     </div>
     <div className={`${wrapperClassName} flex items-center w-full h-full`}>
