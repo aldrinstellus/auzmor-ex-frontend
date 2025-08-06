@@ -201,7 +201,7 @@ const LocationField = ({
           <BreadCrumb
             items={pathItems}
             labelClassName="hover:text-primary-500 hover:underline text-sm"
-            iconWrapperClassName="rounded-l-9xl bg-white pl-2 pr-1"
+            iconWrapperClassName="rounded-l-9xl bg-white pl-2 pr-1 shrink-0"
             wrapperClassName='overflow-x-auto'
             folderIconSize={16}
             iconSize={12}
@@ -725,7 +725,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                 field.fieldName === 'Last Updated' ||
                 field.type === 'datetime'
               ) {
-                return <TimeField time={info.getValue() as string} />;
+                return <TimeField time={info.row.original?.modifiedAt} />;
               } else {
                  const matched = (info.row.original.customFields ?? []).find(
                     (eachField: any) => field.fieldName === eachField.field_name
@@ -821,8 +821,8 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                 className="!w-6"
               />
             </div>
-            <div className="flex-1 min-w-0 overflow-hidden">
-              <div className="line-clamp-2 break-all">
+            <div className="break-words overflow-hidden">
+              <div className="line-clamp-2">
                 {info.getValue() as string}
               </div>
             {info.row.original?.customFields && Array.isArray(info.row.original.customFields) && info.row.original?.customFields.length > 0 && matched && (
@@ -892,7 +892,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
               field.fieldName === 'Last Updated' ||
               field.type === 'datetime'
             ) {
-              return <TimeField time={info.getValue() as string} />;
+              return <TimeField time={info.row.original?.modifiedAt} />;
             } else {
               const matched = (info.row.original.customFields ?? []).find(
                     (eachField: any) => field.fieldName === eachField.field_name
