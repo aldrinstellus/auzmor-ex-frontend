@@ -174,7 +174,26 @@ const LocationField = ({
   const navigate = useNavigate();
   return (
     <Popover
-      triggerNode={<BreadCrumb items={pathItems} onItemClick={() => {}} />}
+      triggerNode={
+        <div className="w-full flex items-center overflow-hidden font-medium">
+        <Icon name="folder" size={20} className="shrink-0 mr-1 text-neutral-500" />
+        <div className="flex items-center overflow-hidden min-w-0">
+          {pathItems.map((item, index) => (
+            <div
+              key={item.id}
+              className="flex items-center min-w-0"
+            >
+              <span className="truncate max-w-[250px] inline-block overflow-hidden whitespace-nowrap text-ellipsis">
+                {item.label}
+              </span>
+              {index < pathItems.length - 1 && (
+                <Icon name="arrowRight" size={16} className="mx-1 shrink-0" />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+      }
       triggerNodeClassName="w-full"
       wrapperClassName="w-full"
       className='right-[-10px] top-[-10px] flex w-[250px] h-[50px] bg-white rounded-9xl border border-primary-50 shadow'
@@ -802,8 +821,8 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                 className="!w-6"
               />
             </div>
-            <div className="break-words overflow-hidden">
-              <div className="line-clamp-2">
+            <div className="flex-1 min-w-0 overflow-hidden">
+              <div className="line-clamp-2 break-all">
                 {info.getValue() as string}
               </div>
             {info.row.original?.customFields && Array.isArray(info.row.original.customFields) && info.row.original?.customFields.length > 0 && matched && (
