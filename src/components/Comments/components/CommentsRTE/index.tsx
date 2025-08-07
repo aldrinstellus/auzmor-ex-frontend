@@ -177,8 +177,8 @@ export const CommentsRTE: FC<CommentFormProps> = ({
           if (oldData) {
             return produce(oldData, (draft: any) => {
               draft.pages[0].data.result.data = [
-                { id: data.id },
-                ...draft.pages[0].data.result.data,
+                { id: data?.id },
+                ...draft?.pages?.[0].data?.result?.data,
               ];
             });
           } else {
