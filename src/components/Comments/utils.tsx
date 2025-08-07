@@ -28,7 +28,7 @@ export function useCommentsFetcher<T>({
   const commentIds: { id: string }[] =
     data?.pages.flatMap((page: any) => page.data?.result?.data) ?? [];
   
-  const totalCommentsCount = data?.pages?.[0].data?.data?.totalCount;
+  const totalCommentsCount = data?.pages?.[0].data?.result?.totalCount;
 
   return {
     commentIds,
