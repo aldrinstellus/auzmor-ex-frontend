@@ -680,10 +680,10 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     return items;
   };
 
-  const getRowUrl = (virtualRow: any) => {
-    if (virtualRow.original.pathWithId) {
+  const getRowUrl = (pathWithId: any) => {
+    if (pathWithId) {
       const encodedPath = compressString(
-        JSON.stringify(virtualRow?.original.pathWithId),
+        JSON.stringify(pathWithId),
       );
       const url = `/channels/${channelId}/documents/${encodedPath}`;
       return url;
@@ -705,7 +705,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           ),
           cell: (info: CellContext<DocType, unknown>) => {
             return (
-            <Link to={getRowUrl(info?.row)} onClick={(e)=> e.preventDefault}>
+            <Link to={getRowUrl(info?.row?.original?.pathWithId)} onClick={(e)=> e.preventDefault}>
               <NameField
                 name={info.getValue() as string}
                 mimeType={info?.row?.original?.mimeType}
@@ -825,7 +825,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         cell: (info: CellContext<DocType, unknown>) => {
           const matched = info.row.original?.customFields.find((field: any) => field.is_matched === true);
           return (
-            <Link to={getRowUrl(info?.row)} onClick={(e) => e.preventDefault}>
+            <Link to={getRowUrl(info?.row?.original?.pathWithId)} onClick={(e) => e.preventDefault}>
               <div className="flex gap-2 font-medium text-neutral-900 leading-6 w-full">
                 <div className="w-6">
                   <Icon
@@ -967,7 +967,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     () => [
       {
         accessorKey: 'name',
-        cell: (info) => <Link to={getRowUrl(info?.row)} onClick={(e)=> e.preventDefault}>
+        cell: (info) => <Link to={getRowUrl(info?.row?.original?.pathWithId)} onClick={(e)=> e.preventDefault}>
           <Doc doc={info.row.original} isFolder={isRootDir} />
           </Link>,
       },
@@ -1748,6 +1748,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                     navigate(`/channels/${channelId}/documents`);
                   }
                 }}
+                getRowUrl={getRowUrl}
                 disable={isCredExpired || isLoading}
               />
               {permissions.includes(ChannelPermissionEnum.CanEditChannelDoc) &&

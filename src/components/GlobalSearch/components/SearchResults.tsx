@@ -386,13 +386,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
         return (
           <Link
             to={getItemUrl(entityType, result)}
-            className="flex flex-1 gap-2 items-center"
-            onClick={() => handleItemClick(entityType, result)}
-            onKeyUp={(e) =>
-              e.code === 'Enter'
-                ? handleItemClick(entityType, result)
-                : ''
-            }
+            onClick={(e) => e.preventDefault}
           >
             <div className="flex gap-1.5 w-full overflow-hidden">
               <div>
@@ -624,6 +618,12 @@ const SearchResults: FC<ISearchResultsProps> = ({
                         className={`flex px-3 py-[4px] gap-2 items-center group/result hover:bg-primary-50 cursor-pointer ${
                           index === selectedIndex && 'bg-primary-50'
                         }`}
+                        onClick={() => handleItemClick(entityType, result)}
+                        onKeyUp={(e) =>
+                          e.code === 'Enter'
+                            ? handleItemClick(entityType, result)
+                            : ''
+                        }
                         ref={(el: HTMLLIElement) =>
                           (itemRefs.current[index] = el)
                         }
