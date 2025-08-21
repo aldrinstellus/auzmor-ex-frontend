@@ -4,8 +4,8 @@ import PreviewLink from 'components/PreviewLink';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
 import useAuth from 'hooks/useAuth';
 import { IPost } from 'interfaces';
-import { ForwardedRef, RefObject, forwardRef, useContext, useState } from 'react';
-import ReactQuill from 'react-quill';
+import { ForwardedRef, RefObject, forwardRef, useContext, useEffect, useState } from 'react';
+import ReactQuill, { Quill } from 'react-quill';
 import RichTextEditor from '../RichTextEditor';
 import Toolbar from '../RichTextEditor/toolbar';
 import Icon from 'components/Icon';
@@ -17,6 +17,7 @@ import { operatorXOR } from 'utils/misc';
 import { useTranslation } from 'react-i18next';
 import Truncate from 'components/Truncate';
 import AddLinkModal from './AddLinkModal';
+import LinkPopup from './LinkPopup';
 
 export interface IBodyProps {
   data?: IPost;
@@ -46,6 +47,14 @@ const Body = forwardRef(
     const { t } = useTranslation('postBuilder');
     const { currentTimezone } = useCurrentTimezone();
     const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+    const [selectedText, setSelectedText] = useState('');
+    const [editingUrl, setEditingUrl] = useState('');
+    const [linkPopup, setLinkPopup] = useState<{
+      url: string;
+      position: any;
+      target: HTMLElement;
+    } | null>(null);
+    const [editingRange, setEditingRange] = useState<{ index: number; length: number } | null>(null);
     const updateContext = () => {
       setEditorValue({
         text: (ref as RefObject<ReactQuill>)
@@ -66,30 +75,111 @@ const Body = forwardRef(
       });
     };
     const onRequestLink = () => {
+      const editor = quillRef.current?.getEditor();
+      if (editor) {
+        const range = editor.getSelection();
+        if (range && range.length > 0) {
+          setSelectedText(editor.getText(range.index, range.length));
+        } else {
+          setSelectedText('');
+        }
+      }
       setIsLinkModalOpen(true);
+    };
+
+    const closeLinkPopup = () => setLinkPopup(null);
+    
+    const normalizeUrl = (url: string) => {
+      if (!url) return '';
+      if (/^(https?:)?\/\//i.test(url)) return url;
+      return `https://${url}`;
+    };
+
+    const handleEditLink = () => {
+      const editor = quillRef.current?.getEditor();
+      if (!editor || !linkPopup) return;
+
+      const anchor = linkPopup.target as HTMLAnchorElement;
+      const blot = Quill.find(anchor);
+      if (!blot) return;
+
+      const startIndex = blot.offset(editor.scroll);
+      const length = (anchor.textContent || '').length;
+
+      setEditingRange({ index: startIndex, length });
+      setSelectedText(anchor.textContent || '');
+      setEditingUrl(linkPopup.url);
+
+      setIsLinkModalOpen(true);
+      closeLinkPopup();
     };
 
     const handleAddLink = (linkText: string, url: string) => {
       const editor = quillRef.current?.getEditor();
       if (!editor) return;
 
-      const range = editor.getSelection(true);
-      if (range) {
-        editor.deleteText(range.index, range.length);
-        editor.insertText(range.index, linkText, 'link', url);
+      const normalizedUrl = normalizeUrl(url);
+      if (editingRange) {
+        const { index, length } = editingRange;
+
+        // Formats at start of the link (bold/italic/etc.)
+        const baseFormats = editor.getFormat(index, 1);
+
+        // If text didn't change, only update the URL (preserves all inline formats)
+        if (linkText === selectedText) {
+          editor.formatText(index, length, 'link', normalizedUrl);
+        } else {
+          // Replace text but preserve other formats
+          const formats = { ...baseFormats, link: normalizedUrl };
+          // Remove existing text
+          editor.deleteText(index, length);
+          // Insert new text with preserved formats
+          editor.insertText(index, linkText, formats);
+        }
+
+        setEditingRange(null);
+      } else {
+        // Creating a brand-new link at the current selection
+        const range = editor.getSelection(true);
+        if (range) {
+          editor.deleteText(range.index, range.length);
+          editor.insertText(range.index, linkText, { link: normalizedUrl });
+        }
       }
+
+      setSelectedText('');
+      setEditingUrl('');
       setIsLinkModalOpen(false);
     };
 
-    const getSelectedText = () => {
+    useEffect(() => {
       const editor = quillRef.current?.getEditor();
-      if (!editor) return '';
+      if (!editor) return;
 
-      const range = editor.getSelection();
-      if (!range || range.length === 0) return '';
+      const handleClick = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'A') {
+          e.preventDefault();
+          const linkUrl = target.getAttribute('href') || '';
+          const containerRect = editor.root.getBoundingClientRect();
+          const rect = target.getBoundingClientRect();
+          setLinkPopup({
+            url: linkUrl,
+            position: {
+              top: rect.top - containerRect.top + 158,
+              left: rect.left - containerRect.left - 10,
+              width: rect.width,
+              height: rect.height,
+            },
+            target
+          });
+        }
+      };
 
-      return editor.getText(range.index, range.length);
-    };
+      editor.root.addEventListener('click', handleClick);
+      return () => editor.root.removeEventListener('click', handleClick);
+    }, []);
+
 
     return (
       <div className="text-sm text-neutral-900">
@@ -252,11 +342,19 @@ const Body = forwardRef(
             )}
             dataTestId={dataTestId}
           />
+          {linkPopup && (
+            <LinkPopup
+              url={linkPopup.url}
+              position={linkPopup.position}
+              onEdit={handleEditLink}
+            />
+          )}
           <AddLinkModal
             isOpen={isLinkModalOpen}
             onClose={() => setIsLinkModalOpen(false)}
             onSave={handleAddLink}
-            selectedText={getSelectedText}
+            selectedText={selectedText}
+            url={editingUrl}
           />
         </div>
       </div>

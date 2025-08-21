@@ -1,79 +1,108 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import Button, { Size, Variant } from "components/Button";
+import Layout, { FieldType } from "components/Form";
 import Icon from "components/Icon";
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 
 interface AddLinkModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (linkText: string, url: string) => void;
-  selectedText: () => string;
+  selectedText: string;
+  url: string;
 }
 
-const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, onSave, selectedText }) => {
+enum AddFlow {
+  CreateLink = 'CREATE_LINK',
+  EditLink = 'EDIT_LINK',
+}
+
+const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, onSave, selectedText, url }) => {
   const { t } = useTranslation('postBuilder');
-  const [url, setUrl] = useState('');
-  const [linkText, setLinkText] = useState('');
-  const [isValid, setIsValid] = useState(false);
 
-  const isValidUrl = (url: string) => {
-    try {
-      new URL(url.startsWith('http') ? url : `https://${url}`);
-      return url.trim().length > 0 && (url.includes('.') || url.startsWith('http'));
-    } catch {
-      return false;
-    }
-  };
+  const schema = yup.object().shape({
+    linkText: yup.string().optional(),
+    textUrl: yup
+      .string()
+      .required("URL is required")
+      .test("is-url-valid", t('hyperlink.invalidUrlMsg'), (value) => {
+        if (!value) return false;
+        try {
+          new URL(value.startsWith('http') ? value : `https://${value}`);
+          return value.trim().length > 0 && (value.includes('.') || value.startsWith('http'));
+        } catch {
+          return false;
+        }
+      }),
+  });
+
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isValid },
+    clearErrors,
+  } = useForm<any>({
+    defaultValues: {
+      linkText: selectedText || "",
+      textUrl: url || "",
+    },
+    resolver: yupResolver(schema),
+    mode: "onChange",
+  });
+
+  const linkFlow = false ? AddFlow.EditLink : AddFlow.CreateLink;
+  const dataTestId = linkFlow === AddFlow.CreateLink ? "create-link" : "edit-link";
 
   useEffect(() => {
-  if (isOpen) {
-    const text = selectedText();
-    setLinkText(text);
-  }
-}, [isOpen]); 
-
-
-  useEffect(() => {
-    if (!url) {
-      setIsValid(false);
-      return;
+    if (isOpen) {
+      reset({
+        linkText: selectedText || "",
+        textUrl: url || "",
+      });
     }
-    setIsValid(isValidUrl(url));
-  }, [url]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 pt-[250px]">
-      <div className="bg-white rounded-9xl shadow-xl border border-neutral-100 w-[460px] h-[300px]">
+    <div className="fixed inset-0 flex items-center justify-center z-50 pt-[270px]">
+      <div className="bg-white rounded-9xl shadow-xl border border-neutral-100 w-[460px] h-[340px]">
         <div className="flex justify-between items-center p-4 border-b-2 border-neutral-100">
           <h2 className="text-lg font-bold">{t('hyperlink.modalTitle')}</h2>
           <Icon name="close" size={20} onClick={() => onClose()} />
         </div>
-        <div className="flex flex-col px-4 pt-2 h-[56%] gap-3">
-          <div className="flex flex-col gap-1">
-            <p className="font-semibold">{t('hyperlink.linkTextLabel')}</p>
-            <input
-              type="text"
-              placeholder={t('hyperlink.textPlaceholder')}
-              className="w-full h-10 border rounded-19xl px-3 py-2"
-              value={linkText}
-              onChange={(e) => setLinkText(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <p className="font-semibold">{t('hyperlink.pasteUrl')}</p>
-            <input
-              type="url"
-              placeholder={t('hyperlink.placeholder')}
-              className="w-full h-10 border rounded-19xl px-3 py-2"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-            />
-            {(!isValid && url.length > 0) && (
-              <p className="text-xxs text-red-500 pl-2 mt-[-7px]">{t('hyperlink.invalidUrlMsg')}</p>
-            )}
-          </div>
+        <div className="px-4 pt-2 h-[57.5%]">
+          <Layout
+            className="w-full flex flex-col gap-4"
+            fields={[
+              {
+                type: FieldType.Input,
+                control,
+                name: "linkText",
+                label: t("hyperlink.linkTextLabel"),
+                placeholder: t("hyperlink.textPlaceholder"),
+                dataTestId: `${dataTestId}-text`,
+                autoFocus: selectedText ? false : true,
+                error: errors.linkText?.message,
+              },
+              {
+                type: FieldType.Input,
+                control,
+                name: "textUrl",
+                label: t("hyperlink.pasteUrl"),
+                placeholder: t("hyperlink.placeholder"),
+                dataTestId: `${dataTestId}-url`,
+                required: true,
+                clearErrors,
+                error: errors.textUrl?.message,
+                autofocus: selectedText ? true : false,
+              },
+            ]}
+          />
         </div>
         <div className="flex justify-end items-center px-4 h-[24%] gap-2 bg-blue-50 rounded-b-9xl">
           <Button
@@ -87,12 +116,10 @@ const AddLinkModal: React.FC<AddLinkModalProps> = ({ isOpen, onClose, onSave, se
             size={Size.Small}
             label={t('hyperlink.saveLabel')}
             className = 'h-[36px]'
-            disabled={(!url || !isValid || !linkText)}
-            onClick={() => {
-              onSave(linkText, url.trim());
-              setUrl('');
-              setLinkText('');
-            }}
+            disabled={!isValid}
+            onClick={handleSubmit((values) => {
+              onSave(values?.linkText?.trim(), values?.textUrl?.trim());
+            })}
           />
         </div>
       </div>

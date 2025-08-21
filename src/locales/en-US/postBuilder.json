@@ -83,7 +83,7 @@
   "hyperlink": {
     "modalTitle": "Add link",
     "placeholder": "ex. www.abc.com",
-    "textPlaceholder": "Please enter the text",
+    "textPlaceholder": "eg: Design Document",
     "linkTextLabel": "Text",
     "pasteUrl": "Paste the URL",
     "invalidUrlMsg": "Please enter a valid URL",
