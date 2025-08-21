@@ -4,7 +4,7 @@ import PreviewLink from 'components/PreviewLink';
 import { CreatePostContext, CreatePostFlow } from 'contexts/CreatePostContext';
 import useAuth from 'hooks/useAuth';
 import { IPost } from 'interfaces';
-import { ForwardedRef, RefObject, forwardRef, useContext } from 'react';
+import { ForwardedRef, RefObject, forwardRef, useContext, useState } from 'react';
 import ReactQuill from 'react-quill';
 import RichTextEditor from '../RichTextEditor';
 import Toolbar from '../RichTextEditor/toolbar';
@@ -16,6 +16,7 @@ import Button, { Size, Variant } from 'components/Button';
 import { operatorXOR } from 'utils/misc';
 import { useTranslation } from 'react-i18next';
 import Truncate from 'components/Truncate';
+import AddLinkModal from './AddLinkModal';
 
 export interface IBodyProps {
   data?: IPost;
@@ -44,6 +45,7 @@ const Body = forwardRef(
     const { user } = useAuth();
     const { t } = useTranslation('postBuilder');
     const { currentTimezone } = useCurrentTimezone();
+    const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
     const updateContext = () => {
       setEditorValue({
         text: (ref as RefObject<ReactQuill>)
@@ -63,6 +65,32 @@ const Body = forwardRef(
           .getContents(),
       });
     };
+    const onRequestLink = () => {
+      setIsLinkModalOpen(true);
+    };
+
+    const handleAddLink = (linkText: string, url: string) => {
+      const editor = quillRef.current?.getEditor();
+      if (!editor) return;
+
+      const range = editor.getSelection(true);
+      if (range) {
+        editor.deleteText(range.index, range.length);
+        editor.insertText(range.index, linkText, 'link', url);
+      }
+      setIsLinkModalOpen(false);
+    };
+
+    const getSelectedText = () => {
+      const editor = quillRef.current?.getEditor();
+      if (!editor) return '';
+
+      const range = editor.getSelection();
+      if (!range || range.length === 0) return '';
+
+      return editor.getText(range.index, range.length);
+    };
+
     return (
       <div className="text-sm text-neutral-900">
         <div className="max-h-[75vh] overflow-y-auto flex flex-col gap-2">
@@ -207,6 +235,7 @@ const Body = forwardRef(
                   isCharLimit={isCharLimit}
                   dataTestId={dataTestId}
                   quillRef={quillRef}
+                  onAddLink={onRequestLink}
                 />
               );
             }}
@@ -222,6 +251,12 @@ const Body = forwardRef(
               />
             )}
             dataTestId={dataTestId}
+          />
+          <AddLinkModal
+            isOpen={isLinkModalOpen}
+            onClose={() => setIsLinkModalOpen(false)}
+            onSave={handleAddLink}
+            selectedText={getSelectedText}
           />
         </div>
       </div>
