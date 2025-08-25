@@ -347,6 +347,7 @@ const Body = forwardRef(
               url={linkPopup.url}
               position={linkPopup.position}
               onEdit={handleEditLink}
+              onClose={closeLinkPopup}
             />
           )}
           <AddLinkModal
