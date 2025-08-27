@@ -29,6 +29,7 @@ import { PUBLIC_URL } from 'utils/constants';
 import Truncate from 'components/Truncate';
 import apiService from 'utils/apiService';
 import { Link } from 'react-router-dom';
+import { failureToastConfig } from 'components/Toast/variants/FailureToast';
 
 interface ISearchResultsProps {
   searchResults: ISearchResultGroup[];
@@ -94,7 +95,11 @@ const SearchResults: FC<ISearchResultsProps> = ({
   const [deletedResult, setDeletedResult] = useState<IDeletedResult | null>(
     null,
   );
-  const [fetchingPreviewId, setFetchingPreviewId] = useState(null);
+  const [fetchingPreview, setFetchingPreview] = useState<{ id: number | null, index: number | null }>({
+  id: null,
+  index: null,
+});
+
 
   const { user } = useAuth();
   const { isAdmin } = useRole();
@@ -143,15 +148,20 @@ const SearchResults: FC<ISearchResultsProps> = ({
     },
   });
 
-  const fetchPreviewApi = async (channelId: string, fileId: string) => {
+  const fetchPreviewApi = async (channelId: number, fileId: number) => {
     const { data } = await apiService.get(`/channels/${channelId}/file/${fileId}/preview`);
     return data;
   };
 
-  const handlePreviewClick = async (channelId: any, fileId: any) => {
-    setFetchingPreviewId(fileId);
-    const previewData = await fetchPreviewApi(channelId, fileId);
-    setFetchingPreviewId(null);
+  const handlePreviewClick = async (channelId: number, fileId: number, index: number) => {
+    setFetchingPreview({ id: fileId, index });
+    const previewData = await fetchPreviewApi(channelId, fileId)
+    .catch(() => {
+      failureToastConfig({ content: t('failedToOpenPreview')});
+      setFetchingPreview({ id: null, index: null });
+      return null;
+    });
+    setFetchingPreview({ id: null, index: null });
     if (previewData) {
       window.open(previewData.result.previewURL, '_blank', 'noopener,noreferrer');
     }
@@ -266,7 +276,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
     entityType: ISearchResultType,
     isRecent: boolean,
   ) => {
-    const textStyles = `text-sm leading-4 text-black max-w-[380px]
+    const textStyles = `text-sm leading-4 text-black max-w-[420px]
      ${
       isRecent ? 'font-semibold' : ''
     }`;
@@ -628,11 +638,12 @@ const SearchResults: FC<ISearchResultsProps> = ({
                       isRecent && result?.sourceType
                         ? (result.sourceType.toLowerCase() as ISearchResultType)
                         : entity.module;
+                    const isFolder = isRecent ? result?.additionalInfo?.isFolder : result?.isFolder;
                     return (
                       <li
                         id={`search-item-${index}`}
                         key={`search-item-${index}`}
-                        className={`flex px-3 py-[4px] gap-2 items-center group/result hover:bg-primary-50 cursor-pointer ${
+                        className={`flex justify-between px-3 py-[4px] gap-2 items-center group/result hover:bg-primary-50 cursor-pointer ${
                           index === selectedIndex && 'bg-primary-50'
                         }`}
                         onClick={() => handleItemClick(entityType, result)}
@@ -648,10 +659,12 @@ const SearchResults: FC<ISearchResultsProps> = ({
                       >
                         {getEntityRenderer(result, entityType, isRecent)}
                         <div className='flex gap-2 items-center'>
-                          {entityType === ISearchResultType.DOCUMENT && !result?.additionalInfo?.isFolder && (
+                          {entityType === ISearchResultType.DOCUMENT && !isFolder && (
                             <div className="relative w-4 h-4 shrink-0">
-                              {fetchingPreviewId === result?.additionalInfo?.id ? (
-                                <Spinner className="absolute -top-1 -right-1 !text-black" />
+                              {(fetchingPreview.id === (result?.additionalInfo?.id || result?.id) && fetchingPreview.index === index) ?  (
+                                <Spinner className={`absolute -top-1 -right-1 !text-black ${
+                                    selectedIndex === index ? 'visible' : 'invisible'
+                                  } group-hover/result:visible !rounded-none`} />
                               ) : (
                                 <Icon
                                   name="launch"
@@ -660,7 +673,11 @@ const SearchResults: FC<ISearchResultsProps> = ({
                                   className={`absolute -top-[1px] -right-[1px] ${selectedIndex === index ? 'visible' : 'invisible'} group-hover/result:visible !rounded-none`}
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handlePreviewClick(result?.additionalInfo?.channelId, result?.additionalInfo?.id);
+                                    handlePreviewClick(
+                                      result?.additionalInfo?.channelId || result?.channelId,
+                                      result?.additionalInfo?.id || result?.id,
+                                      resultIndex
+                                    );
                                   }}
                                 />
                               )}

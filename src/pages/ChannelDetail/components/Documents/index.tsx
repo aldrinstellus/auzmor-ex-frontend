@@ -328,7 +328,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     useModal();
   const [renameModal, showRenameModal, closeRenameModal, renameModalProps] =
     useModal();
-  const { control, watch, setValue, formState: { dirtyFields }  } = useForm<IForm>({
+  const { control, watch, setValue, resetField, formState: { dirtyFields }  } = useForm<IForm>({
     defaultValues: {
       applyDocumentSearch: '',
       documentSearch: '',
@@ -606,7 +606,20 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
       const canDelete =
         !isCredExpired &&
         permissions.includes(ChannelPermissionEnum.CanDeleteDocuments);
+      const showCopyLink = !isCredExpired;
       return [
+        {
+          label: t('copyLink'),
+          onClick: (e: Event) => {
+            e.stopPropagation();
+            const lxpBaseUrl = `${window.location.origin}/lxp`;
+            const url = `${lxpBaseUrl}${getRowUrl(info?.row?.original?.pathWithId)}`;
+            navigator.clipboard.writeText(url);
+          },
+          dataTestId: 'folder-menu',
+          className: '!px-6 !py-[6px]',
+          isHidden: !showCopyLink,
+        },
         {
           label: t('rename'),
           onClick: (e: Event) => {
@@ -1127,6 +1140,10 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           const encodedPath = compressString(
             JSON.stringify(virtualRow?.original.pathWithId),
           );
+          if (isDocSearchApplied && virtualRow.original.isFolder) {
+            resetField('applyDocumentSearch');
+            resetField('documentSearch');
+          }
           navigate(`/channels/${channelId}/documents/${encodedPath}`);
         }
       },
@@ -1165,7 +1182,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   // Hook to reset document search param
   useEffect(() => {
     if (documentSearch === '' && isDocSearchApplied) {
-      setValue('applyDocumentSearch', '');
+      resetField('applyDocumentSearch');
     }
   }, [documentSearch, isDocSearchApplied]);
 
@@ -1701,7 +1718,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
               className="!py-[7px]"
               variant={ButtonVariant.Secondary}
               onClick={() => {
-                setValue('documentSearch', '');
+                resetField('documentSearch');
               }}
             />
           ) : (
@@ -1720,7 +1737,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                 const encodedPath = compressString(
                   JSON.stringify(mappedItemsToEncode),
                 );
-                setValue('documentSearch', '');
+                resetField('documentSearch');
                 if (!!mappedItemsToEncode.length) {
                   navigate(`/channels/${channelId}/documents/${encodedPath}`);
                 } else {
