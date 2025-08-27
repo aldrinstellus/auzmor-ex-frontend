@@ -140,7 +140,9 @@ const FilePreview: FC<IFilePreviewProps> = ({
 useEffect(() => {
   if (!isLoadingComments) {
     setTotalComments(commentInfo?.count);
-    setShowComment(true);
+    if (commentInfo?.count > 0) {
+      setShowComment(true);
+    }
   }
 }, [isLoadingComments, commentInfo]);
 
@@ -267,7 +269,7 @@ useEffect(() => {
               ) : null}
             </div>
           )}
-          {canDownload && !fileLoading && !isLink && !!file.downloadable && (
+          {canDownload && !fileLoading && !isLink && !!file?.downloadable && (
             <div className="flex gap-2">
               {isDownloading && <Spinner />}
               <Icon
