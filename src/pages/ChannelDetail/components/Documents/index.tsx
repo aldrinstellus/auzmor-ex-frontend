@@ -328,7 +328,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     useModal();
   const [renameModal, showRenameModal, closeRenameModal, renameModalProps] =
     useModal();
-  const { control, watch, setValue, resetField, formState: { dirtyFields }  } = useForm<IForm>({
+  const { control, watch, setValue, formState: { dirtyFields }  } = useForm<IForm>({
     defaultValues: {
       applyDocumentSearch: '',
       documentSearch: '',
@@ -1141,8 +1141,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
             JSON.stringify(virtualRow?.original.pathWithId),
           );
           if (isDocSearchApplied && virtualRow.original.isFolder) {
-            resetField('applyDocumentSearch');
-            resetField('documentSearch');
+            setValue('documentSearch', '', { shouldDirty: true });
           }
           navigate(`/channels/${channelId}/documents/${encodedPath}`);
         }
@@ -1182,7 +1181,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   // Hook to reset document search param
   useEffect(() => {
     if (documentSearch === '' && isDocSearchApplied) {
-      resetField('applyDocumentSearch');
+      setValue('applyDocumentSearch', '');
     }
   }, [documentSearch, isDocSearchApplied]);
 
@@ -1718,7 +1717,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
               className="!py-[7px]"
               variant={ButtonVariant.Secondary}
               onClick={() => {
-                resetField('documentSearch');
+                setValue('documentSearch', '');
               }}
             />
           ) : (
@@ -1737,7 +1736,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                 const encodedPath = compressString(
                   JSON.stringify(mappedItemsToEncode),
                 );
-                resetField('documentSearch');
+                setValue('documentSearch', '');
                 if (!!mappedItemsToEncode.length) {
                   navigate(`/channels/${channelId}/documents/${encodedPath}`);
                 } else {
