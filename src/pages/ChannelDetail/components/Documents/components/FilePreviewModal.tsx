@@ -251,6 +251,16 @@ useEffect(() => {
           )}
         </div>
         <div className="w-[30%] flex justify-end items-center gap-3 right-4">
+          {previewUrl ? (
+            <Icon
+              name="launch"
+              color="text-neutral-900"
+              hoverColor='text-primary-500'
+              onClick={() => {
+                window.open(previewUrl, '_blank', 'noopener,noreferrer');
+              }}
+            />
+          ) : null}
           {(canViewComment || isChannelAdmin || isAdmin) && (
              <div className="relative">
               <Icon
@@ -286,16 +296,6 @@ useEffect(() => {
               />
             </div>
           )}
-          {previewUrl ? (
-            <Icon
-              name="launch"
-              color="text-neutral-900"
-              hoverColor='text-primary-500'
-              onClick={() => {
-                window.open(previewUrl, '_blank', 'noopener,noreferrer');
-              }}
-            />
-          ) : null}
           <Icon name="close2" color="text-neutral-900" onClick={closeModal} />
         </div>
       </div>
