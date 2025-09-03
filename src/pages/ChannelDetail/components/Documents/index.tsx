@@ -617,6 +617,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
             const lxpBaseUrl = `${window.location.origin}/lxp${!isAdmin ? '/user' : ''}`;
             const url = `${lxpBaseUrl}${getRowUrl(info?.row?.original?.pathWithId)}`;
             navigator.clipboard.writeText(url);
+            successToastConfig({content: t('linkCopied')});
           },
           dataTestId: 'folder-menu',
           className: '!px-6 !py-[6px]',
