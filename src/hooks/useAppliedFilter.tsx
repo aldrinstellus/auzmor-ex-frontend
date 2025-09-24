@@ -61,6 +61,7 @@ export const useAppliedFilter = (initialFilters: Record<string, any>) => {
       return;
     }
     const applied = Object.entries(filters).some(([key, value]) => {
+      if (key === 'sort') return false;
       const initialValue = initialFilters[key];
 
       if (Array.isArray(value)) return value.length > 0;
@@ -115,7 +116,7 @@ export const useAppliedFilter = (initialFilters: Record<string, any>) => {
     }[];
   }) => {
     const { deleteParam } = useURLParams();
-    return isFilterApplied ? (
+    return (isFilterApplied || !!filters?.sort) ? (
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-4">
           <span className="text-neutral-500">{ts('filterBy')}</span>
@@ -124,9 +125,10 @@ export const useAppliedFilter = (initialFilters: Record<string, any>) => {
             Object.entries(filters).map(([key, value]) => {
               if (key === 'modifiedOn' || key === 'sort') return <></>;
               if (
-                !value ||
-                (Array.isArray(value) && value.length === 0) ||
-                !filterKeys.map((eachFilter) => eachFilter.key).includes(key)
+                (value === undefined ||
+                  (Array.isArray(value) && value.length === 0) ||
+                  (!filterKeys.map((eachFilter) => eachFilter.key).includes(key) &&
+                    typeof value !== 'boolean'))
               )
                 return null;
 
@@ -139,7 +141,9 @@ export const useAppliedFilter = (initialFilters: Record<string, any>) => {
                       ? v
                       : v?.data?.label || v?.data?.name || JSON.stringify(v),
                   )
-                : [typeof value === 'string' ? value : JSON.stringify(value)];
+                : typeof value === 'boolean'
+                  ? [value ? 'Yes' : 'No']
+                  : [typeof value === 'string' ? value : JSON.stringify(value)];
 
               return (
                 <FilterChip
@@ -163,7 +167,7 @@ export const useAppliedFilter = (initialFilters: Record<string, any>) => {
               onClear={() => setFilters({ ...filters, modifiedOn: '' })}
             />
           )}
-          {isFilterApplied && filters && !!filters.sort && (
+          {filters && !!filters.sort && (
             <FilterChip
               label="Sort by"
               values={[

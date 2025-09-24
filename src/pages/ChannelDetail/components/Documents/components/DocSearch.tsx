@@ -5,7 +5,7 @@ import { IForm } from '..';
 import clsx from 'clsx';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useDebounce } from 'hooks/useDebounce';
 import DocSearchRow from './DocSearchRow';
 import { Doc } from 'interfaces';
@@ -16,8 +16,10 @@ import { useTranslation } from 'react-i18next';
 interface IDocSearchProps {
   control: Control<IForm, any>;
   watch: UseFormWatch<IForm>;
+  dirtyFields: any;
   onEnter: (documentSearchDebounceValue: string) => void;
   onClick: (doc: Doc) => void;
+  getRowUrl: (pathWithId: any) => string;
   disable: boolean;
 }
 
@@ -25,8 +27,10 @@ const DocSearch: FC<IDocSearchProps> = ({
   disable,
   control,
   watch,
+  dirtyFields,
   onEnter,
   onClick,
+  getRowUrl,
 }) => {
   const { t } = useTranslation('channelDetail', {
     keyPrefix: 'documentTab',
@@ -36,16 +40,30 @@ const DocSearch: FC<IDocSearchProps> = ({
   const { getApi } = usePermissions();
   const useChannelDocDeepSearch = getApi(ApiEnum.GetChannelDocDeepSearch);
   const { channelId } = useParams();
+  const [isSearching, setIsSearching] = React.useState(false);
   const documentSearchDebounceValue = useDebounce(documentSearch, 500);
+  const shouldFetch = !!documentSearchDebounceValue && dirtyFields?.documentSearch;
 
   // Api call: Get search results
-  const { data, isLoading, isError } = useChannelDocDeepSearch({
+  const { data, isFetching, isError } = useChannelDocDeepSearch({
     channelId,
     params: { q: documentSearchDebounceValue || '' },
-  });
+  }, {enabled: shouldFetch});
+
   const documents = isError
     ? []
     : data?.pages?.flatMap((page: { data: any }) => page?.data?.result?.data);
+
+  useEffect(() => {
+    if (!documentSearch) {
+      setIsSearching(false);
+      return;
+    }
+    setIsSearching(true);
+    if (!isFetching && shouldFetch) {
+      setIsSearching(false);
+    }
+  }, [documentSearch, isFetching]);
 
   useEffect(() => {
     const elem = document.getElementById(
@@ -77,6 +95,7 @@ const DocSearch: FC<IDocSearchProps> = ({
     'group-focus-within/searchdoc:opacity-100 group-focus-within/searchdoc:flex':
       true,
   });
+
   return (
     <div className="flex relative group/searchdoc">
       <Layout
@@ -96,36 +115,40 @@ const DocSearch: FC<IDocSearchProps> = ({
         ]}
         className="w-[480px]"
       />
-      <ul
-        className={style}
-        style={{ boxShadow: '0px 4px 15px 0px rgba(0, 0, 0, 0.15)' }}
-      >
-        {isLoading ? (
-          [...Array(3)].map((each, index: number) => (
-            <li key={`doc-deep-search-skeleton-${index}`}>
-              <div className="flex items-center gap-2">
-                <Skeleton height={32} width={32} />
-                <div className="flex flex-col flex-grow">
-                  <Skeleton className="w-full" />
-                  <Skeleton className="w-full" />
+      {dirtyFields?.documentSearch && (
+        <ul
+          className={style}
+          style={{ boxShadow: '0px 4px 15px 0px rgba(0, 0, 0, 0.15)' }}
+        >
+          {isSearching ? (
+            [...Array(3)].map((each, index: number) => (
+              <li key={`doc-deep-search-skeleton-${index}`}>
+                <div className="flex items-center gap-2">
+                  <Skeleton height={32} width={32} />
+                  <div className="flex flex-col flex-grow">
+                    <Skeleton className="w-full" />
+                    <Skeleton className="w-full" />
+                  </div>
                 </div>
-              </div>
-            </li>
-          ))
-        ) : (documents || []).length <= 0 ? (
-          <NoDataFound illustrationClassName="h-24" hideClearBtn />
-        ) : (
-          (documents || []).map((doc: Doc) => (
-            <li key={doc.id}>
-              <DocSearchRow
-                data={doc}
-                searchQuery={documentSearchDebounceValue}
-                onClick={onClick}
-              />
-            </li>
-          ))
-        )}
-      </ul>
+              </li>
+            ))
+          ) : (documents || []).length === 0 ? (
+            <NoDataFound illustrationClassName="h-24" hideClearBtn />
+          ) : (
+            (documents || []).map((doc: Doc) => (
+              <li key={doc.id}>
+                <Link to={getRowUrl(doc?.pathWithId)} onClick={(e) => e.preventDefault}>
+                  <DocSearchRow
+                    data={doc}
+                    searchQuery={documentSearchDebounceValue}
+                    onClick={onClick}
+                  />
+                </Link>
+              </li>
+            ))
+          )}
+        </ul>
+    )}
     </div>
   );
 };

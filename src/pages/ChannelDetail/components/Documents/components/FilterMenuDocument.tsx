@@ -109,7 +109,7 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
           label: () => column.label,
           component: (form: UseFormReturn<any>) => (
             <GenericFilter
-              options={column.values}
+              options={column.type === 'boolean' ? [true, false] : column.values}
               name={column.fieldName}
               {...form}
               listType={column.type === "boolean" ? "RADIO" : "CHECKBOX"}
@@ -262,7 +262,24 @@ const FilterMenuDocument: FC<IFilterMenu> = ({
               />
             )}
             {!hideColumnSelector && columns.length > 0 && (
-              <ColumnSelector columns={columns.filter((col) => col.type !== 'image')} updateColumns={updateColumns} />
+              <ColumnSelector
+                columns={columns.filter((col) => col.type !== 'image')}
+                updateColumns={updateColumns}
+                clearFilter={(filterKey) => {
+                  const newFilters = { ...filters };
+                  filterKey.forEach((key) => {
+                    const currentValue = newFilters[key];
+
+                    if (Array.isArray(currentValue)) {
+                      newFilters[key] = [];
+                    } else {
+                      newFilters[key] = '';
+                    }
+                  });
+                  setFilters(newFilters);
+                }}
+
+              />
             )}
           </div>
         </div>

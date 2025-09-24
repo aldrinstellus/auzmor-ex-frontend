@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo } from 'react';
+import { FC, useEffect, useMemo, useRef } from 'react';
 import IconButton, { Size, Variant } from 'components/IconButton';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
@@ -7,6 +7,7 @@ import Popover from 'components/Popover';
 import { ICheckboxListOption } from 'components/CheckboxList';
 import { searchObjects } from 'utils/misc';
 import Input from 'components/Input';
+import { useDebounce } from 'hooks/useDebounce';
 
 export interface ColumnItem {
   id: string;
@@ -23,17 +24,24 @@ export interface ColumnItem {
 interface IColumnSelecorProps {
   columns: ColumnItem[];
   updateColumns: (columns: ColumnItem[]) => void;
+  clearFilter?: (keysToClear: string[]) => void;
 }
 
 const ColumnSelector: FC<IColumnSelecorProps> = ({
   columns,
   updateColumns,
+  clearFilter,
 }) => {
   const { t } = useTranslation('components', {
     keyPrefix: 'columnSelector',
   });
 
-  const { control, watch } = useForm({
+  const visibleColumns = columns
+  .filter((column) => !!column.visibility)
+  .map((column) => column.fieldName);
+
+  const prevVisibleColumns = useRef<string[]>(visibleColumns);
+  const { control, watch, formState: { dirtyFields } } = useForm({
     defaultValues: {
       columns: columns
         .filter((column) => !!column.visibility)
@@ -47,18 +55,33 @@ const ColumnSelector: FC<IColumnSelecorProps> = ({
     'columnSearch',
   ]);
 
+  const debouncedWatchedColumns = useDebounce(watchedColumns, 500);
+
   useEffect(() => {
-    if (watchedColumns) {
+    if (debouncedWatchedColumns && dirtyFields?.columns) {
+      const currentVisibleColumns = debouncedWatchedColumns.map(
+      (col: any) => col.data.fieldName
+    );
+    if (prevVisibleColumns.current.length) {
+      const removedColumns = prevVisibleColumns.current.filter(
+        (fieldName) => !currentVisibleColumns.includes(fieldName)
+      );
+      if (removedColumns.length > 0 && typeof clearFilter === 'function') {
+        clearFilter(removedColumns);
+      }
+    }
+
+    prevVisibleColumns.current = currentVisibleColumns;
       updateColumns(
         columns.map((column) => ({
           ...column,
-          visibility: !!watchedColumns.find(
-            (watchedColumn) => watchedColumn.data.id === column.id,
+          visibility: !!debouncedWatchedColumns.find(
+            (watchedColumn: any) => watchedColumn.data.id === column.id,
           ),
         })),
       );
     }
-  }, [watchedColumns]);
+  }, [debouncedWatchedColumns, dirtyFields]);
 
   const disabledFieldName = ['Name'];
 

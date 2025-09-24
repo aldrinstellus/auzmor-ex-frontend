@@ -1,3 +1,5 @@
+import isBoolean from 'lodash/isBoolean';
+import isEmpty from 'lodash/isEmpty';
 import React, {
   FC,
   Fragment,
@@ -77,6 +79,8 @@ import useNavigate from 'hooks/useNavigation';
 import { ColumnItem } from './components/ColumnSelector';
 import Truncate from 'components/Truncate';
 import HighlightText from 'components/HighlightText';
+import useRole from 'hooks/useRole';
+import truncate from 'lodash/truncate';
 // import { ICheckboxListOption } from 'components/CheckboxList';
 
 export enum DocIntegrationEnum {
@@ -98,16 +102,18 @@ interface IDocumentProps {
 }
 
 const fieldSize: Record<string, number> = {
-  Owner: 180,
+  Owner: 200,
   ownerName: 256,
   modifiedAt: 200,
 };
 
 const fieldSizeByType: Record<string, number> = {
   hyperlink: 150,
-  date: 150,
-  boolean: 100,
+  date: 200,
+  boolean: 150,
   number: 150,
+  text: 250,
+  choice: 180,
 };
 
 const TimeField = ({ time }: { time: string }) => (
@@ -126,19 +132,18 @@ const NameField = ({
   isFolder: boolean;
 }) => (
   <div className="flex gap-2 font-medium text-neutral-900 leading-6 w-full">
-    <div className="flex w-6">
+    <div className="flex w-6 shrink-0">
       <Icon
         name={isFolder ? 'folder' : getIconFromMime(mimeType)}
         className="!w-6"
         hover={false}
       />
     </div>
-    <Truncate
-      maxLength={25}
-      toolTipClassName='!z-[999]'
-      text={name || ''}
-      className="text-neutral-900 font-medium"
-    />
+    <div className="flex-1 min-w-0 overflow-hidden">
+      <div className="line-clamp-2 break-all">
+        {name || ''}
+      </div>
+    </div>
   </div>
 );
 
@@ -152,7 +157,7 @@ const OwnerField = ({
   <div className="flex gap-2">
     <Avatar image={ownerImage} name={ownerName} size={24} />
     <Truncate
-      maxLength={10}
+      maxLength={12}
       toolTipClassName='!z-[999]'
       text={ownerName}
     />
@@ -173,15 +178,37 @@ const LocationField = ({
   const navigate = useNavigate();
   return (
     <Popover
-      triggerNode={<BreadCrumb items={pathItems} onItemClick={() => {}} />}
+      triggerNode={
+        <div className="w-full flex items-center overflow-hidden font-medium">
+        <Icon name="folder" size={20} className="shrink-0 mr-1 text-neutral-500" />
+        <div className="flex items-center overflow-hidden min-w-0">
+          {pathItems.map((item, index) => (
+            <div
+              key={item.id}
+              className="flex items-center min-w-0"
+            >
+              <span className="truncate max-w-[250px] inline-block overflow-hidden whitespace-nowrap text-ellipsis">
+                {item.label}
+              </span>
+              {index < pathItems.length - 1 && (
+                <Icon name="arrowRight" size={16} className="mx-1 shrink-0" />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+      }
       triggerNodeClassName="w-full"
       wrapperClassName="w-full"
-      className='right-[-100px] top-[-10px] rounded-9xl'
+      className='right-[-10px] top-[-10px] flex w-[250px] h-[50px] bg-white rounded-9xl border border-primary-50 shadow'
       contentRenderer={() => (
-        <div className="flex p-3 bg-white rounded-9xl border border-primary-50 shadow">
           <BreadCrumb
             items={pathItems}
-            labelClassName="hover:text-primary-500 hover:underline min-w-max"
+            labelClassName="hover:text-primary-500 hover:underline text-sm"
+            iconWrapperClassName="rounded-l-9xl bg-white pl-2 pr-1 shrink-0"
+            wrapperClassName='overflow-x-auto'
+            folderIconSize={16}
+            iconSize={12}
             onItemClick={(item, e) => {
               e?.stopPropagation();
               const sliceIndex = pathWithId.findIndex(
@@ -204,7 +231,6 @@ const LocationField = ({
               updateDocumentSearch('');
             }}
           />
-        </div>
       )}
     />
   );
@@ -215,6 +241,13 @@ const renderCustomField = (type: string, value: any): React.ReactNode => {
 
   switch (type) {
     case 'text':
+      return (
+        <div className='break-words overflow-hidden'>
+          <div className='line-clamp-2'>
+            {value}
+          </div>
+        </div>
+      )
     case 'number':
     case 'currency':
     case 'metadata':
@@ -228,13 +261,18 @@ const renderCustomField = (type: string, value: any): React.ReactNode => {
             {displayed.map((item, idx) => (
               <span
                 key={idx}
-                className="bg-white text-sm rounded-full px-3 py-1 inline-block border border-neutral-200"
+                className="bg-white h-[30px] text-sm rounded-full px-3 py-1 inline-block border border-neutral-200"
               >
-                {item}
+                <Truncate
+                maxLength={12}
+                toolTipClassName='!z-[999]'
+                text={item}
+                className="text-neutral-900 font-medium"
+              />
               </span>
             ))}
             {remaining > 0 && (
-              <span className="bg-white text-sm rounded-full px-3 py-1 inline-block border border-neutral-200">
+              <span className="bg-white h-[30px] text-sm rounded-full px-3 py-1 inline-block border border-neutral-200">
                 +{remaining}
               </span>
             )}
@@ -242,8 +280,13 @@ const renderCustomField = (type: string, value: any): React.ReactNode => {
         );
       }
       return (
-        <span className="bg-white text-sm rounded-full px-3 py-1 inline-block border border-neutral-200">
-          {value}
+        <span className="bg-white h-[30px] text-sm rounded-full px-3 py-1 inline-block border border-neutral-200">
+          <Truncate
+                maxLength={12}
+                toolTipClassName='!z-[999]'
+                text={value}
+                className="text-neutral-900 font-medium"
+              />
         </span>
       );
     }
@@ -289,7 +332,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     useModal();
   const [renameModal, showRenameModal, closeRenameModal, renameModalProps] =
     useModal();
-  const { control, watch, setValue } = useForm<IForm>({
+  const { control, watch, setValue, formState: { dirtyFields }  } = useForm<IForm>({
     defaultValues: {
       applyDocumentSearch: '',
       documentSearch: '',
@@ -323,6 +366,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   const { data: currentUser } = useCurrentUser();
   const syncIntervalRef = useRef<any>(null);
   const navigate = useNavigate();
+  const { isAdmin } = useRole();
 
   // Api call: Check connection status
   const useChannelDocumentStatus = getApi(ApiEnum.GetChannelDocumentStatus);
@@ -333,10 +377,11 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   } = useChannelDocumentStatus({
     channelId,
   });
+  const isBaseFolderSet = statusResponse?.status === 'ACTIVE';
 
   // Api call: Get fields for the channel
   const useChannelDocumentFields = getApi(ApiEnum.GetChannelDocumentFields);
-  const { data: documentFields } = useChannelDocumentFields({ channelId }, { enabled: statusResponse?.status === 'ACTIVE' });
+  const { data: documentFields } = useChannelDocumentFields({ channelId }, { enabled: isBaseFolderSet });
 
   // Api call: Update fields for the channel
   const updateChannelDocumentFields = getApi(
@@ -378,7 +423,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     mutationFn: deleteChannelDoc,
     onSuccess: () => {
       successToastConfig({
-        content: t('deleteFile.success', { name: deleteDocProps?.doc?.name }),
+        content: t('deleteFile.success', { name: truncate(deleteDocProps?.doc?.name, { length: 50 }) }),
       });
     },
     onError: (response: any) => {
@@ -497,6 +542,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
       channelId,
     },
     {
+      enabled: isBaseFolderSet,
       onSuccess: (data: any) => {
         const syncResults = data?.data?.result?.data;
         if (!!syncResults?.length) {
@@ -514,7 +560,6 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   );
 
   // State management flags
-  const isBaseFolderSet = statusResponse?.status === 'ACTIVE';
   const isConnectionMade =
     isBaseFolderSet ||
     (statusResponse?.status === 'INACTIVE' &&
@@ -566,7 +611,21 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
       const canDelete =
         !isCredExpired &&
         permissions.includes(ChannelPermissionEnum.CanDeleteDocuments);
+      const showCopyLink = !isCredExpired;
       return [
+        {
+          label: t('copyLink'),
+          onClick: (e: Event) => {
+            e.stopPropagation();
+            const lxpBaseUrl = `${window.location.origin}/lxp`;
+            const url = `${lxpBaseUrl}${getRowUrl(info?.row?.original?.pathWithId)}`;
+            navigator.clipboard.writeText(url);
+            successToastConfig({content: t('linkCopied')});
+          },
+          dataTestId: 'folder-menu',
+          className: '!px-6 !py-[6px]',
+          isHidden: !showCopyLink,
+        },
         {
           label: t('rename'),
           onClick: (e: Event) => {
@@ -640,6 +699,18 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     return items;
   };
 
+  const getRowUrl = (pathWithId: any) => {
+    if (pathWithId) {
+      const encodedPath = compressString(
+        JSON.stringify(pathWithId),
+      );
+      const base = !isAdmin ? '/user' : '';
+      const url = `${base}/channels/${channelId}/documents/${encodedPath}`;
+      return url;
+    }
+    return '';
+  };
+
   // Columns configuration for Datagrid component for List view
   const columnsListView = React.useMemo<ColumnDef<DocType>[]>(
     () =>
@@ -652,15 +723,19 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
               {t('nameColumn', { totalRows })}
             </div>
           ),
-          cell: (info: CellContext<DocType, unknown>) => (
-            <NameField
-              name={info.getValue() as string}
-              mimeType={info?.row?.original?.mimeType}
-              isFolder={isRootDir || info?.row?.original?.isFolder}
-            />
-          ),
-          thClassName: 'flex-1 min-w-[250px] border-neutral-200 py-3 px-3',
-          tdClassName: 'flex-1 min-w-[250px] border-b-1 border-neutral-200 py-3 px-3',
+          cell: (info: CellContext<DocType, unknown>) => {
+            return (
+            <Link to={getRowUrl(info?.row?.original?.pathWithId)} onClick={(e)=> e.preventDefault}>
+              <NameField
+                name={info.getValue() as string}
+                mimeType={info?.row?.original?.mimeType}
+                isFolder={isRootDir || info?.row?.original?.isFolder}
+              />
+            </Link>
+          );
+        },
+          thClassName: 'flex-1 min-w-[30%] border-neutral-200 py-3 px-3',
+          tdClassName: 'flex-1 min-w-[30%] border-b-1 border-neutral-200 py-3 px-3',
         },
         ...((documentFields as ColumnItem[])
           ?.filter(
@@ -671,7 +746,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
             id: field.id,
             accessorKey: field.fieldName,
             header: () => (
-              <div className="font-bold text-neutral-500">{field.label}</div>
+              <div className="font-bold text-neutral-500 truncate">{field.label}</div>
             ),
             cell: (info: CellContext<DocType, unknown>) => {
               if (field.fieldName === 'Owner') {
@@ -685,7 +760,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                 field.fieldName === 'Last Updated' ||
                 field.type === 'datetime'
               ) {
-                return <TimeField time={info.getValue() as string} />;
+                return <TimeField time={info.row.original?.modifiedAt} />;
               } else {
                  const matched = (info.row.original.customFields ?? []).find(
                     (eachField: any) => field.fieldName === eachField.field_name
@@ -695,7 +770,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
               }
             },
             size: field.size || fieldSize[field.fieldName] || fieldSizeByType[field.type] || 256,
-            thClassName: 'py-3 px-3',
+            thClassName: 'relative py-3 px-3',
             tdClassName: 'border-b-1 border-neutral-200 py-3 px-3',
           })) || []),
         {
@@ -712,7 +787,6 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
             }
             const options = getAllOptions(info);
             return options.length > 0 ? (
-              <div className="relative z-[999999]">
                 <PopupMenu
                   triggerNode={
                     <div
@@ -724,10 +798,10 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                     </div>
                   }
                   menuItems={options}
-                  className="right-5 bg-white bottom-[calc(100%-32px)] border-1 border-neutral-200 w-40"
+                  className={`border-1 border-neutral-200 w-40`}
                   onClick={(e) => e.stopPropagation()}
+                  useCustomPopupPosition
                 />
-              </div>
             ) : null;
           },
           size: 16,
@@ -767,86 +841,52 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
             {t('nameColumn', { totalRows })}
           </div>
         ),
-        cell: (info: CellContext<DocType, unknown>) => (
-          <div className="flex gap-2 font-medium text-neutral-900 leading-6 w-full">
-            <div className="flex w-6">
-              <Icon
-                name={
-                  info?.row?.original?.isFolder
-                    ? 'folder'
-                    : getIconFromMime(info.row.original.mimeType)
-                }
-                className="!w-6"
-              />
-            </div>
-            <div className='flex flex-col gap-1'>
-            <span className="break-all truncate w-full">
-              {info.getValue() as string}
-            </span>
-            {info.row.original?.customFields && Array.isArray(info.row.original.customFields) && info.row.original?.customFields.length > 0 && (
-              <div className="text-xs text-neutral-700">
-                &quot;
-                <HighlightText
-                  text={
-                    Array.isArray(info.row.original.customFields[0].custom_field_values)
-                      ? info.row.original.customFields[0].custom_field_values.find((val: any) =>
-                        typeof val === 'string' &&
-                        applyDocumentSearch &&
-                        val.toLowerCase().includes(applyDocumentSearch.toLowerCase())
-                      ) || ''
-                      : typeof info.row.original.customFields[0].custom_field_values === 'string'
-                        ? info.row.original.customFields[0].custom_field_values
-                        : ''
-                  }
-                  subString={applyDocumentSearch}
-                />
-                &quot;
-                &nbsp;
-                {t('foundIn')}
-                &nbsp;
-                <span className="font-semibold">
-                  {info.row.original.customFields[0]?.display_name}
-                </span>
+        cell: (info: CellContext<DocType, unknown>) => {
+          const customFields = info.row.original?.customFields;
+          const matchedValue = Array.isArray(customFields)
+            ? customFields.find((field: any) => field.is_matched === true)
+            : {};
+          return (
+            <Link to={getRowUrl(info?.row?.original?.pathWithId)} onClick={(e) => e.preventDefault}>
+              <div className="flex gap-2 font-medium text-neutral-900 leading-6 w-full">
+                <div className="w-6">
+                  <Icon
+                    name={
+                      info?.row?.original?.isFolder
+                        ? 'folder'
+                        : getIconFromMime(info.row.original.mimeType)
+                    }
+                    className="!w-6"
+                  />
+                </div>
+                <div className="flex-1 min-w-0 overflow-hidden">
+                  <div className="line-clamp-2 break-all">
+                    {info.getValue() as string}
+                  </div>
+                  {!isEmpty!(matchedValue) && !isBoolean(matchedValue.field_values) && (
+                    <div className="text-xs text-neutral-700">
+                      &quot;
+                      <HighlightText
+                        text={Array.isArray(matchedValue.field_values)
+                          ? matchedValue.field_values.find((val: any) => val?.toLowerCase?.().includes(applyDocumentSearch?.toLowerCase?.()))
+                          : matchedValue.field_values?.Description ?? matchedValue.field_values}
+                        subString={applyDocumentSearch}
+                      />
+                      &quot;
+                      &nbsp;
+                      {t('foundIn')}
+                      &nbsp;
+                      <span className="font-semibold">
+                        {matchedValue.field_name}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-            </div>
-          </div>
-        ),
-        thClassName: 'flex-1 min-w-[250px] border-neutral-200 py-3 px-3',
-        tdClassName: 'flex-1 min-w-[250px] border-b-1 border-neutral-200 py-3 px-3',
-      },
-      {
-        accessorKey: 'ownerName',
-        header: () => (
-          <div className="font-bold text-neutral-500">{t('owner')}</div>
-        ),
-        cell: (info: CellContext<DocType, unknown>) => (
-          <div className="flex gap-2">
-            <Avatar
-              image={info.row.original?.ownerImage}
-              name={info.row.original?.ownerName}
-              size={24}
-            />
-            <span className="truncate">{info.row.original?.ownerName}</span>
-          </div>
-        ),
-        size: 256,
-        thClassName: 'py-3 px-3',
-        tdClassName: 'border-b-1 border-neutral-200 py-3 px-3',
-      },
-      {
-        accessorKey: 'modifiedAt',
-        header: () => (
-          <div className="font-bold text-neutral-500">{t('lastUpdated')}</div>
-        ),
-        cell: (info: CellContext<DocType, unknown>) => (
-          <div className="flex gap-2 font-medium text-neutral-900 leading-6">
-            {moment(info.getValue() as string).format('MMMM DD,YYYY') as string}
-          </div>
-        ),
-        size: 200,
-        thClassName: 'py-3 px-3',
-        tdClassName: 'border-b-1 border-neutral-200 py-3 px-3',
+            </Link>
+        )},
+        thClassName: 'flex-1 min-w-[30%] border-neutral-200 py-3 px-3',
+        tdClassName: 'flex-1 min-w-[30%] border-b-1 border-neutral-200 py-3 px-3',
       },
       {
         accessorKey: 'location',
@@ -855,35 +895,54 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         ),
         cell: (info: CellContext<DocType, unknown>) => {
           return (
-            <Popover
-              triggerNode={
-                <BreadCrumb
-                  items={getMappedLocation(info?.row?.original)}
-                  onItemClick={() => {}}
-                />
-              }
-              className='left-[-100px] top-0 rounded-9xl'
-              triggerNodeClassName="w-full"
-              wrapperClassName="w-full"
-              contentRenderer={() => (
-                <div className="flex p-3 bg-white rounded-9xl border border-primary-50 shadow">
-                  <LocationField
-                    pathItems={getMappedLocation(info?.row?.original)}
-                    pathWithId={info?.row?.original?.pathWithId}
-                    channelId={channelId}
-                    updateDocumentSearch={(value: string) =>
-                      setValue('applyDocumentSearch', value)
-                    }
-                  />
-                </div>
-              )}
-            />
+              <LocationField
+                pathItems={getMappedLocation(info?.row?.original)}
+                pathWithId={info?.row?.original?.pathWithId}
+                channelId={channelId}
+                updateDocumentSearch={(value: string) =>
+                  setValue('applyDocumentSearch', value)
+                }
+              />
           );
         },
-        size: 260,
-        thClassName: 'py-3 px-3',
-        tdClassName: 'border-b-1 border-neutral-200 py-3 px-3',
+        thClassName: '!w-[320px] truncate py-3 px-3',
+        tdClassName: '!w-[320px] truncate border-b-1 border-neutral-200 py-3 px-3',
       },
+      ...((documentFields as ColumnItem[])
+        ?.filter(
+          (field: ColumnItem) =>
+            field.visibility && field.fieldName !== 'Name' && field.type !== 'image',
+        )
+        ?.map((field: any) => ({
+          id: field.id,
+          accessorKey: field.fieldName,
+          header: () => (
+            <div className="font-bold text-neutral-500">{field.label}</div>
+          ),
+          cell: (info: CellContext<DocType, unknown>) => {
+            if (field.fieldName === 'Owner') {
+              return (
+                <OwnerField
+                  ownerName={info.row.original?.ownerName}
+                  ownerImage={info.row.original?.ownerImage}
+                />
+              );
+            } else if (
+              field.fieldName === 'Last Updated' ||
+              field.type === 'datetime'
+            ) {
+              return <TimeField time={info.row.original?.modifiedAt} />;
+            } else {
+              const matched = (info.row.original.customFields ?? []).find(
+                    (eachField: any) => field.fieldName === eachField.field_name
+                  ) as { field_values?: any } | undefined;
+              return <>{renderCustomField(field.type, matched?.field_values)}</>;
+            }
+          },
+          size: field.size || fieldSize[field.fieldName] || fieldSizeByType[field.type] || 256,
+          thClassName: 'py-3 px-3',
+          tdClassName: 'border-b-1 border-neutral-200 py-3 px-3',
+        })) || []),
       {
         accessorKey: 'more',
         header: () => '',
@@ -897,7 +956,6 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           }
           const options = getAllOptions(info);
           return options.length > 0 ? (
-            <div className="relative z-[999999]">
             <PopupMenu
               triggerNode={
                 <div
@@ -909,10 +967,10 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                 </div>
               }
               menuItems={options}
-              className="right-5 bg-white bottom-[calc(100%-32px)] border-1 border-neutral-200 w-40"
+              className="border-1 border-neutral-200 w-40"
               onClick={(e) => e.stopPropagation()}
+              useCustomPopupPosition
             />
-            </div>
           ) : (
             <></>
           );
@@ -922,7 +980,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
         tdClassName: 'sticky right-0 !w-[60px] !z-[10] bg-white flex items-center justify-center border-l-1 border-b-1 border-r-1 border-neutral-200 py-3 px-3',
       },
     ],
-    [totalRows, downloadChannelFileMutation.isLoading],
+    [totalRows, downloadChannelFileMutation.isLoading, documentFields],
   );
 
   // Columns configuration for Datagrid component for Grid view
@@ -930,7 +988,9 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
     () => [
       {
         accessorKey: 'name',
-        cell: (info) => <Doc doc={info.row.original} isFolder={isRootDir} />,
+        cell: (info) => <Link to={getRowUrl(info?.row?.original?.pathWithId)} onClick={(e)=> e.preventDefault}>
+          <Doc doc={info.row.original} isFolder={isRootDir} />
+          </Link>,
       },
     ],
     [isRootDir],
@@ -1062,7 +1122,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
       },
     },
     options: {
-      enabled: !isLoading,
+      enabled: !isLoading && isBaseFolderSet,
     },
     loadingGrid: (
       <Skeleton
@@ -1088,6 +1148,9 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
           const encodedPath = compressString(
             JSON.stringify(virtualRow?.original.pathWithId),
           );
+          if (isDocSearchApplied && virtualRow.original.isFolder) {
+            setValue('documentSearch', '', { shouldDirty: true });
+          }
           navigate(`/channels/${channelId}/documents/${encodedPath}`);
         }
       },
@@ -1103,7 +1166,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
       ),
       trDataClassName: isCredExpired ? '' : 'cursor-pointer !px-0 !py-0 !z-[10] !gap-0 !border-l-1 !border-b-0 border-neutral-200',
       thDataClassName: '!px-0 !py-0 !border-0 !gap-0 !z-10',
-      className: '!overflow-x-auto border-r-1 border-neutral-200',
+      className: '!overflow-auto border-r-1 border-neutral-200 !max-h-[450px]',
     },
   });
 
@@ -1126,7 +1189,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
   // Hook to reset document search param
   useEffect(() => {
     if (documentSearch === '' && isDocSearchApplied) {
-      setValue('applyDocumentSearch', '');
+      setValue('applyDocumentSearch', '', { shouldDirty: true });
     }
   }, [documentSearch, isDocSearchApplied]);
 
@@ -1662,7 +1725,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
               className="!py-[7px]"
               variant={ButtonVariant.Secondary}
               onClick={() => {
-                setValue('documentSearch', '');
+                setValue('documentSearch', '', { shouldDirty: true });
               }}
             />
           ) : (
@@ -1681,6 +1744,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                 const encodedPath = compressString(
                   JSON.stringify(mappedItemsToEncode),
                 );
+                setValue('documentSearch', '', { shouldDirty: true });
                 if (!!mappedItemsToEncode.length) {
                   navigate(`/channels/${channelId}/documents/${encodedPath}`);
                 } else {
@@ -1694,6 +1758,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
               <DocSearch
                 control={control}
                 watch={watch}
+                dirtyFields={dirtyFields}
                 onEnter={(value: string) =>
                   setValue('applyDocumentSearch', value)
                 }
@@ -1707,6 +1772,7 @@ const Document: FC<IDocumentProps> = ({ permissions }) => {
                     navigate(`/channels/${channelId}/documents`);
                   }
                 }}
+                getRowUrl={getRowUrl}
                 disable={isCredExpired || isLoading}
               />
               {permissions.includes(ChannelPermissionEnum.CanEditChannelDoc) &&

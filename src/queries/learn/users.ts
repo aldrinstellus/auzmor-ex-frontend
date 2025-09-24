@@ -99,6 +99,8 @@ export const fetchMe = async () => {
               orgData.result.data.organization_setting.enable_ecommerce,
             enableSocialLearning:
               orgData.result.data.organization_setting.enable_social_learning,
+            enableCustomReports:
+              orgData.result.data.organization_setting.enable_custom_reports,
           },
           primaryAdmin: {
             ...orgData?.result?.data?.primary_admin,
@@ -183,7 +185,8 @@ export const getMembers = async ({
         ...item,
       };
     });
-    return { data: { result: { data: transformedData } } };
+    const totalCount = data?.result?.totalCount;
+    return { data: { result: { data: transformedData } }, totalCount };
   } else return apiService.get(pageParam);
 };
 

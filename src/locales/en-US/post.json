@@ -43,8 +43,8 @@
     "editReplyPlaceholder": "Edit your Reply...",
     "createReplyPlaceholder": "Reply to this thread…",
     "createWishPlaceholder": "Wish them now...",
-    "documentCommentPlaceholder": "Ask a question, add a comment…",
-    "commentTitle": "Comments"
+    "documentCommentPlaceholder": "Add a comment…",
+    "commentTitle": "Comments ({{count}})"
   },
   "announcementAnalytics": {
     "title": "Acknowledgement Report",
