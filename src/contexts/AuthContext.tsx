@@ -241,7 +241,7 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
     }
     if (!!!token && isLxp && process.env.NODE_ENV !== 'development') {
       const currentUrl = encodeURIComponent(window.location.pathname + window.location.search);
-      window.location.replace(`${getLearnUrl()}?redirectUrl=${currentUrl}`);
+      window.location.replace(`${getLearnUrl()}?redirectLxpUrl=${currentUrl}`);
     } else {
       setLoading(false);
     }
