@@ -6,16 +6,30 @@ const permissionView: Record<string, string> = {
   learner_view: "learnerView",
 };
 
+interface Role {
+  id: number;
+  name: string;
+  display_name: string;
+  organization_id: number;
+  locale: string;
+  created_at: number;
+  updated_at: number;
+}
+
 interface PermissionState {
   accessibleModules: string[];
+  roles: Role[];
   loading: boolean;
   error: string | null;
   fetchAccessibleModules: () => Promise<void>;
+  fetchRoles: (params?: Record<string, any>) => Promise<void>;
   getAccessibleModules: () => string[];
+  getRoles: () => Role[];
 }
 
 const usePermissionStore = create<PermissionState>((set, get) => ({
   accessibleModules: [],
+  roles: [],
   loading: false,
   error: null,
   fetchAccessibleModules: async () => {
@@ -34,7 +48,19 @@ const usePermissionStore = create<PermissionState>((set, get) => ({
     }
   },
 
+  fetchRoles: async (params = {}) => {
+    try {
+      const res = await apiService.get("/roles", params);
+      const roles = res?.data?.result?.data || [];
+      set({ roles });
+    } catch (error) {
+      console.error("Failed to fetch roles:", error);
+    }
+  },
+
   getAccessibleModules: () => get().accessibleModules,
+
+  getRoles: () => get().roles,
 }));
 
 export default usePermissionStore;
