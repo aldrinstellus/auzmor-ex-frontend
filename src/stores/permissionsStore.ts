@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import apiService from "utils/apiService";
+import { convertKeysToCamelCase } from "utils/misc";
 
 const permissionView: Record<string, string> = {
   administrative_view: "administrativeView",
@@ -9,11 +10,11 @@ const permissionView: Record<string, string> = {
 interface Role {
   id: number;
   name: string;
-  display_name: string;
-  organization_id: number;
+  displayName: string;
+  organizationId: number;
   locale: string;
-  created_at: number;
-  updated_at: number;
+  createdAt: number;
+  updatedAt: number;
 }
 
 interface PermissionState {
@@ -50,8 +51,8 @@ const usePermissionStore = create<PermissionState>((set, get) => ({
 
   fetchRoles: async (params = {}) => {
     try {
-      const res = await apiService.get("/roles", params);
-      const roles = res?.data?.result?.data || [];
+      const { data } = await apiService.get("/roles", params);
+      const roles = convertKeysToCamelCase(data)?.result?.data || [];
       set({ roles });
     } catch (error) {
       console.error("Failed to fetch roles:", error);

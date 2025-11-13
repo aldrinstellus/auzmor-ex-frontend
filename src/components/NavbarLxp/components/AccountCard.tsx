@@ -218,7 +218,7 @@ const AccountCard = () => {
                 >
                   <div>
                     {isLearnerView
-                      ? t('profile.roleView', { role: userRole?.display_name })
+                      ? t('profile.roleView', { role: userRole?.displayName })
                       : t('profile.learnerView')}
                   </div>
                 </div>
