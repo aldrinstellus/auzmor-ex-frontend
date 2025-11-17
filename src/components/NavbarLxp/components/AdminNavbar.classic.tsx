@@ -45,6 +45,8 @@ const AdminNavbar: FC<INavbarLxpProps> = ({}) => {
 
   const isAdministrativeTaskAccessEnabled = isModuleAccessible(
     accessibleModules, ADMIN_MODULES.TASK_ADMIN,
+  ) || isModuleAccessible(
+    accessibleModules, ADMIN_MODULES.CHECKLIST_ADMIN,
   );
 
   const isAdministrativeMentorshipAccessEnabled = isModuleAccessible(

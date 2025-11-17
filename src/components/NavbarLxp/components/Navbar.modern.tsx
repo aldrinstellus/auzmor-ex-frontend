@@ -35,7 +35,7 @@ const Navbar: FC<INavbarLxpProps> = ({}) => {
 
   const isDashboardAccessEnabled = isModuleAccessible(accessibleModules, LEARNER_MODULES.DASHBOARD_LEARNER);
   const isTrainingsAccessEnabled = isModuleAccessible(accessibleModules, LEARNER_ACCESSIBLE_TRAININGS);
-  const isTaskAccessEnabled = isModuleAccessible(accessibleModules, LEARNER_MODULES.TASK_LEARNER);
+  const isTaskAccessEnabled = isModuleAccessible(accessibleModules, LEARNER_MODULES.TASK_LEARNER) || isModuleAccessible(accessibleModules, LEARNER_MODULES.CHECKLIST_LEARNER);
   const isMentorshipAccessEnabled = isModuleAccessible(accessibleModules, LEARNER_MODULES.MENTORSHIP_LEARNER);
   const isForumAccessEnabled = isModuleAccessible(accessibleModules, LEARNER_MODULES.FORUMS_LEARNER);
   const isEcommerceAccessEnabled = isModuleAccessible(accessibleModules, LEARNER_MODULES.ECOMMERCE_LEARNER);
