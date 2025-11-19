@@ -32,4 +32,5 @@ export const LEARNER_MODULES = {
   DASHBOARD_LEARNER: 'learnerView:Dashboard',
   FEED_LEARNER: 'learnerView:Feeds',
   CHANNELS_LEARNER: 'learnerView:Channel',
+  ME_LEARNER: 'learnerView:Me',
 };

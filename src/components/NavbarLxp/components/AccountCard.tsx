@@ -40,6 +40,9 @@ const AccountCard = () => {
 
   const canAccessAdminView = isModuleAccessible(accessibleModules, ADMIN_MODULES);
   const canAccessLearnerView = isModuleAccessible(accessibleModules, LEARNER_MODULES);
+  const canAccessSettings = () => (isLearnerView
+    ? isModuleAccessible(accessibleModules, [LEARNER_MODULES.SETTINGS_LEARNER, LEARNER_MODULES.ME_LEARNER])
+    : isModuleAccessible(accessibleModules, ADMIN_MODULES.SETTINGS_ADMIN));
 
   const useGetBranches = getApi(ApiEnum.GetOrganizationBranch);
   const { data } = useGetBranches(user?.organization?.id || '');
@@ -163,17 +166,19 @@ const AccountCard = () => {
             </div>
           </div>
           <div className="w-full mt-[14px]">
-            <Link
-              to={`${getLearnUrl()}${isLearnerView ? '/user' : ''}/settings`}
-            >
-              <div
-                className={`flex ${menuItemStyle}`}
-                data-testid="user-menu-user-settings"
-                onClick={close}
+            {canAccessSettings() && (
+              <Link
+                to={`${getLearnUrl()}${isLearnerView ? '/user' : ''}/settings`}
               >
-                <div>{t('settings')}</div>
-              </div>
-            </Link>
+                <div
+                  className={`flex ${menuItemStyle}`}
+                  data-testid="user-menu-user-settings"
+                  onClick={close}
+                >
+                  <div>{t('settings')}</div>
+                </div>
+              </Link>
+            )}
             {isLearnerView && (
               <Link to={`${getLearnUrl()}/user/settings/certificates`}>
                 <div
