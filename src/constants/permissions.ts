@@ -34,3 +34,10 @@ export const LEARNER_MODULES = {
   CHANNELS_LEARNER: 'learnerView:Channel',
   ME_LEARNER: 'learnerView:Me',
 };
+
+export const ME_PERMISSIONS = {
+  ME_CERTIFICATES_INTERNAL_READ_LEARNER: 'me:certificates:internal:read:learner',
+  ME_CERTIFICATES_EXTERNAL_READ_LEARNER: 'me:certificates:external:read:learner',
+  ME_ORDERS_READ_LEARNER: 'me:orders:summary:read:learner',
+  ME_ACTIVITIES_READ_LEARNER: 'me:activities:summary:read:learner',
+};

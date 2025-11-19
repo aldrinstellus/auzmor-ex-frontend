@@ -26,6 +26,7 @@ import Truncate from 'components/Truncate';
 import usePermissionStore from 'stores/permissionsStore';
 import { isModuleAccessible } from 'utils/customRolesPermissions/permissions';
 import { ADMIN_MODULES, LEARNER_MODULES } from 'constants/permissions';
+import useLearnerMeModulePermissions from 'hooks/permissions/useLearnerMeModulePermissions';
 
 const AccountCard = () => {
   const { user, reset } = useAuth();
@@ -37,6 +38,12 @@ const AccountCard = () => {
   const roles = usePermissionStore((state) => state.getRoles());
   const userRole = roles.find(role => role.name === user?.role);
   const accessibleModules = usePermissionStore((state) => state.getAccessibleModules());
+
+  const {
+    isMeOrdersReadLearnerAllowed, isMeCertificatesInternalReadLearnerAllowed,
+    isMeCertificatesExternalReadLearnerAllowed,
+    isMeActivitiesReadLearnerAllowed,
+  } = useLearnerMeModulePermissions();
 
   const canAccessAdminView = isModuleAccessible(accessibleModules, ADMIN_MODULES);
   const canAccessLearnerView = isModuleAccessible(accessibleModules, LEARNER_MODULES);
@@ -179,7 +186,7 @@ const AccountCard = () => {
                 </div>
               </Link>
             )}
-            {isLearnerView && (
+            {isLearnerView && canAccessSettings() && (isMeCertificatesInternalReadLearnerAllowed || isMeCertificatesExternalReadLearnerAllowed) && (
               <Link to={`${getLearnUrl()}/user/settings/certificates`}>
                 <div
                   className={`flex ${menuItemStyle}`}
@@ -190,7 +197,7 @@ const AccountCard = () => {
                 </div>
               </Link>
             )}
-            {isLearnerView && user?.organization?.setting?.enableEcommerce && (
+            {isLearnerView && user?.organization?.setting?.enableEcommerce && canAccessSettings() && isMeOrdersReadLearnerAllowed && (
               <Link to={`${getLearnUrl()}/user/settings/orders`}>
                 <div
                   className={`flex ${menuItemStyle}`}
@@ -201,7 +208,7 @@ const AccountCard = () => {
                 </div>
               </Link>
             )}
-            {isLearnerView && (
+            {isLearnerView && canAccessSettings() && isMeActivitiesReadLearnerAllowed && (
               <Link to={`${getLearnUrl()}/user/settings/activity`}>
                 <div
                   className={`flex ${menuItemStyle}`}
