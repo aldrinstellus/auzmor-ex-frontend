@@ -60,7 +60,7 @@ const ChannelDetail: FC<AppProps> = ({
   const { data, isLoading } = useChannelDetails(channelId!);
   const channelData: IChannel = data?.data?.result?.data || null;
   const isChannelPrivate =
-    channelData?.settings?.visibility === ChannelVisibilityEnum.Private;
+    channelData?.settings?.visibility === ChannelVisibilityEnum.Private || channelData?.settings?.visibility === ChannelVisibilityEnum.Restricted;
 
   const showWithdrawBtn =
     isChannelPrivate && !!!channelData?.member && !!channelData?.joinRequest;
