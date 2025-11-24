@@ -35,7 +35,6 @@ const ChannelVisibilityRow: FC<AppProps> = ({ data, canEdit }) => {
   });
 
   const handleChange = (checked: boolean) => {
-  console.log(checked);
   updateChannelMutation.mutate({
     channelId,
     settings: {
