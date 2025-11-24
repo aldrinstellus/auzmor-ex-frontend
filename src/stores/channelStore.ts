@@ -13,6 +13,7 @@ export enum ChannelVisibilityEnum {
   Public = 'PUBLIC',
   Private = 'PRIVATE',
   All = 'ALL',
+  Restricted = 'RESTRICTED',
 }
 export enum CHANNEL_ROLE {
   Admin = 'ADMIN',

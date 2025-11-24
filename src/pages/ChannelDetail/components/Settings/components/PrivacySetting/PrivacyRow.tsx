@@ -40,7 +40,11 @@ const PrivacyRow: FC<AppProps> = ({ data, canEdit }) => {
   const { control } = useForm<any>({
     mode: 'onSubmit',
     defaultValues: {
-      privacySetting: data?.settings?.visibility,
+      privacySetting:
+        data?.settings?.visibility === ChannelVisibilityEnum.Restricted ||
+        data?.settings?.visibility === ChannelVisibilityEnum.Private
+          ? ChannelVisibilityEnum.Private
+          : ChannelVisibilityEnum.Public,
     },
   });
 
