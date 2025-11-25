@@ -18,6 +18,7 @@ type AppProps = {
 const PrivacySetting: FC<AppProps> = ({ channelData, canEdit }) => {
   const { t } = useTranslation('channelDetail', { keyPrefix: 'setting' });
   const { isLearner } = useRole();
+  const canEditLearnerDiscoveryAndRequest = !isLearner && (channelData?.settings?.visibility === ChannelVisibilityEnum.Private || channelData?.settings?.visibility === ChannelVisibilityEnum.Restricted);
 
   return (
     <div className="flex flex-col gap-3">
@@ -28,9 +29,7 @@ const PrivacySetting: FC<AppProps> = ({ channelData, canEdit }) => {
       />
       <Card shadowOnHover={canEdit} className="px-4">
         <PrivacyRow canEdit={canEdit} data={channelData} />
-        {!isLearner && (channelData?.settings?.visibility === ChannelVisibilityEnum.Private || channelData?.settings?.visibility === ChannelVisibilityEnum.Restricted) && (
-          <ChannelVisibilityRow canEdit={canEdit} data={channelData} />
-        )}
+        <ChannelVisibilityRow canEdit={canEditLearnerDiscoveryAndRequest} data={channelData} />
       </Card>
     </div>
   );

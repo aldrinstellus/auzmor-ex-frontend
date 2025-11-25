@@ -68,10 +68,7 @@ const ChannelCard: FC<IChannelCardProps> = ({ channel }) => {
     mutationKey: ['join-public-channel-request'],
     mutationFn: (channelId: string) => joinChannelRequest(channelId),
     onError: (error: any) => {
-      const message =
-        error?.response?.data?.errors?.[0].message ||
-        t('joinRequestError');
-
+      const message = error?.response?.data?.errors?.[0].message || t('joinRequestError');
       failureToastConfig({
         content: message,
       });
