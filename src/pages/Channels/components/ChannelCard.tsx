@@ -67,10 +67,12 @@ const ChannelCard: FC<IChannelCardProps> = ({ channel }) => {
   const joinChannelMutation = useMutation({
     mutationKey: ['join-public-channel-request'],
     mutationFn: (channelId: string) => joinChannelRequest(channelId),
-    onError: () =>
+    onError: (error: any) => {
+      const message = error?.response?.data?.errors?.[0].message || t('joinRequestError');
       failureToastConfig({
-        content: t('joinRequestError'),
-      }),
+        content: message,
+      });
+    },
     onSuccess: async (data: any) => {
       successToastConfig({
         content:
@@ -133,7 +135,7 @@ const ChannelCard: FC<IChannelCardProps> = ({ channel }) => {
               text={channel.name}
               className="text-sm font-semibold text-neutral-900 max-w-[208px]"
             />
-            {channel.settings?.visibility === ChannelVisibilityEnum.Private && (
+            {(channel.settings?.visibility === ChannelVisibilityEnum.Private || channel.settings?.visibility === ChannelVisibilityEnum.Restricted) && (
               <Icon
                 name={'lockFilled'}
                 size={14}

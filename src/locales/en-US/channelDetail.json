@@ -294,6 +294,9 @@
       "privateDescription": "Anyone in the organization can request to join the channel, and it's visible in the channel discovery.",
       "publicDescription": "Anyone can join automatically, and content is visible to all without joining."
     },
+    "channelVisibilityRow": {
+        "label": "Allow learners to discover and request to join this channel"
+    },
     "restrictionRow": {
       "label": "Restriction",
       "canPostDescription": "Anyone can post and comment.",
