@@ -61,6 +61,7 @@ const ChannelDetail: FC<AppProps> = ({
   const channelData: IChannel = data?.data?.result?.data || null;
   const isChannelPrivate =
     channelData?.settings?.visibility === ChannelVisibilityEnum.Private || channelData?.settings?.visibility === ChannelVisibilityEnum.Restricted;
+  const canAccess = !isLearner || channelData?.settings?.visibility !== ChannelVisibilityEnum.Restricted;
 
   const showWithdrawBtn =
     isChannelPrivate && !!!channelData?.member && !!channelData?.joinRequest;
@@ -117,6 +118,7 @@ const ChannelDetail: FC<AppProps> = ({
               channel={channelData}
               permissions={permissions}
               isRequested={showWithdrawBtn}
+              canAccess={canAccess}
             />
           );
         }
@@ -129,6 +131,7 @@ const ChannelDetail: FC<AppProps> = ({
               channel={channelData}
               permissions={permissions}
               isRequested={showWithdrawBtn}
+              canAccess={canAccess}
             />
           );
         }
@@ -141,6 +144,7 @@ const ChannelDetail: FC<AppProps> = ({
               channel={channelData}
               permissions={permissions}
               isRequested={showWithdrawBtn}
+              canAccess={canAccess}
             />
           );
         }
@@ -153,6 +157,7 @@ const ChannelDetail: FC<AppProps> = ({
               channel={channelData}
               permissions={permissions}
               isRequested={showWithdrawBtn}
+              canAccess={canAccess}
             />
           );
         }
@@ -165,6 +170,7 @@ const ChannelDetail: FC<AppProps> = ({
               channel={channelData}
               permissions={permissions}
               isRequested={showWithdrawBtn}
+              canAccess={canAccess}
             />
           );
         }
