@@ -83,7 +83,6 @@ const ChannelDetail: FC<AppProps> = ({
 
   const handleGoBack = () => {
     if (prevRoute) {
-      console.log({ prevRoute });
       navigate(prevRoute);
     } else {
       navigate(`/channels`);
