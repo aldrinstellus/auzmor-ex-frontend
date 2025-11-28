@@ -2,11 +2,12 @@ import Card from 'components/Card';
 
 import Header from 'components/ProfileInfo/components/Header';
 import React, { FC } from 'react';
-import { IChannel } from 'stores/channelStore';
+import { ChannelVisibilityEnum, IChannel } from 'stores/channelStore';
 
 import PrivacyRow from './PrivacyRow';
 // import RestrictionRow from './RestrictionRow';
 import { useTranslation } from 'react-i18next';
+import ChannelVisibilityRow from './ChannelVisibilityRow';
 
 type AppProps = {
   channelData: IChannel;
@@ -15,6 +16,7 @@ type AppProps = {
 
 const PrivacySetting: FC<AppProps> = ({ channelData, canEdit }) => {
   const { t } = useTranslation('channelDetail', { keyPrefix: 'setting' });
+  const canEditLearnerDiscoveryAndRequest = canEdit && (channelData?.settings?.visibility === ChannelVisibilityEnum.Private || channelData?.settings?.visibility === ChannelVisibilityEnum.Restricted);
 
   return (
     <div className="flex flex-col gap-3">
@@ -25,6 +27,7 @@ const PrivacySetting: FC<AppProps> = ({ channelData, canEdit }) => {
       />
       <Card shadowOnHover={canEdit} className="px-4">
         <PrivacyRow canEdit={canEdit} data={channelData} />
+        <ChannelVisibilityRow canEdit={canEditLearnerDiscoveryAndRequest} data={channelData} />
       </Card>
     </div>
   );

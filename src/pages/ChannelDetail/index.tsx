@@ -57,10 +57,14 @@ const ChannelDetail: FC<AppProps> = ({
 
   // fetch channel data
   const useChannelDetails = getApi(ApiEnum.GetChannel);
-  const { data, isLoading } = useChannelDetails(channelId!);
+  const { data, isLoading, isError } = useChannelDetails(channelId!);
   const channelData: IChannel = data?.data?.result?.data || null;
+  if (!isLoading && (!channelData || isError)) {
+    navigate(isLearner ? '/user/channels' : '/channels');
+  }
   const isChannelPrivate =
-    channelData?.settings?.visibility === ChannelVisibilityEnum.Private;
+    channelData?.settings?.visibility === ChannelVisibilityEnum.Private || channelData?.settings?.visibility === ChannelVisibilityEnum.Restricted;
+  const canAccess = !isLearner || channelData?.settings?.visibility !== ChannelVisibilityEnum.Restricted;
 
   const showWithdrawBtn =
     isChannelPrivate && !!!channelData?.member && !!channelData?.joinRequest;
@@ -82,7 +86,6 @@ const ChannelDetail: FC<AppProps> = ({
 
   const handleGoBack = () => {
     if (prevRoute) {
-      console.log({ prevRoute });
       navigate(prevRoute);
     } else {
       navigate(`/channels`);
@@ -117,6 +120,7 @@ const ChannelDetail: FC<AppProps> = ({
               channel={channelData}
               permissions={permissions}
               isRequested={showWithdrawBtn}
+              canAccess={canAccess}
             />
           );
         }
@@ -129,6 +133,7 @@ const ChannelDetail: FC<AppProps> = ({
               channel={channelData}
               permissions={permissions}
               isRequested={showWithdrawBtn}
+              canAccess={canAccess}
             />
           );
         }
@@ -141,6 +146,7 @@ const ChannelDetail: FC<AppProps> = ({
               channel={channelData}
               permissions={permissions}
               isRequested={showWithdrawBtn}
+              canAccess={canAccess}
             />
           );
         }
@@ -153,6 +159,7 @@ const ChannelDetail: FC<AppProps> = ({
               channel={channelData}
               permissions={permissions}
               isRequested={showWithdrawBtn}
+              canAccess={canAccess}
             />
           );
         }
@@ -165,6 +172,7 @@ const ChannelDetail: FC<AppProps> = ({
               channel={channelData}
               permissions={permissions}
               isRequested={showWithdrawBtn}
+              canAccess={canAccess}
             />
           );
         }
