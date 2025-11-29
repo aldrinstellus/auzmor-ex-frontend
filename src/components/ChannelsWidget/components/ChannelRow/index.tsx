@@ -23,7 +23,7 @@ const ChannelRow: FC<ChannelRow> = ({ channel }) => {
       <div>
         <Icon
           name={
-            channel?.settings?.visibility === ChannelVisibilityEnum.Private
+            (channel?.settings?.visibility === ChannelVisibilityEnum.Private || channel?.settings?.visibility === ChannelVisibilityEnum.Restricted)
               ? 'lock'
               : 'website'
           }

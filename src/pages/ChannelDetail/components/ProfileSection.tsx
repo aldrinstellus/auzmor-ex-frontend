@@ -44,6 +44,7 @@ import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
 import { ChannelPermissionEnum } from './utils/channelPermission';
 import useProduct from 'hooks/useProduct';
+import useRole from 'hooks/useRole';
 
 type ProfileSectionProps = {
   permissions: ChannelPermissionEnum[];
@@ -65,6 +66,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   const { channelId = '' } = useParams();
   const { user } = useAuth();
   const { isLxp } = useProduct();
+  const { isLearner } = useRole();
   const { t } = useTranslation('channelDetail');
   const { t: tc } = useTranslation('channels');
   const [isEditModalOpen, openEditModal, closeEditModal] = useModal();
@@ -83,9 +85,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   const updateChannelStore = useChannelStore((state) => state.updateChannel);
   const channelData = useChannelStore((state) => state.channels)[channelId];
 
+
   // visibility flags
   const isChannelPrivate =
-    channelData?.settings?.visibility === ChannelVisibilityEnum.Private;
+    channelData?.settings?.visibility === ChannelVisibilityEnum.Private || channelData?.settings?.visibility === ChannelVisibilityEnum.Restricted;
   const isChannelPublic =
     channelData?.settings?.visibility === ChannelVisibilityEnum.Public;
 
@@ -118,6 +121,8 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     !isChannelJoined &&
     !!channelData?.joinRequest &&
     !(isLxp && permissions.includes(ChannelPermissionEnum.CanInviteSelf));
+
+  const canAccess = (!isLearner || channelData?.settings?.visibility !== ChannelVisibilityEnum.Restricted);
 
   const inviteYourSelf = getApi(ApiEnum.AddChannelMembers);
   const inviteYourselfMutation = useMutation({
@@ -190,10 +195,12 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   const joinChannelMutation = useMutation({
     mutationKey: ['join-public-channel-request'],
     mutationFn: (channelId: string) => joinChannelRequest(channelId),
-    onError: () =>
+    onError: (error: any) => {
+      const message = error?.response?.data?.errors?.[0].message || tc('joinRequestError');
       failureToastConfig({
-        content: tc('joinRequestError'),
-      }),
+        content: message,
+      });
+    },
     onSuccess: async () => {
       successToastConfig({
         content:
@@ -561,7 +568,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                 onClick={() => joinChannelMutation.mutate(channelData.id)}
               />
             )}
-            {showRequestBtn && (
+            {showRequestBtn && canAccess && (
               <Button
                 label={tc('privateChannel.joinRequestCTA')}
                 variant={Variant.Primary}
@@ -600,41 +607,45 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
             />
           </div>
           <div className="justify-end pr-8 flex items-center">
-            <div className="flex items-center space-x-1 border-r pr-4 border-neutral-500">
+            <div className="flex items-center space-x-1 pr-4">
               <div className="flex items-center border border-neutral-600 rounded-7xl w-6 h-6 justify-center">
                 <Icon name="lock" size={16} className="text-white" />
               </div>
               <div className="text-white text-sm" data-testid="channel-privacy">
                 {channelData?.settings?.visibility ===
-                ChannelVisibilityEnum.Private
+                ChannelVisibilityEnum.Private || channelData?.settings?.visibility === ChannelVisibilityEnum.Restricted
                   ? t('private')
                   : t('public')}
               </div>
             </div>
-            <div className="flex items-center space-x-1 border-r px-4 border-neutral-500">
-              <div className="flex items-center border border-neutral-600 rounded-7xl w-6 h-6 justify-center">
-                <Icon name="users" size={16} className="text-white" />
+           {canAccess && (
+            <>
+              <div className="flex items-center space-x-1 border-x px-4 border-neutral-500">
+                <div className="flex items-center border border-neutral-600 rounded-7xl w-6 h-6 justify-center">
+                  <Icon name="users" size={16} className="text-white" />
+                </div>
+                <div
+                  className="text-white text-sm"
+                  data-testid="channel-membercount"
+                >
+                  {channelData?.totalMembers === 1
+                    ? `1 ${t('member')}`
+                    : `${channelData.totalMembers} ${t('members')}`}
+                </div>
               </div>
-              <div
-                className="text-white text-sm"
-                data-testid="channel-membercount"
-              >
-                {channelData?.totalMembers === 1
-                  ? `1 ${t('member')}`
-                  : `${channelData.totalMembers} ${t('members')}`}
+              <div className="flex items-center space-x-1 pl-4">
+                <div className="flex items-center border border-neutral-600 rounded-7xl w-6 h-6 justify-center">
+                  <Icon name="chart" size={16} className="text-white" />
+                </div>
+                <div className="relative z-10 overflow-visible" data-testid="channel-category">
+                  <Truncate
+                    maxLength={15}
+                    text={channelData?.categories?.[0]?.name || t('noCategory')}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="flex items-center space-x-1 pl-4">
-              <div className="flex items-center border border-neutral-600 rounded-7xl w-6 h-6 justify-center">
-                <Icon name="chart" size={16} className="text-white" />
-              </div>
-              <div className="relative z-10 overflow-visible" data-testid="channel-category">
-                <Truncate
-                  maxLength={15}
-                  text={channelData?.categories?.[0]?.name || t('noCategory')}
-                />
-              </div>
-            </div>
+            </>
+          )}
           </div>
         </div>
       </div>

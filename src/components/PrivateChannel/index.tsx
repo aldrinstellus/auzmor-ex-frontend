@@ -27,12 +27,14 @@ interface IChannelBannerProps {
   isRequested?: boolean;
   permissions: ChannelPermissionEnum[];
   channel: IChannel;
+  canAccess: boolean;
 }
 
 const PrivateChannelBanner: FC<IChannelBannerProps> = ({
   channel,
   permissions,
   isRequested = false,
+  canAccess,
 }) => {
   const updateChannel = useChannelStore((action) => action.updateChannel);
   const { t } = useTranslation('channels');
@@ -137,53 +139,61 @@ const PrivateChannelBanner: FC<IChannelBannerProps> = ({
         >
           {t('privateChannel.bannerHeader')}
         </div>
-        {isLxp && permissions.includes(ChannelPermissionEnum.CanInviteSelf) ? (
-          <Button
-            label={t('publicChannel.joinRequestCTA')}
-            variant={Variant.Primary}
-            className="text-sm"
-            onClick={() => inviteYourselfMutation.mutate()}
-            loading={inviteYourselfMutation.isLoading}
-            data-testid="channel-invite-your-self"
-          />
-        ) : (
-          <Button
-            label={
-              isRequested
-                ? t('privateChannel.withdrawRequestCTA')
-                : t('privateChannel.joinRequestCTA')
-            }
-            variant={isRequested ? Variant.Danger : Variant.Primary}
-            className="text-sm"
-            onClick={
-              isRequested
-                ? () =>
-                    withdrawJoinChannelRequest.mutate(channel.joinRequest!.id!)
-                : () => joinChannelMutation.mutate(channel.id)
-            }
-            loading={
-              joinChannelMutation.isLoading ||
-              withdrawJoinChannelRequest.isLoading
-            }
-            data-testid={
-              isRequested
-                ? 'channel-withdraw-request'
-                : 'channel-request-to-join'
-            }
-          />
+        {canAccess && (
+          <>
+            {isLxp && permissions.includes(ChannelPermissionEnum.CanInviteSelf) ? (
+              <Button
+                label={t('publicChannel.joinRequestCTA')}
+                variant={Variant.Primary}
+                className="text-sm"
+                onClick={() => inviteYourselfMutation.mutate()}
+                loading={inviteYourselfMutation.isLoading}
+                data-testid="channel-invite-your-self"
+              />
+            ) : (
+              <Button
+                label={
+                  isRequested
+                    ? t('privateChannel.withdrawRequestCTA')
+                    : t('privateChannel.joinRequestCTA')
+                }
+                variant={isRequested ? Variant.Danger : Variant.Primary}
+                className="text-sm"
+                onClick={
+                  isRequested
+                    ? () =>
+                        withdrawJoinChannelRequest.mutate(channel.joinRequest!.id!)
+                    : () => joinChannelMutation.mutate(channel.id)
+                }
+                loading={
+                  joinChannelMutation.isLoading ||
+                  withdrawJoinChannelRequest.isLoading
+                }
+                data-testid={
+                  isRequested
+                    ? 'channel-withdraw-request'
+                    : 'channel-request-to-join'
+                }
+              />
+            )}
+            {admins.length > 0 && (
+              <>
+                <div
+                  className="text-neutral-500 mt-12 mb-4 text-sm font-semibold"
+                  data-testid="channel-admin-list"
+                >
+                  {t('privateChannel.bannerFotter')}
+                </div>
+                <AvatarChips
+                  users={admins}
+                  showCount={CHIPS_COUNT}
+                  dataTestId="channel-admin-list-"
+                  avatarClassName="text-sm py-[7px]"
+                />
+              </>
+            )}
+          </>
         )}
-        <div
-          className="text-neutral-500 mt-12 mb-4 text-sm font-semibold"
-          data-testid={'channel-admin-list'}
-        >
-          {t('privateChannel.bannerFotter')}
-        </div>
-        <AvatarChips
-          users={admins}
-          showCount={CHIPS_COUNT}
-          dataTestId={'channel-admin-list-'}
-          avatarClassName="text-sm py-[7px]"
-        />
       </div>
     </Card>
   );
