@@ -36,7 +36,7 @@ const Cart = () => {
         color="text-[#888888]"
         size={23}
         onClick={() => {
-          window.open(getLearnUrl(isLearner ? '/user/checkout' : '/checkout'));
+          window.location.href = getLearnUrl(isLearner ? '/user/checkout' : '/checkout');
         }}
         ariaLabel={t('learn.cartTitle')}
         className="bg-white hover:!bg-neutral-100 rounded-md active:bg-white py-[9px] px-[13px]"
