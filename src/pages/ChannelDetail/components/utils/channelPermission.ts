@@ -294,7 +294,15 @@ export const getChannelPermissions: (
             ChannelPermissionEnum.CanViewContentOnly,
             ChannelPermissionEnum.CanAccessHomeTab,
             ChannelPermissionEnum.CanAccessMembersTab,
-          ];
+            ChannelPermissionEnum.CanAccessDocumentsTab,
+          ].filter(permission => {
+            if (
+                permission === ChannelPermissionEnum.CanAccessDocumentsTab &&
+                !enableDocuments
+              )
+                return false;
+            return true;
+          });
         } else {
           if (channelRole === CHANNEL_ROLE.Member) {
             // 8 -> LXP -> Learner view - > Public channel -> Joined -> Channel Role -> Member
