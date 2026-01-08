@@ -645,7 +645,7 @@ const SearchResults: FC<ISearchResultsProps> = ({
                         : entity.module;
                     const isFolder = isRecent ? result?.additionalInfo?.isFolder : result?.isFolder;
                     const isDocument = entityType === ISearchResultType.DOCUMENT;
-                    if (isDocument && !result?.additionalInfo) return null;
+                    if (isDocument && isRecent && !result?.additionalInfo) return null;
                     return (
                       <li
                         id={`search-item-${index}`}
