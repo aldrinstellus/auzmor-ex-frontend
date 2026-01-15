@@ -19,11 +19,17 @@ import FontFamilySwitcher from 'components/FontFamilySwitcher';
 function App() {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
+  // Allow login and auth pages on mobile
+  const isAuthPage = window.location.pathname === '/login' ||
+                     window.location.pathname === '/forgot-password' ||
+                     window.location.pathname.startsWith('/reset-password');
+  const allowMobile = isAuthPage;
+
   if (getProduct() === ProductEnum.Lxp && !isDesktop && isDesktop !== null) {
     window.location.replace(getLearnUrl());
   }
 
-  return isDesktop ? (
+  return (isDesktop || allowMobile) ? (
     <QueryClientProvider client={queryClient}>
       <ProductProvider>
         <AuthProvider>

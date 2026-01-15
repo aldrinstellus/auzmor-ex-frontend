@@ -65,11 +65,11 @@ const Login: FC<ILoginProps> = () => {
   const getBackground = () => {
     const defaultBackground = (
       <div
-        className={`w-1/2 h-full absolute top-0 ${
+        className={`hidden lg:block w-1/2 h-full absolute top-0 left-0 ${
           branding?.loginConfig?.layout === 'CENTER' &&
-          'bg-welcome-to-office-large w-screen'
+          'bg-welcome-to-office-large w-screen !block'
         } bg-no-repeat bg-cover bg-bottom ${
-          branding?.loginConfig?.layout === 'LEFT' && 'right-0'
+          branding?.loginConfig?.layout === 'LEFT' && '!right-0 !left-auto'
         } ${branding?.loginConfig?.layout === 'RIGHT' && 'left-0'}`}
         data-testid="signin-cover-image"
       >
@@ -79,6 +79,9 @@ const Login: FC<ILoginProps> = () => {
         {branding?.loginConfig?.layout === 'RIGHT' && (
           <div className="w-full float-left bg-welcome-to-office h-full bg-no-repeat bg-cover bg-bottom"></div>
         )}
+        {branding?.loginConfig?.layout !== 'LEFT' && branding?.loginConfig?.layout !== 'RIGHT' && branding?.loginConfig?.layout !== 'CENTER' && (
+          <div className="w-full bg-welcome-to-office h-full bg-no-repeat bg-cover bg-bottom"></div>
+        )}
       </div>
     );
     if (branding?.loginConfig) {
@@ -87,13 +90,13 @@ const Login: FC<ILoginProps> = () => {
           if (branding?.loginConfig?.image?.original) {
             return (
               <div
-                className={`h-full absolute top-0 bg-no-repeat bg-cover ${
+                className={`hidden lg:block h-full absolute top-0 bg-no-repeat bg-cover ${
                   branding?.loginConfig?.layout === 'LEFT' && '!right-0 w-1/2'
                 } ${
                   branding?.loginConfig?.layout === 'RIGHT' && '!left-0 w-1/2'
                 } ${
                   branding?.loginConfig?.layout === 'CENTER' &&
-                  'w-screen left-0'
+                  'w-screen left-0 !block'
                 }`}
                 style={{
                   backgroundImage: `url(${branding?.loginConfig?.image?.original})`,
@@ -107,13 +110,13 @@ const Login: FC<ILoginProps> = () => {
           if (branding?.loginConfig?.video?.original) {
             return (
               <div
-                className={`h-full absolute top-0 bg-no-repeat bg-cover ${
+                className={`hidden lg:block h-full absolute top-0 bg-no-repeat bg-cover ${
                   branding?.loginConfig?.layout === 'LEFT' && '!right-0 w-1/2'
                 } ${
                   branding?.loginConfig?.layout === 'RIGHT' && '!left-0 w-1/2'
                 } ${
                   branding?.loginConfig?.layout === 'CENTER' &&
-                  'w-screen left-0'
+                  'w-screen left-0 !block'
                 }`}
               >
                 <video
@@ -133,13 +136,13 @@ const Login: FC<ILoginProps> = () => {
           if (branding?.loginConfig?.color) {
             return (
               <div
-                className={`h-full absolute top-0 bg-no-repeat bg-cover ${
+                className={`hidden lg:block h-full absolute top-0 bg-no-repeat bg-cover ${
                   branding?.loginConfig?.layout === 'LEFT' && '!right-0 w-1/2'
                 } ${
                   branding?.loginConfig?.layout === 'RIGHT' && '!left-0 w-1/2'
                 } ${
                   branding?.loginConfig?.layout === 'CENTER' &&
-                  'w-screen left-0'
+                  'w-screen left-0 !block'
                 }`}
                 style={{ backgroundColor: branding?.loginConfig?.color }}
               />
@@ -160,9 +163,9 @@ const Login: FC<ILoginProps> = () => {
       <>
         {branding?.loginConfig?.layout === 'RIGHT' && getBannerText()}
         <div
-          className={`flex flex-col items-center justify-center bg-neutral-50 overflow-y-auto w-[50vw] h-full z-10 gap-12 py-[100px] ${
+          className={`flex flex-col items-center justify-center bg-neutral-50 overflow-y-auto w-full lg:w-[50vw] h-full z-10 gap-8 lg:gap-12 py-12 lg:py-[100px] px-4 lg:px-0 ${
             branding?.loginConfig?.layout === 'CENTER' &&
-            'min-h-[660px] !h-auto rounded-16xl w-[600px] !py-20'
+            'min-h-[660px] !h-auto rounded-16xl lg:w-[600px] !py-20'
           }`}
           data-testid={getDataTestId()}
         >
@@ -194,7 +197,7 @@ const Login: FC<ILoginProps> = () => {
       branding?.loginConfig?.layout !== 'CENTER'
     ) {
       return (
-        <div className="w-[50vw] flex items-center justify-center">
+        <div className="hidden lg:flex w-[50vw] items-center justify-center">
           <p
             className={`text-6xl font-extrabold z-10 leading-[72px] ${
               isDark(branding?.loginConfig?.color || '#777777')
@@ -224,8 +227,8 @@ const Login: FC<ILoginProps> = () => {
   const containerStyle = clsx({
     'flex h-screen w-screen relative': true,
     'justify-center items-center': branding?.loginConfig?.layout === 'CENTER',
-    'justify-end': branding?.loginConfig?.layout === 'RIGHT',
-    'justify-start': branding?.loginConfig?.layout === 'LEFT',
+    'lg:justify-end': branding?.loginConfig?.layout === 'RIGHT',
+    'lg:justify-start': branding?.loginConfig?.layout === 'LEFT',
   });
 
   const getDataTestId = () => {
