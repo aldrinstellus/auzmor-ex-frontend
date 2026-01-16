@@ -76,8 +76,9 @@ Login form with teal theme:
 - Vercel CI failure: Fixed with vercel.json CI=false
 
 ## Deployment
-- **Vercel:** Configured with CI=false in vercel.json
-- **GitHub:** Remote configured as origin
+- **Vercel:** https://office-lxp.vercel.app (alias for production)
+- **Local:** http://localhost:3000
+- **GitHub:** Remote configured as origin (aldrinstellus/auzmor-ex-frontend)
 
 ## Version History
 - v1.0: Initial animated login with world map and floating avatars
