@@ -1,7 +1,8 @@
 {
   "build": {
     "env": {
-      "CI": "false"
+      "CI": "false",
+      "REACT_APP_PRODUCT": "office"
     }
   }
 }
