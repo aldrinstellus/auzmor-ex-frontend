@@ -25,7 +25,7 @@ git push github master
 
 # 3. Deploy to Vercel Production
 echo "🚀 Deploying to Vercel Production..."
-DEPLOY_URL=$(npx vercel --prod --yes 2>&1 | grep -E "Production:" | awk '{print $2}')
+DEPLOY_URL=$(npx vercel --prod --yes 2>&1 | grep -oE "https://officefrontend[^[:space:]]+" | head -1)
 
 if [[ -z "$DEPLOY_URL" ]]; then
     echo "❌ Vercel deployment failed!"
