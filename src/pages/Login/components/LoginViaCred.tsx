@@ -79,7 +79,7 @@ const LoginViaCred: FC<ILoginViaCredProps> = ({ setViaSSO }) => {
     formState: { errors, isValid },
   } = useForm<IForm>({
     resolver: yupResolver(schema),
-    defaultValues: { domain },
+    defaultValues: { email: '', password: '', domain },
     mode: 'onChange',
   });
 
@@ -140,7 +140,7 @@ const LoginViaCred: FC<ILoginViaCredProps> = ({ setViaSSO }) => {
         <Layout fields={fields} className="space-y-5" />
         <div
           className="flex justify-end mt-1"
-          data-testId="signin-forgot-password"
+          data-testid="signin-forgot-password"
         >
           <Link to="/forgot-password">
             <div className="font-bold text-xs leading-[18px]">

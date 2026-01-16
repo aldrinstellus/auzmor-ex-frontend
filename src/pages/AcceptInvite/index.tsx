@@ -137,7 +137,7 @@ const AcceptInvite: FC<IAcceptInviteProps> = () => {
     {
       type: FieldType.Checkbox,
       label: (
-        <div data-testId="sign-up-checkbox">
+        <div data-testid="sign-up-checkbox">
           {t('agreementText')}{' '}
           <span className="text-primary-500">
             <a href={t('termsOfUseLink')}>{t('termsOfUse')}</a>

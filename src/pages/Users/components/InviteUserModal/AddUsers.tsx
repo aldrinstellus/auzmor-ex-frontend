@@ -83,7 +83,7 @@ const AddUsers: FC<IAddUsersProps> = ({
             }
           }}
           {...eventHandlers}
-          data-testId="invite-people-add-another"
+          data-testid="invite-people-add-another"
         >
           <div className="mr-1">
             <Icon

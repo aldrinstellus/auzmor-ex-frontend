@@ -47,7 +47,7 @@ const Logout = () => {
         </Link>
       </div>
       <div className="flex flex-col justify-center items-center bg-white m-14 space-y-8 py-20">
-        <div className="text-2xl font-bold" data-testId="logout-confirm-msg">
+        <div className="text-2xl font-bold" data-testid="logout-confirm-msg">
           {t('logoutMessage')}
         </div>
         <img src={LogoutScreen} alt={t('logoutScreenAlt')} />

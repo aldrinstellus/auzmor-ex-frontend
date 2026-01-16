@@ -181,7 +181,7 @@ const Signup: FC<ISignupProps> = () => {
       rightElement: (
         <div
           className="text-sm font-medium text-neutral-500"
-          data-testId="sign-up-domain"
+          data-testid="sign-up-domain"
         >
           {t('domainSuffix')}
         </div>
@@ -229,7 +229,7 @@ const Signup: FC<ISignupProps> = () => {
     {
       type: FieldType.Checkbox,
       label: (
-        <div data-testId="sign-up-checkbox">
+        <div data-testid="sign-up-checkbox">
           {t('privacyPolicy')}{' '}
           <span className="text-primary-500">
             <a href="https://www.auzmor.com/tc">{t('termsOfUse')}</a>

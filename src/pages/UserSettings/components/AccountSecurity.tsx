@@ -194,7 +194,7 @@ const AccountSecurity = () => {
                 <div className="flex justify-between items-center mt-28">
                   <div
                     className="text-primary-500 text-base font-bold"
-                    data-testId="forgot-password-cta"
+                    data-testid="forgot-password-cta"
                   >
                     <a href={`/forgot-password`} className="text-primary-500">
                       {t('forgotPassword')}

@@ -80,14 +80,14 @@ const InviteUserModal: FC<IInviteUserModalProps> = ({
     close();
     if (users.length === 1) {
       return (
-        <span data-testId="added-people-toaster">
+        <span data-testid="added-people-toaster">
           <span className="font-bold">{users[0].fullName}</span>
           {t('toastMessages.successMsg')}
         </span>
       );
     } else if (users.length === 2) {
       return (
-        <span data-testId="added-people-toaster">
+        <span data-testid="added-people-toaster">
           <span className="font-bold">{users[0].fullName}, </span>
           <span className="font-bold">{users[1].fullName}</span>
           {t('toastMessages.successMsg')}
@@ -95,7 +95,7 @@ const InviteUserModal: FC<IInviteUserModalProps> = ({
       );
     } else if (users.length > 2) {
       return (
-        <span data-testId="added-people-toaster">
+        <span data-testid="added-people-toaster">
           <span className="font-bold">{users[0].fullName}, </span>
           <span className="font-bold">{users[1].fullName}, </span>{' '}
           <span className="font-bold">

@@ -12,7 +12,7 @@ import RequireNonProdAuth from 'components/RequireNonProdAuth';
 import { ChannelDetailTabsEnum } from 'pages/ChannelDetail';
 
 const ErrorBoundary = lazy(() => import('components/ErrorBoundary'));
-const Login = lazy(() => import('pages/Login'));
+const Login = lazy(() => import('pages/Login/LoginAnimated'));
 const Signup = lazy(() => import('pages/Signup'));
 const Registration = lazy(() => import('pages/Registration'));
 const ForgotPassword = lazy(() => import('pages/ForgotPassword'));
