@@ -41,7 +41,9 @@ const LoginAnimated: FC = () => {
   });
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
+    // Skip login check in development or on Vercel preview domains
+    const isVercelDomain = window.location.host.includes('vercel.app');
+    if (process.env.NODE_ENV === 'development' || isVercelDomain) {
       setLoading(false);
       return;
     }
