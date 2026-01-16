@@ -66,17 +66,35 @@ yarn test     # Run tests
 - Uses subdomain-based organization detection
 
 ## Deployment
-**Vercel Configuration:** `vercel.json`
+**Auto-Sync:** Local → GitHub → Vercel
+
+### Quick Deploy (Recommended)
+```bash
+./deploy.sh "Your commit message"
+```
+This script:
+1. Commits all changes
+2. Pushes to GitHub
+3. Deploys to Vercel Production
+4. Updates the alias
+
+### URLs
+- **Local:** http://localhost:3000/login
+- **Vercel:** https://office-lxp.vercel.app/login
+
+### Vercel Configuration (`vercel.json`)
 ```json
 {
   "build": {
     "env": {
-      "CI": "false"
+      "CI": "false",
+      "REACT_APP_PRODUCT": "office"
     }
   }
 }
 ```
-Note: CI=false required to prevent bundle size warnings from failing build.
+- `CI=false`: Prevents bundle size warnings from failing build
+- `REACT_APP_PRODUCT=office`: Uses correct Router with /login route
 
 ## Version History
 | Version | Date | Changes |
