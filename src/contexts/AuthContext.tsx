@@ -249,8 +249,21 @@ const AuthProvider: FC<AuthContextProps> = ({ children }) => {
       }
     }
     if (!!!token && isLxp && process.env.NODE_ENV !== 'development') {
-      const currentUrl = `${window.location.pathname}${window.location.search}`;
-      window.location.replace(`${getLearnUrl()}?redirectLxpUrl=${currentUrl}`);
+      // Prevent redirect loop:
+      // 1. Skip if already has redirectLxpUrl param
+      // 2. Skip if on Vercel preview/staging domains
+      // 3. Skip if getLearnUrl points to same host (would cause infinite loop)
+      const isVercelDomain = window.location.host.includes('vercel.app');
+      const learnUrl = getLearnUrl();
+      const isSameHost = learnUrl.includes(window.location.host);
+      const hasRedirectParam = window.location.search.includes('redirectLxpUrl');
+
+      if (!hasRedirectParam && !isVercelDomain && !isSameHost) {
+        const currentUrl = `${window.location.pathname}${window.location.search}`;
+        window.location.replace(`${learnUrl}?redirectLxpUrl=${currentUrl}`);
+      } else {
+        setLoading(false);
+      }
     } else {
       setLoading(false);
     }
