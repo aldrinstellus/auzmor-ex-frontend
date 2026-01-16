@@ -1,7 +1,7 @@
 # Project Context
 
 ## Current State
-**Login v1.1** - Completed and deployed (Teal Theme)
+**Login v1.1.1** - Completed and deployed (Teal Theme + Vercel Fix)
 **Last Updated:** January 2026
 
 ## Login Page Architecture
@@ -81,4 +81,5 @@ Login form with teal theme:
 
 ## Version History
 - v1.0: Initial animated login with world map and floating avatars
-- v1.1: Updated form to match reference design - teal theme, bigger logo (CURRENT)
+- v1.1: Updated form to match reference design - teal theme, bigger logo
+- v1.1.1: Fixed Vercel deployment (blank page, router config, redirect loop) (CURRENT)

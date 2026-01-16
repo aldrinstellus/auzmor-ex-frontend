@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2026-01-16
+
+### Fixed
+- **Vercel Deployment**: Fixed blank page on Vercel preview domains
+  - Added `REACT_APP_PRODUCT=office` to vercel.json to use correct router
+  - Skip login API check on Vercel domains in LoginAnimated.tsx
+  - Prevent redirect loop for same-host deployments in AuthContext.tsx
+
 ## [1.1.0] - 2026-01-16
 
 ### Changed
