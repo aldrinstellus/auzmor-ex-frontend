@@ -8,7 +8,7 @@ import { useBrandingStore } from 'stores/branding';
 import { usePageTitle } from 'hooks/usePageTitle';
 import { usePermissions } from 'hooks/usePermissions';
 import { ApiEnum } from 'utils/permissions/enums/apiEnum';
-import FloatingAvatars from './components/FloatingAvatars';
+import LoginBackground from './components/LoginBackground';
 import AnimatedLoginForm from './components/AnimatedLoginForm';
 import LoginViaSSO from './components/LoginViaSSO';
 
@@ -57,9 +57,8 @@ const LoginAnimated: FC = () => {
   }
 
   if (loading || isDomainInfoLoading) {
-    // Loading state with animation
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800">
+      <div className="fixed inset-0 flex items-center justify-center bg-teal-700">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -78,33 +77,14 @@ const LoginAnimated: FC = () => {
   }
 
   return (
-    <div className="h-screen w-screen flex overflow-hidden">
-      {/* Left Panel - Original Background with Floating Avatars */}
-      <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="hidden lg:block w-1/2 h-full relative"
-      >
-        <FloatingAvatars />
-      </motion.div>
+    <div className="fixed inset-0 flex">
+      {/* Left Panel - World Map Background */}
+      <div className="hidden lg:block w-1/2 h-full bg-teal-700 relative overflow-hidden">
+        <LoginBackground />
+      </div>
 
       {/* Right Panel - Login Form */}
-      <motion.div
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="w-full lg:w-1/2 h-full flex items-center justify-center bg-white relative"
-      >
-        {/* Subtle pattern background */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `radial-gradient(circle, #6366f1 1px, transparent 1px)`,
-            backgroundSize: '24px 24px',
-          }}
-        />
-
+      <div className="w-full lg:w-1/2 h-full flex items-center justify-center bg-white relative">
         {/* Form content */}
         <div className="relative z-10 w-full max-w-md">
           {viaSSO ? (
@@ -118,7 +98,7 @@ const LoginAnimated: FC = () => {
 
         {/* Bottom gradient accent */}
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
-      </motion.div>
+      </div>
     </div>
   );
 };

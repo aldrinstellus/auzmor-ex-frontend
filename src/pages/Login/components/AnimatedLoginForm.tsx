@@ -79,7 +79,7 @@ const AnimatedLoginForm: FC<AnimatedLoginFormProps> = ({ setViaSSO }) => {
     formState: { errors, isValid },
   } = useForm<IForm>({
     resolver: yupResolver(schema),
-    defaultValues: { domain },
+    defaultValues: { email: '', password: '', domain },
     mode: 'onChange',
   });
 
