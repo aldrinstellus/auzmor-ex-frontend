@@ -2,7 +2,8 @@
 
 ## Current State
 **Login v1.1.1** - Completed and deployed (Teal Theme + Vercel Fix)
-**Last Updated:** January 2026
+**Last Updated:** January 16, 2026
+**Auto-Deploy:** GitHub → Vercel (on push to master)
 
 ## Login Page Architecture
 
