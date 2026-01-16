@@ -59,3 +59,4 @@ Login form with:
 
 ## Version History
 - v1: Initial animated login with world map and floating avatars
+- v1.1: Updated form to match reference design - teal theme, bigger logo
