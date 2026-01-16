@@ -123,24 +123,24 @@ const AnimatedLoginForm: FC<AnimatedLoginFormProps> = ({ setViaSSO }) => {
       {/* Logo */}
       <motion.div
         variants={itemVariants}
-        className="flex justify-center mb-10"
+        className="flex justify-center mb-8"
       >
         <motion.img
           src={branding?.logo?.original || OfficeLogoSvg}
           alt="Logo"
-          className="h-12 object-contain"
+          className="h-20 object-contain"
           whileHover={{ scale: 1.05 }}
           transition={{ duration: 0.2 }}
         />
       </motion.div>
 
       {/* Title */}
-      <motion.div variants={itemVariants} className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome back
+      <motion.div variants={itemVariants} className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-1">
+          Sign In
         </h1>
-        <p className="text-gray-500">
-          Sign in to continue to your workspace
+        <p className="text-gray-500 text-sm">
+          Enter your details to get signed in to your account.
         </p>
       </motion.div>
 
@@ -173,43 +173,23 @@ const AnimatedLoginForm: FC<AnimatedLoginFormProps> = ({ setViaSSO }) => {
         {/* Email Input */}
         <motion.div variants={itemVariants}>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Work Email
+            Work Email / Username
           </label>
           <div className="relative">
             <input
               {...register('email')}
               type="email"
               data-testid="signin-email"
-              placeholder="Enter your email"
-              className={`w-full px-4 py-3.5 rounded-xl border-2 transition-all duration-200 outline-none
+              placeholder="Enter your email address / username"
+              className={`w-full px-4 py-3.5 rounded-xl border transition-all duration-200 outline-none
                 ${
                   errors.email
-                    ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100'
-                    : 'border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100'
+                    ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-100'
+                    : 'border-gray-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-100'
                 }
-                bg-gray-50/50 hover:bg-white focus:bg-white
+                bg-white hover:border-gray-400
               `}
             />
-            <motion.div
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
-                />
-              </svg>
-            </motion.div>
           </div>
           {errors.email && (
             <motion.p
@@ -232,14 +212,14 @@ const AnimatedLoginForm: FC<AnimatedLoginFormProps> = ({ setViaSSO }) => {
               {...register('password')}
               type={showPassword ? 'text' : 'password'}
               data-testid="signin-password"
-              placeholder="Enter your password"
-              className={`w-full px-4 py-3.5 pr-12 rounded-xl border-2 transition-all duration-200 outline-none
+              placeholder="Enter password"
+              className={`w-full px-4 py-3.5 pr-12 rounded-xl border transition-all duration-200 outline-none
                 ${
                   errors.password
-                    ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100'
-                    : 'border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100'
+                    ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-100'
+                    : 'border-gray-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-100'
                 }
-                bg-gray-50/50 hover:bg-white focus:bg-white
+                bg-white hover:border-gray-400
               `}
             />
             <button
@@ -299,9 +279,9 @@ const AnimatedLoginForm: FC<AnimatedLoginFormProps> = ({ setViaSSO }) => {
         <motion.div variants={itemVariants} className="flex justify-end">
           <Link
             to="/forgot-password"
-            className="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
+            className="text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors"
           >
-            Forgot password?
+            Forgot Password?
           </Link>
         </motion.div>
 
@@ -316,7 +296,7 @@ const AnimatedLoginForm: FC<AnimatedLoginFormProps> = ({ setViaSSO }) => {
             className={`w-full py-4 rounded-xl font-semibold text-white transition-all duration-200
               ${
                 isValid
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40'
+                  ? 'bg-teal-600 hover:bg-teal-700 shadow-lg shadow-teal-500/30 hover:shadow-xl hover:shadow-teal-500/40'
                   : 'bg-gray-300 cursor-not-allowed'
               }
             `}
@@ -352,22 +332,14 @@ const AnimatedLoginForm: FC<AnimatedLoginFormProps> = ({ setViaSSO }) => {
               disabled={loginMutation.isLoading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full py-4 rounded-xl font-semibold text-gray-700 bg-white border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm"
+              className="w-full py-4 rounded-xl font-semibold text-gray-700 bg-white border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
             >
-              Sign in with SSO
+              Sign In with Single Sign-On (SSO)
             </motion.button>
           </motion.div>
         )}
       </form>
 
-      {/* Footer */}
-      <motion.div
-        variants={itemVariants}
-        className="mt-8 text-center text-sm text-gray-500"
-      >
-        Powered by{' '}
-        <span className="font-semibold text-gray-700">Auzmor Office</span>
-      </motion.div>
     </motion.div>
   );
 };
