@@ -21,9 +21,88 @@ Auzmor Office frontend application built with React, TypeScript, and Tailwind CS
 - `src/utils/` - Utility functions
 - `src/contexts/` - React contexts
 
+## Commands
+```bash
+yarn start    # Development server (port 3000)
+yarn build    # Production build
+yarn test     # Run tests
+```
+
+## Backend
+- **Location:** `/Users/aldrin-mac-mini/office_backend`
+- **Port:** 4001
+- **Database:** MongoDB (`office`)
+- **Node Version:** 18 (use nvm)
+
+### Start Backend
+```bash
+/tmp/start-backend.sh
+```
+Or manually:
+```bash
+source ~/.nvm/nvm.sh && nvm use 18
+cd /Users/aldrin-mac-mini/office_backend
+export PORT=4001
+npm run app:start
+```
+
+## Demo Data
+**Status:** Complete - Fully populated
+**Last Updated:** January 17, 2026
+
+### Database Stats
+| Collection | Count |
+|------------|-------|
+| Posts | 333 |
+| Posts with Images | 67 |
+| Shoutouts | 36 |
+| Polls | 30 |
+| Users | 54 |
+| Comments | 735 |
+| Reactions | 1531 |
+
+### Post Types Available
+- **UPDATE** - Text and image posts
+- **POLL** - Polls with vote options
+- **SHOUTOUT** - Recognition posts with badges
+
+### Engaging Posts (High Reactions)
+8 featured posts with 25-44 reactions each:
+- Team celebration with image
+- Company offsite photo gallery (4 images)
+- Shoutouts with trophy/star badges
+- Product launch announcements
+- Fun Friday posts
+
+### Auto-Activity Script
+**Status:** DISABLED (cron job removed)
+**Location:** `/Users/aldrin-mac-mini/office_backend/scripts/auto-activity.js`
+
+To re-enable:
+```bash
+crontab -e
+# Add: */5 * * * * /Users/aldrin-mac-mini/office_backend/scripts/run-auto-activity.sh >> /tmp/office-auto-activity.log 2>&1
+```
+
+## Backups / Savepoints
+**Location:** `/Users/aldrin-mac-mini/office_backup/`
+
+### Latest Savepoint
+`savepoint_20260117_104942` (2.7 MB)
+
+### Restore from Savepoint
+```bash
+mongorestore --db=office --drop /Users/aldrin-mac-mini/office_backup/savepoint_20260117_104942/office
+```
+
+### Create New Savepoint
+```bash
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+mongodump --db=office --out="/Users/aldrin-mac-mini/office_backup/savepoint_${TIMESTAMP}"
+```
+
 ## Login Page (v1.1)
 **Status:** Complete - Production Ready
-**Last Updated:** January 2026
 
 **Files:**
 - `src/pages/Login/LoginAnimated.tsx` - Main login page container
@@ -53,34 +132,20 @@ Auzmor Office frontend application built with React, TypeScript, and Tailwind CS
 - Labels: "Work Email / Username", "Password"
 - No bottom gradient bar (clean design)
 
-## Commands
-```bash
-yarn start    # Development server
-yarn build    # Production build
-yarn test     # Run tests
-```
-
-## Environment
-- Development: http://localhost:3000
-- Production: Deployed on Vercel
-- Uses subdomain-based organization detection
-
 ## Deployment
-**Auto-Sync:** Local → GitHub → Vercel
-
-### Quick Deploy (Recommended)
-```bash
-./deploy.sh "Your commit message"
-```
-This script:
-1. Commits all changes
-2. Pushes to GitHub
-3. Deploys to Vercel Production
-4. Updates the alias
 
 ### URLs
-- **Local:** http://localhost:3000/login
-- **Vercel:** https://office-lxp.vercel.app/login
+| Environment | URL |
+|-------------|-----|
+| Local | http://localhost:3000 |
+| Vercel | https://officefrontend-ten.vercel.app |
+| GitHub | https://github.com/aldrinstellus/auzmor-ex-frontend |
+
+### Quick Deploy
+```bash
+git push github master
+vercel --prod --yes
+```
 
 ### Vercel Configuration (`vercel.json`)
 ```json
@@ -93,17 +158,18 @@ This script:
   }
 }
 ```
-- `CI=false`: Prevents bundle size warnings from failing build
-- `REACT_APP_PRODUCT=office`: Uses correct Router with /login route
 
 ## Version History
 | Version | Date | Changes |
 |---------|------|---------|
 | v1.0 | Jan 2026 | Initial animated login with world map and floating avatars |
-| v1.1 | Jan 2026 | Teal theme, bigger logo, clean design (current) |
+| v1.1 | Jan 2026 | Teal theme, bigger logo, clean design |
+| v1.2 | Jan 17, 2026 | Full demo data: 333 posts, 54 users, reactions, images |
 
 ## Known Issues Fixed
 - Gray gaps around left panel: Fixed with `fixed inset-0` layout
 - Vignette dark border: Removed from LoginBackground
 - Purple button: Changed to teal theme (v1.1)
 - Vercel CI errors: Fixed with vercel.json CI=false
+- Backend Node v25 incompatibility: Use Node 18 via nvm
+- Backend wrong port: Set PORT=4001 explicitly
