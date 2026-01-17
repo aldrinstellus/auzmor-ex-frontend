@@ -1,9 +1,81 @@
 # Project Context
 
 ## Current State
-**Login v1.1.1** - Completed and deployed (Teal Theme + Vercel Fix)
-**Last Updated:** January 16, 2026
+**Version:** v1.2 - Full Demo Data
+**Last Updated:** January 17, 2026
 **Auto-Deploy:** GitHub → Vercel (on push to master)
+
+## Quick Start
+
+### Frontend
+```bash
+cd /Users/aldrin-mac-mini/office_frontend
+yarn start  # http://localhost:3000
+```
+
+### Backend
+```bash
+/tmp/start-backend.sh  # http://localhost:4001
+```
+Or manually:
+```bash
+source ~/.nvm/nvm.sh && nvm use 18
+cd /Users/aldrin-mac-mini/office_backend
+export PORT=4001
+npm run app:start
+```
+
+## Demo Data
+
+### Database Stats (MongoDB: `office`)
+| Collection | Count |
+|------------|-------|
+| Posts | 333 |
+| Posts with Images | 67 |
+| Shoutouts | 36 |
+| Polls | 30 |
+| Users | 54 |
+| Comments | 735 |
+| Reactions | 1531 |
+
+### Post Types
+- **UPDATE** - Text and image posts (with picsum.photos images)
+- **POLL** - Interactive polls with vote options
+- **SHOUTOUT** - Recognition posts with trophy/star badges
+
+### Featured Posts (High Engagement)
+8 posts with 25-44 reactions each:
+- Team celebration with image
+- Company offsite photo gallery (4 images)
+- Shoutouts with badges
+- Product launch announcements
+- Fun Friday posts
+
+### Auto-Activity Script
+**Status:** DISABLED
+**Location:** `/Users/aldrin-mac-mini/office_backend/scripts/auto-activity.js`
+
+Re-enable with:
+```bash
+crontab -e
+# Add: */5 * * * * /Users/aldrin-mac-mini/office_backend/scripts/run-auto-activity.sh >> /tmp/office-auto-activity.log 2>&1
+```
+
+## Backups / Savepoints
+
+**Location:** `/Users/aldrin-mac-mini/office_backup/`
+**Latest:** `savepoint_20260117_104942` (2.7 MB)
+
+### Restore
+```bash
+mongorestore --db=office --drop /Users/aldrin-mac-mini/office_backup/savepoint_20260117_104942/office
+```
+
+### Create New
+```bash
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+mongodump --db=office --out="/Users/aldrin-mac-mini/office_backup/savepoint_${TIMESTAMP}"
+```
 
 ## Login Page Architecture
 
@@ -61,27 +133,35 @@ Login form with teal theme:
 - Error: `red-500` text, `red-300` border
 - Disabled: `gray-300` background
 
-## Styling Notes
-- No vignette overlay (was causing dark border effect)
-- Left panel uses `bg-teal-700` as base color
-- No inner gradient boxes - clean edge-to-edge fill
-- World map uses brightness/invert filter for white outline
-- No bottom gradient accent bar (clean design)
-- No "Powered by" footer
-
-## Known Issues Fixed
-- Gray gaps around left panel: Fixed with `fixed inset-0` layout and proper positioning
-- Vignette dark border: Removed from LoginBackground
-- Box effect: Removed inner gradient backgrounds
-- Purple button: Changed to teal in v1.1
-- Vercel CI failure: Fixed with vercel.json CI=false
-
 ## Deployment
-- **Vercel:** https://office-lxp.vercel.app (alias for production)
-- **Local:** http://localhost:3000
-- **GitHub:** Remote configured as origin (aldrinstellus/auzmor-ex-frontend)
+
+### URLs
+| Environment | URL |
+|-------------|-----|
+| Local Frontend | http://localhost:3000 |
+| Local Backend | http://localhost:4001 |
+| Vercel | https://officefrontend-ten.vercel.app |
+| GitHub | https://github.com/aldrinstellus/auzmor-ex-frontend |
+
+### Quick Deploy
+```bash
+git push github master
+vercel --prod --yes
+```
 
 ## Version History
-- v1.0: Initial animated login with world map and floating avatars
-- v1.1: Updated form to match reference design - teal theme, bigger logo
-- v1.1.1: Fixed Vercel deployment (blank page, router config, redirect loop) (CURRENT)
+| Version | Date | Changes |
+|---------|------|---------|
+| v1.0 | Jan 2026 | Initial animated login with world map and floating avatars |
+| v1.1 | Jan 2026 | Teal theme, bigger logo, clean design |
+| v1.1.1 | Jan 2026 | Fixed Vercel deployment (blank page, router config) |
+| v1.2 | Jan 17, 2026 | Full demo data: 333 posts, 54 users, reactions, images |
+
+## Known Issues Fixed
+- Gray gaps around left panel: Fixed with `fixed inset-0` layout
+- Vignette dark border: Removed from LoginBackground
+- Purple button: Changed to teal theme (v1.1)
+- Vercel CI errors: Fixed with vercel.json CI=false
+- Backend Node v25 incompatibility: Use Node 18 via nvm
+- Backend wrong port: Set PORT=4001 explicitly
+- Posts missing author info: Bulk updated from users collection
