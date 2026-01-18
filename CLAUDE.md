@@ -165,6 +165,7 @@ vercel --prod --yes
 | v1.0 | Jan 2026 | Initial animated login with world map and floating avatars |
 | v1.1 | Jan 2026 | Teal theme, bigger logo, clean design |
 | v1.2 | Jan 17, 2026 | Full demo data: 333 posts, 54 users, reactions, images |
+| v1.1.1 | Jan 18, 2026 | QA fixes: React warnings resolved, all pages verified |
 
 ## Known Issues Fixed
 - Gray gaps around left panel: Fixed with `fixed inset-0` layout
@@ -173,3 +174,11 @@ vercel --prod --yes
 - Vercel CI errors: Fixed with vercel.json CI=false
 - Backend Node v25 incompatibility: Use Node 18 via nvm
 - Backend wrong port: Set PORT=4001 explicitly
+- CelebrationWidget key prop warning: Added unique keys to mapped elements
+- ChannelWidgetUserRow DOM nesting: Fixed invalid p inside p
+- VirtualisedPost findDOMNode: Updated to use createRef pattern
+- Smartlook initialization: Added environment check
+
+## Related Projects
+- Backend: `/Users/aldrin-mac-mini/office_backend`
+- Backend GitHub: https://github.com/aldrinstellus/auzmor-office-backend

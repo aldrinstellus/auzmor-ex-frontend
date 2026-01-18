@@ -1,8 +1,9 @@
 # Project Context
 
 ## Current State
-**Version:** v1.2 - Full Demo Data
-**Last Updated:** January 17, 2026
+**Version:** v1.1.1 - QA Verified
+**Last Updated:** January 18, 2026
+**Last QA:** January 18, 2026 (All pages verified, no console errors)
 **Auto-Deploy:** GitHub → Vercel (on push to master)
 
 ## Quick Start
@@ -156,6 +157,29 @@ vercel --prod --yes
 | v1.1 | Jan 2026 | Teal theme, bigger logo, clean design |
 | v1.1.1 | Jan 2026 | Fixed Vercel deployment (blank page, router config) |
 | v1.2 | Jan 17, 2026 | Full demo data: 333 posts, 54 users, reactions, images |
+| v1.1.1-qa | Jan 18, 2026 | QA fixes: React warnings resolved, full verification |
+
+## Recent QA Fixes (Jan 18, 2026)
+
+### React Warning Fixes
+1. **CelebrationWidget** - Added unique keys to mapped elements
+2. **ChannelWidgetUserRow** - Fixed invalid DOM nesting (p inside p)
+3. **VirtualisedPost** - Updated findDOMNode deprecation
+4. **Smartlook** - Added environment check for initialization
+
+### Pages Verified
+- Login: Working
+- Feed: Working (posts, widgets, navigation)
+- People: Working (user directory)
+- Apps: Working (integrations)
+- Channels: Working (communication)
+- Admin: Working (settings tabs)
+- Notifications: Working (dropdown + page)
+
+### Console Status
+- No React warnings
+- No JavaScript errors
+- All API calls successful
 
 ## Known Issues Fixed
 - Gray gaps around left panel: Fixed with `fixed inset-0` layout
@@ -165,3 +189,11 @@ vercel --prod --yes
 - Backend Node v25 incompatibility: Use Node 18 via nvm
 - Backend wrong port: Set PORT=4001 explicitly
 - Posts missing author info: Bulk updated from users collection
+- CelebrationWidget key prop warning (Jan 18)
+- ChannelWidgetUserRow DOM nesting (Jan 18)
+- VirtualisedPost findDOMNode (Jan 18)
+- Smartlook initialization error (Jan 18)
+
+## Related Projects
+- Backend: `/Users/aldrin-mac-mini/office_backend`
+- Backend GitHub: https://github.com/aldrinstellus/auzmor-office-backend
